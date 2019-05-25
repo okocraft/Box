@@ -1,0 +1,51 @@
+name: Box
+version: 1.0.0
+api-version: 1.13
+main: com.github.okocraft.box.Box
+author: lazy_gon
+commands:
+  box:
+    description: Base Command of Box plugin.
+    usage: /<command> help
+    aliases: [box, okobox, okostrage]
+    permission: box
+    permission-message: '§cYou do not have permission <permission>'
+  boxadmin:
+    description: Admin Command of Box plugin.
+    usage: /<command> help
+    aliases: [boxadmin, okoboxadmin, okostrageadmin]
+    permission: box.admin
+    permission-message: '§cYou do not have permission <permission>'
+
+permissions:
+  box.*:
+    description: Includes all permissions.
+    default: op
+    children:
+      box.admin: true
+      box: true
+      box.give.*: true
+      box.autostore.*: true
+  box.admin:
+    description: For command /boxadmin
+    default: op
+  box:
+    description: For command /box
+    default: true
+  box.autostore.*:
+    description: For command /box
+    default: true
+    children:
+      box.autostore: true
+  box.give.*:
+    description: For command /box
+    default: true
+    children:
+      box.give: true
+  box.autostore:
+    description: For command /box
+    default: true
+  box.give:
+    description: For command /box
+    default: true
+  
