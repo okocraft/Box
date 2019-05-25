@@ -1,10 +1,10 @@
-package com.github.okocraft.box.listeners;
+package net.okocraft.box.listeners;
 
 import java.util.List;
 
-import com.github.okocraft.box.ConfigManager;
-import com.github.okocraft.box.Box;
-import com.github.okocraft.box.database.Database;
+import net.okocraft.box.ConfigManager;
+import net.okocraft.box.Box;
+import net.okocraft.box.database.Database;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -39,10 +39,10 @@ public class EntityPickupItem implements Listener {
 
         String itemName = pickedItemStack.getType().name();
         if (!allItems.contains(itemName)) return;
-        
+
         Player player = (Player) event.getEntity();
         if (!database.get("autostore_" + itemName, player.getUniqueId().toString()).equals("true")) return;
-        
+
         int amount = event.getItem().getItemStack().getAmount();
 
         event.getItem().remove();

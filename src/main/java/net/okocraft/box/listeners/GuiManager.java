@@ -1,14 +1,14 @@
-package com.github.okocraft.box.listeners;
+package net.okocraft.box.listeners;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import com.github.okocraft.box.ConfigManager;
-import com.github.okocraft.box.Box;
-import com.github.okocraft.box.command.Commands;
-import com.github.okocraft.box.database.Database;
+import net.okocraft.box.ConfigManager;
+import net.okocraft.box.Box;
+import net.okocraft.box.command.Commands;
+import net.okocraft.box.database.Database;
 import com.google.common.primitives.Ints;
 
 import org.bukkit.Bukkit;
@@ -198,7 +198,7 @@ public class GuiManager implements Listener {
 
                 if (takeOutSound != null)
                     player.playSound(player.getLocation(), takeOutSound, SoundCategory.MASTER, configManager.getSoundPitch(), configManager.getSoundVolume());
-        
+
                 int quantityClone = (storedItemAmount < quantity) ? storedItemAmount : quantity;
 
                 Map<Integer, ItemStack> nonStoredItemStacks = player.getInventory()

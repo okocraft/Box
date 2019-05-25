@@ -1,8 +1,8 @@
-package com.github.okocraft.box.listeners;
+package net.okocraft.box.listeners;
 
-import com.github.okocraft.box.ConfigManager;
-import com.github.okocraft.box.Box;
-import com.github.okocraft.box.database.Database;
+import net.okocraft.box.ConfigManager;
+import net.okocraft.box.Box;
+import net.okocraft.box.database.Database;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;

@@ -1,8 +1,8 @@
-package com.github.okocraft.box.command;
+package net.okocraft.box.command;
 
-import com.github.okocraft.box.ConfigManager;
-import com.github.okocraft.box.Box;
-import com.github.okocraft.box.database.Database;
+import net.okocraft.box.ConfigManager;
+import net.okocraft.box.Box;
+import net.okocraft.box.database.Database;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -30,7 +30,7 @@ public class Commands {
 
     /**
      * 権限がないときにメッセージを送りつつfalseを返す。
-     * 
+     *
      * @param sender
      * @param permission
      * @return 権限がないときにfalse あればtrue
@@ -43,7 +43,7 @@ public class Commands {
 
     /**
      * エラーが発生したときにメッセージを送りつつfalseを返す。
-     * 
+     *
      * @param sender
      * @param errorMessage
      * @return false

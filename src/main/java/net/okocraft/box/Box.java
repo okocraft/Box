@@ -1,15 +1,15 @@
-package com.github.okocraft.box;
+package net.okocraft.box;
 
 import lombok.Getter;
 
 import java.util.logging.Logger;
 
-import com.github.okocraft.box.command.Commands;
-import com.github.okocraft.box.command.BoxTabCompleter;
-import com.github.okocraft.box.database.Database;
-import com.github.okocraft.box.listeners.EntityPickupItem;
-import com.github.okocraft.box.listeners.GuiManager;
-import com.github.okocraft.box.listeners.PlayerJoin;
+import net.okocraft.box.command.Commands;
+import net.okocraft.box.command.BoxTabCompleter;
+import net.okocraft.box.database.Database;
+import net.okocraft.box.listeners.EntityPickupItem;
+import net.okocraft.box.listeners.GuiManager;
+import net.okocraft.box.listeners.PlayerJoin;
 
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
@@ -46,7 +46,7 @@ public class Box extends JavaPlugin {
     /** コンフィグマネージャ */
     @Getter
     private ConfigManager configManager;
-    
+
     /** GUIマネージャ */
     @Getter
     private GuiManager guiManager;

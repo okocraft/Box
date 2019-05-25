@@ -1,13 +1,13 @@
-package com.github.okocraft.box.command;
+package net.okocraft.box.command;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.github.okocraft.box.ConfigManager;
-import com.github.okocraft.box.Box;
-import com.github.okocraft.box.database.Database;
+import net.okocraft.box.ConfigManager;
+import net.okocraft.box.Box;
+import net.okocraft.box.database.Database;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -182,7 +182,7 @@ public class BoxTabCompleter implements TabCompleter {
                 subCommands.add("autostore");
             if (sender.hasPermission("box.give") || sender.hasPermission("box.give.*"))
                 subCommands.add("give");
-            
+
             if (args.length == 1) {
                 return StringUtil.copyPartialMatches(args[0], subCommands, resultList);
             }

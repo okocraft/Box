@@ -1,4 +1,4 @@
-package com.github.okocraft.box.database;
+package net.okocraft.box.database;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -27,8 +27,8 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.val;
 
-import com.github.okocraft.box.Box;
-import com.github.okocraft.box.command.Commands;
+import net.okocraft.box.Box;
+import net.okocraft.box.command.Commands;
 
 public class Database {
     /**
@@ -101,7 +101,7 @@ public class Database {
             return false;
         }
 
-        
+
         // Set DB URL
         fileUrl = url;
         DBUrl = "jdbc:sqlite:" + url;
@@ -188,7 +188,7 @@ public class Database {
      * @param uuid UUID
      * @param name 名前
      * @param showWarning コンソールログを出力するかどうか
-     * 
+     *
      * @return 成功すればtrue 失敗すればfalse
      */
     public boolean addPlayer(@NonNull String uuid, @NonNull String name, boolean showWarning) {
@@ -232,7 +232,7 @@ public class Database {
      * @author LazyGon
      *
      * @param entry プレイヤー
-     * 
+     *
      * @return 成功すればtrue 失敗すればfalse
      */
     public boolean removePlayer(@NonNull String entry) {
@@ -316,10 +316,10 @@ public class Database {
     /**
      * {@code table} で指定したテーブルの列 {@code column} の値を取得する。
      * テーブル、カラム、レコードのいずれかが存在しない場合は対応するエラー文字列を返す。
-     * 
+     *
      * @author akaregi
      * @since 1.0.0-SNAPSHOT
-     * 
+     *
      * @param table
      * @param column
      * @param entry
@@ -455,7 +455,7 @@ public class Database {
      * @return テーブルに含まれるcolumnの名前と型のマップ 失敗したら空のマップを返す。
      */
     public Map<String, String> getColumnMap() {
-        
+
         Map<String, String> columnMap = new HashMap<>();
 
         val statement = prepare("SELECT * FROM " + table + " WHERE 0=1");
@@ -507,10 +507,10 @@ public class Database {
 
     /**
      * {@code table} の {@code column} の {@code entry} の行をNULLにする。(消す)
-     * 
+     *
      * @author LazyGon
      * @since 1.1.0-SNAPSHOT
-     * 
+     *
      * @param table
      * @param column
      * @param entry

@@ -1,4 +1,4 @@
-package com.github.okocraft.box;
+package net.okocraft.box;
 
 import java.io.File;
 import java.io.IOException;

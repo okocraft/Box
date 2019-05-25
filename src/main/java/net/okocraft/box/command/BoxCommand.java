@@ -1,11 +1,11 @@
-package com.github.okocraft.box.command;
+package net.okocraft.box.command;
 
 import java.util.Arrays;
 import java.util.List;
 
-import com.github.okocraft.box.ConfigManager;
-import com.github.okocraft.box.Box;
-import com.github.okocraft.box.database.Database;
+import net.okocraft.box.ConfigManager;
+import net.okocraft.box.Box;
+import net.okocraft.box.database.Database;
 import com.google.common.primitives.Ints;
 import com.google.common.primitives.Longs;
 

@@ -1,4 +1,4 @@
-package com.github.okocraft.box.database;
+package net.okocraft.box.database;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
