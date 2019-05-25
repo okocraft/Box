@@ -60,7 +60,7 @@ public class Box extends JavaPlugin {
     @Override
     public void onEnable() {
         // Initialize Config
-        configManager = new ConfigManager(this);
+        configManager = new ConfigManager(this, database);
 
         // Connect to database. If can't, disable Box.
         if (!database.connect(getDataFolder().getPath() + "/data.db")) {

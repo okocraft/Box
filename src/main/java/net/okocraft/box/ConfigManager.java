@@ -17,10 +17,13 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 
 import lombok.Getter;
+import net.okocraft.box.database.Database;
 
 public class ConfigManager {
 
     private Box instance;
+
+    private Database database;
 
     // CustomConfig
     private CustomConfig messageCustomConfig;
@@ -67,8 +70,9 @@ public class ConfigManager {
     @Getter private Map<Integer, ItemStack> footerItemStacks;
 
 
-    public ConfigManager(Plugin plugin) {
+    public ConfigManager(Plugin plugin, Database database) {
         instance = Box.getInstance();
+        this.database = database;
         defaultConfig = instance.getConfig();
         messageCustomConfig = new CustomConfig(instance, "messages.yml");
         storingItemCustomConfig = new CustomConfig(instance, "items.yml");
@@ -89,6 +93,10 @@ public class ConfigManager {
         storingItemConfig = storingItemCustomConfig.getConfig();
 
         loadFields();
+        allItems.forEach(itemName -> {
+            database.addColumn(itemName, "INTEGER", "0", false);
+            database.addColumn("autostore_" + itemName, "TEXT", "false", false);
+        });
         instance.registerEvents();
     }
 
@@ -148,60 +156,23 @@ public class ConfigManager {
 
         footerItemStacks = new HashMap<>();
 
-        ItemStack previousPage = new ItemStack(Material.ARROW);
-        ItemMeta previousPageMeta = previousPage.getItemMeta();
-        previousPageMeta.setDisplayName(storingItemConfig.getString("CategoryGui.Previouspage", "&6前のページ &8| &6Prev Page").replaceAll("&([a-f0-9])", "§$1"));
-        previousPage.setItemMeta(previousPageMeta);
-        footerItemStacks.put(45, previousPage);
+        footerItemStacks.put(45, createFooter(Material.ARROW, 1,  storingItemConfig.getString("CategoryGui.Previouspage", "&6前のページ &8| &6Prev Page")));
+        footerItemStacks.put(46, createFooter(Material.RED_STAINED_GLASS_PANE, 64, storingItemConfig.getString("CategoryGui.Decrease64", "&7単位: &c-64")));
+        footerItemStacks.put(47, createFooter(Material.RED_STAINED_GLASS_PANE, 8, storingItemConfig.getString("CategoryGui.Decrease8", "&7単位: &c-8")));
+        footerItemStacks.put(48, createFooter(Material.RED_STAINED_GLASS_PANE, 1, storingItemConfig.getString("CategoryGui.Decrease1", "&7単位: &c-1")));
+        footerItemStacks.put(49, createFooter(Material.OAK_DOOR, 1, storingItemConfig.getString("CategoryGui.Return", "&6戻る &8| &6Return")));
+        footerItemStacks.put(50, createFooter(Material.BLUE_STAINED_GLASS_PANE, 1, storingItemConfig.getString("CategoryGui.Increase8", "&7単位: &b+1")));
+        footerItemStacks.put(51, createFooter(Material.BLUE_STAINED_GLASS_PANE, 8, storingItemConfig.getString("CategoryGui.Increase8", "&7単位: &b+8")));
+        footerItemStacks.put(52, createFooter(Material.BLUE_STAINED_GLASS_PANE, 64, storingItemConfig.getString("CategoryGui.Increase8", "&7単位: &b+64")));
+        footerItemStacks.put(52, createFooter(Material.ARROW, 1, storingItemConfig.getString("CategoryGui.Nextpage", "&6次のページ &8| &6Nex Page")));
+    }
 
-        ItemStack decrease64 = new ItemStack(Material.RED_STAINED_GLASS_PANE, 64);
-        ItemMeta decrease64Meta = decrease64.getItemMeta();
-        decrease64Meta.setDisplayName(storingItemConfig.getString("CategoryGui.Decrease64", "&7単位: &c-64").replaceAll("&([a-f0-9])", "§$1"));
-        decrease64.setItemMeta(decrease64Meta);
-        footerItemStacks.put(46, decrease64);
-
-        ItemStack decrease8 = new ItemStack(Material.RED_STAINED_GLASS_PANE, 8);
-        ItemMeta decrease8Meta = decrease8.getItemMeta();
-        decrease8Meta.setDisplayName(storingItemConfig.getString("CategoryGui.Decrease8", "&7単位: &c-8").replaceAll("&([a-f0-9])", "§$1"));
-        decrease8.setItemMeta(decrease8Meta);
-        footerItemStacks.put(47, decrease8);
-
-        ItemStack decrease1 = new ItemStack(Material.RED_STAINED_GLASS_PANE);
-        ItemMeta decrease1Meta = decrease1.getItemMeta();
-        decrease1Meta.setDisplayName(storingItemConfig.getString("CategoryGui.Decrease1", "&7単位: &c-1").replaceAll("&([a-f0-9])", "§$1"));
-        decrease1.setItemMeta(decrease1Meta);
-        footerItemStacks.put(48, decrease1);
-
-        ItemStack returnGui = new ItemStack(Material.OAK_DOOR);
-        ItemMeta returnGuiMeta = returnGui.getItemMeta();
-        returnGuiMeta.setDisplayName(storingItemConfig.getString("CategoryGui.Return", "&6戻る &8| &6Return").replaceAll("&([a-f0-9])", "§$1"));
-        returnGui.setItemMeta(returnGuiMeta);
-        footerItemStacks.put(49, returnGui);
-
-        ItemStack increase1 = new ItemStack(Material.BLUE_STAINED_GLASS_PANE);
-        ItemMeta increase1Meta = increase1.getItemMeta();
-        increase1Meta.setDisplayName(storingItemConfig.getString("CategoryGui.Increase1", "&7単位: &b+1").replaceAll("&([a-f0-9])", "§$1"));
-        increase1.setItemMeta(increase1Meta);
-        footerItemStacks.put(50, increase1);
-
-        ItemStack increase8 = new ItemStack(Material.BLUE_STAINED_GLASS_PANE, 8);
-        ItemMeta increase8Meta = increase8.getItemMeta();
-        increase8Meta.setDisplayName(storingItemConfig.getString("CategoryGui.Increase8", "&7単位: &b+8").replaceAll("&([a-f0-9])", "§$1"));
-        increase8.setItemMeta(increase8Meta);
-        footerItemStacks.put(51, increase8);
-
-        ItemStack increase64 = new ItemStack(Material.BLUE_STAINED_GLASS_PANE, 64);
-        ItemMeta increase64Meta = increase64.getItemMeta();
-        increase64Meta.setDisplayName(storingItemConfig.getString("CategoryGui.Increase64", "&7単位: &b+64").replaceAll("&([a-f0-9])", "§$1"));
-        increase64.setItemMeta(increase64Meta);
-        footerItemStacks.put(52, increase64);
-
-        ItemStack nextPage = new ItemStack(Material.ARROW);
-        ItemMeta nextPageMeta = nextPage.getItemMeta();
-        nextPageMeta.setDisplayName(storingItemConfig.getString("CategoryGui.Nextpage", "&6次のページ &8| &6Nex Page").replaceAll("&([a-f0-9])", "§$1"));
-        nextPage.setItemMeta(nextPageMeta);
-        footerItemStacks.put(53, nextPage);
-
+    private static ItemStack createFooter(Material material, int stackAmount, String displayName) {
+        ItemStack hooterItem = new ItemStack(material, stackAmount);
+        ItemMeta hooterItemMeta = hooterItem.getItemMeta();
+        hooterItemMeta.setDisplayName(displayName.replaceAll("&([a-f0-9])", "§$1"));
+        hooterItem.setItemMeta(hooterItemMeta);
+        return hooterItem;
     }
 
     public static Sound soundOrNull(String sound) {
