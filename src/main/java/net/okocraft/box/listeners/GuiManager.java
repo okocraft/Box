@@ -208,7 +208,7 @@ public class GuiManager implements Listener {
 
             } else {
                 Inventory playerInv = event.getView().getBottomInventory();
-                int playerItemAmount = playerInv.all(clickedItemMaterial).values().stream().mapToInt(item -> item.getAmount()).sum();
+                int playerItemAmount = playerInv.all(clickedItemMaterial).values().stream().filter(item -> !item.hasItemMeta()).mapToInt(item -> item.getAmount()).sum();
                 if (playerItemAmount == 0) {
                     if (notEnoughSound != null)
                         player.playSound(player.getLocation(), notEnoughSound, SoundCategory.MASTER, configManager.getSoundPitch(), configManager.getSoundVolume());
