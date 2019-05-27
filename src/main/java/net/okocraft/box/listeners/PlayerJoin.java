@@ -26,16 +26,16 @@ public class PlayerJoin implements Listener{
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         String uniqueId = player.getUniqueId().toString();
-        String currentName = player.getName();
+        String currentName = player.getName().toLowerCase();
 
         // 新規プレイヤーが昔いた他のプレイヤーと同じ名前でログインしたら昔のプレイヤーの名前を消す。
-        String registeredUniqueId = database.get("uuid", currentName.toLowerCase());
+        String registeredUniqueId = database.get("uuid", currentName);
         if (!registeredUniqueId.equals(uniqueId))
             database.set("player", registeredUniqueId, "");
 
         // 初めてログインするプレイヤーを登録する。
         if (!database.existPlayer(currentName)) {
-            database.addPlayer(uniqueId, currentName.toLowerCase(), false);
+            database.addPlayer(uniqueId, currentName, false);
             String autoStoreDefaultValue = String.valueOf(configManager.isAutoStoreEnabledByDefault());
             configManager.getAllItems().forEach(itemName -> database.set("autostore_" + itemName, uniqueId, autoStoreDefaultValue));
         }
@@ -43,6 +43,6 @@ public class PlayerJoin implements Listener{
         // プレイヤーが過去の名前とは違う名前だったらデータベースを更新する。
         String beforeName = database.get("player", uniqueId);
         if (!beforeName.equalsIgnoreCase(currentName))
-            database.set("player", uniqueId, currentName.toLowerCase());
+            database.set("player", uniqueId, currentName);
     }
 }

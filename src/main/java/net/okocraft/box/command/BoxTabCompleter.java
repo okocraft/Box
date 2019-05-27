@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import net.okocraft.box.ConfigManager;
 import net.okocraft.box.Box;
@@ -39,8 +40,8 @@ public class BoxTabCompleter implements TabCompleter {
             if (!sender.hasPermission("box.admin"))
                 return resultList;
 
-            List<String> subCommands = Arrays.asList("set", "give", "take", "reload", "test", "migrate", "autostore",
-                    "database");
+            List<String> subCommands = new ArrayList<>(
+                    Arrays.asList("set", "give", "take", "reload", "test", "migrate", "autostore", "database"));
             if (args.length == 1) {
                 return StringUtil.copyPartialMatches(args[0], subCommands, resultList);
             }
@@ -58,12 +59,14 @@ public class BoxTabCompleter implements TabCompleter {
                     return StringUtil.copyPartialMatches(args[1], databaseSubCommands, resultList);
                 }
 
-                if (databaseSubCommands.contains(args[1].toLowerCase()))
+                if (!databaseSubCommands.contains(args[1].toLowerCase()))
                     return resultList;
 
                 List<String> columnList = new ArrayList<>(database.getColumnMap().keySet());
                 if (args.length == 3) {
                     switch (args[1].toLowerCase()) {
+                    case "addplayer":
+                        return null;
                     case "removeplayer":
                         return StringUtil.copyPartialMatches(args[2], playerList, resultList);
                     case "existplayer":
@@ -138,6 +141,14 @@ public class BoxTabCompleter implements TabCompleter {
                 return resultList;
 
             List<String> allItems = configManager.getAllItems();
+            List<String> allItemsClone = new ArrayList<>(allItems);
+
+            int maxPage = allItemsClone.size() / 9;
+            maxPage = (allItemsClone.size() % 9 == 0) ? maxPage : maxPage + 1;
+            allItemsClone.addAll(
+                    IntStream.rangeClosed(1, maxPage).boxed().map(String::valueOf).collect(Collectors.toList()));
+            allItemsClone.add("ALL");
+
             if (args.length == 3) {
                 switch (subCommand) {
                 case "set":
@@ -147,26 +158,46 @@ public class BoxTabCompleter implements TabCompleter {
                 case "take":
                     return StringUtil.copyPartialMatches(args[2], allItems, resultList);
                 case "autostore":
-                    return StringUtil.copyPartialMatches(args[2], allItems, resultList);
+                    return StringUtil.copyPartialMatches(args[2], allItemsClone, resultList);
                 }
             }
 
-            if (!allItems.contains(args[2].toUpperCase()))
+            switch (subCommand) {
+            case "set":
+                if (!allItems.contains(args[2].toUpperCase()))
+                    return resultList;
+                break;
+            case "give":
+                if (!allItems.contains(args[2].toUpperCase()))
+                    return resultList;
+                break;
+            case "take":
+                if (!allItems.contains(args[2].toUpperCase()))
+                    return resultList;
+                break;
+            case "autostore":
+                if (!allItemsClone.contains(args[2].toUpperCase()))
+                    return resultList;
+                break;
+            default:
+                return resultList;
+            }
+            if (!allItems.contains(args[2].toUpperCase()) && !args[2].equalsIgnoreCase("all"))
                 return resultList;
 
             if (args.length == 4) {
                 switch (subCommand) {
                 case "set":
-                    return StringUtil.copyPartialMatches(args[2], Arrays.asList("1", "10", "100", "1000", "10000"),
+                    return StringUtil.copyPartialMatches(args[3], Arrays.asList("1", "10", "100", "1000", "10000"),
                             resultList);
                 case "give":
-                    return StringUtil.copyPartialMatches(args[2], Arrays.asList("1", "10", "100", "1000", "10000"),
+                    return StringUtil.copyPartialMatches(args[3], Arrays.asList("1", "10", "100", "1000", "10000"),
                             resultList);
                 case "take":
-                    return StringUtil.copyPartialMatches(args[2], Arrays.asList("1", "10", "100", "1000", "10000"),
+                    return StringUtil.copyPartialMatches(args[3], Arrays.asList("1", "10", "100", "1000", "10000"),
                             resultList);
                 case "autostore":
-                    return StringUtil.copyPartialMatches(args[2], Arrays.asList("true", "false"), resultList);
+                    return StringUtil.copyPartialMatches(args[3], Arrays.asList("true", "false"), resultList);
                 }
             }
 
@@ -174,7 +205,6 @@ public class BoxTabCompleter implements TabCompleter {
         }
 
         if (command.getName().equalsIgnoreCase("box")) {
-
             List<String> subCommands = new ArrayList<>();
             if (sender.hasPermission("box.version"))
                 subCommands.add("version");
@@ -187,49 +217,62 @@ public class BoxTabCompleter implements TabCompleter {
                 return StringUtil.copyPartialMatches(args[0], subCommands, resultList);
             }
 
-            val subCommand = args[1].toLowerCase();
+            val subCommand = args[0].toLowerCase();
+            if (!subCommands.contains(subCommand))
+                return resultList;
 
-            switch(subCommand) {
-                case "autostore":
+            switch (subCommand) {
+            case "autostore":
                 if (!sender.hasPermission("box.autostore") && !sender.hasPermission("box.autostore.*"))
                     return resultList;
-                case "give":
+            case "give":
                 if (!sender.hasPermission("box.give"))
                     return resultList;
             }
 
-            List<String> allItemsAutostore = (sender.hasPermission("box.autostore.*"))
-                ? configManager.getAllItems().stream().filter(itemName -> sender.hasPermission("box.autostore." + itemName)).collect(Collectors.toList())
-                : configManager.getAllItems();
+            List<String> allItems = configManager.getAllItems();
+
+            List<String> allItemsAutostore = (sender.hasPermission("box.autostore.*")) ? allItems.stream()
+                    .filter(itemName -> sender.hasPermission("box.autostore." + itemName)).collect(Collectors.toList())
+                    : allItems;
+            int maxPage = allItemsAutostore.size() / 9;
+            maxPage = (allItemsAutostore.size() % 9 == 0) ? maxPage : maxPage + 1;
+            
+            List<String> allItemsAutostoreClone = new ArrayList<>(allItemsAutostore);
+            allItemsAutostoreClone.addAll(
+                    IntStream.rangeClosed(1, maxPage).boxed().map(String::valueOf).collect(Collectors.toList()));
+            allItemsAutostoreClone.add("ALL");
 
             List<String> players = database.getPlayersMap().values().stream().collect(Collectors.toList());
             if (args.length == 2) {
-                switch(subCommand) {
-                    case "autostore":
-                        StringUtil.copyPartialMatches(args[1], allItemsAutostore, resultList);
-                    case "give":
-                        StringUtil.copyPartialMatches(args[1], players, resultList);
+                switch (subCommand) {
+                case "autostore":
+                    return StringUtil.copyPartialMatches(args[1], allItemsAutostoreClone, resultList);
+                case "give":
+                    return StringUtil.copyPartialMatches(args[1], players, resultList);
                 }
             }
 
-            switch(subCommand) {
-                case "autostore":
-                    if (!allItemsAutostore.contains(args[1].toUpperCase()))
-                        return resultList;
-                case "give":
-                    if (!players.contains(args[1]))
-                        return resultList;
+            switch (subCommand) {
+            case "autostore":
+                if (!allItemsAutostore.contains(args[1].toUpperCase()) && !args[1].equalsIgnoreCase("all"))
+                    return resultList;
+                break;
+            case "give":
+                if (!players.contains(args[1]))
+                    return resultList;
+                break;
             }
 
-            List<String> allItemsGive = (sender.hasPermission("box.give.*"))
-                ? configManager.getAllItems().stream().filter(itemName -> sender.hasPermission("box.autostore." + itemName)).collect(Collectors.toList())
-                : configManager.getAllItems();
+            List<String> allItemsGive = (sender.hasPermission("box.give.*")) ? configManager.getAllItems().stream()
+                    .filter(itemName -> sender.hasPermission("box.give." + itemName)).collect(Collectors.toList())
+                    : configManager.getAllItems();
             if (args.length == 3) {
-                switch(subCommand) {
-                    case "autostore":
-                        StringUtil.copyPartialMatches(args[2], Arrays.asList("true", "false"), resultList);
-                    case "give":
-                        StringUtil.copyPartialMatches(args[2], allItemsGive, resultList);
+                switch (subCommand) {
+                case "autostore":
+                    return StringUtil.copyPartialMatches(args[2], Arrays.asList("true", "false"), resultList);
+                case "give":
+                    return StringUtil.copyPartialMatches(args[2], allItemsGive, resultList);
                 }
             }
         }

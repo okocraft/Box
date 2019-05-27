@@ -1,6 +1,7 @@
 package net.okocraft.box;
 
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.logging.Logger;
 
@@ -41,7 +42,8 @@ public class Box extends JavaPlugin {
      * データベース。
      */
     @Getter
-    private final Database database;
+    @Setter
+    private Database database;
 
     /** コンフィグマネージャ */
     @Getter
