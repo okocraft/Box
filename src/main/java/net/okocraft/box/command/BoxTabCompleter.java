@@ -41,7 +41,7 @@ public class BoxTabCompleter implements TabCompleter {
                 return resultList;
 
             List<String> subCommands = new ArrayList<>(
-                    Arrays.asList("set", "give", "take", "reload", "test", "migrate", "autostore", "database"));
+                    Arrays.asList("set", "give", "take", "reload", "test", "autostore", "database"));
             if (args.length == 1) {
                 return StringUtil.copyPartialMatches(args[0], subCommands, resultList);
             }
@@ -51,7 +51,7 @@ public class BoxTabCompleter implements TabCompleter {
 
             List<String> playerList = database.getPlayersMap().values().parallelStream().collect(Collectors.toList());
             List<String> databaseSubCommands = Arrays.asList("addplayer", "removeplayer", "existplayer", "set", "get",
-                    "addcolumn", "dropcolumn", "getcolumnmap", "getplayersmap");
+                    "addcolumn", "dropcolumn", "getcolumnmap", "getplayersmap", "resetconnection");
 
             if (subCommand.equalsIgnoreCase("database")) {
 

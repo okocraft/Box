@@ -1,12 +1,10 @@
 package net.okocraft.box.command;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import net.okocraft.box.ConfigManager;
 import net.okocraft.box.Box;
@@ -23,8 +21,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.Objective;
 
 import lombok.NonNull;
@@ -80,57 +76,17 @@ public class BoxAdminCommand implements CommandExecutor {
             // Do Stuff
         }
 
-        // Box migrate
-        if (subCommand.equalsIgnoreCase("migrate")) {
-
-            new BukkitRunnable() {
-
-                @Override
-                public void run() {
-
-                    System.out.println("§cmigration started.");
-
-                    if (allPlayers == null)
-                        allPlayers = Stream.of(Bukkit.getOfflinePlayers()).collect(Collectors.toList());
-                    for (int i = 1; i <= 10; i++) {
-                        System.out
-                                .println("§cstart 100 loop " + i + " §ctimes. for " + allPlayers.size() + " players.");
-
-                        new ArrayList<>(allPlayers).stream().limit(200).forEach(entry -> {
-                            database.addPlayer(entry.getUniqueId().toString(), entry.getName().toLowerCase(), false);
-                            scoreItemMap.forEach((item, scoreObj) -> {
-                                database.set(item.getType().name(), entry.getUniqueId().toString(),
-                                        String.valueOf(scoreObj.getScore(entry.getName()).getScore()));
-                            });
-                            allPlayers.remove(entry);
-                            System.out.println(allPlayers.size() + " §eplayers left.");
-
-                        });
-
-                        System.out.println("§efinished. §b" + allPlayers.size()
-                                + " §eplayers left.\n §eNow in 10 second interval.");
-                        database.dispose();
-                        instance.setDatabase(new Database((Plugin) instance));
-                        database.connect(instance.getDataFolder().getPath() + "/data.db");
-                        synchronized (this) {
-                            try {
-                                wait(10000);
-                            } catch (InterruptedException exception) {
-                                exception.printStackTrace();
-                            }
-                        }
-                    }
-                }
-            }.runTaskAsynchronously(instance);
-            return true;
-        }
-
         // Box Database
         if (subCommand.equalsIgnoreCase("database")) {
             if (args.length == 1)
                 return Commands.errorOccured(sender, noEnoughArguments);
 
             val databaseSubCommand = args[1].toLowerCase();
+            if (databaseSubCommand.equalsIgnoreCase("resetconnection")) {
+                database.resetConnection();
+                sender.sendMessage("§eデータベースへの接続をリセットしました。");
+                return true;
+            }
             if (databaseSubCommand.equalsIgnoreCase("addplayer")) {
                 if (args.length == 2)
                     return Commands.errorOccured(sender, noEnoughArguments);

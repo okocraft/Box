@@ -1,6 +1,5 @@
 package net.okocraft.box.listeners;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -31,7 +30,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.tags.CustomItemTagContainer;
 import org.bukkit.inventory.meta.tags.ItemTagType;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.scheduler.BukkitRunnable;
 
 public class GuiManager implements Listener {
 
@@ -401,7 +399,7 @@ public class GuiManager implements Listener {
             return;
         }
 
-        List<ItemStack> items = IntStream.rangeClosed(0, 45).boxed().map(slot -> inv.getItem(slot))
+        List<ItemStack> items = IntStream.rangeClosed(0, 44).boxed().map(slot -> inv.getItem(slot))
                 .filter(item -> item != null).collect(Collectors.toList());
         List<String> itemMaterialNameList = (new ArrayList<ItemStack>(items)).stream().map(item -> item.getType().name())
                 .collect(Collectors.toList());

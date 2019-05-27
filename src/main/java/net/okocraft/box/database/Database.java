@@ -181,6 +181,20 @@ public class Database {
     }
 
     /**
+     * コネクションをリセットし、メモリを開放する。
+     */
+    public void resetConnection() {
+        log.info("Disconnecting.");
+        dispose();
+        log.info("Getting connection.");
+        if (!connect(fileUrl)) {
+            log.info("Failed to reset connection. Disabling Box plugin.");
+            Bukkit.getPluginManager().disablePlugin(Box.getInstance());
+        }
+        log.info("Database reset complete.");
+    }
+
+    /**
      * データベースにレコードを追加する。 showWarningがtrueで失敗した場合はコンソールにログを出力する。
      *
      * @since 1.0.0-SNAPSHOT
