@@ -2,6 +2,7 @@ package net.okocraft.box;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -124,7 +125,7 @@ public class ConfigManager {
         itemTemplateLore = storingItemConfig.getStringList("ItemTemplate.lore").stream().map(loreLine -> loreLine.replaceAll("&([a-f0-9])", "§$1"))
                 .collect(Collectors.toList());
 
-        categories = new HashMap<>();
+        categories = new LinkedHashMap<>();
         MemorySection categoryConfig = memorySectionOrNull(storingItemConfig.get("categories"));
         if (categoryConfig != null) {
             categoryConfig.getValues(false).forEach((sectionName, sectionObject) -> {
@@ -161,10 +162,10 @@ public class ConfigManager {
         footerItemStacks.put(47, createFooter(Material.RED_STAINED_GLASS_PANE, 8, storingItemConfig.getString("CategoryGui.Decrease8", "&7単位: &c-8")));
         footerItemStacks.put(48, createFooter(Material.RED_STAINED_GLASS_PANE, 1, storingItemConfig.getString("CategoryGui.Decrease1", "&7単位: &c-1")));
         footerItemStacks.put(49, createFooter(Material.OAK_DOOR, 1, storingItemConfig.getString("CategoryGui.Return", "&6戻る &8| &6Return")));
-        footerItemStacks.put(50, createFooter(Material.BLUE_STAINED_GLASS_PANE, 1, storingItemConfig.getString("CategoryGui.Increase8", "&7単位: &b+1")));
+        footerItemStacks.put(50, createFooter(Material.BLUE_STAINED_GLASS_PANE, 1, storingItemConfig.getString("CategoryGui.Increase1", "&7単位: &b+1")));
         footerItemStacks.put(51, createFooter(Material.BLUE_STAINED_GLASS_PANE, 8, storingItemConfig.getString("CategoryGui.Increase8", "&7単位: &b+8")));
-        footerItemStacks.put(52, createFooter(Material.BLUE_STAINED_GLASS_PANE, 64, storingItemConfig.getString("CategoryGui.Increase8", "&7単位: &b+64")));
-        footerItemStacks.put(52, createFooter(Material.ARROW, 1, storingItemConfig.getString("CategoryGui.Nextpage", "&6次のページ &8| &6Nex Page")));
+        footerItemStacks.put(52, createFooter(Material.BLUE_STAINED_GLASS_PANE, 64, storingItemConfig.getString("CategoryGui.Increase64", "&7単位: &b+64")));
+        footerItemStacks.put(53, createFooter(Material.ARROW, 1, storingItemConfig.getString("CategoryGui.Nextpage", "&6次のページ &8| &6Nex Page")));
     }
 
     private static ItemStack createFooter(Material material, int stackAmount, String displayName) {
@@ -184,6 +185,7 @@ public class ConfigManager {
     }
 
     public static MemorySection memorySectionOrNull(Object obj) {
+        if (obj == null) return null;
         if (obj.getClass().getSimpleName().equals("MemorySection"))
             return (MemorySection) obj;
         return null;

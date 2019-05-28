@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import net.okocraft.box.ConfigManager;
 import net.okocraft.box.Box;
@@ -40,6 +42,7 @@ public class GuiManager implements Listener {
     private Map<String, String> categoryGuiNameMap;
     private NamespacedKey quantityKey;
     private NamespacedKey categoryNameKey;
+    private List<Integer> categorySelectionGuiFrame;
 
     Sound openSound;
     Sound changePageSound;
@@ -61,6 +64,9 @@ public class GuiManager implements Listener {
 
         quantityKey = new NamespacedKey(instance, "quantity");
         categoryNameKey = new NamespacedKey(instance, "categoryname");
+
+        categorySelectionGuiFrame = Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 17, 18, 26, 27, 35, 36, 44, 45, 46, 47,
+                48, 49, 50, 51, 52, 53);
 
         openSound = configManager.getOpenSound();
         changePageSound = configManager.getChangePageSound();
@@ -91,6 +97,10 @@ public class GuiManager implements Listener {
             event.setCancelled(true);
             if (actionName.equals("NOTHING") || inv.getType() == InventoryType.PLAYER)
                 return;
+
+            if (categorySelectionGuiFrame.contains(clickedSlot))
+                return;
+
             String categoryName = clickedItem.getItemMeta().getCustomTagContainer().getCustomTag(categoryNameKey,
                     ItemTagType.STRING);
 
@@ -108,7 +118,8 @@ public class GuiManager implements Listener {
 
             if (clickedSlot == 45 || clickedSlot == 53) {
                 if (changePageSound != null)
-                    player.playSound(player.getLocation(), changePageSound, SoundCategory.MASTER, configManager.getSoundPitch(), configManager.getSoundVolume());
+                    player.playSound(player.getLocation(), changePageSound, SoundCategory.MASTER,
+                            configManager.getSoundPitch(), configManager.getSoundVolume());
 
                 openCategoryGui(player, categoryName, inv.getItem(clickedSlot).getAmount(), 1, inv, false);
                 return;
@@ -116,7 +127,8 @@ public class GuiManager implements Listener {
 
             if (clickedSlot == 49) {
                 if (returnToSelectionGuiSound != null)
-                    player.playSound(player.getLocation(), returnToSelectionGuiSound, SoundCategory.MASTER, configManager.getSoundPitch(), configManager.getSoundVolume());
+                    player.playSound(player.getLocation(), returnToSelectionGuiSound, SoundCategory.MASTER,
+                            configManager.getSoundPitch(), configManager.getSoundVolume());
 
                 openCategorySelectionGui(player, 1, false);
                 return;
@@ -127,38 +139,50 @@ public class GuiManager implements Listener {
                 if (firstItem == null)
                     return;
 
-                ItemStack nextArrow = inv.getItem(53);
-                int page = 64;
-                if (nextArrow != null)
-                    page = nextArrow.getAmount() - 1;
-
                 int quantity = firstItem.getItemMeta().getCustomTagContainer().getCustomTag(quantityKey,
                         ItemTagType.INTEGER);
 
-                int firstQuantity = quantity;
+                int difference = 0;
 
-                if (clickedSlot == 46 && quantity - 64 >= 1)
-                    quantity -= 64;
-                if (clickedSlot == 47 && quantity - 8 >= 1)
-                    quantity -= 8;
-                if (clickedSlot == 48 && quantity - 1 >= 1)
-                    quantity -= 1;
-                if (clickedSlot == 50 && quantity + 1 <= 640)
-                    quantity += 1;
-                if (clickedSlot == 51 && quantity + 8 <= 640)
-                    quantity += 8;
-                if (clickedSlot == 52 && quantity + 64 <= 640)
-                    quantity += 64;
-
-                if (quantity < firstQuantity) {
-                    if (decreaseSound != null)
-                        player.playSound(player.getLocation(), decreaseSound, SoundCategory.MASTER, configManager.getSoundPitch(), configManager.getSoundVolume());
-                } else if (quantity > firstQuantity) {
-                    if (increaseSound != null)
-                        player.playSound(player.getLocation(), increaseSound, SoundCategory.MASTER, configManager.getSoundPitch(), configManager.getSoundVolume());
+                switch (clickedSlot) {
+                case 46:
+                    difference = -64;
+                    break;
+                case 47:
+                    difference = -8;
+                    break;
+                case 48:
+                    difference = -1;
+                    break;
+                case 50:
+                    difference = 1;
+                    break;
+                case 51:
+                    difference = 8;
+                    break;
+                case 52:
+                    difference = 64;
+                    break;
                 }
 
-                openCategoryGui(player, categoryName, page, quantity, inv, false);
+                if ((quantity == 640 && difference > 0) || (quantity == 1 && difference < 0))
+                    return;
+
+                quantity = (quantity + difference >= 1) ? quantity + difference : 1;
+                if (quantity > 640)
+                    quantity = 640;
+
+                if (difference < 0) {
+                    if (decreaseSound != null)
+                        player.playSound(player.getLocation(), decreaseSound, SoundCategory.MASTER,
+                                configManager.getSoundPitch(), configManager.getSoundVolume());
+                } else if (difference > 0) {
+                    if (increaseSound != null)
+                        player.playSound(player.getLocation(), increaseSound, SoundCategory.MASTER,
+                                configManager.getSoundPitch(), configManager.getSoundVolume());
+                }
+
+                changeQuantity(inv, quantity);
                 return;
             }
 
@@ -188,16 +212,18 @@ public class GuiManager implements Listener {
 
             int resultStoredAmount;
 
-            if (event.isLeftClick()) {
+            if (event.isRightClick()) {
 
                 if (storedItemAmount <= 0) {
                     if (notEnoughSound != null)
-                        player.playSound(player.getLocation(), notEnoughSound, SoundCategory.MASTER, configManager.getSoundPitch(), configManager.getSoundVolume());
+                        player.playSound(player.getLocation(), notEnoughSound, SoundCategory.MASTER,
+                                configManager.getSoundPitch(), configManager.getSoundVolume());
                     return;
                 }
 
                 if (takeOutSound != null)
-                    player.playSound(player.getLocation(), takeOutSound, SoundCategory.MASTER, configManager.getSoundPitch(), configManager.getSoundVolume());
+                    player.playSound(player.getLocation(), takeOutSound, SoundCategory.MASTER,
+                            configManager.getSoundPitch(), configManager.getSoundVolume());
 
                 int quantityClone = (storedItemAmount < quantity) ? storedItemAmount : quantity;
 
@@ -208,26 +234,31 @@ public class GuiManager implements Listener {
 
             } else {
                 Inventory playerInv = event.getView().getBottomInventory();
-                int playerItemAmount = playerInv.all(clickedItemMaterial).values().stream().filter(item -> !item.hasItemMeta()).mapToInt(item -> item.getAmount()).sum();
+                int playerItemAmount = playerInv.all(clickedItemMaterial).values().stream()
+                        .filter(item -> !item.hasItemMeta()).mapToInt(item -> item.getAmount()).sum();
                 if (playerItemAmount == 0) {
                     if (notEnoughSound != null)
-                        player.playSound(player.getLocation(), notEnoughSound, SoundCategory.MASTER, configManager.getSoundPitch(), configManager.getSoundVolume());
+                        player.playSound(player.getLocation(), notEnoughSound, SoundCategory.MASTER,
+                                configManager.getSoundPitch(), configManager.getSoundVolume());
                     return;
                 }
 
                 if (takeInSound != null)
-                    player.playSound(player.getLocation(), takeInSound, SoundCategory.MASTER, configManager.getSoundPitch(), configManager.getSoundVolume());
+                    player.playSound(player.getLocation(), takeInSound, SoundCategory.MASTER,
+                            configManager.getSoundPitch(), configManager.getSoundVolume());
 
-                Map<Integer, ItemStack> nonRemovedItemStacks = playerInv.removeItem(new ItemStack(clickedItemMaterial, quantity));
+                Map<Integer, ItemStack> nonRemovedItemStacks = playerInv
+                        .removeItem(new ItemStack(clickedItemMaterial, quantity));
                 int nonRemovedAmount = nonRemovedItemStacks.values().stream().mapToInt(item -> item.getAmount()).sum();
                 resultStoredAmount = storedItemAmount + quantity - nonRemovedAmount;
             }
 
-            database.set(clickedItemMaterial.name(), player.getUniqueId().toString(),
-                    String.valueOf(resultStoredAmount));
+            String newValue = String.valueOf(resultStoredAmount);
+
+            database.set(clickedItemMaterial.name(), player.getUniqueId().toString(), newValue);
 
             inv.setItem(clickedSlot,
-                    createItem(player, clickedItemMaterial.name(), clickedItemMaterialSection, categoryName, quantity));
+                    createItem(newValue, clickedItemMaterial.name(), clickedItemMaterialSection, categoryName, quantity));
 
             return;
         }
@@ -236,14 +267,14 @@ public class GuiManager implements Listener {
     public void openCategorySelectionGui(Player player, int page, boolean playSound) {
         player.closeInventory();
         if (playSound && openSound != null)
-            player.playSound(player.getLocation(), openSound, SoundCategory.MASTER, configManager.getSoundPitch(), configManager.getSoundVolume());
+            player.playSound(player.getLocation(), openSound, SoundCategory.MASTER, configManager.getSoundPitch(),
+                    configManager.getSoundVolume());
         ItemStack glass = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
         ItemMeta meta = glass.getItemMeta();
         meta.setDisplayName("§6");
         glass.setItemMeta(meta);
         Inventory categorySelectionGui = Bukkit.createInventory(null, 54, categorySelectionGuiName);
-        Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 17, 18, 26, 27, 35, 36, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53)
-                .forEach(slot -> categorySelectionGui.setItem(slot, glass.clone()));
+        categorySelectionGuiFrame.forEach(slot -> categorySelectionGui.setItem(slot, glass.clone()));
         category.forEach((categoryName, categorySetting) -> categorySelectionGui
                 .addItem(createCategorySelectionItem(categoryName, categorySetting)));
         player.openInventory(categorySelectionGui);
@@ -266,8 +297,8 @@ public class GuiManager implements Listener {
         openCategoryGui(player, categoryName, page, quantity, null, playSound);
     }
 
-    public void openCategoryGui(Player player, String categoryName, int page, int quantity,
-            Inventory modifiedInventory, boolean playSound) {
+    public void openCategoryGui(Player player, String categoryName, int page, int quantity, Inventory modifiedInventory,
+            boolean playSound) {
 
         MemorySection categorySetting = category.get(categoryName);
         MemorySection categoryItems = ConfigManager.memorySectionOrNull(categorySetting.get("item"));
@@ -299,12 +330,14 @@ public class GuiManager implements Listener {
             categoryGui.setItem(slot, usingItemStack);
         });
 
-        categoryItems.getValues(false).entrySet().stream().skip(45 * (page - 1)).limit(45 * page).forEach(itemEntry -> {
+        Map<String, String> columnValueMap = database.getMultiValue(new ArrayList<String>(categoryItems.getKeys(false)), player.getUniqueId().toString());
+
+        categoryItems.getValues(false).entrySet().stream().skip(45 * (page - 1)).limit(45).forEach(itemEntry -> {
             MemorySection categoryItemSection = ConfigManager.memorySectionOrNull(itemEntry.getValue());
             if (categoryItemSection == null)
                 return;
 
-            ItemStack categoryItem = createItem(player, itemEntry.getKey(), categoryItemSection, categoryName,
+            ItemStack categoryItem = createItem(columnValueMap.get(itemEntry.getKey()), itemEntry.getKey(), categoryItemSection, categoryName,
                     quantity);
             if (categoryItem.getType() == Material.AIR)
                 return;
@@ -313,8 +346,8 @@ public class GuiManager implements Listener {
         });
 
         if (playSound && openSound != null)
-            player.playSound(player.getLocation(), openSound, SoundCategory.MASTER, configManager.getSoundPitch(), configManager.getSoundVolume());
-
+            player.playSound(player.getLocation(), openSound, SoundCategory.MASTER, configManager.getSoundPitch(),
+                    configManager.getSoundVolume());
 
         if (modifiedInventory != null) {
             modifiedInventory.setContents(categoryGui.getStorageContents());
@@ -324,25 +357,20 @@ public class GuiManager implements Listener {
         }
     }
 
-    private ItemStack createItem(Player player, String materialName, MemorySection section, String categoryName,
+    private ItemStack createItem(String stock, String materialName, MemorySection section, String categoryName,
             int quantity) {
         Material categoryItemMaterial;
         try {
             categoryItemMaterial = Material.valueOf(materialName);
-        } catch(IllegalArgumentException exception) {
+        } catch (IllegalArgumentException exception) {
             return new ItemStack(Material.AIR);
         }
 
         String jp = section.getString("jp", "");
         String en = section.getString("en", "");
-        String stock = database.get(materialName, player.getUniqueId().toString());
-        String categoryItemName = configManager.getItemTemplateName().replaceAll("%item_jp%", jp)
-                .replaceAll("%item_en%", en).replaceAll("%item_quantity%", String.valueOf(quantity))
-                .replaceAll("%stock%", stock).replaceAll("&([a-f0-9])", "§$1");
+        String categoryItemName = replacePlaceholders(configManager.getItemTemplateName(), jp, en, stock, quantity);
         List<String> categoryItemLore = new ArrayList<>(configManager.getItemTemplateLore());
-        categoryItemLore.replaceAll(loreLine -> loreLine.replaceAll("%item_jp%", jp).replaceAll("%item_en%", en)
-                .replaceAll("%item_quantity%", String.valueOf(quantity)).replaceAll("%stock%", stock)
-                .replaceAll("&([a-f0-9])", "§$1"));
+        categoryItemLore.replaceAll(loreLine -> replacePlaceholders(loreLine, jp, en, stock, quantity));
 
         ItemStack categoryItem = new ItemStack(categoryItemMaterial);
         ItemMeta categoryItemMeta = categoryItem.getItemMeta();
@@ -354,5 +382,55 @@ public class GuiManager implements Listener {
         categoryItem.setItemMeta(categoryItemMeta);
 
         return categoryItem;
+    }
+
+    private void changeQuantity(Inventory inv, int quantity) {
+        Player player = (Player) inv.getViewers().get(0);
+        String categoryName = inv.getItem(0).getItemMeta().getCustomTagContainer().getCustomTag(categoryNameKey,
+                ItemTagType.STRING);
+        if (categoryName == null) {
+            System.out.println("カテゴリ名の取得に失敗しました。");
+            return;
+        }
+        MemorySection section = ConfigManager
+                .memorySectionOrNull(configManager.getStoringItemConfig().get("categories." + categoryName + ".item"));
+        if (section == null) {
+            System.out.println("アイテム設定の取得に失敗しました。");
+            return;
+        }
+
+        List<ItemStack> items = IntStream.rangeClosed(0, 44).boxed().map(slot -> inv.getItem(slot))
+                .filter(item -> item != null).collect(Collectors.toList());
+        List<String> itemMaterialNameList = (new ArrayList<ItemStack>(items)).stream().map(item -> item.getType().name())
+                .collect(Collectors.toList());
+
+        Map<String, String> itemAmountMap = database.getMultiValue(itemMaterialNameList,
+                player.getUniqueId().toString());
+
+        items.forEach(item -> {
+            String itemMaterialName = item.getType().name();
+            ItemMeta meta = item.getItemMeta();
+            meta.getCustomTagContainer().setCustomTag(quantityKey, ItemTagType.INTEGER, quantity);
+            String jp = section.getString(itemMaterialName + ".jp", "");
+            String en = section.getString(itemMaterialName + ".en", "");
+            String stock = itemAmountMap.get(itemMaterialName);
+
+            String categoryItemName = replacePlaceholders(configManager.getItemTemplateName(), jp, en, stock, quantity);
+            List<String> categoryItemLore = new ArrayList<>(configManager.getItemTemplateLore());
+            categoryItemLore.replaceAll(loreLine -> replacePlaceholders(loreLine, jp, en, stock, quantity));
+            meta.setDisplayName(categoryItemName);
+            meta.setLore(categoryItemLore);
+            item.setItemMeta(meta);
+
+        });
+    }
+
+    private String replacePlaceholders(String original, String jp, String en, String stock, int quantity) {
+        return original
+                .replaceAll("%item_jp%", jp)
+                .replaceAll("%item_en%", en)
+                .replaceAll("%item_quantity%", String.valueOf(quantity))
+                .replaceAll("%stock%", stock)
+                .replaceAll("&([a-f0-9])", "§$1");
     }
 }

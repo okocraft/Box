@@ -2,6 +2,7 @@ NoEnoughArgument: '&c引数が足りません。'
 NoPlayerFound: '&cその名前のプレイヤーは登録されていません。'
 NoItemFound: '&cその名前のアイテムは登録されていません。'
 InvalidNumberFormat: '&c数字のフォーマットが不正です。'
+InvalidArgument: '&c引数が不正です。'
 DatabaseInvalidNumberFormat: '&c不正な数字が記録されています。管理者に報告して下さい。'
 SuccessfullySet: '&e%player%のボックスの%item%を%amount%にセットしました。'
 SuccessfullyGive: '&e%player%のボックスの%item%を%amount%増やしました。(現在%newamount%)'
@@ -16,10 +17,12 @@ ErrorOccured: '&cエラーが発生して処理を実行できませんでした
 ConfigReloaded: '&7設定を再読込しました。'
 InvalidValueIsStored: '&cデータベースに不正な値が格納されています。管理者に報告して下さい。'
 NoEnoughStore: '&c在庫が足りません。'
-AutoStoreListHeader: '&7=====&6自動回収設定一覧 %page%ページ目 &7(&b%player%&7)====='
+AutoStoreSettingChanged: '&7%item%のAutoStore設定を&b%isEnabled%&7に設定しました。'
+AllAutoStoreSettingChanged: '&7全てのアイテムのAutoStore設定を&b%isEnabled%&7に設定しました。'
+AutoStoreListHeader: '&7=====&6自動回収設定一覧 %page%ページ目 &a%currentline% &7/ &a%maxline% &7(&b%player%&7)====='
 AutoStoreListFormat: '&a%item%&7: &b%isEnabled%'
-
-
-
-#"(.*)", "(.*)"
-#$1: '$2'
+DatabaseNoColumnFound: '&cその名前の列はありません。'
+DatabaseRemovePlayerSuccess: '&7データベースから&b%uuid% &7- &b%player%&7を削除しました。'
+DatabaseAddPlayerSuccess: '&7データベースに&b%uuid% &7- &b%player%&7を追加しました。'
+CannotGiveYourself: '&c自分自身にアイテムを渡すことはできません。'
+AutoStoreValueChangeInPage: '&b%page%&7ページ目の全ての自動収納の値を&b%newValue%&7に変更しました。'
