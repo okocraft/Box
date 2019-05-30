@@ -518,10 +518,10 @@ public class Database {
 
         StringBuilder sb = new StringBuilder();
         columnValueMap.forEach((columnName, columnValue) -> {
-            sb.append(columnName + " = '" + columnValue + "' ");
+            sb.append(columnName + " = '" + columnValue + "', ");
         });
 
-        val statement = prepare("UPDATE " + table + " SET " + sb.toString() + "WHERE " + entryType + " = ?");
+        val statement = prepare("UPDATE " + table + " SET " + sb.substring(0, sb.length() - 2) + " WHERE " + entryType + " = ?");
 
         return statement.map(stmt -> {
             try {

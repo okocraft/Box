@@ -29,7 +29,7 @@ public class EntityPickupItem implements Listener {
         allItems = configManager.getAllItems();
     }
 
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onBlockBreak(EntityPickupItemEvent event) {
         if (event.isCancelled()) return;
         if (!(event.getEntity() instanceof Player)) return;
