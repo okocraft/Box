@@ -16,16 +16,10 @@ public class StatementRunner implements Runnable {
 
     @Override
     public void run() {
-        try {
+        try (Statement stmt = statement) {
             statement.executeBatch();
         } catch (SQLException exception) {
             exception.printStackTrace();
-        } finally {
-            try {
-                statement.close();
-            } catch (SQLException exception) {
-                exception.printStackTrace();
-            }
         }
     }
 

@@ -135,10 +135,11 @@ public class Database {
         }
 
         // create table for Box plugin
-        boolean isTableCreated = connection.map(connection -> {
-            try {
-                connection.createStatement().execute("CREATE TABLE IF NOT EXISTS " + table
-                        + " (uuid TEXT PRIMARY KEY NOT NULL, player TEXT NOT NULL)");
+        val statement = prepare(
+                "CREATE TABLE IF NOT EXISTS " + table + " (uuid TEXT PRIMARY KEY NOT NULL, player TEXT NOT NULL)");
+        boolean isTableCreated = statement.map(resource -> {
+            try (PreparedStatement stmt = resource) {
+                stmt.execute();
 
                 return true;
             } catch (SQLException e) {
@@ -353,8 +354,8 @@ public class Database {
 
         val statement = prepare("SELECT " + column + " FROM " + table + " WHERE " + entryType + " = ?");
 
-        Optional<String> result = statement.map(stmt -> {
-            try {
+        Optional<String> result = statement.map(resource -> {
+            try (PreparedStatement stmt = resource) {
                 stmt.setString(1, entry);
                 ResultSet rs = stmt.executeQuery();
                 return rs.getString(column);
@@ -439,7 +440,7 @@ public class Database {
         });
         String columnsExcludeType = colmunsBuilderExcludeType.toString().replaceAll(", $", "");
 
-        Statement statement;
+        Statement statement = null;
 
         try {
             statement = connection.get().createStatement();
@@ -462,8 +463,7 @@ public class Database {
     }
 
     /**
-     * エントリーの複数のカラムの値を一気に取得する。
-     * マップはLinkedHashMapで、引数のListの順番を引き継ぐ。
+     * エントリーの複数のカラムの値を一気に取得する。 マップはLinkedHashMapで、引数のListの順番を引き継ぐ。
      *
      * @author LazyGon
      * @since 1.0.0-SNAPSHOT
@@ -483,8 +483,8 @@ public class Database {
 
         val statement = prepare("SELECT " + multipleColumnName + " FROM " + table + " WHERE " + entryType + " = ?");
 
-        return statement.map(stmt -> {
-            try {
+        return statement.map(resource -> {
+            try (PreparedStatement stmt = resource) {
                 stmt.setString(1, entry);
                 ResultSet rs = stmt.executeQuery();
 
@@ -521,10 +521,11 @@ public class Database {
             sb.append(columnName + " = '" + columnValue + "', ");
         });
 
-        val statement = prepare("UPDATE " + table + " SET " + sb.substring(0, sb.length() - 2) + " WHERE " + entryType + " = ?");
+        val statement = prepare(
+                "UPDATE " + table + " SET " + sb.substring(0, sb.length() - 2) + " WHERE " + entryType + " = ?");
 
-        return statement.map(stmt -> {
-            try {
+        return statement.map(resource -> {
+            try (PreparedStatement stmt = resource) {
                 stmt.setString(1, entry);
                 stmt.executeUpdate();
                 return true;
@@ -550,8 +551,8 @@ public class Database {
 
         val statement = prepare("SELECT * FROM " + table + " WHERE 0=1");
 
-        return statement.map(stmt -> {
-            try {
+        return statement.map(resource -> {
+            try (PreparedStatement stmt = resource) {
                 ResultSetMetaData rsmd = stmt.executeQuery().getMetaData();
 
                 for (int i = 1; i <= rsmd.getColumnCount(); i++) {
@@ -580,8 +581,8 @@ public class Database {
 
         val statement = prepare("SELECT uuid, player FROM " + table);
 
-        statement.ifPresent(stmt -> {
-            try {
+        statement.ifPresent(resource -> {
+            try (PreparedStatement stmt = resource) {
                 ResultSet rs = stmt.executeQuery();
                 while (rs.next())
                     playersMap.put(rs.getString("uuid"), rs.getString("player"));
@@ -623,8 +624,8 @@ public class Database {
 
         val statement = prepare("UPDATE " + table + " SET " + column + " = NULL WHERE " + entryType + " = ?");
 
-        return statement.map(stmt -> {
-            try {
+        return statement.map(resource -> {
+            try (PreparedStatement stmt = resource) {
                 stmt.setString(1, entry);
                 stmt.executeUpdate();
                 return true;
