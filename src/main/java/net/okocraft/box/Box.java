@@ -14,7 +14,6 @@ import net.okocraft.box.listeners.PlayerJoin;
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
 
 /**
  * @author OKOCRAFT
@@ -79,16 +78,6 @@ public class Box extends JavaPlugin {
         // Initialize Commandsc
         new Commands(database);
         new BoxTabCompleter(database);
-
-        new BukkitRunnable(){
-        
-            @Override
-            public void run() {
-                Bukkit.broadcastMessage("§8[§6Box§8] §7データベースをリフレッシュしています...");
-                database.resetConnection();
-                Bukkit.broadcastMessage("§8[§6Box§8] §7データベースのリフレッシュが完了しました。");
-            }
-        }.runTaskTimer(this, 20*60*60*2, 20*60*60*2);
 
         log.info("Box has been enabled!");
     }
