@@ -11,13 +11,13 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.Plugin;
 
-public class PlayerJoin implements Listener{
-
+public class PlayerJoin implements Listener {
     private final Database database;
-    private ConfigManager configManager;
+    private final ConfigManager configManager;
 
     public PlayerJoin(Database database, Plugin plugin) {
         Bukkit.getPluginManager().registerEvents(this, plugin);
+
         this.database = database;
         this.configManager = Box.getInstance().getConfigManager();
     }

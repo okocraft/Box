@@ -41,7 +41,7 @@ public class BoxCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         // only /box
         if (args.length == 0) {
-            instance.getGuiManager().openCategorySelectionGui((Player) sender, 1, true);
+            instance.getGuiManager().openCategorySelectionGui((Player) sender, true);
             return true;
         }
 
