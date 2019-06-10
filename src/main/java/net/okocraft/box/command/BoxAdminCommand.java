@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import net.okocraft.box.ConfigManager;
-import net.okocraft.box.Box;
-import net.okocraft.box.database.Database;
+import lombok.NonNull;
+import lombok.val;
+
 import com.google.common.primitives.Ints;
 import com.google.common.primitives.Longs;
 
@@ -23,8 +23,9 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scoreboard.Objective;
 
-import lombok.NonNull;
-import lombok.val;
+import net.okocraft.box.ConfigManager;
+import net.okocraft.box.Box;
+import net.okocraft.box.database.Database;
 
 public class BoxAdminCommand implements CommandExecutor {
 
@@ -313,7 +314,7 @@ public class BoxAdminCommand implements CommandExecutor {
 
             if (itemName.equalsIgnoreCase("all") && args.length == 4
                     && Arrays.asList("true", "false").contains(args[3].toLowerCase())) {
-                        Map<String, String> newValues = allItems.stream()
+                Map<String, String> newValues = allItems.stream()
                         .collect(Collectors.toMap(itemNameTemp -> "autostore_" + itemNameTemp,
                                 itemNameTemp -> args[3].toLowerCase(), (e1, e2) -> e1, HashMap::new));
 
@@ -342,9 +343,9 @@ public class BoxAdminCommand implements CommandExecutor {
                 nextValue = args[3].toLowerCase();
             }
             sender.sendMessage(
-                messageConfig.getString("AutoStoreSettingChanged", "&7%item%のAutoStore設定を&b%isEnabled%&7に設定しました。")
-                        .replaceAll("%item%", itemName).replaceAll("%isEnabled%", nextValue)
-                        .replaceAll("&([a-f0-9])", "§$1"));
+                    messageConfig.getString("AutoStoreSettingChanged", "&7%item%のAutoStore設定を&b%isEnabled%&7に設定しました。")
+                            .replaceAll("%item%", itemName).replaceAll("%isEnabled%", nextValue)
+                            .replaceAll("&([a-f0-9])", "§$1"));
             database.set("autostore_" + itemName, player, nextValue);
             return true;
         }

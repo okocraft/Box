@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import lombok.Getter;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -17,7 +19,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 
-import lombok.Getter;
 import net.okocraft.box.database.Database;
 
 public class ConfigManager {
@@ -31,45 +32,67 @@ public class ConfigManager {
     private CustomConfig storingItemCustomConfig;
 
     // FIleConfiguration
-    @Getter private FileConfiguration defaultConfig;
-    @Getter private FileConfiguration messageConfig;
-    @Getter private FileConfiguration storingItemConfig;
+    @Getter
+    private FileConfiguration defaultConfig;
+    @Getter
+    private FileConfiguration messageConfig;
+    @Getter
+    private FileConfiguration storingItemConfig;
 
     // fields
-
-    @Getter private float soundPitch = 0.0F;
-    @Getter private float soundVolume = 0.0F;
-    @Getter private Sound openSound;
-    @Getter private Sound takeInSound;
-    @Getter private Sound takeOutSound;
-    @Getter private Sound notEnoughSound;
-    @Getter private Sound decreaseSound;
-    @Getter private Sound increaseSound;
-    @Getter private Sound returnToSelectionGuiSound;
-    @Getter private Sound changePageSound;
+    @Getter
+    private float soundPitch = 0.0F;
+    @Getter
+    private float soundVolume = 0.0F;
+    @Getter
+    private Sound openSound;
+    @Getter
+    private Sound takeInSound;
+    @Getter
+    private Sound takeOutSound;
+    @Getter
+    private Sound notEnoughSound;
+    @Getter
+    private Sound decreaseSound;
+    @Getter
+    private Sound increaseSound;
+    @Getter
+    private Sound returnToSelectionGuiSound;
+    @Getter
+    private Sound changePageSound;
 
     // autoStoreSetting
-    @Getter private boolean autoStoreEnabled;
-    @Getter private boolean autoStoreEnabledByDefault;
+    @Getter
+    private boolean autoStoreEnabled;
+    @Getter
+    private boolean autoStoreEnabledByDefault;
 
-    @Getter private List<World> disabledWorlds;
+    @Getter
+    private List<World> disabledWorlds;
 
     // Item Template
-    @Getter private String itemTemplateName;
-    @Getter private List<String> itemTemplateLore;
+    @Getter
+    private String itemTemplateName;
+    @Getter
+    private List<String> itemTemplateLore;
 
     // Item categories
-    @Getter private Map<String, MemorySection> categories;
-    @Getter private Map<String, String> categoryGuiNameMap;
-    @Getter private List<String> allItems;
+    @Getter
+    private Map<String, MemorySection> categories;
+    @Getter
+    private Map<String, String> categoryGuiNameMap;
+    @Getter
+    private List<String> allItems;
 
     // CategorySelectionGui Name
-    @Getter private String categorySelectionGuiName;
+    @Getter
+    private String categorySelectionGuiName;
 
     // CategoryGui
-    @Getter private String categoryGuiName;
-    @Getter private Map<Integer, ItemStack> footerItemStacks;
-
+    @Getter
+    private String categoryGuiName;
+    @Getter
+    private Map<Integer, ItemStack> footerItemStacks;
 
     public ConfigManager(Plugin plugin, Database database) {
         instance = Box.getInstance();
@@ -157,7 +180,7 @@ public class ConfigManager {
 
         footerItemStacks = new HashMap<>();
 
-        footerItemStacks.put(45, createFooter(Material.ARROW, 1,  storingItemConfig.getString("CategoryGui.Previouspage", "&6前のページ &8| &6Prev Page")));
+        footerItemStacks.put(45, createFooter(Material.ARROW, 1, storingItemConfig.getString("CategoryGui.Previouspage", "&6前のページ &8| &6Prev Page")));
         footerItemStacks.put(46, createFooter(Material.RED_STAINED_GLASS_PANE, 64, storingItemConfig.getString("CategoryGui.Decrease64", "&7単位: &c-64")));
         footerItemStacks.put(47, createFooter(Material.RED_STAINED_GLASS_PANE, 8, storingItemConfig.getString("CategoryGui.Decrease8", "&7単位: &c-8")));
         footerItemStacks.put(48, createFooter(Material.RED_STAINED_GLASS_PANE, 1, storingItemConfig.getString("CategoryGui.Decrease1", "&7単位: &c-1")));

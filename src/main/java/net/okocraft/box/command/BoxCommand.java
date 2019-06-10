@@ -1,15 +1,11 @@
 package net.okocraft.box.command;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
-import net.okocraft.box.ConfigManager;
-import net.okocraft.box.Box;
-import net.okocraft.box.database.Database;
+import lombok.NonNull;
+import lombok.val;
+
 import com.google.common.primitives.Ints;
 import com.google.common.primitives.Longs;
 
@@ -21,8 +17,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
-import lombok.NonNull;
-import lombok.val;
+import net.okocraft.box.Box;
+import net.okocraft.box.ConfigManager;
+import net.okocraft.box.database.Database;
 
 public class BoxCommand implements CommandExecutor {
 

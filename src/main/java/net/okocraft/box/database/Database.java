@@ -3,32 +3,20 @@ package net.okocraft.box.database;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.Optional;
-import java.util.Properties;
+import java.sql.*;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.Plugin;
-
-import java.util.Map;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.val;
+
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.Plugin;
 
 import net.okocraft.box.Box;
 import net.okocraft.box.command.Commands;

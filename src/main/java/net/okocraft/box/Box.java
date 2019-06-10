@@ -1,8 +1,12 @@
 package net.okocraft.box;
 
+import java.util.logging.Logger;
+
 import lombok.Getter;
 
-import java.util.logging.Logger;
+import org.bukkit.Bukkit;
+import org.bukkit.event.HandlerList;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import net.okocraft.box.command.Commands;
 import net.okocraft.box.command.BoxTabCompleter;
@@ -10,10 +14,6 @@ import net.okocraft.box.database.Database;
 import net.okocraft.box.listeners.EntityPickupItem;
 import net.okocraft.box.listeners.GuiManager;
 import net.okocraft.box.listeners.PlayerJoin;
-
-import org.bukkit.Bukkit;
-import org.bukkit.event.HandlerList;
-import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * @author OKOCRAFT
@@ -43,11 +43,15 @@ public class Box extends JavaPlugin {
     @Getter
     private final Database database;
 
-    /** コンフィグマネージャ */
+    /**
+     * コンフィグマネージャ
+     */
     @Getter
     private ConfigManager configManager;
 
-    /** GUIマネージャ */
+    /**
+     * GUIマネージャ
+     */
     @Getter
     private GuiManager guiManager;
 
@@ -98,6 +102,7 @@ public class Box extends JavaPlugin {
 
         return instance;
     }
+
     public void registerEvents() {
         HandlerList.unregisterAll(this);
         new PlayerJoin(database, this);
