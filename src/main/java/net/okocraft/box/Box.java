@@ -47,54 +47,61 @@ public class Box extends JavaPlugin {
      * コンフィグマネージャ
      */
     @Getter
-    private ConfigManager configManager;
+    private final ConfigManager configManager;
 
     /**
      * GUIマネージャ
      */
     @Getter
-    private GuiManager guiManager;
+    private final GuiManager guiManager;
 
     public Box() {
-        version = getClass().getPackage().getImplementationVersion();
-        log = getLogger();
+        log      = getLogger();
+        version  = getClass().getPackage().getImplementationVersion();
         database = new Database(this);
+
+        // CHANGED: final 化
+        configManager = new ConfigManager(database);
+        guiManager    = new GuiManager(database, this);
     }
 
     @Override
     public void onEnable() {
-        // Initialize Config
-        configManager = new ConfigManager(this, database);
-
-        // Connect to database. If can't, disable Box.
         if (!database.connect(getDataFolder().getPath() + "/data.db")) {
             setEnabled(false);
             return;
         }
 
+        // TODO: いる?
         // Implementation info
         log.info("Installed in : " + getDataFolder().getPath());
         log.info("Database file: " + database.getDBUrl());
 
-        // registerEvents
-        this.registerEvents();
+        registerEvents();
 
-        // Initialize Commandsc
         new Commands(database);
         new BoxTabCompleter(database);
 
-        log.info("Box has been enabled!");
+        // CHANGED: バージョン表示追加
+        log.info(String.format("Box v%s has been enabled!", version));
     }
 
     @Override
     public void onDisable() {
         database.dispose();
-        HandlerList.unregisterAll(this);
-        Bukkit.getScheduler().cancelTasks(this);
 
-        log.info("Box has been disabled!");
+        unregisterEvents();
+        cancelTasks();
+
+        // CHANGED: バージョン表示追加
+        log.info(String.format("Box v%s has been disabled!", version));
     }
 
+    /**
+     * このクラスのインスタンスを返す。
+     *
+     * @return インスタンス
+     */
     public static Box getInstance() {
         if (instance == null) {
             instance = (Box) Bukkit.getPluginManager().getPlugin("Box");
@@ -103,11 +110,30 @@ public class Box extends JavaPlugin {
         return instance;
     }
 
-    public void registerEvents() {
-        HandlerList.unregisterAll(this);
+    /**
+     * イベントを Bukkit サーバに登録する。
+     */
+    void registerEvents() {
+        unregisterEvents();
+
+        // Events should be registered in its own initializer
         new PlayerJoin(database, this);
         new EntityPickupItem(database, this);
-        guiManager = new GuiManager(database, this);
+
         log.info("Events have been registered.");
+    }
+
+    /**
+     * 登録したイベントを Bukkit サーバから削除する。
+     */
+    private void unregisterEvents() {
+        HandlerList.unregisterAll(this);
+    }
+
+    /**
+     * 登録したタスクを終了する。
+     */
+    private void cancelTasks() {
+        Bukkit.getScheduler().cancelTasks(this);
     }
 }
