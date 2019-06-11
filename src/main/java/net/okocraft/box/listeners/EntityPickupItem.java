@@ -18,7 +18,7 @@ import net.okocraft.box.database.Database;
 
 public class EntityPickupItem implements Listener {
     private Database database;
-    private ConfigManager configManager;
+    private ConfigManager config;
 
     private List<String> allItems;
 
@@ -27,9 +27,9 @@ public class EntityPickupItem implements Listener {
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
 
         // Initialize...
+        config = Box.getInstance().getConfigManager();
         this.database = database;
-        configManager = Box.getInstance().getConfigManager();
-        allItems      = configManager.getAllItems();
+        allItems      = config.getAllItems();
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -59,10 +59,6 @@ public class EntityPickupItem implements Listener {
 
         int amount = event.getItem().getItemStack().getAmount();
 
-        // FIXME: Called Twice!
-        event.getItem().remove();
-        event.setCancelled(true);
-
         long currentItems;
         try{
             currentItems = Long.parseLong(database.get(itemName, player.getUniqueId().toString()));
@@ -76,15 +72,14 @@ public class EntityPickupItem implements Listener {
                 String.valueOf(currentItems + amount)
         );
 
-        // FIXME: Called twice!
         event.getItem().remove();
         event.setCancelled(true);
 
         player.playSound(
                 player.getLocation(),
-                configManager.getTakeInSound(),
-                configManager.getSoundPitch(),
-                configManager.getSoundVolume()
+                config.getTakeInSound(),
+                config.getSoundPitch(),
+                config.getSoundVolume()
         );
     }
 }

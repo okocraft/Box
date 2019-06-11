@@ -1,5 +1,6 @@
 package net.okocraft.box.command;
 
+import lombok.val;
 import net.okocraft.box.ConfigManager;
 import net.okocraft.box.Box;
 import net.okocraft.box.database.Database;
@@ -7,21 +8,28 @@ import net.okocraft.box.database.Database;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 
+import java.util.Optional;
+
 @SuppressWarnings("unused")
 public class Commands {
     private Database database;
-    private Box instance;
-    private ConfigManager configManager;
-    private FileConfiguration messageConfig;
 
     public Commands(Database database) {
         this.database = database;
-        this.instance = Box.getInstance();
-        this.configManager = Box.getInstance().getConfigManager();
-        this.messageConfig = configManager.getMessageConfig();
+
+        val instance = Box.getInstance();
+        val config   = instance.getConfigManager();
+        val messageConfig = config.getMessageConfig();
+
+        // CHANGED: JavaPlugin#getCommand() は Nullable っぽいので Optional 化
         // Register command /box
-        instance.getCommand("box").setExecutor(new BoxCommand(this.database));
-        instance.getCommand("boxadmin").setExecutor(new BoxAdminCommand(this.database));
+        Optional.ofNullable(instance.getCommand("box")).ifPresent(cmd ->
+                cmd.setExecutor(new BoxCommand(this.database))
+        );
+
+        Optional.ofNullable(instance.getCommand("boxadmin")).ifPresent(cmd ->
+                cmd.setExecutor(new BoxAdminCommand(this.database))
+        );
     }
 
     public static String checkEntryType(String entry) {
@@ -36,20 +44,12 @@ public class Commands {
      * @return 権限がないときにfalse あればtrue
      */
     public static boolean hasPermission(CommandSender sender, String permission) {
-        if (!sender.hasPermission(permission))
-            return errorOccured(sender, ":PERM_INSUFFICIENT_" + permission);
-        return true;
-    }
+        if (!sender.hasPermission(permission)) {
+            sender.sendMessage(":PERM_INSUFFICIENT_" + permission);
 
-    /**
-     * エラーが発生したときにメッセージを送りつつfalseを返す。
-     *
-     * @param sender
-     * @param errorMessage
-     * @return false
-     */
-    public static boolean errorOccured(CommandSender sender, String errorMessage) {
-        sender.sendMessage(errorMessage);
-        return false;
+            return false;
+        }
+
+        return true;
     }
 }

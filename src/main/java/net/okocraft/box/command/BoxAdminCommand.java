@@ -1,9 +1,6 @@
 package net.okocraft.box.command;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import lombok.NonNull;
@@ -13,53 +10,30 @@ import com.google.common.primitives.Ints;
 import com.google.common.primitives.Longs;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.scoreboard.Objective;
 
 import net.okocraft.box.ConfigManager;
 import net.okocraft.box.Box;
 import net.okocraft.box.database.Database;
 
 public class BoxAdminCommand implements CommandExecutor {
-
     private Database database;
-    private Box instance;
-    private ConfigManager configManager;
+    private ConfigManager config;
     private FileConfiguration messageConfig;
-    private String noEnoughArguments;
-    private Map<ItemStack, Objective> scoreItemMap;
-    List<OfflinePlayer> allPlayers;
+    private String notEnoughArguments;
 
-    protected BoxAdminCommand(Database database) {
+    BoxAdminCommand(Database database) {
+        val instance = Box.getInstance();
         this.database = database;
-        instance = Box.getInstance();
-        configManager = instance.getConfigManager();
-        messageConfig = configManager.getMessageConfig();
-        noEnoughArguments = messageConfig.getString("NoEnoughArgument", "&c引数が足りません。").replaceAll("&([a-f0-9])", "§$1");
 
-        scoreItemMap = new HashMap<>();
-        ((MemorySection) configManager.getDefaultConfig().get("Migration.Combination")).getValues(false)
-                .forEach((k, v) -> {
-                    ItemStack item;
-                    try {
-                        item = new ItemStack(Material.valueOf(k.toUpperCase()), 1);
-                        Objective obj = Bukkit.getScoreboardManager().getMainScoreboard().getObjective((String) v);
-                        if (obj == null)
-                            return;
-                        scoreItemMap.put(item, obj);
-                    } catch (IllegalArgumentException exception) {
-                        System.out.println(k.toUpperCase() + " is...?");
-                        exception.printStackTrace();
-                        return;
-                    }
-                });
+        config        = instance.getConfigManager();
+        messageConfig = config.getMessageConfig();
+        notEnoughArguments = Optional.ofNullable(messageConfig.getString("NoEnoughArgument"))
+                .orElse("&c引数が足りません。")
+                .replaceAll("&([a-f0-9])", "§$1");
     }
 
     @Override
@@ -72,286 +46,636 @@ public class BoxAdminCommand implements CommandExecutor {
         @NonNull
         val subCommand = args[0];
 
-        // test
-        if (subCommand.equalsIgnoreCase("test")) {
-            // Do Stuff
-        }
-
-        // Box Database
+        // /boxadmin database
         if (subCommand.equalsIgnoreCase("database")) {
-            if (args.length == 1)
-                return Commands.errorOccured(sender, noEnoughArguments);
+            if (args.length == 1) {
+                sender.sendMessage(notEnoughArguments);
+
+                return false;
+            }
 
             val databaseSubCommand = args[1].toLowerCase();
+
+            // resetConnection
             if (databaseSubCommand.equalsIgnoreCase("resetconnection")) {
-                database.resetConnection();
-                sender.sendMessage("§eデータベースへの接続をリセットしました。");
-                return true;
+                return resetConnection(sender);
             }
+
+            // addPlayer
             if (databaseSubCommand.equalsIgnoreCase("addplayer")) {
-                if (args.length == 2)
-                    return Commands.errorOccured(sender, noEnoughArguments);
-
-                @SuppressWarnings("deprecation")
-                OfflinePlayer player = Bukkit.getOfflinePlayer(args[2]);
-                if (!player.hasPlayedBefore())
-                    return Commands.errorOccured(sender, messageConfig.getString("NoPlayerFound", "&cプレイヤーが見つかりませんでした。")
-                            .replaceAll("&([a-f0-9])", "§$1"));
-                val uuid = player.getUniqueId().toString();
-                val name = player.getName();
-                database.addPlayer(uuid, name, true);
-                sender.sendMessage(messageConfig
-                        .getString("DatabaseAddPlayerSuccess", "&7データベースに&b%uuid% &7- &b%player%&7を追加しました。")
-                        .replaceAll("%uuid%", uuid).replaceAll("%player%", name).replaceAll("&([a-f0-9])", "§$1"));
-                return true;
+                return addPlayer(sender, args);
             }
+
+            // removePlayer
             if (databaseSubCommand.equalsIgnoreCase("removeplayer")) {
-                if (args.length == 2)
-                    return Commands.errorOccured(sender, noEnoughArguments);
-
-                if (!database.existPlayer(args[2]))
-                    return Commands.errorOccured(sender, messageConfig
-                            .getString("NoPlayerFound", "&cその名前のプレイヤーは登録されていません。").replaceAll("&([a-f0-9])", "§$1"));
-
-                val uuid = database.get("uuid", args[2]);
-                val name = database.get("player", args[2]);
-
-                database.removePlayer(args[2]);
-                sender.sendMessage(messageConfig
-                        .getString("DatabaseRemovePlayerSuccess", "&7データベースから&b%uuid% &7- &b%player%&7を削除しました。")
-                        .replaceAll("%uuid%", uuid).replaceAll("%player%", name).replaceAll("&([a-f0-9])", "§$1"));
-                return true;
+                return removePlayer(sender, args);
             }
+
+            // existPlayer
             if (databaseSubCommand.equalsIgnoreCase("existplayer")) {
-                if (args.length == 2)
-                    return Commands.errorOccured(sender, noEnoughArguments);
-
-                sender.sendMessage(String.valueOf(database.existPlayer(args[2])));
-                return true;
+                return existPlayer(sender, args);
             }
+
+            // set
             if (databaseSubCommand.equalsIgnoreCase("set")) {
-                if (args.length < 4)
-                    return Commands.errorOccured(sender, noEnoughArguments);
-
-                if (!database.existPlayer(args[3]))
-                    return Commands.errorOccured(sender, messageConfig
-                            .getString("NoPlayerFound", "&cその名前のプレイヤーは登録されていません。").replaceAll("&([a-f0-9])", "§$1"));
-
-                val uuid = database.get("uuid", args[3]);
-                val name = database.get("player", args[3]);
-
-                if (database.getColumnMap().containsKey(args[2]))
-                    return Commands.errorOccured(sender, messageConfig
-                            .getString("DatabaseNoColumnFound", "&cその名前の列はありません。").replaceAll("&([a-f0-9])", "§$1"));
-
-                database.set(args[2], args[3], args[4]);
-
-                sender.sendMessage(messageConfig
-                        .getString("DatabaseSetValueSuccess", "&7&b%uuid% &7(%player%)の%column%を%value%にセットしました。")
-                        .replaceAll("%uuid%", uuid).replaceAll("%player%", name).replaceAll("%column%", args[2])
-                        .replaceAll("%value%", args[4]).replaceAll("&([a-f0-9])", "§$1"));
-
-                return true;
+                return databaseSet(sender, args);
             }
+
+            // get
             if (databaseSubCommand.equalsIgnoreCase("get")) {
-                if (args.length < 3)
-                    return Commands.errorOccured(sender, noEnoughArguments);
-
-                sender.sendMessage(database.get(args[2], args[3]));
-                return true;
+                return databaseGet(sender, args);
             }
+
+            // addColumn
             if (databaseSubCommand.equalsIgnoreCase("addcolumn")) {
-                if (args.length < 4)
-                    return Commands.errorOccured(sender, noEnoughArguments);
-
-                if (args[4].equalsIgnoreCase("null"))
-                    args[4] = null;
-                database.addColumn(args[2], args[3], args[4], true);
-                return true;
+                return addColumn(sender, args);
             }
+
+            // dropColumn
             if (databaseSubCommand.equalsIgnoreCase("dropcolumn")) {
-                if (args.length == 2)
-                    return Commands.errorOccured(sender, noEnoughArguments);
-
-                database.dropColumn(args[2]);
-                return true;
+                return dropColumn(sender, args);
             }
+
+            // FIXME: getColumnsMap() と getPlayersMap() の複数形
+            // getColumnsMap
             if (databaseSubCommand.equalsIgnoreCase("getcolumnmap")) {
-                sender.sendMessage("列リスト");
-                database.getColumnMap().forEach((columnName, columnType) -> {
-                    sender.sendMessage(columnName + " - " + columnType);
-                });
-                ;
-                return true;
+                return getColumnsMap(sender);
             }
+
+            // getPlayersMap
             if (databaseSubCommand.equalsIgnoreCase("getplayersmap")) {
-                sender.sendMessage("記録されているプレイヤー");
-                database.getPlayersMap().forEach((uuidStr, name) -> {
-                    sender.sendMessage(uuidStr + " - " + name);
-                });
-                ;
-                return true;
+                return getPlayersMap(sender);
             }
-            return Commands.errorOccured(sender,
-                    messageConfig.getString("NoParamExist", "&c指定された引数は存在しません。").replaceAll("&([a-f0-9])", "§$1"));
         }
 
-        // Box reload
+        // reload
         if (subCommand.equalsIgnoreCase("reload")) {
-            configManager.reloadConfig();
-            sender.sendMessage(
-                    messageConfig.getString("ConfigReloaded", "&7設定を再読込しました。").replaceAll("&([a-f0-9])", "§$1"));
-            return true;
+            return reload(sender);
         }
 
-        // for /boxadmin set|give|take player item [amount]
-        if (subCommand.equalsIgnoreCase("set") || subCommand.equalsIgnoreCase("give")
-                || subCommand.equalsIgnoreCase("take")) {
-            if (args.length < 3) {
-                return Commands.errorOccured(sender, noEnoughArguments);
-            }
-
+        // set|give|take player item [amount]
+        if (subCommand.equalsIgnoreCase("set") ||
+            subCommand.equalsIgnoreCase("give") ||
+            subCommand.equalsIgnoreCase("take") ||
+            args.length >= 3) {
             val playerName = args[1];
-            val itemName = args[2].toUpperCase();
+            val itemName   = args[2].toUpperCase();
 
-            if (!database.getPlayersMap().values().contains(args[1])
-                    && !database.getPlayersMap().keySet().contains(args[1]))
-                return Commands.errorOccured(sender, messageConfig.getString("NoPlayerFound", "&cその名前のプレイヤーは登録されていません。")
-                        .replaceAll("&([a-f0-9])", "§$1"));
+            if (!database.existPlayer(playerName)) {
+                sender.sendMessage(
+                        Optional.ofNullable(messageConfig.getString("NoPlayerFound"))
+                                .orElse("&cその名前のプレイヤーは登録されていません。")
+                                .replaceAll("&([a-f0-9])", "§$1")
+                );
 
-            if (!configManager.getAllItems().contains(itemName)) {
-                return Commands.errorOccured(sender, messageConfig.getString("NoItemFound", "&cその名前のアイテムは登録されていません。")
-                        .replaceAll("&([a-f0-9])", "§$1"));
+                return false;
             }
 
-            Long amount = Longs.tryParse(args[3]);
+            if (!config.getAllItems().contains(itemName)) {
+                sender.sendMessage(
+                        Optional.ofNullable(messageConfig.getString("NoItemFound"))
+                                .orElse("&cその名前のアイテムは登録されていません。")
+                                .replaceAll("&([a-f0-9])", "§$1")
+                );
 
+                return false;
+            }
+
+            // FIXME: Unstable method: Longs#tryParse
+            Long amount = Longs.tryParse(args[3]);
             if (amount == null) {
-                return Commands.errorOccured(sender, messageConfig.getString("InvalidNumberFormat", "&c数字のフォーマットが不正です。")
-                        .replaceAll("&([a-f0-9])", "§$1"));
+                sender.sendMessage(
+                        Optional.ofNullable(messageConfig.getString("InvalidNumberFormat"))
+                                .orElse("&c数字のフォーマットが不正です。")
+                                .replaceAll("&([a-f0-9])", "§$1")
+                );
+
+                return false;
             }
 
             if (subCommand.equalsIgnoreCase("set")) {
-                database.set(itemName, playerName, String.valueOf(amount));
-                sender.sendMessage(
-                        messageConfig.getString("SuccessfullySet", "&e%player%のボックスの%item%を%amount%にセットしました。")
-                                .replaceAll("&([a-f0-9])", "§$1").replaceAll("%player%", playerName)
-                                .replaceAll("%item%", itemName).replaceAll("%amount%", args[3]));
-                return true;
+                return set(sender, args[3], playerName, itemName);
             }
 
+            // FIXME: Unstable method: Longs#tryParse
             Long currentAmount = Longs.tryParse(database.get(itemName, playerName));
             if (currentAmount == null) {
-                return Commands.errorOccured(sender,
-                        messageConfig.getString("DatabaseInvalidNumberFormat", "&c不正な数字が記録されています。")
-                                .replaceAll("&([a-f0-9])", "§$1"));
+                sender.sendMessage(
+                        Optional.ofNullable(messageConfig.getString("DatabaseInvalidNumberFormat"))
+                                .orElse("&c不正な数字が記録されています。")
+                                .replaceAll("&([a-f0-9])", "§$1")
+                );
+
+                return false;
             }
+
             if (subCommand.equalsIgnoreCase("give")) {
-                database.set(itemName, playerName, String.valueOf(currentAmount + amount));
-                sender.sendMessage(messageConfig
-                        .getString("SuccessfullyGive", "&e%player%のボックスの%item%を%amount%増やしました。(現在%newamount%)")
-                        .replaceAll("&([a-f0-9])", "§$1").replaceAll("%player%", playerName)
-                        .replaceAll("%item%", itemName).replaceAll("%amount%", args[3])
-                        .replaceAll("%newamount%", String.valueOf(currentAmount + amount)));
+                return give(sender, args[3], playerName, itemName, String.valueOf(currentAmount + amount));
             }
+
             if (subCommand.equalsIgnoreCase("take")) {
-                database.set(itemName, playerName, String.valueOf(currentAmount - amount));
-                sender.sendMessage(messageConfig
-                        .getString("SuccessfullyTake", "&e%player%のボックスの%item%を%amount%減らしました。(現在%newamount%)")
-                        .replaceAll("&([a-f0-9])", "§$1").replaceAll("%player%", playerName)
-                        .replaceAll("%item%", itemName).replaceAll("%amount%", args[3])
-                        .replaceAll("%newamount%", String.valueOf(currentAmount - amount)));
+                return take(sender, args[3], playerName, itemName, String.valueOf(currentAmount - amount));
             }
-            return true;
         }
 
-        // /boxadmin autostore player item true|false
         if (subCommand.equalsIgnoreCase("autostore")) {
+            return autoStore(sender, args);
+        }
 
-            if (args.length < 2)
-                return Commands.errorOccured(sender, noEnoughArguments);
+        sender.sendMessage(
+                Optional.ofNullable(messageConfig.getString("NoParamExist"))
+                        .orElse("&c指定された引数は存在しません。")
+                        .replaceAll("&([a-f0-9])", "§$1")
+        );
 
-            val player = args[1].toLowerCase();
-            if (!database.existPlayer(player))
-                return Commands.errorOccured(sender, messageConfig.getString("NoPlayerFound", "&cその名前のプレイヤーは登録されていません。")
-                        .replaceAll("&([a-f0-9])", "§$1"));
+        return false;
+    }
 
-            List<String> allItems = configManager.getAllItems();
+    private boolean set(CommandSender sender, String arg, String playerName, String itemName) {
+        // FIXME: Unstable method: Longs#tryParse
+        Long amount = Longs.tryParse(arg);
 
-            if (args.length == 2 || (args.length >= 3 && !args[2].equalsIgnoreCase("all")
-                    && !allItems.contains(args[2].toUpperCase()))) {
-
-                Integer page;
-                if (args.length >= 2) {
-                    page = Ints.tryParse(args[2]);
-                    if (page == null)
-                        page = 1;
-                } else {
-                    page = 1;
-                }
-
-                int maxLine = allItems.size();
-                int currentLine = (maxLine < page * 9) ? maxLine : page * 9;
-
-                sender.sendMessage(messageConfig
-                        .getString("AutoStoreListHeader",
-                                "&7=====&6自動回収設定一覧 %page%ページ目 &a%currentline% &7/ &a%maxline% &7(&b%player%&7)=====")
-                        .replaceAll("%player%", player).replaceAll("%currentline%", String.valueOf(currentLine))
-                        .replaceAll("%maxline%", String.valueOf(maxLine)).replaceAll("%page%", page.toString())
-                        .replaceAll("&([a-f0-9])", "§$1"));
-                configManager.getAllItems().stream().map(itemName -> "autostore_" + itemName).skip(9 * (page - 1))
-                        .limit(9)
-                        .forEach(itemColumnName -> sender.sendMessage(messageConfig
-                                .getString("AutoStoreListFormat", "&a%item%&7: &b%isEnabled%")
-                                .replaceAll("%item%", itemColumnName.substring(10))
-                                .replaceAll("%isEnabled%", database.get(itemColumnName, player))
-                                .replaceAll("%currentline%", String.valueOf(currentLine))
-                                .replaceAll("%maxline%", String.valueOf(maxLine)).replaceAll("&([a-f0-9])", "§$1")));
-                return true;
-            }
-
-            val itemName = args[2].toUpperCase();
-
-            if (itemName.equalsIgnoreCase("all") && args.length == 4
-                    && Arrays.asList("true", "false").contains(args[3].toLowerCase())) {
-                Map<String, String> newValues = allItems.stream()
-                        .collect(Collectors.toMap(itemNameTemp -> "autostore_" + itemNameTemp,
-                                itemNameTemp -> args[3].toLowerCase(), (e1, e2) -> e1, HashMap::new));
-
-                database.setMultiValue(newValues, player);
-                sender.sendMessage(messageConfig
-                        .getString("AllAutoStoreSettingChanged", "&7全てのアイテムのAutoStore設定を&b%isEnabled%&7に設定しました。")
-                        .replaceAll("%isEnabled%", args[3].toLowerCase()).replaceAll("&([a-f0-9])", "§$1"));
-                return true;
-            } else if (itemName.equalsIgnoreCase("all") && args.length == 4) {
-                return Commands.errorOccured(sender,
-                        messageConfig.getString("InvalidArgument", "&c引数が不正です。").replaceAll("&([a-f0-9])", "§$1"));
-            } else if (itemName.equalsIgnoreCase("all")) {
-                return Commands.errorOccured(sender, noEnoughArguments);
-            }
-
-            if (!allItems.contains(itemName)) {
-                return Commands.errorOccured(sender,
-                        messageConfig.getString("InvalidArgument", "&c引数が不正です。").replaceAll("&([a-f0-9])", "§$1"));
-            }
-
-            String nextValue;
-            if (args.length == 3
-                    || (args.length > 2 && !Arrays.asList("true", "false").contains(args[3].toLowerCase()))) {
-                nextValue = database.get("autostore_" + itemName, player).equalsIgnoreCase("true") ? "false" : "true";
-            } else {
-                nextValue = args[3].toLowerCase();
-            }
+        if (amount == null) {
             sender.sendMessage(
-                    messageConfig.getString("AutoStoreSettingChanged", "&7%item%のAutoStore設定を&b%isEnabled%&7に設定しました。")
-                            .replaceAll("%item%", itemName).replaceAll("%isEnabled%", nextValue)
-                            .replaceAll("&([a-f0-9])", "§$1"));
-            database.set("autostore_" + itemName, player, nextValue);
+                    Optional.ofNullable(messageConfig.getString("InvalidNumberFormat"))
+                            .orElse("&c数字のフォーマットが不正です。")
+                            .replaceAll("&([a-f0-9])", "§$1")
+            );
+
+            return false;
+        }
+
+        database.set(itemName, playerName, String.valueOf(amount));
+
+        sender.sendMessage(
+                Optional.ofNullable(messageConfig.getString("SuccessfullySet"))
+                        .orElse("&e%player%のボックスの%item%を%amount%にセットしました。")
+                        .replaceAll("&([a-f0-9])", "§$1")
+                        .replaceAll("%player%", playerName)
+                        .replaceAll("%item%", itemName)
+                        .replaceAll("%amount%", arg)
+        );
+
+        return true;
+    }
+
+    private boolean take(CommandSender sender, String arg, String playerName, String itemName, String value) {
+        database.set(itemName, playerName, value);
+
+        sender.sendMessage(
+                Optional.ofNullable(messageConfig.getString("SuccessfullyTake"))
+                        .orElse("&e%player%のボックスの%item%を%amount%減らしました。(現在%newamount%)")
+                        .replaceAll("&([a-f0-9])", "§$1")
+                        .replaceAll("%player%", playerName)
+                        .replaceAll("%item%", itemName)
+                        .replaceAll("%amount%", arg)
+                        .replaceAll("%newamount%", value)
+        );
+
+        return true;
+    }
+
+    private boolean give(CommandSender sender, String arg, String playerName, String itemName, String value) {
+        database.set(itemName, playerName, value);
+
+        sender.sendMessage(
+                Optional.ofNullable(messageConfig.getString("SuccessfullyGive"))
+                        .orElse("&e%player%のボックスの%item%を%amount%増やしました。(現在%newamount%)")
+                        .replaceAll("&([a-f0-9])", "§$1")
+                        .replaceAll("%player%", playerName)
+                        .replaceAll("%item%", itemName)
+                        .replaceAll("%amount%", arg)
+                        .replaceAll("%newamount%", value)
+        );
+
+        return true;
+    }
+
+    /**
+     * /boxadmin autostore <player> <item> <true|false>
+     *
+     * @param sender Sender, player or console
+     * @param args   Arguments
+     *
+     * @return @code{true} if success, otherwise @code{false}
+     */
+    private boolean autoStore(CommandSender sender, String[] args) {
+        if (args.length < 2) {
+            sender.sendMessage(notEnoughArguments);
+
+            return false;
+        }
+
+        val player = args[1].toLowerCase();
+        if (!database.existPlayer(player)) {
+            sender.sendMessage(
+                    Optional.ofNullable(messageConfig.getString("NoPlayerFound"))
+                            .orElse("&cその名前のプレイヤーは登録されていません。")
+                            .replaceAll("&([a-f0-9])", "§$1")
+            );
+
+            return false;
+        }
+
+        val allItems = config.getAllItems();
+
+        if (args.length == 2 ||
+            !args[2].equalsIgnoreCase("all") &&
+            !allItems.contains(args[2].toUpperCase())) {
+            // FIXME: Unstable method: Ints#tryParse
+            val page = Optional.ofNullable(Ints.tryParse(args[2])).orElse(1);
+
+            int maxLine = allItems.size();
+            int currentLine = (maxLine < page * 9) ? maxLine : page * 9;
+
+            sender.sendMessage(
+                    Optional.ofNullable(messageConfig.getString("AutoStoreListHeader"))
+                            .orElse("&7=====&6自動回収設定一覧 %page%ページ目 &a%currentline% &7/ &a%maxline% &7(&b%player%&7)=====")
+                            .replaceAll("%player%", player)
+                            .replaceAll("%currentline%", String.valueOf(currentLine))
+                            .replaceAll("%maxline%", String.valueOf(maxLine))
+                            .replaceAll("%page%", page.toString())
+                            .replaceAll("&([a-f0-9])", "§$1")
+            );
+
+            config.getAllItems().stream()
+                    .map(itemName -> "autostore_" + itemName)
+                    .skip(9 * (page - 1))
+                    .limit(9)
+                    .forEach(itemColumnName ->
+                            sender.sendMessage(
+                                    Optional.ofNullable(messageConfig.getString("AutoStoreListFormat"))
+                                            .orElse("&a%item%&7: &b%isEnabled%")
+                                            .replaceAll("%item%", itemColumnName.substring(10))
+                                            .replaceAll("%isEnabled%", database.get(itemColumnName, player))
+                                            .replaceAll("%currentline%", String.valueOf(currentLine))
+                                            .replaceAll("%maxline%", String.valueOf(maxLine))
+                                            .replaceAll("&([a-f0-9])", "§$1")
+                            )
+                    );
+
             return true;
         }
 
-        return Commands.errorOccured(sender,
-                messageConfig.getString("NoParamExist", "&c指定された引数は存在しません。").replaceAll("&([a-f0-9])", "§$1"));
+        val itemName = args[2].toUpperCase();
 
+        if (itemName.equalsIgnoreCase("all") &&
+            args.length == 4 &&
+            Arrays.asList("true", "false").contains(args[3].toLowerCase())) {
+            val newValues = allItems.stream()
+                    .collect(Collectors.toMap(
+                            itemNameTemp -> "autostore_" + itemNameTemp,
+                            itemNameTemp -> args[3].toLowerCase(),
+                            (e1, e2) -> e1, HashMap::new
+                    ));
+
+            database.setMultiValue(newValues, player);
+
+            sender.sendMessage(
+                    Optional.ofNullable(messageConfig.getString("AllAutoStoreSettingChanged"))
+                            .orElse("&7全てのアイテムのAutoStore設定を&b%isEnabled%&7に設定しました。")
+                            .replaceAll("%isEnabled%", args[3].toLowerCase())
+                            .replaceAll("&([a-f0-9])", "§$1")
+            );
+
+            return true;
+        }
+
+        if (itemName.equalsIgnoreCase("all") && args.length == 4) {
+            sender.sendMessage(
+                    Optional.ofNullable(messageConfig.getString("InvalidArgument"))
+                        .orElse("&c引数が不正です。")
+                        .replaceAll("&([a-f0-9])", "§$1")
+            );
+
+            return false;
+        }
+
+        if (itemName.equalsIgnoreCase("all")) {
+            sender.sendMessage(notEnoughArguments);
+
+            return false;
+        }
+
+        if (!allItems.contains(itemName)) {
+            sender.sendMessage(
+                    Optional.ofNullable(messageConfig.getString("InvalidArgument"))
+                        .orElse("&c引数が不正です。")
+                        .replaceAll("&([a-f0-9])", "§$1")
+            );
+
+            return false;
+        }
+
+        String nextValue;
+
+        if (args.length == 3 || !Arrays.asList("true", "false").contains(args[3].toLowerCase())) {
+            nextValue = database.get("autostore_" + itemName, player)
+                    .equalsIgnoreCase("true") ? "false" : "true";
+        } else {
+            nextValue = args[3].toLowerCase();
+        }
+
+        sender.sendMessage(
+                Optional.ofNullable(messageConfig.getString("AutoStoreSettingChanged"))
+                        .orElse("&7%item%のAutoStore設定を&b%isEnabled%&7に設定しました。")
+                        .replaceAll("%item%", itemName)
+                        .replaceAll("%isEnabled%", nextValue)
+                        .replaceAll("&([a-f0-9])", "§$1")
+        );
+
+        database.set("autostore_" + itemName, player, nextValue);
+
+        return true;
+    }
+
+    /**
+     * /boxadmin reload
+     *
+     * @param sender Player or Console
+     *
+     * @return @code{true} if success, otherwise @{false}
+     */
+    private boolean reload(CommandSender sender) {
+        config.reloadConfig();
+
+        sender.sendMessage(
+                Optional.ofNullable(messageConfig.getString("ConfigReloaded"))
+                        .orElse("&7設定を再読込しました。")
+                        .replaceAll("&([a-f0-9])", "§$1")
+        );
+
+        return true;
+    }
+
+    /**
+     * /boxadmin database getplayersmap
+     *
+     * @param sender Player or Console
+     *
+     * @return @code{true} if success, otherwise @code{false}
+     */
+    private boolean getPlayersMap(CommandSender sender) {
+        sender.sendMessage("記録されているプレイヤー");
+
+        database.getPlayersMap().forEach((uuidStr, name) ->
+                sender.sendMessage(String.format("%s - %s", uuidStr, name))
+        );
+
+        return true;
+    }
+
+    /**
+     * /boxadmin database getcolumnmap
+     *
+     * @param sender Player or Console
+     *
+     * @return @code{true} if success, otherwise @code{false}
+     */
+    private boolean getColumnsMap(CommandSender sender) {
+        sender.sendMessage("列リスト");
+
+        database.getColumnMap().forEach((columnName, columnType) ->
+                sender.sendMessage(String.format("%s - %s", columnName, columnType))
+        );
+
+        return true;
+    }
+
+    /**
+     * /boxadmin database dropcolumn
+     *
+     * @param sender Player or Console
+     * @param args   Arguments
+     *
+     * @return @code{true} if success, otherwise @code{false}
+     */
+    private boolean dropColumn(CommandSender sender, String[] args) {
+        if (args.length == 2) {
+            sender.sendMessage(notEnoughArguments);
+
+            return false;
+        }
+
+        database.dropColumn(args[2]);
+
+        return true;
+    }
+
+    /**
+     * /boxadmin database addcolumn
+     *
+     * @param sender Player or Console
+     * @param args   Arguments
+     *
+     * @return @code{true} if success, otherwise @code{false}
+     */
+    private boolean addColumn(CommandSender sender, String[] args) {
+        if (args.length < 4) {
+            sender.sendMessage(notEnoughArguments);
+
+            return false;
+        }
+
+        if (args[4].equalsIgnoreCase("null")) {
+            args[4] = null;
+        }
+
+        database.addColumn(args[2], args[3], args[4], true);
+
+        return true;
+    }
+
+    /**
+     * /boxadmin database get
+     *
+     * @param sender Player or Console
+     * @param args   Arguments
+     *
+     * @return @code{true} if success, otherwise @code{false}
+     */
+    private boolean databaseGet(CommandSender sender, String[] args) {
+        if (args.length < 3) {
+            sender.sendMessage(notEnoughArguments);
+
+            return false;
+        }
+
+        sender.sendMessage(database.get(args[2], args[3]));
+
+        return true;
+    }
+
+    /**
+     * /boxadmin database set
+     *
+     * @param sender Player or Console
+     * @param args   Arguments
+     *
+     * @return @code{true} if success, otherwise @code{false}
+     */
+    private boolean databaseSet(CommandSender sender, String[] args) {
+        if (args.length < 4) {
+            sender.sendMessage(notEnoughArguments);
+
+            return false;
+        }
+
+        if (!database.existPlayer(args[3])) {
+            sender.sendMessage(
+                    Optional.ofNullable(messageConfig.getString("NoPlayerFound"))
+                            .orElse("&cその名前のプレイヤーは登録されていません。")
+                            .replaceAll("&([a-f0-9])", "§$1")
+            );
+
+            return false;
+        }
+
+        val uuid = database.get("uuid", args[3]);
+        val name = database.get("player", args[3]);
+
+        if (database.getColumnMap().containsKey(args[2])) {
+            sender.sendMessage(
+                    Optional.ofNullable(messageConfig.getString("DatabaseNoColumnFound"))
+                            .orElse("&cその名前の列はありません。")
+                            .replaceAll("&([a-f0-9])", "§$1")
+            );
+
+            return false;
+        }
+
+        database.set(args[2], args[3], args[4]);
+
+        sender.sendMessage(
+                Optional.ofNullable(messageConfig.getString("DatabaseSetValueSuccess"))
+                        .orElse("&b%uuid% &7(%player%)の %column% を %value% にセットしました。")
+                        .replaceAll("%uuid%", uuid)
+                        .replaceAll("%player%", name)
+                        .replaceAll("%column%", args[2])
+                        .replaceAll("%value%", args[4])
+                        .replaceAll("&([a-f0-9])", "§$1")
+        );
+
+        return true;
+    }
+
+    /**
+     * /boxadmin database removeplayer
+     *
+     * @param sender Player or Console
+     * @param args   Arguments
+     *
+     * @return @code{true} if success, otherwise @code{false}
+     */
+    private boolean removePlayer(CommandSender sender, String[] args) {
+        if (args.length == 2) {
+            sender.sendMessage(notEnoughArguments);
+
+            return false;
+        }
+
+        if (!database.existPlayer(args[2])) {
+            sender.sendMessage(
+                    Optional.ofNullable(messageConfig.getString("NoPlayerFound"))
+                            .orElse("&cその名前のプレイヤーは登録されていません。")
+                            .replaceAll("&([a-f0-9])", "§$1")
+            );
+
+            return false;
+        }
+
+        val uuid = database.get("uuid", args[2]);
+        val name = database.get("player", args[2]);
+
+        database.removePlayer(args[2]);
+
+        sender.sendMessage(
+                Optional.ofNullable(messageConfig.getString("DatabaseRemovePlayerSuccess"))
+                        .orElse("&7データベースから&b%uuid% &7- &b%player%&7を削除しました。")
+                        .replaceAll("%uuid%", uuid)
+                        .replaceAll("%player%", name)
+                        .replaceAll("&([a-f0-9])", "§$1")
+        );
+
+        return true;
+    }
+
+    /**
+     * /boxadmin database addplayer
+     *
+     * @param sender Player or Console
+     * @param args   Arguments
+     *
+     * @return @code{true} if success, otherwise @code{false}
+     */
+    private boolean addPlayer(CommandSender sender, String[] args) {
+        if (args.length == 2) {
+            sender.sendMessage(notEnoughArguments);
+
+            return false;
+        }
+
+        @SuppressWarnings("deprecation")
+        val player = Bukkit.getOfflinePlayer(args[2]);
+
+        if (!player.hasPlayedBefore()) {
+            sender.sendMessage(
+                    Optional.ofNullable(messageConfig.getString("NoPlayerFound"))
+                            .orElse("&cプレイヤーが見つかりませんでした。")
+                            .replaceAll("&([a-f0-9])", "§$1")
+            );
+
+            return false;
+        }
+
+        val uuid = player.getUniqueId().toString();
+        val name = Optional.ofNullable(player.getName()).orElse("unknown");
+
+        database.addPlayer(uuid, name, true);
+
+        sender.sendMessage(
+                Optional.ofNullable(messageConfig.getString("DatabaseAddPlayerSuccess"))
+                        .orElse("&7データベースに&b%uuid% &7- &b%player%&7を追加しました。")
+                        .replaceAll("%uuid%", uuid)
+                        .replaceAll("%player%", name)
+                        .replaceAll("&([a-f0-9])", "§$1")
+        );
+
+        return true;
+    }
+
+    /**
+     * /boxadmin database resetconnection
+     *
+     * @param sender Player or Console
+     *
+     * @return @code{true} if success, otherwise @code{false}
+     */
+    private boolean resetConnection(CommandSender sender) {
+        database.resetConnection();
+
+        sender.sendMessage("§eデータベースへの接続をリセットしました。");
+
+        return true;
+    }
+
+    /**
+     * /boxadmin database existplayer
+     *
+     * @param sender Player or Console
+     * @param args   Arguments
+     *
+     * @return @code{true} if success, otherwise @code{false}
+     */
+    private boolean existPlayer(CommandSender sender, String[] args) {
+        if (args.length == 2) {
+            sender.sendMessage(notEnoughArguments);
+
+            return false;
+        }
+
+        sender.sendMessage(String.valueOf(database.existPlayer(args[2])));
+
+        return true;
     }
 }
