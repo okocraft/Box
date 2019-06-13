@@ -123,6 +123,8 @@ public class BoxAdminCommand implements CommandExecutor {
 
             if (!database.existPlayer(playerName)) {
                 sender.sendMessage(
+                        // FIXME: メッセージ取得時の @Nullable を潰す
+                        // FIXME: メッセージがハードコーディングされている
                         Optional.ofNullable(messageConfig.getString("NoPlayerFound"))
                                 .orElse("&cその名前のプレイヤーは登録されていません。")
                                 .replaceAll("&([a-f0-9])", "§$1")
@@ -133,6 +135,8 @@ public class BoxAdminCommand implements CommandExecutor {
 
             if (!config.getAllItems().contains(itemName)) {
                 sender.sendMessage(
+                        // FIXME: メッセージ取得時の @Nullable を潰す
+                        // FIXME: メッセージがハードコーディングされている
                         Optional.ofNullable(messageConfig.getString("NoItemFound"))
                                 .orElse("&cその名前のアイテムは登録されていません。")
                                 .replaceAll("&([a-f0-9])", "§$1")
@@ -145,6 +149,8 @@ public class BoxAdminCommand implements CommandExecutor {
             Long amount = Longs.tryParse(args[3]);
             if (amount == null) {
                 sender.sendMessage(
+                        // FIXME: メッセージ取得時の @Nullable を潰す
+                        // FIXME: メッセージがハードコーディングされている
                         Optional.ofNullable(messageConfig.getString("InvalidNumberFormat"))
                                 .orElse("&c数字のフォーマットが不正です。")
                                 .replaceAll("&([a-f0-9])", "§$1")
@@ -161,6 +167,8 @@ public class BoxAdminCommand implements CommandExecutor {
             Long currentAmount = Longs.tryParse(database.get(itemName, playerName));
             if (currentAmount == null) {
                 sender.sendMessage(
+                        // FIXME: メッセージ取得時の @Nullable を潰す
+                        // FIXME: メッセージがハードコーディングされている
                         Optional.ofNullable(messageConfig.getString("DatabaseInvalidNumberFormat"))
                                 .orElse("&c不正な数字が記録されています。")
                                 .replaceAll("&([a-f0-9])", "§$1")
@@ -183,6 +191,8 @@ public class BoxAdminCommand implements CommandExecutor {
         }
 
         sender.sendMessage(
+                // FIXME: メッセージ取得時の @Nullable を潰す
+                // FIXME: メッセージがハードコーディングされている
                 Optional.ofNullable(messageConfig.getString("NoParamExist"))
                         .orElse("&c指定された引数は存在しません。")
                         .replaceAll("&([a-f0-9])", "§$1")
@@ -197,6 +207,8 @@ public class BoxAdminCommand implements CommandExecutor {
 
         if (amount == null) {
             sender.sendMessage(
+                    // FIXME: メッセージ取得時の @Nullable を潰す
+                    // FIXME: メッセージがハードコーディングされている
                     Optional.ofNullable(messageConfig.getString("InvalidNumberFormat"))
                             .orElse("&c数字のフォーマットが不正です。")
                             .replaceAll("&([a-f0-9])", "§$1")
@@ -208,6 +220,8 @@ public class BoxAdminCommand implements CommandExecutor {
         database.set(itemName, playerName, String.valueOf(amount));
 
         sender.sendMessage(
+                // FIXME: メッセージ取得時の @Nullable を潰す
+                // FIXME: メッセージがハードコーディングされている
                 Optional.ofNullable(messageConfig.getString("SuccessfullySet"))
                         .orElse("&e%player%のボックスの%item%を%amount%にセットしました。")
                         .replaceAll("&([a-f0-9])", "§$1")
@@ -223,6 +237,8 @@ public class BoxAdminCommand implements CommandExecutor {
         database.set(itemName, playerName, value);
 
         sender.sendMessage(
+                // FIXME: メッセージ取得時の @Nullable を潰す
+                // FIXME: メッセージがハードコーディングされている
                 Optional.ofNullable(messageConfig.getString("SuccessfullyTake"))
                         .orElse("&e%player%のボックスの%item%を%amount%減らしました。(現在%newamount%)")
                         .replaceAll("&([a-f0-9])", "§$1")
@@ -239,6 +255,8 @@ public class BoxAdminCommand implements CommandExecutor {
         database.set(itemName, playerName, value);
 
         sender.sendMessage(
+                // FIXME: メッセージ取得時の @Nullable を潰す
+                // FIXME: メッセージがハードコーディングされている
                 Optional.ofNullable(messageConfig.getString("SuccessfullyGive"))
                         .orElse("&e%player%のボックスの%item%を%amount%増やしました。(現在%newamount%)")
                         .replaceAll("&([a-f0-9])", "§$1")
@@ -269,6 +287,8 @@ public class BoxAdminCommand implements CommandExecutor {
         val player = args[1].toLowerCase();
         if (!database.existPlayer(player)) {
             sender.sendMessage(
+                    // FIXME: メッセージ取得時の @Nullable を潰す
+                    // FIXME: メッセージがハードコーディングされている
                     Optional.ofNullable(messageConfig.getString("NoPlayerFound"))
                             .orElse("&cその名前のプレイヤーは登録されていません。")
                             .replaceAll("&([a-f0-9])", "§$1")
@@ -289,6 +309,8 @@ public class BoxAdminCommand implements CommandExecutor {
             int currentLine = (maxLine < page * 9) ? maxLine : page * 9;
 
             sender.sendMessage(
+                    // FIXME: メッセージ取得時の @Nullable を潰す
+                    // FIXME: メッセージがハードコーディングされている
                     Optional.ofNullable(messageConfig.getString("AutoStoreListHeader"))
                             .orElse("&7=====&6自動回収設定一覧 %page%ページ目 &a%currentline% &7/ &a%maxline% &7(&b%player%&7)=====")
                             .replaceAll("%player%", player)
@@ -304,6 +326,8 @@ public class BoxAdminCommand implements CommandExecutor {
                     .limit(9)
                     .forEach(itemColumnName ->
                             sender.sendMessage(
+                                    // FIXME: メッセージ取得時の @Nullable を潰す
+                                    // FIXME: メッセージがハードコーディングされている
                                     Optional.ofNullable(messageConfig.getString("AutoStoreListFormat"))
                                             .orElse("&a%item%&7: &b%isEnabled%")
                                             .replaceAll("%item%", itemColumnName.substring(10))
@@ -332,6 +356,8 @@ public class BoxAdminCommand implements CommandExecutor {
             database.setMultiValue(newValues, player);
 
             sender.sendMessage(
+                    // FIXME: メッセージ取得時の @Nullable を潰す
+                    // FIXME: メッセージがハードコーディングされている
                     Optional.ofNullable(messageConfig.getString("AllAutoStoreSettingChanged"))
                             .orElse("&7全てのアイテムのAutoStore設定を&b%isEnabled%&7に設定しました。")
                             .replaceAll("%isEnabled%", args[3].toLowerCase())
@@ -343,6 +369,8 @@ public class BoxAdminCommand implements CommandExecutor {
 
         if (itemName.equalsIgnoreCase("all") && args.length == 4) {
             sender.sendMessage(
+                    // FIXME: メッセージ取得時の @Nullable を潰す
+                    // FIXME: メッセージがハードコーディングされている
                     Optional.ofNullable(messageConfig.getString("InvalidArgument"))
                         .orElse("&c引数が不正です。")
                         .replaceAll("&([a-f0-9])", "§$1")
@@ -359,6 +387,8 @@ public class BoxAdminCommand implements CommandExecutor {
 
         if (!allItems.contains(itemName)) {
             sender.sendMessage(
+                    // FIXME: メッセージ取得時の @Nullable を潰す
+                    // FIXME: メッセージがハードコーディングされている
                     Optional.ofNullable(messageConfig.getString("InvalidArgument"))
                         .orElse("&c引数が不正です。")
                         .replaceAll("&([a-f0-9])", "§$1")
@@ -400,6 +430,8 @@ public class BoxAdminCommand implements CommandExecutor {
         config.reloadConfig();
 
         sender.sendMessage(
+                // FIXME: メッセージ取得時の @Nullable を潰す
+                // FIXME: メッセージがハードコーディングされている
                 Optional.ofNullable(messageConfig.getString("ConfigReloaded"))
                         .orElse("&7設定を再読込しました。")
                         .replaceAll("&([a-f0-9])", "§$1")
@@ -416,9 +448,11 @@ public class BoxAdminCommand implements CommandExecutor {
      * @return @code{true} if success, otherwise @code{false}
      */
     private boolean getPlayersMap(CommandSender sender) {
+        // FIXME: メッセージがハードコーディングされている
         sender.sendMessage("記録されているプレイヤー");
 
         database.getPlayersMap().forEach((uuidStr, name) ->
+                // FIXME: メッセージがハードコーディングされている
                 sender.sendMessage(String.format("%s - %s", uuidStr, name))
         );
 
@@ -433,9 +467,11 @@ public class BoxAdminCommand implements CommandExecutor {
      * @return @code{true} if success, otherwise @code{false}
      */
     private boolean getColumnsMap(CommandSender sender) {
+        // FIXME: メッセージがハードコーディングされている
         sender.sendMessage("列リスト");
 
         database.getColumnMap().forEach((columnName, columnType) ->
+                // FIXME: メッセージがハードコーディングされている
                 sender.sendMessage(String.format("%s - %s", columnName, columnType))
         );
 
@@ -452,6 +488,7 @@ public class BoxAdminCommand implements CommandExecutor {
      */
     private boolean dropColumn(CommandSender sender, String[] args) {
         if (args.length == 2) {
+            // FIXME: フォーマットされた形で返す
             sender.sendMessage(notEnoughArguments);
 
             return false;
@@ -472,6 +509,7 @@ public class BoxAdminCommand implements CommandExecutor {
      */
     private boolean addColumn(CommandSender sender, String[] args) {
         if (args.length < 4) {
+            // FIXME: フォーマットされた形で返す
             sender.sendMessage(notEnoughArguments);
 
             return false;
@@ -496,6 +534,7 @@ public class BoxAdminCommand implements CommandExecutor {
      */
     private boolean databaseGet(CommandSender sender, String[] args) {
         if (args.length < 3) {
+            // FIXME: フォーマットされた形で返す
             sender.sendMessage(notEnoughArguments);
 
             return false;
@@ -516,6 +555,7 @@ public class BoxAdminCommand implements CommandExecutor {
      */
     private boolean databaseSet(CommandSender sender, String[] args) {
         if (args.length < 4) {
+            // FIXME: フォーマットされた形で返す
             sender.sendMessage(notEnoughArguments);
 
             return false;
@@ -523,6 +563,8 @@ public class BoxAdminCommand implements CommandExecutor {
 
         if (!database.existPlayer(args[3])) {
             sender.sendMessage(
+                    // FIXME: メッセージ取得時の @Nullable を潰す
+                    // FIXME: メッセージがハードコーディングされている
                     Optional.ofNullable(messageConfig.getString("NoPlayerFound"))
                             .orElse("&cその名前のプレイヤーは登録されていません。")
                             .replaceAll("&([a-f0-9])", "§$1")
@@ -536,6 +578,8 @@ public class BoxAdminCommand implements CommandExecutor {
 
         if (database.getColumnMap().containsKey(args[2])) {
             sender.sendMessage(
+                    // FIXME: メッセージ取得時の @Nullable を潰す
+                    // FIXME: メッセージがハードコーディングされている
                     Optional.ofNullable(messageConfig.getString("DatabaseNoColumnFound"))
                             .orElse("&cその名前の列はありません。")
                             .replaceAll("&([a-f0-9])", "§$1")
@@ -547,6 +591,8 @@ public class BoxAdminCommand implements CommandExecutor {
         database.set(args[2], args[3], args[4]);
 
         sender.sendMessage(
+                // FIXME: メッセージ取得時の @Nullable を潰す
+                // FIXME: メッセージがハードコーディングされている
                 Optional.ofNullable(messageConfig.getString("DatabaseSetValueSuccess"))
                         .orElse("&b%uuid% &7(%player%)の %column% を %value% にセットしました。")
                         .replaceAll("%uuid%", uuid)
@@ -569,6 +615,7 @@ public class BoxAdminCommand implements CommandExecutor {
      */
     private boolean removePlayer(CommandSender sender, String[] args) {
         if (args.length == 2) {
+            // フォーマットされた形で返す
             sender.sendMessage(notEnoughArguments);
 
             return false;
@@ -576,6 +623,8 @@ public class BoxAdminCommand implements CommandExecutor {
 
         if (!database.existPlayer(args[2])) {
             sender.sendMessage(
+                    // FIXME: メッセージ取得時の @Nullable を潰す
+                    // FIXME: メッセージがハードコーディングされている
                     Optional.ofNullable(messageConfig.getString("NoPlayerFound"))
                             .orElse("&cその名前のプレイヤーは登録されていません。")
                             .replaceAll("&([a-f0-9])", "§$1")
@@ -590,6 +639,8 @@ public class BoxAdminCommand implements CommandExecutor {
         database.removePlayer(args[2]);
 
         sender.sendMessage(
+                // FIXME: メッセージ取得時の @Nullable を潰す
+                // FIXME: メッセージがハードコーディングされている
                 Optional.ofNullable(messageConfig.getString("DatabaseRemovePlayerSuccess"))
                         .orElse("&7データベースから&b%uuid% &7- &b%player%&7を削除しました。")
                         .replaceAll("%uuid%", uuid)
@@ -610,16 +661,19 @@ public class BoxAdminCommand implements CommandExecutor {
      */
     private boolean addPlayer(CommandSender sender, String[] args) {
         if (args.length == 2) {
+            // FIXME: フォーマットされた形で返す
             sender.sendMessage(notEnoughArguments);
 
             return false;
         }
 
-        @SuppressWarnings("deprecation")
+        // TODO: 非推奨のメソッド: Bukkit#getOfflinePlayer()
         val player = Bukkit.getOfflinePlayer(args[2]);
 
         if (!player.hasPlayedBefore()) {
             sender.sendMessage(
+                    // FIXME: メッセージ取得時の @Nullable を潰す
+                    // FIXME: メッセージがハードコーディングされている
                     Optional.ofNullable(messageConfig.getString("NoPlayerFound"))
                             .orElse("&cプレイヤーが見つかりませんでした。")
                             .replaceAll("&([a-f0-9])", "§$1")
@@ -634,6 +688,8 @@ public class BoxAdminCommand implements CommandExecutor {
         database.addPlayer(uuid, name, true);
 
         sender.sendMessage(
+                // FIXME: メッセージ取得時の @Nullable を潰す
+                // FIXME: メッセージがハードコーディングされている
                 Optional.ofNullable(messageConfig.getString("DatabaseAddPlayerSuccess"))
                         .orElse("&7データベースに&b%uuid% &7- &b%player%&7を追加しました。")
                         .replaceAll("%uuid%", uuid)
@@ -654,6 +710,7 @@ public class BoxAdminCommand implements CommandExecutor {
     private boolean resetConnection(CommandSender sender) {
         database.resetConnection();
 
+        // FIXME: メッセージがハードコーディングされている
         sender.sendMessage("§eデータベースへの接続をリセットしました。");
 
         return true;

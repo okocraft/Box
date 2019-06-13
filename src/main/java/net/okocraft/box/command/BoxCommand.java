@@ -23,15 +23,18 @@ import net.okocraft.box.database.Database;
 public class BoxCommand implements CommandExecutor {
     private Database database;
     private Box instance;
-    private ConfigManager configManager;
+    private ConfigManager config;
     private FileConfiguration messageConfig;
     private String notEnoughArguments;
 
     BoxCommand(Database database) {
         this.database = database;
         instance = Box.getInstance();
-        configManager = instance.getConfigManager();
-        messageConfig = configManager.getMessageConfig();
+        config = instance.getConfigManager();
+        messageConfig = config.getMessageConfig();
+
+        // FIXME: メッセージ取得時の @Nullable を潰す
+        // FIXME: メッセージがハードコーディングされている
         notEnoughArguments = Optional.ofNullable(messageConfig.getString("NoEnoughArgument"))
                 .orElse("&c引数が足りません。")
                 .replaceAll("&([a-f0-9])", "§$1");
@@ -69,6 +72,8 @@ public class BoxCommand implements CommandExecutor {
         }
 
         sender.sendMessage(
+                // FIXME: メッセージ取得時の @Nullable を潰す
+                // FIXME: メッセージがハードコーディングされている
                 Optional.ofNullable(messageConfig.getString("NoParamExist"))
                         .orElse("&c指定された引数は存在しません。")
                         .replaceAll("&([a-f0-9])", "§$1")
@@ -98,17 +103,22 @@ public class BoxCommand implements CommandExecutor {
 
         val player = ((Player) sender).getUniqueId().toString();
 
+        //
+        // NOTE: Don't use Lombok's val.
+        //       Otherwise build will be failure due to the compiler interpret `index` as primitive int, not Integer.
+        //
         // FIXME: Unstable method: Ints#tryParse
-        // Set index
-        val index = args.length >= 2
+        Integer index = args.length >= 2
                 ? Optional.ofNullable(Ints.tryParse(args[1])).orElse(1)
                 : 1;
 
-        val allItems = configManager.getAllItems();
+        val allItems = config.getAllItems();
         int maxLine = allItems.size();
         int currentLine = (maxLine < index * 9) ? maxLine : index * 9;
 
         sender.sendMessage(
+                // FIXME: メッセージ取得時の @Nullable を潰す
+                // FIXME: メッセージがハードコーディングされている
                 Optional.ofNullable(messageConfig.getString("AutoStoreListHeader"))
                         .orElse("&7=====&6自動回収設定一覧 %page%ページ目 &a%currentline% &7/ &a%maxline% &7(&b%player%&7)=====")
                         .replaceAll("%player%", sender.getName().toLowerCase())
@@ -118,7 +128,7 @@ public class BoxCommand implements CommandExecutor {
                         .replaceAll("&([a-f0-9])", "§$1")
         );
 
-        val columnList = configManager.getAllItems().stream()
+        val columnList = config.getAllItems().stream()
                 .skip(9 * (index - 1))
                 .limit(9)
                 .map(name -> "autostore_" + name)
@@ -126,6 +136,8 @@ public class BoxCommand implements CommandExecutor {
 
         database.getMultiValue(columnList, player).forEach((columnName, value) -> {
             sender.sendMessage(
+                    // FIXME: メッセージ取得時の @Nullable を潰す
+                    // FIXME: メッセージがハードコーディングされている
                     Optional.ofNullable(messageConfig.getString("AutoStoreListFormat"))
                             .orElse("&a%item%&7: &b%isEnabled%")
                             .replaceAll("%item%", columnName.substring(10))
@@ -185,11 +197,12 @@ public class BoxCommand implements CommandExecutor {
      */
     private boolean autoStoreAll(CommandSender sender, String switchTo) {
         val player   = ((Player) sender).getUniqueId().toString();
-        val allItems = configManager.getAllItems();
+        val allItems = config.getAllItems();
 
         // If switchTo is neither true nor false
         if (!switchTo.equalsIgnoreCase("true") && !switchTo.equalsIgnoreCase("false")) {
             sender.sendMessage(
+                    // TODO: @Nullable を潰す: メッセージ
                     Optional.ofNullable(messageConfig.getString("InvalidArgument"))
                             .orElse("&c引数が不正です。")
                             .replaceAll("&([a-f0-9])", "§$1")
@@ -208,6 +221,7 @@ public class BoxCommand implements CommandExecutor {
         database.setMultiValue(newValues, player);
 
         sender.sendMessage(
+                // TODO: @Nullable を潰す: メッセージ
                 Optional.ofNullable(messageConfig.getString("AllAutoStoreSettingChanged"))
                         .orElse("&7すべてのアイテムの AutoStore 設定を &b%isEnabled%&7 に設定しました。")
                         .replaceAll("%isEnabled%", switchTo.toLowerCase())
@@ -228,10 +242,12 @@ public class BoxCommand implements CommandExecutor {
     private boolean autoStoreItem(CommandSender sender, String[] args) {
         val player   = ((Player) sender).getUniqueId().toString();
         val itemName = args[1].toUpperCase();
-        val allItems = configManager.getAllItems();
+        val allItems = config.getAllItems();
 
         if (!allItems.contains(itemName)) {
             sender.sendMessage(
+                    // FIXME: メッセージ取得時の @Nullable を潰す
+                    // FIXME: メッセージがハードコーディングされている
                     Optional.ofNullable(messageConfig.getString("InvalidArgument"))
                             .orElse("&c引数が不正です。")
                             .replaceAll("&([a-f0-9])", "§$1")
@@ -245,6 +261,8 @@ public class BoxCommand implements CommandExecutor {
         if (args.length >= 3) {
             if (!args[2].equalsIgnoreCase("true") && !args[2].equalsIgnoreCase("false")) {
                 sender.sendMessage(
+                        // FIXME: メッセージ取得時の @Nullable を潰す
+                        // FIXME: メッセージがハードコーディングされている
                         Optional.ofNullable(messageConfig.getString("InvalidArgument"))
                                 .orElse("&c引数が不正です。")
                                 .replaceAll("&([a-f0-9])", "§$1")
@@ -260,6 +278,8 @@ public class BoxCommand implements CommandExecutor {
         }
 
         sender.sendMessage(
+                // FIXME: メッセージ取得時の @Nullable を潰す
+                // FIXME: メッセージがハードコーディングされている
                 Optional.ofNullable(messageConfig.getString("AutoStoreSettingChanged"))
                         .orElse("&7%item%のAutoStore設定を&b%isEnabled%&7に設定しました。")
                         .replaceAll("%item%", itemName).replaceAll("%isEnabled%", switchTo)
@@ -291,6 +311,8 @@ public class BoxCommand implements CommandExecutor {
 
         if (senderName.equals(player)) {
             sender.sendMessage(
+                    // FIXME: メッセージ取得時の @Nullable を潰す
+                    // FIXME: メッセージがハードコーディングされている
                     Optional.ofNullable(messageConfig.getString("CannotGiveYourself"))
                             .orElse("&c自分自身にアイテムを渡すことはできません。")
                             .replaceAll("&([a-f0-9])", "§$1")
@@ -300,8 +322,10 @@ public class BoxCommand implements CommandExecutor {
         }
 
         val itemName = args[2].toUpperCase();
-        if (!configManager.getAllItems().contains(itemName)) {
+        if (!config.getAllItems().contains(itemName)) {
             sender.sendMessage(
+                    // FIXME: メッセージ取得時の @Nullable を潰す
+                    // FIXME: メッセージがハードコーディングされている
                     Optional.ofNullable(messageConfig.getString("NoItemFound"))
                             .orElse("&cその名前のアイテムは登録されていません。")
                             .replaceAll("&([a-f0-9])", "§$1")
@@ -312,6 +336,8 @@ public class BoxCommand implements CommandExecutor {
 
         if (!database.existPlayer(player)) {
             sender.sendMessage(
+                    // FIXME: メッセージ取得時の @Nullable を潰す
+                    // FIXME: メッセージがハードコーディングされている
                     Optional.ofNullable(messageConfig.getString("NoPlayerFound"))
                             .orElse("&cその名前のプレイヤーは登録されていません。")
                             .replaceAll("&([a-f0-9])", "§$1")
@@ -332,6 +358,8 @@ public class BoxCommand implements CommandExecutor {
 
         if (senderAmount == null || otherAmount == null) {
             sender.sendMessage(
+                    // FIXME: メッセージ取得時の @Nullable を潰す
+                    // FIXME: メッセージがハードコーディングされている
                     Optional.ofNullable(messageConfig.getString("DatabaseInvalidNumberFormat"))
                             .orElse("&c不正な数字が記録されています。管理者に報告して下さい。")
                             .replaceAll("&([a-f0-9])", "§$1")
@@ -342,6 +370,8 @@ public class BoxCommand implements CommandExecutor {
 
         if (senderAmount - amount < 0) {
             sender.sendMessage(
+                    // FIXME: メッセージ取得時の @Nullable を潰す
+                    // FIXME: メッセージがハードコーディングされている
                     Optional.ofNullable(messageConfig.getString("NoEnoughStore"))
                             .orElse("&c在庫が足りません。")
                             .replaceAll("&([a-f0-9])", "§$1")
@@ -354,6 +384,8 @@ public class BoxCommand implements CommandExecutor {
         database.set(itemName, player, String.valueOf(otherAmount + amount));
 
         sender.sendMessage(
+                // FIXME: メッセージ取得時の @Nullable を潰す
+                // FIXME: メッセージがハードコーディングされている
                 Optional.ofNullable(messageConfig.getString("SuccessfullyGiveNonAdmin"))
                         .orElse("&e%player%に%item%を%amount%個渡しました。(現在%newamount%)")
                         .replaceAll("%player%", player).replaceAll("%item%", itemName)
@@ -367,6 +399,8 @@ public class BoxCommand implements CommandExecutor {
         if (offlinePlayer.isOnline()) {
             Optional.ofNullable(offlinePlayer.getPlayer()).ifPresent( _player ->
                     _player.sendMessage(
+                            // FIXME: メッセージ取得時の @Nullable を潰す
+                            // FIXME: メッセージがハードコーディングされている
                             Optional.ofNullable(messageConfig.getString("GivenItemFromNonAdmin"))
                                     .orElse("&b%player%&7から&b%item%&7を&b%amount%&7個貰いました。(現在%newamount%個)")
                                     .replaceAll("%player%", senderName)
@@ -385,6 +419,7 @@ public class BoxCommand implements CommandExecutor {
     }
 
     private boolean version(CommandSender sender) {
+        // TODO: フォーマットされた形で返す
         sender.sendMessage(Box.getInstance().getVersion());
 
         return true;
@@ -395,6 +430,8 @@ public class BoxCommand implements CommandExecutor {
 
         if (!database.existPlayer(player)) {
             sender.sendMessage(
+                    // TODO: @Nullable を潰す: メッセージ
+                    // FIXME: メッセージがハードコーディングされている
                     Optional.ofNullable(messageConfig.getString("NoPlayerFound"))
                             .orElse("&cその名前のプレイヤーは登録されていません。")
                             .replaceAll("&([a-f0-9])", "§$1")

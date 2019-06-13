@@ -190,6 +190,8 @@ public class GuiManager implements Listener {
 
             if (clickedItemMaterialSection == null) {
                 // TODO: Typo: Occured → Occurred
+                // FIXME: メッセージ取得時の @Nullable を潰す
+                // FIXME: メッセージがハードコーディングされている
                 val errorMessage = Optional.ofNullable(config.getMessageConfig().getString("ErrorOccured"))
                         .orElse("&cエラーが発生して処理を実行できませんでした。")
                         .replaceAll("&([a-f0-9])", "§$1");
@@ -210,6 +212,8 @@ public class GuiManager implements Listener {
             );
 
             if (storedItemAmount == null) {
+                // FIXME: メッセージ取得時の @Nullable を潰す
+                // FIXME: メッセージがハードコーディングされている
                 val errorMessage = Optional.ofNullable(config.getMessageConfig().getString("InvalidValueIsStored"))
                         .orElse("&cデータベースに不正な値が格納されています。管理者に報告して下さい。")
                         .replaceAll("&([a-f0-9])", "§$1");
@@ -303,6 +307,8 @@ public class GuiManager implements Listener {
         );
         val categorySelectionItem     = new ItemStack(categoryIconMaterial);
         val categorySelectionItemMeta = Optional.ofNullable(categorySelectionItem.getItemMeta());
+        // FIXME: メッセージ取得時の @Nullable を潰す
+        // FIXME: メッセージがハードコーディングされている
         val categoryItemName          = Optional.ofNullable(section.getString("display_name"))
                 .orElse("No display_name defined.")
                 .replaceAll("&([a-f0-9])", "§$1");
@@ -328,6 +334,8 @@ public class GuiManager implements Listener {
         val categoryItems   = ConfigManager.getMemorySection(categorySetting.get("item"));
 
         if (categoryItems == null) {
+            // FIXME: メッセージ取得時の @Nullable を潰す
+            // FIXME: メッセージがハードコーディングされている
             val errorMessage = Optional.ofNullable(config.getMessageConfig().getString("ErrorOnOpenGui"))
                     .orElse("§cエラーが発生してGuiを開けませんでした。");
 
@@ -450,6 +458,7 @@ public class GuiManager implements Listener {
 
         if (categoryName == null) {
             // FIXME: 標準出力を使わずにロガーを使う
+            // FIXME: メッセージがハードコーディングされている
             System.out.println("カテゴリ名の取得に失敗しました。");
             return;
         }
@@ -460,6 +469,7 @@ public class GuiManager implements Listener {
 
         if (section == null) {
             // FIXME: 標準出力を使わずにロガーを使う
+            // FIXME: メッセージがハードコーディングされている
             System.out.println("アイテム設定の取得に失敗しました。");
             return;
         }

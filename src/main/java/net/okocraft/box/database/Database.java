@@ -20,6 +20,7 @@ import org.bukkit.plugin.Plugin;
 import net.okocraft.box.Box;
 import net.okocraft.box.command.Commands;
 
+// NOTE: メッセージがハードコーディングされているが、システム側メッセージなのでとりあえず無視する。
 public class Database {
     /**
      * データベルファイルへの URL 。{@code plugins/Box/data.db}
