@@ -35,7 +35,7 @@ public class ConfigManager {
     @Getter
     private FileConfiguration storingItemConfig;
 
-    // fields
+    // Sounds
     @Getter
     private float soundPitch = 0.0F;
     @Getter
@@ -53,7 +53,7 @@ public class ConfigManager {
     @Getter
     private Sound increaseSound;
     @Getter
-    private Sound returnToSelectionGuiSound;
+    private Sound backToGuiSound;
     @Getter
     private Sound changePageSound;
 
@@ -159,7 +159,8 @@ public class ConfigManager {
         val categoryConfig = getMemorySection(storingItemConfig.get("categories"));
         if (categoryConfig != null) {
             categoryConfig.getValues(false).forEach((sectionName, sectionObject) -> {
-                MemorySection section = getMemorySection(sectionObject);
+                val section = getMemorySection(sectionObject);
+
                 if (section != null) {
                     categories.put(sectionName, section);
                 }
@@ -208,21 +209,44 @@ public class ConfigManager {
      * @see ConfigManager#initConfig()
      */
     private void initSoundConfig() {
-        // CHANGED: DON'T USE MAGIC NUMBER
         val DEFAULT_SOUND_VOLUME = 1.0;
         val DEFAULT_SOUND_PITCH  = 1.0;
 
-        soundVolume     = (float) defaultConfig.getDouble("General.SoundSetting.Volume", DEFAULT_SOUND_VOLUME);
-        soundPitch      = (float) defaultConfig.getDouble("General.SoundSetting.Pitch", DEFAULT_SOUND_PITCH);
-        // FIXME: 以下の設定は Nullable, デフォルト設定必要か
-        openSound       = getSound(defaultConfig.getString("General.SoundSetting.Sounds.Open"));
-        takeInSound     = getSound(defaultConfig.getString("General.SoundSetting.Sounds.TakeIn"));
-        takeOutSound    = getSound(defaultConfig.getString("General.SoundSetting.Sounds.TakeOut"));
-        notEnoughSound  = getSound(defaultConfig.getString("General.SoundSetting.Sounds.NotEnough"));
-        decreaseSound   = getSound(defaultConfig.getString("General.SoundSetting.Sounds.Decrease"));
-        increaseSound   = getSound(defaultConfig.getString("General.SoundSetting.Sounds.Increase"));
-        changePageSound = getSound(defaultConfig.getString("General.SoundSetting.Sounds.ChangePage"));
-        returnToSelectionGuiSound = getSound(defaultConfig.getString("General.SoundSetting.Sounds.ReturnToSelectionGui"));
+        val DEFAULT_OPEN_SOUND = Sound.BLOCK_CHEST_OPEN;
+        val DEFAULT_TAKE_IN_SOUND = Sound.ENTITY_ITEM_PICKUP;
+        val DEFAULT_TAKE_OUT_SOUND = Sound.BLOCK_STONE_BUTTON_CLICK_ON;
+        val DEFAULT_NOT_ENOUGH_SOUND = Sound.ENTITY_ENDERMAN_TELEPORT;
+        val DEFAULT_INCREASE_SOUND = Sound.BLOCK_TRIPWIRE_CLICK_ON;
+        val DEFAULT_DECREASE_SOUND = Sound.BLOCK_TRIPWIRE_CLICK_OFF;
+        val DEFAULT_CHANGE_PAGE_SOUND = Sound.ENTITY_EXPERIENCE_ORB_PICKUP;
+        val DEFAULT_RETURN_TO_SELECTION_GUI_SOUND = Sound.ENTITY_EXPERIENCE_ORB_PICKUP;
+
+        soundVolume = (float) defaultConfig.getDouble("General.SoundSetting.Volume", DEFAULT_SOUND_VOLUME);
+        soundPitch  = (float) defaultConfig.getDouble("General.SoundSetting.Pitch", DEFAULT_SOUND_PITCH);
+
+        openSound = getSound(defaultConfig.getString("General.SoundSetting.Sounds.Open"))
+                .orElse(DEFAULT_OPEN_SOUND);
+
+        takeInSound = getSound(defaultConfig.getString("General.SoundSetting.Sounds.TakeIn"))
+                .orElse(DEFAULT_TAKE_IN_SOUND);
+
+        takeOutSound = getSound(defaultConfig.getString("General.SoundSetting.Sounds.TakeOut"))
+                .orElse(DEFAULT_TAKE_OUT_SOUND);
+
+        notEnoughSound = getSound(defaultConfig.getString("General.SoundSetting.Sounds.NotEnough"))
+                .orElse(DEFAULT_NOT_ENOUGH_SOUND);
+
+        increaseSound = getSound(defaultConfig.getString("General.SoundSetting.Sounds.Increase"))
+                .orElse(DEFAULT_INCREASE_SOUND);
+
+        decreaseSound = getSound(defaultConfig.getString("General.SoundSetting.Sounds.Decrease"))
+                .orElse(DEFAULT_DECREASE_SOUND);
+
+        changePageSound = getSound(defaultConfig.getString("General.SoundSetting.Sounds.ChangePage"))
+                .orElse(DEFAULT_CHANGE_PAGE_SOUND);
+
+        backToGuiSound = getSound(defaultConfig.getString("General.SoundSetting.Sounds.ReturnToSelectionGui"))
+                .orElse(DEFAULT_RETURN_TO_SELECTION_GUI_SOUND);
     }
 
     /**
@@ -272,8 +296,7 @@ public class ConfigManager {
         // 戻る
         val back = storingItemConfig.getString("CategoryGui.Return", "&6戻る &8| &6Return");
 
-        // CHANGED: Map<K, V> の初期化に Java 9 から存在する Map#of を使う
-        // CHANGED: 長ったらしいので表示名を変数に置換
+        // フッター
         footerItemStacks = Map.of(
                 45, createFooterItem(Material.ARROW,                   1,  prevPage),
                 46, createFooterItem(Material.RED_STAINED_GLASS_PANE,  64, decrease64),
@@ -292,38 +315,43 @@ public class ConfigManager {
      *
      * @param material    アイテムの種類。
      * @param stackAmount アイテムの量。
-     * @param displayName  表示名。
+     * @param displayName 表示名。
      *
      * @return メタ情報(パラメタ)を適用したアイテム。
      */
     @Nonnull
     private static ItemStack createFooterItem(Material material, int stackAmount, String displayName) {
-        val hooterItem = new ItemStack(material, stackAmount);
+        val item     = new ItemStack(material, stackAmount);
+        val itemMeta = Optional.ofNullable(item.getItemMeta());
 
-        // CHANGED: そのまま処理すると Nullable で警告されるので Optional
-        val hooterItemMeta = Optional.ofNullable(hooterItem.getItemMeta());
-
-        hooterItemMeta.ifPresent(meta -> {
+        itemMeta.ifPresent(meta -> {
             meta.setDisplayName(displayName.replaceAll("&([a-f0-9])", "§$1"));
-            hooterItem.setItemMeta(meta);
+            item.setItemMeta(meta);
         });
 
-        return hooterItem;
+        return item;
     }
 
     /**
-     * String から Sound に変換を試みる。変換先が見つからないないし失敗した場合は @code{null} を返す。
+     * String から Sound に変換する。
      *
      * @param sound Sound にしたい String
      *
-     * @return Sound, 変換に失敗した場合 null
+     * @return {@code Optional<Sound>}
      */
-    @Nullable
-    private static Sound getSound(String sound) {
+    @Nonnull
+    private static Optional<Sound> getSound(@Nullable String sound) {
+        if (sound == null) {
+            return Optional.empty();
+        }
+
         try {
-            return Sound.valueOf(sound);
-        } catch (IllegalArgumentException | NullPointerException exception) {
-            return null;
+            return Optional.of(Sound.valueOf(sound));
+        } catch (IllegalArgumentException e) {
+            // No such sound!
+            e.printStackTrace();
+
+            return Optional.empty();
         }
     }
 

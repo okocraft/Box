@@ -108,10 +108,7 @@ public class GuiManager implements Listener {
                     .getCustomTag(categoryNameKey, ItemTagType.STRING);
 
             if (clickedSlot == 45 || clickedSlot == 53) {
-                // TODO: Remove null checking
-                if (config.getChangePageSound() != null) {
-                    playSound(player, config.getChangePageSound());
-                }
+                playSound(player, config.getChangePageSound());
 
                 openCategoryGui(
                         player,
@@ -125,10 +122,7 @@ public class GuiManager implements Listener {
             }
 
             if (clickedSlot == 49) {
-                // TODO: Remove null checking
-                if (config.getReturnToSelectionGuiSound() != null) {
-                    playSound(player, config.getReturnToSelectionGuiSound());
-                }
+                playSound(player, config.getBackToGuiSound());
 
                 openCategorySelectionGui(player, false);
 
@@ -177,15 +171,9 @@ public class GuiManager implements Listener {
                 }
 
                 if (difference < 0) {
-                    // TODO: Remove null checking
-                    if (config.getDecreaseSound() != null) {
-                        playSound(player, config.getDecreaseSound());
-                    }
+                    playSound(player, config.getDecreaseSound());
                 } else if (difference > 0) {
-                    // TODO: Remove null checking
-                    if (config.getIncreaseSound() != null) {
-                        playSound(player, config.getIncreaseSound());
-                    }
+                    playSound(player, config.getIncreaseSound());
                 }
 
                 changeQuantity(inventory, quantity);
@@ -201,7 +189,7 @@ public class GuiManager implements Listener {
             );
 
             if (clickedItemMaterialSection == null) {
-                // FIXME: Typo: Occured → Occurred
+                // TODO: Typo: Occured → Occurred
                 val errorMessage = Optional.ofNullable(config.getMessageConfig().getString("ErrorOccured"))
                         .orElse("&cエラーが発生して処理を実行できませんでした。")
                         .replaceAll("&([a-f0-9])", "§$1");
@@ -235,18 +223,12 @@ public class GuiManager implements Listener {
 
             if (event.isRightClick()) {
                 if (storedItemAmount <= 0) {
-                    // TODO: Remove null checking
-                    if (config.getNotEnoughSound() != null) {
-                        playSound(player, config.getNotEnoughSound());
-                    }
+                    playSound(player, config.getNotEnoughSound());
 
                     return;
                 }
 
-                // TODO: Remove null checking
-                if (config.getTakeOutSound() != null) {
-                    playSound(player, config.getTakeOutSound());
-                }
+                playSound(player, config.getTakeOutSound());
 
                 int quantityClone = (storedItemAmount < quantity) ? storedItemAmount : quantity;
 
@@ -265,18 +247,12 @@ public class GuiManager implements Listener {
                         .filter(item -> !item.hasItemMeta()).mapToInt(ItemStack::getAmount).sum();
 
                 if (playerItemAmount == 0) {
-                    // TODO: Remove null checking
-                    if (config.getNotEnoughSound() != null) {
-                        playSound(player, config.getNotEnoughSound());
-                    }
+                    playSound(player, config.getNotEnoughSound());
 
                     return;
                 }
 
-                // TODO: Remove null checking
-                if (config.getTakeInSound() != null) {
-                    playSound(player, config.getTakeOutSound());
-                }
+                playSound(player, config.getTakeOutSound());
 
                 val nonRemovedItemStacks = playerInventory.removeItem(new ItemStack(clickedItemMaterial, quantity));
                 int nonRemovedAmount = nonRemovedItemStacks.values().stream()
@@ -298,10 +274,7 @@ public class GuiManager implements Listener {
     public void openCategorySelectionGui(Player player, boolean playSound) {
         player.closeInventory();
 
-        // TODO: Remove null checking
-        if (playSound && config.getOpenSound() != null) {
-            playSound(player, config.getOpenSound());
-        }
+        playSound(player, config.getOpenSound());
 
         val glass = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
         val itemMeta  = Optional.ofNullable(glass.getItemMeta());
@@ -421,10 +394,7 @@ public class GuiManager implements Listener {
                     categoryGui.addItem(item);
                 });
 
-        // TODO: Remove null checking
-        if (playSound && config.getOpenSound() != null) {
-            playSound(player, config.getOpenSound());
-        }
+        playSound(player, config.getOpenSound());
 
         if (modifiedInventory != null) {
             modifiedInventory.setContents(categoryGui.getStorageContents());
