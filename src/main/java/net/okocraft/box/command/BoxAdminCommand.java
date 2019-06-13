@@ -96,7 +96,7 @@ public class BoxAdminCommand implements CommandExecutor {
                 return dropColumn(sender, args);
             }
 
-            // FIXME: getColumnsMap() と getPlayersMap() の複数形
+            // FIXME: config のキー getcolumnmap と getplayersmap の複数形
             // getColumnsMap
             if (databaseSubCommand.equalsIgnoreCase("getcolumnmap")) {
                 return getColumnsMap(sender);

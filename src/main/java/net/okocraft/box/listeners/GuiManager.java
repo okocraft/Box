@@ -48,7 +48,7 @@ public class GuiManager implements Listener {
         quantityKey     = new NamespacedKey(plugin, "quantity");
         categoryNameKey = new NamespacedKey(plugin, "categoryname");
 
-        categorySelectionGuiFrame = Arrays.asList(
+        categorySelectionGuiFrame = List.of(
                 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 17, 18, 26, 27, 35, 36, 44, 45, 46, 47,  48, 49, 50, 51, 52, 53
         );
     }
@@ -177,8 +177,8 @@ public class GuiManager implements Listener {
                 }
 
                 if (difference < 0) {
+                    // TODO: Remove null checking
                     if (config.getDecreaseSound() != null) {
-                        // TODO: Remove null checking
                         playSound(player, config.getDecreaseSound());
                     }
                 } else if (difference > 0) {

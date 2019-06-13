@@ -20,7 +20,7 @@ public class PlayerJoin implements Listener {
         Bukkit.getPluginManager().registerEvents(this, plugin);
 
         this.database = database;
-        this.config = Box.getInstance().getConfigManager();
+        this.config   = Box.getInstance().getConfigManager();
     }
 
     @EventHandler

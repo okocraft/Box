@@ -10,17 +10,16 @@ import java.sql.Statement;
 public class StatementRunner implements Runnable {
     private final Statement statement;
 
-    public StatementRunner(Statement statement) {
+    StatementRunner(Statement statement) {
         this.statement = statement;
     }
 
     @Override
     public void run() {
         try (Statement stmt = statement) {
-            statement.executeBatch();
+            stmt.executeBatch();
         } catch (SQLException exception) {
             exception.printStackTrace();
         }
     }
-
 }

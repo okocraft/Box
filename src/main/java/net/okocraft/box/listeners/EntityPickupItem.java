@@ -27,7 +27,7 @@ public class EntityPickupItem implements Listener {
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
 
         // Initialize...
-        config = Box.getInstance().getConfigManager();
+        this.config   = Box.getInstance().getConfigManager();
         this.database = database;
         allItems      = config.getAllItems();
     }
