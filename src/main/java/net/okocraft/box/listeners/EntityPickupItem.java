@@ -30,13 +30,13 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.plugin.Plugin;
 
-import net.okocraft.box.ConfigManager;
+import net.okocraft.box.util.GeneralConfig;
 import net.okocraft.box.Box;
 import net.okocraft.box.database.Database;
 
 public class EntityPickupItem implements Listener {
     private Database database;
-    private ConfigManager config;
+    private GeneralConfig config;
 
     private List<String> allItems;
 
@@ -45,7 +45,7 @@ public class EntityPickupItem implements Listener {
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
 
         // Initialize...
-        this.config   = Box.getInstance().getConfigManager();
+        this.config   = Box.getInstance().getGeneralConfig();
         this.database = database;
         allItems      = config.getAllItems();
     }

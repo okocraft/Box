@@ -38,13 +38,13 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.tags.ItemTagType;
 import org.bukkit.plugin.Plugin;
 
-import net.okocraft.box.ConfigManager;
+import net.okocraft.box.util.GeneralConfig;
 import net.okocraft.box.Box;
 import net.okocraft.box.database.Database;
 
 public class GuiManager implements Listener {
     private Database      database;
-    private ConfigManager config;
+    private GeneralConfig config;
 
     private Map<String, MemorySection> category;
     private String                     categorySelectionGuiName;
@@ -58,7 +58,7 @@ public class GuiManager implements Listener {
 
         this.database = database;
 
-        config                   = Box.getInstance().getConfigManager();
+        config                   = Box.getInstance().getGeneralConfig();
         category                 = config.getCategories();
         categoryGuiNameMap       = config.getCategoryGuiNameMap();
         categorySelectionGuiName = config.getCategorySelectionGuiName();
@@ -202,7 +202,7 @@ public class GuiManager implements Listener {
             val clickedItemMaterial = clickedItem.getType();
 
             val categorySetting = category.get(categoryName);
-            val clickedItemMaterialSection = ConfigManager.getMemorySection(
+            val clickedItemMaterialSection = GeneralConfig.getMemorySection(
                     categorySetting.get("item." + clickedItemMaterial.name())
             );
 
@@ -349,7 +349,7 @@ public class GuiManager implements Listener {
 
     private void openCategoryGui(Player player, String categoryName, int page, Inventory modifiedInventory, boolean playSound) {
         val categorySetting = category.get(categoryName);
-        val categoryItems   = ConfigManager.getMemorySection(categorySetting.get("item"));
+        val categoryItems   = GeneralConfig.getMemorySection(categorySetting.get("item"));
 
         if (categoryItems == null) {
             // FIXME: メッセージ取得時の @Nullable を潰す
@@ -399,7 +399,7 @@ public class GuiManager implements Listener {
                 .skip(45 * (page - 1))
                 .limit(45)
                 .forEach(itemEntry -> {
-                    val section = ConfigManager.getMemorySection(itemEntry.getValue());
+                    val section = GeneralConfig.getMemorySection(itemEntry.getValue());
 
                     if (section == null) {
                         return;
@@ -481,7 +481,7 @@ public class GuiManager implements Listener {
             return;
         }
 
-        val section = ConfigManager.getMemorySection(
+        val section = GeneralConfig.getMemorySection(
                 config.getStoringItemConfig().get("categories." + categoryName + ".item")
         );
 

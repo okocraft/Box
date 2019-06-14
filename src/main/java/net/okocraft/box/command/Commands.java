@@ -19,12 +19,10 @@
 package net.okocraft.box.command;
 
 import lombok.val;
-import net.okocraft.box.ConfigManager;
 import net.okocraft.box.Box;
 import net.okocraft.box.database.Database;
 
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.Optional;
 
@@ -36,7 +34,7 @@ public class Commands {
         this.database = database;
 
         val instance = Box.getInstance();
-        val config   = instance.getConfigManager();
+        val config   = instance.getGeneralConfig();
         val messageConfig = config.getMessageConfig();
 
         // CHANGED: JavaPlugin#getCommand() は Nullable っぽいので Optional 化

@@ -163,7 +163,7 @@ public class Database {
             return false;
         }
 
-        val allItems = Box.getInstance().getConfigManager().getAllItems();
+        val allItems = Box.getInstance().getGeneralConfig().getAllItems();
 
         allItems.forEach(itemName -> {
             addColumn(itemName, "INTEGER", "0", false);

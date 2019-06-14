@@ -33,13 +33,13 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 
-import net.okocraft.box.ConfigManager;
+import net.okocraft.box.util.GeneralConfig;
 import net.okocraft.box.Box;
 import net.okocraft.box.database.Database;
 
 public class BoxAdminCommand implements CommandExecutor {
     private Database database;
-    private ConfigManager config;
+    private GeneralConfig config;
     private FileConfiguration messageConfig;
     private String notEnoughArguments;
 
@@ -47,7 +47,7 @@ public class BoxAdminCommand implements CommandExecutor {
         val instance = Box.getInstance();
         this.database = database;
 
-        config        = instance.getConfigManager();
+        config        = instance.getGeneralConfig();
         messageConfig = config.getMessageConfig();
         notEnoughArguments = Optional.ofNullable(messageConfig.getString("NoEnoughArgument"))
                 .orElse("&c引数が足りません。")

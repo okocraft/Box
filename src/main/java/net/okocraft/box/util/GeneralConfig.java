@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.okocraft.box;
+package net.okocraft.box.util;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -27,6 +27,7 @@ import javax.annotation.Nullable;
 import lombok.Getter;
 import lombok.val;
 
+import net.okocraft.box.Box;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -37,7 +38,7 @@ import org.bukkit.inventory.ItemStack;
 
 import net.okocraft.box.database.Database;
 
-public class ConfigManager {
+public class GeneralConfig {
     private Box plugin;
     private Database database;
 
@@ -108,7 +109,7 @@ public class ConfigManager {
     @Getter
     private Map<Integer, ItemStack> footerItemStacks;
 
-    ConfigManager(Database database) {
+    public GeneralConfig(Database database) {
         this.plugin = Box.getInstance();
         this.database = database;
 
@@ -224,7 +225,7 @@ public class ConfigManager {
     /**
      * 音設定初期化
      *
-     * @see ConfigManager#initConfig()
+     * @see GeneralConfig#initConfig()
      */
     private void initSoundConfig() {
         val DEFAULT_SOUND_VOLUME = 1.0;
@@ -270,7 +271,7 @@ public class ConfigManager {
     /**
      * AutoStore 設定初期化
      *
-     * @see ConfigManager#initConfig()
+     * @see GeneralConfig#initConfig()
      */
     private void initAutoStoreConfig() {
         autoStoreEnabled = defaultConfig.getBoolean("General.AutoStore.Enabled", false);
@@ -280,7 +281,7 @@ public class ConfigManager {
     /**
      * DisabledWorld 設定初期化
      *
-     * @see ConfigManager#initConfig()
+     * @see GeneralConfig#initConfig()
      */
     private void initDisabledWorldConfig() {
         disabledWorlds = defaultConfig.getStringList("General.DisabledWorld").stream()
@@ -292,7 +293,7 @@ public class ConfigManager {
     /**
      * フッター初期化
      *
-     * @see ConfigManager#initConfig()
+     * @see GeneralConfig#initConfig()
      */
     private void initFooterConfig() {
         // ページ送り

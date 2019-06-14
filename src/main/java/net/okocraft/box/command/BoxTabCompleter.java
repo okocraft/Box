@@ -30,18 +30,18 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.util.StringUtil;
 
 import net.okocraft.box.Box;
-import net.okocraft.box.ConfigManager;
+import net.okocraft.box.util.GeneralConfig;
 import net.okocraft.box.database.Database;
 
 public class BoxTabCompleter implements TabCompleter {
     private Database database;
-    private ConfigManager configManager;
+    private GeneralConfig generalConfig;
 
     public BoxTabCompleter(Database database) {
         val instance = Box.getInstance();
 
         this.database = database;
-        this.configManager = instance.getConfigManager();
+        this.generalConfig = instance.getGeneralConfig();
 
         Optional.ofNullable(instance.getCommand("box")).ifPresent(cmd ->
                 cmd.setTabCompleter(this)
@@ -166,7 +166,7 @@ public class BoxTabCompleter implements TabCompleter {
                 return resultList;
             }
 
-            val allItems = configManager.getAllItems();
+            val allItems = generalConfig.getAllItems();
             val allItemsClone = new ArrayList<>(allItems);
 
             int maxPage = allItemsClone.size() / 9;
@@ -264,7 +264,7 @@ public class BoxTabCompleter implements TabCompleter {
                         return resultList;
             }
 
-            val allItems = configManager.getAllItems();
+            val allItems = generalConfig.getAllItems();
 
             val allItemsAutostore = sender.hasPermission("box.autostore.*")
                     ? allItems.stream()
@@ -312,10 +312,10 @@ public class BoxTabCompleter implements TabCompleter {
             }
 
             val allItemsGive = sender.hasPermission("box.give.*")
-                    ? configManager.getAllItems().stream()
+                    ? generalConfig.getAllItems().stream()
                         .filter(itemName -> sender.hasPermission("box.give." + itemName))
                         .collect(Collectors.toList())
-                    : configManager.getAllItems();
+                    : generalConfig.getAllItems();
 
             if (args.length == 3) {
                 switch (subCommand) {

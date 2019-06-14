@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.okocraft.box;
+package net.okocraft.box.util;
 
 import java.io.File;
 import java.io.InputStreamReader;
@@ -27,7 +27,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 
-class CustomConfig {
+public class CustomConfig {
     private FileConfiguration config;
 
     private final File configFile;

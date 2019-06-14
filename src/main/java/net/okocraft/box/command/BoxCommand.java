@@ -35,20 +35,20 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 import net.okocraft.box.Box;
-import net.okocraft.box.ConfigManager;
+import net.okocraft.box.util.GeneralConfig;
 import net.okocraft.box.database.Database;
 
 public class BoxCommand implements CommandExecutor {
     private Database database;
     private Box instance;
-    private ConfigManager config;
+    private GeneralConfig config;
     private FileConfiguration messageConfig;
     private String notEnoughArguments;
 
     BoxCommand(Database database) {
         this.database = database;
         instance = Box.getInstance();
-        config = instance.getConfigManager();
+        config = instance.getGeneralConfig();
         messageConfig = config.getMessageConfig();
 
         // FIXME: メッセージ取得時の @Nullable を潰す

@@ -26,19 +26,19 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.Plugin;
 
-import net.okocraft.box.ConfigManager;
+import net.okocraft.box.util.GeneralConfig;
 import net.okocraft.box.Box;
 import net.okocraft.box.database.Database;
 
 public class PlayerJoin implements Listener {
     private final Database database;
-    private final ConfigManager config;
+    private final GeneralConfig config;
 
     public PlayerJoin(Database database, Plugin plugin) {
         Bukkit.getPluginManager().registerEvents(this, plugin);
 
         this.database = database;
-        this.config   = Box.getInstance().getConfigManager();
+        this.config   = Box.getInstance().getGeneralConfig();
     }
 
     @EventHandler

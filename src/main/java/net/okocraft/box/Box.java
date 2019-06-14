@@ -22,6 +22,7 @@ import java.util.logging.Logger;
 
 import lombok.Getter;
 
+import net.okocraft.box.util.GeneralConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -65,7 +66,7 @@ public class Box extends JavaPlugin {
      * コンフィグマネージャ
      */
     @Getter
-    private final ConfigManager configManager;
+    private final GeneralConfig generalConfig;
 
     /**
      * GUIマネージャ
@@ -79,7 +80,7 @@ public class Box extends JavaPlugin {
         database = new Database(this);
 
         // CHANGED: final 化
-        configManager = new ConfigManager(database);
+        generalConfig = new GeneralConfig(database);
         guiManager    = new GuiManager(database, this);
     }
 
@@ -131,7 +132,7 @@ public class Box extends JavaPlugin {
     /**
      * イベントを Bukkit サーバに登録する。
      */
-    void registerEvents() {
+    public void registerEvents() {
         unregisterEvents();
 
         // Events should be registered in its own initializer
