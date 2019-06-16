@@ -20,7 +20,7 @@ package net.okocraft.box.util;
 
 import javax.annotation.Nonnull;
 
-public class MessageUtil {
+class MessageUtil {
     /**
      * Convert color code with & to §. e.g. &6 -> §6
      *
@@ -29,7 +29,7 @@ public class MessageUtil {
      * @return Message replaced & to §
      */
     @Nonnull
-    public static String convertColorCode(@Nonnull  String original) {
+    static String convertColorCode(@Nonnull String original) {
         return original.replaceAll("&([a-f0-9])", "§$1");
     }
 }

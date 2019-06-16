@@ -22,20 +22,18 @@ import java.util.Optional;
 import javax.annotation.Nonnull;
 
 import lombok.Getter;
-import lombok.val;
 
 import org.bukkit.configuration.file.FileConfiguration;
 
 import net.okocraft.box.Box;
 
 public class MessageConfig {
-    private final FileConfiguration config;
+    private CustomConfig configFile;
+    private FileConfiguration config;
 
     // Prefix
     @Getter
     private String prefix;
-    @Getter
-    private String prefixConsole;
 
     // notEnough*
     @Getter
@@ -89,30 +87,56 @@ public class MessageConfig {
 
     // Database
     @Getter
+    private String databaseSetValueSuccess;
+    @Getter
     private String databaseNoColumnFound;
     @Getter
     private String databaseRemovePlayerSuccess;
     @Getter
     private String databaseAddPlayerSuccess;
-
-    // Other
     @Getter
-    private String cannotGiveYourself;
+    private String databaseConnectionReset;
+
+    // Map
+    @Getter
+    private String mapPlayersRecord;
+    @Getter
+    private String mapColumnsList;
+    @Getter
+    private String mapFormat;
+
+    // error
     @Getter
     private String errorOccurred;
     @Getter
     private String errorOccurredOnGUI;
+    @Getter
+    private String cannotGiveYourself;
+    @Getter
+    private String errorFetchCategoryName;
+    @Getter
+    private String errorFetchItemConfig;
+    @Getter
+    private String errorFetchDisplayName;
 
-    // Config
+    // plugin
     @Getter
     private String configReloaded;
+    @Getter
+    private String versionInfo;
 
     public MessageConfig(Box plugin) {
-        val messageCustomConfig = new CustomConfig(plugin, "messages.yml");
+        configFile = new CustomConfig(plugin, "messages.yml");
+        configFile.saveDefaultConfig();
 
-        messageCustomConfig.saveDefaultConfig();
+        config = configFile.getConfig();
 
-        config = messageCustomConfig.getConfig();
+        initConfig();
+    }
+
+    public void reload() {
+        configFile.initConfig();
+        config = configFile.getConfig();
 
         initConfig();
     }
@@ -121,8 +145,7 @@ public class MessageConfig {
         //
         // Prefix
         //
-        prefix = "§7* ";
-        prefixConsole = "§8[§6Retcon§8]§7 ";
+        prefix = "§8[§6Box§8]§7 ";
 
         //
         // notEnough*
@@ -207,6 +230,10 @@ public class MessageConfig {
         //
         // Database
         //
+        databaseSetValueSuccess = getMessage(
+                "DatabaseSetValueSuccess",
+                "&b%uuid% &7(%player%)の %column% を %value% にセットしました。"
+        );
         databaseNoColumnFound = getMessage(
                 "DatabaseNoColumnFound",
                 "&cその名前の列はありません。"
@@ -218,6 +245,26 @@ public class MessageConfig {
         databaseRemovePlayerSuccess = getMessage(
                 "DatabaseAddPlayerSuccess",
                 "&7データベースから&b%uuid% &7- &b%player%&7を削除しました。"
+        );
+        databaseConnectionReset = getMessage(
+                "DatabaseConnectionReset",
+                "§eデータベースへの接続をリセットしました。"
+        );
+
+        //
+        // Map
+        //
+        mapPlayersRecord = getMessage(
+                "MapPlayersRecord",
+                "記録されているプレイヤー"
+        );
+        mapColumnsList = getMessage(
+                "MapColumnsList",
+                "列リスト"
+        );
+        mapFormat = getMessage(
+                "MapFormat",
+                "%s - %s"
         );
 
         //
@@ -235,10 +282,26 @@ public class MessageConfig {
                 "ErrorOnOpenGui",
                 "&cエラーが発生してGuiを開けませんでした。"
         );
+        errorFetchCategoryName = getMessage(
+                "ErrorFetchCategoryName",
+                "&cカテゴリ名の取得に失敗しました。"
+        );
+        errorFetchItemConfig = getMessage(
+                "ErrorFetchItemConfig",
+                "&cアイテム設定の取得に失敗しました。"
+        );
+        errorFetchDisplayName = getMessage(
+                "ErrorFetchDisplayName",
+                "&c表示名が定義されていません。"
+        );
 
         //
         // Config
         //
+        versionInfo = getMessage(
+                "VersionInfo",
+                "&7バージョン %version%"
+        );
         configReloaded = getMessage(
                 "ConfigReloaded",
                 "&7設定を再読込しました。"
@@ -255,7 +318,7 @@ public class MessageConfig {
      */
     @Nonnull
     private String getMessage(@Nonnull String required, @Nonnull String def) {
-        return Optional.ofNullable(config.getString(required))
+        return prefix + Optional.ofNullable(config.getString(required))
                 .map(MessageUtil::convertColorCode)
                 .orElse(MessageUtil.convertColorCode(def));
     }

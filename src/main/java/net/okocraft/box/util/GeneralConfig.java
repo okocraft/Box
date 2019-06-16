@@ -42,15 +42,11 @@ public class GeneralConfig {
     private Box plugin;
     private Database database;
 
-    // CustomConfig
-    private CustomConfig messageCustomConfig;
     private CustomConfig storingItemCustomConfig;
 
-    // FIleConfiguration
+    // FileConfiguration
     @Getter
     private FileConfiguration defaultConfig;
-    @Getter
-    private FileConfiguration messageConfig;
     @Getter
     private FileConfiguration storingItemConfig;
 
@@ -110,33 +106,26 @@ public class GeneralConfig {
     private Map<Integer, ItemStack> footerItemStacks;
 
     public GeneralConfig(Database database) {
-        this.plugin = Box.getInstance();
+        this.plugin   = Box.getInstance();
         this.database = database;
 
-        // Initialize configuration
-        messageCustomConfig     = new CustomConfig(plugin, "messages.yml");
         storingItemCustomConfig = new CustomConfig(plugin, "items.yml");
 
         defaultConfig     = plugin.getConfig();
-        messageConfig     = messageCustomConfig.getConfig();
         storingItemConfig = storingItemCustomConfig.getConfig();
 
         // Create some files
         plugin.saveDefaultConfig();
-        messageCustomConfig.saveDefaultConfig();
         storingItemCustomConfig.saveDefaultConfig();
 
         // Bind variables
         initConfig();
     }
 
-    public void reloadConfig() {
-        plugin.reloadConfig();
-        messageCustomConfig.initConfig();
+    public void reload() {
         storingItemCustomConfig.initConfig();
 
         defaultConfig     = plugin.getConfig();
-        messageConfig     = messageCustomConfig.getConfig();
         storingItemConfig = storingItemCustomConfig.getConfig();
 
         initConfig();

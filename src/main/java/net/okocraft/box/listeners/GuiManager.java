@@ -26,6 +26,7 @@ import lombok.val;
 
 import com.google.common.primitives.Ints;
 
+import net.okocraft.box.util.MessageConfig;
 import org.bukkit.*;
 import org.bukkit.configuration.MemorySection;
 import org.bukkit.entity.Player;
@@ -45,6 +46,7 @@ import net.okocraft.box.database.Database;
 public class GuiManager implements Listener {
     private Database      database;
     private GeneralConfig config;
+    private MessageConfig messageConfig;
 
     private Map<String, MemorySection> category;
     private String                     categorySelectionGuiName;
@@ -58,7 +60,10 @@ public class GuiManager implements Listener {
 
         this.database = database;
 
-        config                   = Box.getInstance().getGeneralConfig();
+        // config
+        config        = Box.getInstance().getGeneralConfig();
+        messageConfig = Box.getInstance().getMessageConfig();
+
         category                 = config.getCategories();
         categoryGuiNameMap       = config.getCategoryGuiNameMap();
         categorySelectionGuiName = config.getCategorySelectionGuiName();
@@ -102,8 +107,8 @@ public class GuiManager implements Listener {
                 return;
             }
 
-            // FIXME: NPE を解決する: ItemStack#getItemMeta() は null の可能性がある
             val categoryName = clickedItem.getItemMeta()
+                    // FIXME: NPE を解決する: ItemStack#getItemMeta() は null の可能性がある
                     .getCustomTagContainer()
                     .getCustomTag(categoryNameKey, ItemTagType.STRING);
 
@@ -119,9 +124,9 @@ public class GuiManager implements Listener {
                 return;
             }
 
-            // FIXME: NPE を解決する: ItemStack#getItemMeta() は null の可能性がある
             val categoryName = clickedItem
                     .getItemMeta()
+                    // FIXME: NPE を解決する: ItemStack#getItemMeta() は null の可能性がある
                     .getCustomTagContainer()
                     .getCustomTag(categoryNameKey, ItemTagType.STRING);
 
@@ -132,8 +137,7 @@ public class GuiManager implements Listener {
                         player,
                         categoryName,
                         Optional.ofNullable(inventory.getItem(clickedSlot)).map(ItemStack::getAmount).orElse(1),
-                        inventory,
-                        false
+                        inventory
                 );
 
                 return;
@@ -142,7 +146,7 @@ public class GuiManager implements Listener {
             if (clickedSlot == 49) {
                 playSound(player, config.getBackToGuiSound());
 
-                openCategorySelectionGui(player, false);
+                openCategorySelectionGui(player);
 
                 return;
             }
@@ -207,14 +211,7 @@ public class GuiManager implements Listener {
             );
 
             if (clickedItemMaterialSection == null) {
-                // TODO: Typo: Occured → Occurred
-                // FIXME: メッセージ取得時の @Nullable を潰す
-                // FIXME: メッセージがハードコーディングされている
-                val errorMessage = Optional.ofNullable(config.getMessageConfig().getString("ErrorOccured"))
-                        .orElse("&cエラーが発生して処理を実行できませんでした。")
-                        .replaceAll("&([a-f0-9])", "§$1");
-
-                player.sendMessage(errorMessage);
+                player.sendMessage(messageConfig.getErrorOccurred());
                 player.closeInventory();
 
                 return;
@@ -230,13 +227,7 @@ public class GuiManager implements Listener {
             );
 
             if (storedItemAmount == null) {
-                // FIXME: メッセージ取得時の @Nullable を潰す
-                // FIXME: メッセージがハードコーディングされている
-                val errorMessage = Optional.ofNullable(config.getMessageConfig().getString("InvalidValueIsStored"))
-                        .orElse("&cデータベースに不正な値が格納されています。管理者に報告して下さい。")
-                        .replaceAll("&([a-f0-9])", "§$1");
-
-                player.sendMessage(errorMessage);
+                player.sendMessage(messageConfig.getInvalidValueStored());
 
                 return;
             }
@@ -293,7 +284,7 @@ public class GuiManager implements Listener {
         }
     }
 
-    public void openCategorySelectionGui(Player player, boolean playSound) {
+    public void openCategorySelectionGui(Player player) {
         player.closeInventory();
 
         playSound(player, config.getOpenSound());
@@ -320,6 +311,8 @@ public class GuiManager implements Listener {
     }
 
     private ItemStack createCategorySelectionItem(String categoryName, MemorySection section) {
+        // FIXME: メッセージ取得時の @Nullable を潰す
+        // FIXME: メッセージがハードコーディングされている
         val categoryIconMaterial = Material.valueOf(Optional.ofNullable(
                 section.getString("icon")).orElse("BARRIER").toUpperCase()
         );
@@ -344,20 +337,15 @@ public class GuiManager implements Listener {
     }
 
     private void openCategoryGui(Player player, String categoryName) {
-        openCategoryGui(player, categoryName, 1, null, true);
+        openCategoryGui(player, categoryName, 1, null);
     }
 
-    private void openCategoryGui(Player player, String categoryName, int page, Inventory modifiedInventory, boolean playSound) {
+    private void openCategoryGui(Player player, String categoryName, int page, Inventory modifiedInventory) {
         val categorySetting = category.get(categoryName);
         val categoryItems   = GeneralConfig.getMemorySection(categorySetting.get("item"));
 
         if (categoryItems == null) {
-            // FIXME: メッセージ取得時の @Nullable を潰す
-            // FIXME: メッセージがハードコーディングされている
-            val errorMessage = Optional.ofNullable(config.getMessageConfig().getString("ErrorOnOpenGui"))
-                    .orElse("§cエラーが発生してGuiを開けませんでした。");
-
-            player.sendMessage(errorMessage);
+            player.sendMessage(messageConfig.getErrorOccurredOnGUI());
             player.closeInventory();
 
             return;
@@ -468,16 +456,15 @@ public class GuiManager implements Listener {
 
     private void changeQuantity(Inventory inv, int quantity) {
         val player = (Player) inv.getViewers().get(0);
-        // FIXME: NPE を解決する: ItemStack#getItemMeta() は null の可能性がある
         val categoryName = inv.getItem(0)
+                // FIXME: NPE を解決する: ItemStack#getItemMeta() は null の可能性がある
                 .getItemMeta()
                 .getCustomTagContainer()
                 .getCustomTag(categoryNameKey, ItemTagType.STRING);
 
         if (categoryName == null) {
-            // FIXME: 標準出力を使わずにロガーを使う
-            // FIXME: メッセージがハードコーディングされている
-            System.out.println("カテゴリ名の取得に失敗しました。");
+            player.sendMessage(messageConfig.getErrorFetchCategoryName());
+
             return;
         }
 
@@ -486,9 +473,8 @@ public class GuiManager implements Listener {
         );
 
         if (section == null) {
-            // FIXME: 標準出力を使わずにロガーを使う
-            // FIXME: メッセージがハードコーディングされている
-            System.out.println("アイテム設定の取得に失敗しました。");
+            player.sendMessage(messageConfig.getErrorFetchItemConfig());
+
             return;
         }
 

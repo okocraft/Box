@@ -23,6 +23,7 @@ import java.util.logging.Logger;
 import lombok.Getter;
 
 import net.okocraft.box.util.GeneralConfig;
+import net.okocraft.box.util.MessageConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -63,10 +64,16 @@ public class Box extends JavaPlugin {
     private final Database database;
 
     /**
-     * コンフィグマネージャ
+     * 通常設定
      */
     @Getter
     private final GeneralConfig generalConfig;
+
+    /**
+     * メッセージ設定
+     */
+    @Getter
+    private final MessageConfig messageConfig;
 
     /**
      * GUIマネージャ
@@ -79,8 +86,11 @@ public class Box extends JavaPlugin {
         version  = getClass().getPackage().getImplementationVersion();
         database = new Database(this);
 
-        // CHANGED: final 化
+        // config
         generalConfig = new GeneralConfig(database);
+        messageConfig = new MessageConfig(this);
+
+        // GUI
         guiManager    = new GuiManager(database, this);
     }
 
