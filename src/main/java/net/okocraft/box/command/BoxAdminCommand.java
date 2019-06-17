@@ -162,7 +162,7 @@ public class BoxAdminCommand implements CommandExecutor {
             // FIXME: Unstable method: Longs#tryParse
             Long currentAmount = Longs.tryParse(database.get(itemName, playerName));
             if (currentAmount == null) {
-                sender.sendMessage(messageConfig.getInvalidDatabaseNumberFormat());
+                sender.sendMessage(messageConfig.getDatabaseInvalidValue());
 
                 return false;
             }
@@ -198,7 +198,7 @@ public class BoxAdminCommand implements CommandExecutor {
         database.set(itemName, playerName, String.valueOf(amount));
 
         sender.sendMessage(
-                messageConfig.getSuccessfullySet()
+                messageConfig.getSuccessSet()
                         .replaceAll("&([a-f0-9])", "§$1")
                         .replaceAll("%player%", playerName)
                         .replaceAll("%item%", itemName)
@@ -212,7 +212,7 @@ public class BoxAdminCommand implements CommandExecutor {
         database.set(itemName, playerName, value);
 
         sender.sendMessage(
-                messageConfig.getSuccessfullyTake()
+                messageConfig.getSuccessTake()
                         .replaceAll("&([a-f0-9])", "§$1")
                         .replaceAll("%player%", playerName)
                         .replaceAll("%item%", itemName)
@@ -227,7 +227,7 @@ public class BoxAdminCommand implements CommandExecutor {
         database.set(itemName, playerName, value);
 
         sender.sendMessage(
-                messageConfig.getSuccessfullyGiveAdmin()
+                messageConfig.getSuccessGiveAdmin()
                         .replaceAll("&([a-f0-9])", "§$1")
                         .replaceAll("%player%", playerName)
                         .replaceAll("%item%", itemName)
@@ -497,11 +497,10 @@ public class BoxAdminCommand implements CommandExecutor {
             return false;
         }
 
-        val uuid = database.get("uuid", args[3]);
         val name = database.get("player", args[3]);
 
         if (database.getColumnMap().containsKey(args[2])) {
-            sender.sendMessage(messageConfig.getDatabaseNoColumnFound());
+            sender.sendMessage(messageConfig.getDatabaseNoColumn());
 
             return false;
         }
@@ -509,8 +508,7 @@ public class BoxAdminCommand implements CommandExecutor {
         database.set(args[2], args[3], args[4]);
 
         sender.sendMessage(
-                messageConfig.getDatabaseSetValueSuccess()
-                        .replaceAll("%uuid%", uuid)
+                messageConfig.getSuccessSet()
                         .replaceAll("%player%", name)
                         .replaceAll("%column%", args[2])
                         .replaceAll("%value%", args[4])
@@ -548,7 +546,7 @@ public class BoxAdminCommand implements CommandExecutor {
         database.removePlayer(args[2]);
 
         sender.sendMessage(
-                messageConfig.getDatabaseRemovePlayerSuccess()
+                messageConfig.getDatabasePlayerRemoved()
                         .replaceAll("%uuid%", uuid)
                         .replaceAll("%player%", name)
                         .replaceAll("&([a-f0-9])", "§$1")
@@ -587,7 +585,7 @@ public class BoxAdminCommand implements CommandExecutor {
         database.addPlayer(uuid, name, true);
 
         sender.sendMessage(
-                messageConfig.getDatabaseAddPlayerSuccess()
+                messageConfig.getDatabasePlayerAdded()
                         .replaceAll("%uuid%", uuid)
                         .replaceAll("%player%", name)
                         .replaceAll("&([a-f0-9])", "§$1")

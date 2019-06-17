@@ -227,7 +227,7 @@ public class GuiManager implements Listener {
             );
 
             if (storedItemAmount == null) {
-                player.sendMessage(messageConfig.getInvalidValueStored());
+                player.sendMessage(messageConfig.getDatabaseInvalidValue());
 
                 return;
             }

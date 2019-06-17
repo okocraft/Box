@@ -317,7 +317,7 @@ public class BoxCommand implements CommandExecutor {
 
         if (senderAmount == null || otherAmount == null) {
             sender.sendMessage(
-                    messageConfig.getInvalidDatabaseNumberFormat()
+                    messageConfig.getDatabaseInvalidValue()
             );
 
             return false;
@@ -335,7 +335,7 @@ public class BoxCommand implements CommandExecutor {
         database.set(itemName, player, String.valueOf(otherAmount + amount));
 
         sender.sendMessage(
-                messageConfig.getSuccessfullyGive()
+                messageConfig.getSuccessGive()
                         .replaceAll("%player%", player).replaceAll("%item%", itemName)
                         .replaceAll("%amount%", amount.toString())
                         .replaceAll("%newamount%", String.valueOf(senderAmount - amount))
@@ -347,7 +347,7 @@ public class BoxCommand implements CommandExecutor {
         if (offlinePlayer.isOnline()) {
             Optional.ofNullable(offlinePlayer.getPlayer()).ifPresent( _player ->
                     _player.sendMessage(
-                            messageConfig.getSuccessfullyGive()
+                            messageConfig.getSuccessGive()
                                     .replaceAll("%player%", senderName)
                                     .replaceAll("%item%", itemName)
                                     .replaceAll("%amount%", amount.toString())

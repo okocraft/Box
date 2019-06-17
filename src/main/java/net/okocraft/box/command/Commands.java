@@ -31,14 +31,11 @@ public class Commands {
     private Database database;
 
     public Commands(Database database) {
+        val instance = Box.getInstance();
+
         this.database = database;
 
-        val instance = Box.getInstance();
-        val config   = instance.getGeneralConfig();
-        val messageConfig = config.getMessageConfig();
-
-        // CHANGED: JavaPlugin#getCommand() は Nullable っぽいので Optional 化
-        // Register command /box
+        // コマンド登録
         Optional.ofNullable(instance.getCommand("box")).ifPresent(cmd ->
                 cmd.setExecutor(new BoxCommand(this.database))
         );

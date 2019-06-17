@@ -18,94 +18,47 @@
 
 package net.okocraft.box.util;
 
+import java.io.File;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import javax.annotation.Nonnull;
 
 import lombok.Getter;
 
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 import net.okocraft.box.Box;
 
 public class MessageConfig {
     private CustomConfig configFile;
-    private FileConfiguration config;
 
-    // Prefix
+    private FileConfiguration config;
+    private FileConfiguration defaultConfig;
+
+    // Plugin
     @Getter
     private String prefix;
+    @Getter
+    private String configReloaded;
+    @Getter
+    private String versionInfo;
 
-    // notEnough*
+    // Error
     @Getter
     private String notEnoughArguments;
     @Getter
     private String notEnoughStoredItem;
-
-    // no*
     @Getter
     private String noPlayerFound;
     @Getter
     private String noItemFound;
     @Getter
     private String noParamExist;
-
-    // Invalid
     @Getter
     private String invalidArguments;
     @Getter
     private String invalidNumberFormat;
-    @Getter
-    private String invalidDatabaseNumberFormat;
-    @Getter
-    private String invalidValueStored;
-
-    // Set, Give, Take
-    @Getter
-    private String successfullySet;
-    @Getter
-    private String successfullyGive;
-    @Getter
-    private String successfullyGiveAdmin;
-    @Getter
-    private String successfullyTake;
-
-    // AutoStore
-    @Getter
-    private String autoStoreEnabled;
-    @Getter
-    private String autoStoreDisabled;
-    @Getter
-    private String autoStoreSettingChanged;
-    @Getter
-    private String autoStoreSettingChangedAll;
-    @Getter
-    private String autoStorePageIndexChanged;
-    @Getter
-    private String autoStoreListHeader;
-    @Getter
-    private String autoStoreListFormat;
-
-    // Database
-    @Getter
-    private String databaseSetValueSuccess;
-    @Getter
-    private String databaseNoColumnFound;
-    @Getter
-    private String databaseRemovePlayerSuccess;
-    @Getter
-    private String databaseAddPlayerSuccess;
-    @Getter
-    private String databaseConnectionReset;
-
-    // Map
-    @Getter
-    private String mapPlayersRecord;
-    @Getter
-    private String mapColumnsList;
-    @Getter
-    private String mapFormat;
-
-    // error
     @Getter
     private String errorOccurred;
     @Getter
@@ -119,13 +72,57 @@ public class MessageConfig {
     @Getter
     private String errorFetchDisplayName;
 
-    // plugin
+    // Command
     @Getter
-    private String configReloaded;
+    private String successSet;
     @Getter
-    private String versionInfo;
+    private String successTake;
+    @Getter
+    private String successGive;
+    @Getter
+    private String successGiveAdmin;
+
+    // AutoStore
+    @Getter
+    private String autoStoreEnabled;
+    @Getter
+    private String autoStoreDisabled;
+    @Getter
+    private String autoStoreSettingChanged;
+    @Getter
+    private String autoStoreSettingChangedAll;
+    @Getter
+    private String autoStoreSettingChangedPage;
+    @Getter
+    private String autoStoreListHeader;
+    @Getter
+    private String autoStoreListFormat;
+
+    // Database
+    @Getter
+    private String databaseConnectionReset;
+    @Getter
+    private String databaseInvalidValue;
+    @Getter
+    private String databaseNoColumn;
+    @Getter
+    private String databasePlayerAdded;
+    @Getter
+    private String databasePlayerRemoved;
+
+    // Map
+    @Getter
+    private String mapPlayersRecord;
+    @Getter
+    private String mapColumnsList;
+    @Getter
+    private String mapFormat;
 
     public MessageConfig(Box plugin) {
+        defaultConfig = YamlConfiguration.loadConfiguration(
+                new File(plugin.getClass().getResource("messages.yml").getFile())
+        );
+
         configFile = new CustomConfig(plugin, "messages.yml");
         configFile.saveDefaultConfig();
 
@@ -135,6 +132,10 @@ public class MessageConfig {
     }
 
     public void reload() {
+        defaultConfig = YamlConfiguration.loadConfiguration(
+                new File(Box.getInstance().getClass().getResource("messages.yml").getFile())
+        );
+
         configFile.initConfig();
         config = configFile.getConfig();
 
@@ -143,183 +144,81 @@ public class MessageConfig {
 
     private void initConfig() {
         //
-        // Prefix
+        // Plugin
         //
-        prefix = "§8[§6Box§8]§7 ";
+        prefix = getMessage("plugin.prefix");
+        versionInfo = getMessage("plugin.version");
+        configReloaded = getMessage("plugin.reload");
 
         //
-        // notEnough*
+        // Error
         //
-        notEnoughArguments = getMessage("NoEnoughArgument", "§c引数が足りません。");
-        notEnoughStoredItem = getMessage("NoEnoughStore", "§c在庫が足りません");
+        notEnoughArguments = getMessage("error.notEnoughArguments");
+        notEnoughStoredItem = getMessage("error.notEnoughStoredItem");
+        noPlayerFound = getMessage("error.notPlayerFound");
+        noItemFound = getMessage("error.noItemFound");
+        noParamExist = getMessage("error.noParameterExist");
+        invalidArguments = getMessage("error.invalidArguments");
+        invalidNumberFormat = getMessage("error.invalidNumber");
+        errorOccurred = getMessage("error.errorOccurred");
+        errorOccurredOnGUI = getMessage("error.errorOnOpenGui");
+        errorFetchCategoryName = getMessage("error.errorFetchCategoryName");
+        errorFetchItemConfig = getMessage("error.errorFetchItemConfig");
+        errorFetchDisplayName = getMessage("error.errorFetchDisplayName");
+        cannotGiveYourself = getMessage("error.giveMyself");
 
         //
-        // no*
+        // Command
         //
-        noPlayerFound = getMessage("NoPlayerFound", "§cその名前のプレイヤーは登録されていません");
-        noItemFound = getMessage("NoItemFound", "§cその名前のアイテムは登録されていません");
-        noParamExist = getMessage("NoParamExist", "§c指定された引数は存在しません");
-
-        //
-        // Invalid
-        //
-        invalidArguments = getMessage("InvalidArgument","§c引数が不正です");
-        invalidNumberFormat = getMessage("InvalidNumberFormat", "§c数字のフォーマットが不正です");
-
-        invalidDatabaseNumberFormat = getMessage(
-                "DatabaseInvalidNumberFormat",
-                "&c不正な数字が記録されています。管理者に報告して下さい。"
-        );
-        invalidValueStored = getMessage(
-                "InvalidValueIsStored",
-                "&cデータベースに不正な値が格納されています。管理者に報告して下さい。"
-        );
-
-        //
-        // Give, Set, Take
-        //
-        successfullyGive = getMessage(
-                "SuccessfullyGive",
-                "&e%player%のボックスの%item%を%amount%増やしました。(現在%newamount%)"
-        );
-        successfullyGiveAdmin = getMessage(
-                "SuccessfullyGiveNonAdmin",
-                "&e%player%に%item%を%amount%個渡しました。(現在%newamount%)"
-        );
-        successfullySet = getMessage(
-                "SuccessfullySet",
-                "&e%player%のボックスの%item%を%amount%にセットしました。"
-        );
-        successfullyTake = getMessage(
-                "SuccessfullyTake",
-                "&e%player%のボックスの%item%を%amount%減らしました。(現在%newamount%)"
-        );
+        successGive = getMessage("command.successGive");
+        successGiveAdmin = getMessage("command.successGiveAdmin");
+        successSet = getMessage("command.successSet");
+        successTake = getMessage("command.successTake");
 
         //
         // AutoStore
         //
-        autoStoreEnabled = getMessage(
-                "AutoStoreEnabled",
-                "&a自動収納が有効化されました。"
-        );
-        autoStoreDisabled = getMessage(
-                "AutoStoreDisabled",
-                "&c自動収納が無効化されました。"
-        );
-        autoStoreSettingChanged = getMessage(
-                "AutoStoreSettingChanged",
-                "&7%item%のAutoStore設定を&b%isEnabled%&7に設定しました。"
-        );
-        autoStoreSettingChangedAll = getMessage(
-                "AllAutoStoreSettingChanged",
-                "&7全てのアイテムのAutoStore設定を&b%isEnabled%&7に設定しました。"
-        );
-        autoStorePageIndexChanged = getMessage(
-                "AutoStoreValueChangeInPage",
-                "&b%page%&7ページ目の全ての自動収納の値を&b%newValue%&7に変更しました。"
-        );
-        autoStoreListHeader = getMessage(
-                "AutoStoreListHeader",
-                "&7=====&6自動回収設定一覧 %page%ページ目 &a%currentline% &7/ &a%maxline% &7(&b%player%&7)====="
-        );
-        autoStoreListFormat = getMessage(
-                "AutoStoreListFormat",
-                "&a%item%&7: &b%isEnabled%"
-        );
+        autoStoreEnabled = getMessage("autoStore.enabled");
+        autoStoreDisabled = getMessage("autoStore.disabled");
+        autoStoreSettingChanged = getMessage("autoStore.settingChanged");
+        autoStoreSettingChangedAll = getMessage("autoStore.settingChangedAll");
+        autoStoreSettingChangedPage = getMessage("autoStore.settingChangedPage");
+        autoStoreListHeader = getMessage("autoStore.listHeader");
+        autoStoreListFormat = getMessage("autoStore.listFormat");
 
         //
         // Database
         //
-        databaseSetValueSuccess = getMessage(
-                "DatabaseSetValueSuccess",
-                "&b%uuid% &7(%player%)の %column% を %value% にセットしました。"
-        );
-        databaseNoColumnFound = getMessage(
-                "DatabaseNoColumnFound",
-                "&cその名前の列はありません。"
-        );
-        databaseAddPlayerSuccess = getMessage(
-                "DatabaseRemovePlayerSuccess",
-                "&7データベースに&b%uuid% &7- &b%player%&7を追加しました。"
-        );
-        databaseRemovePlayerSuccess = getMessage(
-                "DatabaseAddPlayerSuccess",
-                "&7データベースから&b%uuid% &7- &b%player%&7を削除しました。"
-        );
-        databaseConnectionReset = getMessage(
-                "DatabaseConnectionReset",
-                "§eデータベースへの接続をリセットしました。"
-        );
+        databaseConnectionReset = getMessage("database.connectionReset");
+        databaseInvalidValue = getMessage("database.invalidValue");
+        databaseNoColumn = getMessage("database.noColumn");
+        databasePlayerAdded = getMessage("database.playerAdded");
+        databasePlayerRemoved = getMessage("database.playerRemoved");
 
         //
         // Map
         //
-        mapPlayersRecord = getMessage(
-                "MapPlayersRecord",
-                "記録されているプレイヤー"
-        );
-        mapColumnsList = getMessage(
-                "MapColumnsList",
-                "列リスト"
-        );
-        mapFormat = getMessage(
-                "MapFormat",
-                "%s - %s"
-        );
-
-        //
-        // Other
-        //
-        cannotGiveYourself = getMessage(
-                "CannotGiveYourself",
-                "&c自分自身にアイテムを渡すことはできません。"
-        );
-        errorOccurred = getMessage(
-                "ErrorOccured",
-                "&cエラーが発生して処理を実行できませんでした。"
-        );
-        errorOccurredOnGUI = getMessage(
-                "ErrorOnOpenGui",
-                "&cエラーが発生してGuiを開けませんでした。"
-        );
-        errorFetchCategoryName = getMessage(
-                "ErrorFetchCategoryName",
-                "&cカテゴリ名の取得に失敗しました。"
-        );
-        errorFetchItemConfig = getMessage(
-                "ErrorFetchItemConfig",
-                "&cアイテム設定の取得に失敗しました。"
-        );
-        errorFetchDisplayName = getMessage(
-                "ErrorFetchDisplayName",
-                "&c表示名が定義されていません。"
-        );
-
-        //
-        // Config
-        //
-        versionInfo = getMessage(
-                "VersionInfo",
-                "&7バージョン %version%"
-        );
-        configReloaded = getMessage(
-                "ConfigReloaded",
-                "&7設定を再読込しました。"
-        );
+        mapPlayersRecord = getMessage("map.playersRecord");
+        mapColumnsList = getMessage("map.columnsList");
+        mapFormat = getMessage("map.format");
     }
 
     /**
      * Gets message from config file.
      *
-     * @param required Message key to get
-     * @param def      Alternative message.
+     * @param key YAML key to get
      *
-     * @return Message. If required's key is not exist, return def.
+     * @return Message.
      */
     @Nonnull
-    private String getMessage(@Nonnull String required, @Nonnull String def) {
-        return prefix + Optional.ofNullable(config.getString(required))
+    private String getMessage(@Nonnull String key) {
+        return prefix + Optional.ofNullable(config.getString(key))
                 .map(MessageUtil::convertColorCode)
-                .orElse(MessageUtil.convertColorCode(def));
+                .orElse(
+                        // Attempt to read original config
+                        Optional.ofNullable(defaultConfig.getString(key))
+                            .map(MessageUtil::convertColorCode)
+                            .orElseThrow(() -> new NoSuchElementException("No such YAML key: " + key))
+                );
     }
 }
