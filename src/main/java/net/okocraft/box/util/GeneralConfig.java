@@ -151,7 +151,6 @@ public class GeneralConfig {
         // Footer
         initFooterConfig();
 
-        // CHANGED: Nullable になると IntelliJ がうるさいので Optional 化
         itemTemplateName = Optional.ofNullable(storingItemConfig.getString("ItemTemplate.display_name"))
                 .orElse("&6%item_jp% &8| &6%item_en%")
                 .replaceAll("&([a-f0-9])", "§$1");
@@ -189,7 +188,6 @@ public class GeneralConfig {
         categoryGuiNameMap = new HashMap<>();
 
         categories.forEach((category, memorySection) -> {
-            // CHANGED: Null の処理に Optional を使う
             val displayName = Optional.ofNullable(memorySection.getString("display_name"));
             displayName.ifPresent(name ->
                     categoryGuiNameMap.put(
@@ -286,8 +284,8 @@ public class GeneralConfig {
      */
     private void initFooterConfig() {
         // ページ送り
-        // FIXME: path の Previouspage → PreviousPage (キャメルケース化)
-        // FIXME: path の Nextpage → NextPage (キャメルケース化)
+        // TODO: path の Previouspage → PreviousPage (キャメルケース化)
+        // TODO: path の Nextpage → NextPage (キャメルケース化)
         val prevPage = storingItemConfig.getString("CategoryGui.Previouspage", "&6前のページ &8| &6Prev Page");
         val nextPage = storingItemConfig.getString("CategoryGui.Nextpage", "&6次のページ &8| &6Nex Page");
 

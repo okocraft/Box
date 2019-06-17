@@ -27,7 +27,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 
-public class CustomConfig {
+class CustomConfig {
     private FileConfiguration config;
 
     private final File configFile;

@@ -88,7 +88,7 @@ public class Box extends JavaPlugin {
 
         // config
         generalConfig = new GeneralConfig(database);
-        messageConfig = new MessageConfig(this);
+        messageConfig = new MessageConfig();
 
         // GUI
         guiManager    = new GuiManager(database, this);
@@ -101,7 +101,6 @@ public class Box extends JavaPlugin {
             return;
         }
 
-        // TODO: いる?
         // Implementation info
         log.info("Installed in : " + getDataFolder().getPath());
         log.info("Database file: " + database.getDBUrl());
@@ -111,7 +110,6 @@ public class Box extends JavaPlugin {
         new Commands(database);
         new BoxTabCompleter(database);
 
-        // CHANGED: バージョン表示追加
         log.info(String.format("Box v%s has been enabled!", version));
     }
 
@@ -122,7 +120,6 @@ public class Box extends JavaPlugin {
         unregisterEvents();
         cancelTasks();
 
-        // CHANGED: バージョン表示追加
         log.info(String.format("Box v%s has been disabled!", version));
     }
 

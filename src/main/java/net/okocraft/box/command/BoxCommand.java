@@ -114,8 +114,8 @@ public class BoxCommand implements CommandExecutor {
         // NOTE: Don't use Lombok's val.
         //       Otherwise build will be failure due to the compiler interpret `index` as primitive int, not Integer.
         //
-        // FIXME: Unstable method: Ints#tryParse
         Integer index = args.length >= 2
+                // FIXME: Unstable method: Ints#tryParse
                 ? Optional.ofNullable(Ints.tryParse(args[1])).orElse(1)
                 : 1;
 
@@ -138,16 +138,16 @@ public class BoxCommand implements CommandExecutor {
                 .map(name -> "autostore_" + name)
                 .collect(Collectors.toList());
 
-        database.getMultiValue(columnList, player).forEach((columnName, value) -> {
-            sender.sendMessage(
-                    messageConfig.getAutoStoreListFormat()
-                            .replaceAll("%item%", columnName.substring(10))
-                            .replaceAll("%isEnabled%", value)
-                            .replaceAll("%currentline%", String.valueOf(currentLine))
-                            .replaceAll("%maxline%", String.valueOf(maxLine))
-                            .replaceAll("&([a-f0-9])", "§$1")
-            );
-        });
+        database.getMultiValue(columnList, player).forEach((columnName, value) ->
+                sender.sendMessage(
+                        messageConfig.getAutoStoreListFormat()
+                                .replaceAll("%item%", columnName.substring(10))
+                                .replaceAll("%isEnabled%", value)
+                                .replaceAll("%currentline%", String.valueOf(currentLine))
+                                .replaceAll("%maxline%", String.valueOf(maxLine))
+                                .replaceAll("&([a-f0-9])", "§$1")
+                )
+        );
 
         return true;
     }
@@ -312,6 +312,7 @@ public class BoxCommand implements CommandExecutor {
 
         // FIXME: Unstable method: Longs#tryParse
         val senderAmount = Longs.tryParse(database.get(itemName, senderName));
+
         // FIXME: Unstable method: Longs#tryParse
         val otherAmount  = Longs.tryParse(database.get(itemName, player));
 

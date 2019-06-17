@@ -110,9 +110,8 @@ public class BoxAdminCommand implements CommandExecutor {
                 return dropColumn(sender, args);
             }
 
-            // FIXME: config のキー getcolumnmap と getplayersmap の複数形
             // getColumnsMap
-            if (databaseSubCommand.equalsIgnoreCase("getcolumnmap")) {
+            if (databaseSubCommand.equalsIgnoreCase("getcolumnsmap")) {
                 return getColumnsMap(sender);
             }
 
@@ -570,7 +569,7 @@ public class BoxAdminCommand implements CommandExecutor {
             return false;
         }
 
-        // TODO: 非推奨のメソッド: Bukkit#getOfflinePlayer()
+        // NOTE: 非推奨のメソッド: Bukkit#getOfflinePlayer()
         val player = Bukkit.getOfflinePlayer(args[2]);
 
         if (!player.hasPlayedBefore()) {

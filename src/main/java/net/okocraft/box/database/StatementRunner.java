@@ -34,8 +34,8 @@ public class StatementRunner implements Runnable {
 
     @Override
     public void run() {
-        try (Statement stmt = statement) {
-            stmt.executeBatch();
+        try (statement) {
+            statement.executeBatch();
         } catch (SQLException exception) {
             exception.printStackTrace();
         }

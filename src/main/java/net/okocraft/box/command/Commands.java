@@ -45,24 +45,15 @@ public class Commands {
         );
     }
 
+    /**
+     * 文字列を検証してプレイヤー名か UUID か判定する。
+     *
+     * @param entry 検証する文字列
+     *
+     * @return UUID なら "uuid", さもなくば "player"
+     */
+    // TODO: 別クラスにする
     public static String checkEntryType(String entry) {
         return entry.matches("([a-z]|\\d){8}(-([a-z]|\\d){4}){3}-([a-z]|\\d){12}") ? "uuid" : "player";
-    }
-
-    /**
-     * 権限がないときにメッセージを送りつつfalseを返す。
-     *
-     * @param sender
-     * @param permission
-     * @return 権限がないときにfalse あればtrue
-     */
-    public static boolean hasPermission(CommandSender sender, String permission) {
-        if (!sender.hasPermission(permission)) {
-            sender.sendMessage(":PERM_INSUFFICIENT_" + permission);
-
-            return false;
-        }
-
-        return true;
     }
 }

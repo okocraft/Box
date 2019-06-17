@@ -25,6 +25,7 @@ import javax.annotation.Nonnull;
 
 import lombok.Getter;
 
+import lombok.val;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -118,7 +119,9 @@ public class MessageConfig {
     @Getter
     private String mapFormat;
 
-    public MessageConfig(Box plugin) {
+    public MessageConfig() {
+        val plugin = Box.getInstance();
+
         defaultConfig = YamlConfiguration.loadConfiguration(
                 new File(plugin.getClass().getResource("messages.yml").getFile())
         );
