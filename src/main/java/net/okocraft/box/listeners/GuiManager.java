@@ -32,6 +32,7 @@ import org.bukkit.configuration.MemorySection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
@@ -80,7 +81,7 @@ public class GuiManager implements Listener {
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
         val player = (Player) event.getWhoClicked();
-        val actionName = event.getAction().name();
+        val action = event.getAction();
         val inventory = event.getClickedInventory();
 
         if (inventory == null) {
@@ -90,7 +91,7 @@ public class GuiManager implements Listener {
         int clickedSlot = event.getSlot();
         val clickedItem = inventory.getItem(clickedSlot);
 
-        if (clickedItem == null) {
+        if (clickedItem == null || clickedItem.getType() == Material.AIR) {
             return;
         }
 
@@ -99,7 +100,7 @@ public class GuiManager implements Listener {
         if (inventoryTitle.equals(categorySelectionGuiName)) {
             event.setCancelled(true);
 
-            if (actionName.equals("NOTHING") || inventory.getType() == InventoryType.PLAYER) {
+            if (action == InventoryAction.NOTHING || inventory.getType() == InventoryType.PLAYER) {
                 return;
             }
 
@@ -108,7 +109,7 @@ public class GuiManager implements Listener {
             }
 
             val categoryName = clickedItem.getItemMeta()
-                    // FIXME: NPE を解決する: ItemStack#getItemMeta() は null の可能性がある
+                    // NOTE: NPE はItemStackがAIRの場合のみしか起こらない。
                     .getCustomTagContainer()
                     .getCustomTag(categoryNameKey, ItemTagType.STRING);
 
@@ -120,13 +121,13 @@ public class GuiManager implements Listener {
         if (categoryGuiNameMap.containsValue(inventoryTitle)) {
             event.setCancelled(true);
 
-            if (actionName.equals("NOTHING") || inventory.getType() == InventoryType.PLAYER) {
+            if (action == InventoryAction.NOTHING || inventory.getType() == InventoryType.PLAYER) {
                 return;
             }
 
             val categoryName = clickedItem
                     .getItemMeta()
-                    // FIXME: NPE を解決する: ItemStack#getItemMeta() は null の可能性がある
+                    // NOTE: NPE はItemStackがAIRの場合のみしか起こらない。
                     .getCustomTagContainer()
                     .getCustomTag(categoryNameKey, ItemTagType.STRING);
 
@@ -311,17 +312,13 @@ public class GuiManager implements Listener {
     }
 
     private ItemStack createCategorySelectionItem(String categoryName, MemorySection section) {
-        // FIXME: メッセージ取得時の @Nullable を潰す
-        // FIXME: メッセージがハードコーディングされている
         val categoryIconMaterial = Material.valueOf(Optional.ofNullable(
                 section.getString("icon")).orElse("BARRIER").toUpperCase()
         );
         val categorySelectionItem     = new ItemStack(categoryIconMaterial);
         val categorySelectionItemMeta = Optional.ofNullable(categorySelectionItem.getItemMeta());
-        // FIXME: メッセージ取得時の @Nullable を潰す
-        // FIXME: メッセージがハードコーディングされている
         val categoryItemName          = Optional.ofNullable(section.getString("display_name"))
-                .orElse("No display_name defined.")
+                .orElseThrow(() -> new NoSuchElementException("No display_name defined."))
                 .replaceAll("&([a-f0-9])", "§$1");
 
         categorySelectionItemMeta.ifPresent(meta -> {
@@ -456,8 +453,12 @@ public class GuiManager implements Listener {
 
     private void changeQuantity(Inventory inv, int quantity) {
         val player = (Player) inv.getViewers().get(0);
-        val categoryName = inv.getItem(0)
-                // FIXME: NPE を解決する: ItemStack#getItemMeta() は null の可能性がある
+        val firstItem = inv.getItem(0);
+        if (firstItem == null || firstItem.getType() == Material.AIR) {
+            return;
+        }
+        val categoryName = firstItem
+                // NOTE: NPE はItemStackがAIRの場合のみしか起こらない。
                 .getItemMeta()
                 .getCustomTagContainer()
                 .getCustomTag(categoryNameKey, ItemTagType.STRING);
