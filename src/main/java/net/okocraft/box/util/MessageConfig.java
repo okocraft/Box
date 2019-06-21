@@ -18,6 +18,8 @@
 
 package net.okocraft.box.util;
 
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import javax.annotation.Nonnull;
@@ -26,6 +28,7 @@ import lombok.Getter;
 
 import lombok.val;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 import net.okocraft.box.Box;
 
@@ -44,7 +47,6 @@ public class MessageConfig {
     private FileConfiguration config;
 
     // Plugin
-    @Getter
     private String prefix;
     @Getter
     private String configReloaded;
@@ -229,10 +231,29 @@ public class MessageConfig {
      */
     @Nonnull
     private String getMessage(@Nonnull String key) {
-        return prefix + Optional.ofNullable(config.getString(key))
-                .map(MessageUtil::convertColorCode)
-                // FIXME この実装ではアップデートごとにNoSuchElementExceptionを吐いてしまう可能性がある。
-                .orElseThrow(() -> new NoSuchElementException("No such YAML key: " + key));
+        return prefix + MessageUtil.convertColorCode(
+                Optional.ofNullable(config.getString(key)).orElse(getDefaultMessage(key))
+        );
+    }
+
+    /**
+     * jarの中にあるmessages.ymlからメッセージを取得する。
+     * 
+     * @author LazyGon
+     * @since v1.1.0
+     * 
+     * @param key
+     * 
+     * @return メッセージ
+     */
+    private String getDefaultMessage(String key) {
+        InputStream messageConfigStream = Optional.ofNullable(
+            Box.getInstance().getResource("messages.yml")
+        ).orElseThrow(() -> new NoSuchElementException("No message file."));
+
+        YamlConfiguration jarConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(messageConfigStream));
+
+        return Optional.ofNullable(jarConfig.getString(key)).orElseThrow(() -> new NoSuchElementException("No such YAML key: " + key));
     }
 
     /**
@@ -245,8 +266,9 @@ public class MessageConfig {
      */
     @Nonnull
     private String getPrefix() {
-        return Optional.ofNullable(config.getString("plugin.prefix"))
-                .map(MessageUtil::convertColorCode)
-                .orElseThrow(() -> new NoSuchElementException("No prefix specified"));
+        String key = "plugin.prefix";
+        return MessageUtil.convertColorCode(
+                Optional.ofNullable(config.getString(key)).orElse(getDefaultMessage(key))
+        );
     }
 }
