@@ -49,13 +49,18 @@ public class PlayerUtil {
     }
 
     /**
-     * データベースからUUIDを取得してそれを元にOfflinePlayerを取得する。
+     * データベースからUUIDを取得してそれを元にOfflinePlayerを取得する。プレイヤーが登録されていないときはコンソールに警告を出力する。
      * 
      * @param name 取得するプレイヤーの名前
      * 
      * @return OfflinePlayerインスタンス
      */
-    public static OfflinePlayer getOfflinePlayer (String name) {
-        return Bukkit.getOfflinePlayer(UUID.fromString(database.get("uuid", name)));
+    public static OfflinePlayer getOfflinePlayer(String name) {
+        String uuidString = database.get("uuid", name);
+        if (uuidString.equals(":NOTHING")) {
+            name = "";
+            instance.getLog().warning(instance.getMessageConfig().getNoPlayerFound().replaceAll("%player%", name));
+        }
+        return Bukkit.getOfflinePlayer(UUID.fromString(uuidString));
     }
 }
