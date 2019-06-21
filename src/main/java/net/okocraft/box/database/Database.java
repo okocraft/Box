@@ -530,7 +530,7 @@ public class Database {
 
                 return new LinkedHashMap<String, String>();
             }
-        }).get();
+        }).orElse(new LinkedHashMap<String, String>());
     }
 
     /**

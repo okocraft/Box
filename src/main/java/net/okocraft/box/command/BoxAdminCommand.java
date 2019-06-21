@@ -27,7 +27,6 @@ import lombok.val;
 import com.google.common.primitives.Ints;
 import com.google.common.primitives.Longs;
 
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -36,6 +35,7 @@ import net.okocraft.box.Box;
 import net.okocraft.box.database.Database;
 import net.okocraft.box.util.GeneralConfig;
 import net.okocraft.box.util.MessageConfig;
+import net.okocraft.box.util.PlayerUtil;
 
 public class BoxAdminCommand implements CommandExecutor {
     private Database database;
@@ -301,7 +301,7 @@ public class BoxAdminCommand implements CommandExecutor {
 
         if (itemName.equalsIgnoreCase("all") &&
             args.length == 4 &&
-            Arrays.asList("true", "false").contains(args[3].toLowerCase())) {
+            List.of("true", "false").contains(args[3].toLowerCase())) {
             val newValues = allItems.stream()
                     .collect(Collectors.toMap(
                             itemNameTemp -> "autostore_" + itemNameTemp,
@@ -340,7 +340,7 @@ public class BoxAdminCommand implements CommandExecutor {
 
         String nextValue;
 
-        if (args.length == 3 || !Arrays.asList("true", "false").contains(args[3].toLowerCase())) {
+        if (args.length == 3 || !List.of("true", "false").contains(args[3].toLowerCase())) {
             nextValue = database.get("autostore_" + itemName, player)
                     .equalsIgnoreCase("true") ? "false" : "true";
         } else {
@@ -569,8 +569,7 @@ public class BoxAdminCommand implements CommandExecutor {
             return false;
         }
 
-        // NOTE: 非推奨のメソッド: Bukkit#getOfflinePlayer()
-        val player = Bukkit.getOfflinePlayer(args[2]);
+        val player = PlayerUtil.getOfflinePlayer(args[2]);
 
         if (!player.hasPlayedBefore()) {
             sender.sendMessage(messageConfig.getNoPlayerFound());

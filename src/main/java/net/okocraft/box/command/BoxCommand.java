@@ -110,26 +110,24 @@ public class BoxCommand implements CommandExecutor {
 
         val player = ((Player) sender).getUniqueId().toString();
 
-        //
-        // NOTE: Don't use Lombok's val.
-        //       Otherwise build will be failure due to the compiler interpret `index` as primitive int, not Integer.
-        //
-        Integer index = args.length >= 2
+        val index = args.length >= 2
                 // FIXME: Unstable method: Ints#tryParse
                 ? Optional.ofNullable(Ints.tryParse(args[1])).orElse(1)
                 : 1;
 
         val allItems = config.getAllItems();
+        allItems.forEach(item -> {
+            System.out.println(item);
+        });
         int maxLine = allItems.size();
         int currentLine = (maxLine < index * 9) ? maxLine : index * 9;
 
         sender.sendMessage(
                 messageConfig.getAutoStoreListHeader()
                         .replaceAll("%player%", sender.getName().toLowerCase())
-                        .replaceAll("%page%", index.toString())
+                        .replaceAll("%page%", String.valueOf(index))
                         .replaceAll("%currentline%", String.valueOf(currentLine))
                         .replaceAll("%maxline%", String.valueOf(maxLine))
-                        .replaceAll("&([a-f0-9])", "§$1")
         );
 
         val columnList = config.getAllItems().stream()
@@ -145,7 +143,6 @@ public class BoxCommand implements CommandExecutor {
                                 .replaceAll("%isEnabled%", value)
                                 .replaceAll("%currentline%", String.valueOf(currentLine))
                                 .replaceAll("%maxline%", String.valueOf(maxLine))
-                                .replaceAll("&([a-f0-9])", "§$1")
                 )
         );
 

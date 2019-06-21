@@ -151,7 +151,7 @@ public class GuiManager implements Listener {
                 return;
             }
 
-            if (Arrays.asList(46, 47, 48, 50, 51, 52).contains(clickedSlot)) {
+            if (List.of(46, 47, 48, 50, 51, 52).contains(clickedSlot)) {
                 val firstItem = Optional.ofNullable(inventory.getItem(0));
 
                 int quantity = firstItem.map(
