@@ -36,7 +36,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 
 import net.okocraft.box.Box;
-import net.okocraft.box.command.Commands;
+import net.okocraft.box.util.PlayerUtil;
 
 // NOTE: メッセージがハードコーディングされているが、システム側メッセージなのでとりあえず無視する。
 
@@ -240,7 +240,7 @@ public class Database {
             return;
         }
 
-        if (Commands.isUuidOrPlayer(uuid).equals("player")) {
+        if (PlayerUtil.isUuidOrPlayer(uuid).equals("player")) {
             if (showWarning) {
                 log.warning(":INVALID_UUID");
             }
@@ -284,7 +284,7 @@ public class Database {
             return;
         }
 
-        String entryType = Commands.isUuidOrPlayer(entry);
+        String entryType = PlayerUtil.isUuidOrPlayer(entry);
 
         prepare("DELETE FROM " + table + " WHERE " + entryType + " = ?").ifPresent(statement -> {
             try {
@@ -334,7 +334,7 @@ public class Database {
             return;
         }
 
-        String entryType = Commands.isUuidOrPlayer(entry);
+        String entryType = PlayerUtil.isUuidOrPlayer(entry);
 
         prepare("UPDATE " + table + " SET " + column + " = ? WHERE " + entryType + " = ?").ifPresent(statement -> {
             try {
@@ -371,7 +371,7 @@ public class Database {
             return ":NO_RECORD_FOR_" + entry + "_EXIST";
         }
 
-        val entryType = Commands.isUuidOrPlayer(entry);
+        val entryType = PlayerUtil.isUuidOrPlayer(entry);
         val statement = prepare("SELECT " + column + " FROM " + table + " WHERE " + entryType + " = ?");
 
         return statement.map(resource -> {
@@ -494,7 +494,7 @@ public class Database {
      * @return 列とフィールドのペア
      */
     public Map<String, String> getMultiValue(List<String> columns, @NonNull String entry) {
-        val entryType = Commands.isUuidOrPlayer(entry);
+        val entryType = PlayerUtil.isUuidOrPlayer(entry);
 
         val sb = new StringBuilder();
 
@@ -543,7 +543,7 @@ public class Database {
      * @param entry エントリ
      */
     public void setMultiValue(Map<String, String> pair, @NonNull String entry) {
-        val entryType = Commands.isUuidOrPlayer(entry);
+        val entryType = PlayerUtil.isUuidOrPlayer(entry);
 
         val sb = new StringBuilder();
 

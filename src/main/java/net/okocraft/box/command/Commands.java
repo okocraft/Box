@@ -44,16 +44,4 @@ public class Commands {
                 cmd.setExecutor(new BoxAdminCommand(this.database))
         );
     }
-
-    /**
-     * 文字列を検証して UUID か Minecraft ID かを判定する。
-     *
-     * @param entry 検証する文字列
-     *
-     * @return UUID なら "uuid", Minecraft ID であれば "player" を返す。
-     */
-    // TODO: 別クラスにする
-    public static String isUuidOrPlayer(String entry) {
-        return entry.matches("([a-z]|\\d){8}(-([a-z]|\\d){4}){3}-([a-z]|\\d){12}") ? "uuid" : "player";
-    }
 }

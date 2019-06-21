@@ -162,7 +162,7 @@ public class GeneralConfig {
                 .map(line -> line.replaceAll("&([a-f0-9])", "§$1"))
                 .collect(Collectors.toList());
 
-        // FIXME: new LinkedHashMap<T>? Is it needed to sort?
+        // コンフィグに書かれた順番で表示するためにLinkedHashMapを使っている。
         categories = new LinkedHashMap<>();
 
         // TODO: MemorySection ってなんやねん......
