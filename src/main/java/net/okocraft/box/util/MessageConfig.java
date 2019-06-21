@@ -101,8 +101,6 @@ public class MessageConfig {
     @Getter
     private String autoStoreSettingChangedAll;
     @Getter
-    private String autoStoreSettingChangedPage;
-    @Getter
     private String autoStoreListHeader;
     @Getter
     private String autoStoreListFormat;
@@ -198,7 +196,6 @@ public class MessageConfig {
         autoStoreDisabled = getMessage("autoStore.disabled");
         autoStoreSettingChanged = getMessage("autoStore.settingChanged");
         autoStoreSettingChangedAll = getMessage("autoStore.settingChangedAll");
-        autoStoreSettingChangedPage = getMessage("autoStore.settingChangedPage");
         autoStoreListHeader = getMessage("autoStore.listHeader");
         autoStoreListFormat = getMessage("autoStore.listFormat");
 
