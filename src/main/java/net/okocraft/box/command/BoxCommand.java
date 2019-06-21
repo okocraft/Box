@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
 import lombok.NonNull;
 import lombok.val;
 
-import com.google.common.primitives.Ints;
 import com.google.common.primitives.Longs;
 
 import org.bukkit.Bukkit;
@@ -37,6 +36,7 @@ import net.okocraft.box.Box;
 import net.okocraft.box.database.Database;
 import net.okocraft.box.util.GeneralConfig;
 import net.okocraft.box.util.MessageConfig;
+import net.okocraft.box.util.OtherUtil;
 
 public class BoxCommand implements CommandExecutor {
     private Box instance;
@@ -110,10 +110,7 @@ public class BoxCommand implements CommandExecutor {
 
         val player = ((Player) sender).getUniqueId().toString();
 
-        val index = args.length >= 2
-                // FIXME: Unstable method: Ints#tryParse
-                ? Optional.ofNullable(Ints.tryParse(args[1])).orElse(1)
-                : 1;
+        val index = args.length >= 2 ? OtherUtil.parseIntOrDefault(args[1], 1) : 1;
 
         val allItems = config.getAllItems();
         allItems.forEach(item -> {
@@ -126,8 +123,8 @@ public class BoxCommand implements CommandExecutor {
                 messageConfig.getAutoStoreListHeader()
                         .replaceAll("%player%", sender.getName().toLowerCase())
                         .replaceAll("%page%", String.valueOf(index))
-                        .replaceAll("%currentline%", String.valueOf(currentLine))
-                        .replaceAll("%maxline%", String.valueOf(maxLine))
+                        .replaceAll("%currentLine%", String.valueOf(currentLine))
+                        .replaceAll("%maxLine%", String.valueOf(maxLine))
         );
 
         val columnList = config.getAllItems().stream()
@@ -141,8 +138,8 @@ public class BoxCommand implements CommandExecutor {
                         messageConfig.getAutoStoreListFormat()
                                 .replaceAll("%item%", columnName.substring(10))
                                 .replaceAll("%isEnabled%", value)
-                                .replaceAll("%currentline%", String.valueOf(currentLine))
-                                .replaceAll("%maxline%", String.valueOf(maxLine))
+                                .replaceAll("%currentLine%", String.valueOf(currentLine))
+                                .replaceAll("%maxLine%", String.valueOf(maxLine))
                 )
         );
 
@@ -301,18 +298,12 @@ public class BoxCommand implements CommandExecutor {
             return false;
         }
 
-        Long amount = args.length == 3
-                // FIXME: Unstable method: Longs#tryParse
-                ? Optional.ofNullable(Longs.tryParse(args[3])).orElse(1L)
-                : 1L;
+        Long amount = args.length == 3 ? OtherUtil.parseLongOrDefault(args[3], 1L) : 1L;
 
-        // FIXME: Unstable method: Longs#tryParse
-        val senderAmount = Longs.tryParse(database.get(itemName, senderName));
+        val senderAmount = OtherUtil.parseLongOrDefault(database.get(itemName, senderName), Long.MIN_VALUE);
+        val otherAmount  = OtherUtil.parseLongOrDefault(database.get(itemName, player), Long.MIN_VALUE);
 
-        // FIXME: Unstable method: Longs#tryParse
-        val otherAmount  = Longs.tryParse(database.get(itemName, player));
-
-        if (senderAmount == null || otherAmount == null) {
+        if (senderAmount == Long.MIN_VALUE || otherAmount == Long.MIN_VALUE) {
             sender.sendMessage(
                     messageConfig.getDatabaseInvalidValue()
             );

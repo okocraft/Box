@@ -64,7 +64,6 @@ public class BoxTabCompleter implements TabCompleter {
     }
 
     public List<String> onTabCompleteBoxCommand(CommandSender sender, List<String> resultList, String[] args) {
-        // TODO: new ArrayList<T>
         val subCommands = new ArrayList<String>();
 
         if (sender.hasPermission("box.version")) {
@@ -103,7 +102,6 @@ public class BoxTabCompleter implements TabCompleter {
         int maxPage = allItemsAutostore.size() / 9;
         maxPage = (allItemsAutostore.size() % 9 == 0) ? maxPage : maxPage + 1;
 
-        // TODO: new ArrayList<T>
         val players = new ArrayList<>(database.getPlayersMap().values());
 
         if (args.length == 2) {
@@ -260,7 +258,6 @@ public class BoxTabCompleter implements TabCompleter {
             return resultList;
         }
 
-        // TODO: new ArrayList<T>
         val columnList = new ArrayList<>(database.getColumnMap().keySet());
 
         if (args.length == 3) {

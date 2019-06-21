@@ -24,9 +24,6 @@ import java.util.stream.Collectors;
 import lombok.NonNull;
 import lombok.val;
 
-import com.google.common.primitives.Ints;
-import com.google.common.primitives.Longs;
-
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -35,6 +32,7 @@ import net.okocraft.box.Box;
 import net.okocraft.box.database.Database;
 import net.okocraft.box.util.GeneralConfig;
 import net.okocraft.box.util.MessageConfig;
+import net.okocraft.box.util.OtherUtil;
 import net.okocraft.box.util.PlayerUtil;
 
 public class BoxAdminCommand implements CommandExecutor {
@@ -146,9 +144,8 @@ public class BoxAdminCommand implements CommandExecutor {
                 return false;
             }
 
-            // FIXME: Unstable method: Longs#tryParse
-            Long amount = Longs.tryParse(args[3]);
-            if (amount == null) {
+            Long amount = OtherUtil.parseLongOrDefault(args[3], Long.MIN_VALUE);
+            if (amount == Long.MIN_VALUE) {
                 sender.sendMessage(messageConfig.getInvalidNumberFormat());
 
                 return false;
@@ -158,10 +155,9 @@ public class BoxAdminCommand implements CommandExecutor {
                 return set(sender, args[3], playerName, itemName);
             }
 
-            // FIXME: Unstable method: Longs#tryParse
-            Long currentAmount = Longs.tryParse(database.get(itemName, playerName));
-            if (currentAmount == null) {
-                sender.sendMessage(messageConfig.getDatabaseInvalidValue());
+            Long currentAmount = OtherUtil.parseLongOrDefault(database.get(itemName, playerName), Long.MIN_VALUE);
+            if (currentAmount == Long.MIN_VALUE) {
+                sender.sendMessage(messageConfig.getInvalidNumberFormat());
 
                 return false;
             }
@@ -185,10 +181,9 @@ public class BoxAdminCommand implements CommandExecutor {
     }
 
     private boolean set(CommandSender sender, String arg, String playerName, String itemName) {
-        // FIXME: Unstable method: Longs#tryParse
-        Long amount = Longs.tryParse(arg);
+        Long amount = OtherUtil.parseLongOrDefault(arg, Long.MIN_VALUE);
 
-        if (amount == null) {
+        if (amount == Long.MIN_VALUE) {
             sender.sendMessage(messageConfig.getInvalidNumberFormat());
 
             return false;
@@ -261,18 +256,17 @@ public class BoxAdminCommand implements CommandExecutor {
         if (args.length == 2 ||
             !args[2].equalsIgnoreCase("all") &&
             !allItems.contains(args[2].toUpperCase())) {
-            // FIXME: Unstable method: Ints#tryParse
-            val page = Optional.ofNullable(Ints.tryParse(args[2])).orElse(1);
+            val page = OtherUtil.parseIntOrDefault(args[2], 1);
 
-            int maxLine = allItems.size();
-            int currentLine = (maxLine < page * 9) ? maxLine : page * 9;
+            val maxLine = allItems.size();
+            val currentLine = (maxLine < page * 9) ? maxLine : page * 9;
 
             sender.sendMessage(
                     messageConfig.getAutoStoreListHeader()
                             .replaceAll("%player%", player)
-                            .replaceAll("%currentline%", String.valueOf(currentLine))
-                            .replaceAll("%maxline%", String.valueOf(maxLine))
-                            .replaceAll("%page%", page.toString())
+                            .replaceAll("%currentLine%", String.valueOf(currentLine))
+                            .replaceAll("%maxLine%", String.valueOf(maxLine))
+                            .replaceAll("%page%", String.valueOf(page))
             );
 
             config.getAllItems().stream()
@@ -284,8 +278,8 @@ public class BoxAdminCommand implements CommandExecutor {
                                     messageConfig.getAutoStoreListFormat()
                                             .replaceAll("%item%", itemColumnName.substring(10))
                                             .replaceAll("%isEnabled%", database.get(itemColumnName, player))
-                                            .replaceAll("%currentline%", String.valueOf(currentLine))
-                                            .replaceAll("%maxline%", String.valueOf(maxLine))
+                                            .replaceAll("%currentLine%", String.valueOf(currentLine))
+                                            .replaceAll("%maxLine%", String.valueOf(maxLine))
                             )
                     );
 

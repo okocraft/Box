@@ -165,17 +165,15 @@ public class GeneralConfig {
         // コンフィグに書かれた順番で表示するためにLinkedHashMapを使っている。
         categories = new LinkedHashMap<>();
 
-        // TODO: MemorySection ってなんやねん......
+        // NOTE: MemorySection -> https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/configuration/MemorySection.html
         val categoryConfig = getMemorySection(storingItemConfig.get("categories"));
-        if (categoryConfig != null) {
-            categoryConfig.getValues(false).forEach((sectionName, sectionObject) -> {
-                val section = getMemorySection(sectionObject);
-
-                if (section != null) {
+        categoryConfig.ifPresent(categoryConfigTemp -> {
+            categoryConfigTemp.getValues(false).forEach((sectionName, sectionObject) -> {
+                getMemorySection(sectionObject).ifPresent(section -> {
                     categories.put(sectionName, section);
-                }
+                });
             });
-        }
+        });
 
         // CHANGED: Nullable になると IntelliJ がうるさいので Optional 化
         categorySelectionGuiName = Optional.ofNullable(storingItemConfig.getString("CategorySelectionGui.GuiName"))
@@ -186,7 +184,6 @@ public class GeneralConfig {
                 .orElse("アイテムボックス - %category%")
                 .replaceAll("&([a-f0-9])", "§$1");;
 
-        // FIXME: new ArrayList<T>, new HashMap<T>? ...
         allItems           = new ArrayList<>();
         categoryGuiNameMap = new HashMap<>();
 
@@ -203,7 +200,7 @@ public class GeneralConfig {
             );
 
             // CHANGED: Null の処理に Optional を使う
-            val categoryItems = Optional.ofNullable(getMemorySection(memorySection.get("item")));
+            val categoryItems = getMemorySection(memorySection.get("item"));
             categoryItems.ifPresent(items ->
                     allItems.addAll(items.getKeys(false).stream()
                     .filter(itemName -> Material.getMaterial(itemName) != null)
@@ -298,10 +295,8 @@ public class GeneralConfig {
      */
     private void initFooterConfig() {
         // ページ送り
-        // TODO: path の Previouspage → PreviousPage (キャメルケース化)
-        // TODO: path の Nextpage → NextPage (キャメルケース化)
-        val prevPage = storingItemConfig.getString("CategoryGui.Previouspage", "&6前のページ &8| &6Prev Page");
-        val nextPage = storingItemConfig.getString("CategoryGui.Nextpage", "&6次のページ &8| &6Nex Page");
+        val prevPage = storingItemConfig.getString("CategoryGui.PreviousPage", "&6前のページ &8| &6Prev Page");
+        val nextPage = storingItemConfig.getString("CategoryGui.NextPage", "&6次のページ &8| &6Nex Page");
 
         // 取扱単位（減算）
         val decrease1  = storingItemConfig.getString("CategoryGui.Decrease1", "&7単位: &c-1");
@@ -381,16 +376,13 @@ public class GeneralConfig {
         }
     }
 
-    @Nullable
-    public static MemorySection getMemorySection(Object object) {
-        if (object == null) {
-            return null;
-        }
+    @Nonnull
+    public static Optional<MemorySection> getMemorySection(@Nonnull Object object) {
 
         if (object.getClass().getSimpleName().equals("MemorySection")) {
-            return (MemorySection) object;
+            return Optional.ofNullable((MemorySection) object);
         }
 
-        return null;
+        return Optional.empty();
     }
 }
