@@ -198,7 +198,6 @@ public class BoxAdminCommand implements CommandExecutor {
 
         sender.sendMessage(
                 messageConfig.getSuccessSet()
-                        .replaceAll("&([a-f0-9])", "§$1")
                         .replaceAll("%player%", playerName)
                         .replaceAll("%item%", itemName)
                         .replaceAll("%amount%", arg)
@@ -212,7 +211,6 @@ public class BoxAdminCommand implements CommandExecutor {
 
         sender.sendMessage(
                 messageConfig.getSuccessTake()
-                        .replaceAll("&([a-f0-9])", "§$1")
                         .replaceAll("%player%", playerName)
                         .replaceAll("%item%", itemName)
                         .replaceAll("%amount%", arg)
@@ -227,7 +225,6 @@ public class BoxAdminCommand implements CommandExecutor {
 
         sender.sendMessage(
                 messageConfig.getSuccessGiveAdmin()
-                        .replaceAll("&([a-f0-9])", "§$1")
                         .replaceAll("%player%", playerName)
                         .replaceAll("%item%", itemName)
                         .replaceAll("%amount%", arg)
@@ -276,7 +273,6 @@ public class BoxAdminCommand implements CommandExecutor {
                             .replaceAll("%currentline%", String.valueOf(currentLine))
                             .replaceAll("%maxline%", String.valueOf(maxLine))
                             .replaceAll("%page%", page.toString())
-                            .replaceAll("&([a-f0-9])", "§$1")
             );
 
             config.getAllItems().stream()
@@ -290,7 +286,6 @@ public class BoxAdminCommand implements CommandExecutor {
                                             .replaceAll("%isEnabled%", database.get(itemColumnName, player))
                                             .replaceAll("%currentline%", String.valueOf(currentLine))
                                             .replaceAll("%maxline%", String.valueOf(maxLine))
-                                            .replaceAll("&([a-f0-9])", "§$1")
                             )
                     );
 
@@ -314,7 +309,6 @@ public class BoxAdminCommand implements CommandExecutor {
             sender.sendMessage(
                     messageConfig.getAutoStoreSettingChangedAll()
                             .replaceAll("%isEnabled%", args[3].toLowerCase())
-                            .replaceAll("&([a-f0-9])", "§$1")
             );
 
             return true;
@@ -351,7 +345,6 @@ public class BoxAdminCommand implements CommandExecutor {
                 messageConfig.getAutoStoreSettingChanged()
                         .replaceAll("%item%", itemName)
                         .replaceAll("%isEnabled%", nextValue)
-                        .replaceAll("&([a-f0-9])", "§$1")
         );
 
         database.set("autostore_" + itemName, player, nextValue);
@@ -511,7 +504,6 @@ public class BoxAdminCommand implements CommandExecutor {
                         .replaceAll("%player%", name)
                         .replaceAll("%column%", args[2])
                         .replaceAll("%value%", args[4])
-                        .replaceAll("&([a-f0-9])", "§$1")
         );
 
         return true;
@@ -548,7 +540,6 @@ public class BoxAdminCommand implements CommandExecutor {
                 messageConfig.getDatabasePlayerRemoved()
                         .replaceAll("%uuid%", uuid)
                         .replaceAll("%player%", name)
-                        .replaceAll("&([a-f0-9])", "§$1")
         );
 
         return true;
@@ -586,7 +577,6 @@ public class BoxAdminCommand implements CommandExecutor {
                 messageConfig.getDatabasePlayerAdded()
                         .replaceAll("%uuid%", uuid)
                         .replaceAll("%player%", name)
-                        .replaceAll("&([a-f0-9])", "§$1")
         );
 
         return true;

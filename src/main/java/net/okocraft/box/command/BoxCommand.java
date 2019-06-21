@@ -336,7 +336,6 @@ public class BoxCommand implements CommandExecutor {
                         .replaceAll("%player%", player).replaceAll("%item%", itemName)
                         .replaceAll("%amount%", amount.toString())
                         .replaceAll("%newamount%", String.valueOf(senderAmount - amount))
-                        .replaceAll("&([a-f0-9])", "§$1")
         );
 
         val offlinePlayer = Bukkit.getOfflinePlayer(UUID.fromString(database.get("uuid", player)));
@@ -351,7 +350,6 @@ public class BoxCommand implements CommandExecutor {
                                     .replaceAll(
                                             "%newamount%",
                                             String.valueOf(otherAmount + amount)
-                                                    .replaceAll("&([a-f0-9])", "§$1")
                                     )
                     )
             );
