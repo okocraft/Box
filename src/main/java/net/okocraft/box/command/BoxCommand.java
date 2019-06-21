@@ -1,6 +1,6 @@
 /*
  * Box
- * Copyright (C) 2019 AKANE AKAGI
+ * Copyright (C) 2019 OKOCRAFT
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -95,7 +95,7 @@ public class BoxCommand implements CommandExecutor {
      * @param sender Sender
      * @param args   Arguments
      *
-     * @return true if success, otherwise false
+     * @return 成功した場合 @code{true}, さもなくば @code{false}
      */
     private boolean autoStoreList(CommandSender sender, String[] args) {
         // If the sender is not player(= is console)
@@ -153,12 +153,12 @@ public class BoxCommand implements CommandExecutor {
     }
 
     /**
-     * /box autostore <item [true|false] | all <true|false>>
+     * /box autostore <item [true|false] | all <true|false>>: 自動収納を設定する
      *
      * @param sender Sender
      * @param args   Arguments
      *
-     * @return true if success, otherwise false
+     * @return 成功した場合 @code{true}, さもなくば @code{false}
      */
     private boolean autoStore(CommandSender sender, String[] args) {
         // len   0    1         2    3
@@ -193,8 +193,7 @@ public class BoxCommand implements CommandExecutor {
      * @param sender   Sender
      * @param switchTo Switch
      *
-     * @return true if success, otherwise false
-     *
+     * @return 成功した場合 @code{true}, さもなくば @code{false}
      */
     private boolean autoStoreAll(CommandSender sender, String switchTo) {
         val player   = ((Player) sender).getUniqueId().toString();
@@ -230,7 +229,7 @@ public class BoxCommand implements CommandExecutor {
      * @param sender Sender
      * @param args   Arguments
      *
-     * @return true if success, otherwise false
+     * @return 成功した場合 @code{true}, さもなくば @code{false}
      */
     private boolean autoStoreItem(CommandSender sender, String[] args) {
         val player   = ((Player) sender).getUniqueId().toString();
@@ -269,12 +268,12 @@ public class BoxCommand implements CommandExecutor {
     }
 
     /**
-     * /box give <player> <item> <amount>
+     * /box give <player> <item> <amount>: 対象プレイヤーにアイテムを与える。
      *
      * @param sender Sender
      * @param args   Arguments
      *
-     * @return true if success, otherwise false
+     * @return 成功した場合 @code{true}, さもなくば @code{false}
      */
     private boolean give(CommandSender sender, String[] args) {
         if (args.length < 3) {
@@ -364,6 +363,13 @@ public class BoxCommand implements CommandExecutor {
         return true;
     }
 
+    /**
+     * /box version: バージョンを表示する。
+     *
+     * @param sender Sender
+     *
+     * @return 成功した場合 @code{true}, さもなくば @code{false}
+     */
     private boolean version(CommandSender sender) {
         sender.sendMessage(
                 messageConfig.getVersionInfo()

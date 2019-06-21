@@ -1,6 +1,6 @@
 /*
  * Box
- * Copyright (C) 2019 AKANE AKAGI
+ * Copyright (C) 2019 OKOCRAFT
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +32,8 @@ import org.bukkit.plugin.Plugin;
 
 /**
  * リソース（YAML 設定）を取り扱うクラス。
+ *
+ * @author LazyGon
  */
 class CustomConfig {
     /**
@@ -64,6 +66,8 @@ class CustomConfig {
     /**
      * 設定を取得する。
      *
+     * @author LazyGon
+     *
      * @return FileConfiguration
      */
     @Nonnull
@@ -77,6 +81,8 @@ class CustomConfig {
 
     /**
      * 設定を読み込む。
+     *
+     * @author LazyGon
      */
     void initConfig() {
         config = YamlConfiguration.loadConfiguration(file);
@@ -93,6 +99,8 @@ class CustomConfig {
 
     /**
      * 設定ファイルを保存する。
+     *
+     * @author LazyGon
      */
     void saveDefaultConfig() {
         if (!file.exists()) {

@@ -1,6 +1,6 @@
 /*
  * Box
- * Copyright (C) 2019 AKANE AKAGI
+ * Copyright (C) 2019 OKOCRAFT
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,6 +38,9 @@ import org.bukkit.inventory.ItemStack;
 
 import net.okocraft.box.database.Database;
 
+/**
+ * @author LazyGon
+ */
 public class GeneralConfig {
     private Box plugin;
     private Database database;
@@ -212,6 +215,9 @@ public class GeneralConfig {
     /**
      * 音設定初期化
      *
+     * @author akaregi
+     * @since v1.1.0
+     *
      * @see GeneralConfig#initConfig()
      */
     private void initSoundConfig() {
@@ -258,6 +264,9 @@ public class GeneralConfig {
     /**
      * AutoStore 設定初期化
      *
+     * @author akaregi
+     * @since v1.1.0
+     *
      * @see GeneralConfig#initConfig()
      */
     private void initAutoStoreConfig() {
@@ -267,6 +276,9 @@ public class GeneralConfig {
 
     /**
      * DisabledWorld 設定初期化
+     *
+     * @author akaregi
+     * @since v1.1.0
      *
      * @see GeneralConfig#initConfig()
      */
@@ -279,6 +291,8 @@ public class GeneralConfig {
 
     /**
      * フッター初期化
+     * @author akaregi
+     * @since v1.1.0
      *
      * @see GeneralConfig#initConfig()
      */
@@ -319,6 +333,9 @@ public class GeneralConfig {
     /**
      * フッターに使うアイテムを作成する。
      *
+     * @author akaregi
+     * @since v1.1.0
+     *
      * @param material    アイテムの種類。
      * @param stackAmount アイテムの量。
      * @param displayName 表示名。
@@ -339,9 +356,12 @@ public class GeneralConfig {
     }
 
     /**
-     * String から Sound に変換する。
+     * {@code String} から {@code Sound} に変換する。
      *
-     * @param sound Sound にしたい String
+     * @author akaregi
+     * @since v1.1.0
+     *
+     * @param sound 変換元
      *
      * @return {@code Optional<Sound>}
      */

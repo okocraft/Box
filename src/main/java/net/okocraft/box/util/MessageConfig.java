@@ -1,6 +1,6 @@
 /*
  * Box
- * Copyright (C) 2019 AKANE AKAGI
+ * Copyright (C) 2019 OKOCRAFT 
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,12 @@ import org.bukkit.configuration.file.FileConfiguration;
 
 import net.okocraft.box.Box;
 
+/**
+ * メッセージ設定クラス
+ *
+ * @author akaregi
+ * @since v1.1.0
+ */
 public class MessageConfig {
     private CustomConfig configFile;
 
@@ -131,6 +137,12 @@ public class MessageConfig {
         initConfig();
     }
 
+    /**
+     * 設定を再読込する。
+     *
+     * @author akaregi
+     * @since v1.1.0
+     */
     public void reload() {
         configFile.initConfig();
         config = configFile.getConfig();
@@ -138,6 +150,12 @@ public class MessageConfig {
         initConfig();
     }
 
+    /**
+     * 設定を初期化する。
+     *
+     * @author akaregi
+     * @since v1.1.0
+     */
     private void initConfig() {
         //
         // Plugin
@@ -200,11 +218,14 @@ public class MessageConfig {
     }
 
     /**
-     * Gets message from config file.
+     * 設定ファイルからメッセージを取得する。
      *
-     * @param key YAML key to get
+     * @author akaregi
+     * @since v1.1.0
      *
-     * @return Message.
+     * @param key YAML キー
+     *
+     * @return メッセージ
      */
     @Nonnull
     private String getMessage(@Nonnull String key) {

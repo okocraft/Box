@@ -1,6 +1,6 @@
 /*
  * Box
- * Copyright (C) 2019 AKANE AKAGI
+ * Copyright (C) 2019 OKOCRAFT
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -243,7 +243,7 @@ public class BoxAdminCommand implements CommandExecutor {
      * @param sender Sender, player or console
      * @param args   Arguments
      *
-     * @return @code{true} if success, otherwise @code{false}
+     * @return 成功した場合 @code{true}, さもなくば @code{false}
      */
     private boolean autoStore(CommandSender sender, String[] args) {
         if (args.length < 2) {
@@ -382,7 +382,7 @@ public class BoxAdminCommand implements CommandExecutor {
      *
      * @param sender Player or Console
      *
-     * @return @code{true} if success, otherwise @code{false}
+     * @return 成功した場合 @code{true}, さもなくば @code{false}
      */
     private boolean getPlayersMap(CommandSender sender) {
         sender.sendMessage(messageConfig.getMapPlayersRecord());
@@ -399,7 +399,7 @@ public class BoxAdminCommand implements CommandExecutor {
      *
      * @param sender Player or Console
      *
-     * @return @code{true} if success, otherwise @code{false}
+     * @return 成功した場合 @code{true}, さもなくば @code{false}
      */
     private boolean getColumnsMap(CommandSender sender) {
         sender.sendMessage(messageConfig.getMapColumnsList());
@@ -417,7 +417,7 @@ public class BoxAdminCommand implements CommandExecutor {
      * @param sender Player or Console
      * @param args   Arguments
      *
-     * @return @code{true} if success, otherwise @code{false}
+     * @return 成功した場合 @code{true}, さもなくば @code{false}
      */
     private boolean dropColumn(CommandSender sender, String[] args) {
         if (args.length == 2) {
@@ -437,7 +437,7 @@ public class BoxAdminCommand implements CommandExecutor {
      * @param sender Player or Console
      * @param args   Arguments
      *
-     * @return @code{true} if success, otherwise @code{false}
+     * @return 成功した場合 @code{true}, さもなくば @code{false}
      */
     private boolean addColumn(CommandSender sender, String[] args) {
         if (args.length < 4) {
@@ -461,7 +461,7 @@ public class BoxAdminCommand implements CommandExecutor {
      * @param sender Player or Console
      * @param args   Arguments
      *
-     * @return @code{true} if success, otherwise @code{false}
+     * @return 成功した場合 @code{true}, さもなくば @code{false}
      */
     private boolean databaseGet(CommandSender sender, String[] args) {
         if (args.length < 3) {
@@ -481,7 +481,7 @@ public class BoxAdminCommand implements CommandExecutor {
      * @param sender Player or Console
      * @param args   Arguments
      *
-     * @return @code{true} if success, otherwise @code{false}
+     * @return 成功した場合 @code{true}, さもなくば @code{false}
      */
     private boolean databaseSet(CommandSender sender, String[] args) {
         if (args.length < 4) {
@@ -523,7 +523,7 @@ public class BoxAdminCommand implements CommandExecutor {
      * @param sender Player or Console
      * @param args   Arguments
      *
-     * @return @code{true} if success, otherwise @code{false}
+     * @return 成功した場合 @code{true}, さもなくば @code{false}
      */
     private boolean removePlayer(CommandSender sender, String[] args) {
         if (args.length == 2) {
@@ -560,7 +560,7 @@ public class BoxAdminCommand implements CommandExecutor {
      * @param sender Player or Console
      * @param args   Arguments
      *
-     * @return @code{true} if success, otherwise @code{false}
+     * @return 成功した場合 @code{true}, さもなくば @code{false}
      */
     private boolean addPlayer(CommandSender sender, String[] args) {
         if (args.length == 2) {
@@ -598,7 +598,7 @@ public class BoxAdminCommand implements CommandExecutor {
      *
      * @param sender Player or Console
      *
-     * @return @code{true} if success, otherwise @code{false}
+     * @return 成功した場合 @code{true}, さもなくば @code{false}
      */
     private boolean resetConnection(CommandSender sender) {
         database.resetConnection();
@@ -614,7 +614,7 @@ public class BoxAdminCommand implements CommandExecutor {
      * @param sender Player or Console
      * @param args   Arguments
      *
-     * @return @code{true} if success, otherwise @code{false}
+     * @return 成功した場合 @code{true}, さもなくば @code{false}
      */
     private boolean existPlayer(CommandSender sender, String[] args) {
         if (args.length == 2) {

@@ -1,6 +1,6 @@
 /*
  * Box
- * Copyright (C) 2019 AKANE AKAGI
+ * Copyright (C) 2019 OKOCRAFT
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,16 +20,25 @@ package net.okocraft.box.util;
 
 import javax.annotation.Nonnull;
 
+/**
+ * メッセージを取り扱うツール群。
+ *
+ * @author akaregi
+ * @since v1.1.0
+ */
 class MessageUtil {
     /**
-     * Convert color code with & to §. e.g. &6 -> §6
+     * & 形式カラーコードのメッセージを § 形式カラーコードのメッセージに変換する。
      *
-     * @param original Original message
+     * @author akaregi
+     * @since v1.1.0
      *
-     * @return Message replaced & to §
+     * @param message メッセージ
+     *
+     * @return カラーコードが変換されたメッセージ
      */
     @Nonnull
-    static String convertColorCode(@Nonnull String original) {
-        return original.replaceAll("&([a-f0-9])", "§$1");
+    static String convertColorCode(@Nonnull String message) {
+        return message.replaceAll("&([a-f0-9])", "§$1");
     }
 }

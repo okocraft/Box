@@ -1,6 +1,6 @@
 /*
  * Box
- * Copyright (C) 2019 AKANE AKAGI
+ * Copyright (C) 2019 OKOCRAFT
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,6 +42,10 @@ import net.okocraft.box.command.Commands;
 
 /**
  * データベース
+ *
+ * @author akaregi
+ * @author LazyGon
+ * @since v1.0.0-SNAPSHOT
  */
 public class Database {
     /**
@@ -100,7 +104,7 @@ public class Database {
      * データベースのファイル自体が存在しない場合はファイルを作成する。
      * ファイル内になんらデータベースが存在しない場合、データベースを新たに生成する。
      *
-     * @since 1.0.0-SNAPSHOT
+     * @since v1.0.0-SNAPSHOT
      * @author akaregi
      */
     public boolean connect(String url) {
@@ -181,7 +185,7 @@ public class Database {
     /**
      * データベースへの接続を切断する。
      *
-     * @since 1.0.0-SNAPSHOT
+     * @since v1.0.0-SNAPSHOT
      * @author akaregi
      */
     public void dispose() {
@@ -197,7 +201,10 @@ public class Database {
     }
 
     /**
-     * コネクションをリセットする。
+     * 接続をリセットする。
+     *
+     * @since v1.0.0-SNAPSHOT
+     * @author LazyGon
      */
     public void resetConnection() {
         log.info("Disconnecting.");
@@ -217,13 +224,12 @@ public class Database {
     /**
      * データベースにレコードを追加する。showWarning が true で失敗した場合はコンソールにログを出力する。
      *
-     * @since 1.0.0-SNAPSHOT
+     * @since v1.0.0-SNAPSHOT
      * @author akaregi
      *
      * @param uuid        UUID
      * @param name        名前
      * @param showWarning コンソールログを出力するかどうか
-     *
      */
     public void addPlayer(@NonNull String uuid, @NonNull String name, boolean showWarning) {
         if (existPlayer(uuid)) {
@@ -234,7 +240,7 @@ public class Database {
             return;
         }
 
-        if (Commands.checkEntryType(uuid).equals("player")) {
+        if (Commands.isUuidOrPlayer(uuid).equals("player")) {
             if (showWarning) {
                 log.warning(":INVALID_UUID");
             }
@@ -265,13 +271,12 @@ public class Database {
     }
 
     /**
-     * テーブルからレコードを削除する。 失敗した場合はコンソールにログを出力する。
+     * テーブルからレコードを削除する。失敗した場合はコンソールにログを出力する。
      *
-     * @since 1.1.0-SNAPSHOT
+     * @since v1.1.0-SNAPSHOT
      * @author LazyGon
      *
      * @param entry プレイヤー
-     *
      */
     public void removePlayer(@NonNull String entry) {
         if (!existPlayer(entry)) {
@@ -279,7 +284,7 @@ public class Database {
             return;
         }
 
-        String entryType = Commands.checkEntryType(entry);
+        String entryType = Commands.isUuidOrPlayer(entry);
 
         prepare("DELETE FROM " + table + " WHERE " + entryType + " = ?").ifPresent(statement -> {
             try {
@@ -295,12 +300,12 @@ public class Database {
     }
 
     /**
-     * テーブルのデータベースに名前が記録されているか調べる。
+     * テーブルに名前が記録されているか調べる。
      *
-     * @since 1.0.0-SNAPSHOT
+     * @since v1.0.0-SNAPSHOT
      * @author LazyGon
      *
-     * @param entry uuidでもmcidでも可
+     * @param entry UUID か Minecraft ID
      */
     public boolean existPlayer(@NonNull String entry) {
         val playersMap = getPlayersMap();
@@ -309,12 +314,13 @@ public class Database {
     }
 
     /**
-     * {@code table}の{@code column}に値をセットする。
+     * {@code table} の {@code column} に値をセットする。
      *
-     * @since 1.0.0-SNAPSHOT
+     * @since v1.0.0-SNAPSHOT
      * @author LazyGon
-     *@param column 更新する列
-     * @param entry  プレイヤー。uuidでもmcidでも可
+     *
+     * @param column 更新する列
+     * @param entry  UUID か Minecraft ID
      * @param value  新しい値
      */
     public void set(@NonNull String column, @NonNull String entry, String value) {
@@ -328,7 +334,7 @@ public class Database {
             return;
         }
 
-        String entryType = Commands.checkEntryType(entry);
+        String entryType = Commands.isUuidOrPlayer(entry);
 
         prepare("UPDATE " + table + " SET " + column + " = ? WHERE " + entryType + " = ?").ifPresent(statement -> {
             try {
@@ -349,7 +355,7 @@ public class Database {
      * テーブル、カラム、レコードのいずれかが存在しない場合は対応するエラー文字列を返す。
      *
      * @author akaregi
-     * @since 1.0.0-SNAPSHOT
+     * @since v1.0.0-SNAPSHOT
      *
      * @param column 列
      * @param entry  エントリ
@@ -365,7 +371,7 @@ public class Database {
             return ":NO_RECORD_FOR_" + entry + "_EXIST";
         }
 
-        val entryType = Commands.checkEntryType(entry);
+        val entryType = Commands.isUuidOrPlayer(entry);
         val statement = prepare("SELECT " + column + " FROM " + table + " WHERE " + entryType + " = ?");
 
         return statement.map(resource -> {
@@ -386,14 +392,13 @@ public class Database {
     /**
      * テーブルに新しい列 {@code column} を追加する。
      *
-     * @author akaregi
-     * @since 1.0.0-SNAPSHOT
+     * @author LazyGon
+     * @since v1.0.0-SNAPSHOT
      *
      * @param column       列の名前。
      * @param type         列の型。
      * @param defaultValue デフォルトの値。必要ない場合はnullを指定する。
      * @param showWarning  同じ列が存在したときにコンソールに警告を表示するかどうか
-     *
      */
     public void addColumn(String column, String type, String defaultValue, boolean showWarning) {
         if (getColumnMap().keySet().contains(column)) {
@@ -426,11 +431,10 @@ public class Database {
     /**
      * テーブル {@code table} から列 {@code column} を削除する。
      *
-     * @author akaregi
-     * @since 1.0.0-SNAPSHOT
+     * @author LazyGon
+     * @since v1.0.0-SNAPSHOT
      *
      * @param column 削除する列の名前。
-     *
      */
     public void dropColumn(String column) {
         if (!getColumnMap().keySet().contains(column)) {
@@ -479,16 +483,18 @@ public class Database {
     }
 
     /**
-     * エントリーの複数のカラムの値を一気に取得する。マップはLinkedHashMapで、引数のListの順番を引き継ぐ。
+     * エントリ {@code entry} に対応する列 {@code columns} の値をすべて取得する。
      *
      * @author LazyGon
-     * @since 1.0.0-SNAPSHOT
+     * @since v1.0.0-SNAPSHOT
      *
+     * @param columns 列
+     * @param entry   ？
      *
-     * @return カラムと値のマップ
+     * @return 列とフィールドのペア
      */
     public Map<String, String> getMultiValue(List<String> columns, @NonNull String entry) {
-        val entryType = Commands.checkEntryType(entry);
+        val entryType = Commands.isUuidOrPlayer(entry);
 
         val sb = new StringBuilder();
 
@@ -528,19 +534,20 @@ public class Database {
     }
 
     /**
-     * エントリーの複数のカラムの値を一気に取得する
+     * エントリ {@code entry} に属する列の値 {@code pair} を設定する。
      *
      * @author LazyGon
-     * @since 1.0.0-SNAPSHOT
+     * @since v1.0.0-SNAPSHOT
      *
-     *
+     * @param pair  列と値のペア
+     * @param entry エントリ
      */
-    public void setMultiValue(Map<String, String> columnValueMap, @NonNull String entry) {
-        val entryType = Commands.checkEntryType(entry);
+    public void setMultiValue(Map<String, String> pair, @NonNull String entry) {
+        val entryType = Commands.isUuidOrPlayer(entry);
 
         val sb = new StringBuilder();
 
-        columnValueMap.forEach((columnName, columnValue) ->
+        pair.forEach((columnName, columnValue) ->
                 sb.append(columnName).append(" = '").append(columnValue).append("', ")
         );
 
@@ -564,8 +571,7 @@ public class Database {
      * テーブルに含まれる列 {@code column} のリストを取得する。
      *
      * @author LazyGon
-     * @since 1.0.0-SNAPSHOT
-     *
+     * @since v1.0.0-SNAPSHOT
      *
      * @return テーブルに含まれるcolumnの名前と型のマップ 失敗したら空のマップを返す。
      */
@@ -592,12 +598,12 @@ public class Database {
     }
 
     /**
-     * 登録されているプレイヤーの名前とUUIDのマップを取得する。
+     * プレイヤー名と UUID のペアを取得する。
      *
      * @author LazyGon
-     * @since 1.1.0-SNAPSHOT
+     * @since v1.1.0-SNAPSHOT
      *
-     * @return プレイヤー名とそのUUIDのマップ
+     * @return ペア。
      */
     public Map<String, String> getPlayersMap() {
         val playersMap = new HashMap<String, String>();
@@ -620,47 +626,6 @@ public class Database {
         }
 
         return playersMap;
-    }
-
-    /**
-     * 非推奨。NULLにしてもなんの意味もない。どころかエラーを引き起こす可能性まである。 {@code table} の {@code column} の
-     * {@code entry} の行をNULLにする。(消す)
-     *
-     * @author LazyGon
-     * @since 1.1.0-SNAPSHOT
-     *
-     * @param column 列
-     * @param entry  エントリ
-     */
-    @Deprecated
-    public boolean removeValue(String column, String entry) {
-        if (!getColumnMap().keySet().contains(column)) {
-            log.warning(":NO_COLUMN_NAMED_" + column + "_EXIST");
-
-            return false;
-        }
-
-        if (!existPlayer(entry)) {
-            log.warning(":NO_RECORD_FOR_" + entry + "_EXIST");
-
-            return false;
-        }
-
-        val entryType = Commands.checkEntryType(entry);
-        val statement = prepare("UPDATE " + table + " SET " + column + " = NULL WHERE " + entryType + " = ?");
-
-        return statement.map(resource -> {
-            try (val stmt = resource) {
-                stmt.setString(1, entry);
-                stmt.executeUpdate();
-
-                return true;
-            } catch (SQLException exception) {
-                exception.printStackTrace();
-
-                return false;
-            }
-        }).orElse(false);
     }
 
     /**

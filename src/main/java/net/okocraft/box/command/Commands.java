@@ -1,6 +1,6 @@
 /*
  * Box
- * Copyright (C) 2019 AKANE AKAGI
+ * Copyright (C) 2019 OKOCRAFT
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,14 +46,14 @@ public class Commands {
     }
 
     /**
-     * 文字列を検証してプレイヤー名か UUID か判定する。
+     * 文字列を検証して UUID か Minecraft ID かを判定する。
      *
      * @param entry 検証する文字列
      *
-     * @return UUID なら "uuid", さもなくば "player"
+     * @return UUID なら "uuid", Minecraft ID であれば "player" を返す。
      */
     // TODO: 別クラスにする
-    public static String checkEntryType(String entry) {
+    public static String isUuidOrPlayer(String entry) {
         return entry.matches("([a-z]|\\d){8}(-([a-z]|\\d){4}){3}-([a-z]|\\d){12}") ? "uuid" : "player";
     }
 }
