@@ -21,26 +21,44 @@ package net.okocraft.box.util;
 import java.io.File;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.NoSuchElementException;
 import java.util.Optional;
+
+import javax.annotation.Nonnull;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 
+/**
+ * リソース（YAML 設定）を取り扱うクラス。
+ */
 class CustomConfig {
-    private FileConfiguration config;
-
-    private final File configFile;
-
-    private final String file;
-
+    /**
+     * プラグイン。
+     */
     private final Plugin plugin;
 
-    CustomConfig(Plugin plugin, String fileName) {
-        this.plugin = plugin;
-        this.file = fileName;
+    /**
+     * 設定の実体ファイル。
+     */
+    private final File file;
 
-        configFile = new File(plugin.getDataFolder(), file);
+    /**
+     * 設定の実体ファイル名。
+     */
+    private final String name;
+
+    /**
+     * 設定。
+     */
+    private FileConfiguration config;
+
+    CustomConfig(@Nonnull Plugin plugin, @Nonnull String name) {
+        this.plugin = plugin;
+        this.name = name;
+
+        file = new File(plugin.getDataFolder(), this.name);
     }
 
     /**
@@ -48,6 +66,7 @@ class CustomConfig {
      *
      * @return FileConfiguration
      */
+    @Nonnull
     FileConfiguration getConfig() {
         if (config == null) {
             initConfig();
@@ -60,21 +79,24 @@ class CustomConfig {
      * 設定を読み込む。
      */
     void initConfig() {
-        config = YamlConfiguration.loadConfiguration(configFile);
+        config = YamlConfiguration.loadConfiguration(file);
 
-        Optional.ofNullable(plugin.getResource(file)).ifPresent(configStream ->
-                config.setDefaults(
-                    YamlConfiguration.loadConfiguration(new InputStreamReader(configStream, StandardCharsets.UTF_8))
+        config.setDefaults(YamlConfiguration.loadConfiguration(
+                new InputStreamReader(
+                        Optional.ofNullable(plugin.getResource(name)).orElseThrow(() ->
+                                new NoSuchElementException("Failed to get resource: " + name)
+                        ),
+                        StandardCharsets.UTF_8
                 )
-        );
+        ));
     }
 
     /**
      * 設定ファイルを保存する。
      */
     void saveDefaultConfig() {
-        if (!configFile.exists()) {
-            plugin.saveResource(file, false);
+        if (!file.exists()) {
+            plugin.saveResource(name, false);
         }
     }
 }

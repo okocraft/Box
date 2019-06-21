@@ -39,17 +39,16 @@ import net.okocraft.box.listeners.PlayerJoin;
  * @author OKOCRAFT
  */
 public class Box extends JavaPlugin {
+    /**
+     * プラグイン Box のインスタンス。
+     */
+    private static Box instance;
 
     /**
      * ロガー。
      */
     @Getter
     private final Logger log;
-
-    /**
-     * プラグイン Box のインスタンス。
-     */
-    private static Box instance;
 
     /**
      * バージョン。
@@ -67,35 +66,36 @@ public class Box extends JavaPlugin {
      * 通常設定
      */
     @Getter
-    private final GeneralConfig generalConfig;
+    private GeneralConfig generalConfig;
 
     /**
      * メッセージ設定
      */
     @Getter
-    private final MessageConfig messageConfig;
+    private MessageConfig messageConfig;
 
     /**
      * GUIマネージャ
      */
     @Getter
-    private final GuiManager guiManager;
+    private GuiManager guiManager;
 
     public Box() {
         log      = getLogger();
         version  = getClass().getPackage().getImplementationVersion();
         database = new Database(this);
+    }
 
+    @Override
+    public void onEnable() {
         // config
         generalConfig = new GeneralConfig(database);
         messageConfig = new MessageConfig();
 
         // GUI
-        guiManager    = new GuiManager(database, this);
-    }
+        guiManager = new GuiManager(database, this);
 
-    @Override
-    public void onEnable() {
+        // Database
         if (!database.connect(getDataFolder().getPath() + "/data.db")) {
             setEnabled(false);
             return;
@@ -107,9 +107,11 @@ public class Box extends JavaPlugin {
 
         registerEvents();
 
+        // Register commands
         new Commands(database);
         new BoxTabCompleter(database);
 
+        // GO GO GO
         log.info(String.format("Box v%s has been enabled!", version));
     }
 

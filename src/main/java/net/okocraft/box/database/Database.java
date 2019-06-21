@@ -39,6 +39,10 @@ import net.okocraft.box.Box;
 import net.okocraft.box.command.Commands;
 
 // NOTE: メッセージがハードコーディングされているが、システム側メッセージなのでとりあえず無視する。
+
+/**
+ * データベース
+ */
 public class Database {
     /**
      * データベルファイルへの URL 。{@code plugins/Box/data.db}
@@ -163,7 +167,8 @@ public class Database {
             return false;
         }
 
-        val allItems = Box.getInstance().getGeneralConfig().getAllItems();
+        // NOTE: Lombok's val cannot use for this.
+        List<String> allItems = Box.getInstance().getGeneralConfig().getAllItems();
 
         allItems.forEach(itemName -> {
             addColumn(itemName, "INTEGER", "0", false);

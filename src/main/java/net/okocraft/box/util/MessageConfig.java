@@ -18,7 +18,6 @@
 
 package net.okocraft.box.util;
 
-import java.io.File;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import javax.annotation.Nonnull;
@@ -27,15 +26,16 @@ import lombok.Getter;
 
 import lombok.val;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 
 import net.okocraft.box.Box;
 
 public class MessageConfig {
     private CustomConfig configFile;
 
+    /**
+     * プラグインのデータフォルダ(plugins/Box/)に存在する messages.yml 。
+     */
     private FileConfiguration config;
-    private FileConfiguration defaultConfig;
 
     // Plugin
     @Getter
@@ -70,8 +70,8 @@ public class MessageConfig {
     private String errorFetchCategoryName;
     @Getter
     private String errorFetchItemConfig;
-    @Getter
-    private String errorFetchDisplayName;
+    // @Getter
+    // private String errorFetchDisplayName;
 
     // Command
     @Getter
@@ -122,11 +122,8 @@ public class MessageConfig {
     public MessageConfig() {
         val plugin = Box.getInstance();
 
-        defaultConfig = YamlConfiguration.loadConfiguration(
-                new File(plugin.getClass().getResource("messages.yml").getFile())
-        );
-
         configFile = new CustomConfig(plugin, "messages.yml");
+        configFile.initConfig();
         configFile.saveDefaultConfig();
 
         config = configFile.getConfig();
@@ -135,10 +132,6 @@ public class MessageConfig {
     }
 
     public void reload() {
-        defaultConfig = YamlConfiguration.loadConfiguration(
-                new File(Box.getInstance().getClass().getResource("messages.yml").getFile())
-        );
-
         configFile.initConfig();
         config = configFile.getConfig();
 
@@ -157,17 +150,17 @@ public class MessageConfig {
         // Error
         //
         notEnoughArguments = getMessage("error.notEnoughArguments");
-        notEnoughStoredItem = getMessage("error.notEnoughStoredItem");
-        noPlayerFound = getMessage("error.notPlayerFound");
+        notEnoughStoredItem = getMessage("error.notEnoughStoredItems");
+        noPlayerFound = getMessage("error.noPlayerFound");
         noItemFound = getMessage("error.noItemFound");
         noParamExist = getMessage("error.noParameterExist");
         invalidArguments = getMessage("error.invalidArguments");
         invalidNumberFormat = getMessage("error.invalidNumber");
         errorOccurred = getMessage("error.errorOccurred");
-        errorOccurredOnGUI = getMessage("error.errorOnOpenGui");
+        errorOccurredOnGUI = getMessage("error.errorOccurredGUI");
         errorFetchCategoryName = getMessage("error.errorFetchCategoryName");
         errorFetchItemConfig = getMessage("error.errorFetchItemConfig");
-        errorFetchDisplayName = getMessage("error.errorFetchDisplayName");
+        // errorFetchDisplayName = getMessage("error.errorFetchDisplayName");
         cannotGiveYourself = getMessage("error.giveMyself");
 
         //
@@ -217,11 +210,6 @@ public class MessageConfig {
     private String getMessage(@Nonnull String key) {
         return prefix + Optional.ofNullable(config.getString(key))
                 .map(MessageUtil::convertColorCode)
-                .orElse(
-                        // Attempt to read original config
-                        Optional.ofNullable(defaultConfig.getString(key))
-                            .map(MessageUtil::convertColorCode)
-                            .orElseThrow(() -> new NoSuchElementException("No such YAML key: " + key))
-                );
+                .orElseThrow(() -> new NoSuchElementException("No such YAML key: " + key));
     }
 }
