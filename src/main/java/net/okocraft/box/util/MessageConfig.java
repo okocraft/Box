@@ -160,7 +160,7 @@ public class MessageConfig {
         //
         // Plugin
         //
-        prefix = getMessage("plugin.prefix");
+        prefix = getPrefix();
         versionInfo = getMessage("plugin.version");
         configReloaded = getMessage("plugin.reload");
 
@@ -231,6 +231,22 @@ public class MessageConfig {
     private String getMessage(@Nonnull String key) {
         return prefix + Optional.ofNullable(config.getString(key))
                 .map(MessageUtil::convertColorCode)
+                // FIXME この実装ではアップデートごとにNoSuchElementExceptionを吐いてしまう可能性がある。
                 .orElseThrow(() -> new NoSuchElementException("No such YAML key: " + key));
+    }
+
+    /**
+     * 設定ファイルからプラグインのプレフィックスを取得する。
+     * 
+     * @author LazyGon
+     * @since v1.1.0
+     * 
+     * @return prefix
+     */
+    @Nonnull
+    private String getPrefix() {
+        return Optional.ofNullable(config.getString("plugin.prefix"))
+                .map(MessageUtil::convertColorCode)
+                .orElseThrow(() -> new NoSuchElementException("No prefix specified"));
     }
 }

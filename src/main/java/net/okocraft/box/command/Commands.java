@@ -22,11 +22,8 @@ import lombok.val;
 import net.okocraft.box.Box;
 import net.okocraft.box.database.Database;
 
-import org.bukkit.command.CommandSender;
-
 import java.util.Optional;
 
-@SuppressWarnings("unused")
 public class Commands {
     private Database database;
 
