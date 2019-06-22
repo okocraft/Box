@@ -177,11 +177,11 @@ public class GeneralConfig {
 
         // CHANGED: Nullable になると IntelliJ がうるさいので Optional 化
         categorySelectionGuiName = Optional.ofNullable(storingItemConfig.getString("CategorySelectionGui.GuiName"))
-                .orElse("アイテムボックス - カテゴリー選択")
+                .orElse("ボックス - カテゴリー選択")
                 .replaceAll("&([a-f0-9])", "§$1");
 
         categoryGuiName = Optional.ofNullable(storingItemConfig.getString("CategoryGui.GuiName"))
-                .orElse("アイテムボックス - %category%")
+                .orElse("ボックス - %category%")
                 .replaceAll("&([a-f0-9])", "§$1");;
 
         allItems           = new ArrayList<>();
