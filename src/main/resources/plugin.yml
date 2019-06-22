@@ -24,6 +24,9 @@ permissions:
       box: true
       box.give.*: true
       box.autostore.*: true
+      box.sell.*: true
+      box.sellprice: true
+      box.sellpricelist: true
   box.admin:
     description: For command /boxadmin
     default: op
@@ -44,5 +47,19 @@ permissions:
     description: For command /box
     default: true
   box.give:
+    description: For command /box
+    default: true
+  box.sell.*:
+    description: For command /box
+    default: true
+    children:
+      box.sell: true
+  box.sell:
+    description: For command /box
+    default: true
+  box.sellprice:
+    description: For command /box
+    default: true
+  box.sellpricelist:
     description: For command /box
     default: true

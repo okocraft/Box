@@ -59,6 +59,8 @@ public class MessageConfig {
     @Getter
     private String notEnoughStoredItem;
     @Getter
+    private String notEnoughMoney;
+    @Getter
     private String noPlayerFound;
     @Getter
     private String noItemFound;
@@ -78,6 +80,8 @@ public class MessageConfig {
     private String errorFetchCategoryName;
     @Getter
     private String errorFetchItemConfig;
+    @Getter
+    private String economyIsNull;
     // @Getter
     // private String errorFetchDisplayName;
 
@@ -91,7 +95,17 @@ public class MessageConfig {
     @Getter
     private String successReceive;
     @Getter
+    private String successSell;
+    @Getter
     private String successGiveAdmin;
+
+    // Price
+    @Getter
+    private String sellPriceListHeader;
+    @Getter
+    private String sellPriceFormat;
+    @Getter
+    private String sellPriceListFormat;
 
     // AutoStore
     @Getter
@@ -171,6 +185,7 @@ public class MessageConfig {
         //
         notEnoughArguments = getMessage("error.notEnoughArguments");
         notEnoughStoredItem = getMessage("error.notEnoughStoredItems");
+        notEnoughMoney = getMessage("error.notEnoughMoney");
         noPlayerFound = getMessage("error.noPlayerFound");
         noItemFound = getMessage("error.noItemFound");
         noParamExist = getMessage("error.noParameterExist");
@@ -182,6 +197,7 @@ public class MessageConfig {
         errorFetchItemConfig = getMessage("error.errorFetchItemConfig");
         // errorFetchDisplayName = getMessage("error.errorFetchDisplayName");
         cannotGiveYourself = getMessage("error.giveMyself");
+        economyIsNull = getMessage("error.economyIsNull");
 
         //
         // Command
@@ -190,7 +206,15 @@ public class MessageConfig {
         successReceive = getMessage("command.successReceive");
         successGiveAdmin = getMessage("command.successGiveAdmin");
         successSet = getMessage("command.successSet");
+        successSell = getMessage("command.successSell");
         successTake = getMessage("command.successTake");
+
+        //
+        // Price
+        //
+        sellPriceListHeader = getMessage("price.sellPriceListHeader");
+        sellPriceListFormat = getRawMessage("price.sellPriceFormat");
+        sellPriceFormat = getMessage("price.sellPriceFormat");
 
         //
         // AutoStore

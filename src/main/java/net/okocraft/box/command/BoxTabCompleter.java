@@ -82,6 +82,18 @@ public class BoxTabCompleter implements TabCompleter {
             subCommands.add("give");
         }
 
+        if (sender.hasPermission("box.sell") || sender.hasPermission("box.sell.*")) {
+            subCommands.add("sell");
+        }
+
+        if (sender.hasPermission("box.sellprice")) {
+            subCommands.add("sellprice");
+        }
+
+        if (sender.hasPermission("box.sellpricelist")) {
+            subCommands.add("sellpricelist");
+        }
+
         if (args.length == 1) {
             return StringUtil.copyPartialMatches(args[0], subCommands, resultList);
         }
@@ -99,8 +111,14 @@ public class BoxTabCompleter implements TabCompleter {
                         .collect(Collectors.toList());
         allItemsAutostore.add("ALL");
 
-        int maxPage = allItemsAutostore.size() / 9;
-        maxPage = (allItemsAutostore.size() % 9 == 0) ? maxPage : maxPage + 1;
+        val allItemsSell = sender.hasPermission("box.autostore.*") ? new ArrayList<>(allItems)
+                : allItems.stream().filter(itemName -> sender.hasPermission("box.sell." + itemName))
+                        .collect(Collectors.toList());
+
+        int autoStoreMaxPage = allItemsAutostore.size() / 9;
+        autoStoreMaxPage = (allItemsAutostore.size() % 9 == 0) ? autoStoreMaxPage : autoStoreMaxPage + 1;
+        int sellMaxPage = allItemsSell.size() / 9;
+        sellMaxPage = (allItemsSell.size() % 9 == 0) ? sellMaxPage : sellMaxPage + 1;
 
         val players = new ArrayList<>(database.getPlayersMap().values());
 
@@ -108,18 +126,32 @@ public class BoxTabCompleter implements TabCompleter {
             switch (subCommand) {
             case "autostorelist":
                 return StringUtil.copyPartialMatches(args[1],
-                        IntStream.rangeClosed(1, maxPage).boxed().map(String::valueOf).collect(Collectors.toList()),
+                        IntStream.rangeClosed(1, autoStoreMaxPage).boxed().map(String::valueOf).collect(Collectors.toList()),
                         resultList);
             case "autostore":
                 return StringUtil.copyPartialMatches(args[1], allItemsAutostore, resultList);
             case "give":
                 return StringUtil.copyPartialMatches(args[1], players, resultList);
+            case "sell":
+                return StringUtil.copyPartialMatches(args[1], allItemsSell, resultList);
+            case "sellprice":
+                return StringUtil.copyPartialMatches(args[1], allItemsSell, resultList);
+            case "sellpricelist":
+                return StringUtil.copyPartialMatches(args[1],
+                        IntStream.rangeClosed(1, sellMaxPage).boxed().map(String::valueOf).collect(Collectors.toList()),
+                        resultList);
             }
         }
 
         switch (subCommand) {
         case "autostore":
             if (!allItemsAutostore.contains(args[1].toUpperCase()) && !args[1].equalsIgnoreCase("all")) {
+                return resultList;
+            }
+
+            break;
+        case "sell":
+            if (!allItemsSell.contains(args[1].toUpperCase())) {
                 return resultList;
             }
 
@@ -142,6 +174,8 @@ public class BoxTabCompleter implements TabCompleter {
                 return StringUtil.copyPartialMatches(args[2], List.of("true", "false"), resultList);
             case "give":
                 return StringUtil.copyPartialMatches(args[2], allItemsGive, resultList);
+            case "sell":
+                return StringUtil.copyPartialMatches(args[2], List.of("1", "10", "100", "1000"), resultList);
             }
         }
 

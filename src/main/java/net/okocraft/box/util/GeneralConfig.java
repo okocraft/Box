@@ -97,6 +97,8 @@ public class GeneralConfig {
     private Map<String, String> categoryGuiNameMap;
     @Getter
     private List<String> allItems;
+    @Getter
+    private Map<String, Integer> sellPrice;
 
     // CategorySelectionGui Name
     @Getter
@@ -207,6 +209,15 @@ public class GeneralConfig {
                     .collect(Collectors.toList()))
             );
         });
+
+        val priceConfig = new CustomConfig(plugin, "sellprice.yml");
+        priceConfig.saveDefaultConfig();
+        sellPrice = allItems.stream().collect(Collectors.toMap(
+                itemName -> itemName,
+                itemName -> priceConfig.getConfig().getInt(itemName),
+                (i1, i2) -> i1,
+                LinkedHashMap::new
+        ));
     }
 
     /**

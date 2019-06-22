@@ -25,6 +25,7 @@ import lombok.NonNull;
 import lombok.val;
 
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -81,6 +82,21 @@ public class BoxCommand implements CommandExecutor {
         // /box give <player> <item> [amount]
         if (subCommand.equalsIgnoreCase("give")) {
             return give(sender, args);
+        }
+
+        // /box sell <item> [amount]
+        if (subCommand.equalsIgnoreCase("sell")) {
+            return sell(sender, args);
+        }
+
+        // /box sellprice <item>
+        if (subCommand.equalsIgnoreCase("sellprice")) {
+            return sellPrice(sender, args);
+        }
+
+        // /box sellpricelist [page]
+        if (subCommand.equalsIgnoreCase("sellpricelist")) {
+            return sellPriceList(sender, args);
         }
 
         sender.sendMessage(messageConfig.getNoParamExist());
@@ -340,6 +356,151 @@ public class BoxCommand implements CommandExecutor {
                     )
             );
         }
+
+        return true;
+    }
+
+    /**
+     * /box sell <item> [amount]: アイテムを売る。
+     *
+     * @param sender Sender
+     * @param args   Arguments
+     *
+     * @return 成功した場合 @code{true}, さもなくば @code{false}
+     */
+    private boolean sell(CommandSender sender, String[] args) {
+
+        if (instance.getEconomy() == null) {
+            sender.sendMessage(messageConfig.getEconomyIsNull());
+
+            return false;
+        }
+
+
+        if (args.length < 2) {
+            sender.sendMessage(messageConfig.getNotEnoughArguments());
+
+            return false;
+        }
+
+        val senderName = sender.getName().toLowerCase();
+        val itemName = args[1];
+
+        if (!config.getAllItems().contains(itemName)) {
+            sender.sendMessage(messageConfig.getNoItemFound());
+
+            return false;
+        }
+
+        if (!database.existPlayer(senderName)) {
+            sender.sendMessage(messageConfig.getNoPlayerFound());
+
+            return false;
+        }
+
+        Long amount = args.length == 2 ? 1L : OtherUtil.parseLongOrDefault(args[2], 1L);
+        if (amount <= 0) amount = 1L;
+
+        val currentAmount = OtherUtil.parseLongOrDefault(database.get(itemName, senderName), Long.MIN_VALUE);
+
+        if (currentAmount == Long.MIN_VALUE) {
+            sender.sendMessage(
+                    messageConfig.getDatabaseInvalidValue()
+            );
+
+            return false;
+        }
+
+        if (currentAmount - amount < 0) amount = currentAmount;
+
+        if (amount == 0) {
+            sender.sendMessage(messageConfig.getNotEnoughStoredItem());
+
+            return false;
+        }
+
+        val economy = instance.getEconomy();
+        double price = config.getSellPrice().get(itemName) * amount;
+        
+        database.set(itemName, senderName, String.valueOf(currentAmount - amount));
+        economy.depositPlayer((OfflinePlayer) sender, price);
+        
+        double balance = economy.getBalance((OfflinePlayer) sender);
+        sender.sendMessage(
+                messageConfig.getSuccessSell()
+                        .replaceAll("%amount%", amount.toString())
+                        .replaceAll("%item%", itemName)
+                        .replaceAll("%price%", String.valueOf(price))
+                        .replaceAll("%newamount%", String.valueOf(currentAmount - amount))
+                        .replaceAll("%newbalance%", String.valueOf(Math.round((balance + price)*10)/10))
+        );
+
+        return true;
+    }
+
+    /**
+     * /box sellprice <item>: itemのsellの値段設定を表示する
+     *
+     * @param sender Sender
+     * @param args   Arguments
+     *
+     * @return 成功した場合 @code{true}, さもなくば @code{false}
+     */
+    private boolean sellPrice(CommandSender sender, String[] args) {
+        if (args.length <= 1) {
+            sender.sendMessage(messageConfig.getNotEnoughArguments());
+
+            return false;
+        }
+
+        val item = args[1].toUpperCase();
+
+        val allItems = config.getAllItems();
+
+        if (!allItems.contains(item)) {
+            sender.sendMessage(messageConfig.getNoItemFound());
+
+            return false;
+        }
+
+        double price = config.getSellPrice().get(item);
+        sender.sendMessage(
+            messageConfig.getSellPriceFormat()
+                    .replaceAll("%item%", item)
+                    .replaceAll("%price%", String.valueOf(price))
+        );
+
+        return true;
+    }
+    /**
+     * /box sellpricelist [page]: sellの値段設定一覧を表示する
+     *
+     * @param sender Sender
+     * @param args   Arguments
+     *
+     * @return 成功した場合 @code{true}, さもなくば @code{false}
+     */
+    private boolean sellPriceList(CommandSender sender, String[] args) {
+        val page = args.length >= 2 ? OtherUtil.parseIntOrDefault(args[1], 1) : 1;
+
+        val allItems = config.getAllItems();
+        
+        int maxLine = allItems.size();
+        int currentLine = (maxLine < page * 9) ? maxLine : page * 9;
+
+        sender.sendMessage(
+                messageConfig.getSellPriceListHeader()
+                        .replaceAll("%currentLine%", String.valueOf(currentLine))
+                        .replaceAll("%maxLine%", String.valueOf(maxLine))
+        );
+
+        config.getSellPrice().entrySet().stream().skip(9 * (page - 1)).limit(9)
+                .forEach(mapEntry -> {
+                    sender.sendMessage(messageConfig.getSellPriceListFormat()
+                            .replaceAll("%item%", mapEntry.getKey())
+                            .replaceAll("%price%", String.valueOf(mapEntry.getValue()))
+                    );
+                });
 
         return true;
     }
