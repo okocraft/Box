@@ -197,7 +197,7 @@ public class MessageConfig {
         autoStoreSettingChanged = getMessage("autoStore.settingChanged");
         autoStoreSettingChangedAll = getMessage("autoStore.settingChangedAll");
         autoStoreListHeader = getMessage("autoStore.listHeader");
-        autoStoreListFormat = getMessage("autoStore.listFormat");
+        autoStoreListFormat = getRawMessage("autoStore.listFormat");
 
         //
         // Database
@@ -217,7 +217,7 @@ public class MessageConfig {
     }
 
     /**
-     * 設定ファイルからメッセージを取得する。
+     * 設定ファイルからメッセージを取得し、それにBoxのprefixをつけて返す。
      *
      * @author akaregi
      * @since v1.1.0
@@ -228,7 +228,22 @@ public class MessageConfig {
      */
     @Nonnull
     private String getMessage(@Nonnull String key) {
-        return prefix + MessageUtil.convertColorCode(
+        return prefix + getRawMessage(key);
+    }
+
+    /**
+     * 設定ファイルからメッセージを取得する。
+     * 
+     * @author LazyGon
+     * 
+     * @since v1.1.0
+     * 
+     * @param key
+     * 
+     * @return 生メッセージ
+     */
+    private String getRawMessage(@Nonnull String key) {
+        return MessageUtil.convertColorCode(
                 Optional.ofNullable(config.getString(key)).orElse(getDefaultMessage(key))
         );
     }
