@@ -296,7 +296,7 @@ public class BoxCommand implements CommandExecutor {
             return false;
         }
 
-        Long amount = args.length == 3 ? OtherUtil.parseLongOrDefault(args[3], 1L) : 1L;
+        Long amount = args.length == 3 ? 1L : OtherUtil.parseLongOrDefault(args[3], 1L);
 
         val senderAmount = OtherUtil.parseLongOrDefault(database.get(itemName, senderName), Long.MIN_VALUE);
         val otherAmount  = OtherUtil.parseLongOrDefault(database.get(itemName, player), Long.MIN_VALUE);
@@ -322,7 +322,8 @@ public class BoxCommand implements CommandExecutor {
 
         sender.sendMessage(
                 messageConfig.getSuccessGive()
-                        .replaceAll("%player%", player).replaceAll("%item%", itemName)
+                        .replaceAll("%player%", player)
+                        .replaceAll("%item%", itemName)
                         .replaceAll("%amount%", amount.toString())
                         .replaceAll("%newamount%", String.valueOf(senderAmount - amount))
         );
@@ -332,14 +333,11 @@ public class BoxCommand implements CommandExecutor {
         if (offlinePlayer.isOnline()) {
             Optional.ofNullable(offlinePlayer.getPlayer()).ifPresent( _player ->
                     _player.sendMessage(
-                            messageConfig.getSuccessGive()
+                            messageConfig.getSuccessReceive()
                                     .replaceAll("%player%", senderName)
                                     .replaceAll("%item%", itemName)
                                     .replaceAll("%amount%", amount.toString())
-                                    .replaceAll(
-                                            "%newamount%",
-                                            String.valueOf(otherAmount + amount)
-                                    )
+                                    .replaceAll("%newamount%", String.valueOf(otherAmount + amount))
                     )
             );
         }

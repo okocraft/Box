@@ -89,6 +89,8 @@ public class MessageConfig {
     @Getter
     private String successGive;
     @Getter
+    private String successReceive;
+    @Getter
     private String successGiveAdmin;
 
     // AutoStore
@@ -185,6 +187,7 @@ public class MessageConfig {
         // Command
         //
         successGive = getMessage("command.successGive");
+        successReceive = getMessage("command.successReceive");
         successGiveAdmin = getMessage("command.successGiveAdmin");
         successSet = getMessage("command.successSet");
         successTake = getMessage("command.successTake");
