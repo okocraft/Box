@@ -92,9 +92,6 @@ public class Box extends JavaPlugin {
         generalConfig = new GeneralConfig(database);
         messageConfig = new MessageConfig();
 
-        // GUI
-        guiManager = new GuiManager(database, this);
-
         // Database
         if (!database.connect(getDataFolder().getPath() + "/data.db")) {
             setEnabled(false);
@@ -147,6 +144,9 @@ public class Box extends JavaPlugin {
         // Events should be registered in its own initializer
         new PlayerJoin(database, this);
         new EntityPickupItem(database, this);
+
+        // GUI
+        guiManager = new GuiManager(database, this);
 
         log.info("Events have been registered.");
     }

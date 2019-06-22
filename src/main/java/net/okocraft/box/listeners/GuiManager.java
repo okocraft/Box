@@ -79,15 +79,16 @@ public class GuiManager implements Listener {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
-        val inventoryTitle = event.getView().getTitle();
 
+        val inventoryTitle = event.getView().getTitle();
+        
         if (inventoryTitle.equals(categorySelectionGuiName)) {
             event.setCancelled(true);
-
+            
             onClickedCategorySelectionGui(event);
             return;
         }
-
+        
         if (categoryGuiNameMap.containsValue(inventoryTitle)) {
             event.setCancelled(true);
 
@@ -156,6 +157,14 @@ public class GuiManager implements Listener {
                 .getCustomTagContainer()
                 .getCustomTag(categoryNameKey, ItemTagType.STRING);
 
+        
+        val firstItem = Optional.ofNullable(inventory.getItem(0));
+        int currentQuantity = firstItem.map(
+                    item -> Optional.ofNullable(item.getItemMeta()).map(
+                            meta -> meta.getCustomTagContainer().getCustomTag(quantityKey, ItemTagType.INTEGER)
+                    ).orElse(1)
+        ).orElse(1);
+
         // ページ移動
         if (clickedSlot == 45 || clickedSlot == 53) {
             playSound(player, config.getChangePageSound());
@@ -166,6 +175,8 @@ public class GuiManager implements Listener {
                     Optional.ofNullable(inventory.getItem(clickedSlot)).map(ItemStack::getAmount).orElse(1),
                     inventory
             );
+
+            changeQuantity(inventory, currentQuantity);
 
             return;
         }
@@ -181,14 +192,6 @@ public class GuiManager implements Listener {
 
         // 取引数増減
         if (List.of(46, 47, 48, 50, 51, 52).contains(clickedSlot)) {
-            val firstItem = Optional.ofNullable(inventory.getItem(0));
-
-            int quantity = firstItem.map(
-                    item -> Optional.ofNullable(item.getItemMeta()).map(
-                            meta -> meta.getCustomTagContainer().getCustomTag(quantityKey, ItemTagType.INTEGER)
-                    ).orElse(1)
-            ).orElse(1);
-
             int difference = 0;
 
             switch (clickedSlot) {
@@ -213,14 +216,14 @@ public class GuiManager implements Listener {
             }
 
             // 既に取引数が上限または下限に達している場合
-            if ((quantity == 640 && difference > 0) || (quantity == 1 && difference < 0)) {
+            if ((currentQuantity == 640 && difference > 0) || (currentQuantity == 1 && difference < 0)) {
                 return;
             }
 
             // 取引数が上限または下限をに達した場合に制限をかける処理
-            quantity = (quantity + difference >= 1) ? quantity + difference : 1;
-            if (quantity > 640) {
-                quantity = 640;
+            currentQuantity = (currentQuantity + difference >= 1) ? currentQuantity + difference : 1;
+            if (currentQuantity > 640) {
+                currentQuantity = 640;
             }  
 
             // 音を鳴らす
@@ -230,7 +233,7 @@ public class GuiManager implements Listener {
                 playSound(player, config.getIncreaseSound());
             }
 
-            changeQuantity(inventory, quantity);
+            changeQuantity(inventory, currentQuantity);
 
             return;
         }
@@ -415,7 +418,10 @@ public class GuiManager implements Listener {
         });
 
         val columnValueMap = database.getMultiValue(
-                new ArrayList<>(categoryItems.get().getKeys(false)), player.getUniqueId().toString()
+                categoryItems.get().getKeys(false).stream()
+                        .filter(itemName -> Material.getMaterial(itemName) != null)
+                        .collect(Collectors.toList()),
+                player.getUniqueId().toString()
         );
 
         categoryItems.get().getValues(false).entrySet().stream()
@@ -425,6 +431,10 @@ public class GuiManager implements Listener {
                     val section = GeneralConfig.getMemorySection(itemEntry.getValue());
 
                     if (!section.isPresent()) {
+                        return;
+                    }
+
+                    if (Material.getMaterial(itemEntry.getKey()) == null) {
                         return;
                     }
 
