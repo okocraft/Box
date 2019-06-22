@@ -35,6 +35,7 @@ import net.okocraft.box.database.Database;
 import net.okocraft.box.util.GeneralConfig;
 import net.okocraft.box.util.MessageConfig;
 import net.okocraft.box.util.OtherUtil;
+import net.okocraft.box.util.PlayerUtil;
 
 public class BoxCommand implements CommandExecutor {
     private Box instance;
@@ -102,7 +103,7 @@ public class BoxCommand implements CommandExecutor {
         }
 
         // If the player isn't registered
-        if (notExistPlayer(sender)) {
+        if (PlayerUtil.notExistPlayer(sender)) {
             return false;
         }
 
@@ -111,9 +112,7 @@ public class BoxCommand implements CommandExecutor {
         val index = args.length >= 2 ? OtherUtil.parseIntOrDefault(args[1], 1) : 1;
 
         val allItems = config.getAllItems();
-        allItems.forEach(item -> {
-            System.out.println(item);
-        });
+        
         int maxLine = allItems.size();
         int currentLine = (maxLine < index * 9) ? maxLine : index * 9;
 
@@ -163,7 +162,7 @@ public class BoxCommand implements CommandExecutor {
             return false;
         }
 
-        if (notExistPlayer(sender)) {
+        if (PlayerUtil.notExistPlayer(sender)) {
             return false;
         }
 
@@ -359,17 +358,5 @@ public class BoxCommand implements CommandExecutor {
         );
 
         return true;
-    }
-
-    private boolean notExistPlayer(CommandSender sender) {
-        val player = ((Player) sender).getUniqueId().toString();
-
-        if (!database.existPlayer(player)) {
-            sender.sendMessage(messageConfig.getNoPlayerFound());
-
-            return true;
-        }
-
-        return false;
     }
 }

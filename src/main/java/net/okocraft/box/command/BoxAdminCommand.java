@@ -108,9 +108,9 @@ public class BoxAdminCommand implements CommandExecutor {
                 return dropColumn(sender, args);
             }
 
-            // getColumnsMap
-            if (databaseSubCommand.equalsIgnoreCase("getcolumnsmap")) {
-                return getColumnsMap(sender);
+            // getColumnMap
+            if (databaseSubCommand.equalsIgnoreCase("getcolumnmap")) {
+                return getColumnMap(sender);
             }
 
             // getPlayersMap
@@ -173,6 +173,10 @@ public class BoxAdminCommand implements CommandExecutor {
 
         if (subCommand.equalsIgnoreCase("autostore")) {
             return autoStore(sender, args);
+        }
+
+        if (subCommand.equalsIgnoreCase("autostorelist")) {
+            return autoStoreList(sender, args);
         }
 
         sender.sendMessage(messageConfig.getNoParamExist());
@@ -346,6 +350,65 @@ public class BoxAdminCommand implements CommandExecutor {
         return true;
     }
 
+
+    /**
+     * /boxadmin autostorelist <player> [page]: 指定したプレイヤーの自動収集の設定一覧を表示する
+     *
+     * @param sender Sender
+     * @param args   Arguments
+     *
+     * @return 成功した場合 @code{true}, さもなくば @code{false}
+     */
+    private boolean autoStoreList(CommandSender sender, String[] args) {
+
+        if (args.length <= 2) {
+            sender.sendMessage(messageConfig.getNotEnoughArguments());
+            
+            return false;
+        }
+        
+        String playerName = args[1].toLowerCase();
+
+        if (!database.existPlayer(args[1])) {
+            sender.sendMessage(messageConfig.getNoPlayerFound().replaceAll("%player%", playerName));
+
+            return false;
+        }
+
+        val index = args.length >= 3 ? OtherUtil.parseIntOrDefault(args[2], 1) : 1;
+
+        val allItems = config.getAllItems();
+        
+        int maxLine = allItems.size();
+        int currentLine = (maxLine < index * 9) ? maxLine : index * 9;
+
+        sender.sendMessage(
+                messageConfig.getAutoStoreListHeader()
+                        .replaceAll("%player%", playerName)
+                        .replaceAll("%page%", String.valueOf(index))
+                        .replaceAll("%currentLine%", String.valueOf(currentLine))
+                        .replaceAll("%maxLine%", String.valueOf(maxLine))
+        );
+
+        val columnList = config.getAllItems().stream()
+                .skip(9 * (index - 1))
+                .limit(9)
+                .map(name -> "autostore_" + name)
+                .collect(Collectors.toList());
+
+        database.getMultiValue(columnList, playerName).forEach((columnName, value) ->
+                sender.sendMessage(
+                        messageConfig.getAutoStoreListFormat()
+                                .replaceAll("%item%", columnName.substring(10))
+                                .replaceAll("%isEnabled%", value)
+                                .replaceAll("%currentLine%", String.valueOf(currentLine))
+                                .replaceAll("%maxLine%", String.valueOf(maxLine))
+                )
+        );
+
+        return true;
+    }
+
     /**
      * /boxadmin reload
      *
@@ -388,7 +451,7 @@ public class BoxAdminCommand implements CommandExecutor {
      *
      * @return 成功した場合 @code{true}, さもなくば @code{false}
      */
-    private boolean getColumnsMap(CommandSender sender) {
+    private boolean getColumnMap(CommandSender sender) {
         sender.sendMessage(messageConfig.getMapColumnsList());
 
         database.getColumnMap().forEach((columnName, columnType) ->

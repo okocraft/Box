@@ -22,7 +22,10 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
+import lombok.val;
 import net.okocraft.box.Box;
 import net.okocraft.box.database.Database;
 
@@ -62,5 +65,28 @@ public class PlayerUtil {
             instance.getLog().warning(instance.getMessageConfig().getNoPlayerFound().replaceAll("%player%", name));
         }
         return Bukkit.getOfflinePlayer(UUID.fromString(uuidString));
+    }
+    
+    /**
+     * データベースにプレイヤーが登録されていない時、senderにエラーメッセージを送信してtrueを返す。
+     * 
+     * @author akaregi
+     * 
+     * @since v1.1.0
+     * 
+     * @param sender
+     * 
+     * @return 登録されていない時true されているならfalse
+     */
+    public static boolean notExistPlayer(CommandSender sender) {
+        val player = ((Player) sender).getUniqueId().toString();
+
+        if (!database.existPlayer(player)) {
+            sender.sendMessage(Box.getInstance().getMessageConfig().getNoPlayerFound());
+
+            return true;
+        }
+
+        return false;
     }
 }

@@ -153,7 +153,7 @@ public class BoxTabCompleter implements TabCompleter {
             return resultList;
         }
 
-        val subCommands = List.of("set", "give", "take", "reload", "test", "autostore", "database");
+        val subCommands = List.of("set", "give", "take", "reload", "test", "autostore", "autostorelist", "database");
 
         if (args.length == 1) {
             return StringUtil.copyPartialMatches(args[0], subCommands, resultList);
@@ -175,6 +175,7 @@ public class BoxTabCompleter implements TabCompleter {
             switch (subCommand) {
             case "set":
             case "autostore":
+            case "autostorelist":
             case "take":
             case "give":
                 return StringUtil.copyPartialMatches(args[1], playerList, resultList);
@@ -185,16 +186,13 @@ public class BoxTabCompleter implements TabCompleter {
             return resultList;
         }
 
-        val allItems = generalConfig.getAllItems();
-        val allItemsClone = new ArrayList<>(allItems);
+        val allItems = new ArrayList<>(generalConfig.getAllItems());
+        val allItemsAndAll = new ArrayList<>(allItems);
+        allItemsAndAll.add("ALL");
 
-        int maxPage = allItemsClone.size() / 9;
-        maxPage = (allItemsClone.size() % 9 == 0) ? maxPage : maxPage + 1;
-
-        allItemsClone
-                .addAll(IntStream.rangeClosed(1, maxPage).boxed().map(String::valueOf).collect(Collectors.toList()));
-
-        allItemsClone.add("ALL");
+        int maxPage = allItems.size() / 9;
+        maxPage = (allItems.size() % 9 == 0) ? maxPage : maxPage + 1;
+        val pages = IntStream.rangeClosed(1, maxPage).boxed().map(String::valueOf).collect(Collectors.toList());
 
         if (args.length == 3) {
             switch (subCommand) {
@@ -203,7 +201,9 @@ public class BoxTabCompleter implements TabCompleter {
             case "give":
                 return StringUtil.copyPartialMatches(args[2], allItems, resultList);
             case "autostore":
-                return StringUtil.copyPartialMatches(args[2], allItemsClone, resultList);
+                return StringUtil.copyPartialMatches(args[2], allItemsAndAll, resultList);
+            case "autostorelist":
+                return StringUtil.copyPartialMatches(args[2], pages, resultList);
             }
         }
 
@@ -214,20 +214,10 @@ public class BoxTabCompleter implements TabCompleter {
             if (!allItems.contains(args[2].toUpperCase())) {
                 return resultList;
             }
-
-            break;
         case "autostore":
-            if (!allItemsClone.contains(args[2].toUpperCase())) {
+            if (!allItemsAndAll.contains(args[2].toUpperCase())) {
                 return resultList;
             }
-
-            break;
-        default:
-            return resultList;
-        }
-
-        if (!allItems.contains(args[2].toUpperCase()) && !args[2].equalsIgnoreCase("all")) {
-            return resultList;
         }
 
         if (args.length == 4) {
@@ -235,8 +225,7 @@ public class BoxTabCompleter implements TabCompleter {
             case "set":
             case "give":
             case "take":
-                return StringUtil.copyPartialMatches(args[3], List.of("1", "10", "100", "1000", "10000"),
-                        resultList);
+                return StringUtil.copyPartialMatches(args[3], List.of("1", "10", "100", "1000", "10000"), resultList);
             case "autostore":
                 return StringUtil.copyPartialMatches(args[3], List.of("true", "false"), resultList);
             }
@@ -245,7 +234,8 @@ public class BoxTabCompleter implements TabCompleter {
         return resultList;
     }
 
-    public List<String> onTabCompleteDatabaseCommand(CommandSender sender, List<String> playerList, List<String> resultList, String[] args) {
+    public List<String> onTabCompleteDatabaseCommand(CommandSender sender, List<String> playerList,
+            List<String> resultList, String[] args) {
 
         val databaseSubCommands = List.of("addplayer", "removeplayer", "existplayer", "set", "get", "addcolumn",
                 "dropcolumn", "getcolumnmap", "getplayersmap", "resetconnection");
