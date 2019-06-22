@@ -1,150 +1,200 @@
+/*
+ * Box
+ * Copyright (C) 2019 OKOCRAFT
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package net.okocraft.box.listeners;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import net.okocraft.box.ConfigManager;
-import net.okocraft.box.Box;
-import net.okocraft.box.command.Commands;
-import net.okocraft.box.database.Database;
-import com.google.common.primitives.Ints;
+import lombok.val;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.Sound;
-import org.bukkit.SoundCategory;
+import net.okocraft.box.util.MessageConfig;
+import net.okocraft.box.util.OtherUtil;
+
+import org.bukkit.*;
 import org.bukkit.configuration.MemorySection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.tags.CustomItemTagContainer;
 import org.bukkit.inventory.meta.tags.ItemTagType;
 import org.bukkit.plugin.Plugin;
 
+import net.okocraft.box.util.GeneralConfig;
+import net.okocraft.box.Box;
+import net.okocraft.box.database.Database;
+
 public class GuiManager implements Listener {
+    private Database      database;
+    private GeneralConfig config;
+    private MessageConfig messageConfig;
 
-    private Plugin instance;
-    private Database database;
-
-    private ConfigManager configManager;
     private Map<String, MemorySection> category;
-    private String categorySelectionGuiName;
-    private Map<String, String> categoryGuiNameMap;
-    private NamespacedKey quantityKey;
-    private NamespacedKey categoryNameKey;
-    private List<Integer> categorySelectionGuiFrame;
-
-    Sound openSound;
-    Sound changePageSound;
-    Sound returnToSelectionGuiSound;
-    Sound decreaseSound;
-    Sound increaseSound;
-    Sound notEnoughSound;
-    Sound takeOutSound;
-    Sound takeInSound;
+    private String                     categorySelectionGuiName;
+    private Map<String, String>        categoryGuiNameMap;
+    private List<Integer>              categorySelectionGuiFrame;
+    private NamespacedKey              categoryNameKey;
+    private NamespacedKey              quantityKey;
 
     public GuiManager(Database database, Plugin plugin) {
         Bukkit.getPluginManager().registerEvents(this, plugin);
+
         this.database = database;
-        this.instance = plugin;
-        configManager = Box.getInstance().getConfigManager();
-        category = configManager.getCategories();
-        categorySelectionGuiName = configManager.getCategorySelectionGuiName();
-        categoryGuiNameMap = configManager.getCategoryGuiNameMap();
 
-        quantityKey = new NamespacedKey(instance, "quantity");
-        categoryNameKey = new NamespacedKey(instance, "categoryname");
+        // config
+        config        = Box.getInstance().getGeneralConfig();
+        messageConfig = Box.getInstance().getMessageConfig();
 
-        categorySelectionGuiFrame = Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 17, 18, 26, 27, 35, 36, 44, 45, 46, 47,
-                48, 49, 50, 51, 52, 53);
+        category                 = config.getCategories();
+        categoryGuiNameMap       = config.getCategoryGuiNameMap();
+        categorySelectionGuiName = config.getCategorySelectionGuiName();
 
-        openSound = configManager.getOpenSound();
-        changePageSound = configManager.getChangePageSound();
-        returnToSelectionGuiSound = configManager.getReturnToSelectionGuiSound();
-        decreaseSound = configManager.getDecreaseSound();
-        increaseSound = configManager.getIncreaseSound();
-        notEnoughSound = configManager.getNotEnoughSound();
-        takeOutSound = configManager.getTakeOutSound();
-        takeInSound = configManager.getTakeInSound();
+        quantityKey     = new NamespacedKey(plugin, "quantity");
+        categoryNameKey = new NamespacedKey(plugin, "categoryname");
+
+        categorySelectionGuiFrame = List.of(
+                0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 17, 18, 26, 27, 35, 36, 44, 45, 46, 47,  48, 49, 50, 51, 52, 53
+        );
     }
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
-        Player player = (Player) event.getWhoClicked();
-        String actionName = event.getAction().name();
-        Inventory inv = event.getClickedInventory();
-        if (inv == null)
-            return;
 
-        int clickedSlot = event.getSlot();
-        ItemStack clickedItem = inv.getItem(clickedSlot);
-        if (clickedItem == null)
-            return;
-
-        String invName = event.getView().getTitle();
-
-        if (invName.equals(categorySelectionGuiName)) {
+        val inventoryTitle = event.getView().getTitle();
+        
+        if (inventoryTitle.equals(categorySelectionGuiName)) {
             event.setCancelled(true);
-            if (actionName.equals("NOTHING") || inv.getType() == InventoryType.PLAYER)
-                return;
+            
+            onClickedCategorySelectionGui(event);
+            return;
+        }
+        
+        if (categoryGuiNameMap.containsValue(inventoryTitle)) {
+            event.setCancelled(true);
 
-            if (categorySelectionGuiFrame.contains(clickedSlot))
-                return;
+            onClickedCategoryGui(event);
+            return;
+        }
+    }
 
-            String categoryName = clickedItem.getItemMeta().getCustomTagContainer().getCustomTag(categoryNameKey,
-                    ItemTagType.STRING);
+    private void onClickedCategorySelectionGui(InventoryClickEvent event) {
+        val player = (Player) event.getWhoClicked();
+        val action = event.getAction();
+        val inventory = event.getClickedInventory();
 
-            openCategoryGui(player, categoryName, 1, 1, true);
+        if (inventory == null) {
             return;
         }
 
-        if (categoryGuiNameMap.containsValue(invName)) {
-            event.setCancelled(true);
-            if (actionName.equals("NOTHING") || inv.getType() == InventoryType.PLAYER)
-                return;
+        int clickedSlot = event.getSlot();
+        val clickedItem = inventory.getItem(clickedSlot);
 
-            String categoryName = clickedItem.getItemMeta().getCustomTagContainer().getCustomTag(categoryNameKey,
-                    ItemTagType.STRING);
+        if (clickedItem == null || clickedItem.getType() == Material.AIR) {
+            return;
+        }
 
-            if (clickedSlot == 45 || clickedSlot == 53) {
-                if (changePageSound != null)
-                    player.playSound(player.getLocation(), changePageSound, SoundCategory.MASTER,
-                            configManager.getSoundPitch(), configManager.getSoundVolume());
+        if (action == InventoryAction.NOTHING || inventory.getType() == InventoryType.PLAYER) {
+            return;
+        }
 
-                openCategoryGui(player, categoryName, inv.getItem(clickedSlot).getAmount(), 1, inv, false);
-                return;
-            }
+        if (categorySelectionGuiFrame.contains(clickedSlot)) {
+            return;
+        }
 
-            if (clickedSlot == 49) {
-                if (returnToSelectionGuiSound != null)
-                    player.playSound(player.getLocation(), returnToSelectionGuiSound, SoundCategory.MASTER,
-                            configManager.getSoundPitch(), configManager.getSoundVolume());
+        val categoryName = clickedItem.getItemMeta()
+                // NOTE: NPE はItemStackがAIRの場合のみしか起こらない。
+                .getCustomTagContainer()
+                .getCustomTag(categoryNameKey, ItemTagType.STRING);
 
-                openCategorySelectionGui(player, 1, false);
-                return;
-            }
+        openCategoryGui(player, categoryName);
 
-            if (Arrays.asList(46, 47, 48, 50, 51, 52).contains(clickedSlot)) {
-                ItemStack firstItem = inv.getItem(0);
-                if (firstItem == null)
-                    return;
+        return;
+    }
 
-                int quantity = firstItem.getItemMeta().getCustomTagContainer().getCustomTag(quantityKey,
-                        ItemTagType.INTEGER);
+    private void onClickedCategoryGui(InventoryClickEvent event) {
+        val player = (Player) event.getWhoClicked();
+        val action = event.getAction();
+        val inventory = event.getClickedInventory();
 
-                int difference = 0;
+        if (inventory == null) {
+            return;
+        }
 
-                switch (clickedSlot) {
+        int clickedSlot = event.getSlot();
+        val clickedItem = inventory.getItem(clickedSlot);
+
+        if (clickedItem == null || clickedItem.getType() == Material.AIR) {
+            return;
+        }
+
+        if (action == InventoryAction.NOTHING || inventory.getType() == InventoryType.PLAYER) {
+            return;
+        }
+
+        val categoryName = clickedItem
+                .getItemMeta()
+                // NOTE: NPE はItemStackがAIRの場合のみしか起こらない。
+                .getCustomTagContainer()
+                .getCustomTag(categoryNameKey, ItemTagType.STRING);
+
+        
+        val firstItem = Optional.ofNullable(inventory.getItem(0));
+        int currentQuantity = firstItem.map(
+                    item -> Optional.ofNullable(item.getItemMeta()).map(
+                            meta -> meta.getCustomTagContainer().getCustomTag(quantityKey, ItemTagType.INTEGER)
+                    ).orElse(1)
+        ).orElse(1);
+
+        // ページ移動
+        if (clickedSlot == 45 || clickedSlot == 53) {
+            playSound(player, config.getChangePageSound());
+
+            openCategoryGui(
+                    player,
+                    categoryName,
+                    Optional.ofNullable(inventory.getItem(clickedSlot)).map(ItemStack::getAmount).orElse(1),
+                    inventory
+            );
+
+            changeQuantity(inventory, currentQuantity);
+
+            return;
+        }
+
+        // カテゴリー選択GUIに戻る
+        if (clickedSlot == 49) {
+            playSound(player, config.getBackToGuiSound());
+
+            openCategorySelectionGui(player);
+
+            return;
+        }
+
+        // 取引数増減
+        if (List.of(46, 47, 48, 50, 51, 52).contains(clickedSlot)) {
+            int difference = 0;
+
+            switch (clickedSlot) {
                 case 46:
                     difference = -64;
                     break;
@@ -163,191 +213,247 @@ public class GuiManager implements Listener {
                 case 52:
                     difference = 64;
                     break;
-                }
+            }
 
-                if ((quantity == 640 && difference > 0) || (quantity == 1 && difference < 0))
-                    return;
-
-                quantity = (quantity + difference >= 1) ? quantity + difference : 1;
-                if (quantity > 640)
-                    quantity = 640;
-
-                if (difference < 0) {
-                    if (decreaseSound != null)
-                        player.playSound(player.getLocation(), decreaseSound, SoundCategory.MASTER,
-                                configManager.getSoundPitch(), configManager.getSoundVolume());
-                } else if (difference > 0) {
-                    if (increaseSound != null)
-                        player.playSound(player.getLocation(), increaseSound, SoundCategory.MASTER,
-                                configManager.getSoundPitch(), configManager.getSoundVolume());
-                }
-
-                changeQuantity(inv, quantity);
+            // 既に取引数が上限または下限に達している場合
+            if ((currentQuantity == 640 && difference > 0) || (currentQuantity == 1 && difference < 0)) {
                 return;
             }
 
-            Material clickedItemMaterial = clickedItem.getType();
+            // 取引数が上限または下限をに達した場合に制限をかける処理
+            currentQuantity = (currentQuantity + difference >= 1) ? currentQuantity + difference : 1;
+            if (currentQuantity > 640) {
+                currentQuantity = 640;
+            }  
 
-            MemorySection categorySetting = category.get(categoryName);
-            MemorySection clickedItemMaterialSection = ConfigManager
-                    .memorySectionOrNull(categorySetting.get("item." + clickedItemMaterial.name()));
-            if (clickedItemMaterialSection == null) {
-                player.sendMessage(configManager.getMessageConfig()
-                        .getString("ErrorOccured", "&cエラーが発生して処理を実行できませんでした。").replaceAll("&([a-f0-9])", "§$1"));
-                player.closeInventory();
-                return;
+            // 音を鳴らす
+            if (difference < 0) {
+                playSound(player, config.getDecreaseSound());
+            } else if (difference > 0) {
+                playSound(player, config.getIncreaseSound());
             }
 
-            int quantity = clickedItem.getItemMeta().getCustomTagContainer().getCustomTag(quantityKey,
-                    ItemTagType.INTEGER);
-
-            Integer storedItemAmount = Ints
-                    .tryParse(database.get(clickedItemMaterial.name(), player.getUniqueId().toString()));
-            if (storedItemAmount == null) {
-                player.sendMessage(configManager.getMessageConfig()
-                        .getString("InvalidValueIsStored", "&cデータベースに不正な値が格納されています。管理者に報告して下さい。")
-                        .replaceAll("&([a-f0-9])", "§$1"));
-                return;
-            }
-
-            int resultStoredAmount;
-
-            if (event.isRightClick()) {
-
-                if (storedItemAmount <= 0) {
-                    if (notEnoughSound != null)
-                        player.playSound(player.getLocation(), notEnoughSound, SoundCategory.MASTER,
-                                configManager.getSoundPitch(), configManager.getSoundVolume());
-                    return;
-                }
-
-                if (takeOutSound != null)
-                    player.playSound(player.getLocation(), takeOutSound, SoundCategory.MASTER,
-                            configManager.getSoundPitch(), configManager.getSoundVolume());
-
-                int quantityClone = (storedItemAmount < quantity) ? storedItemAmount : quantity;
-
-                Map<Integer, ItemStack> nonStoredItemStacks = player.getInventory()
-                        .addItem(new ItemStack(clickedItemMaterial, quantityClone));
-                int nonAddedAmount = nonStoredItemStacks.values().stream().mapToInt(item -> item.getAmount()).sum();
-                resultStoredAmount = storedItemAmount - quantityClone + nonAddedAmount;
-
-            } else {
-                Inventory playerInv = event.getView().getBottomInventory();
-                int playerItemAmount = playerInv.all(clickedItemMaterial).values().stream()
-                        .filter(item -> !item.hasItemMeta()).mapToInt(item -> item.getAmount()).sum();
-                if (playerItemAmount == 0) {
-                    if (notEnoughSound != null)
-                        player.playSound(player.getLocation(), notEnoughSound, SoundCategory.MASTER,
-                                configManager.getSoundPitch(), configManager.getSoundVolume());
-                    return;
-                }
-
-                if (takeInSound != null)
-                    player.playSound(player.getLocation(), takeInSound, SoundCategory.MASTER,
-                            configManager.getSoundPitch(), configManager.getSoundVolume());
-
-                Map<Integer, ItemStack> nonRemovedItemStacks = playerInv
-                        .removeItem(new ItemStack(clickedItemMaterial, quantity));
-                int nonRemovedAmount = nonRemovedItemStacks.values().stream().mapToInt(item -> item.getAmount()).sum();
-                resultStoredAmount = storedItemAmount + quantity - nonRemovedAmount;
-            }
-
-            String newValue = String.valueOf(resultStoredAmount);
-
-            database.set(clickedItemMaterial.name(), player.getUniqueId().toString(), newValue);
-
-            inv.setItem(clickedSlot,
-                    createItem(newValue, clickedItemMaterial.name(), clickedItemMaterialSection, categoryName, quantity));
+            changeQuantity(inventory, currentQuantity);
 
             return;
         }
+
+        // 以下全て引き出し・預け入れ処理
+        val clickedItemMaterial = clickedItem.getType();
+
+        val categorySetting = category.get(categoryName);
+        val clickedItemMaterialSection = GeneralConfig.getMemorySection(
+                categorySetting.get("item." + clickedItemMaterial.name())
+        );
+
+        if (!clickedItemMaterialSection.isPresent()) {
+            player.sendMessage(messageConfig.getErrorOccurred());
+            player.closeInventory();
+
+            return;
+        }
+
+        // アイテムの取引数
+        int quantity = Optional.ofNullable(clickedItem.getItemMeta()).map(item ->
+                item.getCustomTagContainer().getCustomTag(quantityKey, ItemTagType.INTEGER)
+        ).orElse(1);
+
+        // データベースに保存されているアイテム数
+        val storedItemAmount = OtherUtil.parseIntOrDefault(
+                database.get(clickedItemMaterial.name(), player.getUniqueId().toString()),
+                Integer.MIN_VALUE
+        );
+
+        if (storedItemAmount == Integer.MIN_VALUE) {
+            player.sendMessage(messageConfig.getDatabaseInvalidValue());
+
+            return;
+        }
+
+        int resultStoredAmount;
+
+        // 引き出し処理
+        if (event.isRightClick()) {
+            if (storedItemAmount <= 0) {
+                playSound(player, config.getNotEnoughSound());
+
+                return;
+            }
+
+            playSound(player, config.getTakeOutSound());
+
+            int quantityLimited = (storedItemAmount < quantity) ? storedItemAmount : quantity;
+
+            val nonStoredItemStacks = player.getInventory().addItem(
+                    new ItemStack(clickedItemMaterial, quantityLimited)
+            );
+
+            int nonAddedAmount = nonStoredItemStacks.values().stream()
+                    .mapToInt(ItemStack::getAmount).sum();
+
+            resultStoredAmount = storedItemAmount - quantityLimited + nonAddedAmount;
+
+        // 預け入れ処理
+        } else {
+            val playerInventory = event.getView().getBottomInventory();
+
+            int playerItemAmount = playerInventory.all(clickedItemMaterial).values().stream()
+                    .filter(item -> !item.hasItemMeta()).mapToInt(ItemStack::getAmount).sum();
+
+            if (playerItemAmount == 0) {
+                playSound(player, config.getNotEnoughSound());
+
+                return;
+            }
+
+            playSound(player, config.getTakeOutSound());
+
+            val nonRemovedItemStacks = playerInventory.removeItem(new ItemStack(clickedItemMaterial, quantity));
+            int nonRemovedAmount = nonRemovedItemStacks.values().stream()
+                    .mapToInt(ItemStack::getAmount).sum();
+
+            resultStoredAmount = storedItemAmount + quantity - nonRemovedAmount;
+        }
+
+        // データベースに保存して終了
+        val newValue = String.valueOf(resultStoredAmount);
+
+        database.set(clickedItemMaterial.name(), player.getUniqueId().toString(), newValue);
+
+        inventory.setItem(clickedSlot, createItem(
+                newValue, clickedItemMaterial.name(), clickedItemMaterialSection.get(), categoryName, quantity
+        ));
+
     }
 
-    public void openCategorySelectionGui(Player player, int page, boolean playSound) {
+    public void openCategorySelectionGui(Player player) {
         player.closeInventory();
-        if (playSound && openSound != null)
-            player.playSound(player.getLocation(), openSound, SoundCategory.MASTER, configManager.getSoundPitch(),
-                    configManager.getSoundVolume());
-        ItemStack glass = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
-        ItemMeta meta = glass.getItemMeta();
-        meta.setDisplayName("§6");
-        glass.setItemMeta(meta);
-        Inventory categorySelectionGui = Bukkit.createInventory(null, 54, categorySelectionGuiName);
-        categorySelectionGuiFrame.forEach(slot -> categorySelectionGui.setItem(slot, glass.clone()));
-        category.forEach((categoryName, categorySetting) -> categorySelectionGui
-                .addItem(createCategorySelectionItem(categoryName, categorySetting)));
+
+        playSound(player, config.getOpenSound());
+
+        val glass = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
+        val itemMeta  = Optional.ofNullable(glass.getItemMeta());
+
+        itemMeta.ifPresent(meta -> {
+            meta.setDisplayName("§6");
+            glass.setItemMeta(meta);
+        });
+
+        val categorySelectionGui = Bukkit.createInventory(null, 54, categorySelectionGuiName);
+
+        categorySelectionGuiFrame.forEach(slot ->
+                categorySelectionGui.setItem(slot, glass.clone())
+        );
+
+        category.forEach((categoryName, categorySetting) ->
+                categorySelectionGui.addItem(createCategorySelectionItem(categoryName, categorySetting))
+        );
+
         player.openInventory(categorySelectionGui);
     }
 
     private ItemStack createCategorySelectionItem(String categoryName, MemorySection section) {
-        Material categoryIconMaterial = Material.valueOf(section.getString("icon", "BARRIER").toUpperCase());
-        ItemStack categorySelectionItem = new ItemStack(categoryIconMaterial);
-        ItemMeta categorySelectionItemMeta = categorySelectionItem.getItemMeta();
-        String categoryItemName = section.getString("display_name", "No display_name defined.")
+        val categoryIconMaterial = Material.valueOf(Optional.ofNullable(
+                section.getString("icon")).orElse("BARRIER").toUpperCase()
+        );
+        val categorySelectionItem     = new ItemStack(categoryIconMaterial);
+        val categorySelectionItemMeta = Optional.ofNullable(categorySelectionItem.getItemMeta());
+        val categoryItemName          = Optional.ofNullable(section.getString("display_name"))
+                .orElseThrow(() -> new NoSuchElementException("No display_name defined."))
                 .replaceAll("&([a-f0-9])", "§$1");
-        categorySelectionItemMeta.setDisplayName(categoryItemName);
-        categorySelectionItemMeta.getCustomTagContainer().setCustomTag(categoryNameKey, ItemTagType.STRING,
-                categoryName);
-        categorySelectionItem.setItemMeta(categorySelectionItemMeta);
+
+        categorySelectionItemMeta.ifPresent(meta -> {
+            meta.setDisplayName(categoryItemName);
+            meta.getCustomTagContainer().setCustomTag(
+                    categoryNameKey, ItemTagType.STRING, categoryName
+            );
+
+            categorySelectionItem.setItemMeta(meta);
+        });
+
         return categorySelectionItem;
     }
 
-    public void openCategoryGui(Player player, String categoryName, int page, int quantity, boolean playSound) {
-        openCategoryGui(player, categoryName, page, quantity, null, playSound);
+    private void openCategoryGui(Player player, String categoryName) {
+        openCategoryGui(player, categoryName, 1, null);
     }
 
-    public void openCategoryGui(Player player, String categoryName, int page, int quantity, Inventory modifiedInventory,
-            boolean playSound) {
+    private void openCategoryGui(Player player, String categoryName, int page, Inventory modifiedInventory) {
+        val categorySetting = category.get(categoryName);
+        val categoryItems   = GeneralConfig.getMemorySection(categorySetting.get("item"));
 
-        MemorySection categorySetting = category.get(categoryName);
-        MemorySection categoryItems = ConfigManager.memorySectionOrNull(categorySetting.get("item"));
-        if (categoryItems == null) {
-            Commands.errorOccured(player,
-                    configManager.getMessageConfig().getString("ErrorOnOpenGui", "§cエラーが発生してGuiを開けませんでした。"));
+        if (!categoryItems.isPresent()) {
+            player.sendMessage(messageConfig.getErrorOccurredOnGUI());
             player.closeInventory();
+
             return;
         }
 
-        Inventory categoryGui = Bukkit.createInventory(player, 54, categoryGuiNameMap.get(categoryName));
+        val categoryGui = Bukkit.createInventory(player, 54, categoryGuiNameMap.get(categoryName));
 
-        configManager.getFooterItemStacks().forEach((slot, itemStack) -> {
-            ItemStack usingItemStack = itemStack.clone();
-            usingItemStack.getItemMeta().getCustomTagContainer().setCustomTag(categoryNameKey, ItemTagType.STRING,
-                    categoryName);
+        config.getFooterItemStacks().forEach((slot, itemStack) -> {
+            val usingItemStack = itemStack.clone();
+
+            Optional.ofNullable(usingItemStack.getItemMeta()).ifPresent(meta ->
+                    meta.getCustomTagContainer().setCustomTag(categoryNameKey, ItemTagType.STRING, categoryName)
+            );
+
             if (slot == 45) {
-                if (page > 1)
+                if (page > 1) {
                     usingItemStack.setAmount(page - 1);
-                else
+                } else {
                     usingItemStack.setAmount(0);
+                }
             }
+
             if (slot == 53) {
-                if (page < 64)
+                if (page < 64) {
                     usingItemStack.setAmount(page + 1);
-                else
+                } else {
                     usingItemStack.setAmount(0);
+                }
             }
+
             categoryGui.setItem(slot, usingItemStack);
         });
 
-        Map<String, String> columnValueMap = database.getMultiValue(new ArrayList<String>(categoryItems.getKeys(false)), player.getUniqueId().toString());
+        val columnValueMap = database.getMultiValue(
+                categoryItems.get().getKeys(false).stream()
+                        .filter(itemName -> Material.getMaterial(itemName) != null)
+                        .collect(Collectors.toList()),
+                player.getUniqueId().toString()
+        );
 
-        categoryItems.getValues(false).entrySet().stream().skip(45 * (page - 1)).limit(45).forEach(itemEntry -> {
-            MemorySection categoryItemSection = ConfigManager.memorySectionOrNull(itemEntry.getValue());
-            if (categoryItemSection == null)
-                return;
+        categoryItems.get().getValues(false).entrySet().stream()
+                .skip(45 * (page - 1))
+                .limit(45)
+                .forEach(itemEntry -> {
+                    val section = GeneralConfig.getMemorySection(itemEntry.getValue());
 
-            ItemStack categoryItem = createItem(columnValueMap.get(itemEntry.getKey()), itemEntry.getKey(), categoryItemSection, categoryName,
-                    quantity);
-            if (categoryItem.getType() == Material.AIR)
-                return;
+                    if (!section.isPresent()) {
+                        return;
+                    }
 
-            categoryGui.addItem(categoryItem);
-        });
+                    if (Material.getMaterial(itemEntry.getKey()) == null) {
+                        return;
+                    }
 
-        if (playSound && openSound != null)
-            player.playSound(player.getLocation(), openSound, SoundCategory.MASTER, configManager.getSoundPitch(),
-                    configManager.getSoundVolume());
+                    val item = createItem(
+                            columnValueMap.get(itemEntry.getKey()),
+                            itemEntry.getKey(),
+                            section.get(),
+                            categoryName,
+                            1
+                    );
+
+                    if (item.getType() == Material.AIR) {
+                        return;
+                    }
+
+                    categoryGui.addItem(item);
+                });
+
+        playSound(player, config.getOpenSound());
 
         if (modifiedInventory != null) {
             modifiedInventory.setContents(categoryGui.getStorageContents());
@@ -360,68 +466,100 @@ public class GuiManager implements Listener {
     private ItemStack createItem(String stock, String materialName, MemorySection section, String categoryName,
             int quantity) {
         Material categoryItemMaterial;
+
         try {
             categoryItemMaterial = Material.valueOf(materialName);
         } catch (IllegalArgumentException exception) {
             return new ItemStack(Material.AIR);
         }
 
-        String jp = section.getString("jp", "");
-        String en = section.getString("en", "");
-        String categoryItemName = replacePlaceholders(configManager.getItemTemplateName(), jp, en, stock, quantity);
-        List<String> categoryItemLore = new ArrayList<>(configManager.getItemTemplateLore());
-        categoryItemLore.replaceAll(loreLine -> replacePlaceholders(loreLine, jp, en, stock, quantity));
+        val jp = section.getString("jp", "");
+        val en = section.getString("en", "");
+        val categoryItemName = replacePlaceholders(config.getItemTemplateName(), jp, en, stock, quantity);
+        val categoryItemLore = new ArrayList<>(config.getItemTemplateLore());
 
-        ItemStack categoryItem = new ItemStack(categoryItemMaterial);
-        ItemMeta categoryItemMeta = categoryItem.getItemMeta();
-        categoryItemMeta.setDisplayName(categoryItemName);
-        categoryItemMeta.setLore(categoryItemLore);
-        CustomItemTagContainer tagContainer = categoryItemMeta.getCustomTagContainer();
-        tagContainer.setCustomTag(quantityKey, ItemTagType.INTEGER, quantity);
-        tagContainer.setCustomTag(categoryNameKey, ItemTagType.STRING, categoryName);
-        categoryItem.setItemMeta(categoryItemMeta);
+        categoryItemLore.replaceAll(loreLine ->
+                replacePlaceholders(loreLine, jp, en, stock, quantity)
+        );
+
+        val categoryItem     = new ItemStack(categoryItemMaterial);
+        val categoryItemMeta = Optional.ofNullable(categoryItem.getItemMeta());
+
+        categoryItemMeta.ifPresent(meta -> {
+            meta.setDisplayName(categoryItemName);
+            meta.setLore(categoryItemLore);
+
+            val tagContainer = meta.getCustomTagContainer();
+            tagContainer.setCustomTag(quantityKey, ItemTagType.INTEGER, quantity);
+            tagContainer.setCustomTag(categoryNameKey, ItemTagType.STRING, categoryName);
+
+            categoryItem.setItemMeta(meta);
+        });
 
         return categoryItem;
     }
 
     private void changeQuantity(Inventory inv, int quantity) {
-        Player player = (Player) inv.getViewers().get(0);
-        String categoryName = inv.getItem(0).getItemMeta().getCustomTagContainer().getCustomTag(categoryNameKey,
-                ItemTagType.STRING);
-        if (categoryName == null) {
-            System.out.println("カテゴリ名の取得に失敗しました。");
+        val player = (Player) inv.getViewers().get(0);
+        val firstItem = inv.getItem(0);
+        if (firstItem == null || firstItem.getType() == Material.AIR) {
             return;
         }
-        MemorySection section = ConfigManager
-                .memorySectionOrNull(configManager.getStoringItemConfig().get("categories." + categoryName + ".item"));
-        if (section == null) {
-            System.out.println("アイテム設定の取得に失敗しました。");
+        val categoryName = firstItem
+                // NOTE: NPE はItemStackがAIRの場合のみしか起こらない。
+                .getItemMeta()
+                .getCustomTagContainer()
+                .getCustomTag(categoryNameKey, ItemTagType.STRING);
+
+        if (categoryName == null) {
+            player.sendMessage(messageConfig.getErrorFetchCategoryName());
+
             return;
         }
 
-        List<ItemStack> items = IntStream.rangeClosed(0, 44).boxed().map(slot -> inv.getItem(slot))
-                .filter(item -> item != null).collect(Collectors.toList());
-        List<String> itemMaterialNameList = (new ArrayList<ItemStack>(items)).stream().map(item -> item.getType().name())
+        val section = GeneralConfig.getMemorySection(
+                config.getStoringItemConfig().get("categories." + categoryName + ".item")
+        );
+
+        if (!section.isPresent()) {
+            player.sendMessage(messageConfig.getErrorFetchItemConfig());
+
+            return;
+        }
+
+        val items = IntStream.rangeClosed(0, 44).boxed()
+                .map(inv::getItem)
+                .filter(Objects::nonNull).collect(Collectors.toList());
+
+        val itemMaterialNameList = (new ArrayList<>(items)).stream()
+                .map(item -> item.getType().name())
                 .collect(Collectors.toList());
 
-        Map<String, String> itemAmountMap = database.getMultiValue(itemMaterialNameList,
-                player.getUniqueId().toString());
+        val itemAmountMap = database.getMultiValue(itemMaterialNameList, player.getUniqueId().toString());
 
         items.forEach(item -> {
-            String itemMaterialName = item.getType().name();
-            ItemMeta meta = item.getItemMeta();
-            meta.getCustomTagContainer().setCustomTag(quantityKey, ItemTagType.INTEGER, quantity);
-            String jp = section.getString(itemMaterialName + ".jp", "");
-            String en = section.getString(itemMaterialName + ".en", "");
-            String stock = itemAmountMap.get(itemMaterialName);
+            val itemMaterialName = item.getType().name();
+            val itemMeta = Optional.ofNullable(item.getItemMeta());
 
-            String categoryItemName = replacePlaceholders(configManager.getItemTemplateName(), jp, en, stock, quantity);
-            List<String> categoryItemLore = new ArrayList<>(configManager.getItemTemplateLore());
-            categoryItemLore.replaceAll(loreLine -> replacePlaceholders(loreLine, jp, en, stock, quantity));
-            meta.setDisplayName(categoryItemName);
-            meta.setLore(categoryItemLore);
-            item.setItemMeta(meta);
+            itemMeta.ifPresent(meta -> {
+                meta.getCustomTagContainer().setCustomTag(quantityKey, ItemTagType.INTEGER, quantity);
 
+                val jp = section.get().getString(itemMaterialName + ".jp", "");
+                val en = section.get().getString(itemMaterialName + ".en", "");
+                val stock = itemAmountMap.get(itemMaterialName);
+
+                val itemName = replacePlaceholders(config.getItemTemplateName(), jp, en, stock, quantity);
+                val itemLore = new ArrayList<>(config.getItemTemplateLore());
+
+                itemLore.replaceAll(loreLine ->
+                        replacePlaceholders(loreLine, jp, en, stock, quantity)
+                );
+
+                meta.setDisplayName(itemName);
+                meta.setLore(itemLore);
+
+                item.setItemMeta(meta);
+            });
         });
     }
 
@@ -433,4 +571,21 @@ public class GuiManager implements Listener {
                 .replaceAll("%stock%", stock)
                 .replaceAll("&([a-f0-9])", "§$1");
     }
+
+    /**
+     * プレイヤーに音声を流す。
+     *
+     * @param player プレイヤー
+     * @param sound  流す音声
+     */
+    private void playSound(Player player, Sound sound) {
+        player.playSound(
+                player.getLocation(),
+                sound,
+                SoundCategory.MASTER,
+                config.getSoundPitch(),
+                config.getSoundVolume()
+        );
+    }
+
 }

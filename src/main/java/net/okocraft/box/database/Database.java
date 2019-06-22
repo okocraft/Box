@@ -1,38 +1,52 @@
+/*
+ * Box
+ * Copyright (C) 2019 OKOCRAFT
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package net.okocraft.box.database;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.Optional;
-import java.util.Properties;
-import java.util.concurrent.ExecutionException;
+import java.sql.*;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.Plugin;
-
-import java.util.Map;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.val;
 
-import net.okocraft.box.Box;
-import net.okocraft.box.command.Commands;
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.Plugin;
 
+import net.okocraft.box.Box;
+import net.okocraft.box.util.PlayerUtil;
+
+// NOTE: メッセージがハードコーディングされているが、システム側メッセージなのでとりあえず無視する。
+
+/**
+ * データベース
+ *
+ * @author akaregi
+ * @author LazyGon
+ * @since v1.0.0-SNAPSHOT
+ */
 public class Database {
     /**
      * データベルファイルへの URL 。{@code plugins/Box/data.db}
@@ -87,19 +101,19 @@ public class Database {
      * データベースの初期化を行う。
      *
      * <p>
-     * データベースのファイル自体が存在しない場合はファイルを作成する。 ファイル内になんらデータベースが存在しない場合、データベースを新たに生成する。
+     * データベースのファイル自体が存在しない場合はファイルを作成する。
+     * ファイル内になんらデータベースが存在しない場合、データベースを新たに生成する。
      *
-     * @since 1.0.0-SNAPSHOT
+     * @since v1.0.0-SNAPSHOT
      * @author akaregi
      */
     public boolean connect(String url) {
         // Check if driver exists
         try {
             Class.forName("org.sqlite.JDBC");
-        } catch (ClassNotFoundException exception) {
-            // log.error("There's no JDBC driver.");
+        } catch (ClassNotFoundException e) {
             log.severe("There's no JDBC driver.");
-            exception.printStackTrace();
+            e.printStackTrace();
 
             return false;
         }
@@ -116,10 +130,10 @@ public class Database {
             if (!Files.exists(file)) {
                 Files.createFile(file);
             }
-        } catch (IOException exception) {
+        } catch (IOException e) {
             // log.error("Failed to create database file.");
             log.severe("Failed to create database file.");
-            exception.printStackTrace();
+            e.printStackTrace();
 
             return false;
         }
@@ -136,7 +150,9 @@ public class Database {
 
         // create table for Box plugin
         val statement = prepare(
-                "CREATE TABLE IF NOT EXISTS " + table + " (uuid TEXT PRIMARY KEY NOT NULL, player TEXT NOT NULL)");
+                "CREATE TABLE IF NOT EXISTS " + table + " (uuid TEXT PRIMARY KEY NOT NULL, player TEXT NOT NULL)"
+        );
+
         boolean isTableCreated = statement.map(resource -> {
             try (PreparedStatement stmt = resource) {
                 stmt.execute();
@@ -151,10 +167,13 @@ public class Database {
 
         if (!isTableCreated) {
             log.severe("Failed to create the table.");
+
             return false;
         }
 
-        List<String> allItems = Box.getInstance().getConfigManager().getAllItems();
+        // NOTE: Lombok's val cannot use for this.
+        List<String> allItems = Box.getInstance().getGeneralConfig().getAllItems();
+
         allItems.forEach(itemName -> {
             addColumn(itemName, "INTEGER", "0", false);
             addColumn("autostore_" + itemName, "TEXT", "false", false);
@@ -166,7 +185,7 @@ public class Database {
     /**
      * データベースへの接続を切断する。
      *
-     * @since 1.0.0-SNAPSHOT
+     * @since v1.0.0-SNAPSHOT
      * @author akaregi
      */
     public void dispose() {
@@ -182,52 +201,62 @@ public class Database {
     }
 
     /**
-     * コネクションをリセットし、メモリを開放する。
+     * 接続をリセットする。
+     *
+     * @since v1.0.0-SNAPSHOT
+     * @author LazyGon
      */
     public void resetConnection() {
         log.info("Disconnecting.");
+
         dispose();
+
         log.info("Getting connection.");
+
         if (!connect(fileUrl)) {
             log.info("Failed to reset connection. Disabling Box plugin.");
             Bukkit.getPluginManager().disablePlugin(Box.getInstance());
         }
+
         log.info("Database reset complete.");
     }
 
     /**
-     * データベースにレコードを追加する。 showWarningがtrueで失敗した場合はコンソールにログを出力する。
+     * データベースにレコードを追加する。showWarning が true で失敗した場合はコンソールにログを出力する。
      *
-     * @since 1.0.0-SNAPSHOT
+     * @since v1.0.0-SNAPSHOT
      * @author akaregi
      *
      * @param uuid        UUID
      * @param name        名前
      * @param showWarning コンソールログを出力するかどうか
-     *
-     * @return 成功すればtrue 失敗すればfalse
      */
-    public boolean addPlayer(@NonNull String uuid, @NonNull String name, boolean showWarning) {
-
+    public void addPlayer(@NonNull String uuid, @NonNull String name, boolean showWarning) {
         if (existPlayer(uuid)) {
-            if (showWarning)
+            if (showWarning) {
                 log.warning(":PLAYER_" + name + "_UUID_" + uuid + "ALREADY_EXIST");
-            return false;
+            }
+
+            return;
         }
 
-        if (Commands.checkEntryType(uuid).equals("player")) {
-            if (showWarning)
+        if (PlayerUtil.isUuidOrPlayer(uuid).equals("player")) {
+            if (showWarning) {
                 log.warning(":INVALID_UUID");
-            return false;
+            }
+
+            return;
         }
 
         if (!name.matches("(\\d|[a-zA-Z]|_){3,16}")) {
-            if (showWarning)
+            if (showWarning) {
                 log.warning(":INVALID_NAME");
-            return false;
+            }
+
+            return;
         }
 
-        return prepare("INSERT OR IGNORE INTO " + table + " (uuid, player) VALUES (?, ?)").map(statement -> {
+        prepare("INSERT OR IGNORE INTO " + table + " (uuid, player) VALUES (?, ?)").ifPresent(statement -> {
             try {
                 statement.setString(1, uuid);
                 statement.setString(2, name);
@@ -235,86 +264,79 @@ public class Database {
 
                 // Execute this batch
                 threadPool.submit(new StatementRunner(statement));
-                return true;
             } catch (SQLException e) {
                 e.printStackTrace();
-                return false;
             }
-        }).orElse(false);
+        });
     }
 
     /**
-     * テーブルからレコードを削除する。 失敗した場合はコンソールにログを出力する。
+     * テーブルからレコードを削除する。失敗した場合はコンソールにログを出力する。
      *
-     * @since 1.1.0-SNAPSHOT
+     * @since v1.1.0-SNAPSHOT
      * @author LazyGon
      *
      * @param entry プレイヤー
-     *
-     * @return 成功すればtrue 失敗すればfalse
      */
-    public boolean removePlayer(@NonNull String entry) {
-
+    public void removePlayer(@NonNull String entry) {
         if (!existPlayer(entry)) {
             log.warning(":NO_RECORD_FOR_" + entry + "_EXIST");
-            return false;
+            return;
         }
 
-        String entryType = Commands.checkEntryType(entry);
+        String entryType = PlayerUtil.isUuidOrPlayer(entry);
 
-        return prepare("DELETE FROM " + table + " WHERE " + entryType + " = ?").map(statement -> {
+        prepare("DELETE FROM " + table + " WHERE " + entryType + " = ?").ifPresent(statement -> {
             try {
                 statement.setString(1, entry);
                 statement.addBatch();
 
                 // Execute this batch
                 threadPool.submit(new StatementRunner(statement));
-                return true;
             } catch (SQLException e) {
                 e.printStackTrace();
-                return false;
             }
-        }).orElse(false);
+        });
     }
 
     /**
-     * テーブルのデータベースに名前が記録されているか調べる。
+     * テーブルに名前が記録されているか調べる。
      *
-     * @since 1.0.0-SNAPSHOT
+     * @since v1.0.0-SNAPSHOT
      * @author LazyGon
      *
-     * @param entry uuidでもmcidでも可
+     * @param entry UUID か Minecraft ID
      */
     public boolean existPlayer(@NonNull String entry) {
-        Map<String, String> playersMap = getPlayersMap();
+        val playersMap = getPlayersMap();
+
         return playersMap.containsKey(entry) || playersMap.containsValue(entry);
     }
 
     /**
-     * {@code table}の{@code column}に値をセットする。
+     * {@code table} の {@code column} に値をセットする。
      *
-     * @since 1.0.0-SNAPSHOT
+     * @since v1.0.0-SNAPSHOT
      * @author LazyGon
      *
      * @param column 更新する列
-     * @param entry  プレイヤー。uuidでもmcidでも可
+     * @param entry  UUID か Minecraft ID
      * @param value  新しい値
      */
-    public boolean set(@NonNull String column, @NonNull String entry, String value) {
-
+    public void set(@NonNull String column, @NonNull String entry, String value) {
         if (!getColumnMap().keySet().contains(column)) {
             log.warning(":NO_COLUMN_NAMED_" + column + "_EXIST");
-            return false;
+            return;
         }
 
         if (!existPlayer(entry)) {
             log.warning(":NO_RECORD_FOR_" + entry + "_EXIST");
-            return false;
+            return;
         }
 
-        String entryType = Commands.checkEntryType(entry);
+        String entryType = PlayerUtil.isUuidOrPlayer(entry);
 
-        return prepare("UPDATE " + table + " SET " + column + " = ? WHERE " + entryType + " = ?").map(statement -> {
+        prepare("UPDATE " + table + " SET " + column + " = ? WHERE " + entryType + " = ?").ifPresent(statement -> {
             try {
                 statement.setString(1, value);
                 statement.setString(2, entry);
@@ -322,12 +344,10 @@ public class Database {
 
                 // Execute this batch
                 threadPool.submit(new StatementRunner(statement));
-                return true;
             } catch (SQLException e) {
                 e.printStackTrace();
-                return false;
             }
-        }).orElse(false);
+        });
     }
 
     /**
@@ -335,151 +355,154 @@ public class Database {
      * テーブル、カラム、レコードのいずれかが存在しない場合は対応するエラー文字列を返す。
      *
      * @author akaregi
-     * @since 1.0.0-SNAPSHOT
+     * @since v1.0.0-SNAPSHOT
      *
-     * @param table
-     * @param column
-     * @param entry
+     * @param column 列
+     * @param entry  エントリ
+     *
      * @return 値
      */
     public String get(String column, String entry) {
-
-        if (!getColumnMap().keySet().contains(column))
+        if (!getColumnMap().keySet().contains(column)) {
             return ":NO_COLUMN_NAMED_" + column + "_EXIST";
+        }
 
-        if (!existPlayer(entry))
+        if (!existPlayer(entry)) {
             return ":NO_RECORD_FOR_" + entry + "_EXIST";
+        }
 
-        String entryType = Commands.checkEntryType(entry);
-
+        val entryType = PlayerUtil.isUuidOrPlayer(entry);
         val statement = prepare("SELECT " + column + " FROM " + table + " WHERE " + entryType + " = ?");
 
-        Optional<String> result = statement.map(resource -> {
-            try (PreparedStatement stmt = resource) {
+        return statement.map(resource -> {
+            try (val stmt = resource) {
                 stmt.setString(1, entry);
-                ResultSet rs = stmt.executeQuery();
-                return rs.getString(column);
-            } catch (SQLException exception) {
-                exception.printStackTrace();
+
+                val result = stmt.executeQuery();
+
+                return result.getString(column);
+            } catch (SQLException e) {
+                e.printStackTrace();
 
                 return "";
             }
-        });
-
-        return result.orElse(":NOTHING");
+        }).orElse(":NOTHING");
     }
 
     /**
      * テーブルに新しい列 {@code column} を追加する。
      *
-     * @author akaregi
-     * @since 1.0.0-SNAPSHOT
+     * @author LazyGon
+     * @since v1.0.0-SNAPSHOT
      *
      * @param column       列の名前。
      * @param type         列の型。
      * @param defaultValue デフォルトの値。必要ない場合はnullを指定する。
      * @param showWarning  同じ列が存在したときにコンソールに警告を表示するかどうか
-     *
-     * @return 成功したなら {@code true} 、さもなくば {@code false} 。
      */
-    public boolean addColumn(String column, String type, String defaultValue, boolean showWarning) {
-
+    public void addColumn(String column, String type, String defaultValue, boolean showWarning) {
         if (getColumnMap().keySet().contains(column)) {
-            if (showWarning)
+            if (showWarning) {
                 log.warning(":COLUMN_EXIST");
-            return false;
+            }
+
+            return;
         }
 
         defaultValue = (defaultValue != null) ? " NOT NULL DEFAULT '" + defaultValue + "'" : "";
         val statement = prepare("ALTER TABLE " + table + " ADD " + column + " " + type + defaultValue);
 
-        return statement.map(stmt -> {
+        statement.map(stmt -> {
             try {
                 stmt.addBatch();
 
                 // Execute this batch
                 threadPool.submit(new StatementRunner(stmt));
+
                 return true;
-            } catch (SQLException exception) {
-                exception.printStackTrace();
+            } catch (SQLException e) {
+                e.printStackTrace();
+
                 return false;
             }
-        }).orElse(false);
+        });
     }
 
     /**
      * テーブル {@code table} から列 {@code column} を削除する。
      *
-     * @author akaregi
-     * @since 1.0.0-SNAPSHOT
+     * @author LazyGon
+     * @since v1.0.0-SNAPSHOT
      *
      * @param column 削除する列の名前。
-     *
-     * @return 成功したなら {@code true} 、さもなくば {@code false} 。
      */
-    public boolean dropColumn(String column) {
-
+    public void dropColumn(String column) {
         if (!getColumnMap().keySet().contains(column)) {
             log.warning(":NO_COLUMN_NAMED_" + column + "_EXIST");
-            return false;
+
+            return;
         }
 
         // 新しいテーブルの列
-        StringBuilder columnsBuilder = new StringBuilder();
+        val columnsBuilder = new StringBuilder();
+
         getColumnMap().forEach((colName, colType) -> {
-            if (!column.equals(colName))
-                columnsBuilder.append(colName + " " + colType + ", ");
+            if (!column.equals(colName)) {
+                columnsBuilder.append(colName).append(" ").append(colType).append(", ");
+            }
         });
-        String columns = columnsBuilder.toString().replaceAll(", $", "");
+
+        val columns = columnsBuilder.toString().replaceAll(", $", "");
 
         // 新しいテーブルの列 (型なし)
-        StringBuilder colmunsBuilderExcludeType = new StringBuilder();
+        val columnsBuilderExcludeType = new StringBuilder();
+
         getColumnMap().forEach((colName, colType) -> {
             if (!column.equals(colName))
-                colmunsBuilderExcludeType.append(colName + ", ");
+                columnsBuilderExcludeType.append(colName).append(", ");
         });
-        String columnsExcludeType = colmunsBuilderExcludeType.toString().replaceAll(", $", "");
 
-        Statement statement = null;
+        val columnsExcludeType = columnsBuilderExcludeType.toString().replaceAll(", $", "");
 
-        try {
-            statement = connection.get().createStatement();
+        connection.ifPresent(con -> {
+            try (val statement = con.createStatement()) {
+                statement.addBatch("BEGIN TRANSACTION");
+                statement.addBatch("ALTER TABLE " + table + " RENAME TO temp_" + table + "");
+                statement.addBatch("CREATE TABLE " + table + " (" + columns + ")");
+                statement.addBatch("INSERT INTO " + table + " (" + columnsExcludeType + ") SELECT " + columnsExcludeType
+                                + " FROM temp_" + table + "");
+                statement.addBatch("DROP TABLE temp_" + table + "");
+                statement.addBatch("COMMIT");
 
-            statement.addBatch("BEGIN TRANSACTION");
-            statement.addBatch("ALTER TABLE " + table + " RENAME TO temp_" + table + "");
-            statement.addBatch("CREATE TABLE " + table + " (" + columns + ")");
-            statement.addBatch("INSERT INTO " + table + " (" + columnsExcludeType + ") SELECT " + columnsExcludeType
-                    + " FROM temp_" + table + "");
-            statement.addBatch("DROP TABLE temp_" + table + "");
-            statement.addBatch("COMMIT");
-
-            // Execute this batch
-            threadPool.submit(new StatementRunner(statement));
-            return true;
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-            return false;
-        }
+                // Execute this batch
+                threadPool.submit(new StatementRunner(statement));
+            } catch (SQLException exception) {
+                exception.printStackTrace();
+            }
+        });
     }
 
     /**
-     * エントリーの複数のカラムの値を一気に取得する。 マップはLinkedHashMapで、引数のListの順番を引き継ぐ。
+     * エントリ {@code entry} に対応する列 {@code columns} の値をすべて取得する。
      *
      * @author LazyGon
-     * @since 1.0.0-SNAPSHOT
+     * @since v1.0.0-SNAPSHOT
      *
+     * @param columns 列
+     * @param entry   ？
      *
-     * @return カラムと値のマップ
+     * @return 列とフィールドのペア
      */
     public Map<String, String> getMultiValue(List<String> columns, @NonNull String entry) {
+        val entryType = PlayerUtil.isUuidOrPlayer(entry);
 
-        String entryType = Commands.checkEntryType(entry);
+        val sb = new StringBuilder();
 
-        StringBuilder sb = new StringBuilder();
-        for (String columnName : columns)
-            sb.append(columnName + ", ");
+        for (String columnName : columns) {
+            sb.append(columnName).append(", ");
+        }
 
-        String multipleColumnName = sb.substring(0, sb.length() - 2).toString();
+        val multipleColumnName = sb.substring(0, sb.length() - 2);
 
         val statement = prepare("SELECT " + multipleColumnName + " FROM " + table + " WHERE " + entryType + " = ?");
 
@@ -488,43 +511,51 @@ public class Database {
                 stmt.setString(1, entry);
                 ResultSet rs = stmt.executeQuery();
 
-                return columns.stream().collect(Collectors.toMap(columnName -> columnName, columnName -> {
-                    try {
-                        return rs.getString(columnName);
-                    } catch (SQLException exception) {
-                        exception.printStackTrace();
-                        return "";
-                    }
-                }, (e1, e2) -> e1, LinkedHashMap::new));
+                return columns.stream()
+                        .collect(Collectors.toMap(
+                                columnName -> columnName,
+                                columnName -> {
+                                    try {
+                                        return rs.getString(columnName);
+                                    } catch (SQLException exception) {
+                                        exception.printStackTrace();
+
+                                        return "";
+                                    }
+                                },
+                                (e1, e2) -> e1, LinkedHashMap::new)
+                        );
             } catch (SQLException exception) {
                 exception.printStackTrace();
+
                 return new LinkedHashMap<String, String>();
             }
-        }).get();
+        }).orElse(new LinkedHashMap<String, String>());
     }
 
     /**
-     * エントリーの複数のカラムの値を一気に取得する
+     * エントリ {@code entry} に属する列の値 {@code pair} を設定する。
      *
      * @author LazyGon
-     * @since 1.0.0-SNAPSHOT
+     * @since v1.0.0-SNAPSHOT
      *
-     *
-     * @return カラムと値のマップ
+     * @param pair  列と値のペア
+     * @param entry エントリ
      */
-    public boolean setMultiValue(Map<String, String> columnValueMap, @NonNull String entry) {
+    public void setMultiValue(Map<String, String> pair, @NonNull String entry) {
+        val entryType = PlayerUtil.isUuidOrPlayer(entry);
 
-        String entryType = Commands.checkEntryType(entry);
+        val sb = new StringBuilder();
 
-        StringBuilder sb = new StringBuilder();
-        columnValueMap.forEach((columnName, columnValue) -> {
-            sb.append(columnName + " = '" + columnValue + "', ");
-        });
+        pair.forEach((columnName, columnValue) ->
+                sb.append(columnName).append(" = '").append(columnValue).append("', ")
+        );
 
         val statement = prepare(
-                "UPDATE " + table + " SET " + sb.substring(0, sb.length() - 2) + " WHERE " + entryType + " = ?");
+                "UPDATE " + table + " SET " + sb.substring(0, sb.length() - 2) + " WHERE " + entryType + " = ?"
+        );
 
-        return statement.map(resource -> {
+        statement.map(resource -> {
             try (PreparedStatement stmt = resource) {
                 stmt.setString(1, entry);
                 stmt.executeUpdate();
@@ -533,129 +564,68 @@ public class Database {
                 exception.printStackTrace();
                 return false;
             }
-        }).orElse(false);
+        });
     }
 
     /**
      * テーブルに含まれる列 {@code column} のリストを取得する。
      *
      * @author LazyGon
-     * @since 1.0.0-SNAPSHOT
-     *
+     * @since v1.0.0-SNAPSHOT
      *
      * @return テーブルに含まれるcolumnの名前と型のマップ 失敗したら空のマップを返す。
      */
     public Map<String, String> getColumnMap() {
-
-        Map<String, String> columnMap = new HashMap<>();
+        val columnMap = new HashMap<String, String>();
 
         val statement = prepare("SELECT * FROM " + table + " WHERE 0=1");
 
         return statement.map(resource -> {
-            try (PreparedStatement stmt = resource) {
-                ResultSetMetaData rsmd = stmt.executeQuery().getMetaData();
+            try (val stmt = resource) {
+                val resultMeta = stmt.executeQuery().getMetaData();
 
-                for (int i = 1; i <= rsmd.getColumnCount(); i++) {
-                    columnMap.put(rsmd.getColumnName(i), rsmd.getColumnTypeName(i));
+                for (int i = 1; i <= resultMeta.getColumnCount(); i++) {
+                    columnMap.put(resultMeta.getColumnName(i), resultMeta.getColumnTypeName(i));
                 }
 
                 return columnMap;
             } catch (SQLException exception) {
                 exception.printStackTrace();
+
                 return new HashMap<String, String>();
             }
         }).orElse(columnMap);
     }
 
     /**
-     * 登録されているプレイヤーの名前とUUIDのマップを取得する。
+     * プレイヤー名と UUID のペアを取得する。
      *
      * @author LazyGon
-     * @since 1.1.0-SNAPSHOT
+     * @since v1.1.0-SNAPSHOT
      *
-     * @return プレイヤー名とそのUUIDのマップ
+     * @return ペア。
      */
     public Map<String, String> getPlayersMap() {
-
-        Map<String, String> playersMap = new HashMap<>();
-
+        val playersMap = new HashMap<String, String>();
         val statement = prepare("SELECT uuid, player FROM " + table);
 
         statement.ifPresent(resource -> {
-            try (PreparedStatement stmt = resource) {
-                ResultSet rs = stmt.executeQuery();
-                while (rs.next())
-                    playersMap.put(rs.getString("uuid"), rs.getString("player"));
-            } catch (SQLException exception) {
-                exception.printStackTrace();
+            try (val stmt = resource) {
+                val result = stmt.executeQuery();
+
+                while (result.next()) {
+                    playersMap.put(result.getString("uuid"), result.getString("player"));
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         });
 
-        if (playersMap.isEmpty())
+        if (playersMap.isEmpty()) {
             log.warning(":MAP_IS_EMPTY");
+        }
+
         return playersMap;
-    }
-
-    /**
-     * 非推奨。NULLにしてもなんの意味もない。どころかエラーを引き起こす可能性まである。 {@code table} の {@code column} の
-     * {@code entry} の行をNULLにする。(消す)
-     *
-     * @author LazyGon
-     * @since 1.1.0-SNAPSHOT
-     *
-     * @param table
-     * @param column
-     * @param entry
-     */
-    @Deprecated
-    public boolean removeValue(String column, String entry) {
-
-        if (!getColumnMap().keySet().contains(column)) {
-            log.warning(":NO_COLUMN_NAMED_" + column + "_EXIST");
-            return false;
-        }
-
-        if (!existPlayer(entry)) {
-            log.warning(":NO_RECORD_FOR_" + entry + "_EXIST");
-            return false;
-        }
-
-        String entryType = Commands.checkEntryType(entry);
-
-        val statement = prepare("UPDATE " + table + " SET " + column + " = NULL WHERE " + entryType + " = ?");
-
-        return statement.map(resource -> {
-            try (PreparedStatement stmt = resource) {
-                stmt.setString(1, entry);
-                stmt.executeUpdate();
-                return true;
-            } catch (SQLException exception) {
-                exception.printStackTrace();
-                return false;
-            }
-        }).orElse(false);
-    }
-
-    /**
-     * スレッド上で SQL を実行する。
-     *
-     * @author akaregi
-     * @since 1.0.0-SNAPSHOT
-     *
-     * @param statement SQL 準備文。
-     *
-     * @return {@Code ResultSet}
-     */
-    public Optional<ResultSet> exec(PreparedStatement statement) {
-        val thread = threadPool.submit(new StatementCaller(statement));
-
-        try {
-            return thread.get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-
-            return Optional.empty();
-        }
     }
 
     /**
@@ -668,7 +638,7 @@ public class Database {
      *
      * @return SQL 準備文
      */
-    public Optional<PreparedStatement> prepare(@NonNull String sql) {
+    private Optional<PreparedStatement> prepare(@NonNull String sql) {
         if (connection.isPresent()) {
             try {
                 return Optional.of(connection.get().prepareStatement(sql));

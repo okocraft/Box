@@ -16,29 +16,29 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.okocraft.box.command;
+package net.okocraft.box.util;
 
-import lombok.val;
-import net.okocraft.box.Box;
-import net.okocraft.box.database.Database;
+import javax.annotation.Nonnull;
 
-import java.util.Optional;
-
-public class Commands {
-    private Database database;
-
-    public Commands(Database database) {
-        val instance = Box.getInstance();
-
-        this.database = database;
-
-        // コマンド登録
-        Optional.ofNullable(instance.getCommand("box")).ifPresent(cmd ->
-                cmd.setExecutor(new BoxCommand(this.database))
-        );
-
-        Optional.ofNullable(instance.getCommand("boxadmin")).ifPresent(cmd ->
-                cmd.setExecutor(new BoxAdminCommand(this.database))
-        );
+/**
+ * メッセージを取り扱うツール群。
+ *
+ * @author akaregi
+ * @since v1.1.0
+ */
+class MessageUtil {
+    /**
+     * & 形式カラーコードのメッセージを § 形式カラーコードのメッセージに変換する。
+     *
+     * @author akaregi
+     * @since v1.1.0
+     *
+     * @param message メッセージ
+     *
+     * @return カラーコードが変換されたメッセージ
+     */
+    @Nonnull
+    static String convertColorCode(@Nonnull String message) {
+        return message.replaceAll("&([a-f0-9])", "§$1");
     }
 }

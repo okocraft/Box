@@ -1,28 +1,80 @@
-NoEnoughArgument: '&c引数が足りません。'
-NoPlayerFound: '&cその名前のプレイヤーは登録されていません。'
-NoItemFound: '&cその名前のアイテムは登録されていません。'
-InvalidNumberFormat: '&c数字のフォーマットが不正です。'
-InvalidArgument: '&c引数が不正です。'
-DatabaseInvalidNumberFormat: '&c不正な数字が記録されています。管理者に報告して下さい。'
-SuccessfullySet: '&e%player%のボックスの%item%を%amount%にセットしました。'
-SuccessfullyGive: '&e%player%のボックスの%item%を%amount%増やしました。(現在%newamount%)'
-SuccessfullyGiveNonAdmin: '&e%player%に%item%を%amount%個渡しました。(現在%newamount%)'
-SuccessfullyTake: '&e%player%のボックスの%item%を%amount%減らしました。(現在%newamount%)'
-NoParamExist: '&c指定された引数は存在しません。'
-OnlyPlayerCommand: '&cこのコマンドはプレイヤーだけが実行できます。'
-AutoStoreEnabled: '&a自動収納が有効化されました。'
-AutoStoreDisabled: '&c自動収納が無効化されました。'
-ErrorOnOpenGui: '&cエラーが発生してGuiを開けませんでした。'
-ErrorOccured: '&cエラーが発生して処理を実行できませんでした。'
-ConfigReloaded: '&7設定を再読込しました。'
-InvalidValueIsStored: '&cデータベースに不正な値が格納されています。管理者に報告して下さい。'
-NoEnoughStore: '&c在庫が足りません。'
-AutoStoreSettingChanged: '&7%item%のAutoStore設定を&b%isEnabled%&7に設定しました。'
-AllAutoStoreSettingChanged: '&7全てのアイテムのAutoStore設定を&b%isEnabled%&7に設定しました。'
-AutoStoreListHeader: '&7=====&6自動回収設定一覧 %page%ページ目 &a%currentline% &7/ &a%maxline% &7(&b%player%&7)====='
-AutoStoreListFormat: '&a%item%&7: &b%isEnabled%'
-DatabaseNoColumnFound: '&cその名前の列はありません。'
-DatabaseRemovePlayerSuccess: '&7データベースから&b%uuid% &7- &b%player%&7を削除しました。'
-DatabaseAddPlayerSuccess: '&7データベースに&b%uuid% &7- &b%player%&7を追加しました。'
-CannotGiveYourself: '&c自分自身にアイテムを渡すことはできません。'
-AutoStoreValueChangeInPage: '&b%page%&7ページ目の全ての自動収納の値を&b%newValue%&7に変更しました。'
+plugin:
+  prefix: "§8[§6Box§8]§7 "
+  # %version% バージョン名
+  version: "バージョン %version%"
+  reload: "&7設定を再読込しました。"
+
+error:
+  notEnoughArguments: "&c引数が足りません。"
+  notEnoughStoredItems: "&c在庫が足りません。"
+  noPlayerFound: "&cその名前のプレイヤーは登録されていません。"
+  noItemFound: "&cその名前のアイテムは登録されていません。"
+  noParameterExist: "&c指定された引数は存在しません。"
+  invalidArguments: "&c引数が正しくありません。"
+  invalidNumber: "&c数字が正しくありません。"
+  errorOccurred: "&cエラーが発生し処理を続行できませんでした。"
+  errorOccurredGUI: "&cエラーが発生し GUI を開けませんでした。"
+  errorFetchCategoryName: "&cカテゴリ名の取得に失敗しました。"
+  errorFetchItemConfig: "&cアイテム設定の取得に失敗しました。"
+  onlyForPlayer: "&cこのコマンドはプレイヤーのみ実行できます。"
+  giveMyself: "&c自分自身にはアイテムを渡せません。"
+
+command:
+  # %player%    プレイヤー
+  # %item%      アイテム
+  # %amount%    設定される量
+  successSet: '&b%player%&7 のボックスの &b%item%&7 を &b%amount%&7 にしました。'
+  # %player%    プレイヤー
+  # %item%      アイテム
+  # %amount%    変化した量
+  # %newamount% 現在量
+  successTake: '&b%player%&7 のボックスの &b%item%&7 を &b%amount%&7 減らしました(現在 &b%newamount%&7)。'
+  # %player%    プレイヤー
+  # %item%      アイテム
+  # %amount%    変化した量
+  # %newamount% 現在量
+  successGive: '&b%player%&7 に &b%item%&7 を &b%amount%&7 個渡しました(現在 &b%newamount%&7)。'
+  # %player%    プレイヤー
+  # %item%      アイテム
+  # %amount%    変化した量
+  # %newamount% 現在量
+  successReceive: '&b%player%&7 から &b%item%&7 を &b%amount%&7 個受け取りました(現在 &b%newamount%&7)。'
+  # %player%    プレイヤー
+  # %item%      アイテム
+  # %amount%    変化した量
+  # %newamount% 現在量
+  successGiveAdmin: '&b%player%&7 のボックスの &b%item%&7 を &b%amount%&7 増やしました(現在 &b%newamount%&7)。'
+
+autoStore:
+  enabled: "&7自動収納を&a有効&7にしました。"
+  disabled: "&7自動収納を&c無効&7にしました。"
+  # %item%      アイテム
+  # %isEnabled%
+  settingChanged: "&b%item%&7 の自動収納を &b%isEnabled%&7 しました。"
+  # %isEnabled%
+  settingChangedAll: "&7すべてのアイテムの自動収納を &b%isEnabled%&7 にしました。"
+  # %newValue%
+  settingChangedPage: "&b%page%ページ&7目のアイテムの自動収納を &b%newValue%&7 にしました。"
+  # %player%      プレイヤー
+  # %currentLine% 現在のページ
+  # %maxLine%     最大のページ
+  listHeader: "&b%player%&7 の自動収納設定 &a%currentLine%&7 / %maxLine%"
+  # %item%      アイテム
+  # %isEnabled%
+  listFormat: "&b%item%&7: &b%isEnabled%"
+
+database:
+  connectionReset: "&7データベースへの接続をリセットしました。"
+  invalidValue: "&c不正な値が記録されています。管理者に報告して下さい。"
+  noColumn: "&cその名前の列はありません。"
+  # %uuid%   UUID
+  # %player% プレイヤー名
+  playerAdded: "&7データベースに &b%uuid%&7 - &b%player%&7 を追加しました。"
+  # %uuid%   UUID
+  # %player% プレイヤー名
+  playerRemoved: "&7データベースから &b%uuid%&7 - &b%player%&7 を削除しました。"
+
+map:
+  playersRecord: "&7記録されているプレイヤー"
+  columnsList: "&7列リスト"
+  format: "%s - %s"
