@@ -258,6 +258,18 @@ public class GuiManager implements Listener {
                 item.getCustomTagContainer().getCustomTag(quantityKey, ItemTagType.INTEGER)
         ).orElse(1);
 
+        // creative状態であるか、box.creativeの権限を持っていると無限に引き出せるようになる。
+        if (player.getGameMode() == GameMode.CREATIVE || player.hasPermission("box.creative")) {
+            if (event.isRightClick()) {
+                playSound(player, config.getTakeOutSound());
+                player.getInventory().addItem(new ItemStack(clickedItemMaterial, quantity));
+            } else {
+                playSound(player, config.getTakeOutSound());
+                player.getInventory().removeItem(new ItemStack(clickedItemMaterial, quantity));
+            }
+            return;
+        }
+
         // データベースに保存されているアイテム数
         val storedItemAmount = OtherUtil.parseIntOrDefault(
                 database.get(clickedItemMaterial.name(), player.getUniqueId().toString()),
