@@ -18,7 +18,12 @@
 
 package net.okocraft.box.listeners;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -27,8 +32,13 @@ import lombok.val;
 import net.okocraft.box.util.MessageConfig;
 import net.okocraft.box.util.OtherUtil;
 
-import org.bukkit.*;
-import org.bukkit.configuration.MemorySection;
+import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -49,12 +59,12 @@ public class GuiManager implements Listener {
     private GeneralConfig config;
     private MessageConfig messageConfig;
 
-    private Map<String, MemorySection> category;
-    private String                     categorySelectionGuiName;
-    private Map<String, String>        categoryGuiNameMap;
-    private List<Integer>              categorySelectionGuiFrame;
-    private NamespacedKey              categoryNameKey;
-    private NamespacedKey              quantityKey;
+    private Map<String, ConfigurationSection> category;
+    private String                            categorySelectionGuiName;
+    private Map<String, String>               categoryGuiNameMap;
+    private List<Integer>                     categorySelectionGuiFrame;
+    private NamespacedKey                     categoryNameKey;
+    private NamespacedKey                     quantityKey;
 
     public GuiManager(Database database, Plugin plugin) {
         Bukkit.getPluginManager().registerEvents(this, plugin);
@@ -242,9 +252,10 @@ public class GuiManager implements Listener {
         val clickedItemMaterial = clickedItem.getType();
 
         val categorySetting = category.get(categoryName);
-        val clickedItemMaterialSection = GeneralConfig.getMemorySection(
-                categorySetting.get("item." + clickedItemMaterial.name())
-        );
+        val clickedItemMaterialSection =
+                Optional.ofNullable(
+                    categorySetting.getConfigurationSection("item." + clickedItemMaterial.name())
+                );
 
         if (!clickedItemMaterialSection.isPresent()) {
             player.sendMessage(messageConfig.getErrorOccurred());
@@ -364,7 +375,7 @@ public class GuiManager implements Listener {
         player.openInventory(categorySelectionGui);
     }
 
-    private ItemStack createCategorySelectionItem(String categoryName, MemorySection section) {
+    private ItemStack createCategorySelectionItem(String categoryName, ConfigurationSection section) {
         val categoryIconMaterial = Material.valueOf(Optional.ofNullable(
                 section.getString("icon")).orElse("BARRIER").toUpperCase()
         );
@@ -392,14 +403,16 @@ public class GuiManager implements Listener {
 
     private void openCategoryGui(Player player, String categoryName, int page, Inventory modifiedInventory) {
         val categorySetting = category.get(categoryName);
-        val categoryItems   = GeneralConfig.getMemorySection(categorySetting.get("item"));
+        val optionalCategoryItems   = Optional.ofNullable(categorySetting.getConfigurationSection("item"));
 
-        if (!categoryItems.isPresent()) {
+        if (!optionalCategoryItems.isPresent()) {
             player.sendMessage(messageConfig.getErrorOccurredOnGUI());
             player.closeInventory();
 
             return;
         }
+
+        val categoryItems = optionalCategoryItems.get();
 
         val categoryGui = Bukkit.createInventory(player, 54, categoryGuiNameMap.get(categoryName));
 
@@ -430,29 +443,29 @@ public class GuiManager implements Listener {
         });
 
         val columnValueMap = database.getMultiValue(
-                categoryItems.get().getKeys(false).stream()
+                categoryItems.getKeys(false).stream()
                         .filter(itemName -> Material.getMaterial(itemName) != null)
                         .collect(Collectors.toList()),
                 player.getUniqueId().toString()
         );
 
-        categoryItems.get().getValues(false).entrySet().stream()
+        categoryItems.getValues(false).keySet().stream()
                 .skip(45 * (page - 1))
                 .limit(45)
-                .forEach(itemEntry -> {
-                    val section = GeneralConfig.getMemorySection(itemEntry.getValue());
+                .forEach(itemName -> {
+                    val section = Optional.ofNullable(categoryItems.getConfigurationSection(itemName));
 
                     if (!section.isPresent()) {
                         return;
                     }
 
-                    if (Material.getMaterial(itemEntry.getKey()) == null) {
+                    if (Material.getMaterial(itemName) == null) {
                         return;
                     }
 
                     val item = createItem(
-                            columnValueMap.get(itemEntry.getKey()),
-                            itemEntry.getKey(),
+                            columnValueMap.get(itemName),
+                            itemName,
                             section.get(),
                             categoryName,
                             1
@@ -475,7 +488,7 @@ public class GuiManager implements Listener {
         }
     }
 
-    private ItemStack createItem(String stock, String materialName, MemorySection section, String categoryName,
+    private ItemStack createItem(String stock, String materialName, ConfigurationSection section, String categoryName,
             int quantity) {
         Material categoryItemMaterial;
 
@@ -529,8 +542,8 @@ public class GuiManager implements Listener {
             return;
         }
 
-        val section = GeneralConfig.getMemorySection(
-                config.getStoringItemConfig().get("categories." + categoryName + ".item")
+        val section = Optional.ofNullable(
+                config.getStoringItemConfig().getConfigurationSection("categories." + categoryName + ".item")
         );
 
         if (!section.isPresent()) {

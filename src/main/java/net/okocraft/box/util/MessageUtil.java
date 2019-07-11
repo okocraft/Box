@@ -20,6 +20,8 @@ package net.okocraft.box.util;
 
 import javax.annotation.Nonnull;
 
+import org.bukkit.ChatColor;
+
 /**
  * メッセージを取り扱うツール群。
  *
@@ -39,6 +41,6 @@ class MessageUtil {
      */
     @Nonnull
     static String convertColorCode(@Nonnull String message) {
-        return message.replaceAll("&([a-f0-9])", "§$1");
+        return ChatColor.translateAlternateColorCodes('&', message);
     }
 }

@@ -26,13 +26,13 @@ import javax.annotation.Nullable;
 
 import lombok.Getter;
 import lombok.val;
-
+import net.md_5.bungee.api.ChatColor;
 import net.okocraft.box.Box;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
-import org.bukkit.configuration.MemorySection;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
 
@@ -92,7 +92,7 @@ public class GeneralConfig {
 
     // Item categories
     @Getter
-    private Map<String, MemorySection> categories;
+    private Map<String, ConfigurationSection> categories;
     @Getter
     private Map<String, String> categoryGuiNameMap;
     @Getter
@@ -167,43 +167,37 @@ public class GeneralConfig {
         // コンフィグに書かれた順番で表示するためにLinkedHashMapを使っている。
         categories = new LinkedHashMap<>();
 
-        // NOTE: MemorySection -> https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/configuration/MemorySection.html
-        val categoryConfig = getMemorySection(storingItemConfig.get("categories"));
+        val categoryConfig = Optional.ofNullable(storingItemConfig.getConfigurationSection("categories"));
         categoryConfig.ifPresent(categoryConfigTemp -> {
-            categoryConfigTemp.getValues(false).forEach((sectionName, sectionObject) -> {
-                getMemorySection(sectionObject).ifPresent(section -> {
-                    categories.put(sectionName, section);
-                });
+            categoryConfigTemp.getValues(false).keySet().forEach(sectionName -> {
+                Optional.ofNullable(categoryConfigTemp.getConfigurationSection(sectionName))
+                        .ifPresent(categorySection -> {
+                            categories.put(sectionName, categorySection);
+                        });
             });
         });
 
         // CHANGED: Nullable になると IntelliJ がうるさいので Optional 化
-        categorySelectionGuiName = Optional.ofNullable(storingItemConfig.getString("CategorySelectionGui.GuiName"))
-                .orElse("ボックス - カテゴリー選択")
-                .replaceAll("&([a-f0-9])", "§$1");
+        categorySelectionGuiName = ChatColor.translateAlternateColorCodes('&', Optional.ofNullable(storingItemConfig.getString("CategorySelectionGui.GuiName"))
+                .orElse("ボックス - カテゴリー選択"));
 
-        categoryGuiName = Optional.ofNullable(storingItemConfig.getString("CategoryGui.GuiName"))
-                .orElse("ボックス - %category%")
-                .replaceAll("&([a-f0-9])", "§$1");;
+        categoryGuiName = ChatColor.translateAlternateColorCodes('&', Optional.ofNullable(storingItemConfig.getString("CategoryGui.GuiName"))
+                .orElse("ボックス - %category%"));
 
         allItems           = new ArrayList<>();
         categoryGuiNameMap = new HashMap<>();
 
-        categories.forEach((category, memorySection) -> {
-            val displayName = Optional.ofNullable(memorySection.getString("display_name"));
-            displayName.ifPresent(name ->
+        categories.forEach((category, section) -> {
+            Optional.ofNullable(section.getString("display_name")).ifPresent(name ->
                     categoryGuiNameMap.put(
                         category,
                         categoryGuiName
                             .replaceAll("%category%", category)
                             .replaceAll("%category_item_display_name%", name)
-                            .replaceAll("&([a-f0-9])", "§$1")
                     )
             );
 
-            // CHANGED: Null の処理に Optional を使う
-            val categoryItems = getMemorySection(memorySection.get("item"));
-            categoryItems.ifPresent(items ->
+            Optional.ofNullable(section.getConfigurationSection("item")).ifPresent(items ->
                     allItems.addAll(items.getKeys(false).stream()
                     .filter(itemName -> Material.getMaterial(itemName) != null)
                     .collect(Collectors.toList()))
@@ -385,15 +379,5 @@ public class GeneralConfig {
 
             return Optional.empty();
         }
-    }
-
-    @Nonnull
-    public static Optional<MemorySection> getMemorySection(@Nonnull Object object) {
-
-        if (object.getClass().getSimpleName().equals("MemorySection")) {
-            return Optional.ofNullable((MemorySection) object);
-        }
-
-        return Optional.empty();
     }
 }
