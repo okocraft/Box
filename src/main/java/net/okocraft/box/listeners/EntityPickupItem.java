@@ -51,12 +51,16 @@ public class EntityPickupItem implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void onBlockBreak(EntityPickupItemEvent event) {
+    public void onPickupItem(EntityPickupItemEvent event) {
         if (event.isCancelled()) {
             return;
         }
 
         if (!(event.getEntity() instanceof Player)) {
+            return;
+        }
+
+        if (config.getDisabledWorlds().contains(event.getEntity().getWorld())) {
             return;
         }
 
