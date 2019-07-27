@@ -33,6 +33,7 @@ import org.bukkit.entity.Player;
 
 import net.okocraft.box.Box;
 import net.okocraft.box.database.Database;
+import net.okocraft.box.gui.CategorySelectorGUI;
 import net.okocraft.box.util.GeneralConfig;
 import net.okocraft.box.util.MessageConfig;
 import net.okocraft.box.util.OtherUtil;
@@ -55,9 +56,18 @@ public class BoxCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (sender instanceof Player &&
+                config.getDisabledWorlds().contains(((Player) sender).getWorld())) {
+            sender.sendMessage(messageConfig.getDisabledWorld());
+            return false;
+        }
         // only /box
         if (args.length == 0) {
-            instance.getGuiManager().openCategorySelectionGui((Player) sender);
+            if (!(sender instanceof Player)) {
+                messageConfig.getErrorOccurredOnGUI();
+                return false;
+            }
+            ((Player) sender).openInventory(CategorySelectorGUI.GUI);
             return true;
         }
 

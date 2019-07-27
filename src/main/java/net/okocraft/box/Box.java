@@ -33,9 +33,10 @@ import net.okocraft.box.command.Commands;
 import net.milkbowl.vault.economy.Economy;
 import net.okocraft.box.command.BoxTabCompleter;
 import net.okocraft.box.database.Database;
+import net.okocraft.box.gui.CategorySelectorGUI;
 import net.okocraft.box.listeners.EntityPickupItem;
-import net.okocraft.box.listeners.GuiManager;
 import net.okocraft.box.listeners.PlayerJoin;
+import net.okocraft.box.listeners.Replant;
 
 /**
  * @author OKOCRAFT
@@ -75,12 +76,6 @@ public class Box extends JavaPlugin {
      */
     @Getter
     private MessageConfig messageConfig;
-
-    /**
-     * GUIマネージャ
-     */
-    @Getter
-    private GuiManager guiManager;
 
     /**
      * 経済
@@ -156,9 +151,10 @@ public class Box extends JavaPlugin {
         // Events should be registered in its own initializer
         new PlayerJoin(database, this);
         new EntityPickupItem(database, this);
+        new Replant();
 
         // GUI
-        guiManager = new GuiManager(database, this);
+        CategorySelectorGUI.startListener();
 
         log.info("Events have been registered.");
     }

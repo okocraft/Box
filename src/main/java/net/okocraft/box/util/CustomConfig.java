@@ -19,10 +19,12 @@
 package net.okocraft.box.util;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.logging.Level;
 
 import javax.annotation.Nonnull;
 
@@ -35,7 +37,7 @@ import org.bukkit.plugin.Plugin;
  *
  * @author LazyGon
  */
-class CustomConfig {
+public class CustomConfig {
     /**
      * プラグイン。
      */
@@ -86,15 +88,23 @@ class CustomConfig {
      */
     void initConfig() {
         config = YamlConfiguration.loadConfiguration(file);
+        Optional<InputStream> inputStream = Optional.ofNullable(plugin.getResource(name));
+        if (inputStream.isPresent()) {
+            config.setDefaults(YamlConfiguration.loadConfiguration(
+                new InputStreamReader(inputStream.get(), StandardCharsets.UTF_8)
+            ));
+        }
+    }
 
-        config.setDefaults(YamlConfiguration.loadConfiguration(
-                new InputStreamReader(
-                        Optional.ofNullable(plugin.getResource(name)).orElseThrow(() ->
-                                new NoSuchElementException("Failed to get resource: " + name)
-                        ),
-                        StandardCharsets.UTF_8
-                )
-        ));
+    /**
+     * デフォルトの設定ファイルを保存する。
+     *
+     * @author LazyGon
+     */
+    void saveDefaultConfig() {
+        if (!file.exists()) {
+            plugin.saveResource(name, false);
+        }
     }
 
     /**
@@ -102,9 +112,13 @@ class CustomConfig {
      *
      * @author LazyGon
      */
-    void saveDefaultConfig() {
-        if (!file.exists()) {
-            plugin.saveResource(name, false);
+    public void saveConfig() {
+        if (config == null)
+            return;
+        try {
+            getConfig().save(file);
+        } catch (IOException e) {
+            plugin.getLogger().log(Level.SEVERE, "Could not save config to " + file, e);
         }
     }
 }

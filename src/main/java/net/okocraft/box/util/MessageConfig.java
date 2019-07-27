@@ -87,6 +87,8 @@ public class MessageConfig {
 
     // Command
     @Getter
+    private String disabledWorld;
+    @Getter
     private String successSet;
     @Getter
     private String successTake;
@@ -202,6 +204,7 @@ public class MessageConfig {
         //
         // Command
         //
+        disabledWorld = getMessage("command.disabledWorld");
         successGive = getMessage("command.successGive");
         successReceive = getMessage("command.successReceive");
         successGiveAdmin = getMessage("command.successGiveAdmin");

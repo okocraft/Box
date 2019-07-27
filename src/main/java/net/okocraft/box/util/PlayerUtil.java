@@ -22,6 +22,8 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -37,8 +39,9 @@ import net.okocraft.box.database.Database;
  */
 public class PlayerUtil {
 
-    private static Box instance = Box.getInstance();
-    private static Database database = instance.getDatabase();
+    private static final Box INSTANCE = Box.getInstance();
+    private static final Database DATABASE = INSTANCE.getDatabase();
+    private static final GeneralConfig CONFIG = INSTANCE.getGeneralConfig();
 
     /**
      * 文字列を検証して UUID か Minecraft ID かを判定する。
@@ -59,10 +62,10 @@ public class PlayerUtil {
      * @return OfflinePlayerインスタンス
      */
     public static OfflinePlayer getOfflinePlayer(String name) {
-        String uuidString = database.get("uuid", name);
+        String uuidString = DATABASE.get("uuid", name);
         if (uuidString.equals(":NOTHING")) {
             name = "";
-            instance.getLog().warning(instance.getMessageConfig().getNoPlayerFound().replaceAll("%player%", name));
+            INSTANCE.getLog().warning(INSTANCE.getMessageConfig().getNoPlayerFound().replaceAll("%player%", name));
         }
         return Bukkit.getOfflinePlayer(UUID.fromString(uuidString));
     }
@@ -81,12 +84,28 @@ public class PlayerUtil {
     public static boolean notExistPlayer(CommandSender sender) {
         val player = ((Player) sender).getUniqueId().toString();
 
-        if (!database.existPlayer(player)) {
+        if (!DATABASE.existPlayer(player)) {
             sender.sendMessage(Box.getInstance().getMessageConfig().getNoPlayerFound());
 
             return true;
         }
 
         return false;
+    }
+
+    /**
+     * プレイヤーに音声を流す。
+     *
+     * @param player プレイヤー
+     * @param sound  流す音声
+     */
+    public static void playSound(Player player, Sound sound) {
+        player.playSound(
+                player.getLocation(),
+                sound,
+                SoundCategory.MASTER,
+                CONFIG.getSoundPitch(),
+                CONFIG.getSoundVolume()
+        );
     }
 }

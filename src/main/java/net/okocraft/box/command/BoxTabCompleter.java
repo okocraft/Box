@@ -187,7 +187,7 @@ public class BoxTabCompleter implements TabCompleter {
             return resultList;
         }
 
-        val subCommands = List.of("set", "give", "take", "reload", "test", "autostore", "autostorelist", "database");
+        val subCommands = List.of("set", "give", "take", "reload", "test", "autostore", "autostorelist", "database", "addcategory");
 
         if (args.length == 1) {
             return StringUtil.copyPartialMatches(args[0], subCommands, resultList);
@@ -309,7 +309,7 @@ public class BoxTabCompleter implements TabCompleter {
             return resultList;
         }
 
-        val sqlTypeList = List.of("TEXT", "INTEGER", "NONE", "NUMERIC", "REAL");
+        List<String> sqlTypeList = List.of("TEXT", "INTEGER", "NONE", "NUMERIC", "REAL");
         if (args.length == 4) {
             switch (args[1].toLowerCase()) {
             case "set":

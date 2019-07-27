@@ -26,7 +26,6 @@ import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 import lombok.Getter;
 import lombok.NonNull;
@@ -502,7 +501,7 @@ public class Database {
             sb.append(columnName).append(", ");
         }
 
-        val multipleColumnName = sb.substring(0, sb.length() - 2);
+        val multipleColumnName = sb.toString().endsWith(", ") ? sb.substring(0, sb.length() - 2) : sb.toString();
 
         val statement = prepare("SELECT " + multipleColumnName + " FROM " + table + " WHERE " + entryType + " = ?");
 
@@ -510,21 +509,11 @@ public class Database {
             try (PreparedStatement stmt = resource) {
                 stmt.setString(1, entry);
                 ResultSet rs = stmt.executeQuery();
-
-                return columns.stream()
-                        .collect(Collectors.toMap(
-                                columnName -> columnName,
-                                columnName -> {
-                                    try {
-                                        return rs.getString(columnName);
-                                    } catch (SQLException exception) {
-                                        exception.printStackTrace();
-
-                                        return "";
-                                    }
-                                },
-                                (e1, e2) -> e1, LinkedHashMap::new)
-                        );
+                Map<String, String> result = new LinkedHashMap<>();
+                for (String columnName : columns) {
+                    result.put(columnName, rs.getString(columnName));
+                }
+                return result;
             } catch (SQLException exception) {
                 exception.printStackTrace();
 
@@ -543,6 +532,9 @@ public class Database {
      * @param entry エントリ
      */
     public void setMultiValue(Map<String, String> pair, @NonNull String entry) {
+        if (pair.isEmpty()) {
+            return;
+        }
         val entryType = PlayerUtil.isUuidOrPlayer(entry);
 
         val sb = new StringBuilder();
@@ -550,6 +542,11 @@ public class Database {
         pair.forEach((columnName, columnValue) ->
                 sb.append(columnName).append(" = '").append(columnValue).append("', ")
         );
+
+        if (!sb.toString().endsWith(", ")) {
+            log.warning(":NO_VALUE_SPECIFIED");
+            return;
+        }
 
         val statement = prepare(
                 "UPDATE " + table + " SET " + sb.substring(0, sb.length() - 2) + " WHERE " + entryType + " = ?"

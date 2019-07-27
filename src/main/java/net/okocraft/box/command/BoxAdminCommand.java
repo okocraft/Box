@@ -27,9 +27,11 @@ import lombok.val;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import net.okocraft.box.Box;
 import net.okocraft.box.database.Database;
+import net.okocraft.box.listeners.GenerateItemConfig;
 import net.okocraft.box.util.GeneralConfig;
 import net.okocraft.box.util.MessageConfig;
 import net.okocraft.box.util.OtherUtil;
@@ -122,6 +124,17 @@ public class BoxAdminCommand implements CommandExecutor {
         // reload
         if (subCommand.equalsIgnoreCase("reload")) {
             return reload(sender);
+        }
+
+        if (subCommand.equalsIgnoreCase("addcategory")) {
+            if (args.length < 5) {
+                sender.sendMessage(messageConfig.getNotEnoughArguments());
+                sender.sendMessage("/boxadmin addcategory category id displayName iconMaterial");
+                return false;
+            }
+            sender.sendMessage("[Box] チェストを選択してください");
+            new GenerateItemConfig((Player) sender, args[1], args[2], args[3], args[4]);
+            return true;
         }
 
         // set|give|take player item [amount]
