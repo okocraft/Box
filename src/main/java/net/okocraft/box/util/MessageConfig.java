@@ -81,11 +81,19 @@ public class MessageConfig {
     @Getter
     private String errorFetchItemConfig;
     @Getter
+    private String permissionDenied;
+    @Getter
+    private String playerOnly;
+    @Getter
     private String economyIsNull;
     // @Getter
     // private String errorFetchDisplayName;
 
     // Command
+    @Getter
+    private String commandHelpHeader;
+    @Getter
+    private String adminCommandHelpHeader;
     @Getter
     private String disabledWorld;
     @Getter
@@ -100,6 +108,44 @@ public class MessageConfig {
     private String successSell;
     @Getter
     private String successGiveAdmin;
+
+    // command description
+    @Getter
+    private String boxDesc;
+    @Getter
+    private String autoStoreDesc;
+    @Getter
+    private String autoStoreListDesc;
+    @Getter
+    private String giveDesc;
+    @Getter
+    private String sellDesc;
+    @Getter
+    private String sellPriceDesc;
+    @Getter
+    private String sellPriceListDesc;
+    @Getter
+    private String versionDesc;
+    @Getter
+    private String helpDesc;
+
+    // admin command description
+    @Getter
+    private String addCategoryDesc;
+    @Getter
+    private String autoStoreAdminDesc;
+    @Getter
+    private String autoStoreListAdminDesc;
+    @Getter
+    private String giveAdminDesc;
+    @Getter
+    private String setDesc;
+    @Getter
+    private String takeDesc;
+    @Getter
+    private String reloadDesc;
+    @Getter
+    private String helpAdminDesc;
 
     // Price
     @Getter
@@ -199,11 +245,15 @@ public class MessageConfig {
         errorFetchItemConfig = getMessage("error.errorFetchItemConfig");
         // errorFetchDisplayName = getMessage("error.errorFetchDisplayName");
         cannotGiveYourself = getMessage("error.giveMyself");
+        permissionDenied = getMessage("error.permissionDenied");
+        playerOnly = getMessage("error.playerOnly");
         economyIsNull = getMessage("error.economyIsNull");
 
         //
         // Command
         //
+        commandHelpHeader = getMessage("command.commandHelpHeader");
+        adminCommandHelpHeader = getMessage("command.adminCommandHelpHeader");
         disabledWorld = getMessage("command.disabledWorld");
         successGive = getMessage("command.successGive");
         successReceive = getMessage("command.successReceive");
@@ -211,6 +261,31 @@ public class MessageConfig {
         successSet = getMessage("command.successSet");
         successSell = getMessage("command.successSell");
         successTake = getMessage("command.successTake");
+
+        //
+        // Command Description
+        //
+        boxDesc = getRawMessage("commandDescription.box");
+        autoStoreDesc = getRawMessage("commandDescription.autoStore");
+        autoStoreListDesc = getRawMessage("commandDescription.autoStoreList");
+        giveDesc = getRawMessage("commandDescription.give");
+        sellDesc = getRawMessage("commandDescription.sell");
+        sellPriceDesc = getRawMessage("commandDescription.sellPrice");
+        sellPriceListDesc = getRawMessage("commandDescription.sellPriceList");
+        helpDesc = getRawMessage("commandDescription.help");
+        versionDesc = getRawMessage("commandDescription.version");
+
+        //
+        // Admin Command Description
+        //
+        addCategoryDesc = getRawMessage("adminCommandDescription.addCategory");
+        autoStoreAdminDesc = getRawMessage("adminCommandDescription.autoStore");
+        autoStoreListAdminDesc = getRawMessage("adminCommandDescription.autoStoreList");
+        giveAdminDesc = getRawMessage("adminCommandDescription.give");
+        setDesc = getRawMessage("adminCommandDescription.set");
+        takeDesc = getRawMessage("adminCommandDescription.take");
+        helpAdminDesc = getRawMessage("adminCommandDescription.help");
+        reloadDesc = getRawMessage("adminCommandDescription.reload");
 
         //
         // Price

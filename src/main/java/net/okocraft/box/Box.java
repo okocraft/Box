@@ -29,9 +29,9 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import net.okocraft.box.command.Commands;
 import net.milkbowl.vault.economy.Economy;
-import net.okocraft.box.command.BoxTabCompleter;
+import net.okocraft.box.command.box.BoxCommand;
+import net.okocraft.box.command.boxadmin.BoxAdminCommand;
 import net.okocraft.box.database.Database;
 import net.okocraft.box.gui.CategorySelectorGUI;
 import net.okocraft.box.listeners.EntityPickupItem;
@@ -78,6 +78,19 @@ public class Box extends JavaPlugin {
     private MessageConfig messageConfig;
 
     /**
+     * コマンドクラス
+     */
+    @Getter
+    private BoxCommand command;
+
+    /**
+     * 管理者コマンドクラス
+     */
+    @Getter
+    private BoxAdminCommand adminCommand;
+
+
+    /**
      * 経済
      */
     @Getter
@@ -112,8 +125,8 @@ public class Box extends JavaPlugin {
         registerEvents();
 
         // Register commands
-        new Commands(database);
-        new BoxTabCompleter(database);
+        command = new BoxCommand();
+        adminCommand = new BoxAdminCommand();
 
         // GO GO GO
         log.info(String.format("Box v%s has been enabled!", version));
