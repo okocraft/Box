@@ -10,10 +10,6 @@ class Version extends BaseSubCommand {
     private static final int LEAST_ARG_LENGTH = 1;
     private static final String USAGE = "/box version";
 
-    public Version() {
-        super();
-    }
-
     @Override
     public boolean runCommand(CommandSender sender, String[] args) {
         if (!validate(sender, args)) {

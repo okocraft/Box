@@ -20,10 +20,6 @@ class Sell extends BaseSubCommand {
     private static final int LEAST_ARG_LENGTH = 2;
     private static final String USAGE = "/box sell <ITEM> [amount]";
 
-    public Sell() {
-        super();
-    }
-
     @Override
     public boolean runCommand(CommandSender sender, String[] args) {
         if (!validate(sender, args)) {

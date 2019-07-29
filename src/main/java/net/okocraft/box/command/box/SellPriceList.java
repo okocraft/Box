@@ -16,10 +16,6 @@ class SellPriceList extends BaseSubCommand {
     private static final int LEAST_ARG_LENGTH = 1;
     private static final String USAGE = "/box sellpricelist [page]";
 
-    public SellPriceList() {
-        super();
-    }
-
     @Override
     public boolean runCommand(CommandSender sender, String[] args) {
         if (!validate(sender, args)) {
