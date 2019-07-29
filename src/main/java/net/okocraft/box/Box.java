@@ -201,6 +201,6 @@ public class Box extends JavaPlugin {
             return false;
         }
         economy = rsp.getProvider();
-        return economy != null;
+        return true;
 	}
 }

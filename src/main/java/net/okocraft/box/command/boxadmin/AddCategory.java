@@ -6,21 +6,20 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.bukkit.Material;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 
 import net.okocraft.box.listeners.GenerateItemConfig;
 
-public class AddCategory extends BaseSubAdminCommand {
+class AddCategory extends BaseSubAdminCommand {
 
     private static final String COMMAND_NAME = "addcategory";
     private static final int LEAST_ARG_LENGTH = 5;
     private static final String USAGE = "/boxadmin addcategory <category> <id> <displayName> <iconMaterial>";
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(CommandSender sender, String[] args) {
         if (!validate(sender, args)) {
             return false;
         }
@@ -31,7 +30,7 @@ public class AddCategory extends BaseSubAdminCommand {
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+    public List<String> onTabComplete(String[] args) {
         List<String> result = new ArrayList<>();
 
         switch (args.length) {
@@ -42,7 +41,7 @@ public class AddCategory extends BaseSubAdminCommand {
         case 4:
             return StringUtil.copyPartialMatches(args[3], List.of("<display_name>"), result);
         case 5:
-            List<String> items = Arrays.asList(Material.values()).stream()
+            List<String> items = Arrays.stream(Material.values())
                     .map(Material::name).collect(Collectors.toList());
             return StringUtil.copyPartialMatches(args[4], items, result);
         default:
@@ -71,7 +70,7 @@ public class AddCategory extends BaseSubAdminCommand {
     }
 
     @Override
-    protected boolean validate(CommandSender sender, String[] args) {
+    boolean validate(CommandSender sender, String[] args) {
         if (!super.validate(sender, args)) {
             return false;
         }

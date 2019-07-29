@@ -89,11 +89,9 @@ public class CustomConfig {
     void initConfig() {
         config = YamlConfiguration.loadConfiguration(file);
         Optional<InputStream> inputStream = Optional.ofNullable(plugin.getResource(name));
-        if (inputStream.isPresent()) {
-            config.setDefaults(YamlConfiguration.loadConfiguration(
-                new InputStreamReader(inputStream.get(), StandardCharsets.UTF_8)
-            ));
-        }
+        inputStream.ifPresent(stream -> config.setDefaults(YamlConfiguration.loadConfiguration(
+                new InputStreamReader(stream, StandardCharsets.UTF_8)
+        )));
     }
 
     /**

@@ -8,18 +8,17 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.util.StringUtil;
 
-public class AutoStore extends BaseSubAdminCommand {
+class AutoStore extends BaseSubAdminCommand {
 
     private static final String COMMAND_NAME = "autostore";
     private static final int LEAST_ARG_LENGTH = 3;
     private static final String USAGE = "/boxadmin autostore <player> < <ITEM> [true|false] | ALL <true|false> >";
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(CommandSender sender, String[] args) {
         if (!validate(sender, args)) {
             return false;
         }
@@ -42,7 +41,6 @@ public class AutoStore extends BaseSubAdminCommand {
      * アイテム１つのautoStore設定を変更する。
      * 
      * @param sender
-     * @param args
      * @return
      */
     private boolean autoStore(CommandSender sender, String player, String itemName, @Nullable String switchTo) {
@@ -65,7 +63,6 @@ public class AutoStore extends BaseSubAdminCommand {
      * アイテムすべてのautoStore設定を変更する。
      * 
      * @param sender
-     * @param args
      * @return
      */
     private boolean autoStoreAll(CommandSender sender, String player, String switchTo) {
@@ -89,7 +86,7 @@ public class AutoStore extends BaseSubAdminCommand {
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+    public List<String> onTabComplete(String[] args) {
         List<String> result = new ArrayList<>();
 
         List<String> players = new ArrayList<>(DATABASE.getPlayersMap().values());
@@ -141,7 +138,7 @@ public class AutoStore extends BaseSubAdminCommand {
     }
 
     @Override
-    protected boolean validate(CommandSender sender, String[] args) {
+    boolean validate(CommandSender sender, String[] args) {
         if (!super.validate(sender, args)) {
             return false;
         }
@@ -161,7 +158,7 @@ public class AutoStore extends BaseSubAdminCommand {
             return false;
         }
 
-        if (args.length >= 4 && (!args[3].equalsIgnoreCase("true") || !args[3].equalsIgnoreCase("false"))) {
+        if (args.length >= 4) {
             sender.sendMessage(MESSAGE_CONFIG.getInvalidArguments());
             return false;
         }

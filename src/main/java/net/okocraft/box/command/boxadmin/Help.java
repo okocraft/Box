@@ -7,33 +7,30 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.util.StringUtil;
 
 import net.okocraft.box.util.OtherUtil;
 
-public class Help extends BaseSubAdminCommand {
+class Help extends BaseSubAdminCommand {
 
     private static final String COMMAND_NAME = "help";
     private static final int LEAST_ARG_LENGTH = 1;
     private static final String USAGE = "/boxadmin help [page]";
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(CommandSender sender, String[] args) {
         if (!validate(sender, args)) {
             return false;
         }
 
         BoxAdminCommand commands = INSTANCE.getAdminCommand();
 
-        Map<String, String> commandDescriptionMap = new LinkedHashMap<String, String>(){
+        Map<String, String> commandDescriptionMap = new LinkedHashMap<>() {
             private static final long serialVersionUID = 1L;
-            
+
             {
-                commands.getSubCommandMap().values().forEach(subCommand -> {
-                    put(subCommand.getUsage(), subCommand.getDescription());
-                });
+                commands.getSubCommandMap().values().forEach(subCommand -> put(subCommand.getUsage(), subCommand.getDescription()));
             }
         };
 
@@ -45,15 +42,13 @@ public class Help extends BaseSubAdminCommand {
         }
 
         sender.sendMessage(MESSAGE_CONFIG.getAdminCommandHelpHeader());
-        commandDescriptionMap.entrySet().stream().skip(8 * (page - 1)).limit(8).forEach(entry -> {
-            sender.sendMessage("§b" + entry.getKey() + "§7 - " + entry.getValue());
-        });
+        commandDescriptionMap.entrySet().stream().skip(8 * (page - 1)).limit(8).forEach(entry -> sender.sendMessage("§b" + entry.getKey() + "§7 - " + entry.getValue()));
 
         return true;
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+    public List<String> onTabComplete(String[] args) {
         List<String> result = new ArrayList<>();
 
         int mapSize = INSTANCE.getAdminCommand().getSubCommandMapSize();

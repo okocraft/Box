@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.bukkit.OfflinePlayer;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
@@ -15,7 +14,7 @@ import net.milkbowl.vault.economy.Economy;
 import net.okocraft.box.util.OtherUtil;
 import net.okocraft.box.util.PlayerUtil;
 
-public class Sell extends BaseSubCommand {
+class Sell extends BaseSubCommand {
 
     private static final String COMMAND_NAME = "sell";
     private static final int LEAST_ARG_LENGTH = 2;
@@ -26,7 +25,7 @@ public class Sell extends BaseSubCommand {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(CommandSender sender, String[] args) {
         if (!validate(sender, args)) {
             return false;
         }
@@ -75,7 +74,7 @@ public class Sell extends BaseSubCommand {
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+    public List<String> onTabComplete(CommandSender sender, String[] args) {
         List<String> result = new ArrayList<>();
 
         List<String> items = DATABASE.getMultiValue(new ArrayList<>(CONFIG.getSellPrice().keySet()), sender.getName())
@@ -91,10 +90,6 @@ public class Sell extends BaseSubCommand {
         }
 
         String stock = DATABASE.get(sender.getName(), args[1].toUpperCase());
-
-        if (args.length == 2) {
-            return StringUtil.copyPartialMatches(args[2], List.of("1", stock), result);
-        }
 
         return result;
     }
@@ -121,7 +116,7 @@ public class Sell extends BaseSubCommand {
 
 
     @Override
-    protected boolean validate(CommandSender sender, String[] args) {
+    boolean validate(CommandSender sender, String[] args) {
         if (!super.validate(sender, args)) {
             return false;
         }

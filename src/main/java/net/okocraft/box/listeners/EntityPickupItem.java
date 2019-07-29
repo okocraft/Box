@@ -35,10 +35,10 @@ import net.okocraft.box.Box;
 import net.okocraft.box.database.Database;
 
 public class EntityPickupItem implements Listener {
-    private Database database;
-    private GeneralConfig config;
+    private final Database database;
+    private final GeneralConfig config;
 
-    private List<String> allItems;
+    private final List<String> allItems;
 
     public EntityPickupItem(Database database, Plugin plugin) {
         // Register this event

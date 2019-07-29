@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.bukkit.Bukkit;
@@ -59,7 +60,7 @@ public class GenerateItemConfig implements Listener {
 
         Block chest = event.getClickedBlock();
 
-        if (chest == null || (chest != null && event.getClickedBlock().getType() != Material.CHEST)) {
+        if (chest == null || event.getClickedBlock().getType() != Material.CHEST) {
             event.setCancelled(true);
             player.sendMessage("ブロックがチェストではなかったため、キャンセルされました。");
             event.setCancelled(true);
@@ -99,7 +100,7 @@ public class GenerateItemConfig implements Listener {
             itemConfig.set(itemPath + ".en", getItemName(item, ItemLanguage.ENGLISH_NAME_MAP));
         }
         itemConfig.getValues(false);
-        CONFIG.getItemConfig().getKeys(true).forEach(key -> System.out.println(key));
+        CONFIG.getItemConfig().getKeys(true).forEach(System.out::println);
         CONFIG.getItemCustomConfig().saveConfig();
         CONFIG.addCategory();
 
@@ -111,11 +112,6 @@ public class GenerateItemConfig implements Listener {
         if (event.getPlayer() == player) {
             HandlerList.unregisterAll(this);
         }
-    }
-
-    public void cancel() {
-        HandlerList.unregisterAll(this);
-        player.sendMessage("Generating config file is cancelled.");
     }
 
     private static String getItemName(ItemStack item, Map<String, String> langMap) {
@@ -150,7 +146,8 @@ public class GenerateItemConfig implements Listener {
         if (playerHead.getType() != Material.PLAYER_HEAD || playerHead.getType() != Material.PLAYER_WALL_HEAD) {
             return "";
         }
-        if (langMap != ItemLanguage.JAPANESE_NAME_MAP || langMap != ItemLanguage.ENGLISH_NAME_MAP) {
+
+        if (langMap != ItemLanguage.JAPANESE_NAME_MAP && langMap != ItemLanguage.ENGLISH_NAME_MAP) {
             return "";
         }
 
@@ -178,13 +175,13 @@ public class GenerateItemConfig implements Listener {
         if (tippedArrow.getType() != Material.TIPPED_ARROW) {
             return "";
         }
-        if (langMap != ItemLanguage.JAPANESE_NAME_MAP || langMap != ItemLanguage.ENGLISH_NAME_MAP) {
+        if (langMap != ItemLanguage.JAPANESE_NAME_MAP && langMap != ItemLanguage.ENGLISH_NAME_MAP) {
             return "";
         }
 
         PotionMeta meta = (PotionMeta) tippedArrow.getItemMeta();
         String effectName = meta.getBasePotionData().getType().name().toLowerCase();
-        if (effectName == null || effectName == "empty") {
+        if (effectName == null || Objects.equals(effectName, "empty")) {
             return langMap.get("tipped_arrow.effect.empty");
         }
 
@@ -194,7 +191,6 @@ public class GenerateItemConfig implements Listener {
     /**
      * もし渡されたアイテムがpotionだった場合、渡されたマップに応じてデフォルトの名前の文字列を取得する。
      * 
-     * @param tippedArrow
      * @param langMap
      * @return potionの効果ごとの名前
      */
@@ -202,13 +198,13 @@ public class GenerateItemConfig implements Listener {
         if (potion.getType() != Material.POTION) {
             return "";
         }
-        if (langMap != ItemLanguage.JAPANESE_NAME_MAP || langMap != ItemLanguage.ENGLISH_NAME_MAP) {
+        if (langMap != ItemLanguage.JAPANESE_NAME_MAP && langMap != ItemLanguage.ENGLISH_NAME_MAP) {
             return "";
         }
 
         PotionMeta meta = (PotionMeta) potion.getItemMeta();
         String effectName = meta.getBasePotionData().getType().name().toLowerCase();
-        if (effectName == null || effectName == "empty") {
+        if (Objects.equals(effectName, "empty")) {
             return langMap.get("potion.effect.empty");
         }
 
@@ -218,7 +214,6 @@ public class GenerateItemConfig implements Listener {
     /**
      * もし渡されたアイテムがsplash_potionだった場合、渡されたマップに応じてデフォルトの名前の文字列を取得する。
      * 
-     * @param tippedArrow
      * @param langMap
      * @return splash_potionの効果ごとの名前
      */
@@ -226,13 +221,13 @@ public class GenerateItemConfig implements Listener {
         if (potion.getType() != Material.SPLASH_POTION) {
             return "";
         }
-        if (langMap != ItemLanguage.JAPANESE_NAME_MAP || langMap != ItemLanguage.ENGLISH_NAME_MAP) {
+        if (langMap != ItemLanguage.JAPANESE_NAME_MAP && langMap != ItemLanguage.ENGLISH_NAME_MAP) {
             return "";
         }
 
         PotionMeta meta = (PotionMeta) potion.getItemMeta();
         String effectName = meta.getBasePotionData().getType().name().toLowerCase();
-        if (effectName == null || effectName == "empty") {
+        if (Objects.equals(effectName, "empty")) {
             return langMap.get("splash_potion.effect.empty");
         }
 
@@ -242,7 +237,6 @@ public class GenerateItemConfig implements Listener {
     /**
      * もし渡されたアイテムがsplash_potionだった場合、渡されたマップに応じてデフォルトの名前の文字列を取得する。
      * 
-     * @param tippedArrow
      * @param langMap
      * @return splash_potionの効果ごとの名前
      */
@@ -250,13 +244,13 @@ public class GenerateItemConfig implements Listener {
         if (potion.getType() != Material.LINGERING_POTION) {
             return "";
         }
-        if (langMap != ItemLanguage.JAPANESE_NAME_MAP || langMap != ItemLanguage.ENGLISH_NAME_MAP) {
+        if (langMap != ItemLanguage.JAPANESE_NAME_MAP && langMap != ItemLanguage.ENGLISH_NAME_MAP) {
             return "";
         }
 
         PotionMeta meta = (PotionMeta) potion.getItemMeta();
         String effectName = meta.getBasePotionData().getType().name().toLowerCase();
-        if (effectName == null || effectName == "empty") {
+        if (Objects.equals(effectName, "empty")) {
             return langMap.get("lingering_potion.effect.empty");
         }
 
@@ -266,7 +260,6 @@ public class GenerateItemConfig implements Listener {
     /**
      * もし渡されたアイテムがshieldだった場合、渡されたマップに応じてデフォルトの名前の文字列を取得する。
      * 
-     * @param tippedArrow
      * @param langMap
      * @return shieldの色ごとの名前
      */
@@ -274,7 +267,7 @@ public class GenerateItemConfig implements Listener {
         if (shield.getType() != Material.SHIELD) {
             return "";
         }
-        if (langMap != ItemLanguage.JAPANESE_NAME_MAP || langMap != ItemLanguage.ENGLISH_NAME_MAP) {
+        if (langMap != ItemLanguage.JAPANESE_NAME_MAP && langMap != ItemLanguage.ENGLISH_NAME_MAP) {
             return "";
         }
 
@@ -289,18 +282,4 @@ public class GenerateItemConfig implements Listener {
         return langMap.get("shield." + color);
     }
 
-    /**
-     * Appends text to the target file.
-     *
-     * @param target Target file
-     * @param text   Text to append (NOTE: only 1 line expected)
-     */
-    public static void appendText(Path target, String text) {
-        text = text.contains("\n") ? text : text + "\n";
-        try {
-            Files.write(target, text.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 }

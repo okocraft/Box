@@ -35,14 +35,13 @@ import net.okocraft.box.database.Database;
 import net.okocraft.box.util.GeneralConfig;
 import net.okocraft.box.util.PlayerUtil;
 
-public class CategoryGUI implements Listener {
+class CategoryGUI implements Listener {
 
     private static final Box INSTANCE = Box.getInstance();
     private static final GeneralConfig CONFIG = INSTANCE.getGeneralConfig();
-    private Database DATABASE = INSTANCE.getDatabase();
+    private final Database DATABASE = INSTANCE.getDatabase();
 
     private final Player player;
-    private final String categoryName;
     private final ConfigurationSection categorySection;
     @Getter
     private int page;
@@ -67,16 +66,14 @@ public class CategoryGUI implements Listener {
             throw new IllegalArgumentException("Category " + categoryName + " is not registered.");
         }
         this.player = player;
-        this.categoryName = categoryName;
-        this.categorySection = CONFIG.getCategories().get(this.categoryName);
+        this.categorySection = CONFIG.getCategories().get(categoryName);
         this.page = 1;
         this.quantity = quantity;
-        String guiName = ChatColor.translateAlternateColorCodes('&', CONFIG.getCategoryGuiNameMap().get(this.categoryName));
+        String guiName = ChatColor.translateAlternateColorCodes('&', CONFIG.getCategoryGuiNameMap().get(categoryName));
         this.gui = Bukkit.createInventory(null, 54, guiName);
-        ConfigurationSection categorySection = categories.get(this.categoryName);
+        ConfigurationSection categorySection = categories.get(categoryName);
         if (categorySection.isConfigurationSection("item")) {
-            List<String> keys = categorySection.getConfigurationSection("item").getKeys(false).stream()
-                    .collect(Collectors.toList());
+            List<String> keys = new ArrayList<>(categorySection.getConfigurationSection("item").getKeys(false));
             items = new ArrayList<>();
             itemStockMap = DATABASE.getMultiValue(keys, player.getName()).entrySet().stream()
                     .filter(entry -> Objects.nonNull(Material.getMaterial(entry.getKey())))
@@ -143,14 +140,13 @@ public class CategoryGUI implements Listener {
      * 
      * @param page 目的のページ
      */
-    public void setPage(int page) {
+    private void setPage(int page) {
         if (page <= 0 || page > 64) {
             return;
         }
         int maxPage = (items.size() % 45 == 0) ? items.size() / 45 : items.size() / 45 + 1;
         this.page = page;
         gui.clear();
-        List<ItemStack> pageItems = items.stream().skip(45 * (page - 1)).limit(45).collect(Collectors.toList());
         Map<Integer, ItemStack> footers = CONFIG.getFooterItemStacks();
         footers.get(45).setAmount(page - 1);
         if (page == maxPage) {
@@ -158,10 +154,8 @@ public class CategoryGUI implements Listener {
         } else {
             footers.get(53).setAmount(page == 64 ? 0 : page + 1);
         }
-        IntStream.range(45, 54).boxed().forEach(slot -> {
-            gui.setItem(slot, footers.get(slot));
-        });
-        gui.addItem(pageItems.toArray(new ItemStack[pageItems.size()]));
+        IntStream.range(45, 54).boxed().forEach(slot -> gui.setItem(slot, footers.get(slot)));
+        gui.addItem(items.stream().skip(45 * (page - 1)).limit(45).toArray(ItemStack[]::new));
         updateLores();
         PlayerUtil.playSound(player, CONFIG.getChangePageSound());
     }
@@ -171,7 +165,7 @@ public class CategoryGUI implements Listener {
      * 
      * @param newQuantity
      */
-    public void setQuantity(int newQuantity) {
+    private void setQuantity(int newQuantity) {
         if (quantity < newQuantity) {
             PlayerUtil.playSound(player, CONFIG.getIncreaseSound());
         } else if (quantity > newQuantity) {
@@ -186,7 +180,7 @@ public class CategoryGUI implements Listener {
     /**
      * 全てのアイテムのloreを更新する。
      */
-    public void updateLores() {
+    private void updateLores() {
         for (int i = 0; i < 45; i++) {
             ItemStack item = gui.getItem(i);
             if (item != null) {
@@ -200,7 +194,7 @@ public class CategoryGUI implements Listener {
      * 
      * @param item
      */
-    public void withdraw(Material item) {
+    private void withdraw(Material item) {
         if (!itemStockMap.containsKey(item)) {
             return;
         }
@@ -226,7 +220,7 @@ public class CategoryGUI implements Listener {
      * 
      * @param item
      */
-    public void deposit(Material item) {
+    private void deposit(Material item) {
         if (!itemStockMap.containsKey(item)) {
             return;
         }
@@ -247,10 +241,9 @@ public class CategoryGUI implements Listener {
 
     /**
      * アイテムの取引などで変動したloreを追随させるためのメソッド。
-     * 
-     * @param item
+     *
      */
-    public void updateLore(Material material) {
+    private void updateLore(Material material) {
         ItemStack item = null;
         for (int i = 0; i < 45; i++) {
             ItemStack tempItem = gui.getItem(i);
@@ -270,7 +263,7 @@ public class CategoryGUI implements Listener {
      * 
      * @param item
      */
-    public void updateLore(ItemStack item) {
+    private void updateLore(ItemStack item) {
         ItemMeta meta = item.getItemMeta();
         String materialName = item.getType().name();
         String jp = categorySection.getString("item." + materialName + ".jp", "");
@@ -285,9 +278,9 @@ public class CategoryGUI implements Listener {
     /**
      * 在庫の変更をデータベースに保存する。
      */
-    public void commit() {
+    private void commit() {
         Map<String, String> change = stockChangedItems.stream().collect(Collectors.toMap(
-            item -> item.name(),
+                Enum::name,
             item -> String.valueOf(itemStockMap.get(item)),
             (e1, e2) -> e1,
             HashMap::new
@@ -321,7 +314,7 @@ public class CategoryGUI implements Listener {
         InventoryAction action = event.getAction();
         Inventory inv = event.getInventory();
 
-        if (inv == null || !gui.getItem(0).isSimilar(inv.getItem(0))) {
+        if (!gui.getItem(0).isSimilar(inv.getItem(0))) {
             return;
         }
         event.setCancelled(true);

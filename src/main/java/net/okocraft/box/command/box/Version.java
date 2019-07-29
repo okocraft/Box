@@ -2,10 +2,9 @@ package net.okocraft.box.command.box;
 
 import java.util.List;
 
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
-public class Version extends BaseSubCommand {
+class Version extends BaseSubCommand {
 
     private static final String COMMAND_NAME = "version";
     private static final int LEAST_ARG_LENGTH = 1;
@@ -16,7 +15,7 @@ public class Version extends BaseSubCommand {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(CommandSender sender, String[] args) {
         if (!validate(sender, args)) {
             return false;
         }
@@ -25,7 +24,7 @@ public class Version extends BaseSubCommand {
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+    public List<String> onTabComplete(CommandSender sender, String[] args) {
         return List.of();
     }
 
@@ -51,11 +50,7 @@ public class Version extends BaseSubCommand {
 
 
     @Override
-    protected boolean validate(CommandSender sender, String[] args) {
-        if (!super.validate(sender, args)) {
-            return false;
-        }
-
-        return true;
+    boolean validate(CommandSender sender, String[] args) {
+        return super.validate(sender, args);
     }
 }

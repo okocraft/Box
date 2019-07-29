@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
@@ -13,7 +12,7 @@ import org.bukkit.util.StringUtil;
 import net.okocraft.box.util.OtherUtil;
 import net.okocraft.box.util.PlayerUtil;
 
-public class AutoStoreList extends BaseSubCommand {
+class AutoStoreList extends BaseSubCommand {
 
     private static final String COMMAND_NAME = "autostorelist";
     private static final int LEAST_ARG_LENGTH = 2;
@@ -24,7 +23,7 @@ public class AutoStoreList extends BaseSubCommand {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(CommandSender sender, String[] args) {
         if (!validate(sender, args)) {
             return false;
         }
@@ -65,7 +64,7 @@ public class AutoStoreList extends BaseSubCommand {
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+    public List<String> onTabComplete(CommandSender sender, String[] args) {
         List<String> result = new ArrayList<>();
 
         int items = CONFIG.getAllItems().size();
@@ -99,7 +98,7 @@ public class AutoStoreList extends BaseSubCommand {
 
 
     @Override
-    protected boolean validate(CommandSender sender, String[] args) {
+    boolean validate(CommandSender sender, String[] args) {
         if (!super.validate(sender, args)) {
             return false;
         }

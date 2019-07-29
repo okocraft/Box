@@ -25,10 +25,11 @@ import net.okocraft.box.util.GeneralConfig;
 public class Replant implements Listener {
     private static final Box INSTANCE = Box.getInstance();
     private static final GeneralConfig CONFIG = INSTANCE.getGeneralConfig();
-    private Database DATABASE = INSTANCE.getDatabase();
+    private final Database DATABASE = INSTANCE.getDatabase();
 
-    private Map<Material, Material> plants = new HashMap<Material, Material>() {
+    private final Map<Material, Material> plants = new HashMap<>() {
         private static final long serialVersionUID = 1L;
+
         {
             put(Material.WHEAT, Material.WHEAT_SEEDS);
             put(Material.POTATOES, Material.POTATO);
@@ -37,8 +38,9 @@ public class Replant implements Listener {
         }
     };
 
-    private Map<Material, Material> trees = new HashMap<Material, Material>() {
+    private final Map<Material, Material> trees = new HashMap<>() {
         private static final long serialVersionUID = 1L;
+
         {
             put(Material.ACACIA_LOG, Material.ACACIA_SAPLING);
             put(Material.ACACIA_WOOD, Material.ACACIA_SAPLING);
@@ -235,11 +237,7 @@ public class Replant implements Listener {
             exception.printStackTrace();
             return false;
         }
-        
-        if (stock <= 0) {
-            return false;
-        }
 
-        return true;
+        return stock > 0;
     }
 }

@@ -82,7 +82,7 @@ public class Database {
     /**
      * テーブル名
      */
-    private static String table = "Box";
+    private static final String table = "Box";
 
     public Database(Plugin plugin) {
         // Configure database properties
@@ -200,27 +200,6 @@ public class Database {
     }
 
     /**
-     * 接続をリセットする。
-     *
-     * @since v1.0.0-SNAPSHOT
-     * @author LazyGon
-     */
-    public void resetConnection() {
-        log.info("Disconnecting.");
-
-        dispose();
-
-        log.info("Getting connection.");
-
-        if (!connect(fileUrl)) {
-            log.info("Failed to reset connection. Disabling Box plugin.");
-            Bukkit.getPluginManager().disablePlugin(Box.getInstance());
-        }
-
-        log.info("Database reset complete.");
-    }
-
-    /**
      * データベースにレコードを追加する。showWarning が true で失敗した場合はコンソールにログを出力する。
      *
      * @since v1.0.0-SNAPSHOT
@@ -259,35 +238,6 @@ public class Database {
             try {
                 statement.setString(1, uuid);
                 statement.setString(2, name);
-                statement.addBatch();
-
-                // Execute this batch
-                threadPool.submit(new StatementRunner(statement));
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        });
-    }
-
-    /**
-     * テーブルからレコードを削除する。失敗した場合はコンソールにログを出力する。
-     *
-     * @since v1.1.0-SNAPSHOT
-     * @author LazyGon
-     *
-     * @param entry プレイヤー
-     */
-    public void removePlayer(@NonNull String entry) {
-        if (!existPlayer(entry)) {
-            log.warning(":NO_RECORD_FOR_" + entry + "_EXIST");
-            return;
-        }
-
-        String entryType = PlayerUtil.isUuidOrPlayer(entry);
-
-        prepare("DELETE FROM " + table + " WHERE " + entryType + " = ?").ifPresent(statement -> {
-            try {
-                statement.setString(1, entry);
                 statement.addBatch();
 
                 // Execute this batch
@@ -428,60 +378,6 @@ public class Database {
     }
 
     /**
-     * テーブル {@code table} から列 {@code column} を削除する。
-     *
-     * @author LazyGon
-     * @since v1.0.0-SNAPSHOT
-     *
-     * @param column 削除する列の名前。
-     */
-    public void dropColumn(String column) {
-        if (!getColumnMap().keySet().contains(column)) {
-            log.warning(":NO_COLUMN_NAMED_" + column + "_EXIST");
-
-            return;
-        }
-
-        // 新しいテーブルの列
-        val columnsBuilder = new StringBuilder();
-
-        getColumnMap().forEach((colName, colType) -> {
-            if (!column.equals(colName)) {
-                columnsBuilder.append(colName).append(" ").append(colType).append(", ");
-            }
-        });
-
-        val columns = columnsBuilder.toString().replaceAll(", $", "");
-
-        // 新しいテーブルの列 (型なし)
-        val columnsBuilderExcludeType = new StringBuilder();
-
-        getColumnMap().forEach((colName, colType) -> {
-            if (!column.equals(colName))
-                columnsBuilderExcludeType.append(colName).append(", ");
-        });
-
-        val columnsExcludeType = columnsBuilderExcludeType.toString().replaceAll(", $", "");
-
-        connection.ifPresent(con -> {
-            try (val statement = con.createStatement()) {
-                statement.addBatch("BEGIN TRANSACTION");
-                statement.addBatch("ALTER TABLE " + table + " RENAME TO temp_" + table + "");
-                statement.addBatch("CREATE TABLE " + table + " (" + columns + ")");
-                statement.addBatch("INSERT INTO " + table + " (" + columnsExcludeType + ") SELECT " + columnsExcludeType
-                                + " FROM temp_" + table + "");
-                statement.addBatch("DROP TABLE temp_" + table + "");
-                statement.addBatch("COMMIT");
-
-                // Execute this batch
-                threadPool.submit(new StatementRunner(statement));
-            } catch (SQLException exception) {
-                exception.printStackTrace();
-            }
-        });
-    }
-
-    /**
      * エントリ {@code entry} に対応する列 {@code columns} の値をすべて取得する。
      *
      * @author LazyGon
@@ -519,7 +415,7 @@ public class Database {
 
                 return new LinkedHashMap<String, String>();
             }
-        }).orElse(new LinkedHashMap<String, String>());
+        }).orElse(new LinkedHashMap<>());
     }
 
     /**

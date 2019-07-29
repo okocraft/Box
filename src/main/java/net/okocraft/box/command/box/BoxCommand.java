@@ -25,35 +25,36 @@ public class BoxCommand implements CommandExecutor, TabCompleter {
     private static final String USAGE = "/box [args...]";
     
     @Getter
-    private Map<String, BaseSubCommand> subCommandMap;
+    private final Map<String, BaseSubCommand> subCommandMap;
     @Getter
     private final int subCommandMapSize;
 
     public BoxCommand() {
-        subCommandMap = new HashMap<String, BaseSubCommand>(){
+        subCommandMap = new HashMap<>() {
             private static final long serialVersionUID = 1L;
+
             {
                 Version version = new Version();
                 put(version.getCommandName(), version);
-    
+
                 Help help = new Help();
                 put(help.getCommandName(), help);
-    
+
                 AutoStoreList autoStoreList = new AutoStoreList();
                 put(autoStoreList.getCommandName(), autoStoreList);
-    
+
                 AutoStore autoStore = new AutoStore();
                 put(autoStore.getCommandName(), autoStore);
-    
+
                 Give give = new Give();
                 put(give.getCommandName(), give);
-    
+
                 Sell sell = new Sell();
                 put(sell.getCommandName(), sell);
-    
+
                 SellPrice sellPrice = new SellPrice();
                 put(sellPrice.getCommandName(), sellPrice);
-    
+
                 SellPriceList sellPriceList = new SellPriceList();
                 put(sellPriceList.getCommandName(), sellPriceList);
             }
@@ -68,14 +69,14 @@ public class BoxCommand implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (args.length == 0) {
-            return runCommand(sender, args);
+            return runCommand(sender);
         }
         BaseSubCommand subCommand = subCommandMap.get(args[0].toLowerCase());
         if (subCommand == null) {
             sender.sendMessage(MESSAGE_CONFIG.getNoParamExist());
             return false;
         }
-        return subCommand.onCommand(sender, command, label, args);
+        return subCommand.onCommand(sender, args);
     }
 
     @Override
@@ -100,7 +101,7 @@ public class BoxCommand implements CommandExecutor, TabCompleter {
         if (subCommand == null || !permedSubCommands.contains(subCommand.getCommandName())) {
             return List.of();
         }
-        return subCommand.onTabComplete(sender, command, alias, args);
+        return subCommand.onTabComplete(sender, args);
     }
 
     /**
@@ -130,7 +131,7 @@ public class BoxCommand implements CommandExecutor, TabCompleter {
         return USAGE;
     }
 
-    public boolean runCommand(CommandSender sender, String[] args) {
+    private boolean runCommand(CommandSender sender) {
         if (!(sender instanceof Player)) {
             MESSAGE_CONFIG.getErrorOccurredOnGUI();
             return false;

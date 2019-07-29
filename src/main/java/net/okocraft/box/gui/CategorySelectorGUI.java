@@ -35,7 +35,7 @@ public class CategorySelectorGUI implements Listener {
 
     public static final Inventory GUI = Bukkit.createInventory(null, 54, CONFIG.getCategorySelectionGuiName());
 
-    private static List<Integer> flameSlots = List.of(
+    private static final List<Integer> flameSlots = List.of(
         0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 17, 18, 26, 27, 35, 36, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53
     );
 
@@ -48,7 +48,7 @@ public class CategorySelectorGUI implements Listener {
         initGUI();
     }
 
-    public static void initGUI() {
+    private static void initGUI() {
         GUI.clear();
         ItemStack flame = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
         ItemMeta flameMeta = flame.getItemMeta();
@@ -57,8 +57,7 @@ public class CategorySelectorGUI implements Listener {
         flame.setItemMeta(flameMeta);
         flameSlots.forEach(slot -> GUI.setItem(slot, flame));
 
-        List<ItemStack> itemList = CONFIG.getCategories().entrySet().stream().map(entry -> createItem(entry.getKey(), entry.getValue())).collect(Collectors.toList());
-        GUI.addItem(itemList.toArray(new ItemStack[itemList.size()]));
+        GUI.addItem(CONFIG.getCategories().entrySet().stream().map(entry -> createItem(entry.getKey(), entry.getValue())).toArray(ItemStack[]::new));
     }
     
     /**
@@ -101,7 +100,7 @@ public class CategorySelectorGUI implements Listener {
     /**
      * リスナーを止める。
      */
-    public static void stopListener() {
+    private static void stopListener() {
         if (categorySelector == null) {
             return;
         }
@@ -163,6 +162,5 @@ public class CategorySelectorGUI implements Listener {
 
         new CategoryGUI(player, categoryName, 1);
 
-        return;
     }
 }

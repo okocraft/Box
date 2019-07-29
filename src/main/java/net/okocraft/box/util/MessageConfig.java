@@ -39,7 +39,7 @@ import net.okocraft.box.Box;
  * @since v1.1.0
  */
 public class MessageConfig {
-    private CustomConfig configFile;
+    private final CustomConfig configFile;
 
     /**
      * プラグインのデータフォルダ(plugins/Box/)に存在する messages.yml 。

@@ -43,11 +43,11 @@ import net.okocraft.box.gui.CategorySelectorGUI;
  * @author LazyGon
  */
 public class GeneralConfig {
-    private Box plugin;
-    private Database database;
+    private final Box plugin;
+    private final Database database;
 
     @Getter
-    private CustomConfig itemCustomConfig;
+    private final CustomConfig itemCustomConfig;
 
     // FileConfiguration
     @Getter

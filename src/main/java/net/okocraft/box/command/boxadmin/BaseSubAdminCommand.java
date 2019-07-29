@@ -2,7 +2,6 @@ package net.okocraft.box.command.boxadmin;
 
 import java.util.List;
 
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -11,34 +10,29 @@ import net.okocraft.box.database.Database;
 import net.okocraft.box.util.GeneralConfig;
 import net.okocraft.box.util.MessageConfig;
 
-public abstract class BaseSubAdminCommand {
+abstract class BaseSubAdminCommand {
 
-    protected static final Box INSTANCE = Box.getInstance();
-    protected static final GeneralConfig CONFIG = INSTANCE.getGeneralConfig();
-    protected static final MessageConfig MESSAGE_CONFIG = INSTANCE.getMessageConfig();
-    protected static final Database DATABASE = INSTANCE.getDatabase();
+    static final Box INSTANCE = Box.getInstance();
+    static final GeneralConfig CONFIG = INSTANCE.getGeneralConfig();
+    static final MessageConfig MESSAGE_CONFIG = INSTANCE.getMessageConfig();
+    static final Database DATABASE = INSTANCE.getDatabase();
 
     /**
      * コマンドの処理内容
      * 
      * @param sender
-     * @param cmd
-     * @param label
      * @param args
      * @return コマンドが成功したらtrue
      */
-    abstract boolean onCommand(CommandSender sender, Command cmd, String label, String[] args);
+    abstract boolean onCommand(CommandSender sender, String[] args);
 
     /**
      * コマンドのタブ補完の内容
      * 
-     * @param sender
-     * @param cmd
-     * @param label
      * @param args
      * @return その時のタブ補完のリスト
      */
-    abstract List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args);
+    abstract List<String> onTabComplete(String[] args);
 
     /**
      * コマンドの名前を取得する。
@@ -52,7 +46,7 @@ public abstract class BaseSubAdminCommand {
      * 
      * @return 権限
      */
-    protected String getPermissionNode() {
+    String getPermissionNode() {
         return "boxadmin." + getCommandName();
     }
 
@@ -82,7 +76,7 @@ public abstract class BaseSubAdminCommand {
      * 
      * @return 満たしていればtrue
      */
-    protected boolean validate(CommandSender sender, String[] args) {
+    boolean validate(CommandSender sender, String[] args) {
         if ((sender instanceof Player) && !sender.hasPermission(getPermissionNode())) {
             sender.sendMessage(MESSAGE_CONFIG.getPermissionDenied());
             return false;

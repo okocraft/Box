@@ -5,13 +5,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.util.StringUtil;
 
 import net.okocraft.box.util.OtherUtil;
 
-public class SellPriceList extends BaseSubCommand {
+class SellPriceList extends BaseSubCommand {
 
     private static final String COMMAND_NAME = "sellpricelist";
     private static final int LEAST_ARG_LENGTH = 1;
@@ -22,7 +21,7 @@ public class SellPriceList extends BaseSubCommand {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(CommandSender sender, String[] args) {
         if (!validate(sender, args)) {
             return false;
         }
@@ -38,18 +37,16 @@ public class SellPriceList extends BaseSubCommand {
         );
 
         CONFIG.getSellPrice().entrySet().stream().skip(8 * (page - 1)).limit(8)
-                .forEach(mapEntry -> {
-                    sender.sendMessage(MESSAGE_CONFIG.getSellPriceListFormat()
-                            .replaceAll("%item%", mapEntry.getKey())
-                            .replaceAll("%price%", String.valueOf(mapEntry.getValue()))
-                    );
-                });
+                .forEach(mapEntry -> sender.sendMessage(MESSAGE_CONFIG.getSellPriceListFormat()
+                        .replaceAll("%item%", mapEntry.getKey())
+                        .replaceAll("%price%", String.valueOf(mapEntry.getValue()))
+                ));
 
         return true;
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+    public List<String> onTabComplete(CommandSender sender, String[] args) {
         List<String> result = new ArrayList<>();
 
         int items = CONFIG.getSellPrice().size();
@@ -86,7 +83,7 @@ public class SellPriceList extends BaseSubCommand {
 
 
     @Override
-    protected boolean validate(CommandSender sender, String[] args) {
+    boolean validate(CommandSender sender, String[] args) {
         if (!super.validate(sender, args)) {
             return false;
         }
