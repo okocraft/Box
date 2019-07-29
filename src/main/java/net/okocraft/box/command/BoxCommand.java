@@ -17,19 +17,19 @@ public interface BoxCommand {
     static final Database DATABASE = INSTANCE.getDatabase();
 
     /**
-     * コマンドの処理内容
+     * 各コマンドの処理
      * 
-     * @param sender
-     * @param args
+     * @param sender コマンドの実行者
+     * @param args 引数
      * @return コマンドが成功したらtrue
      */
     boolean runCommand(CommandSender sender, String[] args);
 
     /**
-     * コマンドのタブ補完の内容
+     * 各コマンドのタブ補完の処理
      * 
-     * @param sender
-     * @param args
+     * @param sender コマンドの実行者
+     * @param args 引数
      * @return その時のタブ補完のリスト
      */
     List<String> runTabComplete(CommandSender sender, String[] args);

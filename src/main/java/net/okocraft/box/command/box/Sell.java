@@ -114,7 +114,6 @@ class Sell extends BaseSubCommand {
         return MESSAGE_CONFIG.getSellDesc();
     }
 
-
     @Override
     protected boolean validate(CommandSender sender, String[] args) {
         if (!super.validate(sender, args)) {

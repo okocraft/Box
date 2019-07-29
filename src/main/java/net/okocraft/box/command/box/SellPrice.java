@@ -66,7 +66,6 @@ class SellPrice extends BaseSubCommand {
         return MESSAGE_CONFIG.getSellPriceDesc();
     }
 
-
     @Override
     protected boolean validate(CommandSender sender, String[] args) {
         if (!super.validate(sender, args)) {

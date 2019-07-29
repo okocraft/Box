@@ -132,6 +132,9 @@ public class GeneralConfig {
         initConfig();
     }
 
+    /**
+     * すべての設定を再読込する。
+     */
     public void reload() {
         itemCustomConfig.initConfig();
 
@@ -148,6 +151,9 @@ public class GeneralConfig {
         plugin.registerEvents();
     }
 
+    /**
+     * 設定をファイルから読み込んで初期化する。
+     */
     private void initConfig() {
         // SoundSetting
         initSoundConfig();
@@ -207,6 +213,9 @@ public class GeneralConfig {
                 itemName -> priceConfig.getConfig().getInt(itemName), (i1, i2) -> i1, LinkedHashMap::new));
     }
 
+    /**
+     * コマンドによって増えた増分のカテゴリを読み込む。
+     */
     public void addCategory() {
         itemCustomConfig.initConfig();
         itemConfig = itemCustomConfig.getConfig();

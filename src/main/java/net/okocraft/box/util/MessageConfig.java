@@ -343,7 +343,7 @@ public class MessageConfig {
      * 
      * @since v1.1.0
      * 
-     * @param key
+     * @param key YAML キー
      * 
      * @return 生メッセージ
      */
@@ -359,7 +359,7 @@ public class MessageConfig {
      * @author LazyGon
      * @since v1.1.0
      * 
-     * @param key
+     * @param key YAML キー
      * 
      * @return メッセージ
      */

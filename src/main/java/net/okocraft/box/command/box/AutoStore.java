@@ -45,7 +45,7 @@ class AutoStore extends BaseSubCommand {
      * @param item
      * @param switchTo
      * 
-     * @return
+     * @return 実行に成功したら {@code true}
      */
     private boolean autoStore(CommandSender sender, String item, @Nullable String switchTo) {
         String player = ((Player) sender).getUniqueId().toString();
@@ -70,7 +70,7 @@ class AutoStore extends BaseSubCommand {
      * 
      * @param sender
      * @param switchTo
-     * @return
+     * @return  実行に成功したら {@code true}
      */
     private boolean autoStoreAll(CommandSender sender, String switchTo) {
         String player = ((Player) sender).getUniqueId().toString();

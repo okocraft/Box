@@ -64,8 +64,8 @@ public class CategorySelectorGUI implements Listener {
     /**
      * categoryのアイコンなどの情報をsectionから引き出し、そのアイテムを作る。
      * 
-     * @param categoryName
-     * @param section
+     * @param categoryName カテゴリ名
+     * @param section コンフィグ
      * @return アイテム
      */
     private static ItemStack createItem(String categoryName, ConfigurationSection section) {

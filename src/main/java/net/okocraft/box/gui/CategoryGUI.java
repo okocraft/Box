@@ -164,7 +164,7 @@ class CategoryGUI implements Listener {
     /**
      * 取引量を変える。
      * 
-     * @param newQuantity
+     * @param newQuantity 新しい取引量
      */
     private void setQuantity(int newQuantity) {
         if (quantity < newQuantity) {
@@ -193,7 +193,7 @@ class CategoryGUI implements Listener {
     /**
      * アイテムを引き出す。
      * 
-     * @param item
+     * @param item 引き出すアイテム
      */
     private void withdraw(Material item) {
         if (!itemStockMap.containsKey(item)) {
@@ -205,7 +205,7 @@ class CategoryGUI implements Listener {
             PlayerUtil.playSound(player, CONFIG.getNotEnoughSound());
             return;
         }
-        tempQuantity = stock < tempQuantity ? stock : tempQuantity;
+        tempQuantity = Math.min(stock, tempQuantity);
         ItemStack givenItem = new ItemStack(item, tempQuantity);
         int nonAdded = player.getInventory().addItem(givenItem).values().stream().mapToInt(ItemStack::getAmount).sum();
         itemStockMap.put(item, stock + nonAdded - tempQuantity);
@@ -219,7 +219,7 @@ class CategoryGUI implements Listener {
     /**
      * アイテムを預ける。
      * 
-     * @param item
+     * @param item 預けるアイテム
      */
     private void deposit(Material item) {
         if (!itemStockMap.containsKey(item)) {
@@ -243,7 +243,7 @@ class CategoryGUI implements Listener {
     /**
      * アイテムの取引などで変動したloreを追随させるためのメソッド。
      * 
-     * @param material
+     * @param material loreを更新するアイテムを検索するためのタイプ
      */
     private void updateLore(Material material) {
         ItemStack item = null;
@@ -263,7 +263,7 @@ class CategoryGUI implements Listener {
     /**
      * GUIの初期化や、アイテムの取引などで変動したloreを追随させるためのメソッド。
      * 
-     * @param item
+     * @param item loreを更新するアイテム
      */
     private void updateLore(ItemStack item) {
         ItemMeta meta = item.getItemMeta();
@@ -385,10 +385,8 @@ class CategoryGUI implements Listener {
             }
 
             // 取引数が上限または下限をに達した場合に制限をかける処理
-            currentQuantity = (currentQuantity + difference >= 1) ? currentQuantity + difference : 1;
-            if (currentQuantity > 640) {
-                currentQuantity = 640;
-            }
+            currentQuantity = Math.max(currentQuantity + difference, 1);
+            currentQuantity = Math.min(currentQuantity, 640);
 
             setQuantity(currentQuantity);
             return;

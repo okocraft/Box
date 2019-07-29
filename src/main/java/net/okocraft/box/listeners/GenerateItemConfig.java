@@ -132,9 +132,9 @@ public class GenerateItemConfig implements Listener {
     /**
      * もし渡されたアイテムがplayer_headだった場合、渡されたマップに応じてデフォルトの名前の文字列を取得する。
      * 
-     * @param playerHead
-     * @param langMap
-     * @return プレイヤーの頭
+     * @param playerHead プレイヤーの頭
+     * @param langMap アイテムのデフォルト名を格納したマップ
+     * @return プレイヤーの頭の名前
      */
     private static String getHeadName(ItemStack playerHead, Map<String, String> langMap) {
         if (playerHead.getType() != Material.PLAYER_HEAD || playerHead.getType() != Material.PLAYER_WALL_HEAD) {
@@ -161,8 +161,8 @@ public class GenerateItemConfig implements Listener {
     /**
      * もし渡されたアイテムがtipped_arrowだった場合、渡されたマップに応じてデフォルトの名前の文字列を取得する。
      * 
-     * @param tippedArrow
-     * @param langMap
+     * @param tippedArrow 効果付きの矢
+     * @param langMap アイテムのデフォルト名を格納したマップ
      * @return tipped_arrowの効果ごとの名前
      */
     private static String getTippedArrowName(ItemStack tippedArrow, Map<String, String> langMap) {
@@ -185,8 +185,8 @@ public class GenerateItemConfig implements Listener {
     /**
      * もし渡されたアイテムがpotionだった場合、渡されたマップに応じてデフォルトの名前の文字列を取得する。
      * 
-     * @param potion
-     * @param langMap
+     * @param potion 普通のポーション
+     * @param langMap アイテムのデフォルト名を格納したマップ
      * @return potionの効果ごとの名前
      */
     private static String getPotionName(ItemStack potion, Map<String, String> langMap) {
@@ -209,8 +209,8 @@ public class GenerateItemConfig implements Listener {
     /**
      * もし渡されたアイテムがsplash_potionだった場合、渡されたマップに応じてデフォルトの名前の文字列を取得する。
      * 
-     * @param potion
-     * @param langMap
+     * @param potion スプラッシュポーション
+     * @param langMap アイテムのデフォルト名を格納したマップ
      * @return splash_potionの効果ごとの名前
      */
     private static String getSplashPotionName(ItemStack potion, Map<String, String> langMap) {
@@ -233,8 +233,8 @@ public class GenerateItemConfig implements Listener {
     /**
      * もし渡されたアイテムがsplash_potionだった場合、渡されたマップに応じてデフォルトの名前の文字列を取得する。
      * 
-     * @param potion
-     * @param langMap
+     * @param potion 残留ポーション
+     * @param langMap アイテムのデフォルト名を格納したマップ
      * @return splash_potionの効果ごとの名前
      */
     private static String getLingeringPotionName(ItemStack potion, Map<String, String> langMap) {
@@ -257,8 +257,8 @@ public class GenerateItemConfig implements Listener {
     /**
      * もし渡されたアイテムがshieldだった場合、渡されたマップに応じてデフォルトの名前の文字列を取得する。
      * 
-     * @param shield
-     * @param langMap
+     * @param shield 盾
+     * @param langMap アイテムのデフォルト名を格納したマップ
      * @return shieldの色ごとの名前
      */
     private static String getShieldName(ItemStack shield, Map<String, String> langMap) {

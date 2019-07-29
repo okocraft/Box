@@ -43,7 +43,7 @@ class AutoStore extends BaseSubAdminCommand {
      * @param sender
      * @param itemName
      * @param switchTo
-     * @return
+     * @return 実行に成功したら {@code true}
      */
     private boolean autoStore(CommandSender sender, String player, String itemName, @Nullable String switchTo) {
         if (switchTo == null) {
@@ -67,7 +67,7 @@ class AutoStore extends BaseSubAdminCommand {
      * @param sender
      * @param player
      * @param switchTo
-     * @return
+     * @return 実行に成功したら {@code true}
      */
     private boolean autoStoreAll(CommandSender sender, String player, String switchTo) {
         List<String> allItems = CONFIG.getAllItems();

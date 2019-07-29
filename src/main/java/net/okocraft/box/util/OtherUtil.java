@@ -17,8 +17,8 @@ public class OtherUtil {
      * @author LazyGon
      * @since v1.1.0
      * 
-     * @param number
-     * @param def
+     * @param number 解析する文字列
+     * @param def 解析に失敗したときに返す数字
      * 
      * @return int型の数字。
      */
@@ -36,8 +36,8 @@ public class OtherUtil {
      * @author LazyGon
      * @since v1.1.0
      * 
-     * @param number
-     * @param def
+     * @param number 解析する文字列
+     * @param def 解析に失敗したときに返す数字
      * 
      * @return long型の数字。
      */
@@ -52,8 +52,8 @@ public class OtherUtil {
     /**
      * パーミッションを登録する。
      * 
-     * @param permName 登録する権限
-     * @param parentPermName 登録する権限の親
+     * @param permName 登録する権限の文字列
+     * @param parentPermName {@code permName} の親権限の文字列
      */
     public static void registerPermission(String permName, @Nullable String parentPermName) {
         PluginManager pm = Bukkit.getPluginManager();
@@ -75,7 +75,7 @@ public class OtherUtil {
     /**
      * パーミッションを登録する。
      * 
-     * @param permName
+     * @param permName 登録する権限の文字列
      */
     public static void registerPermission(String permName) {
         registerPermission(permName, null);

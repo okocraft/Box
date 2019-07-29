@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.bukkit.command.Command;
@@ -59,8 +60,11 @@ public class BoxAdmin extends BaseBoxCommand implements CommandExecutor, TabComp
 
         subCommandMapSize = subCommandMap.size();
 
-        INSTANCE.getCommand(getCommandName()).setExecutor(this);
-        INSTANCE.getCommand(getCommandName()).setTabCompleter(this);
+        Optional.ofNullable(INSTANCE.getCommand(getCommandName())).ifPresent(pluginCommand -> {
+            pluginCommand.setExecutor(this);
+            pluginCommand.setTabCompleter(this);
+        });
+        
     }
 
     @Override
