@@ -18,19 +18,17 @@
 
 package net.okocraft.box.util;
 
+import lombok.Getter;
+import lombok.val;
+import net.okocraft.box.Box;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+
+import javax.annotation.Nonnull;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import javax.annotation.Nonnull;
-
-import lombok.Getter;
-
-import lombok.val;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
-
-import net.okocraft.box.Box;
 
 /**
  * メッセージ設定クラス
@@ -343,7 +341,7 @@ public class MessageConfig {
      * 
      * @since v1.1.0
      * 
-     * @param key
+     * @param key 取得するメッセージの設定パス
      * 
      * @return 生メッセージ
      */
@@ -359,7 +357,7 @@ public class MessageConfig {
      * @author LazyGon
      * @since v1.1.0
      * 
-     * @param key
+     * @param key 取得するメッセージの設定パス
      * 
      * @return メッセージ
      */

@@ -18,8 +18,9 @@
 
 package net.okocraft.box.util;
 
-import java.util.UUID;
-
+import lombok.val;
+import net.okocraft.box.Box;
+import net.okocraft.box.database.Database;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
@@ -27,9 +28,7 @@ import org.bukkit.SoundCategory;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import lombok.val;
-import net.okocraft.box.Box;
-import net.okocraft.box.database.Database;
+import java.util.UUID;
 
 /**
  * プレイヤー名やそのインスタンスを取り扱うツール群。
@@ -77,7 +76,7 @@ public class PlayerUtil {
      * 
      * @since v1.1.0
      * 
-     * @param sender
+     * @param sender コマンドを実行した人
      * 
      * @return 登録されていない時true されているならfalse
      */

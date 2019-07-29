@@ -1,14 +1,13 @@
 package net.okocraft.box.command.box;
 
+import net.okocraft.box.util.OtherUtil;
+import org.bukkit.command.CommandSender;
+import org.bukkit.util.StringUtil;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-
-import org.bukkit.command.CommandSender;
-import org.bukkit.util.StringUtil;
-
-import net.okocraft.box.util.OtherUtil;
 
 class SellPriceList extends BaseSubCommand {
 
@@ -16,19 +15,19 @@ class SellPriceList extends BaseSubCommand {
     private static final int LEAST_ARG_LENGTH = 1;
     private static final String USAGE = "/box sellpricelist [page]";
 
-    public SellPriceList() {
+    SellPriceList() {
         super();
     }
 
     @Override
     public boolean onCommand(CommandSender sender, String[] args) {
-        if (!validate(sender, args)) {
+        if (validate(sender, args)) {
             return false;
         }
         int page = args.length >= 2 ? OtherUtil.parseIntOrDefault(args[1], 1) : 1;
 
         int maxLine = CONFIG.getAllItems().size();
-        int currentLine = (maxLine < page * 8) ? maxLine : page * 8;
+        int currentLine = Math.min(maxLine, page * 8);
 
         sender.sendMessage(
                 MESSAGE_CONFIG.getSellPriceListHeader()
@@ -84,15 +83,15 @@ class SellPriceList extends BaseSubCommand {
 
     @Override
     boolean validate(CommandSender sender, String[] args) {
-        if (!super.validate(sender, args)) {
-            return false;
+        if (super.validate(sender, args)) {
+            return true;
         }
 
         if (INSTANCE.getEconomy() == null) {
             sender.sendMessage(MESSAGE_CONFIG.getEconomyIsNull());
-            return false;
+            return true;
         }
 
-        return true;
+        return false;
     }
 }

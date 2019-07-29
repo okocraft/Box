@@ -1,12 +1,11 @@
 package net.okocraft.box.command.boxadmin;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import net.okocraft.box.util.OtherUtil;
 import org.bukkit.command.CommandSender;
 import org.bukkit.util.StringUtil;
 
-import net.okocraft.box.util.OtherUtil;
+import java.util.ArrayList;
+import java.util.List;
 
 class Give extends BaseSubAdminCommand {
 
@@ -15,7 +14,7 @@ class Give extends BaseSubAdminCommand {
     private static final String USAGE = "/boxadmin give <player> <ITEM> [amount]";
     @Override
     public boolean onCommand(CommandSender sender, String[] args) {
-        if (!validate(sender, args)) {
+        if (validate(sender, args)) {
             return false;
         }
         String player = args[1].toLowerCase();
@@ -99,20 +98,20 @@ class Give extends BaseSubAdminCommand {
 
     @Override
     boolean validate(CommandSender sender, String[] args) {
-        if (!super.validate(sender, args)) {
-            return false;
+        if (super.validate(sender, args)) {
+            return true;
         }
 
         if (!DATABASE.existPlayer(args[1].toLowerCase())) {
             sender.sendMessage(MESSAGE_CONFIG.getNoPlayerFound());
-            return false;
+            return true;
         }
 
         if (!CONFIG.getAllItems().contains(args[2].toUpperCase())) {
             sender.sendMessage(MESSAGE_CONFIG.getNoItemFound());
-            return false;
+            return true;
         }
 
-        return true;
+        return false;
     }
 }

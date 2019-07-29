@@ -1,14 +1,13 @@
 package net.okocraft.box.command.boxadmin;
 
-import java.util.List;
-
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-
 import net.okocraft.box.Box;
 import net.okocraft.box.database.Database;
 import net.okocraft.box.util.GeneralConfig;
 import net.okocraft.box.util.MessageConfig;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+import java.util.List;
 
 abstract class BaseSubAdminCommand {
 
@@ -20,16 +19,16 @@ abstract class BaseSubAdminCommand {
     /**
      * コマンドの処理内容
      * 
-     * @param sender
-     * @param args
-     * @return コマンドが成功したらtrue
+     * @param sender コマンドを実行した人
+     * @param args コマンドの引数
+     * @return コマンドに成功なら {@code true}
      */
     abstract boolean onCommand(CommandSender sender, String[] args);
 
     /**
      * コマンドのタブ補完の内容
      * 
-     * @param args
+     * @param args コマンドの引数
      * @return その時のタブ補完のリスト
      */
     abstract List<String> onTabComplete(String[] args);
@@ -79,14 +78,14 @@ abstract class BaseSubAdminCommand {
     boolean validate(CommandSender sender, String[] args) {
         if ((sender instanceof Player) && !sender.hasPermission(getPermissionNode())) {
             sender.sendMessage(MESSAGE_CONFIG.getPermissionDenied());
-            return false;
+            return true;
         }
 
         if (args.length < getLeastArgLength()) {
             sender.sendMessage(MESSAGE_CONFIG.getNotEnoughArguments());
-            return false;
+            return true;
         }
 
-        return true;
+        return false;
     }
 }

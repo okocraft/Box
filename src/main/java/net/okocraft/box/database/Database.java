@@ -18,6 +18,13 @@
 
 package net.okocraft.box.database;
 
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.val;
+import net.okocraft.box.Box;
+import net.okocraft.box.util.PlayerUtil;
+import org.bukkit.plugin.Plugin;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -26,16 +33,6 @@ import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
-
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.val;
-
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.Plugin;
-
-import net.okocraft.box.Box;
-import net.okocraft.box.util.PlayerUtil;
 
 // NOTE: メッセージがハードコーディングされているが、システム側メッセージなのでとりあえず無視する。
 
@@ -273,7 +270,7 @@ public class Database {
      * @param value  新しい値
      */
     public void set(@NonNull String column, @NonNull String entry, String value) {
-        if (!getColumnMap().keySet().contains(column)) {
+        if (!getColumnMap().containsKey(column)) {
             log.warning(":NO_COLUMN_NAMED_" + column + "_EXIST");
             return;
         }
@@ -312,7 +309,7 @@ public class Database {
      * @return 値
      */
     public String get(String column, String entry) {
-        if (!getColumnMap().keySet().contains(column)) {
+        if (!getColumnMap().containsKey(column)) {
             return ":NO_COLUMN_NAMED_" + column + "_EXIST";
         }
 
@@ -350,7 +347,7 @@ public class Database {
      * @param showWarning  同じ列が存在したときにコンソールに警告を表示するかどうか
      */
     public void addColumn(String column, String type, String defaultValue, boolean showWarning) {
-        if (getColumnMap().keySet().contains(column)) {
+        if (getColumnMap().containsKey(column)) {
             if (showWarning) {
                 log.warning(":COLUMN_EXIST");
             }

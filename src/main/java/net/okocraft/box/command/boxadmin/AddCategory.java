@@ -1,16 +1,15 @@
 package net.okocraft.box.command.boxadmin;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
+import net.okocraft.box.listeners.GenerateItemConfig;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 
-import net.okocraft.box.listeners.GenerateItemConfig;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 class AddCategory extends BaseSubAdminCommand {
 
@@ -20,7 +19,7 @@ class AddCategory extends BaseSubAdminCommand {
 
     @Override
     public boolean onCommand(CommandSender sender, String[] args) {
-        if (!validate(sender, args)) {
+        if (validate(sender, args)) {
             return false;
         }
 
@@ -71,15 +70,15 @@ class AddCategory extends BaseSubAdminCommand {
 
     @Override
     boolean validate(CommandSender sender, String[] args) {
-        if (!super.validate(sender, args)) {
-            return false;
+        if (super.validate(sender, args)) {
+            return true;
         }
 
         if (!(sender instanceof Player)) {
             sender.sendMessage(MESSAGE_CONFIG.getPlayerOnly());
-            return false;
+            return true;
         }
 
-        return true;
+        return false;
     }
 }

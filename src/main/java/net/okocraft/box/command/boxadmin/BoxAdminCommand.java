@@ -1,11 +1,9 @@
 package net.okocraft.box.command.boxadmin;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
+import lombok.Getter;
+import net.okocraft.box.Box;
+import net.okocraft.box.gui.CategorySelectorGUI;
+import net.okocraft.box.util.MessageConfig;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -13,10 +11,8 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 
-import lombok.Getter;
-import net.okocraft.box.Box;
-import net.okocraft.box.gui.CategorySelectorGUI;
-import net.okocraft.box.util.MessageConfig;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class BoxAdminCommand implements CommandExecutor, TabCompleter {
 
@@ -62,7 +58,7 @@ public class BoxAdminCommand implements CommandExecutor, TabCompleter {
 
         subCommandMapSize = subCommandMap.size();
 
-        INSTANCE.getCommand("boxadmin").setExecutor(this);
+        Objects.requireNonNull(INSTANCE.getCommand("boxadmin")).setExecutor(this);
         INSTANCE.getCommand("boxadmin").setTabCompleter(this);
     }
 

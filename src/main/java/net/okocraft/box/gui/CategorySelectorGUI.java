@@ -1,9 +1,8 @@
 package net.okocraft.box.gui;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
+import lombok.val;
+import net.okocraft.box.Box;
+import net.okocraft.box.util.GeneralConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -21,9 +20,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.tags.ItemTagType;
 
-import lombok.val;
-import net.okocraft.box.Box;
-import net.okocraft.box.util.GeneralConfig;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 public class CategorySelectorGUI implements Listener {
 
@@ -52,6 +51,8 @@ public class CategorySelectorGUI implements Listener {
         GUI.clear();
         ItemStack flame = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
         ItemMeta flameMeta = flame.getItemMeta();
+        assert flameMeta != null;
+
         flameMeta.setDisplayName("§r");
         flameMeta.getCustomTagContainer().setCustomTag(CATEGORY_SELECTOR_KEY, ItemTagType.INTEGER, 1);
         flame.setItemMeta(flameMeta);
@@ -63,8 +64,8 @@ public class CategorySelectorGUI implements Listener {
     /**
      * categoryのアイコンなどの情報をsectionから引き出し、そのアイテムを作る。
      * 
-     * @param categoryName
-     * @param section
+     * @param categoryName カテゴリーの名前
+     * @param section コンフィグ
      * @return アイテム
      */
     private static ItemStack createItem(String categoryName, ConfigurationSection section) {
@@ -119,7 +120,7 @@ public class CategorySelectorGUI implements Listener {
     /**
      * カテゴリ選択GUIへのクリックを検知して、適切なカテゴリGUIに遷移させる。
      * 
-     * @param event
+     * @param event InventoryClickEvent が格納されている
      */
     @EventHandler(priority = EventPriority.NORMAL)
     public void onClick(InventoryClickEvent event) {
@@ -129,7 +130,7 @@ public class CategorySelectorGUI implements Listener {
         val player = (Player) event.getWhoClicked();
         val action = event.getAction();
         val inventory = event.getClickedInventory();
-        if (inventory == null || inventory.getItem(0) == null || !GUI.getItem(0).isSimilar(inventory.getItem(0))) {
+        if (inventory == null || inventory.getItem(0) == null || !Objects.requireNonNull(GUI.getItem(0)).isSimilar(inventory.getItem(0))) {
             return;
         }
         event.setCancelled(true);
@@ -154,7 +155,7 @@ public class CategorySelectorGUI implements Listener {
         }
 
         // NOTE: NPE はItemStackがAIRの場合のみしか起こらない。
-        val categoryName = clickedItem.getItemMeta()
+        val categoryName = Objects.requireNonNull(clickedItem.getItemMeta())
                 .getCustomTagContainer()
                 .getCustomTag(CATEGORY_NAME_KEY, ItemTagType.STRING);
 

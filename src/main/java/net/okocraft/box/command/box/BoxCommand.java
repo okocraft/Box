@@ -1,11 +1,9 @@
 package net.okocraft.box.command.box;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
+import lombok.Getter;
+import net.okocraft.box.Box;
+import net.okocraft.box.gui.CategorySelectorGUI;
+import net.okocraft.box.util.MessageConfig;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -13,10 +11,8 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 
-import lombok.Getter;
-import net.okocraft.box.Box;
-import net.okocraft.box.gui.CategorySelectorGUI;
-import net.okocraft.box.util.MessageConfig;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class BoxCommand implements CommandExecutor, TabCompleter {
 
@@ -62,8 +58,8 @@ public class BoxCommand implements CommandExecutor, TabCompleter {
 
         subCommandMapSize = subCommandMap.size();
 
-        INSTANCE.getCommand("box").setExecutor(this);
-        INSTANCE.getCommand("box").setTabCompleter(this);
+        Objects.requireNonNull(INSTANCE.getCommand("box")).setExecutor(this);
+        Objects.requireNonNull(INSTANCE.getCommand("box")).setTabCompleter(this);
     }
 
     @Override
@@ -107,7 +103,7 @@ public class BoxCommand implements CommandExecutor, TabCompleter {
     /**
      * コマンドの名前を取得する。
      * 
-     * @return
+     * @return コマンドの名前 (box)
      */
     public String getCommandName() {
         return "box";

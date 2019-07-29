@@ -1,14 +1,8 @@
 package net.okocraft.box.listeners;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-
+import net.okocraft.box.Box;
+import net.okocraft.box.util.GeneralConfig;
+import net.okocraft.box.util.ItemLanguage;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Banner;
@@ -28,9 +22,11 @@ import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
-import net.okocraft.box.Box;
-import net.okocraft.box.util.GeneralConfig;
-import net.okocraft.box.util.ItemLanguage;
+import java.io.File;
+import java.io.IOException;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
 public class GenerateItemConfig implements Listener {
 
@@ -138,8 +134,8 @@ public class GenerateItemConfig implements Listener {
     /**
      * もし渡されたアイテムがplayer_headだった場合、渡されたマップに応じてデフォルトの名前の文字列を取得する。
      * 
-     * @param playerHead
-     * @param langMap
+     * @param playerHead プレイヤーの頭
+     * @param langMap アイテム名のマップ
      * @return プレイヤーの頭
      */
     private static String getHeadName(ItemStack playerHead, Map<String, String> langMap) {
@@ -152,11 +148,14 @@ public class GenerateItemConfig implements Listener {
         }
 
         SkullMeta meta = (SkullMeta) playerHead.getItemMeta();
+        assert meta != null;
+
         if (!meta.hasOwner()) {
             return langMap.get("player_head");
         }
 
-        String ownerName = meta.getOwningPlayer().getName();
+        String ownerName = Objects.requireNonNull(meta.getOwningPlayer()).getName();
+
         if (ownerName == null) {
             return langMap.get("player_head");
         }
@@ -167,8 +166,8 @@ public class GenerateItemConfig implements Listener {
     /**
      * もし渡されたアイテムがtipped_arrowだった場合、渡されたマップに応じてデフォルトの名前の文字列を取得する。
      * 
-     * @param tippedArrow
-     * @param langMap
+     * @param tippedArrow 矢
+     * @param langMap アイテム名のマップ
      * @return tipped_arrowの効果ごとの名前
      */
     private static String getTippedArrowName(ItemStack tippedArrow, Map<String, String> langMap) {
@@ -180,8 +179,10 @@ public class GenerateItemConfig implements Listener {
         }
 
         PotionMeta meta = (PotionMeta) tippedArrow.getItemMeta();
+        assert meta != null;
+
         String effectName = meta.getBasePotionData().getType().name().toLowerCase();
-        if (effectName == null || Objects.equals(effectName, "empty")) {
+        if (Objects.equals(effectName, "empty")) {
             return langMap.get("tipped_arrow.effect.empty");
         }
 
@@ -191,7 +192,7 @@ public class GenerateItemConfig implements Listener {
     /**
      * もし渡されたアイテムがpotionだった場合、渡されたマップに応じてデフォルトの名前の文字列を取得する。
      * 
-     * @param langMap
+     * @param langMap アイテム名のマップ
      * @return potionの効果ごとの名前
      */
     private static String getPotionName(ItemStack potion, Map<String, String> langMap) {
@@ -203,6 +204,8 @@ public class GenerateItemConfig implements Listener {
         }
 
         PotionMeta meta = (PotionMeta) potion.getItemMeta();
+        assert meta != null;
+
         String effectName = meta.getBasePotionData().getType().name().toLowerCase();
         if (Objects.equals(effectName, "empty")) {
             return langMap.get("potion.effect.empty");
@@ -214,7 +217,7 @@ public class GenerateItemConfig implements Listener {
     /**
      * もし渡されたアイテムがsplash_potionだった場合、渡されたマップに応じてデフォルトの名前の文字列を取得する。
      * 
-     * @param langMap
+     * @param langMap アイテム名のマップ
      * @return splash_potionの効果ごとの名前
      */
     private static String getSplashPotionName(ItemStack potion, Map<String, String> langMap) {
@@ -226,6 +229,8 @@ public class GenerateItemConfig implements Listener {
         }
 
         PotionMeta meta = (PotionMeta) potion.getItemMeta();
+        assert meta != null;
+
         String effectName = meta.getBasePotionData().getType().name().toLowerCase();
         if (Objects.equals(effectName, "empty")) {
             return langMap.get("splash_potion.effect.empty");
@@ -237,7 +242,7 @@ public class GenerateItemConfig implements Listener {
     /**
      * もし渡されたアイテムがsplash_potionだった場合、渡されたマップに応じてデフォルトの名前の文字列を取得する。
      * 
-     * @param langMap
+     * @param langMap アイテム名のマップ
      * @return splash_potionの効果ごとの名前
      */
     private static String getLingeringPotionName(ItemStack potion, Map<String, String> langMap) {
@@ -249,6 +254,8 @@ public class GenerateItemConfig implements Listener {
         }
 
         PotionMeta meta = (PotionMeta) potion.getItemMeta();
+        assert meta != null;
+
         String effectName = meta.getBasePotionData().getType().name().toLowerCase();
         if (Objects.equals(effectName, "empty")) {
             return langMap.get("lingering_potion.effect.empty");
@@ -260,7 +267,7 @@ public class GenerateItemConfig implements Listener {
     /**
      * もし渡されたアイテムがshieldだった場合、渡されたマップに応じてデフォルトの名前の文字列を取得する。
      * 
-     * @param langMap
+     * @param langMap アイテム名のマップ
      * @return shieldの色ごとの名前
      */
     private static String getShieldName(ItemStack shield, Map<String, String> langMap) {
@@ -272,6 +279,8 @@ public class GenerateItemConfig implements Listener {
         }
 
         BlockStateMeta meta = (BlockStateMeta) shield.getItemMeta();
+        assert meta != null;
+
         if (!meta.hasBlockState()) {
             return langMap.get("shield");
         }

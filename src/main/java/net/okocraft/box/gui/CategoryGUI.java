@@ -1,15 +1,11 @@
 package net.okocraft.box.gui;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
 import com.google.common.primitives.Ints;
-
+import lombok.Getter;
+import net.okocraft.box.Box;
+import net.okocraft.box.database.Database;
+import net.okocraft.box.util.GeneralConfig;
+import net.okocraft.box.util.PlayerUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -29,11 +25,9 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import lombok.Getter;
-import net.okocraft.box.Box;
-import net.okocraft.box.database.Database;
-import net.okocraft.box.util.GeneralConfig;
-import net.okocraft.box.util.PlayerUtil;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 class CategoryGUI implements Listener {
 
@@ -60,7 +54,7 @@ class CategoryGUI implements Listener {
      * @param quantity 引き出し・預け入れ量
      * @throws IllegalArgumentException カテゴリ名が登録されていないとき。
      */
-    public CategoryGUI(Player player, String categoryName, int quantity) throws IllegalArgumentException {
+    CategoryGUI(Player player, String categoryName, int quantity) throws IllegalArgumentException {
         Map<String, ConfigurationSection> categories = CONFIG.getCategories();
         if (!categories.containsKey(categoryName)) {
             throw new IllegalArgumentException("Category " + categoryName + " is not registered.");
@@ -73,7 +67,7 @@ class CategoryGUI implements Listener {
         this.gui = Bukkit.createInventory(null, 54, guiName);
         ConfigurationSection categorySection = categories.get(categoryName);
         if (categorySection.isConfigurationSection("item")) {
-            List<String> keys = new ArrayList<>(categorySection.getConfigurationSection("item").getKeys(false));
+            List<String> keys = new ArrayList<>(Objects.requireNonNull(categorySection.getConfigurationSection("item")).getKeys(false));
             items = new ArrayList<>();
             itemStockMap = DATABASE.getMultiValue(keys, player.getName()).entrySet().stream()
                     .filter(entry -> Objects.nonNull(Material.getMaterial(entry.getKey())))
@@ -87,6 +81,7 @@ class CategoryGUI implements Listener {
                         Material material = Material.getMaterial(key);
 
                         // itemsに追加する ------
+                        assert material != null;
                         ItemStack item = new ItemStack(material);
 
                         // meta設定
@@ -96,6 +91,8 @@ class CategoryGUI implements Listener {
                         String itemName = replacePlaceholders(CONFIG.getItemTemplateName(), jp, en, stock, quantity);
                         List<String> itemLore = new ArrayList<>(CONFIG.getItemTemplateLore());
                         itemLore.replaceAll(loreLine -> replacePlaceholders(loreLine, jp, en, stock, quantity));
+
+                        assert meta != null;
                         meta.setDisplayName(itemName);
                         meta.setLore(itemLore);
                         item.setItemMeta(meta);
@@ -163,7 +160,7 @@ class CategoryGUI implements Listener {
     /**
      * 取引量を変える。
      * 
-     * @param newQuantity
+     * @param newQuantity 新しい取引量
      */
     private void setQuantity(int newQuantity) {
         if (quantity < newQuantity) {
@@ -192,7 +189,7 @@ class CategoryGUI implements Listener {
     /**
      * アイテムを引き出す。
      * 
-     * @param item
+     * @param item 引き出すアイテム
      */
     private void withdraw(Material item) {
         if (!itemStockMap.containsKey(item)) {
@@ -204,7 +201,7 @@ class CategoryGUI implements Listener {
             PlayerUtil.playSound(player, CONFIG.getNotEnoughSound());
             return;
         }
-        tempQuantity = stock < tempQuantity ? stock : tempQuantity;
+        tempQuantity = Math.min(stock, tempQuantity);
         ItemStack givenItem = new ItemStack(item, tempQuantity);
         int nonAdded = player.getInventory().addItem(givenItem).values().stream().mapToInt(ItemStack::getAmount).sum();
         itemStockMap.put(item, stock + nonAdded - tempQuantity);
@@ -218,7 +215,7 @@ class CategoryGUI implements Listener {
     /**
      * アイテムを預ける。
      * 
-     * @param item
+     * @param item 預けるアイテム
      */
     private void deposit(Material item) {
         if (!itemStockMap.containsKey(item)) {
@@ -261,7 +258,7 @@ class CategoryGUI implements Listener {
     /**
      * GUIの初期化や、アイテムの取引などで変動したloreを追随させるためのメソッド。
      * 
-     * @param item
+     * @param item 追随させるアイテム
      */
     private void updateLore(ItemStack item) {
         ItemMeta meta = item.getItemMeta();
@@ -271,6 +268,8 @@ class CategoryGUI implements Listener {
         int stock = itemStockMap.get(item.getType());
         List<String> itemLore = new ArrayList<>(CONFIG.getItemTemplateLore());
         itemLore.replaceAll(loreLine -> replacePlaceholders(loreLine, jp, en, stock, quantity));
+
+        assert meta != null;
         meta.setLore(itemLore);
         item.setItemMeta(meta);
     }
@@ -314,7 +313,7 @@ class CategoryGUI implements Listener {
         InventoryAction action = event.getAction();
         Inventory inv = event.getInventory();
 
-        if (!gui.getItem(0).isSimilar(inv.getItem(0))) {
+        if (!Objects.requireNonNull(gui.getItem(0)).isSimilar(inv.getItem(0))) {
             return;
         }
         event.setCancelled(true);
@@ -383,7 +382,7 @@ class CategoryGUI implements Listener {
             }
 
             // 取引数が上限または下限をに達した場合に制限をかける処理
-            currentQuantity = (currentQuantity + difference >= 1) ? currentQuantity + difference : 1;
+            currentQuantity = Math.max(currentQuantity + difference, 1);
             if (currentQuantity > 640) {
                 currentQuantity = 640;
             }

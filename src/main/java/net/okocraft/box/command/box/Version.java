@@ -1,8 +1,8 @@
 package net.okocraft.box.command.box;
 
-import java.util.List;
-
 import org.bukkit.command.CommandSender;
+
+import java.util.List;
 
 class Version extends BaseSubCommand {
 
@@ -10,13 +10,13 @@ class Version extends BaseSubCommand {
     private static final int LEAST_ARG_LENGTH = 1;
     private static final String USAGE = "/box version";
 
-    public Version() {
+    Version() {
         super();
     }
 
     @Override
     public boolean onCommand(CommandSender sender, String[] args) {
-        if (!validate(sender, args)) {
+        if (validate(sender, args)) {
             return false;
         }
         sender.sendMessage(MESSAGE_CONFIG.getVersionInfo().replaceAll("%version%", INSTANCE.getVersion()));

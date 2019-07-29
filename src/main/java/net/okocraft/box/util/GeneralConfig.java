@@ -18,16 +18,12 @@
 
 package net.okocraft.box.util;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import lombok.Getter;
 import lombok.val;
 import net.md_5.bungee.api.ChatColor;
 import net.okocraft.box.Box;
+import net.okocraft.box.database.Database;
+import net.okocraft.box.gui.CategorySelectorGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -36,8 +32,10 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
 
-import net.okocraft.box.database.Database;
-import net.okocraft.box.gui.CategorySelectorGUI;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author LazyGon
@@ -173,7 +171,7 @@ public class GeneralConfig {
         // コンフィグに書かれた順番で表示するためにLinkedHashMapを使っている。
         categories = new LinkedHashMap<>();
         if (itemConfig.isConfigurationSection("categories")) {
-            itemConfig.getConfigurationSection("categories").getKeys(false).forEach(sectionName -> {
+            Objects.requireNonNull(itemConfig.getConfigurationSection("categories")).getKeys(false).forEach(sectionName -> {
                 if (itemConfig.isConfigurationSection("categories." + sectionName)) {
                     ConfigurationSection section = itemConfig.getConfigurationSection("categories." + sectionName);
                     categories.put(sectionName, section);
@@ -213,12 +211,13 @@ public class GeneralConfig {
         if (!itemConfig.isConfigurationSection("categories")) {
             return;
         }
-        itemConfig.getConfigurationSection("categories").getKeys(false).stream()
+        Objects.requireNonNull(itemConfig.getConfigurationSection("categories")).getKeys(false).stream()
                 .filter(sectionName -> !categories.containsKey(sectionName))
                 .filter(sectionName -> itemConfig.isConfigurationSection("categories." + sectionName))
                 .forEach(sectionName -> {
                     ConfigurationSection section = itemConfig.getConfigurationSection("categories." + sectionName);
                     categories.put(sectionName, section);
+                    assert section != null;
                     Optional.ofNullable(section.getString("display_name"))
                             .ifPresent(name -> categoryGuiNameMap.put(sectionName,
                                     categoryGuiName.replaceAll("%category%", sectionName)

@@ -10,8 +10,8 @@ public class OtherUtil {
      * @author LazyGon
      * @since v1.1.0
      * 
-     * @param number
-     * @param def
+     * @param number 解析して int にする数字
+     * @param def 解析できなかった場合、デフォルトとして返す数字
      * 
      * @return int型の数字。
      */
@@ -28,9 +28,9 @@ public class OtherUtil {
      * 
      * @author LazyGon
      * @since v1.1.0
-     * 
-     * @param number
-     * @param def
+     *
+     * @param number 解析して long にする数字
+     * @param def 解析できなかった場合、デフォルトとして返す数字
      * 
      * @return long型の数字。
      */

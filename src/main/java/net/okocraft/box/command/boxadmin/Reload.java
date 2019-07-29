@@ -1,8 +1,8 @@
 package net.okocraft.box.command.boxadmin;
 
-import java.util.List;
-
 import org.bukkit.command.CommandSender;
+
+import java.util.List;
 
 class Reload extends BaseSubAdminCommand {
 
@@ -12,7 +12,7 @@ class Reload extends BaseSubAdminCommand {
 
     @Override
     public boolean onCommand(CommandSender sender, String[] args) {
-        if (!validate(sender, args)) {
+        if (validate(sender, args)) {
             return false;
         }
         INSTANCE.reloadConfig();

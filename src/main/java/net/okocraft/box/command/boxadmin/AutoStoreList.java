@@ -1,16 +1,15 @@
 package net.okocraft.box.command.boxadmin;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
+import net.okocraft.box.util.OtherUtil;
+import net.okocraft.box.util.PlayerUtil;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 
-import net.okocraft.box.util.OtherUtil;
-import net.okocraft.box.util.PlayerUtil;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 class AutoStoreList extends BaseSubAdminCommand {
 
@@ -20,14 +19,14 @@ class AutoStoreList extends BaseSubAdminCommand {
 
     @Override
     public boolean onCommand(CommandSender sender, String[] args) {
-        if (!validate(sender, args)) {
+        if (validate(sender, args)) {
             return false;
         }
 
         String player = args[1].toLowerCase();
         int index = OtherUtil.parseIntOrDefault(args[2], 1);
         int maxLine = CONFIG.getAllItems().size();
-        int currentLine = (maxLine < index * 8) ? maxLine : index * 8;
+        int currentLine = Math.min(maxLine, index * 8);
 
         sender.sendMessage(
                 MESSAGE_CONFIG.getAutoStoreListHeader()
@@ -101,21 +100,21 @@ class AutoStoreList extends BaseSubAdminCommand {
 
     @Override
     boolean validate(CommandSender sender, String[] args) {
-        if (!super.validate(sender, args)) {
-            return false;
+        if (super.validate(sender, args)) {
+            return true;
         }
         
         if (!(sender instanceof Player)) {
             sender.sendMessage(MESSAGE_CONFIG.getPlayerOnly());
-            return false;
+            return true;
         }
 
         // If the player isn't registered
         if (PlayerUtil.notExistPlayer(sender)) {
             sender.sendMessage(MESSAGE_CONFIG.getNoPlayerFound());
-            return false;
+            return true;
         }
 
-        return true;
+        return false;
     }
 }

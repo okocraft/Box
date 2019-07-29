@@ -1,19 +1,18 @@
 package net.okocraft.box.command.box;
 
+import net.okocraft.box.util.OtherUtil;
+import net.okocraft.box.util.PlayerUtil;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.bukkit.util.StringUtil;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-
-import org.bukkit.OfflinePlayer;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-import org.bukkit.util.StringUtil;
-
-import net.okocraft.box.util.OtherUtil;
-import net.okocraft.box.util.PlayerUtil;
 
 class Give extends BaseSubCommand {
 
@@ -23,7 +22,7 @@ class Give extends BaseSubCommand {
 
     @Override
     public boolean onCommand(CommandSender sender, String[] args) {
-        if (!validate(sender, args)) {
+        if (validate(sender, args)) {
             return false;
         }
 
@@ -162,24 +161,24 @@ class Give extends BaseSubCommand {
 
     @Override
     boolean validate(CommandSender sender, String[] args) {
-        if (!super.validate(sender, args)) {
-            return false;
+        if (super.validate(sender, args)) {
+            return true;
         }
         
         if (!(sender instanceof Player)) {
             sender.sendMessage(MESSAGE_CONFIG.getPlayerOnly());
-            return false;
+            return true;
         }
 
         if (sender.getName().equalsIgnoreCase(args[1])) {
             sender.sendMessage(MESSAGE_CONFIG.getCannotGiveYourself());
-            return false;
+            return true;
         }
 
         // アイテムが登録されていない
         if (!CONFIG.getAllItems().contains(args[2].toUpperCase())) {
             sender.sendMessage(MESSAGE_CONFIG.getNoItemFound());
-            return false;
+            return true;
         }
 
         Map<String, String> players = DATABASE.getPlayersMap();
@@ -191,9 +190,9 @@ class Give extends BaseSubCommand {
             !players.containsValue(sender.getName().toLowerCase())
         ){
             sender.sendMessage(MESSAGE_CONFIG.getNoPlayerFound());
-            return false;
+            return true;
         }
 
-        return true;
+        return false;
     }
 }

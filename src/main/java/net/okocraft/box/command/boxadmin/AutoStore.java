@@ -1,15 +1,14 @@
 package net.okocraft.box.command.boxadmin;
 
+import org.bukkit.command.CommandSender;
+import org.bukkit.util.StringUtil;
+
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import javax.annotation.Nullable;
-
-import org.bukkit.command.CommandSender;
-import org.bukkit.util.StringUtil;
 
 class AutoStore extends BaseSubAdminCommand {
 
@@ -19,7 +18,7 @@ class AutoStore extends BaseSubAdminCommand {
 
     @Override
     public boolean onCommand(CommandSender sender, String[] args) {
-        if (!validate(sender, args)) {
+        if (validate(sender, args)) {
             return false;
         }
 
@@ -30,6 +29,7 @@ class AutoStore extends BaseSubAdminCommand {
         // autostore all <true|false>
         if (itemName.equalsIgnoreCase("all")) {
             // validateにより、nullのままこのifに進むことはない。
+            assert switchTo != null;
             return autoStoreAll(sender, player, switchTo);
         }
 
@@ -40,8 +40,8 @@ class AutoStore extends BaseSubAdminCommand {
     /**
      * アイテム１つのautoStore設定を変更する。
      * 
-     * @param sender
-     * @return
+     * @param sender コマンドの実行者
+     * @return 変更に成功なら {@code true}
      */
     private boolean autoStore(CommandSender sender, String player, String itemName, @Nullable String switchTo) {
         if (switchTo == null) {
@@ -62,8 +62,8 @@ class AutoStore extends BaseSubAdminCommand {
     /**
      * アイテムすべてのautoStore設定を変更する。
      * 
-     * @param sender
-     * @return
+     * @param sender コマンドを実行した人
+     * @return 変更に成功なら {@code true}
      */
     private boolean autoStoreAll(CommandSender sender, String player, String switchTo) {
         List<String> allItems = CONFIG.getAllItems();
@@ -139,30 +139,30 @@ class AutoStore extends BaseSubAdminCommand {
 
     @Override
     boolean validate(CommandSender sender, String[] args) {
-        if (!super.validate(sender, args)) {
-            return false;
+        if (super.validate(sender, args)) {
+            return true;
         }
 
         if (!DATABASE.existPlayer(args[1].toLowerCase())) {
             sender.sendMessage(MESSAGE_CONFIG.getNoPlayerFound());
-            return false;
+            return true;
         }
         
         if (!args[2].equalsIgnoreCase("ALL") && !CONFIG.getAllItems().contains(args[2].toUpperCase())) {
             sender.sendMessage(MESSAGE_CONFIG.getInvalidArguments());
-            return false;
+            return true;
         }
 
         if (args.length < 4 && args[2].equalsIgnoreCase("ALL")) {
             sender.sendMessage(MESSAGE_CONFIG.getNotEnoughArguments());
-            return false;
+            return true;
         }
 
         if (args.length >= 4) {
             sender.sendMessage(MESSAGE_CONFIG.getInvalidArguments());
-            return false;
+            return true;
         }
 
-        return true;
+        return false;
     }
 }

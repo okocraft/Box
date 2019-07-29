@@ -1,14 +1,13 @@
 package net.okocraft.box.command.box;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
+import net.okocraft.box.util.PlayerUtil;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 
-import net.okocraft.box.util.PlayerUtil;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 class SellPrice extends BaseSubCommand {
 
@@ -16,13 +15,13 @@ class SellPrice extends BaseSubCommand {
     private static final int LEAST_ARG_LENGTH = 2;
     private static final String USAGE = "/box sellprice <ITEM>";
 
-    public SellPrice() {
+    SellPrice() {
         super();
     }
 
     @Override
     public boolean onCommand(CommandSender sender, String[] args) {
-        if (!validate(sender, args)) {
+        if (validate(sender, args)) {
             return false;
         }
 
@@ -73,30 +72,30 @@ class SellPrice extends BaseSubCommand {
 
     @Override
     boolean validate(CommandSender sender, String[] args) {
-        if (!super.validate(sender, args)) {
-            return false;
+        if (super.validate(sender, args)) {
+            return true;
         }
         
         if (!(sender instanceof Player)) {
             sender.sendMessage(MESSAGE_CONFIG.getPlayerOnly());
-            return false;
+            return true;
         }
 
         if (INSTANCE.getEconomy() == null) {
             sender.sendMessage(MESSAGE_CONFIG.getEconomyIsNull());
-            return false;
+            return true;
         }
         
         if (!CONFIG.getAllItems().contains(args[1].toUpperCase())) {
             sender.sendMessage(MESSAGE_CONFIG.getNoItemFound());
-            return false;
+            return true;
         }
 
         if (PlayerUtil.notExistPlayer(sender)) {
             sender.sendMessage(MESSAGE_CONFIG.getNoPlayerFound());
-            return false;
+            return true;
         }
 
-        return true;
+        return false;
     }
 }
