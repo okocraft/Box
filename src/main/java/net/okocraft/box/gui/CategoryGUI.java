@@ -39,7 +39,7 @@ class CategoryGUI implements Listener {
 
     private static final Box INSTANCE = Box.getInstance();
     private static final GeneralConfig CONFIG = INSTANCE.getGeneralConfig();
-    private final Database DATABASE = INSTANCE.getDatabase();
+    private static final Database DATABASE = INSTANCE.getDatabase();
 
     private final Player player;
     private final ConfigurationSection categorySection;
@@ -79,7 +79,7 @@ class CategoryGUI implements Listener {
                     .filter(entry -> Objects.nonNull(Material.getMaterial(entry.getKey())))
                     .filter(entry -> Objects.nonNull(Ints.tryParse(entry.getValue())))
                     .map(entry -> {
-                        String key = entry.getKey();
+                        String key = entry.getKey().toUpperCase();
                         String value = entry.getValue();
 
                         int stock = Integer.parseInt(value);
@@ -145,6 +145,7 @@ class CategoryGUI implements Listener {
             return;
         }
         int maxPage = (items.size() % 45 == 0) ? items.size() / 45 : items.size() / 45 + 1;
+        page = Math.min(page, maxPage);
         this.page = page;
         gui.clear();
         Map<Integer, ItemStack> footers = CONFIG.getFooterItemStacks();
@@ -241,7 +242,8 @@ class CategoryGUI implements Listener {
 
     /**
      * アイテムの取引などで変動したloreを追随させるためのメソッド。
-     *
+     * 
+     * @param material
      */
     private void updateLore(Material material) {
         ItemStack item = null;
@@ -280,7 +282,7 @@ class CategoryGUI implements Listener {
      */
     private void commit() {
         Map<String, String> change = stockChangedItems.stream().collect(Collectors.toMap(
-                Enum::name,
+            Enum::name,
             item -> String.valueOf(itemStockMap.get(item)),
             (e1, e2) -> e1,
             HashMap::new

@@ -18,7 +18,7 @@ class AutoStore extends BaseSubAdminCommand {
     private static final String USAGE = "/boxadmin autostore <player> < <ITEM> [true|false] | ALL <true|false> >";
 
     @Override
-    public boolean onCommand(CommandSender sender, String[] args) {
+    public boolean runCommand(CommandSender sender, String[] args) {
         if (!validate(sender, args)) {
             return false;
         }
@@ -41,6 +41,8 @@ class AutoStore extends BaseSubAdminCommand {
      * アイテム１つのautoStore設定を変更する。
      * 
      * @param sender
+     * @param itemName
+     * @param switchTo
      * @return
      */
     private boolean autoStore(CommandSender sender, String player, String itemName, @Nullable String switchTo) {
@@ -63,6 +65,8 @@ class AutoStore extends BaseSubAdminCommand {
      * アイテムすべてのautoStore設定を変更する。
      * 
      * @param sender
+     * @param player
+     * @param switchTo
      * @return
      */
     private boolean autoStoreAll(CommandSender sender, String player, String switchTo) {
@@ -86,7 +90,7 @@ class AutoStore extends BaseSubAdminCommand {
     }
 
     @Override
-    public List<String> onTabComplete(String[] args) {
+    public List<String> runTabComplete(CommandSender sender, String[] args) {
         List<String> result = new ArrayList<>();
 
         List<String> players = new ArrayList<>(DATABASE.getPlayersMap().values());
@@ -118,27 +122,27 @@ class AutoStore extends BaseSubAdminCommand {
     }
 
     @Override
-    String getCommandName() {
+    public String getCommandName() {
         return COMMAND_NAME;
     }
 
     @Override
-    int getLeastArgLength() {
+    public int getLeastArgLength() {
         return LEAST_ARG_LENGTH;
     }
 
     @Override
-    String getUsage() {
+    public String getUsage() {
         return USAGE;
     }
 
     @Override
-    String getDescription() {
+    public String getDescription() {
         return MESSAGE_CONFIG.getAutoStoreDesc();
     }
 
     @Override
-    boolean validate(CommandSender sender, String[] args) {
+    protected boolean validate(CommandSender sender, String[] args) {
         if (!super.validate(sender, args)) {
             return false;
         }
@@ -158,7 +162,7 @@ class AutoStore extends BaseSubAdminCommand {
             return false;
         }
 
-        if (args.length >= 4) {
+        if (args.length >= 4 && (!args[3].equalsIgnoreCase("true") || !args[3].equalsIgnoreCase("false"))) {
             sender.sendMessage(MESSAGE_CONFIG.getInvalidArguments());
             return false;
         }

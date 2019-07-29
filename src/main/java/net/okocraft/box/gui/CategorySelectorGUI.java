@@ -19,7 +19,7 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.tags.ItemTagType;
+import org.bukkit.persistence.PersistentDataType;
 
 import lombok.val;
 import net.okocraft.box.Box;
@@ -35,7 +35,7 @@ public class CategorySelectorGUI implements Listener {
 
     public static final Inventory GUI = Bukkit.createInventory(null, 54, CONFIG.getCategorySelectionGuiName());
 
-    private static final List<Integer> flameSlots = List.of(
+    private static List<Integer> flameSlots = List.of(
         0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 17, 18, 26, 27, 35, 36, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53
     );
 
@@ -48,16 +48,17 @@ public class CategorySelectorGUI implements Listener {
         initGUI();
     }
 
-    private static void initGUI() {
+    public static void initGUI() {
         GUI.clear();
         ItemStack flame = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
         ItemMeta flameMeta = flame.getItemMeta();
         flameMeta.setDisplayName("§r");
-        flameMeta.getCustomTagContainer().setCustomTag(CATEGORY_SELECTOR_KEY, ItemTagType.INTEGER, 1);
+        flameMeta.getPersistentDataContainer().set(CATEGORY_SELECTOR_KEY, PersistentDataType.INTEGER, 1);
         flame.setItemMeta(flameMeta);
         flameSlots.forEach(slot -> GUI.setItem(slot, flame));
 
-        GUI.addItem(CONFIG.getCategories().entrySet().stream().map(entry -> createItem(entry.getKey(), entry.getValue())).toArray(ItemStack[]::new));
+        List<ItemStack> itemList = CONFIG.getCategories().entrySet().stream().map(entry -> createItem(entry.getKey(), entry.getValue())).collect(Collectors.toList());
+        GUI.addItem(itemList.toArray(new ItemStack[itemList.size()]));
     }
     
     /**
@@ -78,7 +79,7 @@ public class CategorySelectorGUI implements Listener {
 
         categorySelectionItemMeta.ifPresent(meta -> {
             meta.setDisplayName(categoryItemName);
-            meta.getCustomTagContainer().setCustomTag(CATEGORY_NAME_KEY, ItemTagType.STRING, categoryName);
+            meta.getPersistentDataContainer().set(CATEGORY_NAME_KEY, PersistentDataType.STRING, categoryName);
 
             categorySelectionItem.setItemMeta(meta);
         });
@@ -100,7 +101,7 @@ public class CategorySelectorGUI implements Listener {
     /**
      * リスナーを止める。
      */
-    private static void stopListener() {
+    public static void stopListener() {
         if (categorySelector == null) {
             return;
         }
@@ -154,13 +155,13 @@ public class CategorySelectorGUI implements Listener {
         }
 
         // NOTE: NPE はItemStackがAIRの場合のみしか起こらない。
-        val categoryName = clickedItem.getItemMeta()
-                .getCustomTagContainer()
-                .getCustomTag(CATEGORY_NAME_KEY, ItemTagType.STRING);
+        val categoryName = clickedItem.getItemMeta().getPersistentDataContainer()
+                .get(CATEGORY_NAME_KEY, PersistentDataType.STRING);
 
         player.closeInventory();
 
         new CategoryGUI(player, categoryName, 1);
 
+        return;
     }
 }

@@ -21,7 +21,7 @@ class AutoStore extends BaseSubCommand {
     private static final String USAGE = "/box autostore < <ITEM> [true|false] | ALL <true|false> >";
 
     @Override
-    public boolean onCommand(CommandSender sender, String[] args) {
+    public boolean runCommand(CommandSender sender, String[] args) {
         if (!validate(sender, args)) {
             return false;
         }
@@ -42,6 +42,9 @@ class AutoStore extends BaseSubCommand {
      * アイテム１つのautoStore設定を変更する。
      * 
      * @param sender
+     * @param item
+     * @param switchTo
+     * 
      * @return
      */
     private boolean autoStore(CommandSender sender, String item, @Nullable String switchTo) {
@@ -66,6 +69,7 @@ class AutoStore extends BaseSubCommand {
      * アイテムすべてのautoStore設定を変更する。
      * 
      * @param sender
+     * @param switchTo
      * @return
      */
     private boolean autoStoreAll(CommandSender sender, String switchTo) {
@@ -97,7 +101,7 @@ class AutoStore extends BaseSubCommand {
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender sender, String[] args) {
+    public List<String> runTabComplete(CommandSender sender, String[] args) {
         List<String> result = new ArrayList<>();
 
         List<String> items = new ArrayList<>(CONFIG.getAllItems());
@@ -121,27 +125,27 @@ class AutoStore extends BaseSubCommand {
     }
 
     @Override
-    String getCommandName() {
+    public String getCommandName() {
         return COMMAND_NAME;
     }
 
     @Override
-    int getLeastArgLength() {
+    public int getLeastArgLength() {
         return LEAST_ARG_LENGTH;
     }
 
     @Override
-    String getUsage() {
+    public String getUsage() {
         return USAGE;
     }
 
     @Override
-    String getDescription() {
+    public String getDescription() {
         return MESSAGE_CONFIG.getAutoStoreDesc();
     }
 
     @Override
-    boolean validate(CommandSender sender, String[] args) {
+    protected boolean validate(CommandSender sender, String[] args) {
         if (!super.validate(sender, args)) {
             return false;
         }

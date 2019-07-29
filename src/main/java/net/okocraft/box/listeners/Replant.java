@@ -25,9 +25,9 @@ import net.okocraft.box.util.GeneralConfig;
 public class Replant implements Listener {
     private static final Box INSTANCE = Box.getInstance();
     private static final GeneralConfig CONFIG = INSTANCE.getGeneralConfig();
-    private final Database DATABASE = INSTANCE.getDatabase();
+    private static final Database DATABASE = INSTANCE.getDatabase();
 
-    private final Map<Material, Material> plants = new HashMap<>() {
+    private static final Map<Material, Material> PLANTS = new HashMap<>() {
         private static final long serialVersionUID = 1L;
 
         {
@@ -38,9 +38,9 @@ public class Replant implements Listener {
         }
     };
 
-    private final Map<Material, Material> trees = new HashMap<>() {
+    private static final Map<Material, Material> TREES = new HashMap<Material, Material>() {
         private static final long serialVersionUID = 1L;
-
+        
         {
             put(Material.ACACIA_LOG, Material.ACACIA_SAPLING);
             put(Material.ACACIA_WOOD, Material.ACACIA_SAPLING);
@@ -88,9 +88,11 @@ public class Replant implements Listener {
         Material brokenBlockType = brokenBlock.getType();
         Player player = event.getPlayer();
 
-        if (!plants.containsKey(brokenBlockType)) return;
+        if (!PLANTS.containsKey(brokenBlockType)) {
+            return;
+        }
 
-        Material seed = plants.get(brokenBlockType);
+        Material seed = PLANTS.get(brokenBlockType);
 
         if (!hasSeed(player, seed)) {
             event.setCancelled(true);
@@ -135,16 +137,16 @@ public class Replant implements Listener {
 
         Material treeMaterial = treeBlock.getType();
 
-        if (trees.containsValue(treeMaterial)) {
+        if (TREES.containsValue(treeMaterial)) {
             event.setCancelled(true);
             return;
         }
         
-        if (!trees.containsKey(treeMaterial)) {
+        if (!TREES.containsKey(treeMaterial)) {
             return;
         }
 
-        Material sapling = trees.get(treeMaterial);
+        Material sapling = TREES.get(treeMaterial);
 
         Material blockBelow = treeBlock.getLocation().add(0D, -1D, 0D).getBlock().getBlockData().getMaterial();
         if (!blockBelow.equals(Material.DIRT) && !blockBelow.equals(Material.GRASS_BLOCK)
@@ -175,7 +177,7 @@ public class Replant implements Listener {
         }
 
         Material sapling = event.getBlock().getLocation().add(0, 1, 0).getBlock().getType();
-        if (trees.containsValue(sapling)) {
+        if (TREES.containsValue(sapling)) {
             event.setCancelled(true);
         }
     }
@@ -186,7 +188,7 @@ public class Replant implements Listener {
         if (clickedBlock == null) {
             return;
         }
-        if (!trees.containsValue(clickedBlock.getType())) {
+        if (!TREES.containsValue(clickedBlock.getType())) {
             return;
         }
         if (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
@@ -200,7 +202,7 @@ public class Replant implements Listener {
     }
 
     private void takeSeed(Player player, Material seed) {
-        if (!plants.containsValue(seed)) {
+        if (!PLANTS.containsValue(seed)) {
             return;
         }
         int stock;
@@ -218,7 +220,7 @@ public class Replant implements Listener {
     }
     
     private boolean hasSeed(Player player, Material seed) {
-        if (!plants.containsValue(seed)) {
+        if (!PLANTS.containsValue(seed)) {
             return false;
         }
 
@@ -237,7 +239,7 @@ public class Replant implements Listener {
             exception.printStackTrace();
             return false;
         }
-
+        
         return stock > 0;
     }
 }

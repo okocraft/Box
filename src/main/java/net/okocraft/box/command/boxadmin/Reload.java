@@ -11,7 +11,7 @@ class Reload extends BaseSubAdminCommand {
     private static final String USAGE = "/boxadmin reload";
 
     @Override
-    public boolean onCommand(CommandSender sender, String[] args) {
+    public boolean runCommand(CommandSender sender, String[] args) {
         if (!validate(sender, args)) {
             return false;
         }
@@ -26,27 +26,27 @@ class Reload extends BaseSubAdminCommand {
     }
 
     @Override
-    public List<String> onTabComplete(String[] args) {
+    public List<String> runTabComplete(CommandSender sender, String[] args) {
         return List.of();
     }
 
     @Override
-    String getCommandName() {
+    public String getCommandName() {
         return COMMAND_NAME;
     }
 
     @Override
-    int getLeastArgLength() {
+    public int getLeastArgLength() {
         return LEAST_ARG_LENGTH;
     }
 
     @Override
-    String getUsage() {
+    public String getUsage() {
         return USAGE;
     }
 
     @Override
-    String getDescription() {
+    public String getDescription() {
         return MESSAGE_CONFIG.getReloadDesc();
     }
 }

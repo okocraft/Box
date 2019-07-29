@@ -7,62 +7,7 @@ commands:
   box:
     description: Base Command of Box plugin.
     aliases: [box, okobox, okostrage]
-    permission: box
-    permission-message: '§cYou do not have permission <permission>'
   boxadmin:
     description: Admin Command of Box plugin.
     aliases: [boxadmin, okoboxadmin, okostrageadmin]
-    permission: box.admin
-    permission-message: '§cYou do not have permission <permission>'
-
-permissions:
-  box.*:
-    description: Includes all permissions.
-    default: op
-    children:
-      box.admin: true
-      box: true
-      box.give.*: true
-      box.autostore.*: true
-      box.sell.*: true
-      box.sellprice: true
-      box.sellpricelist: true
-  box.admin:
-    description: For command /boxadmin
-    default: op
-  box.creative:
-    description: With this perm, player can get unlimited items from /box
-    default: op
-  box:
-    description: For command /box
-    default: true
-  box.autostore.*:
-    description: For command /box
-    default: true
-    children:
-      box.autostore: true
-  box.give.*:
-    description: For command /box
-    default: true
-    children:
-      box.give: true
-  box.autostore:
-    description: For command /box
-    default: true
-  box.give:
-    description: For command /box
-    default: true
-  box.sell.*:
-    description: For command /box
-    default: true
-    children:
-      box.sell: true
-  box.sell:
-    description: For command /box
-    default: true
-  box.sellprice:
-    description: For command /box
-    default: true
-  box.sellpricelist:
-    description: For command /box
-    default: true
+    permission: boxadmin

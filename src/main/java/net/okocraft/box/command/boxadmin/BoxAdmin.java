@@ -10,51 +10,48 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
-import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 
 import lombok.Getter;
-import net.okocraft.box.Box;
-import net.okocraft.box.gui.CategorySelectorGUI;
-import net.okocraft.box.util.MessageConfig;
+import net.okocraft.box.command.BaseBoxCommand;
+import net.okocraft.box.command.BoxCommand;
 
-public class BoxAdminCommand implements CommandExecutor, TabCompleter {
+public class BoxAdmin extends BaseBoxCommand implements CommandExecutor, TabCompleter {
 
-    private static final Box INSTANCE = Box.getInstance();
-    private static final MessageConfig MESSAGE_CONFIG = INSTANCE.getMessageConfig();
-    private static final String USAGE = "/box [args...]";
+    private static final String COMMAND_NAME = "boxadmin";
+    private static final int LEAST_ARG_LENGTH = 1;
+    private static final String USAGE = "/boxadmin <args...>";
 
     @Getter
-    private final Map<String, BaseSubAdminCommand> subCommandMap;
+    private Map<String, BoxCommand> subCommandMap;
     @Getter
     private final int subCommandMapSize;
 
-    public BoxAdminCommand() {
-        subCommandMap = new HashMap<>() {
+    public BoxAdmin() {
+        subCommandMap = new HashMap<String, BoxCommand>() {
             private static final long serialVersionUID = 1L;
-
             {
                 Help help = new Help();
                 put(help.getCommandName(), help);
-
+    
                 AddCategory addCategory = new AddCategory();
                 put(addCategory.getCommandName(), addCategory);
-
+    
                 AutoStoreList autoStoreList = new AutoStoreList();
                 put(autoStoreList.getCommandName(), autoStoreList);
-
+    
                 AutoStore autoStore = new AutoStore();
                 put(autoStore.getCommandName(), autoStore);
-
+    
                 Give give = new Give();
                 put(give.getCommandName(), give);
-
+    
                 Set set = new Set();
                 put(set.getCommandName(), set);
-
+    
                 Take take = new Take();
                 put(take.getCommandName(), take);
-
+    
                 Reload reload = new Reload();
                 put(reload.getCommandName(), reload);
             }
@@ -62,21 +59,22 @@ public class BoxAdminCommand implements CommandExecutor, TabCompleter {
 
         subCommandMapSize = subCommandMap.size();
 
-        INSTANCE.getCommand("boxadmin").setExecutor(this);
-        INSTANCE.getCommand("boxadmin").setTabCompleter(this);
+        INSTANCE.getCommand(getCommandName()).setExecutor(this);
+        INSTANCE.getCommand(getCommandName()).setTabCompleter(this);
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (args.length == 0) {
-            return runCommand(sender);
+        if (!validate(sender, args)) {
+            return false;
         }
-        BaseSubAdminCommand subCommand = subCommandMap.get(args[0].toLowerCase());
+
+        BoxCommand subCommand = subCommandMap.get(args[0].toLowerCase());
         if (subCommand == null) {
             sender.sendMessage(MESSAGE_CONFIG.getNoParamExist());
             return false;
         }
-        return subCommand.onCommand(sender, args);
+        return subCommand.runCommand(sender, args);
     }
 
     @Override
@@ -93,37 +91,45 @@ public class BoxAdminCommand implements CommandExecutor, TabCompleter {
             return StringUtil.copyPartialMatches(args[0], permedSubCommands, new ArrayList<>());
         }
         
-        BaseSubAdminCommand subCommand = subCommandMap.get(args[0].toLowerCase());
+        BoxCommand subCommand = subCommandMap.get(args[0].toLowerCase());
         if (subCommand == null || !permedSubCommands.contains(subCommand.getCommandName())) {
             return List.of();
         }
-        return subCommand.onTabComplete(args);
+        return subCommand.runTabComplete(sender, args);
     }
 
-    /**
-     * コマンドの説明を取得する。例: "アイテムの自動収納の設定をリストにして表示する。"
-     * 
-     * @return コマンドの説明
-     */
+    @Override
     public String getDescription() {
-        return MESSAGE_CONFIG.getBoxDesc();
+        return "";    
     }
 
-    /**
-     * コマンドの引数の内容を取得する。例: "/box autostoreList [page]"
-     * 
-     * @return 引数の内容
-     */
+    @Override
     public String getUsage() {
         return USAGE;
     }
 
-    private boolean runCommand(CommandSender sender) {
-        if (!(sender instanceof Player)) {
-            MESSAGE_CONFIG.getErrorOccurredOnGUI();
-            return false;
-        }
-        ((Player) sender).openInventory(CategorySelectorGUI.GUI);
-        return true;
+    @Override
+    public String getCommandName() {
+        return COMMAND_NAME;
+    }
+
+    @Override
+    public String getPermissionNode() {
+        return getCommandName();
+    }
+
+    @Override
+    public int getLeastArgLength() {
+        return LEAST_ARG_LENGTH;
+    }
+
+    @Override
+    public boolean runCommand(CommandSender sender, String[] args) {
+        throw new UnsupportedOperationException("BoxAdmin must be executed with sub commands.");
+    }
+
+    @Override
+    public List<String> runTabComplete(CommandSender sender, String[] args) {
+        throw new UnsupportedOperationException("Non subcommand could not be completed with this method.");
     }
 }

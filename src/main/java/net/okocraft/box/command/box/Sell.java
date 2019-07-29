@@ -25,7 +25,7 @@ class Sell extends BaseSubCommand {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, String[] args) {
+    public boolean runCommand(CommandSender sender, String[] args) {
         if (!validate(sender, args)) {
             return false;
         }
@@ -74,12 +74,12 @@ class Sell extends BaseSubCommand {
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender sender, String[] args) {
+    public List<String> runTabComplete(CommandSender sender, String[] args) {
         List<String> result = new ArrayList<>();
 
-        List<String> items = DATABASE.getMultiValue(new ArrayList<>(CONFIG.getSellPrice().keySet()), sender.getName())
+        List<String> items = DATABASE.getMultiValue(new ArrayList<>(CONFIG.getSellPrice().keySet()), sender.getName().toLowerCase())
                 .entrySet().stream().filter(entry -> !entry.getValue().equals("0"))
-                .map(Map.Entry::getKey).collect(Collectors.toList());
+                .map(Map.Entry::getKey).map(String::toUpperCase).collect(Collectors.toList());
         
         if (args.length == 2) {
             return StringUtil.copyPartialMatches(args[1], items, result);
@@ -91,32 +91,36 @@ class Sell extends BaseSubCommand {
 
         String stock = DATABASE.get(sender.getName(), args[1].toUpperCase());
 
+        if (args.length == 3) {
+            return StringUtil.copyPartialMatches(args[2], List.of("1", stock), result);
+        }
+
         return result;
     }
 
     @Override
-    String getCommandName() {
+    public String getCommandName() {
         return COMMAND_NAME;
     }
 
     @Override
-    int getLeastArgLength() {
+    public int getLeastArgLength() {
         return LEAST_ARG_LENGTH;
     }
 
     @Override
-    String getUsage() {
+    public String getUsage() {
         return USAGE;
     }
 
     @Override
-    String getDescription() {
+    public String getDescription() {
         return MESSAGE_CONFIG.getSellDesc();
     }
 
 
     @Override
-    boolean validate(CommandSender sender, String[] args) {
+    protected boolean validate(CommandSender sender, String[] args) {
         if (!super.validate(sender, args)) {
             return false;
         }

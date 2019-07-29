@@ -22,7 +22,7 @@ class Give extends BaseSubCommand {
     private static final String USAGE = "/box give <player> <ITEM> [amount]";
 
     @Override
-    public boolean onCommand(CommandSender sender, String[] args) {
+    public boolean runCommand(CommandSender sender, String[] args) {
         if (!validate(sender, args)) {
             return false;
         }
@@ -88,9 +88,10 @@ class Give extends BaseSubCommand {
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender sender, String[] args) {
+    public List<String> runTabComplete(CommandSender sender, String[] args) {
         List<String> result = new ArrayList<>();
         List<String> players = new ArrayList<>(DATABASE.getPlayersMap().values());
+        String senderName = sender.getName().toLowerCase();
 
         if (args.length == 2) {
             return StringUtil.copyPartialMatches(args[1], players, result);
@@ -102,9 +103,9 @@ class Give extends BaseSubCommand {
             return List.of();
         }
 
-        List<String> items = DATABASE.getMultiValue(CONFIG.getAllItems(), player).entrySet()
-                .stream().filter(entry -> !entry.getValue().equals("0")).map(Map.Entry::getKey)
-                .collect(Collectors.toList());
+        List<String> items = DATABASE.getMultiValue(CONFIG.getAllItems(), senderName)
+                .entrySet().stream().filter(entry -> !entry.getValue().equals("0"))
+                .map(Map.Entry::getKey).map(String::toUpperCase).collect(Collectors.toList());
 
         if (args.length == 3) {
             return StringUtil.copyPartialMatches(args[2], items, result);
@@ -116,7 +117,7 @@ class Give extends BaseSubCommand {
             return List.of();
         }
         
-        String rawStock = DATABASE.get(item, player);
+        String rawStock = DATABASE.get(item, senderName);
         long stock;
         try {
             stock = Long.parseLong(rawStock);
@@ -140,28 +141,28 @@ class Give extends BaseSubCommand {
     }
 
     @Override
-    String getCommandName() {
+    public String getCommandName() {
         return COMMAND_NAME;
     }
 
     @Override
-    int getLeastArgLength() {
+    public int getLeastArgLength() {
         return LEAST_ARG_LENGTH;
     }
 
     @Override
-    String getUsage() {
+    public String getUsage() {
         return USAGE;
     }
 
     @Override
-    String getDescription() {
+    public String getDescription() {
         return MESSAGE_CONFIG.getGiveDesc();
     }
 
 
     @Override
-    boolean validate(CommandSender sender, String[] args) {
+    protected boolean validate(CommandSender sender, String[] args) {
         if (!super.validate(sender, args)) {
             return false;
         }
@@ -185,10 +186,10 @@ class Give extends BaseSubCommand {
         Map<String, String> players = DATABASE.getPlayersMap();
         // プレイヤーがデータベースに登録されていない
         if (
-            !players.containsKey(args[1].toLowerCase()) ||
-            !players.containsValue(args[1].toLowerCase()) ||
-            !players.containsKey(sender.getName().toLowerCase()) ||
-            !players.containsValue(sender.getName().toLowerCase())
+            (!players.containsKey(args[1].toLowerCase()) &&
+            !players.containsValue(args[1].toLowerCase())) ||
+            (!players.containsKey(sender.getName().toLowerCase()) &&
+            !players.containsValue(sender.getName().toLowerCase()))
         ){
             sender.sendMessage(MESSAGE_CONFIG.getNoPlayerFound());
             return false;

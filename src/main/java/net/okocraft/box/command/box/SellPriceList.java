@@ -21,14 +21,14 @@ class SellPriceList extends BaseSubCommand {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, String[] args) {
+    public boolean runCommand(CommandSender sender, String[] args) {
         if (!validate(sender, args)) {
             return false;
         }
         int page = args.length >= 2 ? OtherUtil.parseIntOrDefault(args[1], 1) : 1;
 
         int maxLine = CONFIG.getAllItems().size();
-        int currentLine = (maxLine < page * 8) ? maxLine : page * 8;
+        int currentLine = Math.min(maxLine, page * 8);
 
         sender.sendMessage(
                 MESSAGE_CONFIG.getSellPriceListHeader()
@@ -46,7 +46,7 @@ class SellPriceList extends BaseSubCommand {
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender sender, String[] args) {
+    public List<String> runTabComplete(CommandSender sender, String[] args) {
         List<String> result = new ArrayList<>();
 
         int items = CONFIG.getSellPrice().size();
@@ -62,28 +62,28 @@ class SellPriceList extends BaseSubCommand {
     }
 
     @Override
-    String getCommandName() {
+    public String getCommandName() {
         return COMMAND_NAME;
     }
 
     @Override
-    int getLeastArgLength() {
+    public int getLeastArgLength() {
         return LEAST_ARG_LENGTH;
     }
 
     @Override
-    String getUsage() {
+    public String getUsage() {
         return USAGE;
     }
 
     @Override
-    String getDescription() {
+    public String getDescription() {
         return MESSAGE_CONFIG.getSellPriceListDesc();
     }
 
 
     @Override
-    boolean validate(CommandSender sender, String[] args) {
+    protected boolean validate(CommandSender sender, String[] args) {
         if (!super.validate(sender, args)) {
             return false;
         }

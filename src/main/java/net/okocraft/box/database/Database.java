@@ -21,8 +21,17 @@ package net.okocraft.box.database;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.sql.*;
-import java.util.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
@@ -31,7 +40,6 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.val;
 
-import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 
 import net.okocraft.box.Box;
@@ -249,6 +257,35 @@ public class Database {
     }
 
     /**
+     * テーブルからレコードを削除する。失敗した場合はコンソールにログを出力する。
+     *
+     * @since v1.1.0-SNAPSHOT
+     * @author LazyGon
+     *
+     * @param entry プレイヤー
+     */
+    public void removePlayer(@NonNull String entry) {
+        if (!existPlayer(entry)) {
+            log.warning(":NO_RECORD_FOR_" + entry + "_EXIST");
+            return;
+        }
+
+        String entryType = PlayerUtil.isUuidOrPlayer(entry);
+
+        prepare("DELETE FROM " + table + " WHERE " + entryType + " = ?").ifPresent(statement -> {
+            try {
+                statement.setString(1, entry);
+                statement.addBatch();
+
+                // Execute this batch
+                threadPool.submit(new StatementRunner(statement));
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    /**
      * テーブルに名前が記録されているか調べる。
      *
      * @since v1.0.0-SNAPSHOT
@@ -373,6 +410,60 @@ public class Database {
                 e.printStackTrace();
 
                 return false;
+            }
+        });
+    }
+
+    /**
+     * テーブル {@code table} から列 {@code column} を削除する。
+     *
+     * @author LazyGon
+     * @since v1.0.0-SNAPSHOT
+     *
+     * @param column 削除する列の名前。
+     */
+    public void dropColumn(String column) {
+        if (!getColumnMap().keySet().contains(column)) {
+            log.warning(":NO_COLUMN_NAMED_" + column + "_EXIST");
+
+            return;
+        }
+
+        // 新しいテーブルの列
+        val columnsBuilder = new StringBuilder();
+
+        getColumnMap().forEach((colName, colType) -> {
+            if (!column.equals(colName)) {
+                columnsBuilder.append(colName).append(" ").append(colType).append(", ");
+            }
+        });
+
+        val columns = columnsBuilder.toString().replaceAll(", $", "");
+
+        // 新しいテーブルの列 (型なし)
+        val columnsBuilderExcludeType = new StringBuilder();
+
+        getColumnMap().forEach((colName, colType) -> {
+            if (!column.equals(colName))
+                columnsBuilderExcludeType.append(colName).append(", ");
+        });
+
+        val columnsExcludeType = columnsBuilderExcludeType.toString().replaceAll(", $", "");
+
+        connection.ifPresent(con -> {
+            try (val statement = con.createStatement()) {
+                statement.addBatch("BEGIN TRANSACTION");
+                statement.addBatch("ALTER TABLE " + table + " RENAME TO temp_" + table + "");
+                statement.addBatch("CREATE TABLE " + table + " (" + columns + ")");
+                statement.addBatch("INSERT INTO " + table + " (" + columnsExcludeType + ") SELECT " + columnsExcludeType
+                                + " FROM temp_" + table + "");
+                statement.addBatch("DROP TABLE temp_" + table + "");
+                statement.addBatch("COMMIT");
+
+                // Execute this batch
+                threadPool.submit(new StatementRunner(statement));
+            } catch (SQLException exception) {
+                exception.printStackTrace();
             }
         });
     }

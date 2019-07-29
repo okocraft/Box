@@ -19,15 +19,15 @@ class AutoStoreList extends BaseSubAdminCommand {
     private static final String USAGE = "/boxadmin autostorelist <player> <page>";
 
     @Override
-    public boolean onCommand(CommandSender sender, String[] args) {
+    public boolean runCommand(CommandSender sender, String[] args) {
         if (!validate(sender, args)) {
             return false;
         }
 
         String player = args[1].toLowerCase();
-        int index = OtherUtil.parseIntOrDefault(args[2], 1);
+        int index = args.length >= 2 ? OtherUtil.parseIntOrDefault(args[2], 1) : 1;
         int maxLine = CONFIG.getAllItems().size();
-        int currentLine = (maxLine < index * 8) ? maxLine : index * 8;
+        int currentLine = Math.min(maxLine, index * 8);
 
         sender.sendMessage(
                 MESSAGE_CONFIG.getAutoStoreListHeader()
@@ -56,7 +56,7 @@ class AutoStoreList extends BaseSubAdminCommand {
     }
 
     @Override
-    public List<String> onTabComplete(String[] args) {
+    public List<String> runTabComplete(CommandSender sender, String[] args) {
         List<String> result = new ArrayList<>();
 
         List<String> players = new ArrayList<>(DATABASE.getPlayersMap().values());
@@ -79,28 +79,28 @@ class AutoStoreList extends BaseSubAdminCommand {
     }
 
     @Override
-    String getCommandName() {
+    public String getCommandName() {
         return COMMAND_NAME;
     }
 
     @Override
-    int getLeastArgLength() {
+    public int getLeastArgLength() {
         return LEAST_ARG_LENGTH;
     }
 
     @Override
-    String getUsage() {
+    public String getUsage() {
         return USAGE;
     }
 
     @Override
-    String getDescription() {
+    public String getDescription() {
         return MESSAGE_CONFIG.getAutoStoreListDesc();
     }
 
 
     @Override
-    boolean validate(CommandSender sender, String[] args) {
+    protected boolean validate(CommandSender sender, String[] args) {
         if (!super.validate(sender, args)) {
             return false;
         }

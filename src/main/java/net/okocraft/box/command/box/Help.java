@@ -19,16 +19,16 @@ class Help extends BaseSubCommand {
     private static final String USAGE = "/box help [page]";
 
     @Override
-    public boolean onCommand(CommandSender sender, String[] args) {
+    public boolean runCommand(CommandSender sender, String[] args) {
         if (!validate(sender, args)) {
             return false;
         }
 
-        BoxCommand commands = INSTANCE.getCommand();
+        Box commands = INSTANCE.getCommand();
 
-        Map<String, String> commandDescriptionMap = new LinkedHashMap<>() {
+        Map<String, String> commandDescriptionMap = new LinkedHashMap<>(){
             private static final long serialVersionUID = 1L;
-
+            
             {
                 put(commands.getUsage(), commands.getDescription());
                 commands.getSubCommandMap().values().forEach(subCommand -> put(subCommand.getUsage(), subCommand.getDescription()));
@@ -38,9 +38,7 @@ class Help extends BaseSubCommand {
         int mapSize = commands.getSubCommandMapSize();
         int page = args.length > 1 ? OtherUtil.parseIntOrDefault(args[1], 1) : 1;
         int maxPage = mapSize % 8 == 0 ? mapSize / 8 : mapSize / 8 + 1;
-        if (page > maxPage) {
-            page = maxPage;
-        }
+        page = Math.min(page, maxPage);
 
         sender.sendMessage(MESSAGE_CONFIG.getCommandHelpHeader());
         commandDescriptionMap.entrySet().stream().skip(8 * (page - 1)).limit(8).forEach(entry -> sender.sendMessage("§b" + entry.getKey() + "§7 - " + entry.getValue()));
@@ -49,7 +47,7 @@ class Help extends BaseSubCommand {
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender sender, String[] args) {
+    public List<String> runTabComplete(CommandSender sender, String[] args) {
         List<String> result = new ArrayList<>();
 
         int mapSize = INSTANCE.getCommand().getSubCommandMapSize();
@@ -62,22 +60,22 @@ class Help extends BaseSubCommand {
     }
 
     @Override
-    String getCommandName() {
+    public String getCommandName() {
         return COMMAND_NAME;
     }
 
     @Override
-    int getLeastArgLength() {
+    public int getLeastArgLength() {
         return LEAST_ARG_LENGTH;
     }
 
     @Override
-    String getUsage() {
+    public String getUsage() {
         return USAGE;
     }
 
     @Override
-    String getDescription() {
+    public String getDescription() {
         return MESSAGE_CONFIG.getHelpDesc();
     }
 }

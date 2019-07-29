@@ -20,6 +20,9 @@ package net.okocraft.box.listeners;
 
 import lombok.val;
 
+import java.util.HashMap;
+import java.util.stream.Collectors;
+
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -58,11 +61,15 @@ public class PlayerJoin implements Listener {
             database.addPlayer(uuid, name, false);
 
             // Grasp default value.
-            val autoStore = String.valueOf(config.isAutoStoreEnabledByDefault());
+            val defaultValue = String.valueOf(config.isAutoStoreEnabledByDefault());
 
-            config.getAllItems().forEach(itemName ->
-                    database.set("autostore_" + itemName, uuid, autoStore)
-            );
+            val newValues = config.getAllItems().parallelStream().map(item -> "autostore_" + item).collect(Collectors.toMap(
+                    autoStore -> autoStore,
+                    autoStore -> defaultValue,
+                    (e1, e2) -> e1,
+                    HashMap::new
+            ));
+            database.setMultiValue(newValues, uuid);
         }
 
         // プレイヤーが過去の名前とは違う名前だったらデータベースを更新する。

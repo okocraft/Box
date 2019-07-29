@@ -19,36 +19,37 @@ class Help extends BaseSubAdminCommand {
     private static final String USAGE = "/boxadmin help [page]";
 
     @Override
-    public boolean onCommand(CommandSender sender, String[] args) {
+    public boolean runCommand(CommandSender sender, String[] args) {
         if (!validate(sender, args)) {
             return false;
         }
 
-        BoxAdminCommand commands = INSTANCE.getAdminCommand();
+        BoxAdmin commands = INSTANCE.getAdminCommand();
 
         Map<String, String> commandDescriptionMap = new LinkedHashMap<>() {
             private static final long serialVersionUID = 1L;
-
+            
             {
-                commands.getSubCommandMap().values().forEach(subCommand -> put(subCommand.getUsage(), subCommand.getDescription()));
+                commands.getSubCommandMap().values()
+                        .forEach(subCommand -> put(subCommand.getUsage(), subCommand.getDescription()));
             }
         };
 
         int mapSize = commands.getSubCommandMapSize();
         int page = args.length > 1 ? OtherUtil.parseIntOrDefault(args[1], 1) : 1;
         int maxPage = mapSize % 8 == 0 ? mapSize / 8 : mapSize / 8 + 1;
-        if (page > maxPage) {
-            page = maxPage;
-        }
+        page = Math.min(page, maxPage);
 
         sender.sendMessage(MESSAGE_CONFIG.getAdminCommandHelpHeader());
-        commandDescriptionMap.entrySet().stream().skip(8 * (page - 1)).limit(8).forEach(entry -> sender.sendMessage("§b" + entry.getKey() + "§7 - " + entry.getValue()));
+        commandDescriptionMap.entrySet().stream().skip(8 * (page - 1)).limit(8).forEach(entry -> {
+            sender.sendMessage("§b" + entry.getKey() + "§7 - " + entry.getValue());
+        });
 
         return true;
     }
 
     @Override
-    public List<String> onTabComplete(String[] args) {
+    public List<String> runTabComplete(CommandSender sender, String[] args) {
         List<String> result = new ArrayList<>();
 
         int mapSize = INSTANCE.getAdminCommand().getSubCommandMapSize();
@@ -61,22 +62,22 @@ class Help extends BaseSubAdminCommand {
     }
 
     @Override
-    String getCommandName() {
+    public String getCommandName() {
         return COMMAND_NAME;
     }
 
     @Override
-    int getLeastArgLength() {
+    public int getLeastArgLength() {
         return LEAST_ARG_LENGTH;
     }
 
     @Override
-    String getUsage() {
+    public String getUsage() {
         return USAGE;
     }
 
     @Override
-    String getDescription() {
+    public String getDescription() {
         return MESSAGE_CONFIG.getHelpAdminDesc();
     }
 }

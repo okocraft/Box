@@ -23,7 +23,7 @@ class AutoStoreList extends BaseSubCommand {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, String[] args) {
+    public boolean runCommand(CommandSender sender, String[] args) {
         if (!validate(sender, args)) {
             return false;
         }
@@ -35,7 +35,7 @@ class AutoStoreList extends BaseSubCommand {
         List<String> allItems = CONFIG.getAllItems();
         
         int maxLine = allItems.size();
-        int currentLine = (maxLine < index * 8) ? maxLine : index * 8;
+        int currentLine = Math.min(maxLine, index * 8);
 
         sender.sendMessage(
                 MESSAGE_CONFIG.getAutoStoreListHeader()
@@ -64,7 +64,7 @@ class AutoStoreList extends BaseSubCommand {
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender sender, String[] args) {
+    public List<String> runTabComplete(CommandSender sender, String[] args) {
         List<String> result = new ArrayList<>();
 
         int items = CONFIG.getAllItems().size();
@@ -77,28 +77,28 @@ class AutoStoreList extends BaseSubCommand {
     }
 
     @Override
-    String getCommandName() {
+    public String getCommandName() {
         return COMMAND_NAME;
     }
 
     @Override
-    int getLeastArgLength() {
+    public int getLeastArgLength() {
         return LEAST_ARG_LENGTH;
     }
 
     @Override
-    String getUsage() {
+    public String getUsage() {
         return USAGE;
     }
 
     @Override
-    String getDescription() {
+    public String getDescription() {
         return MESSAGE_CONFIG.getAutoStoreListDesc();
     }
 
 
     @Override
-    boolean validate(CommandSender sender, String[] args) {
+    protected boolean validate(CommandSender sender, String[] args) {
         if (!super.validate(sender, args)) {
             return false;
         }

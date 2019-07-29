@@ -14,7 +14,7 @@ class Give extends BaseSubAdminCommand {
     private static final int LEAST_ARG_LENGTH = 3;
     private static final String USAGE = "/boxadmin give <player> <ITEM> [amount]";
     @Override
-    public boolean onCommand(CommandSender sender, String[] args) {
+    public boolean runCommand(CommandSender sender, String[] args) {
         if (!validate(sender, args)) {
             return false;
         }
@@ -39,7 +39,7 @@ class Give extends BaseSubAdminCommand {
                 MESSAGE_CONFIG.getSuccessGiveAdmin()
                         .replaceAll("%player%", player)
                         .replaceAll("%item%", item)
-                        .replaceAll("%amount%", String.valueOf(amount))
+                        .replaceAll("%amount%", Long.toString(amount))
                         .replaceAll("%newamount%", value)
         );
 
@@ -47,7 +47,7 @@ class Give extends BaseSubAdminCommand {
     }
 
     @Override
-    public List<String> onTabComplete(String[] args) {
+    public List<String> runTabComplete(CommandSender sender, String[] args) {
         List<String> result = new ArrayList<>();
 
         List<String> players = new ArrayList<>(DATABASE.getPlayersMap().values());
@@ -78,27 +78,27 @@ class Give extends BaseSubAdminCommand {
     }
 
     @Override
-    String getCommandName() {
+    public String getCommandName() {
         return COMMAND_NAME;
     }
 
     @Override
-    int getLeastArgLength() {
+    public int getLeastArgLength() {
         return LEAST_ARG_LENGTH;
     }
 
     @Override
-    String getUsage() {
+    public String getUsage() {
         return USAGE;
     }
 
     @Override
-    String getDescription() {
+    public String getDescription() {
         return MESSAGE_CONFIG.getGiveAdminDesc();
     }
 
     @Override
-    boolean validate(CommandSender sender, String[] args) {
+    protected boolean validate(CommandSender sender, String[] args) {
         if (!super.validate(sender, args)) {
             return false;
         }

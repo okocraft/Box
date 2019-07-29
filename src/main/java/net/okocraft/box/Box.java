@@ -21,17 +21,17 @@ package net.okocraft.box;
 import java.util.logging.Logger;
 
 import lombok.Getter;
-
 import net.okocraft.box.util.GeneralConfig;
 import net.okocraft.box.util.MessageConfig;
+import net.okocraft.box.util.OtherUtil;
+
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import net.milkbowl.vault.economy.Economy;
-import net.okocraft.box.command.box.BoxCommand;
-import net.okocraft.box.command.boxadmin.BoxAdminCommand;
+import net.okocraft.box.command.boxadmin.BoxAdmin;
 import net.okocraft.box.database.Database;
 import net.okocraft.box.gui.CategorySelectorGUI;
 import net.okocraft.box.listeners.EntityPickupItem;
@@ -81,13 +81,13 @@ public class Box extends JavaPlugin {
      * コマンドクラス
      */
     @Getter
-    private BoxCommand command;
+    private net.okocraft.box.command.box.Box command;
 
     /**
      * 管理者コマンドクラス
      */
     @Getter
-    private BoxAdminCommand adminCommand;
+    private BoxAdmin adminCommand;
 
 
     /**
@@ -123,10 +123,11 @@ public class Box extends JavaPlugin {
         log.info("Database file: " + database.getDBUrl());
 
         registerEvents();
+        OtherUtil.registerPermission("box.*");
 
         // Register commands
-        command = new BoxCommand();
-        adminCommand = new BoxAdminCommand();
+        command = new net.okocraft.box.command.box.Box();
+        adminCommand = new BoxAdmin();
 
         // GO GO GO
         log.info(String.format("Box v%s has been enabled!", version));
@@ -201,6 +202,6 @@ public class Box extends JavaPlugin {
             return false;
         }
         economy = rsp.getProvider();
-        return true;
+        return economy != null;
 	}
 }
