@@ -331,12 +331,14 @@ class CategoryGUI implements Listener {
         if (player != event.getWhoClicked()) {
             return;
         }
-        InventoryAction action = event.getAction();
-        Inventory inv = event.getInventory();
 
-        if (!gui.getItem(0).isSimilar(inv.getItem(0))) {
+        Inventory inv = event.getInventory();
+        
+        if (inv == null || !gui.getItem(0).isSimilar(inv.getItem(0))) {
             return;
         }
+
+        InventoryAction action = event.getAction();
         event.setCancelled(true);
         
         if (CONFIG.getDisabledWorlds().contains(event.getWhoClicked().getWorld())) {
