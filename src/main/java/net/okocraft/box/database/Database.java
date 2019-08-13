@@ -310,13 +310,14 @@ public class Database {
      * @param value  新しい値
      */
     public void set(@NonNull String column, @NonNull String entry, String value) {
+        String entryLower = entry.toLowerCase();
         if (!getColumnMap().containsKey(column)) {
             log.warning(":NO_COLUMN_NAMED_" + column + "_EXIST");
             return;
         }
 
-        if (!existPlayer(entry)) {
-            log.warning(":NO_RECORD_FOR_" + entry + "_EXIST");
+        if (!existPlayer(entryLower)) {
+            log.warning(":NO_RECORD_FOR_" + entryLower + "_EXIST");
             return;
         }
 
@@ -325,7 +326,7 @@ public class Database {
         prepare("UPDATE " + table + " SET " + column + " = ? WHERE " + entryType + " = ?").ifPresent(statement -> {
             try {
                 statement.setString(1, value);
-                statement.setString(2, entry);
+                statement.setString(2, entryLower);
                 statement.addBatch();
 
                 // Execute this batch
@@ -349,20 +350,21 @@ public class Database {
      * @return 値
      */
     public String get(String column, String entry) {
+        String entryLower = entry.toLowerCase();
         if (!getColumnMap().containsKey(column)) {
             return ":NO_COLUMN_NAMED_" + column + "_EXIST";
         }
 
-        if (!existPlayer(entry)) {
-            return ":NO_RECORD_FOR_" + entry + "_EXIST";
+        if (!existPlayer(entryLower)) {
+            return ":NO_RECORD_FOR_" + entryLower + "_EXIST";
         }
 
-        val entryType = PlayerUtil.isUuidOrPlayer(entry);
+        val entryType = PlayerUtil.isUuidOrPlayer(entryLower);
         val statement = prepare("SELECT " + column + " FROM " + table + " WHERE " + entryType + " = ?");
 
         return statement.map(resource -> {
             try (val stmt = resource) {
-                stmt.setString(1, entry);
+                stmt.setString(1, entryLower);
 
                 val result = stmt.executeQuery();
 
@@ -480,6 +482,7 @@ public class Database {
      * @return 列とフィールドのペア
      */
     public Map<String, String> getMultiValue(List<String> columns, @NonNull String entry) {
+        val entryLower = entry.toLowerCase();
         val entryType = PlayerUtil.isUuidOrPlayer(entry);
 
         val sb = new StringBuilder();
@@ -494,7 +497,7 @@ public class Database {
 
         return statement.map(resource -> {
             try (PreparedStatement stmt = resource) {
-                stmt.setString(1, entry);
+                stmt.setString(1, entryLower);
                 ResultSet rs = stmt.executeQuery();
                 rs.next();
 
@@ -525,26 +528,27 @@ public class Database {
         if (pair.isEmpty()) {
             return;
         }
-        val entryType = PlayerUtil.isUuidOrPlayer(entry);
 
+        String entryLower = entry.toLowerCase();
+        val entryType = PlayerUtil.isUuidOrPlayer(entryLower);
+        
         val sb = new StringBuilder();
 
         pair.forEach((columnName, columnValue) ->
                 sb.append(columnName).append(" = '").append(columnValue).append("', ")
-        );
+                );
 
         if (!sb.toString().endsWith(", ")) {
             log.warning(":NO_VALUE_SPECIFIED");
             return;
         }
-
+        
         val statement = prepare(
                 "UPDATE " + table + " SET " + sb.substring(0, sb.length() - 2) + " WHERE " + entryType + " = ?"
         );
-
         statement.map(resource -> {
             try (PreparedStatement stmt = resource) {
-                stmt.setString(1, entry);
+                stmt.setString(1, entryLower);
                 stmt.executeUpdate();
                 return true;
             } catch (SQLException exception) {
