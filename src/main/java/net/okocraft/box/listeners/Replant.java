@@ -130,11 +130,11 @@ public class Replant implements Listener {
         
             @Override
             public void run() {
-                Location blockLoc = brokenBlock.getLocation();
-                if (!blockLoc.getBlock().getType().equals(Material.AIR))
+                Block block = brokenBlock.getLocation().getBlock();
+                if (!block.getType().equals(Material.AIR))
                     return;
-                blockLoc.getBlock().setType(brokenBlockType);
-                blockLoc.getBlock().setBlockData(newBlockDataAgeable);
+                block.setType(brokenBlockType);
+                block.setBlockData(newBlockDataAgeable);
                 
                 takeSeed(player, seed);
             }

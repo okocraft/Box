@@ -92,8 +92,12 @@ class CategoryGUI implements Listener {
         ConfigurationSection categorySection = categories.get(categoryName);
         if (categorySection.isConfigurationSection("item")) {
             List<String> keys = new ArrayList<>(categorySection.getConfigurationSection("item").getKeys(false));
+            if (keys.isEmpty()) {
+                throw new IllegalArgumentException("section has no item.");
+            }
+            keys.removeIf(name -> !CONFIG.getAllItems().contains(name));
             items = new ArrayList<>();
-            itemStockMap = DATABASE.getMultiValue(keys, player.getName()).entrySet().stream()
+            itemStockMap = DATABASE.getMultiValue(keys, player.getUniqueId().toString()).entrySet().stream()
                     .filter(entry -> Objects.nonNull(Material.getMaterial(entry.getKey())))
                     .filter(entry -> Objects.nonNull(Ints.tryParse(entry.getValue())))
                     .map(entry -> {
@@ -128,8 +132,7 @@ class CategoryGUI implements Listener {
                         HashMap::new)
                     );
         } else {
-            itemStockMap = new HashMap<>();
-            items = new ArrayList<>();
+            throw new IllegalArgumentException("item section is invalid.");
         }
         stockChangedItems = new ArrayList<>();
         Bukkit.getPluginManager().registerEvents(this, INSTANCE);

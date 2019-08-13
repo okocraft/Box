@@ -484,23 +484,26 @@ public class Database {
 
         val sb = new StringBuilder();
 
+        columns.retainAll(getColumnMap().keySet());
         for (String columnName : columns) {
             sb.append(columnName).append(", ");
         }
 
         val multipleColumnName = sb.toString().endsWith(", ") ? sb.substring(0, sb.length() - 2) : sb.toString();
-
         val statement = prepare("SELECT " + multipleColumnName + " FROM " + table + " WHERE " + entryType + " = ?");
 
         return statement.map(resource -> {
             try (PreparedStatement stmt = resource) {
                 stmt.setString(1, entry);
                 ResultSet rs = stmt.executeQuery();
+                rs.next();
+
                 Map<String, String> result = new LinkedHashMap<>();
                 for (String columnName : columns) {
                     result.put(columnName, rs.getString(columnName));
                 }
                 return result;
+                
             } catch (SQLException exception) {
                 exception.printStackTrace();
 

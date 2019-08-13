@@ -42,11 +42,13 @@ import org.bukkit.persistence.PersistentDataType;
 import lombok.val;
 import net.okocraft.box.Box;
 import net.okocraft.box.util.GeneralConfig;
+import net.okocraft.box.util.MessageConfig;
 
 public class CategorySelectorGUI implements Listener {
 
     private static final Box INSTANCE = Box.getInstance();
     private static final GeneralConfig CONFIG = INSTANCE.getGeneralConfig();
+    private static final MessageConfig MESSAGE_CONFIG = INSTANCE.getMessageConfig();
 
     private static final NamespacedKey CATEGORY_SELECTOR_KEY = new NamespacedKey(INSTANCE, "categoryselector");
     private static final NamespacedKey CATEGORY_NAME_KEY = new NamespacedKey(INSTANCE, "categoryname");
@@ -154,6 +156,7 @@ public class CategorySelectorGUI implements Listener {
         event.setCancelled(true);
         
         if (CONFIG.getDisabledWorlds().contains(event.getWhoClicked().getWorld())) {
+            player.sendMessage(MESSAGE_CONFIG.getDisabledWorld());
             return;
         }
 
