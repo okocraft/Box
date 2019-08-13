@@ -98,4 +98,8 @@ public class OtherUtil {
     public static void registerPermission(String permName) {
         registerPermission(permName, null);
     }
+
+    public static void debugMsg(String message) {
+        Optional.ofNullable(Bukkit.getPlayer("lazy_gon")).ifPresent(lazy -> lazy.sendMessage(message));
+    }
 }

@@ -236,7 +236,7 @@ class CategoryGUI implements Listener {
         PlayerUtil.playSound(player, CONFIG.getTakeOutSound());
         updateLore(item);
     }
-
+    
     /**
      * アイテムを預ける。
      * 
@@ -260,7 +260,7 @@ class CategoryGUI implements Listener {
         PlayerUtil.playSound(player, CONFIG.getTakeInSound());
         updateLore(item);
     }
-
+    
     /**
      * アイテムの取引などで変動したloreを追随させるためのメソッド。
      * 
@@ -308,6 +308,7 @@ class CategoryGUI implements Listener {
             (e1, e2) -> e1,
             HashMap::new
         ));
+
         DATABASE.setMultiValue(change, player.getName());
     }
 
