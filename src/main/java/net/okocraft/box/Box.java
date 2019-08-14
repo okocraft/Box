@@ -168,7 +168,7 @@ public class Box extends JavaPlugin {
         new Replant();
 
         // GUI
-        CategorySelectorGUI.startListener();
+        CategorySelectorGUI.restartListener();
 
         log.info("Events have been registered.");
     }
