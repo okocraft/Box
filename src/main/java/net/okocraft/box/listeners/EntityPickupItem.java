@@ -37,6 +37,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import net.okocraft.box.util.GeneralConfig;
+import net.okocraft.box.util.OtherUtil;
 import net.okocraft.box.Box;
 import net.okocraft.box.database.Database;
 
@@ -48,6 +49,7 @@ public class EntityPickupItem implements Listener {
     private final Map<Player, Map<Material, Integer>> playerItemMap = new HashMap<>();
 
     private final List<String> allItems;
+    private final Map<Player, Map<String, String>> autoStore = new HashMap<>();
 
     public EntityPickupItem(Database database, Plugin plugin) {
         // Register this event
@@ -73,21 +75,28 @@ public class EntityPickupItem implements Listener {
             return;
         }
 
-        val pickedItemStack = event.getItem().getItemStack();
-        if (pickedItemStack.hasItemMeta()) {
+        ItemStack pickedItem = event.getItem().getItemStack();
+        if (pickedItem.hasItemMeta()) {
             return;
         }
 
-        val itemName = pickedItemStack.getType().name();
-        if (!allItems.contains(itemName)) {
-            return;
+        Player player = (Player) event.getEntity();
+        if (!autoStore.containsKey(player)) {
+            autoStore.put(player, new HashMap<>());
+        }
+        
+        Material pickedMaterial = pickedItem.getType();
+        val itemName = pickedMaterial.name();
+        if (!autoStore.get(player).containsKey(itemName)) {
+            String value = database.get("autostore_" + itemName, player.getUniqueId().toString());
+            autoStore.get(player).put(itemName, value);
         }
 
-        val player = (Player) event.getEntity();
+        if (!autoStore.get(player).get(itemName).equalsIgnoreCase("true")) {
+            return;
+        }
 
         Map<Material, Integer> items = playerItemMap.getOrDefault(player, new HashMap<>());
-        ItemStack pickedItem = event.getItem().getItemStack();
-        Material pickedMaterial = pickedItem.getType();
         int newAmount = pickedItem.getAmount() + items.getOrDefault(pickedMaterial, 0);
         items.put(pickedMaterial, newAmount);
         playerItemMap.put(player, items);
@@ -112,6 +121,7 @@ public class EntityPickupItem implements Listener {
                     if (cooldown.get(player) < System.currentTimeMillis()) {
                         commit(player);
                         cooldown.remove(player);
+                        autoStore.remove(player);
                         cancel();
                     }
                 }
