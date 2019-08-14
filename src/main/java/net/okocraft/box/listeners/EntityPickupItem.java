@@ -19,7 +19,6 @@
 package net.okocraft.box.listeners;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -37,7 +36,6 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import net.okocraft.box.util.GeneralConfig;
-import net.okocraft.box.util.OtherUtil;
 import net.okocraft.box.Box;
 import net.okocraft.box.database.Database;
 
@@ -48,7 +46,6 @@ public class EntityPickupItem implements Listener {
     private final Map<Player, Long> cooldown = new HashMap<>();
     private final Map<Player, Map<Material, Integer>> playerItemMap = new HashMap<>();
 
-    private final List<String> allItems;
     private final Map<Player, Map<String, String>> autoStore = new HashMap<>();
 
     public EntityPickupItem(Database database, Plugin plugin) {
@@ -58,7 +55,6 @@ public class EntityPickupItem implements Listener {
         // Initialize...
         this.config   = Box.getInstance().getGeneralConfig();
         this.database = database;
-        allItems      = config.getAllItems();
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
