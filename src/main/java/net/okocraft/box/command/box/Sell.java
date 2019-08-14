@@ -103,7 +103,7 @@ class Sell extends BaseSubCommand {
             return List.of();
         }
 
-        String stock = DATABASE.get(sender.getName(), args[1].toUpperCase());
+        String stock = DATABASE.get(args[1].toUpperCase(), sender.getName().toLowerCase());
 
         if (args.length == 3) {
             return StringUtil.copyPartialMatches(args[2], List.of("1", stock), result);
