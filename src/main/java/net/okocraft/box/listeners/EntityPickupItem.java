@@ -22,8 +22,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import lombok.val;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -82,13 +80,14 @@ public class EntityPickupItem implements Listener {
         }
         
         Material pickedMaterial = pickedItem.getType();
-        val itemName = pickedMaterial.name();
+        String itemName = pickedMaterial.name();
         if (!autoStore.get(player).containsKey(itemName)) {
             String value = database.get("autostore_" + itemName, player.getUniqueId().toString());
             autoStore.get(player).put(itemName, value);
         }
 
         if (!autoStore.get(player).get(itemName).equalsIgnoreCase("true")) {
+            autoStore.remove(player);
             return;
         }
 
