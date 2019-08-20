@@ -221,20 +221,22 @@ public class GeneralConfig {
     public void addCategory() {
         itemCustomConfig.initConfig();
         itemConfig = itemCustomConfig.getConfig();
-        if (!itemConfig.isConfigurationSection("categories")) {
-            return;
-        }
-        itemConfig.getConfigurationSection("categories").getKeys(false).stream()
+        if (!itemConfig.isConfigurationSection("categories"))  return;
+
+        ConfigurationSection categoriesConfig = itemConfig.getConfigurationSection("categories");
+
+        if (categoriesConfig != null){
+        categoriesConfig.getKeys(false).stream()
                 .filter(sectionName -> !categories.containsKey(sectionName))
                 .filter(sectionName -> itemConfig.isConfigurationSection("categories." + sectionName))
                 .forEach(sectionName -> {
                     ConfigurationSection section = itemConfig.getConfigurationSection("categories." + sectionName);
                     categories.put(sectionName, section);
-                    Optional.ofNullable(section.getString("display_name"))
-                            .ifPresent(name -> categoryGuiNameMap.put(sectionName,
-                                    categoryGuiName.replaceAll("%category%", sectionName)
-                                            .replaceAll("%category_item_display_name%", name)));
-
+                    if (section != null) {
+                        Optional.ofNullable(section.getString("display_name"))
+                                .ifPresent(name -> categoryGuiNameMap.put(sectionName,
+                                        categoryGuiName.replaceAll("%category%", sectionName)
+                                                .replaceAll("%category_item_display_name%", name)));
                     Optional.ofNullable(section.getConfigurationSection("item"))
                             .ifPresent(items -> allItems.addAll(items.getKeys(false).stream()
                                     .filter(itemName -> Material.getMaterial(itemName) != null)
@@ -242,10 +244,10 @@ public class GeneralConfig {
                                         database.addColumn(itemName, "INTEGER", "0", false);
                                         database.addColumn("autostore_" + itemName, "TEXT", "false", false);
                                     }).collect(Collectors.toList())));
-                });
+                }});
 
         CategorySelectorGUI.restartListener();
-    }
+    }}
 
     /**
      * 音設定初期化
