@@ -18,15 +18,14 @@
 
 package net.okocraft.box.command.boxadmin;
 
+import net.okocraft.box.util.OtherUtil;
+import org.bukkit.command.CommandSender;
+import org.bukkit.util.StringUtil;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-
-import org.bukkit.command.CommandSender;
-import org.bukkit.util.StringUtil;
-
-import net.okocraft.box.util.OtherUtil;
 
 class Take extends BaseSubAdminCommand {
 
@@ -40,11 +39,11 @@ class Take extends BaseSubAdminCommand {
             return false;
         }
         String player = args[1].toLowerCase();
-        String item   = args[2].toUpperCase();
+        String item = args[2].toUpperCase();
         long amount = args.length < 4 ? 1 : OtherUtil.parseLongOrDefault(args[3], 1);
 
         long currentAmount;
-        
+
         try {
             currentAmount = Long.parseLong(DATABASE.get(item, player));
         } catch (NumberFormatException e) {
