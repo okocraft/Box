@@ -18,32 +18,21 @@
 
 package net.okocraft.box.database;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Properties;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.logging.Logger;
-
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.val;
-
-import org.bukkit.plugin.Plugin;
-
 import net.okocraft.box.Box;
 import net.okocraft.box.util.PlayerUtil;
+import org.bukkit.plugin.Plugin;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.sql.*;
+import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.logging.Logger;
 
 // NOTE: メッセージがハードコーディングされているが、システム側メッセージなのでとりあえず無視する。
 
@@ -111,8 +100,8 @@ public class Database {
      * データベースのファイル自体が存在しない場合はファイルを作成する。
      * ファイル内になんらデータベースが存在しない場合、データベースを新たに生成する。
      *
-     * @since v1.0.0-SNAPSHOT
      * @author akaregi
+     * @since v1.0.0-SNAPSHOT
      */
     public boolean connect(String url) {
         // Check if driver exists
@@ -192,8 +181,8 @@ public class Database {
     /**
      * データベースへの接続を切断する。
      *
-     * @since v1.0.0-SNAPSHOT
      * @author akaregi
+     * @since v1.0.0-SNAPSHOT
      */
     public void dispose() {
         connection.ifPresent(connection -> {
@@ -210,12 +199,11 @@ public class Database {
     /**
      * データベースにレコードを追加する。showWarning が true で失敗した場合はコンソールにログを出力する。
      *
-     * @since v1.0.0-SNAPSHOT
-     * @author akaregi
-     *
      * @param uuid        UUID
      * @param name        名前
      * @param showWarning コンソールログを出力するかどうか
+     * @author akaregi
+     * @since v1.0.0-SNAPSHOT
      */
     public void addPlayer(@NonNull String uuid, @NonNull String name, boolean showWarning) {
         if (existPlayer(uuid)) {
@@ -259,10 +247,9 @@ public class Database {
     /**
      * テーブルからレコードを削除する。失敗した場合はコンソールにログを出力する。
      *
-     * @since v1.1.0-SNAPSHOT
-     * @author LazyGon
-     *
      * @param entry プレイヤー
+     * @author LazyGon
+     * @since v1.1.0-SNAPSHOT
      */
     public void removePlayer(@NonNull String entry) {
         if (!existPlayer(entry)) {
@@ -288,10 +275,9 @@ public class Database {
     /**
      * テーブルに名前が記録されているか調べる。
      *
-     * @since v1.0.0-SNAPSHOT
-     * @author LazyGon
-     *
      * @param entry UUID か Minecraft ID
+     * @author LazyGon
+     * @since v1.0.0-SNAPSHOT
      */
     public boolean existPlayer(@NonNull String entry) {
         val playersMap = getPlayersMap();
@@ -302,12 +288,11 @@ public class Database {
     /**
      * {@code table} の {@code column} に値をセットする。
      *
-     * @since v1.0.0-SNAPSHOT
-     * @author LazyGon
-     *
      * @param column 更新する列
      * @param entry  UUID か Minecraft ID
      * @param value  新しい値
+     * @author LazyGon
+     * @since v1.0.0-SNAPSHOT
      */
     public void set(@NonNull String column, @NonNull String entry, String value) {
         String entryLower = entry.toLowerCase();
@@ -341,13 +326,11 @@ public class Database {
      * {@code table} で指定したテーブルの列 {@code column} の値を取得する。
      * テーブル、カラム、レコードのいずれかが存在しない場合は対応するエラー文字列を返す。
      *
-     * @author akaregi
-     * @since v1.0.0-SNAPSHOT
-     *
      * @param column 列
      * @param entry  エントリ
-     *
      * @return 値
+     * @author akaregi
+     * @since v1.0.0-SNAPSHOT
      */
     public String get(String column, String entry) {
         String entryLower = entry.toLowerCase();
@@ -380,13 +363,12 @@ public class Database {
     /**
      * テーブルに新しい列 {@code column} を追加する。
      *
-     * @author LazyGon
-     * @since v1.0.0-SNAPSHOT
-     *
      * @param column       列の名前。
      * @param type         列の型。
      * @param defaultValue デフォルトの値。必要ない場合はnullを指定する。
      * @param showWarning  同じ列が存在したときにコンソールに警告を表示するかどうか
+     * @author LazyGon
+     * @since v1.0.0-SNAPSHOT
      */
     public void addColumn(String column, String type, String defaultValue, boolean showWarning) {
         if (getColumnMap().containsKey(column)) {
@@ -419,10 +401,9 @@ public class Database {
     /**
      * テーブル {@code table} から列 {@code column} を削除する。
      *
+     * @param column 削除する列の名前。
      * @author LazyGon
      * @since v1.0.0-SNAPSHOT
-     *
-     * @param column 削除する列の名前。
      */
     public void dropColumn(String column) {
         if (!getColumnMap().containsKey(column)) {
@@ -458,7 +439,7 @@ public class Database {
                 statement.addBatch("ALTER TABLE " + table + " RENAME TO temp_" + table + "");
                 statement.addBatch("CREATE TABLE " + table + " (" + columns + ")");
                 statement.addBatch("INSERT INTO " + table + " (" + columnsExcludeType + ") SELECT " + columnsExcludeType
-                                + " FROM temp_" + table + "");
+                        + " FROM temp_" + table + "");
                 statement.addBatch("DROP TABLE temp_" + table + "");
                 statement.addBatch("COMMIT");
 
@@ -473,13 +454,11 @@ public class Database {
     /**
      * エントリ {@code entry} に対応する列 {@code columns} の値をすべて取得する。
      *
-     * @author LazyGon
-     * @since v1.0.0-SNAPSHOT
-     *
      * @param columns 列
      * @param entry   ？
-     *
      * @return 列とフィールドのペア
+     * @author LazyGon
+     * @since v1.0.0-SNAPSHOT
      */
     public Map<String, String> getMultiValue(List<String> columns, @NonNull String entry) {
         val entryLower = entry.toLowerCase();
@@ -506,7 +485,7 @@ public class Database {
                     result.put(columnName, rs.getString(columnName));
                 }
                 return result;
-                
+
             } catch (SQLException exception) {
                 exception.printStackTrace();
 
@@ -518,11 +497,10 @@ public class Database {
     /**
      * エントリ {@code entry} に属する列の値 {@code pair} を設定する。
      *
-     * @author LazyGon
-     * @since v1.0.0-SNAPSHOT
-     *
      * @param pair  列と値のペア
      * @param entry エントリ
+     * @author LazyGon
+     * @since v1.0.0-SNAPSHOT
      */
     public void setMultiValue(Map<String, String> pair, @NonNull String entry) {
         if (pair.isEmpty()) {
@@ -531,18 +509,18 @@ public class Database {
 
         String entryLower = entry.toLowerCase();
         val entryType = PlayerUtil.isUuidOrPlayer(entryLower);
-        
+
         val sb = new StringBuilder();
 
         pair.forEach((columnName, columnValue) ->
                 sb.append(columnName).append(" = '").append(columnValue).append("', ")
-                );
+        );
 
         if (!sb.toString().endsWith(", ")) {
             log.warning(":NO_VALUE_SPECIFIED");
             return;
         }
-        
+
         val statement = prepare(
                 "UPDATE " + table + " SET " + sb.substring(0, sb.length() - 2) + " WHERE " + entryType + " = ?"
         );
@@ -561,10 +539,9 @@ public class Database {
     /**
      * テーブルに含まれる列 {@code column} のリストを取得する。
      *
+     * @return テーブルに含まれるcolumnの名前と型のマップ 失敗したら空のマップを返す。
      * @author LazyGon
      * @since v1.0.0-SNAPSHOT
-     *
-     * @return テーブルに含まれるcolumnの名前と型のマップ 失敗したら空のマップを返す。
      */
     public Map<String, String> getColumnMap() {
         val columnMap = new HashMap<String, String>();
@@ -591,10 +568,9 @@ public class Database {
     /**
      * プレイヤー名と UUID のペアを取得する。
      *
+     * @return ペア。
      * @author LazyGon
      * @since v1.1.0-SNAPSHOT
-     *
-     * @return ペア。
      */
     public Map<String, String> getPlayersMap() {
         val playersMap = new HashMap<String, String>();
@@ -622,12 +598,10 @@ public class Database {
     /**
      * SQL 準備文を構築する。
      *
+     * @param sql SQL 文。
+     * @return SQL 準備文
      * @author akaregi
      * @since 1.0.0-SNAPSHOT
-     *
-     * @param sql SQL 文。
-     *
-     * @return SQL 準備文
      */
     private Optional<PreparedStatement> prepare(@NonNull String sql) {
         if (connection.isPresent()) {
@@ -646,15 +620,12 @@ public class Database {
     /**
      * Connection(String, Properties)} のラッパーメソッド。
      *
-     * @since 1.0.0-SNAPSHOT
-     * @author akaregi
-     *
-     * @see DriverManager#getConnection(String, Properties)
-     *
      * @param url   {@code jdbc:subprotocol:subname} という形式のデータベース URL
      * @param props データベースの取り扱いについてのプロパティ
-     *
      * @return 指定されたデータベースへの接続 {@code Connect} 。
+     * @author akaregi
+     * @see DriverManager#getConnection(String, Properties)
+     * @since 1.0.0-SNAPSHOT
      */
     private static Optional<Connection> getConnection(@NonNull String url, Properties props) {
         try {
