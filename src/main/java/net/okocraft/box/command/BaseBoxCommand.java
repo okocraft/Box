@@ -36,6 +36,7 @@ public abstract class BaseBoxCommand implements BoxCommand {
      *
      * @return 満たしていればtrue
      */
+    // 常に反転されている
     protected boolean validate(CommandSender sender, String[] args) {
         if ((sender instanceof Player) && !sender.hasPermission(getPermissionNode())) {
             sender.sendMessage(MESSAGE_CONFIG.getPermissionDenied());
