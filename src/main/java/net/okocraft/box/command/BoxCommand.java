@@ -29,10 +29,10 @@ import net.okocraft.box.util.MessageConfig;
 
 public interface BoxCommand {
 
-    static final Box INSTANCE = Box.getInstance();
-    static final GeneralConfig CONFIG = INSTANCE.getGeneralConfig();
-    static final MessageConfig MESSAGE_CONFIG = INSTANCE.getMessageConfig();
-    static final Database DATABASE = INSTANCE.getDatabase();
+    Box INSTANCE = Box.getInstance();
+    GeneralConfig CONFIG = INSTANCE.getGeneralConfig();
+    MessageConfig MESSAGE_CONFIG = INSTANCE.getMessageConfig();
+    Database DATABASE = INSTANCE.getDatabase();
 
     /**
      * 各コマンドの処理
