@@ -72,6 +72,7 @@ public class CategorySelectorGUI implements Listener {
         GUI.clear();
         ItemStack flame = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
         ItemMeta flameMeta = flame.getItemMeta();
+        if (flameMeta != null){
         flameMeta.setDisplayName("§r");
         flameMeta.getPersistentDataContainer().set(CATEGORY_SELECTOR_KEY, PersistentDataType.INTEGER, 1);
         flame.setItemMeta(flameMeta);
@@ -79,7 +80,7 @@ public class CategorySelectorGUI implements Listener {
 
         List<ItemStack> itemList = CONFIG.getCategories().entrySet().stream().map(entry -> createItem(entry.getKey(), entry.getValue())).collect(Collectors.toList());
         GUI.addItem(itemList.toArray(new ItemStack[itemList.size()]));
-    }
+    }}
     
     /**
      * categoryのアイコンなどの情報をsectionから引き出し、そのアイテムを作る。
