@@ -18,17 +18,16 @@
 
 package net.okocraft.box.command.box;
 
+import net.okocraft.box.util.OtherUtil;
+import org.bukkit.command.CommandSender;
+import org.bukkit.util.StringUtil;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-
-import org.bukkit.command.CommandSender;
-import org.bukkit.util.StringUtil;
-
-import net.okocraft.box.util.OtherUtil;
 
 class Help extends BaseSubCommand {
 
@@ -44,9 +43,9 @@ class Help extends BaseSubCommand {
 
         Box commands = INSTANCE.getCommand();
 
-        Map<String, String> commandDescriptionMap = new LinkedHashMap<>(){
+        Map<String, String> commandDescriptionMap = new LinkedHashMap<>() {
             private static final long serialVersionUID = 1L;
-            
+
             {
                 put(commands.getUsage(), commands.getDescription());
                 commands.getSubCommandMap().values().forEach(subCommand -> put(subCommand.getUsage(), subCommand.getDescription()));
@@ -70,7 +69,7 @@ class Help extends BaseSubCommand {
 
         int mapSize = INSTANCE.getCommand().getSubCommandMapSize();
         int maxPage = mapSize % 8 == 0 ? mapSize / 8 : mapSize / 8 + 1;
-        List<String> pages  = IntStream.rangeClosed(1, maxPage).boxed().map(String::valueOf).collect(Collectors.toList());
+        List<String> pages = IntStream.rangeClosed(1, maxPage).boxed().map(String::valueOf).collect(Collectors.toList());
         if (args.length == 2) {
             return StringUtil.copyPartialMatches(args[1], pages, result);
         }
