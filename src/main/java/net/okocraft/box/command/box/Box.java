@@ -62,6 +62,9 @@ public class Box extends BaseBoxCommand implements CommandExecutor, TabCompleter
                 AutoStore autoStore = new AutoStore();
                 put(autoStore.getCommandName(), autoStore);
     
+                GetStick getStick = new GetStick();
+                put(getStick.getCommandName(), getStick);
+    
                 Give give = new Give();
                 put(give.getCommandName(), give);
     
