@@ -155,7 +155,7 @@ public class CategorySelectorGUI implements Listener {
         }
         event.setCancelled(true);
         
-        if (CONFIG.getDisabledWorlds().contains(event.getWhoClicked().getWorld())) {
+        if (CONFIG.getDisabledWorlds().contains(event.getWhoClicked().getWorld().getName())) {
             player.sendMessage(MESSAGE_CONFIG.getDisabledWorld());
             return;
         }

@@ -345,7 +345,7 @@ class CategoryGUI implements Listener {
         InventoryAction action = event.getAction();
         event.setCancelled(true);
         
-        if (CONFIG.getDisabledWorlds().contains(event.getWhoClicked().getWorld())) {
+        if (CONFIG.getDisabledWorlds().contains(event.getWhoClicked().getWorld().getName())) {
             return;
         }
 

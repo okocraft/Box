@@ -84,7 +84,7 @@ public class GeneralConfig {
     private boolean autoStoreEnabledByDefault;
 
     @Getter
-    private List<World> disabledWorlds;
+    private List<String> disabledWorlds;
 
     @Getter
     private List<World> replantWorlds;
@@ -315,8 +315,7 @@ public class GeneralConfig {
      * @see GeneralConfig#initConfig()
      */
     private void initDisabledWorldConfig() {
-        disabledWorlds = defaultConfig.getStringList("General.DisabledWorld").stream().map(Bukkit::getWorld)
-                .filter(Objects::nonNull).collect(Collectors.toList());
+        disabledWorlds = defaultConfig.getStringList("General.DisabledWorld");
     }
 
     /**
