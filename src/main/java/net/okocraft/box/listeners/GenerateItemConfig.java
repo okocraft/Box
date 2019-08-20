@@ -195,6 +195,7 @@ public class GenerateItemConfig implements Listener {
         if (tippedArrow.getType() != Material.TIPPED_ARROW) {
             return "";
         }
+
         if (langMap != ItemLanguage.JAPANESE_NAME_MAP && langMap != ItemLanguage.ENGLISH_NAME_MAP) {
             return "";
         }
@@ -203,6 +204,7 @@ public class GenerateItemConfig implements Listener {
         if (meta == null){
             return "";
         }
+
         String effectName = meta.getBasePotionData().getType().name().toLowerCase();
         if (effectName.equals("empty")) {
             return langMap.get("tipped_arrow.effect.empty");
@@ -230,6 +232,7 @@ public class GenerateItemConfig implements Listener {
         if (meta == null){
             return "";
         }
+
         String effectName = meta.getBasePotionData().getType().name().toLowerCase();
         if (effectName.equals("empty")) {
             return langMap.get("potion.effect.empty");
@@ -257,6 +260,7 @@ public class GenerateItemConfig implements Listener {
         if (meta == null){
             return "";
         }
+
         String effectName = meta.getBasePotionData().getType().name().toLowerCase();
         if (effectName.equals("empty")) {
             return langMap.get("splash_potion.effect.empty");
@@ -281,6 +285,10 @@ public class GenerateItemConfig implements Listener {
         }
 
         PotionMeta meta = (PotionMeta) potion.getItemMeta();
+        if (meta == null){
+            return "";
+        }
+
         String effectName = meta.getBasePotionData().getType().name().toLowerCase();
         if (effectName.equals("empty")) {
             return langMap.get("lingering_potion.effect.empty");
@@ -305,6 +313,10 @@ public class GenerateItemConfig implements Listener {
         }
 
         BlockStateMeta meta = (BlockStateMeta) shield.getItemMeta();
+        if (meta == null){
+            return "";
+        }
+        
         if (!meta.hasBlockState()) {
             return langMap.get("shield");
         }
