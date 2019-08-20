@@ -18,30 +18,30 @@
 
 package net.okocraft.box.command.boxadmin;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import net.okocraft.box.util.OtherUtil;
 import org.bukkit.command.CommandSender;
 import org.bukkit.util.StringUtil;
 
-import net.okocraft.box.util.OtherUtil;
+import java.util.ArrayList;
+import java.util.List;
 
 class Give extends BaseSubAdminCommand {
 
     private static final String COMMAND_NAME = "give";
     private static final int LEAST_ARG_LENGTH = 3;
     private static final String USAGE = "/boxadmin give <player> <ITEM> [amount]";
+
     @Override
     public boolean runCommand(CommandSender sender, String[] args) {
         if (!validate(sender, args)) {
             return false;
         }
         String player = args[1].toLowerCase();
-        String item   = args[2].toUpperCase();
+        String item = args[2].toUpperCase();
         long amount = args.length < 4 ? 1 : OtherUtil.parseLongOrDefault(args[3], 1);
 
         long currentAmount;
-        
+
         try {
             currentAmount = Long.parseLong(DATABASE.get(item, player));
         } catch (NumberFormatException e) {
