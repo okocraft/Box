@@ -200,6 +200,9 @@ public class GenerateItemConfig implements Listener {
         }
 
         PotionMeta meta = (PotionMeta) tippedArrow.getItemMeta();
+        if (meta == null){
+            return "";
+        }
         String effectName = meta.getBasePotionData().getType().name().toLowerCase();
         if (effectName.equals("empty")) {
             return langMap.get("tipped_arrow.effect.empty");
