@@ -63,6 +63,7 @@ class AutoStore extends BaseSubCommand {
      * @param switchTo 変更後の boolean
      * @return 実行に成功したら {@code true}
      */
+    // 常に true を返す
     private boolean autoStore(CommandSender sender, String item, @Nullable String switchTo) {
         String player = ((Player) sender).getUniqueId().toString();
 

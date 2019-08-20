@@ -64,6 +64,7 @@ class AutoStore extends BaseSubAdminCommand {
      * @param switchTo 変更後の boolean
      * @return 実行に成功したら {@code true}
      */
+    // 常に true を返す
     private boolean autoStore(CommandSender sender, String player, String itemName, @Nullable String switchTo) {
         if (switchTo == null) {
             boolean now = DATABASE.get("autostore_" + itemName, player).equalsIgnoreCase("true");
@@ -88,6 +89,7 @@ class AutoStore extends BaseSubAdminCommand {
      * @param switchTo 変更後の boolean
      * @return 実行に成功したら {@code true}
      */
+    // 常に true を返す
     private boolean autoStoreAll(CommandSender sender, String player, String switchTo) {
         List<String> allItems = CONFIG.getAllItems();
 
