@@ -87,8 +87,8 @@ class AutoStore extends BaseSubCommand {
     /**
      * アイテムすべてのautoStore設定を変更する。
      * 
-     * @param sender
-     * @param switchTo
+     * @param sender 変更する人
+     * @param switchTo 変更後の boolean
      * @return  実行に成功したら {@code true}
      */
     private boolean autoStoreAll(CommandSender sender, String switchTo) {
