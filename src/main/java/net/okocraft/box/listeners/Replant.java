@@ -18,9 +18,9 @@
 
 package net.okocraft.box.listeners;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import net.okocraft.box.Box;
+import net.okocraft.box.database.Database;
+import net.okocraft.box.util.GeneralConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -36,9 +36,8 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import net.okocraft.box.Box;
-import net.okocraft.box.database.Database;
-import net.okocraft.box.util.GeneralConfig;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Replant implements Listener {
     private static final Box INSTANCE = Box.getInstance();
@@ -56,9 +55,9 @@ public class Replant implements Listener {
         }
     };
 
-    private static final Map<Material, Material> TREES = new HashMap<Material, Material>() {
+    private static final Map<Material, Material> TREES = new HashMap<>() {
         private static final long serialVersionUID = 1L;
-        
+
         {
             put(Material.ACACIA_LOG, Material.ACACIA_SAPLING);
             put(Material.ACACIA_WOOD, Material.ACACIA_SAPLING);
@@ -126,8 +125,8 @@ public class Replant implements Listener {
         Ageable newBlockDataAgeable = (Ageable) blockDataAgable.clone();
         newBlockDataAgeable.setAge(0);
 
-        new BukkitRunnable(){
-        
+        new BukkitRunnable() {
+
             @Override
             public void run() {
                 Block block = brokenBlock.getLocation().getBlock();
@@ -135,7 +134,7 @@ public class Replant implements Listener {
                     return;
                 block.setType(brokenBlockType);
                 block.setBlockData(newBlockDataAgeable);
-                
+
                 takeSeed(player, seed);
             }
         }.runTaskLater(INSTANCE, 3L);
@@ -159,7 +158,7 @@ public class Replant implements Listener {
             event.setCancelled(true);
             return;
         }
-        
+
         if (!TREES.containsKey(treeMaterial)) {
             return;
         }
@@ -187,7 +186,7 @@ public class Replant implements Listener {
         if (event.isCancelled()) {
             return;
         }
-        
+
         Material ground = event.getBlock().getType();
         if (!ground.equals(Material.DIRT) && !ground.equals(Material.GRASS_BLOCK)
                 && !ground.equals(Material.PODZOL)) {
@@ -199,7 +198,7 @@ public class Replant implements Listener {
             event.setCancelled(true);
         }
     }
-    
+
     @EventHandler
     public void cancelBoneMeal(PlayerInteractEvent event) {
         Block clickedBlock = event.getClickedBlock();
@@ -236,7 +235,7 @@ public class Replant implements Listener {
             player.getInventory().removeItem(new ItemStack(seed));
         }
     }
-    
+
     private boolean hasSeed(Player player, Material seed) {
         if (!PLANTS.containsValue(seed)) {
             return false;
@@ -257,7 +256,7 @@ public class Replant implements Listener {
             exception.printStackTrace();
             return false;
         }
-        
+
         return stock > 0;
     }
 }
