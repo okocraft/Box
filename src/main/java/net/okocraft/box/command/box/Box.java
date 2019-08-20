@@ -18,13 +18,9 @@
 
 package net.okocraft.box.command.box;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
+import lombok.Getter;
+import net.okocraft.box.command.BaseBoxCommand;
+import net.okocraft.box.gui.CategorySelectorGUI;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -32,15 +28,14 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 
-import lombok.Getter;
-import net.okocraft.box.command.BaseBoxCommand;
-import net.okocraft.box.gui.CategorySelectorGUI;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Box extends BaseBoxCommand implements CommandExecutor, TabCompleter {
 
     private static final String COMMAND_NAME = "box";
     private static final String USAGE = "/box [args...]";
-    
+
     @Getter
     private Map<String, BaseSubCommand> subCommandMap;
     @Getter
@@ -118,7 +113,7 @@ public class Box extends BaseBoxCommand implements CommandExecutor, TabCompleter
                     new ArrayList<>()
             );
         }
-        
+
         BaseSubCommand subCommand = subCommandMap.get(args[0].toLowerCase());
         if (subCommand == null || !permedSubCommands.contains(subCommand.getCommandName())) {
             return List.of();
