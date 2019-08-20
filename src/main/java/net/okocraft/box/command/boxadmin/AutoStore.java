@@ -43,12 +43,12 @@ class AutoStore extends BaseSubAdminCommand {
 
         String player = args[1].toUpperCase();
         String itemName = args[2].toUpperCase();
+        // null の必要がないのに定義する理由
         String switchTo = args.length < 4 ? null : args[3].toLowerCase();
 
         // autostore all <true|false>
         if (itemName.equalsIgnoreCase("all")) {
             // validateにより、nullのままこのifに進むことはない。
-            // null の場合の処理はなし?
             return autoStoreAll(sender, player, switchTo);
         }
 
