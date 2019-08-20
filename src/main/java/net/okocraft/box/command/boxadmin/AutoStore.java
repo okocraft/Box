@@ -48,6 +48,7 @@ class AutoStore extends BaseSubAdminCommand {
         // autostore all <true|false>
         if (itemName.equalsIgnoreCase("all")) {
             // validateにより、nullのままこのifに進むことはない。
+            // null の場合の処理はなし?
             return autoStoreAll(sender, player, switchTo);
         }
 
@@ -57,7 +58,7 @@ class AutoStore extends BaseSubAdminCommand {
 
     /**
      * アイテム１つのautoStore設定を変更する。
-     * 
+     *
      * @param sender
      * @param itemName
      * @param switchTo
@@ -81,7 +82,7 @@ class AutoStore extends BaseSubAdminCommand {
 
     /**
      * アイテムすべてのautoStore設定を変更する。
-     * 
+     *
      * @param sender
      * @param player
      * @param switchTo
@@ -169,7 +170,7 @@ class AutoStore extends BaseSubAdminCommand {
             sender.sendMessage(MESSAGE_CONFIG.getNoPlayerFound());
             return false;
         }
-        
+
         if (!args[2].equalsIgnoreCase("ALL") && !CONFIG.getAllItems().contains(args[2].toUpperCase())) {
             sender.sendMessage(MESSAGE_CONFIG.getInvalidArguments());
             return false;
