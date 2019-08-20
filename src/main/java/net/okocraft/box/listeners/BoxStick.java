@@ -35,8 +35,10 @@ public class BoxStick implements Listener {
     private static final ItemStack stick = new ItemStack(Material.STICK) {
         {
             ItemMeta meta = getItemMeta();
+            String stickDisplayName = CONFIG.getDefaultConfig().getString("General.BoxStick.DisplayName", "&9Box Stick");
+            if (meta != null && stickDisplayName != null){
             meta.setDisplayName(ChatColor.translateAlternateColorCodes('&',
-                    CONFIG.getDefaultConfig().getString("General.BoxStick.DisplayName", "&9Box Stick")));
+                    stickDisplayName));
 
             List<String> lore = CONFIG.getDefaultConfig().getStringList("General.BoxStick.Lore");
             if (lore.isEmpty()) {
@@ -49,7 +51,7 @@ public class BoxStick implements Listener {
 
             meta.getPersistentDataContainer().set(stickKey, PersistentDataType.INTEGER, 1);
             setItemMeta(meta);
-        }
+        }}
     };
 
     public BoxStick() {
@@ -61,7 +63,7 @@ public class BoxStick implements Listener {
         if (event.isCancelled()) {
             return;
         }
-        
+
         useItemFromDatabase(event.getItemInHand(), event.getPlayer());
     }
 
@@ -71,11 +73,11 @@ public class BoxStick implements Listener {
     }
 
     private void useItemFromDatabase(ItemStack item, Player player) {
-        
+
         if (!CONFIG.getDefaultConfig().getBoolean("General.BoxStick.Enabled")) {
             return;
         }
-        
+
         if (CONFIG.getDisabledWorlds().contains(player.getWorld().getName())) {
             return;
         }
@@ -84,6 +86,8 @@ public class BoxStick implements Listener {
         if (offHandItem.getType() != Material.STICK) {
             return;
         }
+
+        if(offHandItem.getItemMeta() == null) return;
 
         if (Optional.ofNullable(
                 offHandItem.getItemMeta().getPersistentDataContainer().get(stickKey, PersistentDataType.INTEGER))
