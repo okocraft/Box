@@ -18,16 +18,12 @@
 
 package net.okocraft.box.util;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import lombok.Getter;
 import lombok.val;
 import net.md_5.bungee.api.ChatColor;
 import net.okocraft.box.Box;
+import net.okocraft.box.database.Database;
+import net.okocraft.box.gui.CategorySelectorGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -36,8 +32,10 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
 
-import net.okocraft.box.database.Database;
-import net.okocraft.box.gui.CategorySelectorGUI;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author LazyGon
@@ -180,14 +178,15 @@ public class GeneralConfig {
         categories = new LinkedHashMap<>();
         if (itemConfig.isConfigurationSection("categories")) {
             ConfigurationSection categoriesConfig = itemConfig.getConfigurationSection("categories");
-            if (categoriesConfig != null){
-            categoriesConfig.getKeys(false).forEach(sectionName -> {
-                if (itemConfig.isConfigurationSection("categories." + sectionName)) {
-                    ConfigurationSection section = itemConfig.getConfigurationSection("categories." + sectionName);
-                    categories.put(sectionName, section);
-                }
-            });
-        }}
+            if (categoriesConfig != null) {
+                categoriesConfig.getKeys(false).forEach(sectionName -> {
+                    if (itemConfig.isConfigurationSection("categories." + sectionName)) {
+                        ConfigurationSection section = itemConfig.getConfigurationSection("categories." + sectionName);
+                        categories.put(sectionName, section);
+                    }
+                });
+            }
+        }
 
         // CHANGED: Nullable になると IntelliJ がうるさいので Optional 化
         categorySelectionGuiName = ChatColor.translateAlternateColorCodes('&',
@@ -221,41 +220,42 @@ public class GeneralConfig {
     public void addCategory() {
         itemCustomConfig.initConfig();
         itemConfig = itemCustomConfig.getConfig();
-        if (!itemConfig.isConfigurationSection("categories"))  return;
+        if (!itemConfig.isConfigurationSection("categories")) return;
 
         ConfigurationSection categoriesConfig = itemConfig.getConfigurationSection("categories");
 
-        if (categoriesConfig != null){
-        categoriesConfig.getKeys(false).stream()
-                .filter(sectionName -> !categories.containsKey(sectionName))
-                .filter(sectionName -> itemConfig.isConfigurationSection("categories." + sectionName))
-                .forEach(sectionName -> {
-                    ConfigurationSection section = itemConfig.getConfigurationSection("categories." + sectionName);
-                    categories.put(sectionName, section);
-                    if (section != null) {
-                        Optional.ofNullable(section.getString("display_name"))
-                                .ifPresent(name -> categoryGuiNameMap.put(sectionName,
-                                        categoryGuiName.replaceAll("%category%", sectionName)
-                                                .replaceAll("%category_item_display_name%", name)));
-                    Optional.ofNullable(section.getConfigurationSection("item"))
-                            .ifPresent(items -> allItems.addAll(items.getKeys(false).stream()
-                                    .filter(itemName -> Material.getMaterial(itemName) != null)
-                                    .peek(itemName -> {
-                                        database.addColumn(itemName, "INTEGER", "0", false);
-                                        database.addColumn("autostore_" + itemName, "TEXT", "false", false);
-                                    }).collect(Collectors.toList())));
-                }});
+        if (categoriesConfig != null) {
+            categoriesConfig.getKeys(false).stream()
+                    .filter(sectionName -> !categories.containsKey(sectionName))
+                    .filter(sectionName -> itemConfig.isConfigurationSection("categories." + sectionName))
+                    .forEach(sectionName -> {
+                        ConfigurationSection section = itemConfig.getConfigurationSection("categories." + sectionName);
+                        categories.put(sectionName, section);
+                        if (section != null) {
+                            Optional.ofNullable(section.getString("display_name"))
+                                    .ifPresent(name -> categoryGuiNameMap.put(sectionName,
+                                            categoryGuiName.replaceAll("%category%", sectionName)
+                                                    .replaceAll("%category_item_display_name%", name)));
+                            Optional.ofNullable(section.getConfigurationSection("item"))
+                                    .ifPresent(items -> allItems.addAll(items.getKeys(false).stream()
+                                            .filter(itemName -> Material.getMaterial(itemName) != null)
+                                            .peek(itemName -> {
+                                                database.addColumn(itemName, "INTEGER", "0", false);
+                                                database.addColumn("autostore_" + itemName, "TEXT", "false", false);
+                                            }).collect(Collectors.toList())));
+                        }
+                    });
 
-        CategorySelectorGUI.restartListener();
-    }}
+            CategorySelectorGUI.restartListener();
+        }
+    }
 
     /**
      * 音設定初期化
      *
      * @author akaregi
-     * @since v1.1.0
-     *
      * @see GeneralConfig#initConfig()
+     * @since v1.1.0
      */
     private void initSoundConfig() {
         val DEFAULT_SOUND_VOLUME = 1.0;
@@ -301,9 +301,8 @@ public class GeneralConfig {
      * AutoStore 設定初期化
      *
      * @author akaregi
-     * @since v1.1.0
-     *
      * @see GeneralConfig#initConfig()
+     * @since v1.1.0
      */
     private void initAutoStoreConfig() {
         autoStoreEnabled = defaultConfig.getBoolean("General.AutoStore.Enabled", false);
@@ -314,9 +313,8 @@ public class GeneralConfig {
      * DisabledWorld 設定初期化
      *
      * @author akaregi
-     * @since v1.1.0
-     *
      * @see GeneralConfig#initConfig()
+     * @since v1.1.0
      */
     private void initDisabledWorldConfig() {
         disabledWorlds = defaultConfig.getStringList("General.DisabledWorld");
@@ -326,9 +324,8 @@ public class GeneralConfig {
      * ReplantWorld 設定初期化
      *
      * @author LazyGon
-     * @since v1.1.0
-     *
      * @see GeneralConfig#initConfig()
+     * @since v1.1.0
      */
     private void initReplantWorldConfig() {
         replantWorlds = defaultConfig.getStringList("General.ReplantWorld").stream().map(Bukkit::getWorld)
@@ -337,11 +334,10 @@ public class GeneralConfig {
 
     /**
      * フッター初期化
-     * 
-     * @author akaregi
-     * @since v1.1.0
      *
+     * @author akaregi
      * @see GeneralConfig#initConfig()
+     * @since v1.1.0
      */
     private void initFooterConfig() {
         // ページ送り
@@ -376,14 +372,12 @@ public class GeneralConfig {
     /**
      * フッターに使うアイテムを作成する。
      *
-     * @author akaregi
-     * @since v1.1.0
-     *
      * @param material    アイテムの種類。
      * @param stackAmount アイテムの量。
      * @param displayName 表示名。
-     *
      * @return メタ情報(パラメタ)を適用したアイテム。
+     * @author akaregi
+     * @since v1.1.0
      */
     @Nonnull
     private static ItemStack createFooterItem(Material material, int stackAmount, String displayName) {
@@ -401,12 +395,10 @@ public class GeneralConfig {
     /**
      * {@code String} から {@code Sound} に変換する。
      *
+     * @param sound 変換元
+     * @return {@code Optional<Sound>}
      * @author akaregi
      * @since v1.1.0
-     *
-     * @param sound 変換元
-     *
-     * @return {@code Optional<Sound>}
      */
     @Nonnull
     private static Optional<Sound> getSound(@Nullable String sound) {
