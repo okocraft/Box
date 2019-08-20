@@ -77,7 +77,7 @@ public class PlayerUtil {
      * 
      * @since v1.1.0
      * 
-     * @param sender
+     * @param sender 登録されているかされてないか判定する人
      * 
      * @return 登録されていない時true されているならfalse
      */
