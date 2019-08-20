@@ -18,13 +18,9 @@
 
 package net.okocraft.box.listeners;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Map;
-import java.util.Optional;
-
+import net.okocraft.box.Box;
+import net.okocraft.box.util.GeneralConfig;
+import net.okocraft.box.util.ItemLanguage;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -45,9 +41,11 @@ import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
-import net.okocraft.box.Box;
-import net.okocraft.box.util.GeneralConfig;
-import net.okocraft.box.util.ItemLanguage;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Map;
+import java.util.Optional;
 
 public class GenerateItemConfig implements Listener {
 
@@ -132,29 +130,29 @@ public class GenerateItemConfig implements Listener {
     private static String getItemName(ItemStack item, Map<String, String> langMap) {
         Material type = item.getType();
         switch (type) {
-        case PLAYER_HEAD:
-        case PLAYER_WALL_HEAD:
-            return getHeadName(item, langMap);
-        case TIPPED_ARROW:
-            return getTippedArrowName(item, langMap);
-        case POTION:
-            return getPotionName(item, langMap);
-        case SPLASH_POTION:
-            return getSplashPotionName(item, langMap);
-        case LINGERING_POTION:
-            return getLingeringPotionName(item, langMap);
-        case SHIELD:
-            return getShieldName(item, langMap);
-        default:
-            return langMap.get(type.name().toLowerCase());
+            case PLAYER_HEAD:
+            case PLAYER_WALL_HEAD:
+                return getHeadName(item, langMap);
+            case TIPPED_ARROW:
+                return getTippedArrowName(item, langMap);
+            case POTION:
+                return getPotionName(item, langMap);
+            case SPLASH_POTION:
+                return getSplashPotionName(item, langMap);
+            case LINGERING_POTION:
+                return getLingeringPotionName(item, langMap);
+            case SHIELD:
+                return getShieldName(item, langMap);
+            default:
+                return langMap.get(type.name().toLowerCase());
         }
     }
 
     /**
      * もし渡されたアイテムがplayer_headだった場合、渡されたマップに応じてデフォルトの名前の文字列を取得する。
-     * 
+     *
      * @param playerHead プレイヤーの頭
-     * @param langMap アイテムのデフォルト名を格納したマップ
+     * @param langMap    アイテムのデフォルト名を格納したマップ
      * @return プレイヤーの頭の名前
      */
     private static String getHeadName(ItemStack playerHead, Map<String, String> langMap) {
@@ -172,7 +170,7 @@ public class GenerateItemConfig implements Listener {
         }
 
         OfflinePlayer player = meta.getOwningPlayer();
-        if (player == null){
+        if (player == null) {
             return langMap.get("player_head");
         }
 
@@ -186,9 +184,9 @@ public class GenerateItemConfig implements Listener {
 
     /**
      * もし渡されたアイテムがtipped_arrowだった場合、渡されたマップに応じてデフォルトの名前の文字列を取得する。
-     * 
+     *
      * @param tippedArrow 効果付きの矢
-     * @param langMap アイテムのデフォルト名を格納したマップ
+     * @param langMap     アイテムのデフォルト名を格納したマップ
      * @return tipped_arrowの効果ごとの名前
      */
     private static String getTippedArrowName(ItemStack tippedArrow, Map<String, String> langMap) {
@@ -201,7 +199,7 @@ public class GenerateItemConfig implements Listener {
         }
 
         PotionMeta meta = (PotionMeta) tippedArrow.getItemMeta();
-        if (meta == null){
+        if (meta == null) {
             return "";
         }
 
@@ -215,8 +213,8 @@ public class GenerateItemConfig implements Listener {
 
     /**
      * もし渡されたアイテムがpotionだった場合、渡されたマップに応じてデフォルトの名前の文字列を取得する。
-     * 
-     * @param potion 普通のポーション
+     *
+     * @param potion  普通のポーション
      * @param langMap アイテムのデフォルト名を格納したマップ
      * @return potionの効果ごとの名前
      */
@@ -229,7 +227,7 @@ public class GenerateItemConfig implements Listener {
         }
 
         PotionMeta meta = (PotionMeta) potion.getItemMeta();
-        if (meta == null){
+        if (meta == null) {
             return "";
         }
 
@@ -243,8 +241,8 @@ public class GenerateItemConfig implements Listener {
 
     /**
      * もし渡されたアイテムがsplash_potionだった場合、渡されたマップに応じてデフォルトの名前の文字列を取得する。
-     * 
-     * @param potion スプラッシュポーション
+     *
+     * @param potion  スプラッシュポーション
      * @param langMap アイテムのデフォルト名を格納したマップ
      * @return splash_potionの効果ごとの名前
      */
@@ -257,7 +255,7 @@ public class GenerateItemConfig implements Listener {
         }
 
         PotionMeta meta = (PotionMeta) potion.getItemMeta();
-        if (meta == null){
+        if (meta == null) {
             return "";
         }
 
@@ -271,8 +269,8 @@ public class GenerateItemConfig implements Listener {
 
     /**
      * もし渡されたアイテムがsplash_potionだった場合、渡されたマップに応じてデフォルトの名前の文字列を取得する。
-     * 
-     * @param potion 残留ポーション
+     *
+     * @param potion  残留ポーション
      * @param langMap アイテムのデフォルト名を格納したマップ
      * @return splash_potionの効果ごとの名前
      */
@@ -285,7 +283,7 @@ public class GenerateItemConfig implements Listener {
         }
 
         PotionMeta meta = (PotionMeta) potion.getItemMeta();
-        if (meta == null){
+        if (meta == null) {
             return "";
         }
 
@@ -299,8 +297,8 @@ public class GenerateItemConfig implements Listener {
 
     /**
      * もし渡されたアイテムがshieldだった場合、渡されたマップに応じてデフォルトの名前の文字列を取得する。
-     * 
-     * @param shield 盾
+     *
+     * @param shield  盾
      * @param langMap アイテムのデフォルト名を格納したマップ
      * @return shieldの色ごとの名前
      */
@@ -313,10 +311,10 @@ public class GenerateItemConfig implements Listener {
         }
 
         BlockStateMeta meta = (BlockStateMeta) shield.getItemMeta();
-        if (meta == null){
+        if (meta == null) {
             return "";
         }
-        
+
         if (!meta.hasBlockState()) {
             return langMap.get("shield");
         }
