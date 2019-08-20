@@ -80,11 +80,7 @@ public class OtherUtil {
         if (!optionalPerm.isPresent()) {
             Permission perm = new Permission(permName);
 
-            Optional.ofNullable(parentPermName).ifPresent(_parentPermName -> {
-                Optional.ofNullable(pm.getPermission(_parentPermName)).ifPresent(parentPerm -> {
-                    perm.addParent(parentPerm, true);
-                });
-            });
+            Optional.ofNullable(parentPermName).ifPresent(_parentPermName -> Optional.ofNullable(pm.getPermission(_parentPermName)).ifPresent(parentPerm -> perm.addParent(parentPerm, true)));
 
             pm.getPermissions().add(perm);
         }
