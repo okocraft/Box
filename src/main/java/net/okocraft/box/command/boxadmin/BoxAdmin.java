@@ -47,30 +47,31 @@ public class BoxAdmin extends BaseBoxCommand implements CommandExecutor, TabComp
     private final int subCommandMapSize;
 
     public BoxAdmin() {
-        subCommandMap = new HashMap<String, BoxCommand>() {
+        subCommandMap = new HashMap<>() {
             private static final long serialVersionUID = 1L;
+
             {
                 Help help = new Help();
                 put(help.getCommandName(), help);
-    
+
                 AddCategory addCategory = new AddCategory();
                 put(addCategory.getCommandName(), addCategory);
-    
+
                 AutoStoreList autoStoreList = new AutoStoreList();
                 put(autoStoreList.getCommandName(), autoStoreList);
-    
+
                 AutoStore autoStore = new AutoStore();
                 put(autoStore.getCommandName(), autoStore);
-    
+
                 Give give = new Give();
                 put(give.getCommandName(), give);
-    
+
                 Set set = new Set();
                 put(set.getCommandName(), set);
-    
+
                 Take take = new Take();
                 put(take.getCommandName(), take);
-    
+
                 Reload reload = new Reload();
                 put(reload.getCommandName(), reload);
             }
