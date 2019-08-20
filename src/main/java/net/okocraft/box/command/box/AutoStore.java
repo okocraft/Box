@@ -45,6 +45,7 @@ class AutoStore extends BaseSubCommand {
         }
 
         String item = args[1].toUpperCase();
+        // switchTo が null の場合の処理はどうするのか
         String switchTo = args.length > 2 ? args[2] : null;
 
         // autostore all <true|false>
