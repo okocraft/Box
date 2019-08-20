@@ -18,17 +18,16 @@
 
 package net.okocraft.box.command.box;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
+import net.okocraft.box.util.OtherUtil;
+import net.okocraft.box.util.PlayerUtil;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 
-import net.okocraft.box.util.OtherUtil;
-import net.okocraft.box.util.PlayerUtil;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 class AutoStoreList extends BaseSubCommand {
 
@@ -47,7 +46,7 @@ class AutoStoreList extends BaseSubCommand {
         int index = args.length >= 2 ? OtherUtil.parseIntOrDefault(args[1], 1) : 1;
 
         List<String> allItems = CONFIG.getAllItems();
-        
+
         int maxLine = allItems.size();
         int currentLine = Math.min(maxLine, index * 8);
 
@@ -83,7 +82,7 @@ class AutoStoreList extends BaseSubCommand {
 
         int items = CONFIG.getAllItems().size();
         int maxPage = items % 8 == 0 ? items / 8 : items / 8 + 1;
-        List<String> pages  = IntStream.rangeClosed(1, maxPage).boxed().map(String::valueOf).collect(Collectors.toList());
+        List<String> pages = IntStream.rangeClosed(1, maxPage).boxed().map(String::valueOf).collect(Collectors.toList());
         if (args.length == 2) {
             return StringUtil.copyPartialMatches(args[1], pages, result);
         }
@@ -115,7 +114,7 @@ class AutoStoreList extends BaseSubCommand {
         if (!super.validate(sender, args)) {
             return false;
         }
-        
+
         if (!(sender instanceof Player)) {
             sender.sendMessage(MESSAGE_CONFIG.getPlayerOnly());
             return false;
