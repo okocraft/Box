@@ -27,6 +27,7 @@ import java.util.Optional;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Banner;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
@@ -166,7 +167,12 @@ public class GenerateItemConfig implements Listener {
         }
 
         SkullMeta meta = (SkullMeta) playerHead.getItemMeta();
-        if (!meta.hasOwner()) {
+        if (meta == null || !meta.hasOwner()) {
+            return langMap.get("player_head");
+        }
+
+        OfflinePlayer player = meta.getOwningPlayer();
+        if (player == null){
             return langMap.get("player_head");
         }
 
