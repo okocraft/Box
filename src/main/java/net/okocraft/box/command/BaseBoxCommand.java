@@ -1,9 +1,8 @@
 package net.okocraft.box.command;
 
+import net.okocraft.box.util.OtherUtil;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import net.okocraft.box.util.OtherUtil;
 
 /*
  * Box
@@ -34,7 +33,7 @@ public abstract class BaseBoxCommand implements BoxCommand {
 
     /**
      * 権限や引数の長さなどが基準を満たしているか確認する。
-     * 
+     *
      * @return 満たしていればtrue
      */
     protected boolean validate(CommandSender sender, String[] args) {
