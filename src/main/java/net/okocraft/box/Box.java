@@ -18,18 +18,7 @@
 
 package net.okocraft.box;
 
-import java.util.logging.Logger;
-
 import lombok.Getter;
-import net.okocraft.box.util.GeneralConfig;
-import net.okocraft.box.util.MessageConfig;
-import net.okocraft.box.util.OtherUtil;
-
-import org.bukkit.Bukkit;
-import org.bukkit.event.HandlerList;
-import org.bukkit.plugin.RegisteredServiceProvider;
-import org.bukkit.plugin.java.JavaPlugin;
-
 import net.milkbowl.vault.economy.Economy;
 import net.okocraft.box.command.boxadmin.BoxAdmin;
 import net.okocraft.box.database.Database;
@@ -38,6 +27,15 @@ import net.okocraft.box.listeners.BoxStick;
 import net.okocraft.box.listeners.EntityPickupItem;
 import net.okocraft.box.listeners.PlayerJoin;
 import net.okocraft.box.listeners.Replant;
+import net.okocraft.box.util.GeneralConfig;
+import net.okocraft.box.util.MessageConfig;
+import net.okocraft.box.util.OtherUtil;
+import org.bukkit.Bukkit;
+import org.bukkit.event.HandlerList;
+import org.bukkit.plugin.RegisteredServiceProvider;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.logging.Logger;
 
 /**
  * @author OKOCRAFT
@@ -98,8 +96,8 @@ public class Box extends JavaPlugin {
     private Economy economy;
 
     public Box() {
-        log      = getLogger();
-        version  = getClass().getPackage().getImplementationVersion();
+        log = getLogger();
+        version = getClass().getPackage().getImplementationVersion();
         database = new Database(this);
     }
 
@@ -191,10 +189,10 @@ public class Box extends JavaPlugin {
 
     /**
      * economyをセットする。
-     * 
+     *
      * @return 成功したらtrue　失敗したらfalse
      */
-	private boolean setupEconomy() {
+    private boolean setupEconomy() {
         if (getServer().getPluginManager().getPlugin("Vault") == null) {
             log.severe("Vault was not found.");
             return false;
@@ -205,5 +203,5 @@ public class Box extends JavaPlugin {
         }
         economy = rsp.getProvider();
         return true;
-	}
+    }
 }
