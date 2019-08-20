@@ -18,9 +18,9 @@
 
 package net.okocraft.box.command.boxadmin;
 
-import java.util.List;
-
 import org.bukkit.command.CommandSender;
+
+import java.util.List;
 
 class Reload extends BaseSubAdminCommand {
 
