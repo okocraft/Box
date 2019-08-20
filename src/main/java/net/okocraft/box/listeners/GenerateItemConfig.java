@@ -20,6 +20,8 @@ package net.okocraft.box.listeners;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Map;
 import java.util.Optional;
 
@@ -84,10 +86,10 @@ public class GenerateItemConfig implements Listener {
         HandlerList.unregisterAll(this);
         event.setCancelled(true);
 
-        File file = INSTANCE.getDataFolder().toPath().resolve(category + ".yml").toFile();
-        if (!file.exists()) {
+        Path file = INSTANCE.getDataFolder().toPath().resolve(category + ".yml");
+        if (!Files.exists(file)) {
             try {
-                file.createNewFile();
+                Files.createFile(file);
             } catch (IOException ex) {
                 ex.printStackTrace();
                 player.sendMessage("ファイルを作ることができなかったため、キャンセルされました。");
