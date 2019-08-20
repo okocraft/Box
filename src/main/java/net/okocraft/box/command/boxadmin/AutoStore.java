@@ -18,16 +18,15 @@
 
 package net.okocraft.box.command.boxadmin;
 
+import org.bukkit.command.CommandSender;
+import org.bukkit.util.StringUtil;
+
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import javax.annotation.Nullable;
-
-import org.bukkit.command.CommandSender;
-import org.bukkit.util.StringUtil;
 
 class AutoStore extends BaseSubAdminCommand {
 
@@ -59,8 +58,8 @@ class AutoStore extends BaseSubAdminCommand {
     /**
      * アイテム１つのautoStore設定を変更する。
      *
-     * @param sender コマンド実行者
-     * @param player 変更される人
+     * @param sender   コマンド実行者
+     * @param player   変更される人
      * @param itemName 変更するアイテム
      * @param switchTo 変更後の boolean
      * @return 実行に成功したら {@code true}
@@ -84,8 +83,8 @@ class AutoStore extends BaseSubAdminCommand {
     /**
      * アイテムすべてのautoStore設定を変更する。
      *
-     * @param sender コマンド実行者
-     * @param player 変更される人
+     * @param sender   コマンド実行者
+     * @param player   変更される人
      * @param switchTo 変更後の boolean
      * @return 実行に成功したら {@code true}
      */
