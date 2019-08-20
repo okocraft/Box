@@ -343,8 +343,11 @@ class CategoryGUI implements Listener {
         }
 
         Inventory inv = event.getInventory();
+        ItemStack item = gui.getItem(0);
+
+        if (item == null) return;
         
-        if (inv == null || !gui.getItem(0).isSimilar(inv.getItem(0))) {
+        if (!item.isSimilar(inv.getItem(0))) {
             return;
         }
 
