@@ -254,6 +254,9 @@ public class GenerateItemConfig implements Listener {
         }
 
         PotionMeta meta = (PotionMeta) potion.getItemMeta();
+        if (meta == null){
+            return "";
+        }
         String effectName = meta.getBasePotionData().getType().name().toLowerCase();
         if (effectName.equals("empty")) {
             return langMap.get("splash_potion.effect.empty");
