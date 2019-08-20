@@ -18,15 +18,14 @@
 
 package net.okocraft.box.command.box;
 
+import net.okocraft.box.util.OtherUtil;
+import org.bukkit.command.CommandSender;
+import org.bukkit.util.StringUtil;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-
-import org.bukkit.command.CommandSender;
-import org.bukkit.util.StringUtil;
-
-import net.okocraft.box.util.OtherUtil;
 
 class SellPriceList extends BaseSubCommand {
 
