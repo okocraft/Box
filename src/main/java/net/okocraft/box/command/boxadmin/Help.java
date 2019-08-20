@@ -58,9 +58,7 @@ class Help extends BaseSubAdminCommand {
         page = Math.min(page, maxPage);
 
         sender.sendMessage(MESSAGE_CONFIG.getAdminCommandHelpHeader());
-        commandDescriptionMap.entrySet().stream().skip(8 * (page - 1)).limit(8).forEach(entry -> {
-            sender.sendMessage("§b" + entry.getKey() + "§7 - " + entry.getValue());
-        });
+        commandDescriptionMap.entrySet().stream().skip(8 * (page - 1)).limit(8).forEach(entry -> sender.sendMessage("§b" + entry.getKey() + "§7 - " + entry.getValue()));
 
         return true;
     }
