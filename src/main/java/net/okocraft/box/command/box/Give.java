@@ -18,20 +18,19 @@
 
 package net.okocraft.box.command.box;
 
+import net.okocraft.box.util.OtherUtil;
+import net.okocraft.box.util.PlayerUtil;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.bukkit.util.StringUtil;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-
-import org.bukkit.OfflinePlayer;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-import org.bukkit.util.StringUtil;
-
-import net.okocraft.box.util.OtherUtil;
-import net.okocraft.box.util.PlayerUtil;
 
 class Give extends BaseSubCommand {
 
@@ -59,7 +58,7 @@ class Give extends BaseSubCommand {
         }
 
         long senderAmount = OtherUtil.parseLongOrDefault(DATABASE.get(itemName, senderName), Long.MIN_VALUE);
-        long otherAmount  = OtherUtil.parseLongOrDefault(DATABASE.get(itemName, player), Long.MIN_VALUE);
+        long otherAmount = OtherUtil.parseLongOrDefault(DATABASE.get(itemName, player), Long.MIN_VALUE);
 
         if (senderAmount == Long.MIN_VALUE || otherAmount == Long.MIN_VALUE) {
             sender.sendMessage(
@@ -91,7 +90,7 @@ class Give extends BaseSubCommand {
         OfflinePlayer offlinePlayer = PlayerUtil.getOfflinePlayer(player);
 
         if (offlinePlayer.isOnline()) {
-            Optional.ofNullable(offlinePlayer.getPlayer()).ifPresent( _player ->
+            Optional.ofNullable(offlinePlayer.getPlayer()).ifPresent(_player ->
                     _player.sendMessage(
                             MESSAGE_CONFIG.getSuccessReceive()
                                     .replaceAll("%player%", senderName)
@@ -134,7 +133,7 @@ class Give extends BaseSubCommand {
         if (!items.contains(item)) {
             return List.of();
         }
-        
+
         String rawStock = DATABASE.get(item, senderName);
         long stock;
         try {
@@ -184,7 +183,7 @@ class Give extends BaseSubCommand {
         if (!super.validate(sender, args)) {
             return false;
         }
-        
+
         if (!(sender instanceof Player)) {
             sender.sendMessage(MESSAGE_CONFIG.getPlayerOnly());
             return false;
@@ -204,11 +203,11 @@ class Give extends BaseSubCommand {
         Map<String, String> players = DATABASE.getPlayersMap();
         // プレイヤーがデータベースに登録されていない
         if (
-            (!players.containsKey(args[1].toLowerCase()) &&
-            !players.containsValue(args[1].toLowerCase())) ||
-            (!players.containsKey(sender.getName().toLowerCase()) &&
-            !players.containsValue(sender.getName().toLowerCase()))
-        ){
+                (!players.containsKey(args[1].toLowerCase()) &&
+                        !players.containsValue(args[1].toLowerCase())) ||
+                        (!players.containsKey(sender.getName().toLowerCase()) &&
+                                !players.containsValue(sender.getName().toLowerCase()))
+        ) {
             sender.sendMessage(MESSAGE_CONFIG.getNoPlayerFound());
             return false;
         }
