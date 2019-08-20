@@ -18,22 +18,17 @@
 
 package net.okocraft.box.command.boxadmin;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
+import lombok.Getter;
+import net.okocraft.box.command.BaseBoxCommand;
+import net.okocraft.box.command.BoxCommand;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.util.StringUtil;
 
-import lombok.Getter;
-import net.okocraft.box.command.BaseBoxCommand;
-import net.okocraft.box.command.BoxCommand;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class BoxAdmin extends BaseBoxCommand implements CommandExecutor, TabCompleter {
 
@@ -83,7 +78,7 @@ public class BoxAdmin extends BaseBoxCommand implements CommandExecutor, TabComp
             pluginCommand.setExecutor(this);
             pluginCommand.setTabCompleter(this);
         });
-        
+
     }
 
     @Override
@@ -113,7 +108,7 @@ public class BoxAdmin extends BaseBoxCommand implements CommandExecutor, TabComp
         if (args.length == 1) {
             return StringUtil.copyPartialMatches(args[0], permedSubCommands, new ArrayList<>());
         }
-        
+
         BoxCommand subCommand = subCommandMap.get(args[0].toLowerCase());
         if (subCommand == null || !permedSubCommands.contains(subCommand.getCommandName())) {
             return List.of();
@@ -123,7 +118,7 @@ public class BoxAdmin extends BaseBoxCommand implements CommandExecutor, TabComp
 
     @Override
     public String getDescription() {
-        return "";    
+        return "";
     }
 
     @Override
