@@ -47,33 +47,34 @@ public class Box extends BaseBoxCommand implements CommandExecutor, TabCompleter
     private final int subCommandMapSize;
 
     public Box() {
-        subCommandMap = new HashMap<String, BaseSubCommand>(){
+        subCommandMap = new HashMap<>() {
             private static final long serialVersionUID = 1L;
+
             {
                 Version version = new Version();
                 put(version.getCommandName(), version);
-    
+
                 Help help = new Help();
                 put(help.getCommandName(), help);
-    
+
                 AutoStoreList autoStoreList = new AutoStoreList();
                 put(autoStoreList.getCommandName(), autoStoreList);
-    
+
                 AutoStore autoStore = new AutoStore();
                 put(autoStore.getCommandName(), autoStore);
-    
+
                 GetStick getStick = new GetStick();
                 put(getStick.getCommandName(), getStick);
-    
+
                 Give give = new Give();
                 put(give.getCommandName(), give);
-    
+
                 Sell sell = new Sell();
                 put(sell.getCommandName(), sell);
-    
+
                 SellPrice sellPrice = new SellPrice();
                 put(sellPrice.getCommandName(), sellPrice);
-    
+
                 SellPriceList sellPriceList = new SellPriceList();
                 put(sellPriceList.getCommandName(), sellPriceList);
             }
