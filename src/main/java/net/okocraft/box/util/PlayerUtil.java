@@ -18,8 +18,9 @@
 
 package net.okocraft.box.util;
 
-import java.util.UUID;
-
+import lombok.val;
+import net.okocraft.box.Box;
+import net.okocraft.box.database.Database;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
@@ -27,9 +28,7 @@ import org.bukkit.SoundCategory;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import lombok.val;
-import net.okocraft.box.Box;
-import net.okocraft.box.database.Database;
+import java.util.UUID;
 
 /**
  * プレイヤー名やそのインスタンスを取り扱うツール群。
@@ -47,7 +46,6 @@ public class PlayerUtil {
      * 文字列を検証して UUID か Minecraft ID かを判定する。
      *
      * @param entry 検証する文字列
-     *
      * @return UUID なら "uuid", Minecraft ID であれば "player" を返す。
      */
     public static String isUuidOrPlayer(String entry) {
@@ -56,9 +54,8 @@ public class PlayerUtil {
 
     /**
      * データベースからUUIDを取得してそれを元にOfflinePlayerを取得する。プレイヤーが登録されていないときはコンソールに警告を出力する。
-     * 
+     *
      * @param name 取得するプレイヤーの名前
-     * 
      * @return OfflinePlayerインスタンス
      */
     public static OfflinePlayer getOfflinePlayer(String name) {
@@ -69,17 +66,14 @@ public class PlayerUtil {
         }
         return Bukkit.getOfflinePlayer(UUID.fromString(uuidString));
     }
-    
+
     /**
      * データベースにプレイヤーが登録されていない時、senderにエラーメッセージを送信してtrueを返す。
-     * 
-     * @author akaregi
-     * 
-     * @since v1.1.0
-     * 
+     *
      * @param sender 登録されているかされてないか判定する人
-     * 
      * @return 登録されていない時true されているならfalse
+     * @author akaregi
+     * @since v1.1.0
      */
     public static boolean notExistPlayer(CommandSender sender) {
         val player = ((Player) sender).getUniqueId().toString();
