@@ -129,6 +129,7 @@ public class Box extends BaseBoxCommand implements CommandExecutor, TabCompleter
     @Override
     public boolean runCommand(CommandSender sender, String[] args) {
         if (!(sender instanceof Player)) {
+            // メソッドの呼び出しの無視
             MESSAGE_CONFIG.getErrorOccurredOnGUI();
             return false;
         }
