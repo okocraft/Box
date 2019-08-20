@@ -18,9 +18,9 @@
 
 package net.okocraft.box.command.box;
 
-import java.util.List;
-
 import org.bukkit.command.CommandSender;
+
+import java.util.List;
 
 class Version extends BaseSubCommand {
 
