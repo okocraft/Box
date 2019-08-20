@@ -78,8 +78,7 @@ public class CategorySelectorGUI implements Listener {
         flame.setItemMeta(flameMeta);
         flameSlots.forEach(slot -> GUI.setItem(slot, flame));
 
-        List<ItemStack> itemList = CONFIG.getCategories().entrySet().stream().map(entry -> createItem(entry.getKey(), entry.getValue())).collect(Collectors.toList());
-        GUI.addItem(itemList.toArray(new ItemStack[itemList.size()]));
+            GUI.addItem(CONFIG.getCategories().entrySet().stream().map(entry -> createItem(entry.getKey(), entry.getValue())).toArray(ItemStack[]::new));
     }}
     
     /**
@@ -111,7 +110,7 @@ public class CategorySelectorGUI implements Listener {
     /**
      * リスナーを動かす。カテゴリーGUIと違ってカテゴリー選択GUIはonEnableのときから常にリスナーをオンにしておく。
      */
-    public static void startListener() {
+    private static void startListener() {
         if (categorySelector != null) {
             return;
         }
@@ -122,7 +121,7 @@ public class CategorySelectorGUI implements Listener {
     /**
      * リスナーを止める。
      */
-    public static void stopListener() {
+    private static void stopListener() {
         if (categorySelector == null) {
             return;
         }
@@ -151,7 +150,8 @@ public class CategorySelectorGUI implements Listener {
         val player = (Player) event.getWhoClicked();
         val action = event.getAction();
         val inventory = event.getClickedInventory();
-        if (inventory == null || inventory.getItem(0) == null || !GUI.getItem(0).isSimilar(inventory.getItem(0))) {
+        val guiItem = GUI.getItem(0);
+        if (inventory == null || inventory.getItem(0) == null || guiItem == null ||!guiItem.isSimilar(inventory.getItem(0))) {
             return;
         }
         event.setCancelled(true);
