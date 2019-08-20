@@ -176,6 +176,10 @@ public class CategorySelectorGUI implements Listener {
             return;
         }
 
+        if (clickedItem.getItemMeta() == null) {
+            return;
+        }
+
         // NOTE: NPE はItemStackがAIRの場合のみしか起こらない。
         val categoryName = clickedItem.getItemMeta().getPersistentDataContainer()
                 .get(CATEGORY_NAME_KEY, PersistentDataType.STRING);
@@ -183,7 +187,5 @@ public class CategorySelectorGUI implements Listener {
         player.closeInventory();
 
         new CategoryGUI(player, categoryName, 1);
-
-        return;
     }
 }
