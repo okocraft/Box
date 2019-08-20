@@ -19,19 +19,17 @@
 package net.okocraft.box.listeners;
 
 import lombok.val;
-
-import java.util.HashMap;
-import java.util.stream.Collectors;
-
+import net.okocraft.box.Box;
+import net.okocraft.box.database.Database;
+import net.okocraft.box.util.GeneralConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.Plugin;
 
-import net.okocraft.box.util.GeneralConfig;
-import net.okocraft.box.Box;
-import net.okocraft.box.database.Database;
+import java.util.HashMap;
+import java.util.stream.Collectors;
 
 public class PlayerJoin implements Listener {
     private final Database database;
@@ -41,14 +39,14 @@ public class PlayerJoin implements Listener {
         Bukkit.getPluginManager().registerEvents(this, plugin);
 
         this.database = database;
-        this.config   = Box.getInstance().getGeneralConfig();
+        this.config = Box.getInstance().getGeneralConfig();
     }
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         val player = event.getPlayer();
-        val uuid   = player.getUniqueId().toString();
-        val name   = player.getName().toLowerCase();
+        val uuid = player.getUniqueId().toString();
+        val name = player.getName().toLowerCase();
 
         // 新規プレイヤーが昔いた他のプレイヤーと同じ名前でログインしたら昔のプレイヤーの名前を消す。
         val registeredUuid = database.get("uuid", name);
