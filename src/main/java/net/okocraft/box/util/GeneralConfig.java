@@ -179,13 +179,15 @@ public class GeneralConfig {
         // コンフィグに書かれた順番で表示するためにLinkedHashMapを使っている。
         categories = new LinkedHashMap<>();
         if (itemConfig.isConfigurationSection("categories")) {
-            itemConfig.getConfigurationSection("categories").getKeys(false).forEach(sectionName -> {
+            ConfigurationSection categoriesConfig = itemConfig.getConfigurationSection("categories");
+            if (categoriesConfig != null){
+            categoriesConfig.getKeys(false).forEach(sectionName -> {
                 if (itemConfig.isConfigurationSection("categories." + sectionName)) {
                     ConfigurationSection section = itemConfig.getConfigurationSection("categories." + sectionName);
                     categories.put(sectionName, section);
                 }
             });
-        }
+        }}
 
         // CHANGED: Nullable になると IntelliJ がうるさいので Optional 化
         categorySelectionGuiName = ChatColor.translateAlternateColorCodes('&',
