@@ -18,17 +18,16 @@
 
 package net.okocraft.box.command.boxadmin;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
+import net.okocraft.box.listeners.GenerateItemConfig;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 
-import net.okocraft.box.listeners.GenerateItemConfig;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 class AddCategory extends BaseSubAdminCommand {
 
@@ -52,18 +51,18 @@ class AddCategory extends BaseSubAdminCommand {
         List<String> result = new ArrayList<>();
 
         switch (args.length) {
-        case 2:
-            return StringUtil.copyPartialMatches(args[1], List.of("<category>"), result);
-        case 3:
-            return StringUtil.copyPartialMatches(args[2], List.of("<id>"), result);
-        case 4:
-            return StringUtil.copyPartialMatches(args[3], List.of("<display_name>"), result);
-        case 5:
-        List<String> items = Arrays.stream(Material.values())
-                .map(Material::name).collect(Collectors.toList());
-            return StringUtil.copyPartialMatches(args[4], items, result);
-        default:
-            return result;
+            case 2:
+                return StringUtil.copyPartialMatches(args[1], List.of("<category>"), result);
+            case 3:
+                return StringUtil.copyPartialMatches(args[2], List.of("<id>"), result);
+            case 4:
+                return StringUtil.copyPartialMatches(args[3], List.of("<display_name>"), result);
+            case 5:
+                List<String> items = Arrays.stream(Material.values())
+                        .map(Material::name).collect(Collectors.toList());
+                return StringUtil.copyPartialMatches(args[4], items, result);
+            default:
+                return result;
         }
     }
 
