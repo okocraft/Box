@@ -18,10 +18,9 @@
 
 package net.okocraft.box.listeners;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
-
+import net.okocraft.box.Box;
+import net.okocraft.box.database.Database;
+import net.okocraft.box.util.GeneralConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -33,9 +32,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import net.okocraft.box.util.GeneralConfig;
-import net.okocraft.box.Box;
-import net.okocraft.box.database.Database;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class EntityPickupItem implements Listener {
     private final Database database;
@@ -51,7 +50,7 @@ public class EntityPickupItem implements Listener {
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
 
         // Initialize...
-        this.config   = Box.getInstance().getGeneralConfig();
+        this.config = Box.getInstance().getGeneralConfig();
         this.database = database;
     }
 
@@ -78,7 +77,7 @@ public class EntityPickupItem implements Listener {
         if (!autoStore.containsKey(player)) {
             autoStore.put(player, new HashMap<>());
         }
-        
+
         Material pickedMaterial = pickedItem.getType();
         String itemName = pickedMaterial.name();
         if (!autoStore.get(player).containsKey(itemName)) {
@@ -100,17 +99,17 @@ public class EntityPickupItem implements Listener {
         event.setCancelled(true);
 
         player.playSound(
-            player.getLocation(),
-            config.getTakeInSound(),
-            config.getSoundPitch(),
-            config.getSoundVolume()
+                player.getLocation(),
+                config.getTakeInSound(),
+                config.getSoundPitch(),
+                config.getSoundVolume()
         );
 
         if (!cooldown.containsKey(player)) {
             cooldown.put(player, System.currentTimeMillis() + 1000L);
-            
-            new BukkitRunnable(){
-                
+
+            new BukkitRunnable() {
+
                 @Override
                 public void run() {
                     if (cooldown.get(player) < System.currentTimeMillis()) {
