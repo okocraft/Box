@@ -59,10 +59,10 @@ class AutoStore extends BaseSubCommand {
 
     /**
      * アイテム１つのautoStore設定を変更する。
-     * 
-     * @param sender
-     * @param item
-     * @param switchTo
+     *
+     * @param sender 変更する人
+     * @param item 変更するアイテム
+     * @param switchTo 変更後の boolean
      * 
      * @return 実行に成功したら {@code true}
      */
