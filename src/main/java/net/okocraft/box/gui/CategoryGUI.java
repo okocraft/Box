@@ -72,6 +72,7 @@ class CategoryGUI implements Listener {
      * @param quantity     引き出し・預け入れ量
      * @throws IllegalArgumentException カテゴリ名が登録されていないとき。
      */
+    // quantity は常に 1
     CategoryGUI(Player player, String categoryName, int quantity) throws IllegalArgumentException {
         Map<String, ConfigurationSection> categories = CONFIG.getCategories();
         if (!categories.containsKey(categoryName)) {
