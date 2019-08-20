@@ -68,7 +68,7 @@ public class CategorySelectorGUI implements Listener {
         initGUI();
     }
 
-    public static void initGUI() {
+    private static void initGUI() {
         GUI.clear();
         ItemStack flame = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
         ItemMeta flameMeta = flame.getItemMeta();
@@ -140,7 +140,7 @@ public class CategorySelectorGUI implements Listener {
     /**
      * カテゴリ選択GUIへのクリックを検知して、適切なカテゴリGUIに遷移させる。
      * 
-     * @param event
+     * @param event イベント
      */
     @EventHandler(priority = EventPriority.NORMAL)
     public void onClick(InventoryClickEvent event) {
