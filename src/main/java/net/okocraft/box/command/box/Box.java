@@ -37,7 +37,7 @@ public class Box extends BaseBoxCommand implements CommandExecutor, TabCompleter
     private static final String USAGE = "/box [args...]";
 
     @Getter
-    private Map<String, BaseSubCommand> subCommandMap;
+    private final Map<String, BaseSubCommand> subCommandMap;
     @Getter
     private final int subCommandMapSize;
 

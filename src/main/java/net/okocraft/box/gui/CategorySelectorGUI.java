@@ -53,7 +53,7 @@ public class CategorySelectorGUI implements Listener {
 
     public static final Inventory GUI = Bukkit.createInventory(null, 54, CONFIG.getCategorySelectionGuiName());
 
-    private static List<Integer> flameSlots = List.of(
+    private static final List<Integer> flameSlots = List.of(
             0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 17, 18, 26, 27, 35, 36, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53
     );
 

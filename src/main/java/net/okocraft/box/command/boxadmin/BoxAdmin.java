@@ -37,7 +37,7 @@ public class BoxAdmin extends BaseBoxCommand implements CommandExecutor, TabComp
     private static final String USAGE = "/boxadmin <args...>";
 
     @Getter
-    private Map<String, BoxCommand> subCommandMap;
+    private final Map<String, BoxCommand> subCommandMap;
     @Getter
     private final int subCommandMapSize;
 
