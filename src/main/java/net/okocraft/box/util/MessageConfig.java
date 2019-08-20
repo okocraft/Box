@@ -1,6 +1,6 @@
 /*
  * Box
- * Copyright (C) 2019 OKOCRAFT 
+ * Copyright (C) 2019 OKOCRAFT
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,19 +18,17 @@
 
 package net.okocraft.box.util;
 
+import lombok.Getter;
+import lombok.val;
+import net.okocraft.box.Box;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+
+import javax.annotation.Nonnull;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import javax.annotation.Nonnull;
-
-import lombok.Getter;
-
-import lombok.val;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
-
-import net.okocraft.box.Box;
 
 /**
  * メッセージ設定クラス
@@ -324,12 +322,10 @@ public class MessageConfig {
     /**
      * 設定ファイルからメッセージを取得し、それにBoxのprefixをつけて返す。
      *
+     * @param key YAML キー
+     * @return メッセージ
      * @author akaregi
      * @since v1.1.0
-     *
-     * @param key YAML キー
-     *
-     * @return メッセージ
      */
     @Nonnull
     private String getMessage(@Nonnull String key) {
@@ -338,14 +334,11 @@ public class MessageConfig {
 
     /**
      * 設定ファイルからメッセージを取得する。
-     * 
-     * @author LazyGon
-     * 
-     * @since v1.1.0
-     * 
+     *
      * @param key YAML キー
-     * 
      * @return 生メッセージ
+     * @author LazyGon
+     * @since v1.1.0
      */
     private String getRawMessage(@Nonnull String key) {
         return MessageUtil.convertColorCode(
@@ -355,17 +348,15 @@ public class MessageConfig {
 
     /**
      * jarの中にあるmessages.ymlからメッセージを取得する。
-     * 
+     *
+     * @param key YAML キー
+     * @return メッセージ
      * @author LazyGon
      * @since v1.1.0
-     * 
-     * @param key YAML キー
-     * 
-     * @return メッセージ
      */
     private String getDefaultMessage(String key) {
         InputStream messageConfigStream = Optional.ofNullable(
-            Box.getInstance().getResource("messages.yml")
+                Box.getInstance().getResource("messages.yml")
         ).orElseThrow(() -> new NoSuchElementException("No message file."));
 
         YamlConfiguration jarConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(messageConfigStream));
@@ -375,11 +366,10 @@ public class MessageConfig {
 
     /**
      * 設定ファイルからプラグインのプレフィックスを取得する。
-     * 
+     *
+     * @return prefix
      * @author LazyGon
      * @since v1.1.0
-     * 
-     * @return prefix
      */
     @Nonnull
     private String getPrefix() {
