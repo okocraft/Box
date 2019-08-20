@@ -78,7 +78,7 @@ class CategoryGUI implements Listener {
      * @param quantity 引き出し・預け入れ量
      * @throws IllegalArgumentException カテゴリ名が登録されていないとき。
      */
-    public CategoryGUI(Player player, String categoryName, int quantity) throws IllegalArgumentException {
+    CategoryGUI(Player player, String categoryName, int quantity) throws IllegalArgumentException {
         Map<String, ConfigurationSection> categories = CONFIG.getCategories();
         if (!categories.containsKey(categoryName)) {
             throw new IllegalArgumentException("Category " + categoryName + " is not registered.");
@@ -91,10 +91,11 @@ class CategoryGUI implements Listener {
         this.gui = Bukkit.createInventory(null, 54, guiName);
         ConfigurationSection categorySection = categories.get(categoryName);
         if (categorySection.isConfigurationSection("item")) {
-            List<String> keys = new ArrayList<>(categorySection.getConfigurationSection("item").getKeys(false));
-            if (keys.isEmpty()) {
-                throw new IllegalArgumentException("section has no item.");
-            }
+            // getConfigurationSection は Nullable.
+                List<String> keys = new ArrayList<>(categorySection.getConfigurationSection("item").getKeys(false));
+                if (keys.isEmpty()) {
+                    throw new IllegalArgumentException("section has no item.");
+                }
             keys.removeIf(name -> !CONFIG.getAllItems().contains(name));
             items = new ArrayList<>();
             itemStockMap = DATABASE.getMultiValue(keys, player.getUniqueId().toString()).entrySet().stream()
@@ -106,6 +107,7 @@ class CategoryGUI implements Listener {
 
                         int stock = Integer.parseInt(value);
 
+                        // getMaterial は Nullable.
                         Material material = Material.getMaterial(key);
 
                         // itemsに追加する ------
@@ -113,15 +115,17 @@ class CategoryGUI implements Listener {
 
                         // meta設定
                         ItemMeta meta = item.getItemMeta();
-                        String jp = categorySection.getString("item." + key + ".jp", "");
-                        String en = categorySection.getString("item." + key + ".en", "");
-                        String itemName = replacePlaceholders(CONFIG.getItemTemplateName(), jp, en, stock, quantity);
-                        List<String> itemLore = new ArrayList<>(CONFIG.getItemTemplateLore());
-                        itemLore.replaceAll(loreLine -> replacePlaceholders(loreLine, jp, en, stock, quantity));
-                        meta.setDisplayName(itemName);
-                        meta.setLore(itemLore);
-                        item.setItemMeta(meta);
-                        items.add(item);
+                        if (meta != null) {
+                            String jp = categorySection.getString("item." + key + ".jp", "");
+                            String en = categorySection.getString("item." + key + ".en", "");
+                            String itemName = replacePlaceholders(CONFIG.getItemTemplateName(), jp, en, stock, quantity);
+                            List<String> itemLore = new ArrayList<>(CONFIG.getItemTemplateLore());
+                            itemLore.replaceAll(loreLine -> replacePlaceholders(loreLine, jp, en, stock, quantity));
+                            meta.setDisplayName(itemName);
+                            meta.setLore(itemLore);
+                            item.setItemMeta(meta);
+                            items.add(item);
+                        }
                         // -------
 
                         return Map.entry(material, stock);
@@ -288,14 +292,16 @@ class CategoryGUI implements Listener {
      */
     private void updateLore(ItemStack item) {
         ItemMeta meta = item.getItemMeta();
-        String materialName = item.getType().name();
-        String jp = categorySection.getString("item." + materialName + ".jp", "");
-        String en = categorySection.getString("item." + materialName + ".en", "");
-        int stock = itemStockMap.get(item.getType());
-        List<String> itemLore = new ArrayList<>(CONFIG.getItemTemplateLore());
-        itemLore.replaceAll(loreLine -> replacePlaceholders(loreLine, jp, en, stock, quantity));
-        meta.setLore(itemLore);
-        item.setItemMeta(meta);
+        if (meta != null) {
+            String materialName = item.getType().name();
+            String jp = categorySection.getString("item." + materialName + ".jp", "");
+            String en = categorySection.getString("item." + materialName + ".en", "");
+            int stock = itemStockMap.get(item.getType());
+            List<String> itemLore = new ArrayList<>(CONFIG.getItemTemplateLore());
+            itemLore.replaceAll(loreLine -> replacePlaceholders(loreLine, jp, en, stock, quantity));
+            meta.setLore(itemLore);
+            item.setItemMeta(meta);
+        }
     }
 
     /**
