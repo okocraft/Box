@@ -18,13 +18,12 @@
 
 package net.okocraft.box.command.boxadmin;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import net.okocraft.box.util.OtherUtil;
 import org.bukkit.command.CommandSender;
 import org.bukkit.util.StringUtil;
 
-import net.okocraft.box.util.OtherUtil;
+import java.util.ArrayList;
+import java.util.List;
 
 class Set extends BaseSubAdminCommand {
 
@@ -38,7 +37,7 @@ class Set extends BaseSubAdminCommand {
             return false;
         }
         String player = args[1].toLowerCase();
-        String item   = args[2].toUpperCase();
+        String item = args[2].toUpperCase();
 
         long amount = args.length < 4 ? 0 : OtherUtil.parseLongOrDefault(args[3], 0);
 
