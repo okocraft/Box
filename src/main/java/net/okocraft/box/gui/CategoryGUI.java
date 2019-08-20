@@ -18,16 +18,12 @@
 
 package net.okocraft.box.gui;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
 import com.google.common.primitives.Ints;
-
+import lombok.Getter;
+import net.okocraft.box.Box;
+import net.okocraft.box.database.Database;
+import net.okocraft.box.util.GeneralConfig;
+import net.okocraft.box.util.PlayerUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -47,11 +43,9 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import lombok.Getter;
-import net.okocraft.box.Box;
-import net.okocraft.box.database.Database;
-import net.okocraft.box.util.GeneralConfig;
-import net.okocraft.box.util.PlayerUtil;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 class CategoryGUI implements Listener {
 
@@ -72,10 +66,10 @@ class CategoryGUI implements Listener {
 
     /**
      * コンストラクタ
-     * 
-     * @param player カテゴリ選択GUIでアイコンをクリックしたプレイヤー
+     *
+     * @param player       カテゴリ選択GUIでアイコンをクリックしたプレイヤー
      * @param categoryName 選択されたカテゴリの名前
-     * @param quantity 引き出し・預け入れ量
+     * @param quantity     引き出し・預け入れ量
      * @throws IllegalArgumentException カテゴリ名が登録されていないとき。
      */
     CategoryGUI(Player player, String categoryName, int quantity) throws IllegalArgumentException {
@@ -92,10 +86,10 @@ class CategoryGUI implements Listener {
         ConfigurationSection categorySection = categories.get(categoryName);
         if (categorySection.isConfigurationSection("item")) {
             // getConfigurationSection は Nullable.
-                List<String> keys = new ArrayList<>(categorySection.getConfigurationSection("item").getKeys(false));
-                if (keys.isEmpty()) {
-                    throw new IllegalArgumentException("section has no item.");
-                }
+            List<String> keys = new ArrayList<>(categorySection.getConfigurationSection("item").getKeys(false));
+            if (keys.isEmpty()) {
+                throw new IllegalArgumentException("section has no item.");
+            }
             keys.removeIf(name -> !CONFIG.getAllItems().contains(name));
             items = new ArrayList<>();
             itemStockMap = DATABASE.getMultiValue(keys, player.getUniqueId().toString()).entrySet().stream()
@@ -130,10 +124,10 @@ class CategoryGUI implements Listener {
 
                         return Map.entry(material, stock);
                     }).collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                        Map.Entry::getValue,
-                        (e1, e2) -> e1,
-                        HashMap::new)
+                            Map.Entry::getKey,
+                            Map.Entry::getValue,
+                            (e1, e2) -> e1,
+                            HashMap::new)
                     );
         } else {
             throw new IllegalArgumentException("item section is invalid.");
@@ -146,11 +140,11 @@ class CategoryGUI implements Listener {
 
     /**
      * originalのプレホルを受け取った情報で置換する。
-     * 
+     *
      * @param original プレホルを含むオリジナル文字列
-     * @param jp アイテムの日本語名
-     * @param en アイテムの英語名
-     * @param stock アイテムの在庫
+     * @param jp       アイテムの日本語名
+     * @param en       アイテムの英語名
+     * @param stock    アイテムの在庫
      * @param quantity 一度のアイテムの取引量
      * @return 置換された文字列
      */
@@ -162,7 +156,7 @@ class CategoryGUI implements Listener {
 
     /**
      * 今開いているguiのページを指定したページに移動させる。
-     * 
+     *
      * @param page 目的のページ
      */
     private void setPage(int page) {
@@ -188,7 +182,7 @@ class CategoryGUI implements Listener {
 
     /**
      * 取引量を変える。
-     * 
+     *
      * @param newQuantity 新しい取引量
      */
     private void setQuantity(int newQuantity) {
@@ -217,7 +211,7 @@ class CategoryGUI implements Listener {
 
     /**
      * アイテムを引き出す。
-     * 
+     *
      * @param item 引き出すアイテム
      */
     private void withdraw(Material item) {
@@ -240,10 +234,10 @@ class CategoryGUI implements Listener {
         PlayerUtil.playSound(player, CONFIG.getTakeOutSound());
         updateLore(item);
     }
-    
+
     /**
      * アイテムを預ける。
-     * 
+     *
      * @param item 預けるアイテム
      */
     private void deposit(Material item) {
@@ -264,10 +258,10 @@ class CategoryGUI implements Listener {
         PlayerUtil.playSound(player, CONFIG.getTakeInSound());
         updateLore(item);
     }
-    
+
     /**
      * アイテムの取引などで変動したloreを追随させるためのメソッド。
-     * 
+     *
      * @param material loreを更新するアイテムを検索するためのタイプ
      */
     private void updateLore(Material material) {
@@ -287,7 +281,7 @@ class CategoryGUI implements Listener {
 
     /**
      * GUIの初期化や、アイテムの取引などで変動したloreを追随させるためのメソッド。
-     * 
+     *
      * @param item loreを更新するアイテム
      */
     private void updateLore(ItemStack item) {
@@ -309,10 +303,10 @@ class CategoryGUI implements Listener {
      */
     private void commit() {
         Map<String, String> change = stockChangedItems.stream().collect(Collectors.toMap(
-            Enum::name,
-            item -> String.valueOf(itemStockMap.get(item)),
-            (e1, e2) -> e1,
-            HashMap::new
+                Enum::name,
+                item -> String.valueOf(itemStockMap.get(item)),
+                (e1, e2) -> e1,
+                HashMap::new
         ));
 
         DATABASE.setMultiValue(change, player.getName());
@@ -346,14 +340,14 @@ class CategoryGUI implements Listener {
         ItemStack item = gui.getItem(0);
 
         if (item == null) return;
-        
+
         if (!item.isSimilar(inv.getItem(0))) {
             return;
         }
 
         InventoryAction action = event.getAction();
         event.setCancelled(true);
-        
+
         if (CONFIG.getDisabledWorlds().contains(event.getWhoClicked().getWorld().getName())) {
             return;
         }
@@ -424,7 +418,7 @@ class CategoryGUI implements Listener {
             setQuantity(currentQuantity);
             return;
         }
-        
+
         Material itemType = clickedItem.getType();
         if (!itemStockMap.containsKey(itemType)) {
             return;
