@@ -18,6 +18,11 @@
 
 package net.okocraft.box.util;
 
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.Plugin;
+
+import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,12 +30,6 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import java.util.logging.Level;
-
-import javax.annotation.Nonnull;
-
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.plugin.Plugin;
 
 /**
  * リソース（YAML 設定）を取り扱うクラス。
@@ -68,9 +67,8 @@ public class CustomConfig {
     /**
      * 設定を取得する。
      *
-     * @author LazyGon
-     *
      * @return FileConfiguration
+     * @author LazyGon
      */
     @Nonnull
     FileConfiguration getConfig() {
