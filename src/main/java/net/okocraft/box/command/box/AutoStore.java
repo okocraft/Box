@@ -18,19 +18,17 @@
 
 package net.okocraft.box.command.box;
 
+import net.okocraft.box.util.PlayerUtil;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.bukkit.util.StringUtil;
+
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import javax.annotation.Nullable;
-
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-import org.bukkit.util.StringUtil;
-
-import net.okocraft.box.util.PlayerUtil;
 
 class AutoStore extends BaseSubCommand {
 
@@ -60,10 +58,9 @@ class AutoStore extends BaseSubCommand {
     /**
      * アイテム１つのautoStore設定を変更する。
      *
-     * @param sender 変更する人
-     * @param item 変更するアイテム
+     * @param sender   変更する人
+     * @param item     変更するアイテム
      * @param switchTo 変更後の boolean
-     * 
      * @return 実行に成功したら {@code true}
      */
     private boolean autoStore(CommandSender sender, String item, @Nullable String switchTo) {
@@ -86,10 +83,10 @@ class AutoStore extends BaseSubCommand {
 
     /**
      * アイテムすべてのautoStore設定を変更する。
-     * 
-     * @param sender 変更する人
+     *
+     * @param sender   変更する人
      * @param switchTo 変更後の boolean
-     * @return  実行に成功したら {@code true}
+     * @return 実行に成功したら {@code true}
      */
     private boolean autoStoreAll(CommandSender sender, String switchTo) {
         String player = ((Player) sender).getUniqueId().toString();
@@ -168,7 +165,7 @@ class AutoStore extends BaseSubCommand {
         if (!super.validate(sender, args)) {
             return false;
         }
-        
+
         if (!(sender instanceof Player)) {
             sender.sendMessage(MESSAGE_CONFIG.getPlayerOnly());
             return false;
