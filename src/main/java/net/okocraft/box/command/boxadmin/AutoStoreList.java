@@ -43,7 +43,7 @@ class AutoStoreList extends BaseSubAdminCommand {
         }
 
         String player = args[1].toLowerCase();
-        int index = args.length >= 2 ? OtherUtil.parseIntOrDefault(args[2], 1) : 1;
+        int index = OtherUtil.parseIntOrDefault(args[2], 1);
         int maxLine = CONFIG.getAllItems().size();
         int currentLine = Math.min(maxLine, index * 8);
 
