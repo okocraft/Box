@@ -59,9 +59,10 @@ class AutoStore extends BaseSubAdminCommand {
     /**
      * アイテム１つのautoStore設定を変更する。
      *
-     * @param sender
-     * @param itemName
-     * @param switchTo
+     * @param sender コマンド実行者
+     * @param player 変更される人
+     * @param itemName 変更するアイテム
+     * @param switchTo 変更後の boolean
      * @return 実行に成功したら {@code true}
      */
     private boolean autoStore(CommandSender sender, String player, String itemName, @Nullable String switchTo) {
@@ -83,9 +84,9 @@ class AutoStore extends BaseSubAdminCommand {
     /**
      * アイテムすべてのautoStore設定を変更する。
      *
-     * @param sender
-     * @param player
-     * @param switchTo
+     * @param sender コマンド実行者
+     * @param player 変更される人
+     * @param switchTo 変更後の boolean
      * @return 実行に成功したら {@code true}
      */
     private boolean autoStoreAll(CommandSender sender, String player, String switchTo) {
