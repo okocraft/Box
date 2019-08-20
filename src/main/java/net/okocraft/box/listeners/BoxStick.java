@@ -1,8 +1,10 @@
 package net.okocraft.box.listeners;
 
-import java.util.List;
-import java.util.Optional;
-
+import lombok.Getter;
+import net.okocraft.box.Box;
+import net.okocraft.box.database.Database;
+import net.okocraft.box.util.GeneralConfig;
+import net.okocraft.box.util.OtherUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -18,11 +20,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import lombok.Getter;
-import net.okocraft.box.Box;
-import net.okocraft.box.database.Database;
-import net.okocraft.box.util.GeneralConfig;
-import net.okocraft.box.util.OtherUtil;
+import java.util.List;
+import java.util.Optional;
 
 public class BoxStick implements Listener {
 
@@ -36,22 +35,23 @@ public class BoxStick implements Listener {
         {
             ItemMeta meta = getItemMeta();
             String stickDisplayName = CONFIG.getDefaultConfig().getString("General.BoxStick.DisplayName", "&9Box Stick");
-            if (meta != null && stickDisplayName != null){
-            meta.setDisplayName(ChatColor.translateAlternateColorCodes('&',
-                    stickDisplayName));
+            if (meta != null && stickDisplayName != null) {
+                meta.setDisplayName(ChatColor.translateAlternateColorCodes('&',
+                        stickDisplayName));
 
-            List<String> lore = CONFIG.getDefaultConfig().getStringList("General.BoxStick.Lore");
-            if (lore.isEmpty()) {
-                lore.add("§r");
-                lore.add("§7利き手じゃない手にこれを持つと、利き手の");
-                lore.add("§7アイテムを使った時にBoxから消費します。");
+                List<String> lore = CONFIG.getDefaultConfig().getStringList("General.BoxStick.Lore");
+                if (lore.isEmpty()) {
+                    lore.add("§r");
+                    lore.add("§7利き手じゃない手にこれを持つと、利き手の");
+                    lore.add("§7アイテムを使った時にBoxから消費します。");
+                }
+                lore.replaceAll(loreLine -> ChatColor.translateAlternateColorCodes('&', loreLine));
+                meta.setLore(lore);
+
+                meta.getPersistentDataContainer().set(stickKey, PersistentDataType.INTEGER, 1);
+                setItemMeta(meta);
             }
-            lore.replaceAll(loreLine -> ChatColor.translateAlternateColorCodes('&', loreLine));
-            meta.setLore(lore);
-
-            meta.getPersistentDataContainer().set(stickKey, PersistentDataType.INTEGER, 1);
-            setItemMeta(meta);
-        }}
+        }
     };
 
     public BoxStick() {
@@ -87,7 +87,7 @@ public class BoxStick implements Listener {
             return;
         }
 
-        if(offHandItem.getItemMeta() == null) return;
+        if (offHandItem.getItemMeta() == null) return;
 
         if (Optional.ofNullable(
                 offHandItem.getItemMeta().getPersistentDataContainer().get(stickKey, PersistentDataType.INTEGER))
