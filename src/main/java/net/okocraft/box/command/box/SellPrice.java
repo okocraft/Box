@@ -18,15 +18,14 @@
 
 package net.okocraft.box.command.box;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
+import net.okocraft.box.util.PlayerUtil;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 
-import net.okocraft.box.util.PlayerUtil;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 class SellPrice extends BaseSubCommand {
 
@@ -43,9 +42,9 @@ class SellPrice extends BaseSubCommand {
         String item = args[1].toUpperCase();
         double price = Optional.ofNullable(CONFIG.getSellPrice().get(item)).orElse(0);
         sender.sendMessage(
-            MESSAGE_CONFIG.getSellPriceFormat()
-                    .replaceAll("%item%", item)
-                    .replaceAll("%price%", String.valueOf(price))
+                MESSAGE_CONFIG.getSellPriceFormat()
+                        .replaceAll("%item%", item)
+                        .replaceAll("%price%", String.valueOf(price))
         );
 
         return true;
@@ -54,9 +53,9 @@ class SellPrice extends BaseSubCommand {
     @Override
     public List<String> runTabComplete(CommandSender sender, String[] args) {
         List<String> result = new ArrayList<>();
-        
+
         List<String> items = new ArrayList<>(CONFIG.getSellPrice().keySet());
-        
+
         if (args.length == 2) {
             return StringUtil.copyPartialMatches(args[1], items, result);
         }
@@ -89,7 +88,7 @@ class SellPrice extends BaseSubCommand {
         if (!super.validate(sender, args)) {
             return false;
         }
-        
+
         if (!(sender instanceof Player)) {
             sender.sendMessage(MESSAGE_CONFIG.getPlayerOnly());
             return false;
@@ -99,7 +98,7 @@ class SellPrice extends BaseSubCommand {
             sender.sendMessage(MESSAGE_CONFIG.getEconomyIsNull());
             return false;
         }
-        
+
         if (!CONFIG.getAllItems().contains(args[1].toUpperCase())) {
             sender.sendMessage(MESSAGE_CONFIG.getNoItemFound());
             return false;
