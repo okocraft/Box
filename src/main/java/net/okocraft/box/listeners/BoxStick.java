@@ -96,6 +96,10 @@ public class BoxStick implements Listener {
             return;
         }
 
+        if (usedItem.hasItemMeta() || !usedItem.getEnchantments().isEmpty()) {
+            return;
+        }
+
         int stock = OtherUtil.parseIntOrDefault(DATABASE.get(usedItem.getType().name(), player.getUniqueId().toString()), 0);
         if (stock < 1) {
             return;
