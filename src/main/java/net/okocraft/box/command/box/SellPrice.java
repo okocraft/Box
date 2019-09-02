@@ -41,7 +41,7 @@ class SellPrice extends BaseSubCommand {
         }
 
         String item = args[1].toUpperCase();
-        double price = Optional.ofNullable(CONFIG.getSellPrice().get(item)).orElse(0);
+        double price = Optional.ofNullable(CONFIG.getSellPrice().get(item)).orElse(0D);
         sender.sendMessage(
             MESSAGE_CONFIG.getSellPriceFormat()
                     .replaceAll("%item%", item)
