@@ -48,16 +48,16 @@ class AutoStoreList extends BaseSubCommand {
         Set<String> allItems = CONFIG.getAllItems();
 
         int maxLine = allItems.size();
-        int maxPage = maxLine % 8 == 0 ? maxLine / 8 : maxLine / 8 + 1;
+        int maxPage = maxLine % 9 == 0 ? maxLine / 9 : maxLine / 9 + 1;
         int page = Math.min(maxPage, (args.length >= 2 ? OtherUtil.parseIntOrDefault(args[1], 1) : 1));
-        int currentLine = Math.min(maxLine, page * 8);
+        int currentLine = Math.min(maxLine, page * 9);
 
         sender.sendMessage(MESSAGE_CONFIG.getAutoStoreListHeader()
                 .replaceAll("%player%", sender.getName().toLowerCase()).replaceAll("%page%", String.valueOf(page))
                 .replaceAll("%currentLine%", String.valueOf(currentLine))
                 .replaceAll("%maxLine%", String.valueOf(maxLine)));
 
-        PlayerData.getAutoStoreAll((OfflinePlayer) sender).entrySet().stream().skip((page - 1) * 8).limit(8).forEach(
+        PlayerData.getAutoStoreAll((OfflinePlayer) sender).entrySet().stream().skip((page - 1) * 9).limit(9).forEach(
                 entry -> sender.sendMessage(MESSAGE_CONFIG.getAutoStoreListFormat().replaceAll("%item%", entry.getKey())
                         .replaceAll("%isEnabled%", Boolean.toString(entry.getValue()))
                         .replaceAll("%currentLine%", String.valueOf(currentLine))
@@ -71,7 +71,7 @@ class AutoStoreList extends BaseSubCommand {
         List<String> result = new ArrayList<>();
 
         int items = CONFIG.getAllItems().size();
-        int maxPage = items % 8 == 0 ? items / 8 : items / 8 + 1;
+        int maxPage = items % 9 == 0 ? items / 9 : items / 9 + 1;
         List<String> pages = IntStream.rangeClosed(1, maxPage).boxed().map(String::valueOf)
                 .collect(Collectors.toList());
         if (args.length == 2) {

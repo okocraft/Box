@@ -41,9 +41,9 @@ class SellPriceList extends BaseSubCommand {
         }
         
         int maxLine = CONFIG.getAllItems().size();
-        int maxPage = maxLine % 8 == 0 ? maxLine / 8 : maxLine / 8 + 1;
+        int maxPage = maxLine % 9 == 0 ? maxLine / 9 : maxLine / 9 + 1;
         int page = Math.min(maxPage, (args.length >= 2 ? OtherUtil.parseIntOrDefault(args[1], 1) : 1));
-        int currentLine = Math.min(maxLine, page * 8);
+        int currentLine = Math.min(maxLine, page * 9);
 
         sender.sendMessage(
                 MESSAGE_CONFIG.getSellPriceListHeader()
@@ -51,7 +51,7 @@ class SellPriceList extends BaseSubCommand {
                         .replaceAll("%maxLine%", String.valueOf(maxLine))
         );
 
-        CONFIG.getSellPrice().entrySet().stream().skip(8 * (page - 1)).limit(8)
+        CONFIG.getSellPrice().entrySet().stream().skip(9 * (page - 1)).limit(9)
                 .forEach(mapEntry -> sender.sendMessage(MESSAGE_CONFIG.getSellPriceListFormat()
                         .replaceAll("%item%", mapEntry.getKey())
                         .replaceAll("%price%", String.valueOf(mapEntry.getValue()))
@@ -65,7 +65,7 @@ class SellPriceList extends BaseSubCommand {
         List<String> result = new ArrayList<>();
 
         int items = CONFIG.getSellPrice().size();
-        int maxPage = items % 8 == 0 ? items : items + 1;
+        int maxPage = items % 9 == 0 ? items / 9 : items / 9 + 1;
 
         List<String> pages = IntStream.rangeClosed(0, maxPage).boxed().map(String::valueOf).collect(Collectors.toList());
 

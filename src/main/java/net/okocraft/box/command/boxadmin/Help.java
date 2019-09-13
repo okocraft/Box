@@ -55,11 +55,11 @@ class Help extends BaseSubAdminCommand {
 
         int mapSize = commands.getSubCommandMapSize();
         int page = args.length > 1 ? OtherUtil.parseIntOrDefault(args[1], 1) : 1;
-        int maxPage = mapSize % 8 == 0 ? mapSize / 8 : mapSize / 8 + 1;
+        int maxPage = mapSize % 9 == 0 ? mapSize / 9 : mapSize / 9 + 1;
         page = Math.min(page, maxPage);
 
         sender.sendMessage(MESSAGE_CONFIG.getAdminCommandHelpHeader());
-        commandDescriptionMap.entrySet().stream().skip(8 * (page - 1)).limit(8).forEach(entry -> {
+        commandDescriptionMap.entrySet().stream().skip(9 * (page - 1)).limit(9).forEach(entry -> {
             sender.sendMessage("§b" + entry.getKey() + "§7 - " + entry.getValue());
         });
 
@@ -71,7 +71,7 @@ class Help extends BaseSubAdminCommand {
         List<String> result = new ArrayList<>();
 
         int mapSize = INSTANCE.getAdminCommand().getSubCommandMapSize();
-        int maxPage = mapSize % 8 == 0 ? mapSize / 8 : mapSize / 8 + 1;
+        int maxPage = mapSize % 9 == 0 ? mapSize / 9 : mapSize / 9 + 1;
         List<String> pages  = IntStream.rangeClosed(1, maxPage).boxed().map(String::valueOf).collect(Collectors.toList());
         if (args.length == 2) {
             return StringUtil.copyPartialMatches(args[1], pages, result);
