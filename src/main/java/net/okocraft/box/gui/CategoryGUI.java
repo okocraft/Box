@@ -19,20 +19,13 @@
 package net.okocraft.box.gui;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import com.google.common.primitives.Ints;
-
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -49,7 +42,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import lombok.Getter;
 import net.okocraft.box.Box;
-import net.okocraft.box.database.Database;
+import net.okocraft.box.database.Items;
+import net.okocraft.box.database.PlayerData;
 import net.okocraft.box.util.GeneralConfig;
 import net.okocraft.box.util.PlayerUtil;
 
@@ -57,84 +51,55 @@ class CategoryGUI implements Listener {
 
     private static final Box INSTANCE = Box.getInstance();
     private static final GeneralConfig CONFIG = INSTANCE.getGeneralConfig();
-    private static final Database DATABASE = INSTANCE.getDatabase();
 
     private final Player player;
-    private final ConfigurationSection categorySection;
+    private final Category category;
     @Getter
     private int page;
     @Getter
     private int quantity;
     private Inventory gui;
     private final List<ItemStack> items;
-    private final Map<Material, Integer> itemStockMap;
-    private final List<Material> stockChangedItems;
 
     /**
      * コンストラクタ
      * 
-     * @param player カテゴリ選択GUIでアイコンをクリックしたプレイヤー
+     * @param player       カテゴリ選択GUIでアイコンをクリックしたプレイヤー
      * @param categoryName 選択されたカテゴリの名前
-     * @param quantity 引き出し・預け入れ量
+     * @param quantity     引き出し・預け入れ量
      * @throws IllegalArgumentException カテゴリ名が登録されていないとき。
      */
     public CategoryGUI(Player player, String categoryName, int quantity) throws IllegalArgumentException {
-        Map<String, ConfigurationSection> categories = CONFIG.getCategories();
+        Map<String, Category> categories = CONFIG.getCategories();
         if (!categories.containsKey(categoryName)) {
             throw new IllegalArgumentException("Category " + categoryName + " is not registered.");
         }
         this.player = player;
-        this.categorySection = CONFIG.getCategories().get(categoryName);
+        this.category = categories.get(categoryName);
         this.page = 1;
         this.quantity = quantity;
-        String guiName = ChatColor.translateAlternateColorCodes('&', CONFIG.getCategoryGuiNameMap().get(categoryName));
-        this.gui = Bukkit.createInventory(null, 54, guiName);
-        ConfigurationSection categorySection = categories.get(categoryName);
-        if (categorySection.isConfigurationSection("item")) {
-            List<String> keys = new ArrayList<>(categorySection.getConfigurationSection("item").getKeys(false));
-            if (keys.isEmpty()) {
-                throw new IllegalArgumentException("section has no item.");
+        this.gui = Bukkit.createInventory(null, 54, category.getDisplayName());
+        this.items = new ArrayList<>() {
+            private static final long serialVersionUID = 1L;
+            {
+                category.getItems().forEach(item -> {
+                    ItemStack itemStack = item.getItem();
+                    // meta設定
+                    ItemMeta meta = itemStack.getItemMeta();
+                    String jp = item.getJapanese();
+                    String en = item.getEnglish();
+                    long stock = PlayerData.getItemAmount(player, item);
+                    String itemName = replacePlaceholders(CONFIG.getItemTemplateName(), jp, en, stock, quantity);
+                    List<String> itemLore = new ArrayList<>(CONFIG.getItemTemplateLore());
+                    itemLore.replaceAll(loreLine -> replacePlaceholders(loreLine, jp, en, stock, quantity));
+                    meta.setDisplayName(itemName);
+                    meta.setLore(itemLore);
+                    itemStack.setItemMeta(meta);
+                    add(itemStack);
+                });
             }
-            keys.removeIf(name -> !CONFIG.getAllItems().contains(name));
-            items = new ArrayList<>();
-            itemStockMap = DATABASE.getMultiValue(keys, player.getUniqueId().toString()).entrySet().stream()
-                    .filter(entry -> Objects.nonNull(Material.getMaterial(entry.getKey())))
-                    .filter(entry -> Objects.nonNull(Ints.tryParse(entry.getValue())))
-                    .map(entry -> {
-                        String key = entry.getKey().toUpperCase();
-                        String value = entry.getValue();
+        };
 
-                        int stock = Integer.parseInt(value);
-
-                        Material material = Material.getMaterial(key);
-
-                        // itemsに追加する ------
-                        ItemStack item = new ItemStack(material);
-
-                        // meta設定
-                        ItemMeta meta = item.getItemMeta();
-                        String jp = categorySection.getString("item." + key + ".jp", "");
-                        String en = categorySection.getString("item." + key + ".en", "");
-                        String itemName = replacePlaceholders(CONFIG.getItemTemplateName(), jp, en, stock, quantity);
-                        List<String> itemLore = new ArrayList<>(CONFIG.getItemTemplateLore());
-                        itemLore.replaceAll(loreLine -> replacePlaceholders(loreLine, jp, en, stock, quantity));
-                        meta.setDisplayName(itemName);
-                        meta.setLore(itemLore);
-                        item.setItemMeta(meta);
-                        items.add(item);
-                        // -------
-
-                        return Map.entry(material, stock);
-                    }).collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                        Map.Entry::getValue,
-                        (e1, e2) -> e1,
-                        HashMap::new)
-                    );
-        } else {
-            throw new IllegalArgumentException("item section is invalid.");
-        }
-        stockChangedItems = new ArrayList<>();
         Bukkit.getPluginManager().registerEvents(this, INSTANCE);
         setPage(page);
         player.openInventory(gui);
@@ -144,13 +109,13 @@ class CategoryGUI implements Listener {
      * originalのプレホルを受け取った情報で置換する。
      * 
      * @param original プレホルを含むオリジナル文字列
-     * @param jp アイテムの日本語名
-     * @param en アイテムの英語名
-     * @param stock アイテムの在庫
+     * @param jp       アイテムの日本語名
+     * @param en       アイテムの英語名
+     * @param stock    アイテムの在庫
      * @param quantity 一度のアイテムの取引量
      * @return 置換された文字列
      */
-    private String replacePlaceholders(String original, String jp, String en, int stock, int quantity) {
+    private String replacePlaceholders(String original, String jp, String en, long stock, int quantity) {
         return original.replaceAll("%item_jp%", jp).replaceAll("%item_en%", en)
                 .replaceAll("%item_quantity%", String.valueOf(quantity)).replaceAll("%stock%", String.valueOf(stock))
                 .replaceAll("&([a-f0-9])", "§$1");
@@ -216,69 +181,55 @@ class CategoryGUI implements Listener {
      * 
      * @param item 引き出すアイテム
      */
-    private void withdraw(Material item) {
-        if (!itemStockMap.containsKey(item)) {
-            return;
-        }
-        int stock = itemStockMap.get(item);
-        int tempQuantity = quantity;
+    private void withdraw(Items item) {
+        long stock = PlayerData.getItemAmount(player, item);
+        long tempQuantity = quantity;
         if (stock == 0) {
             PlayerUtil.playSound(player, CONFIG.getNotEnoughSound());
             return;
         }
         tempQuantity = Math.min(stock, tempQuantity);
-        ItemStack givenItem = new ItemStack(item, tempQuantity);
+        ItemStack givenItem = item.getItem();
+        givenItem.setAmount((int) tempQuantity);
         int nonAdded = player.getInventory().addItem(givenItem).values().stream().mapToInt(ItemStack::getAmount).sum();
-        itemStockMap.put(item, stock + nonAdded - tempQuantity);
-        if (!stockChangedItems.contains(item)) {
-            stockChangedItems.add(item);
-        }
+        PlayerData.setItemAmount(player, item, stock + nonAdded - tempQuantity);
         PlayerUtil.playSound(player, CONFIG.getTakeOutSound());
         updateLore(item);
     }
-    
+
     /**
      * アイテムを預ける。
      * 
      * @param item 預けるアイテム
      */
-    private void deposit(Material item) {
-        if (!itemStockMap.containsKey(item)) {
-            return;
-        }
-        int stock = itemStockMap.get(item);
-        ItemStack takenItem = new ItemStack(item, quantity);
-        int nonRemoved = player.getInventory().removeItem(takenItem).values().stream().mapToInt(ItemStack::getAmount).sum();
+    private void deposit(Items item) {
+        long stock = PlayerData.getItemAmount(player, item);
+        ItemStack takenItem = item.getItem();
+        takenItem.setAmount(quantity);
+        int nonRemoved = player.getInventory().removeItem(takenItem).values().stream().mapToInt(ItemStack::getAmount)
+                .sum();
         if (nonRemoved == quantity) {
             PlayerUtil.playSound(player, CONFIG.getNotEnoughSound());
             return;
         }
-        itemStockMap.put(item, stock - nonRemoved + quantity);
-        if (!stockChangedItems.contains(item)) {
-            stockChangedItems.add(item);
-        }
+        PlayerData.setItemAmount(player, item, stock - nonRemoved + quantity);
         PlayerUtil.playSound(player, CONFIG.getTakeInSound());
         updateLore(item);
     }
-    
+
     /**
      * アイテムの取引などで変動したloreを追随させるためのメソッド。
      * 
      * @param material loreを更新するアイテムを検索するためのタイプ
      */
-    private void updateLore(Material material) {
-        ItemStack item = null;
+    private void updateLore(Items item) {
         for (int i = 0; i < 45; i++) {
-            ItemStack tempItem = gui.getItem(i);
-            if (tempItem != null && tempItem.getType() == material) {
-                item = tempItem;
+            ItemStack guiItem = gui.getItem(i);
+            if (guiItem != null && Items.getNameIgnoreMeta(guiItem).equals(item.name())) {
+                updateLore(guiItem);
                 break;
             }
         }
-        if (item == null) {
-            return;
-        }
-        updateLore(item);
     }
 
     /**
@@ -287,29 +238,15 @@ class CategoryGUI implements Listener {
      * @param item loreを更新するアイテム
      */
     private void updateLore(ItemStack item) {
+        Items items = Items.valueOf(Items.getNameIgnoreMeta(item));
         ItemMeta meta = item.getItemMeta();
-        String materialName = item.getType().name();
-        String jp = categorySection.getString("item." + materialName + ".jp", "");
-        String en = categorySection.getString("item." + materialName + ".en", "");
-        int stock = itemStockMap.get(item.getType());
+        String jp = items.getJapanese();
+        String en = items.getEnglish();
+        long stock = PlayerData.getItemAmount(player, items);
         List<String> itemLore = new ArrayList<>(CONFIG.getItemTemplateLore());
         itemLore.replaceAll(loreLine -> replacePlaceholders(loreLine, jp, en, stock, quantity));
         meta.setLore(itemLore);
         item.setItemMeta(meta);
-    }
-
-    /**
-     * 在庫の変更をデータベースに保存する。
-     */
-    private void commit() {
-        Map<String, String> change = stockChangedItems.stream().collect(Collectors.toMap(
-            Enum::name,
-            item -> String.valueOf(itemStockMap.get(item)),
-            (e1, e2) -> e1,
-            HashMap::new
-        ));
-
-        DATABASE.setMultiValue(change, player.getName());
     }
 
     @EventHandler
@@ -326,7 +263,6 @@ class CategoryGUI implements Listener {
             return;
         }
 
-        commit();
         HandlerList.unregisterAll(this);
     }
 
@@ -337,19 +273,22 @@ class CategoryGUI implements Listener {
         }
 
         Inventory inv = event.getInventory();
-        
+
         if (inv == null || !gui.getItem(0).isSimilar(inv.getItem(0))) {
             return;
         }
 
         InventoryAction action = event.getAction();
         event.setCancelled(true);
-        
+
         if (CONFIG.getDisabledWorlds().contains(event.getWhoClicked().getWorld().getName())) {
             return;
         }
 
         int clickedSlot = event.getSlot();
+        if (clickedSlot == -999) {
+            return;
+        }
         ItemStack clickedItem = gui.getItem(clickedSlot);
 
         if (clickedItem == null || clickedItem.getType() == Material.AIR) {
@@ -383,24 +322,24 @@ class CategoryGUI implements Listener {
             int difference = 0;
 
             switch (clickedSlot) {
-                case 46:
-                    difference = -64;
-                    break;
-                case 47:
-                    difference = -8;
-                    break;
-                case 48:
-                    difference = -1;
-                    break;
-                case 50:
-                    difference = 1;
-                    break;
-                case 51:
-                    difference = 8;
-                    break;
-                case 52:
-                    difference = 64;
-                    break;
+            case 46:
+                difference = -64;
+                break;
+            case 47:
+                difference = -8;
+                break;
+            case 48:
+                difference = -1;
+                break;
+            case 50:
+                difference = 1;
+                break;
+            case 51:
+                difference = 8;
+                break;
+            case 52:
+                difference = 64;
+                break;
             }
 
             // 既に取引数が上限または下限に達している場合
@@ -415,28 +354,26 @@ class CategoryGUI implements Listener {
             setQuantity(currentQuantity);
             return;
         }
-        
-        Material itemType = clickedItem.getType();
-        if (!itemStockMap.containsKey(itemType)) {
-            return;
-        }
 
+        Items item = Items.getByItemStackIgnoreMeta(clickedItem);
         // creative状態であるか、box.creativeの権限を持っていると無限に引き出せるようになる。
         if (player.getGameMode() == GameMode.CREATIVE || player.hasPermission("box.creative")) {
+            ItemStack itemStack = item.getItem();
+            itemStack.setAmount(quantity);
             if (event.isRightClick()) {
                 PlayerUtil.playSound(player, CONFIG.getTakeOutSound());
-                player.getInventory().addItem(new ItemStack(itemType, quantity));
+                player.getInventory().addItem(itemStack);
             } else {
                 PlayerUtil.playSound(player, CONFIG.getTakeOutSound());
-                player.getInventory().removeItem(new ItemStack(itemType, quantity));
+                player.getInventory().removeItem(itemStack);
             }
             return;
         }
 
         if (event.isRightClick()) {
-            withdraw(itemType);
+            withdraw(item);
         } else {
-            deposit(itemType);
+            deposit(item);
         }
     }
 }

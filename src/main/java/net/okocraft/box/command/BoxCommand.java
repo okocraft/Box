@@ -23,7 +23,6 @@ import java.util.List;
 import org.bukkit.command.CommandSender;
 
 import net.okocraft.box.Box;
-import net.okocraft.box.database.Database;
 import net.okocraft.box.util.GeneralConfig;
 import net.okocraft.box.util.MessageConfig;
 
@@ -32,7 +31,6 @@ public interface BoxCommand {
     static final Box INSTANCE = Box.getInstance();
     static final GeneralConfig CONFIG = INSTANCE.getGeneralConfig();
     static final MessageConfig MESSAGE_CONFIG = INSTANCE.getMessageConfig();
-    static final Database DATABASE = INSTANCE.getDatabase();
 
     /**
      * 各コマンドの処理

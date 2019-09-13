@@ -19,15 +19,18 @@
 package net.okocraft.box.command.boxadmin;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.UUID;
 
-import javax.annotation.Nullable;
-
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.util.StringUtil;
+
+import net.okocraft.box.database.Items;
+import net.okocraft.box.database.PlayerData;
+import net.okocraft.box.util.PlayerUtil;
 
 class AutoStore extends BaseSubAdminCommand {
 
@@ -36,23 +39,47 @@ class AutoStore extends BaseSubAdminCommand {
     private static final String USAGE = "/boxadmin autostore <player> < <ITEM> [true|false] | ALL <true|false> >";
 
     @Override
+    @SuppressWarnings("deprecation")
     public boolean runCommand(CommandSender sender, String[] args) {
         if (!validate(sender, args)) {
             return false;
         }
 
-        String player = args[1].toUpperCase();
-        String itemName = args[2].toUpperCase();
-        String switchTo = args.length < 4 ? null : args[3].toLowerCase();
-
-        // autostore all <true|false>
-        if (itemName.equalsIgnoreCase("all")) {
-            // validateにより、nullのままこのifに進むことはない。
-            return autoStoreAll(sender, player, switchTo);
+        String playerName = args[1].toLowerCase();
+        Map<String, String> players = PlayerData.getPlayers();
+        if (!players.containsKey(playerName) && players.containsValue(playerName)) {
+            sender.sendMessage(MESSAGE_CONFIG.getNoPlayerFound());
+            return false;
         }
 
+        OfflinePlayer player;
+        try {
+            player = Bukkit.getOfflinePlayer(UUID.fromString(playerName));
+        } catch (IllegalArgumentException e) {
+            player = Bukkit.getOfflinePlayer(playerName);
+        }
+
+        // autostore all <true|false>
+        if (args.length > 3 && args[2].equalsIgnoreCase("ALL")) {
+
+            // If switchTo is neither true nor false
+            if (!args[3].equalsIgnoreCase("true") && !args[3].equalsIgnoreCase("false")) {
+                sender.sendMessage(MESSAGE_CONFIG.getInvalidArguments());
+                
+                return false;
+            }
+
+            autoStoreAll(sender, player, args[3].equalsIgnoreCase("true"));
+            return true;
+        }
+        
+        
         // autostore Item [true|false]
-        return autoStore(sender, player, itemName, switchTo);
+        Items item = Items.valueOf(args[2].toUpperCase());
+        boolean now = PlayerData.getAutoStore((OfflinePlayer) sender, item);
+        boolean switchTo = args.length > 3 ? args[3].equalsIgnoreCase("true") : !now;
+        autoStore(sender, player, item, switchTo);
+        return true;
     }
 
     /**
@@ -61,22 +88,13 @@ class AutoStore extends BaseSubAdminCommand {
      * @param sender
      * @param itemName
      * @param switchTo
-     * @return 実行に成功したら {@code true}
      */
-    private boolean autoStore(CommandSender sender, String player, String itemName, @Nullable String switchTo) {
-        if (switchTo == null) {
-            boolean now = DATABASE.get("autostore_" + itemName, player).equalsIgnoreCase("true");
-            switchTo = now ? "false" : "true";
-        }
-
+    private void autoStore(CommandSender sender, OfflinePlayer player, Items item, boolean switchTo) {
         sender.sendMessage(
                 MESSAGE_CONFIG.getAutoStoreSettingChanged()
-                        .replaceAll("%item%", itemName).replaceAll("%isEnabled%", switchTo)
+                        .replaceAll("%item%", item.name()).replaceAll("%isEnabled%", Boolean.toString(switchTo))
         );
-
-        DATABASE.set("autostore_" + itemName, player, switchTo);
-
-        return true;
+        PlayerData.setAutoStore(player, item, switchTo);
     }
 
     /**
@@ -85,33 +103,20 @@ class AutoStore extends BaseSubAdminCommand {
      * @param sender
      * @param player
      * @param switchTo
-     * @return 実行に成功したら {@code true}
      */
-    private boolean autoStoreAll(CommandSender sender, String player, String switchTo) {
-        List<String> allItems = CONFIG.getAllItems();
-
-        Map<String, String> newValues = allItems.stream()
-                .collect(Collectors.toMap(itemNameTemp ->
-                                "autostore_" + itemNameTemp,
-                        itemNameTemp -> switchTo.toLowerCase(),
-                        (e1, e2) -> e1, HashMap::new
-                ));
-
-        DATABASE.setMultiValue(newValues, player);
-
+    private void autoStoreAll(CommandSender sender, OfflinePlayer player, boolean switchTo) {
         sender.sendMessage(
                 MESSAGE_CONFIG.getAutoStoreSettingChangedAll()
-                        .replaceAll("%isEnabled%", switchTo.toLowerCase())
+                        .replaceAll("%isEnabled%", Boolean.toString(switchTo))
         );
-
-        return true;
+        PlayerData.setAutoStoreAll(player, switchTo);
     }
 
     @Override
     public List<String> runTabComplete(CommandSender sender, String[] args) {
         List<String> result = new ArrayList<>();
 
-        List<String> players = new ArrayList<>(DATABASE.getPlayersMap().values());
+        List<String> players = new ArrayList<>(PlayerData.getPlayers().values());
 
         if (args.length == 2) {
             return StringUtil.copyPartialMatches(args[1], players, result);
@@ -165,13 +170,12 @@ class AutoStore extends BaseSubAdminCommand {
             return false;
         }
 
-        if (!DATABASE.existPlayer(args[1].toLowerCase())) {
-            sender.sendMessage(MESSAGE_CONFIG.getNoPlayerFound());
+        if (!PlayerUtil.existPlayer(sender, args[1].toLowerCase())) {
             return false;
         }
-        
+
         if (!args[2].equalsIgnoreCase("ALL") && !CONFIG.getAllItems().contains(args[2].toUpperCase())) {
-            sender.sendMessage(MESSAGE_CONFIG.getInvalidArguments());
+            sender.sendMessage(MESSAGE_CONFIG.getNoItemFound());
             return false;
         }
 

@@ -27,6 +27,8 @@ import javax.annotation.Nonnull;
 import lombok.Getter;
 
 import lombok.val;
+
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -348,9 +350,7 @@ public class MessageConfig {
      * @return 生メッセージ
      */
     private String getRawMessage(@Nonnull String key) {
-        return MessageUtil.convertColorCode(
-                Optional.ofNullable(config.getString(key)).orElse(getDefaultMessage(key))
-        );
+        return convertColor(Optional.ofNullable(config.getString(key)).orElse(getDefaultMessage(key)));
     }
 
     /**
@@ -364,13 +364,13 @@ public class MessageConfig {
      * @return メッセージ
      */
     private String getDefaultMessage(String key) {
-        InputStream messageConfigStream = Optional.ofNullable(
-            Box.getInstance().getResource("messages.yml")
-        ).orElseThrow(() -> new NoSuchElementException("No message file."));
+        InputStream messageConfigStream = Optional.ofNullable(Box.getInstance().getResource("messages.yml"))
+                .orElseThrow(() -> new NoSuchElementException("No message file."));
 
         YamlConfiguration jarConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(messageConfigStream));
 
-        return Optional.ofNullable(jarConfig.getString(key)).orElseThrow(() -> new NoSuchElementException("No such YAML key: " + key));
+        return Optional.ofNullable(jarConfig.getString(key))
+                .orElseThrow(() -> new NoSuchElementException("No such YAML key: " + key));
     }
 
     /**
@@ -384,8 +384,16 @@ public class MessageConfig {
     @Nonnull
     private String getPrefix() {
         String key = "plugin.prefix";
-        return MessageUtil.convertColorCode(
-                Optional.ofNullable(config.getString(key)).orElse(getDefaultMessage(key))
-        );
+        return convertColor(Optional.ofNullable(config.getString(key)).orElse(getDefaultMessage(key)));
+    }
+
+    /**
+     * {@link ChatColor#translateAlternateColorCodes(char, String)}
+     * 
+     * @param target
+     * @return replaced target
+     */
+    public static String convertColor(String target) {
+        return ChatColor.translateAlternateColorCodes('&', target);
     }
 }

@@ -21,10 +21,14 @@ package net.okocraft.box.command.boxadmin;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.util.StringUtil;
 
+import net.okocraft.box.database.Items;
+import net.okocraft.box.database.PlayerData;
 import net.okocraft.box.util.OtherUtil;
+import net.okocraft.box.util.PlayerUtil;
 
 class Set extends BaseSubAdminCommand {
 
@@ -37,17 +41,17 @@ class Set extends BaseSubAdminCommand {
         if (!validate(sender, args)) {
             return false;
         }
-        String player = args[1].toLowerCase();
-        String item   = args[2].toUpperCase();
+        OfflinePlayer player = PlayerUtil.getOfflinePlayer(args[1]);
+        Items item = Items.valueOf(args[2].toUpperCase());
 
         long amount = args.length < 4 ? 0 : OtherUtil.parseLongOrDefault(args[3], 0);
 
-        DATABASE.set(item, player, String.valueOf(amount));
+        PlayerData.setItemAmount(player, item, amount);
 
         sender.sendMessage(
                 MESSAGE_CONFIG.getSuccessSet()
-                        .replaceAll("%player%", player)
-                        .replaceAll("%item%", item)
+                        .replaceAll("%player%", player.getName())
+                        .replaceAll("%item%", item.name())
                         .replaceAll("%amount%", String.valueOf(amount))
         );
 
@@ -58,7 +62,7 @@ class Set extends BaseSubAdminCommand {
     public List<String> runTabComplete(CommandSender sender, String[] args) {
         List<String> result = new ArrayList<>();
 
-        List<String> players = new ArrayList<>(DATABASE.getPlayersMap().values());
+        List<String> players = new ArrayList<>(PlayerData.getPlayers().values());
 
         if (args.length == 2) {
             return StringUtil.copyPartialMatches(args[1], players, result);
@@ -68,7 +72,7 @@ class Set extends BaseSubAdminCommand {
             return List.of();
         }
 
-        List<String> items = CONFIG.getAllItems();
+        List<String> items = new ArrayList<>(CONFIG.getAllItems());
 
         if (args.length == 3) {
             return StringUtil.copyPartialMatches(args[2], items, result);
@@ -111,7 +115,7 @@ class Set extends BaseSubAdminCommand {
             return false;
         }
 
-        if (!DATABASE.existPlayer(args[1].toLowerCase())) {
+        if (!PlayerUtil.existPlayer(sender, args[1].toLowerCase())) {
             sender.sendMessage(MESSAGE_CONFIG.getNoPlayerFound());
             return false;
         }

@@ -21,17 +21,18 @@ package net.okocraft.box.command.box;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 
+import net.okocraft.box.database.Items;
+import net.okocraft.box.database.PlayerData;
 import net.okocraft.box.util.OtherUtil;
-import net.okocraft.box.util.PlayerUtil;
 
 class Give extends BaseSubCommand {
 
@@ -45,11 +46,15 @@ class Give extends BaseSubCommand {
             return false;
         }
 
-        String senderName = sender.getName().toLowerCase();
-        String player = args[1].toLowerCase();
+        @SuppressWarnings("deprecation")
+        OfflinePlayer player = Bukkit.getOfflinePlayer(args[1]);
 
-        String itemName = args[2].toUpperCase();
-
+        if (!player.hasPlayedBefore()) {
+            sender.sendMessage(MESSAGE_CONFIG.getNoPlayerFound());
+            return false;
+        }
+        
+        Items item = Items.valueOf(args[2].toUpperCase());
 
         long amount = args.length == 3 ? 1L : OtherUtil.parseLongOrDefault(args[3], 1L);
 
@@ -58,16 +63,8 @@ class Give extends BaseSubCommand {
             return false;
         }
 
-        long senderAmount = OtherUtil.parseLongOrDefault(DATABASE.get(itemName, senderName), Long.MIN_VALUE);
-        long otherAmount  = OtherUtil.parseLongOrDefault(DATABASE.get(itemName, player), Long.MIN_VALUE);
-
-        if (senderAmount == Long.MIN_VALUE || otherAmount == Long.MIN_VALUE) {
-            sender.sendMessage(
-                    MESSAGE_CONFIG.getDatabaseInvalidValue()
-            );
-
-            return false;
-        }
+        long senderAmount = PlayerData.getItemAmount((OfflinePlayer) sender, item);
+        long otherAmount = PlayerData.getItemAmount(player, item);
 
         if (senderAmount - amount < 0) {
             sender.sendMessage(
@@ -77,28 +74,24 @@ class Give extends BaseSubCommand {
             return false;
         }
 
-        DATABASE.set(itemName, senderName, String.valueOf(senderAmount - amount));
-        DATABASE.set(itemName, player, String.valueOf(otherAmount + amount));
+        PlayerData.setItemAmount((OfflinePlayer) sender, item, senderAmount - amount);
+        PlayerData.setItemAmount(player, item, otherAmount + amount);
 
         sender.sendMessage(
                 MESSAGE_CONFIG.getSuccessGive()
-                        .replaceAll("%player%", player)
-                        .replaceAll("%item%", itemName)
+                        .replaceAll("%player%", player.getName())
+                        .replaceAll("%item%", item.name())
                         .replaceAll("%amount%", Long.toString(amount))
-                        .replaceAll("%newamount%", String.valueOf(senderAmount - amount))
+                        .replaceAll("%newamount%", Long.toString(senderAmount - amount))
         );
 
-        OfflinePlayer offlinePlayer = PlayerUtil.getOfflinePlayer(player);
-
-        if (offlinePlayer.isOnline()) {
-            Optional.ofNullable(offlinePlayer.getPlayer()).ifPresent( _player ->
-                    _player.sendMessage(
-                            MESSAGE_CONFIG.getSuccessReceive()
-                                    .replaceAll("%player%", senderName)
-                                    .replaceAll("%item%", itemName)
-                                    .replaceAll("%amount%", Long.toString(amount))
-                                    .replaceAll("%newamount%", String.valueOf(otherAmount + amount))
-                    )
+        if (player.isOnline()) {
+            player.getPlayer().sendMessage(
+                    MESSAGE_CONFIG.getSuccessReceive()
+                            .replaceAll("%player%", sender.getName())
+                            .replaceAll("%item%", item.name())
+                            .replaceAll("%amount%", Long.toString(amount))
+                            .replaceAll("%newamount%", Long.toString(otherAmount + amount))
             );
         }
 
@@ -108,8 +101,7 @@ class Give extends BaseSubCommand {
     @Override
     public List<String> runTabComplete(CommandSender sender, String[] args) {
         List<String> result = new ArrayList<>();
-        List<String> players = new ArrayList<>(DATABASE.getPlayersMap().values());
-        String senderName = sender.getName().toLowerCase();
+        List<String> players = new ArrayList<>(PlayerData.getPlayers().values());
 
         if (args.length == 2) {
             return StringUtil.copyPartialMatches(args[1], players, result);
@@ -121,27 +113,21 @@ class Give extends BaseSubCommand {
             return List.of();
         }
 
-        List<String> items = DATABASE.getMultiValue(CONFIG.getAllItems(), senderName)
-                .entrySet().stream().filter(entry -> !entry.getValue().equals("0"))
-                .map(Map.Entry::getKey).map(String::toUpperCase).collect(Collectors.toList());
+        List<String> items = PlayerData.getItemsAmount((OfflinePlayer) sender).entrySet()
+                .parallelStream().filter(entry -> entry.getValue() != 0L).map(Map.Entry::getKey)
+                .collect(Collectors.toList());
 
         if (args.length == 3) {
             return StringUtil.copyPartialMatches(args[2], items, result);
         }
 
-        String item = args[2].toUpperCase();
+        String itemName = args[2].toUpperCase();
 
-        if (!items.contains(item)) {
+        if (!items.contains(itemName)) {
             return List.of();
         }
         
-        String rawStock = DATABASE.get(item, senderName);
-        long stock;
-        try {
-            stock = Long.parseLong(rawStock);
-        } catch (NumberFormatException e) {
-            return List.of();
-        }
+        long stock = PlayerData.getItemAmount((OfflinePlayer) sender, Items.valueOf(itemName));
 
         if (stock < 1) {
             return List.of();
@@ -201,7 +187,7 @@ class Give extends BaseSubCommand {
             return false;
         }
 
-        Map<String, String> players = DATABASE.getPlayersMap();
+        Map<String, String> players = PlayerData.getPlayers();
         // プレイヤーがデータベースに登録されていない
         if (
             (!players.containsKey(args[1].toLowerCase()) &&

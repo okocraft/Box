@@ -18,9 +18,11 @@
 
 package net.okocraft.box.command.boxadmin;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.command.CommandSender;
+import org.bukkit.util.StringUtil;
 
 class Reload extends BaseSubAdminCommand {
 
@@ -33,19 +35,43 @@ class Reload extends BaseSubAdminCommand {
         if (!validate(sender, args)) {
             return false;
         }
-        INSTANCE.reloadConfig();
 
-        CONFIG.reload();
-        MESSAGE_CONFIG.reload();
+        if (args.length == 1) {
+            reloadConfig(sender);
+        }
+
+        if (args.length == 2) {
+            String type = args[1].toLowerCase();
+            switch (type) {
+            case "listener":
+                INSTANCE.registerEvents();
+                break;
+            case "config":
+                reloadConfig(sender);
+                break;
+            }
+        }
 
         sender.sendMessage(MESSAGE_CONFIG.getConfigReloaded());
-
         return true;
+    }
+
+    private void reloadConfig(CommandSender sender) {
+        INSTANCE.reloadConfig();
+        CONFIG.reload();
+        MESSAGE_CONFIG.reload();
     }
 
     @Override
     public List<String> runTabComplete(CommandSender sender, String[] args) {
-        return List.of();
+        List<String> result = new ArrayList<>();
+        List<String> subCommands = List.of("listener", "config");
+
+        if (args.length == 2) {
+            return StringUtil.copyPartialMatches(args[1], subCommands, result);
+        }
+
+        return result;
     }
 
     @Override

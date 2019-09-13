@@ -20,15 +20,14 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import lombok.Getter;
 import net.okocraft.box.Box;
-import net.okocraft.box.database.Database;
+import net.okocraft.box.database.Items;
+import net.okocraft.box.database.PlayerData;
 import net.okocraft.box.util.GeneralConfig;
-import net.okocraft.box.util.OtherUtil;
 
 public class BoxStick implements Listener {
 
     private static final Box INSTANCE = Box.getInstance();
     private static final GeneralConfig CONFIG = INSTANCE.getGeneralConfig();
-    private static final Database DATABASE = INSTANCE.getDatabase();
     private static final NamespacedKey stickKey = new NamespacedKey(INSTANCE, "boxstick");
 
     @Getter
@@ -91,16 +90,9 @@ public class BoxStick implements Listener {
             return;
         }
 
-        ItemStack usedItem = item.clone();
-        if (!CONFIG.getAllItems().contains(usedItem.getType().name())) {
-            return;
-        }
+        Items items = Items.getByItemStack(item);
 
-        if (usedItem.hasItemMeta() || !usedItem.getEnchantments().isEmpty()) {
-            return;
-        }
-
-        int stock = OtherUtil.parseIntOrDefault(DATABASE.get(usedItem.getType().name(), player.getUniqueId().toString()), 0);
+        long stock = PlayerData.getItemAmount(player, items);
         if (stock < 1) {
             return;
         }
@@ -109,8 +101,8 @@ public class BoxStick implements Listener {
 
             @Override
             public void run() {
-                player.getInventory().setItemInMainHand(usedItem);
-                DATABASE.set(usedItem.getType().name(), player.getUniqueId().toString(), Integer.toString(stock - 1));
+                player.getInventory().addItem(items.getItem());
+                PlayerData.setItemAmount(player, items, stock - 1);
             }
         }.runTaskLater(INSTANCE, 1L);
     }

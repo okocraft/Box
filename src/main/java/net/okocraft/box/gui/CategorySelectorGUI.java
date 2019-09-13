@@ -19,13 +19,11 @@
 package net.okocraft.box.gui;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -39,7 +37,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
-import lombok.val;
 import net.okocraft.box.Box;
 import net.okocraft.box.util.GeneralConfig;
 import net.okocraft.box.util.MessageConfig;
@@ -55,9 +52,8 @@ public class CategorySelectorGUI implements Listener {
 
     public static final Inventory GUI = Bukkit.createInventory(null, 54, CONFIG.getCategorySelectionGuiName());
 
-    private static List<Integer> flameSlots = List.of(
-        0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 17, 18, 26, 27, 35, 36, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53
-    );
+    private static List<Integer> flameSlots = List.of(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 17, 18, 26, 27, 35, 36, 44, 45, 46,
+            47, 48, 49, 50, 51, 52, 53);
 
     private static CategorySelectorGUI categorySelector;
 
@@ -77,34 +73,9 @@ public class CategorySelectorGUI implements Listener {
         flame.setItemMeta(flameMeta);
         flameSlots.forEach(slot -> GUI.setItem(slot, flame));
 
-        List<ItemStack> itemList = CONFIG.getCategories().entrySet().stream().map(entry -> createItem(entry.getKey(), entry.getValue())).collect(Collectors.toList());
+        List<ItemStack> itemList = CONFIG.getCategories().values().stream().map(category -> category.getIconItem())
+                .collect(Collectors.toList());
         GUI.addItem(itemList.toArray(new ItemStack[itemList.size()]));
-    }
-    
-    /**
-     * categoryのアイコンなどの情報をsectionから引き出し、そのアイテムを作る。
-     * 
-     * @param categoryName カテゴリ名
-     * @param section コンフィグ
-     * @return アイテム
-     */
-    private static ItemStack createItem(String categoryName, ConfigurationSection section) {
-        Material categoryIconMaterial = Material
-                .valueOf(Optional.ofNullable(section.getString("icon")).orElse("BARRIER").toUpperCase());
-        ItemStack categorySelectionItem = new ItemStack(categoryIconMaterial);
-        Optional<ItemMeta> categorySelectionItemMeta = Optional.ofNullable(categorySelectionItem.getItemMeta());
-        // setDisplayNameにnullを渡すために、存在しない場合は素直にnullを吐かせている。
-        String categoryItemName = Optional.ofNullable(section.getString("display_name"))
-                .map(name -> name.replaceAll("&([a-f0-9])", "§$1")).orElse(null);
-
-        categorySelectionItemMeta.ifPresent(meta -> {
-            meta.setDisplayName(categoryItemName);
-            meta.getPersistentDataContainer().set(CATEGORY_NAME_KEY, PersistentDataType.STRING, categoryName);
-
-            categorySelectionItem.setItemMeta(meta);
-        });
-
-        return categorySelectionItem;
     }
 
     /**
@@ -147,21 +118,21 @@ public class CategorySelectorGUI implements Listener {
         if (event.isCancelled()) {
             return;
         }
-        val player = (Player) event.getWhoClicked();
-        val action = event.getAction();
-        val inventory = event.getClickedInventory();
+        Player player = (Player) event.getWhoClicked();
+        InventoryAction action = event.getAction();
+        Inventory inventory = event.getClickedInventory();
         if (inventory == null || inventory.getItem(0) == null || !GUI.getItem(0).isSimilar(inventory.getItem(0))) {
             return;
         }
         event.setCancelled(true);
-        
+
         if (CONFIG.getDisabledWorlds().contains(event.getWhoClicked().getWorld().getName())) {
             player.sendMessage(MESSAGE_CONFIG.getDisabledWorld());
             return;
         }
 
         int clickedSlot = event.getSlot();
-        val clickedItem = inventory.getItem(clickedSlot);
+        ItemStack clickedItem = inventory.getItem(clickedSlot);
 
         if (clickedItem == null || clickedItem.getType() == Material.AIR) {
             return;
@@ -176,8 +147,8 @@ public class CategorySelectorGUI implements Listener {
         }
 
         // NOTE: NPE はItemStackがAIRの場合のみしか起こらない。
-        val categoryName = clickedItem.getItemMeta().getPersistentDataContainer()
-                .get(CATEGORY_NAME_KEY, PersistentDataType.STRING);
+        String categoryName = clickedItem.getItemMeta().getPersistentDataContainer().get(CATEGORY_NAME_KEY,
+                PersistentDataType.STRING);
 
         player.closeInventory();
 

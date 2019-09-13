@@ -19,18 +19,15 @@
 package net.okocraft.box.command.box;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
-import javax.annotation.Nullable;
-
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 
-import net.okocraft.box.util.PlayerUtil;
+import net.okocraft.box.database.Items;
+import net.okocraft.box.database.PlayerData;
 
 class AutoStore extends BaseSubCommand {
 
@@ -44,16 +41,27 @@ class AutoStore extends BaseSubCommand {
             return false;
         }
 
-        String item = args[1].toUpperCase();
-        String switchTo = args.length > 2 ? args[2] : null;
-
         // autostore all <true|false>
-        if (item.equals("ALL")) {
-            return autoStoreAll(sender, switchTo);
-        }
+        if (args.length > 2 && args[1].equalsIgnoreCase("ALL")) {
 
+            // If switchTo is neither true nor false
+            if (!args[2].equalsIgnoreCase("true") && !args[2].equalsIgnoreCase("false")) {
+                sender.sendMessage(MESSAGE_CONFIG.getInvalidArguments());
+                
+                return false;
+            }
+
+            autoStoreAll(sender, args[2].equalsIgnoreCase("true"));
+            return true;
+        }
+        
+        
         // autostore Item [true|false]
-        return autoStore(sender, item, switchTo);
+        Items item = Items.valueOf(args[1].toUpperCase());
+        boolean now = PlayerData.getAutoStore((OfflinePlayer) sender, item);
+        boolean switchTo = args.length > 2 ? args[2].equalsIgnoreCase("true") : !now;
+        autoStore(sender, item, switchTo);
+        return true;
     }
 
     /**
@@ -62,25 +70,13 @@ class AutoStore extends BaseSubCommand {
      * @param sender
      * @param item
      * @param switchTo
-     * 
-     * @return 実行に成功したら {@code true}
      */
-    private boolean autoStore(CommandSender sender, String item, @Nullable String switchTo) {
-        String player = ((Player) sender).getUniqueId().toString();
-
-        if (switchTo == null) {
-            boolean now = DATABASE.get("autostore_" + item, player).equalsIgnoreCase("true");
-            switchTo = now ? "false" : "true";
-        }
-
+    private void autoStore(CommandSender sender, Items item, boolean switchTo) {
         sender.sendMessage(
                 MESSAGE_CONFIG.getAutoStoreSettingChanged()
-                        .replaceAll("%item%", item).replaceAll("%isEnabled%", switchTo)
+                        .replaceAll("%item%", item.name()).replaceAll("%isEnabled%", Boolean.toString(switchTo))
         );
-
-        DATABASE.set("autostore_" + item, player, switchTo);
-
-        return true;
+        PlayerData.setAutoStore((OfflinePlayer) sender, item, switchTo);
     }
 
     /**
@@ -88,34 +84,13 @@ class AutoStore extends BaseSubCommand {
      * 
      * @param sender
      * @param switchTo
-     * @return  実行に成功したら {@code true}
      */
-    private boolean autoStoreAll(CommandSender sender, String switchTo) {
-        String player = ((Player) sender).getUniqueId().toString();
-        List<String> allItems = CONFIG.getAllItems();
-
-        // If switchTo is neither true nor false
-        if (!switchTo.equalsIgnoreCase("true") && !switchTo.equalsIgnoreCase("false")) {
-            sender.sendMessage(MESSAGE_CONFIG.getNotEnoughArguments());
-
-            return false;
-        }
-
-        Map<String, String> newValues = allItems.stream()
-                .collect(Collectors.toMap(itemNameTemp ->
-                                "autostore_" + itemNameTemp,
-                        itemNameTemp -> switchTo.toLowerCase(),
-                        (e1, e2) -> e1, HashMap::new
-                ));
-
-        DATABASE.setMultiValue(newValues, player);
-
+    private void autoStoreAll(CommandSender sender, boolean switchTo) {
         sender.sendMessage(
                 MESSAGE_CONFIG.getAutoStoreSettingChangedAll()
-                        .replaceAll("%isEnabled%", switchTo.toLowerCase())
+                        .replaceAll("%isEnabled%", Boolean.toString(switchTo))
         );
-
-        return true;
+        PlayerData.setAutoStoreAll((OfflinePlayer) sender, switchTo);
     }
 
     @Override
@@ -173,12 +148,6 @@ class AutoStore extends BaseSubCommand {
             return false;
         }
 
-        // If the player isn't registered
-        if (PlayerUtil.notExistPlayer(sender)) {
-            sender.sendMessage(MESSAGE_CONFIG.getNoPlayerFound());
-            return false;
-        }
-
         if (args.length > 2 && (!args[2].equalsIgnoreCase("true") && !args[2].equalsIgnoreCase("false"))) {
             sender.sendMessage(MESSAGE_CONFIG.getInvalidArguments());
             return false;
@@ -190,7 +159,7 @@ class AutoStore extends BaseSubCommand {
         }
 
         if (!args[1].equalsIgnoreCase("ALL") && !CONFIG.getAllItems().contains(args[1].toUpperCase())) {
-            sender.sendMessage(MESSAGE_CONFIG.getInvalidArguments());
+            sender.sendMessage(MESSAGE_CONFIG.getNoItemFound());
             return false;
         }
 

@@ -32,11 +32,12 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import net.milkbowl.vault.economy.Economy;
 import net.okocraft.box.command.boxadmin.BoxAdmin;
-import net.okocraft.box.database.Database;
+//import net.okocraft.box.database.Migrater;
+import net.okocraft.box.database.PlayerData;
+import net.okocraft.box.database.Sqlite;
 import net.okocraft.box.gui.CategorySelectorGUI;
 import net.okocraft.box.listeners.BoxStick;
 import net.okocraft.box.listeners.EntityPickupItem;
-import net.okocraft.box.listeners.PlayerJoin;
 import net.okocraft.box.listeners.Replant;
 
 /**
@@ -59,12 +60,6 @@ public class Box extends JavaPlugin {
      */
     @Getter
     private final String version;
-
-    /**
-     * データベース。
-     */
-    @Getter
-    private final Database database;
 
     /**
      * 通常設定
@@ -100,28 +95,17 @@ public class Box extends JavaPlugin {
     public Box() {
         log      = getLogger();
         version  = getClass().getPackage().getImplementationVersion();
-        database = new Database(this);
     }
 
     @Override
     public void onEnable() {
         // config
-        generalConfig = new GeneralConfig(database);
+        generalConfig = new GeneralConfig();
         messageConfig = new MessageConfig();
 
         if (!setupEconomy()) {
             log.severe("Box failed to setup economy.");
         }
-
-        // Database
-        if (!database.connect(getDataFolder().getPath() + "/data.db")) {
-            setEnabled(false);
-            return;
-        }
-
-        // Implementation info
-        log.info("Installed in : " + getDataFolder().getPath());
-        log.info("Database file: " + database.getDBUrl());
 
         registerEvents();
         OtherUtil.registerPermission("box.*");
@@ -130,13 +114,17 @@ public class Box extends JavaPlugin {
         command = new net.okocraft.box.command.box.Box();
         adminCommand = new BoxAdmin();
 
+        PlayerData.loadOnlinePlayersData();
+
         // GO GO GO
         log.info(String.format("Box v%s has been enabled!", version));
     }
 
     @Override
     public void onDisable() {
-        database.dispose();
+
+        PlayerData.saveOnlinePlayersData();
+        Sqlite.disconnect();
 
         unregisterEvents();
         cancelTasks();
@@ -164,8 +152,9 @@ public class Box extends JavaPlugin {
         unregisterEvents();
 
         // Events should be registered in its own initializer
-        new PlayerJoin(database, this);
-        new EntityPickupItem(database, this);
+        new PlayerData(this);
+        //Migrater.migrate();
+        new EntityPickupItem(this);
         new BoxStick();
         new Replant();
 

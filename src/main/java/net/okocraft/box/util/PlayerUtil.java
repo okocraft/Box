@@ -18,6 +18,7 @@
 
 package net.okocraft.box.util;
 
+import java.util.Map;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -27,9 +28,8 @@ import org.bukkit.SoundCategory;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import lombok.val;
 import net.okocraft.box.Box;
-import net.okocraft.box.database.Database;
+import net.okocraft.box.database.PlayerData;
 
 /**
  * プレイヤー名やそのインスタンスを取り扱うツール群。
@@ -40,38 +40,35 @@ import net.okocraft.box.database.Database;
 public class PlayerUtil {
 
     private static final Box INSTANCE = Box.getInstance();
-    private static final Database DATABASE = INSTANCE.getDatabase();
     private static final GeneralConfig CONFIG = INSTANCE.getGeneralConfig();
 
     /**
-     * 文字列を検証して UUID か Minecraft ID かを判定する。
+     * 文字列を検証して UUID かどうか判定する。
      *
      * @param entry 検証する文字列
      *
-     * @return UUID なら "uuid", Minecraft ID であれば "player" を返す。
+     * @return UUID なら {@code true}
      */
-    public static String isUuidOrPlayer(String entry) {
-        return entry.matches("([a-z]|\\d){8}(-([a-z]|\\d){4}){3}-([a-z]|\\d){12}") ? "uuid" : "player";
+    public static boolean isUUID(String string) {
+        try {
+            UUID.fromString(string);
+            return true;
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
     }
 
-    /**
-     * データベースからUUIDを取得してそれを元にOfflinePlayerを取得する。プレイヤーが登録されていないときはコンソールに警告を出力する。
-     * 
-     * @param name 取得するプレイヤーの名前
-     * 
-     * @return OfflinePlayerインスタンス
-     */
-    public static OfflinePlayer getOfflinePlayer(String name) {
-        String uuidString = DATABASE.get("uuid", name);
-        if (uuidString.equals(":NOTHING")) {
-            name = "";
-            INSTANCE.getLog().warning(INSTANCE.getMessageConfig().getNoPlayerFound().replaceAll("%player%", name));
+    @SuppressWarnings("deprecation")
+    public static OfflinePlayer getOfflinePlayer(String uuidOrName) {
+        if (isUUID(uuidOrName)) {
+            return Bukkit.getOfflinePlayer(UUID.fromString(uuidOrName));
+        } else {
+            return Bukkit.getOfflinePlayer(uuidOrName);
         }
-        return Bukkit.getOfflinePlayer(UUID.fromString(uuidString));
     }
     
     /**
-     * データベースにプレイヤーが登録されていない時、senderにエラーメッセージを送信してtrueを返す。
+     * データベースにプレイヤーが登録されていない時、senderにエラーメッセージを送信してfalseを返す。
      * 
      * @author akaregi
      * 
@@ -79,17 +76,21 @@ public class PlayerUtil {
      * 
      * @param sender
      * 
-     * @return 登録されていない時true されているならfalse
+     * @return 登録されている時true、されていないならfalse
      */
-    public static boolean notExistPlayer(CommandSender sender) {
-        val player = ((Player) sender).getUniqueId().toString();
-
-        if (!DATABASE.existPlayer(player)) {
-            sender.sendMessage(Box.getInstance().getMessageConfig().getNoPlayerFound());
-
-            return true;
+    public static boolean existPlayer(CommandSender sender, String player) {
+        Map<String, String> players = PlayerData.getPlayers();
+        if (isUUID(player)) {
+            if (players.containsKey(player)) {
+                return true;
+            }
+        } else {
+            if (players.containsValue(player)) {
+                return true;
+            }
         }
-
+        
+        sender.sendMessage(Box.getInstance().getMessageConfig().getNoPlayerFound());
         return false;
     }
 

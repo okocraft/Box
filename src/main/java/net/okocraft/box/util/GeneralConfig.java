@@ -25,18 +25,19 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import lombok.Getter;
-import lombok.val;
 import net.md_5.bungee.api.ChatColor;
 import net.okocraft.box.Box;
+import net.okocraft.box.database.Items;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
-import net.okocraft.box.database.Database;
+import net.okocraft.box.gui.Category;
 import net.okocraft.box.gui.CategorySelectorGUI;
 
 /**
@@ -44,7 +45,6 @@ import net.okocraft.box.gui.CategorySelectorGUI;
  */
 public class GeneralConfig {
     private final Box plugin;
-    private final Database database;
 
     @Getter
     private final CustomConfig itemCustomConfig;
@@ -97,11 +97,9 @@ public class GeneralConfig {
 
     // Item categories
     @Getter
-    private Map<String, ConfigurationSection> categories;
+    private Map<String, Category> categories;
     @Getter
-    private Map<String, String> categoryGuiNameMap;
-    @Getter
-    private List<String> allItems;
+    private Set<String> allItems;
     @Getter
     private Map<String, Double> sellPrice;
 
@@ -115,18 +113,17 @@ public class GeneralConfig {
     @Getter
     private Map<Integer, ItemStack> footerItemStacks;
 
-    public GeneralConfig(Database database) {
+    public GeneralConfig() {
         this.plugin = Box.getInstance();
-        this.database = database;
 
         itemCustomConfig = new CustomConfig(plugin, "items.yml");
-
-        defaultConfig = plugin.getConfig();
-        itemConfig = itemCustomConfig.getConfig();
 
         // Create some files
         plugin.saveDefaultConfig();
         itemCustomConfig.saveDefaultConfig();
+
+        defaultConfig = plugin.getConfig();
+        itemConfig = itemCustomConfig.getConfig();
 
         // Bind variables
         initConfig();
@@ -142,11 +139,6 @@ public class GeneralConfig {
         itemConfig = itemCustomConfig.getConfig();
 
         initConfig();
-
-        allItems.forEach(name -> {
-            database.addColumn(name, "INTEGER", "0", false);
-            database.addColumn("autostore_" + name, "TEXT", "false", false);
-        });
 
         plugin.registerEvents();
     }
@@ -171,46 +163,46 @@ public class GeneralConfig {
         initFooterConfig();
 
         itemTemplateName = Optional.ofNullable(itemConfig.getString("ItemTemplate.display_name"))
-                .orElse("&6%item_jp% &8| &6%item_en%").replaceAll("&([a-f0-9])", "§$1");
+                .orElseGet(() -> "&6%item_jp% &8| &6%item_en%").replaceAll("&([a-f0-9])", "§$1");
 
         itemTemplateLore = itemConfig.getStringList("ItemTemplate.lore").stream()
                 .map(line -> line.replaceAll("&([a-f0-9])", "§$1")).collect(Collectors.toList());
 
-        // コンフィグに書かれた順番で表示するためにLinkedHashMapを使っている。
-        categories = new LinkedHashMap<>();
-        if (itemConfig.isConfigurationSection("categories")) {
-            itemConfig.getConfigurationSection("categories").getKeys(false).forEach(sectionName -> {
-                if (itemConfig.isConfigurationSection("categories." + sectionName)) {
-                    ConfigurationSection section = itemConfig.getConfigurationSection("categories." + sectionName);
-                    categories.put(sectionName, section);
-                }
-            });
-        }
-
-        // CHANGED: Nullable になると IntelliJ がうるさいので Optional 化
-        categorySelectionGuiName = ChatColor.translateAlternateColorCodes('&',
-                Optional.ofNullable(itemConfig.getString("CategorySelectionGui.GuiName")).orElse("ボックス - カテゴリー選択"));
-
         categoryGuiName = ChatColor.translateAlternateColorCodes('&',
-                Optional.ofNullable(itemConfig.getString("CategoryGui.GuiName")).orElse("ボックス - %category%"));
+                Optional.ofNullable(itemConfig.getString("CategoryGui.GuiName"))
+                        .orElseGet(() -> "%category_item_display_name% (%category%)"));
 
-        allItems = new ArrayList<>();
-        categoryGuiNameMap = new HashMap<>();
+        categorySelectionGuiName = ChatColor.translateAlternateColorCodes('&', Optional
+                .ofNullable(itemConfig.getString("CategorySelectionGui.GuiName")).orElseGet(() -> "Box - カテゴリー選択"));
 
-        categories.forEach((category, section) -> {
-            Optional.ofNullable(section.getString("display_name"))
-                    .ifPresent(name -> categoryGuiNameMap.put(category, categoryGuiName
-                            .replaceAll("%category%", category).replaceAll("%category_item_display_name%", name)));
-
-            Optional.ofNullable(section.getConfigurationSection("item"))
-                    .ifPresent(items -> allItems.addAll(items.getKeys(false).stream()
-                            .filter(itemName -> Material.getMaterial(itemName) != null).collect(Collectors.toList())));
+        // コンフィグに書かれた順番で表示するためにLinkedHashMapを使っている。
+        allItems = new HashSet<>();
+        categories = new LinkedHashMap<>();
+        Optional.ofNullable(itemConfig.getConfigurationSection("categories")).ifPresent(categoriesSection -> {
+            categoriesSection.getKeys(false).forEach(sectionName -> {
+                Optional.ofNullable(categoriesSection.getConfigurationSection(sectionName))
+                        .ifPresent(categorySection -> {
+                            List<String> items = categorySection.getStringList("item");
+                            if (items.isEmpty()) {
+                                return;
+                            }
+                            String displayName = categoryGuiName
+                                    .replaceAll("%category_item_display_name%",
+                                            categorySection.getString("display_name"))
+                                    .replaceAll("%category%", sectionName);
+                            Material icon = Items.valueOf(categorySection.getString("icon").toUpperCase()).getMaterial();
+                            allItems.addAll(items);
+                            categories.put(sectionName, new Category(sectionName, displayName, icon, items));
+                        });
+            });
         });
 
-        val priceConfig = new CustomConfig(plugin, "sellprice.yml");
+        allItems.removeIf(item -> !Items.contains(item));
+
+        CustomConfig priceConfig = new CustomConfig(plugin, "sellprice.yml");
         priceConfig.saveDefaultConfig();
         sellPrice = allItems.stream().collect(Collectors.toMap(itemName -> itemName,
-                itemName -> priceConfig.getConfig().getDouble(itemName), (i1, i2) -> i1, LinkedHashMap::new));
+                itemName -> priceConfig.getConfig().getDouble(itemName), (i1, i2) -> i1, HashMap::new));
     }
 
     /**
@@ -219,28 +211,27 @@ public class GeneralConfig {
     public void addCategory() {
         itemCustomConfig.initConfig();
         itemConfig = itemCustomConfig.getConfig();
-        if (!itemConfig.isConfigurationSection("categories")) {
-            return;
-        }
-        itemConfig.getConfigurationSection("categories").getKeys(false).stream()
-                .filter(sectionName -> !categories.containsKey(sectionName))
-                .filter(sectionName -> itemConfig.isConfigurationSection("categories." + sectionName))
-                .forEach(sectionName -> {
-                    ConfigurationSection section = itemConfig.getConfigurationSection("categories." + sectionName);
-                    categories.put(sectionName, section);
-                    Optional.ofNullable(section.getString("display_name"))
-                            .ifPresent(name -> categoryGuiNameMap.put(sectionName,
-                                    categoryGuiName.replaceAll("%category%", sectionName)
-                                            .replaceAll("%category_item_display_name%", name)));
 
-                    Optional.ofNullable(section.getConfigurationSection("item"))
-                            .ifPresent(items -> allItems.addAll(items.getKeys(false).stream()
-                                    .filter(itemName -> Material.getMaterial(itemName) != null)
-                                    .peek(itemName -> {
-                                        database.addColumn(itemName, "INTEGER", "0", false);
-                                        database.addColumn("autostore_" + itemName, "TEXT", "false", false);
-                                    }).collect(Collectors.toList())));
-                });
+        Optional.ofNullable(itemConfig.getConfigurationSection("categories")).ifPresent(categoriesSection -> {
+            categoriesSection.getKeys(false).stream().filter(sectionName -> !categories.containsKey(sectionName))
+                    .filter(sectionName -> itemConfig.isConfigurationSection("categories." + sectionName))
+                    .map(sectionName -> itemConfig.getConfigurationSection("categories." + sectionName))
+                    .forEach(categorySection -> {
+                        List<String> items = categorySection.getStringList("item");
+                        if (items.isEmpty()) {
+                            return;
+                        }
+                        String name = categorySection.getName();
+                        String displayName = categoryGuiName
+                                .replaceAll("%category_item_display_name%", categorySection.getString("display_name"))
+                                .replaceAll("%category%", name);
+                        Material icon = Material.valueOf(categorySection.getString("icon").toUpperCase());
+                        categories.put(name, new Category(name, displayName, icon, items));
+                    });
+
+        });
+
+        allItems.removeIf(item -> !Items.contains(item));
 
         CategorySelectorGUI.restartListener();
     }
@@ -254,17 +245,17 @@ public class GeneralConfig {
      * @see GeneralConfig#initConfig()
      */
     private void initSoundConfig() {
-        val DEFAULT_SOUND_VOLUME = 1.0;
-        val DEFAULT_SOUND_PITCH = 1.0;
+        float DEFAULT_SOUND_VOLUME = 1.0F;
+        float DEFAULT_SOUND_PITCH = 1.0F;
 
-        val DEFAULT_OPEN_SOUND = Sound.BLOCK_CHEST_OPEN;
-        val DEFAULT_TAKE_IN_SOUND = Sound.ENTITY_ITEM_PICKUP;
-        val DEFAULT_TAKE_OUT_SOUND = Sound.BLOCK_STONE_BUTTON_CLICK_ON;
-        val DEFAULT_NOT_ENOUGH_SOUND = Sound.ENTITY_ENDERMAN_TELEPORT;
-        val DEFAULT_INCREASE_SOUND = Sound.BLOCK_TRIPWIRE_CLICK_ON;
-        val DEFAULT_DECREASE_SOUND = Sound.BLOCK_TRIPWIRE_CLICK_OFF;
-        val DEFAULT_CHANGE_PAGE_SOUND = Sound.ENTITY_EXPERIENCE_ORB_PICKUP;
-        val DEFAULT_RETURN_TO_SELECTION_GUI_SOUND = Sound.ENTITY_EXPERIENCE_ORB_PICKUP;
+        Sound DEFAULT_OPEN_SOUND = Sound.BLOCK_CHEST_OPEN;
+        Sound DEFAULT_TAKE_IN_SOUND = Sound.ENTITY_ITEM_PICKUP;
+        Sound DEFAULT_TAKE_OUT_SOUND = Sound.BLOCK_STONE_BUTTON_CLICK_ON;
+        Sound DEFAULT_NOT_ENOUGH_SOUND = Sound.ENTITY_ENDERMAN_TELEPORT;
+        Sound DEFAULT_INCREASE_SOUND = Sound.BLOCK_TRIPWIRE_CLICK_ON;
+        Sound DEFAULT_DECREASE_SOUND = Sound.BLOCK_TRIPWIRE_CLICK_OFF;
+        Sound DEFAULT_CHANGE_PAGE_SOUND = Sound.ENTITY_EXPERIENCE_ORB_PICKUP;
+        Sound DEFAULT_RETURN_TO_SELECTION_GUI_SOUND = Sound.ENTITY_EXPERIENCE_ORB_PICKUP;
 
         soundVolume = (float) defaultConfig.getDouble("General.SoundSetting.Volume", DEFAULT_SOUND_VOLUME);
         soundPitch = (float) defaultConfig.getDouble("General.SoundSetting.Pitch", DEFAULT_SOUND_PITCH);
@@ -341,21 +332,21 @@ public class GeneralConfig {
      */
     private void initFooterConfig() {
         // ページ送り
-        val prevPage = itemConfig.getString("CategoryGui.PreviousPage", "&6前のページ &8| &6Prev Page");
-        val nextPage = itemConfig.getString("CategoryGui.NextPage", "&6次のページ &8| &6Nex Page");
+        String prevPage = itemConfig.getString("CategoryGui.PreviousPage", "&6前のページ &8| &6Prev Page");
+        String nextPage = itemConfig.getString("CategoryGui.NextPage", "&6次のページ &8| &6Nex Page");
 
         // 取扱単位（減算）
-        val decrease1 = itemConfig.getString("CategoryGui.Decrease1", "&7単位: &c-1");
-        val decrease8 = itemConfig.getString("CategoryGui.Decrease8", "&7単位: &c-8");
-        val decrease64 = itemConfig.getString("CategoryGui.Decrease64", "&7単位: &c-64");
+        String decrease1 = itemConfig.getString("CategoryGui.Decrease1", "&7単位: &c-1");
+        String decrease8 = itemConfig.getString("CategoryGui.Decrease8", "&7単位: &c-8");
+        String decrease64 = itemConfig.getString("CategoryGui.Decrease64", "&7単位: &c-64");
 
         // 取扱単位（加算）
-        val increase1 = itemConfig.getString("CategoryGui.Increase1", "&7単位: &b+1");
-        val increase8 = itemConfig.getString("CategoryGui.Increase8", "&7単位: &b+8");
-        val increase64 = itemConfig.getString("CategoryGui.Increase64", "&7単位: &b+64");
+        String increase1 = itemConfig.getString("CategoryGui.Increase1", "&7単位: &b+1");
+        String increase8 = itemConfig.getString("CategoryGui.Increase8", "&7単位: &b+8");
+        String increase64 = itemConfig.getString("CategoryGui.Increase64", "&7単位: &b+64");
 
         // 戻る
-        val back = itemConfig.getString("CategoryGui.Return", "&6戻る &8| &6Return");
+        String back = itemConfig.getString("CategoryGui.Return", "&6戻る &8| &6Return");
 
         // フッター
         footerItemStacks = Map.of(45, createFooterItem(Material.ARROW, 1, prevPage), 46,
@@ -383,8 +374,8 @@ public class GeneralConfig {
      */
     @Nonnull
     private static ItemStack createFooterItem(Material material, int stackAmount, String displayName) {
-        val item = new ItemStack(material, stackAmount);
-        val itemMeta = Optional.ofNullable(item.getItemMeta());
+        ItemStack item = new ItemStack(material, stackAmount);
+        Optional<ItemMeta> itemMeta = Optional.ofNullable(item.getItemMeta());
 
         itemMeta.ifPresent(meta -> {
             meta.setDisplayName(displayName.replaceAll("&([a-f0-9])", "§$1"));

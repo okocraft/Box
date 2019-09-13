@@ -20,15 +20,17 @@ package net.okocraft.box.command.box;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 
+import net.okocraft.box.database.PlayerData;
 import net.okocraft.box.util.OtherUtil;
-import net.okocraft.box.util.PlayerUtil;
 
 class AutoStoreList extends BaseSubCommand {
 
@@ -42,11 +44,9 @@ class AutoStoreList extends BaseSubCommand {
             return false;
         }
 
-        String player = ((Player) sender).getUniqueId().toString();
-
         int index = args.length >= 2 ? OtherUtil.parseIntOrDefault(args[1], 1) : 1;
 
-        List<String> allItems = CONFIG.getAllItems();
+        Set<String> allItems = CONFIG.getAllItems();
         
         int maxLine = allItems.size();
         int currentLine = Math.min(maxLine, index * 8);
@@ -59,16 +59,11 @@ class AutoStoreList extends BaseSubCommand {
                         .replaceAll("%maxLine%", String.valueOf(maxLine))
         );
 
-        List<String> columnList = CONFIG.getAllItems().stream()
-                .skip(8 * (index - 1)).limit(8)
-                .map(name -> "autostore_" + name)
-                .collect(Collectors.toList());
-
-        DATABASE.getMultiValue(columnList, player).forEach((columnName, value) ->
+        PlayerData.getAutoStoreAll((OfflinePlayer) sender).forEach((item, value) -> 
                 sender.sendMessage(
                         MESSAGE_CONFIG.getAutoStoreListFormat()
-                                .replaceAll("%item%", columnName.substring(10))
-                                .replaceAll("%isEnabled%", value)
+                                .replaceAll("%item%", item)
+                                .replaceAll("%isEnabled%", Boolean.toString(value))
                                 .replaceAll("%currentLine%", String.valueOf(currentLine))
                                 .replaceAll("%maxLine%", String.valueOf(maxLine))
                 )
@@ -118,12 +113,6 @@ class AutoStoreList extends BaseSubCommand {
         
         if (!(sender instanceof Player)) {
             sender.sendMessage(MESSAGE_CONFIG.getPlayerOnly());
-            return false;
-        }
-
-        // If the player isn't registered
-        if (PlayerUtil.notExistPlayer(sender)) {
-            sender.sendMessage(MESSAGE_CONFIG.getNoPlayerFound());
             return false;
         }
 

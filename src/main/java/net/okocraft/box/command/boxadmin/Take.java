@@ -19,14 +19,19 @@
 package net.okocraft.box.command.boxadmin;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.util.StringUtil;
 
+import net.okocraft.box.database.Items;
+import net.okocraft.box.database.PlayerData;
 import net.okocraft.box.util.OtherUtil;
+import net.okocraft.box.util.PlayerUtil;
 
 class Take extends BaseSubAdminCommand {
 
@@ -39,30 +44,20 @@ class Take extends BaseSubAdminCommand {
         if (!validate(sender, args)) {
             return false;
         }
-        String player = args[1].toLowerCase();
-        String item   = args[2].toUpperCase();
+        OfflinePlayer player = PlayerUtil.getOfflinePlayer(args[1]);
+        Items item = Items.valueOf(args[2].toUpperCase());
         long amount = args.length < 4 ? 1 : OtherUtil.parseLongOrDefault(args[3], 1);
-
-        long currentAmount;
+        long currentAmount = PlayerData.getItemAmount(player, item);
         
-        try {
-            currentAmount = Long.parseLong(DATABASE.get(item, player));
-        } catch (NumberFormatException e) {
-            e.printStackTrace();
-            sender.sendMessage(MESSAGE_CONFIG.getInvalidNumberFormat());
-            return false;
-        }
-
-        long rawValue = currentAmount - amount;
-        String value = String.valueOf(rawValue < 1 ? 1 : rawValue);
-        DATABASE.set(item, player, value);
+        long value = currentAmount - amount;
+        PlayerData.setItemAmount(player, item, value);
 
         sender.sendMessage(
                 MESSAGE_CONFIG.getSuccessTake()
-                        .replaceAll("%player%", player)
-                        .replaceAll("%item%", item)
+                        .replaceAll("%player%", player.getName())
+                        .replaceAll("%item%", item.name())
                         .replaceAll("%amount%", Long.toString(amount))
-                        .replaceAll("%newamount%", value)
+                        .replaceAll("%newamount%", Long.toString(value))
         );
 
         return true;
@@ -72,19 +67,19 @@ class Take extends BaseSubAdminCommand {
     public List<String> runTabComplete(CommandSender sender, String[] args) {
         List<String> result = new ArrayList<>();
 
-        List<String> players = new ArrayList<>(DATABASE.getPlayersMap().values());
+        List<String> players = new ArrayList<>(PlayerData.getPlayers().values());
 
         if (args.length == 2) {
             return StringUtil.copyPartialMatches(args[1], players, result);
         }
 
-        String player = args[1].toLowerCase();
+        String playerName = args[1].toLowerCase();
 
-        if (!players.contains(player)) {
+        if (!players.contains(playerName)) {
             return List.of();
         }
 
-        List<String> items = CONFIG.getAllItems();
+        List<String> items = Arrays.stream(Items.values()).parallel().map(Items::name).collect(Collectors.toList());
 
         if (args.length == 3) {
             return StringUtil.copyPartialMatches(args[2], items, result);
@@ -96,13 +91,7 @@ class Take extends BaseSubAdminCommand {
             return List.of();
         }
 
-        String rawStock = DATABASE.get(item, player);
-        long stock;
-        try {
-            stock = Long.parseLong(rawStock);
-        } catch (NumberFormatException e) {
-            return List.of("0");
-        }
+        long stock = PlayerData.getItemAmount(PlayerUtil.getOfflinePlayer(playerName), Items.valueOf(item));
 
         List<String> amountList = IntStream.iterate(1, n -> n * 10).limit(10).filter(n -> n < stock)
                 .boxed().map(String::valueOf).collect(Collectors.toList());
@@ -141,7 +130,7 @@ class Take extends BaseSubAdminCommand {
             return false;
         }
 
-        if (!DATABASE.existPlayer(args[1].toLowerCase())) {
+        if (!PlayerUtil.existPlayer(sender, args[1].toLowerCase())) {
             sender.sendMessage(MESSAGE_CONFIG.getNoPlayerFound());
             return false;
         }

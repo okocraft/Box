@@ -21,10 +21,14 @@ package net.okocraft.box.command.boxadmin;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.util.StringUtil;
 
+import net.okocraft.box.database.Items;
+import net.okocraft.box.database.PlayerData;
 import net.okocraft.box.util.OtherUtil;
+import net.okocraft.box.util.PlayerUtil;
 
 class Give extends BaseSubAdminCommand {
 
@@ -36,29 +40,19 @@ class Give extends BaseSubAdminCommand {
         if (!validate(sender, args)) {
             return false;
         }
-        String player = args[1].toLowerCase();
-        String item   = args[2].toUpperCase();
+        OfflinePlayer player = PlayerUtil.getOfflinePlayer(args[1]);
+        Items item = Items.valueOf(args[2].toUpperCase());
         long amount = args.length < 4 ? 1 : OtherUtil.parseLongOrDefault(args[3], 1);
+        long currentAmount = PlayerData.getItemAmount(player, item);
 
-        long currentAmount;
-        
-        try {
-            currentAmount = Long.parseLong(DATABASE.get(item, player));
-        } catch (NumberFormatException e) {
-            e.printStackTrace();
-            sender.sendMessage(MESSAGE_CONFIG.getInvalidNumberFormat());
-            return false;
-        }
-
-        String value = String.valueOf(currentAmount + amount);
-        DATABASE.set(item, player, value);
+        PlayerData.setItemAmount(player, item, currentAmount + amount);
 
         sender.sendMessage(
                 MESSAGE_CONFIG.getSuccessGiveAdmin()
-                        .replaceAll("%player%", player)
-                        .replaceAll("%item%", item)
+                        .replaceAll("%player%", player.getName())
+                        .replaceAll("%item%", item.name())
                         .replaceAll("%amount%", Long.toString(amount))
-                        .replaceAll("%newamount%", value)
+                        .replaceAll("%newamount%", Long.toString(currentAmount + amount))
         );
 
         return true;
@@ -68,7 +62,7 @@ class Give extends BaseSubAdminCommand {
     public List<String> runTabComplete(CommandSender sender, String[] args) {
         List<String> result = new ArrayList<>();
 
-        List<String> players = new ArrayList<>(DATABASE.getPlayersMap().values());
+        List<String> players = new ArrayList<>(PlayerData.getPlayers().values());
 
         if (args.length == 2) {
             return StringUtil.copyPartialMatches(args[1], players, result);
@@ -78,7 +72,7 @@ class Give extends BaseSubAdminCommand {
             return List.of();
         }
 
-        List<String> items = CONFIG.getAllItems();
+        List<String> items = new ArrayList<>(CONFIG.getAllItems());
 
         if (args.length == 3) {
             return StringUtil.copyPartialMatches(args[2], items, result);
@@ -121,7 +115,7 @@ class Give extends BaseSubAdminCommand {
             return false;
         }
 
-        if (!DATABASE.existPlayer(args[1].toLowerCase())) {
+        if (!PlayerUtil.existPlayer(sender, args[1].toLowerCase())) {
             sender.sendMessage(MESSAGE_CONFIG.getNoPlayerFound());
             return false;
         }

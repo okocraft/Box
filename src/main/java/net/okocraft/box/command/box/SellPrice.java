@@ -26,8 +26,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 
-import net.okocraft.box.util.PlayerUtil;
-
 class SellPrice extends BaseSubCommand {
 
     private static final String COMMAND_NAME = "sellprice";
@@ -102,11 +100,6 @@ class SellPrice extends BaseSubCommand {
         
         if (!CONFIG.getAllItems().contains(args[1].toUpperCase())) {
             sender.sendMessage(MESSAGE_CONFIG.getNoItemFound());
-            return false;
-        }
-
-        if (PlayerUtil.notExistPlayer(sender)) {
-            sender.sendMessage(MESSAGE_CONFIG.getNoPlayerFound());
             return false;
         }
 

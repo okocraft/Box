@@ -20,13 +20,16 @@ package net.okocraft.box.command.boxadmin;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 
+import net.okocraft.box.database.PlayerData;
 import net.okocraft.box.util.OtherUtil;
 import net.okocraft.box.util.PlayerUtil;
 
@@ -41,31 +44,27 @@ class AutoStoreList extends BaseSubAdminCommand {
         if (!validate(sender, args)) {
             return false;
         }
-
-        String player = args[1].toLowerCase();
+        
+        OfflinePlayer player = PlayerUtil.getOfflinePlayer(args[1].toLowerCase());
+        Map<String, Boolean> autoStoreData = PlayerData.getAutoStoreAll(player);
         int index = args.length >= 2 ? OtherUtil.parseIntOrDefault(args[2], 1) : 1;
-        int maxLine = CONFIG.getAllItems().size();
+        int maxLine = autoStoreData.size();
         int currentLine = Math.min(maxLine, index * 8);
 
         sender.sendMessage(
                 MESSAGE_CONFIG.getAutoStoreListHeader()
-                        .replaceAll("%player%", player)
+                        .replaceAll("%player%", player.getName())
                         .replaceAll("%page%", String.valueOf(index))
                         .replaceAll("%currentLine%", String.valueOf(currentLine))
                         .replaceAll("%maxLine%", String.valueOf(maxLine))
         );
 
-        List<String> columnList = CONFIG.getAllItems().stream()
-                .skip(8 * (index - 1)).limit(8)
-                .map(name -> "autostore_" + name)
-                .collect(Collectors.toList());
-
-        DATABASE.getMultiValue(columnList, player).forEach((columnName, value) ->
+        autoStoreData.forEach((item, value) ->
                 sender.sendMessage(
                         MESSAGE_CONFIG.getAutoStoreListFormat()
-                                .replaceAll("%item%", columnName.substring(10))
-                                .replaceAll("%isEnabled%", value)
-                                .replaceAll("%currentLine%", String.valueOf(currentLine))
+                                .replaceAll("%item%", item)
+                                .replaceAll("%isEnabled%", Boolean.toString(value))
+                                .replaceAll("%currentLine%", Integer.toString(currentLine))
                                 .replaceAll("%maxLine%", String.valueOf(maxLine))
                 )
         );
@@ -77,17 +76,20 @@ class AutoStoreList extends BaseSubAdminCommand {
     public List<String> runTabComplete(CommandSender sender, String[] args) {
         List<String> result = new ArrayList<>();
 
-        List<String> players = new ArrayList<>(DATABASE.getPlayersMap().values());
+        List<String> players = new ArrayList<>(PlayerData.getPlayers().values());
 
         if (args.length == 2) {
             return StringUtil.copyPartialMatches(args[1], players, result);
         }
 
-        if (!players.contains(args[1].toLowerCase())) {
+        String playerName = args[1].toLowerCase();
+
+        if (!players.contains(playerName)) {
             return List.of();
         }
 
-        int items = CONFIG.getAllItems().size();
+        @SuppressWarnings("deprecation")
+        int items = PlayerData.getAutoStoreAll(Bukkit.getOfflinePlayer(playerName)).size();
         int maxPage = items % 8 == 0 ? items / 8 : items / 8 + 1;
         List<String> pages  = IntStream.rangeClosed(1, maxPage).boxed().map(String::valueOf).collect(Collectors.toList());
         if (args.length == 3) {
@@ -123,14 +125,7 @@ class AutoStoreList extends BaseSubAdminCommand {
             return false;
         }
         
-        if (!(sender instanceof Player)) {
-            sender.sendMessage(MESSAGE_CONFIG.getPlayerOnly());
-            return false;
-        }
-
-        // If the player isn't registered
-        if (PlayerUtil.notExistPlayer(sender)) {
-            sender.sendMessage(MESSAGE_CONFIG.getNoPlayerFound());
+        if (!PlayerUtil.existPlayer(sender, args[1].toLowerCase())) {
             return false;
         }
 

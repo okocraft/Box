@@ -37,13 +37,13 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import net.okocraft.box.Box;
-import net.okocraft.box.database.Database;
+import net.okocraft.box.database.Items;
+import net.okocraft.box.database.PlayerData;
 import net.okocraft.box.util.GeneralConfig;
 
 public class Replant implements Listener {
     private static final Box INSTANCE = Box.getInstance();
     private static final GeneralConfig CONFIG = INSTANCE.getGeneralConfig();
-    private static final Database DATABASE = INSTANCE.getDatabase();
 
     private static final Map<Material, Material> PLANTS = new HashMap<>() {
         private static final long serialVersionUID = 1L;
@@ -223,15 +223,12 @@ public class Replant implements Listener {
         if (!PLANTS.containsValue(seed)) {
             return;
         }
-        int stock;
-        try {
-            stock = Integer.parseInt(DATABASE.get(seed.name(), player.getName()));
-        } catch (NumberFormatException exception) {
-            exception.printStackTrace();
-            return;
-        }
+
+        Items seedItem = Items.valueOf(seed.name());
+        long stock = PlayerData.getItemAmount(player, seedItem);
+
         if (stock >= 1) {
-            DATABASE.set(seed.name(), player.getName(), String.valueOf(stock - 1));
+            PlayerData.setItemAmount(player, seedItem, stock - 1);
         } else {
             player.getInventory().removeItem(new ItemStack(seed));
         }
@@ -246,18 +243,6 @@ public class Replant implements Listener {
             return true;
         }
 
-        if (!DATABASE.getColumnMap().containsKey(seed.name())) {
-            return false;
-        }
-
-        int stock;
-        try {
-            stock = Integer.parseInt(DATABASE.get(seed.name(), player.getName()));
-        } catch (NumberFormatException exception) {
-            exception.printStackTrace();
-            return false;
-        }
-        
-        return stock > 0;
+        return PlayerData.getItemAmount(player, Items.valueOf(seed.name())) > 0;
     }
 }
