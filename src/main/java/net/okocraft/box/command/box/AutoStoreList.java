@@ -44,30 +44,24 @@ class AutoStoreList extends BaseSubCommand {
             return false;
         }
 
-        int index = args.length >= 2 ? OtherUtil.parseIntOrDefault(args[1], 1) : 1;
-
-        Set<String> allItems = CONFIG.getAllItems();
         
+        Set<String> allItems = CONFIG.getAllItems();
+
         int maxLine = allItems.size();
-        int currentLine = Math.min(maxLine, index * 8);
+        int maxPage = maxLine % 8 == 0 ? maxLine / 8 : maxLine / 8 + 1;
+        int page = Math.min(maxPage, (args.length >= 2 ? OtherUtil.parseIntOrDefault(args[1], 1) : 1));
+        int currentLine = Math.min(maxLine, page * 8);
 
-        sender.sendMessage(
-                MESSAGE_CONFIG.getAutoStoreListHeader()
-                        .replaceAll("%player%", sender.getName().toLowerCase())
-                        .replaceAll("%page%", String.valueOf(index))
+        sender.sendMessage(MESSAGE_CONFIG.getAutoStoreListHeader()
+                .replaceAll("%player%", sender.getName().toLowerCase()).replaceAll("%page%", String.valueOf(page))
+                .replaceAll("%currentLine%", String.valueOf(currentLine))
+                .replaceAll("%maxLine%", String.valueOf(maxLine)));
+
+        PlayerData.getAutoStoreAll((OfflinePlayer) sender).entrySet().stream().skip((page - 1) * 8).limit(8).forEach(
+                entry -> sender.sendMessage(MESSAGE_CONFIG.getAutoStoreListFormat().replaceAll("%item%", entry.getKey())
+                        .replaceAll("%isEnabled%", Boolean.toString(entry.getValue()))
                         .replaceAll("%currentLine%", String.valueOf(currentLine))
-                        .replaceAll("%maxLine%", String.valueOf(maxLine))
-        );
-
-        PlayerData.getAutoStoreAll((OfflinePlayer) sender).forEach((item, value) -> 
-                sender.sendMessage(
-                        MESSAGE_CONFIG.getAutoStoreListFormat()
-                                .replaceAll("%item%", item)
-                                .replaceAll("%isEnabled%", Boolean.toString(value))
-                                .replaceAll("%currentLine%", String.valueOf(currentLine))
-                                .replaceAll("%maxLine%", String.valueOf(maxLine))
-                )
-        );
+                        .replaceAll("%maxLine%", String.valueOf(maxLine))));
 
         return true;
     }
@@ -78,7 +72,8 @@ class AutoStoreList extends BaseSubCommand {
 
         int items = CONFIG.getAllItems().size();
         int maxPage = items % 8 == 0 ? items / 8 : items / 8 + 1;
-        List<String> pages  = IntStream.rangeClosed(1, maxPage).boxed().map(String::valueOf).collect(Collectors.toList());
+        List<String> pages = IntStream.rangeClosed(1, maxPage).boxed().map(String::valueOf)
+                .collect(Collectors.toList());
         if (args.length == 2) {
             return StringUtil.copyPartialMatches(args[1], pages, result);
         }
@@ -110,7 +105,7 @@ class AutoStoreList extends BaseSubCommand {
         if (!super.validate(sender, args)) {
             return false;
         }
-        
+
         if (!(sender instanceof Player)) {
             sender.sendMessage(MESSAGE_CONFIG.getPlayerOnly());
             return false;

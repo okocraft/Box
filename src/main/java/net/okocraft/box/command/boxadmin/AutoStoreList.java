@@ -47,23 +47,24 @@ class AutoStoreList extends BaseSubAdminCommand {
         
         OfflinePlayer player = PlayerUtil.getOfflinePlayer(args[1].toLowerCase());
         Map<String, Boolean> autoStoreData = PlayerData.getAutoStoreAll(player);
-        int index = args.length >= 2 ? OtherUtil.parseIntOrDefault(args[2], 1) : 1;
         int maxLine = autoStoreData.size();
-        int currentLine = Math.min(maxLine, index * 8);
+        int maxPage = maxLine % 8 == 0 ? maxLine / 8 : maxLine / 8 + 1;
+        int page = Math.max(maxPage, (args.length >= 2 ? OtherUtil.parseIntOrDefault(args[2], 1) : 1));
+        int currentLine = Math.min(maxLine, page * 8);
 
         sender.sendMessage(
                 MESSAGE_CONFIG.getAutoStoreListHeader()
                         .replaceAll("%player%", player.getName())
-                        .replaceAll("%page%", String.valueOf(index))
+                        .replaceAll("%page%", String.valueOf(page))
                         .replaceAll("%currentLine%", String.valueOf(currentLine))
                         .replaceAll("%maxLine%", String.valueOf(maxLine))
         );
 
-        autoStoreData.forEach((item, value) ->
+        autoStoreData.entrySet().stream().skip((page - 1) * 8).limit(8).forEach(entry ->
                 sender.sendMessage(
                         MESSAGE_CONFIG.getAutoStoreListFormat()
-                                .replaceAll("%item%", item)
-                                .replaceAll("%isEnabled%", Boolean.toString(value))
+                                .replaceAll("%item%", entry.getKey())
+                                .replaceAll("%isEnabled%", Boolean.toString(entry.getValue()))
                                 .replaceAll("%currentLine%", Integer.toString(currentLine))
                                 .replaceAll("%maxLine%", String.valueOf(maxLine))
                 )
