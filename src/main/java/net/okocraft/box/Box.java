@@ -32,7 +32,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import net.milkbowl.vault.economy.Economy;
 import net.okocraft.box.command.boxadmin.BoxAdmin;
-//import net.okocraft.box.database.Migrater;
 import net.okocraft.box.database.PlayerData;
 import net.okocraft.box.database.Sqlite;
 import net.okocraft.box.gui.CategorySelectorGUI;
@@ -153,7 +152,6 @@ public class Box extends JavaPlugin {
 
         // Events should be registered in its own initializer
         new PlayerData(this);
-        //Migrater.migrate();
         new EntityPickupItem(this);
         new BoxStick();
         new Replant();
