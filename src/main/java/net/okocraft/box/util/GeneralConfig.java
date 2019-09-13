@@ -19,6 +19,7 @@
 package net.okocraft.box.util;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
@@ -201,7 +202,7 @@ public class GeneralConfig {
 
         CustomConfig priceConfig = new CustomConfig(plugin, "sellprice.yml");
         priceConfig.saveDefaultConfig();
-        sellPrice = allItems.stream().collect(Collectors.toMap(itemName -> itemName,
+        sellPrice = allItems.stream().collect(Collectors.toMap(Function.identity(),
                 itemName -> priceConfig.getConfig().getDouble(itemName), (i1, i2) -> i1, HashMap::new));
     }
 
