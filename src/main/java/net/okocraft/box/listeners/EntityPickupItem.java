@@ -64,6 +64,10 @@ public class EntityPickupItem implements Listener {
         } catch (IllegalArgumentException e) {
             return;
         }
+
+        if (!Box.getInstance().getGeneralConfig().getAllItems().contains(pickedItem.name())) {
+            return;
+        }
         
         if (!PlayerData.getAutoStore(player, pickedItem)) {
             return;
