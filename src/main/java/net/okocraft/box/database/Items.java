@@ -728,6 +728,7 @@ public enum Items {
     LINGERING_POTION_SLOW_FALLING_EXTENDED(Material.LINGERING_POTION, CreativeCategory.BREWING, "低速落下の残留ポーション", "Lingering Potion of Slow Falling"),    PHANTOM_MEMBRANE(Material.PHANTOM_MEMBRANE, CreativeCategory.BREWING, "ファントムの皮膜", "Phantom Membrane"),
     TURTLE_HELMET(Material.TURTLE_HELMET, CreativeCategory.COMBAT, "カメの甲羅", "Turtle Shell"),
     BOW(Material.BOW, CreativeCategory.COMBAT, "弓", "Bow"),
+    ARROW(Material.ARROW, CreativeCategory.COMBAT, "矢", "Arrow"),
     IRON_SWORD(Material.IRON_SWORD, CreativeCategory.COMBAT, "鉄の剣", "Iron Sword"),
     WOODEN_SWORD(Material.WOODEN_SWORD, CreativeCategory.COMBAT, "木の剣", "Wooden Sword"),
     STONE_SWORD(Material.STONE_SWORD, CreativeCategory.COMBAT, "石の剣", "Stone Sword"),

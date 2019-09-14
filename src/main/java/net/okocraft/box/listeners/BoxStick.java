@@ -90,7 +90,12 @@ public class BoxStick implements Listener {
             return;
         }
 
-        Items items = Items.getByItemStack(item);
+        Items items;
+        try {
+            items = Items.getByItemStack(item);
+        } catch (IllegalArgumentException e) {
+            return;
+        }
 
         long stock = PlayerData.getItemAmount(player, items);
         if (stock < 1) {
