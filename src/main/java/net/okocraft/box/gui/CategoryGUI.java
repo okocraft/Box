@@ -42,6 +42,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import lombok.Getter;
 import net.okocraft.box.Box;
+import net.okocraft.box.database.Items;
 import net.okocraft.box.database.PlayerData;
 import net.okocraft.box.util.GeneralConfig;
 import net.okocraft.box.util.PlayerUtil;
@@ -190,7 +191,7 @@ class CategoryGUI implements Listener {
             return;
         }
         tempQuantity = Math.min(stock, tempQuantity);
-        ItemStack givenItem = item.clone();
+        ItemStack givenItem = Items.getItemStack(Items.getName(item, true));
         givenItem.setAmount((int) tempQuantity);
         int nonAdded = player.getInventory().addItem(givenItem).values().stream().mapToInt(ItemStack::getAmount).sum();
         PlayerData.setItemAmount(player, item, stock + nonAdded - tempQuantity);
@@ -205,7 +206,7 @@ class CategoryGUI implements Listener {
      */
     private void deposit(@NotNull ItemStack item) {
         long stock = PlayerData.getItemAmount(player, item);
-        ItemStack takenItem = item.clone();
+        ItemStack takenItem = Items.getItemStack(Items.getName(item, true));
         takenItem.setAmount(quantity);
         int nonRemoved = player.getInventory().removeItem(takenItem).values().stream().mapToInt(ItemStack::getAmount)
                 .sum();
@@ -340,7 +341,7 @@ class CategoryGUI implements Listener {
 
         // creative状態であるか、box.creativeの権限を持っていると無限に引き出せるようになる。
         if (player.getGameMode() == GameMode.CREATIVE || player.hasPermission("box.creative")) {
-            ItemStack item = clickedItem.clone();
+            ItemStack item = Items.getItemStack(Items.getName(clickedItem, true));
             item.setAmount(quantity);
             if (event.isRightClick()) {
                 PlayerUtil.playSound(player, CONFIG.getTakeOutSound());
