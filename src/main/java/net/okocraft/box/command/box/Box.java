@@ -35,6 +35,7 @@ import org.bukkit.util.StringUtil;
 import lombok.Getter;
 import net.okocraft.box.command.BaseBoxCommand;
 import net.okocraft.box.gui.CategorySelectorGUI;
+import org.jetbrains.annotations.NotNull;
 
 public class Box extends BaseBoxCommand implements CommandExecutor, TabCompleter {
 
@@ -88,7 +89,7 @@ public class Box extends BaseBoxCommand implements CommandExecutor, TabCompleter
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, Command command, String label, @NotNull String[] args) {
         if (args.length == 0) {
             return runCommand(sender, args);
         }
@@ -101,7 +102,7 @@ public class Box extends BaseBoxCommand implements CommandExecutor, TabCompleter
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+    public List<String> onTabComplete(@NotNull CommandSender sender, Command command, String alias, @NotNull String[] args) {
         if (args.length == 0) {
             return null;
         }
@@ -135,11 +136,13 @@ public class Box extends BaseBoxCommand implements CommandExecutor, TabCompleter
         return true;
     }
 
+    @NotNull
     @Override
     public List<String> runTabComplete(CommandSender sender, String[] args) {
         throw new UnsupportedOperationException("Non subcommand could not be completed with this method.");
     }
 
+    @NotNull
     @Override
     public String getCommandName() {
         return COMMAND_NAME;
@@ -150,11 +153,13 @@ public class Box extends BaseBoxCommand implements CommandExecutor, TabCompleter
         return MESSAGE_CONFIG.getBoxDesc();
     }
 
+    @NotNull
     @Override
     public String getUsage() {
         return USAGE;
     }
 
+    @NotNull
     @Override
     public String getPermissionNode() {
         return getCommandName();

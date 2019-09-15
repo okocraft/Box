@@ -28,11 +28,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.StringUtil;
 
 import net.okocraft.box.database.Items;
 import net.okocraft.box.database.PlayerData;
 import net.okocraft.box.util.OtherUtil;
+import org.jetbrains.annotations.NotNull;
 
 class Give extends BaseSubCommand {
 
@@ -41,7 +43,7 @@ class Give extends BaseSubCommand {
     private static final String USAGE = "/box give <player> <ITEM> [amount]";
 
     @Override
-    public boolean runCommand(CommandSender sender, String[] args) {
+    public boolean runCommand(@NotNull CommandSender sender, @NotNull String[] args) {
         if (!validate(sender, args)) {
             return false;
         }
@@ -54,7 +56,8 @@ class Give extends BaseSubCommand {
             return false;
         }
         
-        Items item = Items.valueOf(args[2].toUpperCase());
+        String itemName = args[2].toUpperCase();
+        ItemStack item = Items.getItemStack(itemName);
 
         long amount = args.length == 3 ? 1L : OtherUtil.parseLongOrDefault(args[3], 1L);
 
@@ -80,7 +83,7 @@ class Give extends BaseSubCommand {
         sender.sendMessage(
                 MESSAGE_CONFIG.getSuccessGive()
                         .replaceAll("%player%", player.getName())
-                        .replaceAll("%item%", item.name())
+                        .replaceAll("%item%", itemName)
                         .replaceAll("%amount%", Long.toString(amount))
                         .replaceAll("%newamount%", Long.toString(senderAmount - amount))
         );
@@ -89,7 +92,7 @@ class Give extends BaseSubCommand {
             player.getPlayer().sendMessage(
                     MESSAGE_CONFIG.getSuccessReceive()
                             .replaceAll("%player%", sender.getName())
-                            .replaceAll("%item%", item.name())
+                            .replaceAll("%item%", itemName)
                             .replaceAll("%amount%", Long.toString(amount))
                             .replaceAll("%newamount%", Long.toString(otherAmount + amount))
             );
@@ -99,7 +102,7 @@ class Give extends BaseSubCommand {
     }
 
     @Override
-    public List<String> runTabComplete(CommandSender sender, String[] args) {
+    public List<String> runTabComplete(CommandSender sender, @NotNull String[] args) {
         List<String> result = new ArrayList<>();
         List<String> players = new ArrayList<>(PlayerData.getPlayers().values());
 
@@ -127,7 +130,7 @@ class Give extends BaseSubCommand {
             return List.of();
         }
         
-        long stock = PlayerData.getItemAmount((OfflinePlayer) sender, Items.valueOf(itemName));
+        long stock = PlayerData.getItemAmount((OfflinePlayer) sender, Items.getItemStack(itemName));
 
         if (stock < 1) {
             return List.of();
@@ -144,6 +147,7 @@ class Give extends BaseSubCommand {
         return result;
     }
 
+    @NotNull
     @Override
     public String getCommandName() {
         return COMMAND_NAME;
@@ -154,6 +158,7 @@ class Give extends BaseSubCommand {
         return LEAST_ARG_LENGTH;
     }
 
+    @NotNull
     @Override
     public String getUsage() {
         return USAGE;
@@ -166,7 +171,7 @@ class Give extends BaseSubCommand {
 
 
     @Override
-    protected boolean validate(CommandSender sender, String[] args) {
+    protected boolean validate(CommandSender sender, @NotNull String[] args) {
         if (!super.validate(sender, args)) {
             return false;
         }

@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.util.StringUtil;
+import org.jetbrains.annotations.NotNull;
 
 class Reload extends BaseSubAdminCommand {
 
@@ -31,7 +32,7 @@ class Reload extends BaseSubAdminCommand {
     private static final String USAGE = "/boxadmin reload";
 
     @Override
-    public boolean runCommand(CommandSender sender, String[] args) {
+    public boolean runCommand(@NotNull CommandSender sender, @NotNull String[] args) {
         if (!validate(sender, args)) {
             return false;
         }
@@ -62,8 +63,9 @@ class Reload extends BaseSubAdminCommand {
         MESSAGE_CONFIG.reload();
     }
 
+    @NotNull
     @Override
-    public List<String> runTabComplete(CommandSender sender, String[] args) {
+    public List<String> runTabComplete(CommandSender sender, @NotNull String[] args) {
         List<String> result = new ArrayList<>();
         List<String> subCommands = List.of("listener", "config");
 
@@ -74,6 +76,7 @@ class Reload extends BaseSubAdminCommand {
         return result;
     }
 
+    @NotNull
     @Override
     public String getCommandName() {
         return COMMAND_NAME;
@@ -84,6 +87,7 @@ class Reload extends BaseSubAdminCommand {
         return LEAST_ARG_LENGTH;
     }
 
+    @NotNull
     @Override
     public String getUsage() {
         return USAGE;

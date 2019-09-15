@@ -22,7 +22,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import javax.annotation.Nonnull;
 
 import lombok.Getter;
 
@@ -33,6 +32,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import net.okocraft.box.Box;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * メッセージ設定クラス
@@ -41,6 +41,7 @@ import net.okocraft.box.Box;
  * @since v1.1.0
  */
 public class MessageConfig {
+    @NotNull
     private final CustomConfig configFile;
 
     /**
@@ -333,8 +334,8 @@ public class MessageConfig {
      *
      * @return メッセージ
      */
-    @Nonnull
-    private String getMessage(@Nonnull String key) {
+    @NotNull
+    private String getMessage(@NotNull String key) {
         return prefix + getRawMessage(key);
     }
 
@@ -349,7 +350,8 @@ public class MessageConfig {
      * 
      * @return 生メッセージ
      */
-    private String getRawMessage(@Nonnull String key) {
+    @NotNull
+    private String getRawMessage(@NotNull String key) {
         return convertColor(Optional.ofNullable(config.getString(key)).orElse(getDefaultMessage(key)));
     }
 
@@ -363,7 +365,7 @@ public class MessageConfig {
      * 
      * @return メッセージ
      */
-    private String getDefaultMessage(String key) {
+    private String getDefaultMessage(@NotNull String key) {
         InputStream messageConfigStream = Optional.ofNullable(Box.getInstance().getResource("messages.yml"))
                 .orElseThrow(() -> new NoSuchElementException("No message file."));
 
@@ -381,7 +383,7 @@ public class MessageConfig {
      * 
      * @return prefix
      */
-    @Nonnull
+    @NotNull
     private String getPrefix() {
         String key = "plugin.prefix";
         return convertColor(Optional.ofNullable(config.getString(key)).orElse(getDefaultMessage(key)));
@@ -393,7 +395,8 @@ public class MessageConfig {
      * @param target
      * @return replaced target
      */
-    public static String convertColor(String target) {
+    @NotNull
+    public static String convertColor(@NotNull String target) {
         return ChatColor.translateAlternateColorCodes('&', target);
     }
 }

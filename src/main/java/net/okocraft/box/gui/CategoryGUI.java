@@ -42,16 +42,19 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import lombok.Getter;
 import net.okocraft.box.Box;
-import net.okocraft.box.database.Items;
 import net.okocraft.box.database.PlayerData;
 import net.okocraft.box.util.GeneralConfig;
 import net.okocraft.box.util.PlayerUtil;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 class CategoryGUI implements Listener {
 
+    @Nullable
     private static final Box INSTANCE = Box.getInstance();
     private static final GeneralConfig CONFIG = INSTANCE.getGeneralConfig();
 
+    @NotNull
     private final Player player;
     private final Category category;
     @Getter
@@ -59,6 +62,7 @@ class CategoryGUI implements Listener {
     @Getter
     private int quantity;
     private Inventory gui;
+    @NotNull
     private final List<ItemStack> items;
 
     /**
@@ -69,7 +73,7 @@ class CategoryGUI implements Listener {
      * @param quantity     引き出し・預け入れ量
      * @throws IllegalArgumentException カテゴリ名が登録されていないとき。
      */
-    public CategoryGUI(Player player, String categoryName, int quantity) throws IllegalArgumentException {
+    public CategoryGUI(@NotNull Player player, String categoryName, int quantity) throws IllegalArgumentException {
         Map<String, Category> categories = CONFIG.getCategories();
         if (!categories.containsKey(categoryName)) {
             throw new IllegalArgumentException("Category " + categoryName + " is not registered.");
@@ -83,16 +87,12 @@ class CategoryGUI implements Listener {
             private static final long serialVersionUID = 1L;
             {
                 category.getItems().forEach(item -> {
-                    ItemStack itemStack = item.getItem();
+                    ItemStack itemStack = item.clone();
                     // meta設定
                     ItemMeta meta = itemStack.getItemMeta();
-                    String jp = item.getJapanese();
-                    String en = item.getEnglish();
                     long stock = PlayerData.getItemAmount(player, item);
-                    String itemName = replacePlaceholders(CONFIG.getItemTemplateName(), jp, en, stock, quantity);
                     List<String> itemLore = new ArrayList<>(CONFIG.getItemTemplateLore());
-                    itemLore.replaceAll(loreLine -> replacePlaceholders(loreLine, jp, en, stock, quantity));
-                    meta.setDisplayName(itemName);
+                    itemLore.replaceAll(loreLine -> replacePlaceholders(loreLine, stock, quantity));
                     meta.setLore(itemLore);
                     itemStack.setItemMeta(meta);
                     add(itemStack);
@@ -115,9 +115,10 @@ class CategoryGUI implements Listener {
      * @param quantity 一度のアイテムの取引量
      * @return 置換された文字列
      */
-    private String replacePlaceholders(String original, String jp, String en, long stock, int quantity) {
-        return original.replaceAll("%item_jp%", jp).replaceAll("%item_en%", en)
-                .replaceAll("%item_quantity%", String.valueOf(quantity)).replaceAll("%stock%", String.valueOf(stock))
+    @NotNull
+    private String replacePlaceholders(@NotNull String original, long stock, int quantity) {
+        return original.replaceAll("%item_quantity%", Integer.toString(quantity))
+                .replaceAll("%stock%", String.valueOf(stock))
                 .replaceAll("&([a-f0-9])", "§$1");
     }
 
@@ -181,7 +182,7 @@ class CategoryGUI implements Listener {
      * 
      * @param item 引き出すアイテム
      */
-    private void withdraw(Items item) {
+    private void withdraw(@NotNull ItemStack item) {
         long stock = PlayerData.getItemAmount(player, item);
         long tempQuantity = quantity;
         if (stock == 0) {
@@ -189,7 +190,7 @@ class CategoryGUI implements Listener {
             return;
         }
         tempQuantity = Math.min(stock, tempQuantity);
-        ItemStack givenItem = item.getItem();
+        ItemStack givenItem = item.clone();
         givenItem.setAmount((int) tempQuantity);
         int nonAdded = player.getInventory().addItem(givenItem).values().stream().mapToInt(ItemStack::getAmount).sum();
         PlayerData.setItemAmount(player, item, stock + nonAdded - tempQuantity);
@@ -202,9 +203,9 @@ class CategoryGUI implements Listener {
      * 
      * @param item 預けるアイテム
      */
-    private void deposit(Items item) {
+    private void deposit(@NotNull ItemStack item) {
         long stock = PlayerData.getItemAmount(player, item);
-        ItemStack takenItem = item.getItem();
+        ItemStack takenItem = item.clone();
         takenItem.setAmount(quantity);
         int nonRemoved = player.getInventory().removeItem(takenItem).values().stream().mapToInt(ItemStack::getAmount)
                 .sum();
@@ -218,39 +219,21 @@ class CategoryGUI implements Listener {
     }
 
     /**
-     * アイテムの取引などで変動したloreを追随させるためのメソッド。
-     * 
-     * @param material loreを更新するアイテムを検索するためのタイプ
-     */
-    private void updateLore(Items item) {
-        for (int i = 0; i < 45; i++) {
-            ItemStack guiItem = gui.getItem(i);
-            if (guiItem != null && Items.getNameIgnoreMeta(guiItem).equals(item.name())) {
-                updateLore(guiItem);
-                break;
-            }
-        }
-    }
-
-    /**
      * GUIの初期化や、アイテムの取引などで変動したloreを追随させるためのメソッド。
      * 
      * @param item loreを更新するアイテム
      */
-    private void updateLore(ItemStack item) {
-        Items items = Items.valueOf(Items.getNameIgnoreMeta(item));
+    private void updateLore(@NotNull ItemStack item) {
         ItemMeta meta = item.getItemMeta();
-        String jp = items.getJapanese();
-        String en = items.getEnglish();
-        long stock = PlayerData.getItemAmount(player, items);
+        long stock = PlayerData.getItemAmount(player, item);
         List<String> itemLore = new ArrayList<>(CONFIG.getItemTemplateLore());
-        itemLore.replaceAll(loreLine -> replacePlaceholders(loreLine, jp, en, stock, quantity));
+        itemLore.replaceAll(loreLine -> replacePlaceholders(loreLine, stock, quantity));
         meta.setLore(itemLore);
         item.setItemMeta(meta);
     }
 
     @EventHandler
-    public void onQuit(PlayerQuitEvent event) {
+    public void onQuit(@NotNull PlayerQuitEvent event) {
         if (event.getPlayer() != player) {
             return;
         }
@@ -258,7 +241,7 @@ class CategoryGUI implements Listener {
     }
 
     @EventHandler
-    public void onGuiClosed(InventoryCloseEvent event) {
+    public void onGuiClosed(@NotNull InventoryCloseEvent event) {
         if (event.getPlayer() != player) {
             return;
         }
@@ -355,25 +338,24 @@ class CategoryGUI implements Listener {
             return;
         }
 
-        Items item = Items.getByItemStackIgnoreMeta(clickedItem);
         // creative状態であるか、box.creativeの権限を持っていると無限に引き出せるようになる。
         if (player.getGameMode() == GameMode.CREATIVE || player.hasPermission("box.creative")) {
-            ItemStack itemStack = item.getItem();
-            itemStack.setAmount(quantity);
+            ItemStack item = clickedItem.clone();
+            item.setAmount(quantity);
             if (event.isRightClick()) {
                 PlayerUtil.playSound(player, CONFIG.getTakeOutSound());
-                player.getInventory().addItem(itemStack);
+                player.getInventory().addItem(item);
             } else {
                 PlayerUtil.playSound(player, CONFIG.getTakeOutSound());
-                player.getInventory().removeItem(itemStack);
+                player.getInventory().removeItem(item);
             }
             return;
         }
 
         if (event.isRightClick()) {
-            withdraw(item);
+            withdraw(clickedItem);
         } else {
-            deposit(item);
+            deposit(clickedItem);
         }
     }
 }

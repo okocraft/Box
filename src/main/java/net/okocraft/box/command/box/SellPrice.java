@@ -25,6 +25,7 @@ import java.util.Optional;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
+import org.jetbrains.annotations.NotNull;
 
 class SellPrice extends BaseSubCommand {
 
@@ -33,7 +34,7 @@ class SellPrice extends BaseSubCommand {
     private static final String USAGE = "/box sellprice <ITEM>";
 
     @Override
-    public boolean runCommand(CommandSender sender, String[] args) {
+    public boolean runCommand(@NotNull CommandSender sender, @NotNull String[] args) {
         if (!validate(sender, args)) {
             return false;
         }
@@ -49,8 +50,9 @@ class SellPrice extends BaseSubCommand {
         return true;
     }
 
+    @NotNull
     @Override
-    public List<String> runTabComplete(CommandSender sender, String[] args) {
+    public List<String> runTabComplete(CommandSender sender, @NotNull String[] args) {
         List<String> result = new ArrayList<>();
         
         List<String> items = new ArrayList<>(CONFIG.getSellPrice().keySet());
@@ -62,6 +64,7 @@ class SellPrice extends BaseSubCommand {
         return result;
     }
 
+    @NotNull
     @Override
     public String getCommandName() {
         return COMMAND_NAME;
@@ -72,6 +75,7 @@ class SellPrice extends BaseSubCommand {
         return LEAST_ARG_LENGTH;
     }
 
+    @NotNull
     @Override
     public String getUsage() {
         return USAGE;
@@ -83,7 +87,7 @@ class SellPrice extends BaseSubCommand {
     }
 
     @Override
-    protected boolean validate(CommandSender sender, String[] args) {
+    protected boolean validate(CommandSender sender, @NotNull String[] args) {
         if (!super.validate(sender, args)) {
             return false;
         }

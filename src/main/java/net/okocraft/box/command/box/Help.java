@@ -29,6 +29,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.util.StringUtil;
 
 import net.okocraft.box.util.OtherUtil;
+import org.jetbrains.annotations.NotNull;
 
 class Help extends BaseSubCommand {
 
@@ -37,7 +38,7 @@ class Help extends BaseSubCommand {
     private static final String USAGE = "/box help [page]";
 
     @Override
-    public boolean runCommand(CommandSender sender, String[] args) {
+    public boolean runCommand(@NotNull CommandSender sender, @NotNull String[] args) {
         if (!validate(sender, args)) {
             return false;
         }
@@ -64,8 +65,9 @@ class Help extends BaseSubCommand {
         return true;
     }
 
+    @NotNull
     @Override
-    public List<String> runTabComplete(CommandSender sender, String[] args) {
+    public List<String> runTabComplete(CommandSender sender, @NotNull String[] args) {
         List<String> result = new ArrayList<>();
 
         int mapSize = INSTANCE.getCommand().getSubCommandMapSize();
@@ -77,6 +79,7 @@ class Help extends BaseSubCommand {
         return result;
     }
 
+    @NotNull
     @Override
     public String getCommandName() {
         return COMMAND_NAME;
@@ -87,6 +90,7 @@ class Help extends BaseSubCommand {
         return LEAST_ARG_LENGTH;
     }
 
+    @NotNull
     @Override
     public String getUsage() {
         return USAGE;

@@ -34,6 +34,7 @@ import org.bukkit.util.StringUtil;
 import lombok.Getter;
 import net.okocraft.box.command.BaseBoxCommand;
 import net.okocraft.box.command.BoxCommand;
+import org.jetbrains.annotations.NotNull;
 
 public class BoxAdmin extends BaseBoxCommand implements CommandExecutor, TabCompleter {
 
@@ -86,7 +87,7 @@ public class BoxAdmin extends BaseBoxCommand implements CommandExecutor, TabComp
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, Command command, String label, @NotNull String[] args) {
         if (!validate(sender, args)) {
             return false;
         }
@@ -100,7 +101,7 @@ public class BoxAdmin extends BaseBoxCommand implements CommandExecutor, TabComp
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+    public List<String> onTabComplete(@NotNull CommandSender sender, Command command, String alias, @NotNull String[] args) {
         if (args.length == 0) {
             return null;
         }
@@ -120,21 +121,25 @@ public class BoxAdmin extends BaseBoxCommand implements CommandExecutor, TabComp
         return subCommand.runTabComplete(sender, args);
     }
 
+    @NotNull
     @Override
     public String getDescription() {
         return "";    
     }
 
+    @NotNull
     @Override
     public String getUsage() {
         return USAGE;
     }
 
+    @NotNull
     @Override
     public String getCommandName() {
         return COMMAND_NAME;
     }
 
+    @NotNull
     @Override
     public String getPermissionNode() {
         return getCommandName();
@@ -150,6 +155,7 @@ public class BoxAdmin extends BaseBoxCommand implements CommandExecutor, TabComp
         throw new UnsupportedOperationException("BoxAdmin must be executed with sub commands.");
     }
 
+    @NotNull
     @Override
     public List<String> runTabComplete(CommandSender sender, String[] args) {
         throw new UnsupportedOperationException("Non subcommand could not be completed with this method.");

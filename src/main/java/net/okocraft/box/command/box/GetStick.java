@@ -23,6 +23,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import net.okocraft.box.listeners.BoxStick;
+import org.jetbrains.annotations.NotNull;
 
 class GetStick extends BaseSubCommand {
 
@@ -31,7 +32,7 @@ class GetStick extends BaseSubCommand {
     private static final String USAGE = "/box stick";
 
     @Override
-    public boolean runCommand(CommandSender sender, String[] args) {
+    public boolean runCommand(@NotNull CommandSender sender, @NotNull String[] args) {
         if (!validate(sender, args)) {
             return false;
         }
@@ -44,6 +45,7 @@ class GetStick extends BaseSubCommand {
         return List.of();
     }
 
+    @NotNull
     @Override
     public String getCommandName() {
         return COMMAND_NAME;
@@ -54,6 +56,7 @@ class GetStick extends BaseSubCommand {
         return LEAST_ARG_LENGTH;
     }
 
+    @NotNull
     @Override
     public String getUsage() {
         return USAGE;
@@ -65,7 +68,7 @@ class GetStick extends BaseSubCommand {
     }
 
     @Override
-    protected boolean validate(CommandSender sender, String[] args) {
+    protected boolean validate(CommandSender sender, @NotNull String[] args) {
         if (!super.validate(sender, args)) {
             return false;
         }

@@ -24,17 +24,20 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityPickupItemEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
 import net.okocraft.box.util.GeneralConfig;
+import net.okocraft.box.util.PlayerUtil;
 import net.okocraft.box.Box;
 import net.okocraft.box.database.Items;
 import net.okocraft.box.database.PlayerData;
+import org.jetbrains.annotations.NotNull;
 
 public class EntityPickupItem implements Listener {
     private final GeneralConfig config;
 
-    public EntityPickupItem(Plugin plugin) {
+    public EntityPickupItem(@NotNull Plugin plugin) {
         // Register this event
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
 
@@ -43,8 +46,12 @@ public class EntityPickupItem implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void onPickupItem(EntityPickupItemEvent event) {
+    public void onPickupItem(@NotNull EntityPickupItemEvent event) {
         if (event.isCancelled()) {
+            return;
+        }
+
+        if (!config.isAutoStoreEnabled()) {
             return;
         }
 
@@ -57,15 +64,11 @@ public class EntityPickupItem implements Listener {
         }
 
         Player player = (Player) event.getEntity();
-        
-        Items pickedItem;
-        try {
-            pickedItem = Items.getByItemStack(event.getItem().getItemStack());
-        } catch (IllegalArgumentException e) {
-            return;
-        }
+        ItemStack pickedItem = event.getItem().getItemStack();
 
-        if (!Box.getInstance().getGeneralConfig().getAllItems().contains(pickedItem.name())) {
+        String pickedItemName = Items.getName(pickedItem, false);
+
+        if (!Box.getInstance().getGeneralConfig().getAllItems().contains(pickedItemName)) {
             return;
         }
         
@@ -79,11 +82,6 @@ public class EntityPickupItem implements Listener {
         event.getItem().remove();
         event.setCancelled(true);
 
-        player.playSound(
-            player.getLocation(),
-            config.getTakeInSound(),
-            config.getSoundPitch(),
-            config.getSoundVolume()
-        );
+        PlayerUtil.playSound(player, config.getTakeInSound());
     }
 }

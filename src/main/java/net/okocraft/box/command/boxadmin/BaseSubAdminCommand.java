@@ -19,8 +19,10 @@
 package net.okocraft.box.command.boxadmin;
 
 import net.okocraft.box.command.BaseBoxCommand;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class BaseSubAdminCommand extends BaseBoxCommand {
+    @NotNull
     @Override
     public String getPermissionNode() {
         return "boxadmin." + getCommandName();

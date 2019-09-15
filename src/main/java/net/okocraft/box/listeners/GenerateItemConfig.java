@@ -42,9 +42,12 @@ import org.bukkit.inventory.Inventory;
 import net.okocraft.box.Box;
 import net.okocraft.box.database.Items;
 import net.okocraft.box.util.GeneralConfig;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class GenerateItemConfig implements Listener {
 
+    @Nullable
     private static final Box INSTANCE = Box.getInstance();
     private static final GeneralConfig CONFIG = INSTANCE.getGeneralConfig();
 
@@ -54,7 +57,7 @@ public class GenerateItemConfig implements Listener {
     private final String displayName;
     private final Material icon;
 
-    public GenerateItemConfig(Player player, String category, String id, String displayName, String icon) {
+    public GenerateItemConfig(Player player, String category, String id, String displayName, @NotNull String icon) {
         Bukkit.getPluginManager().registerEvents(this, INSTANCE);
         this.player = player;
         this.category = category;
@@ -64,7 +67,7 @@ public class GenerateItemConfig implements Listener {
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
-    public void onChestClick(PlayerInteractEvent event) {
+    public void onChestClick(@NotNull PlayerInteractEvent event) {
         if (event.getPlayer() != player) {
             return;
         }
@@ -103,7 +106,7 @@ public class GenerateItemConfig implements Listener {
         
         List<String> items = Arrays.stream(chestSnapInv.getContents())
                 .filter(itemStack -> itemStack != null)
-                .map(Items::getByItemStack).map(Items::name)
+                .map(itemStack -> Items.getName(itemStack, false))
                 .collect(Collectors.toList());
         
         itemConfig.set(categoryPath + ".item", items);
@@ -115,7 +118,7 @@ public class GenerateItemConfig implements Listener {
     }
 
     @EventHandler
-    public void onQuit(PlayerQuitEvent event) {
+    public void onQuit(@NotNull PlayerQuitEvent event) {
         if (event.getPlayer() == player) {
             HandlerList.unregisterAll(this);
         }

@@ -29,6 +29,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 
 import net.okocraft.box.listeners.GenerateItemConfig;
+import org.jetbrains.annotations.NotNull;
 
 class AddCategory extends BaseSubAdminCommand {
 
@@ -37,7 +38,7 @@ class AddCategory extends BaseSubAdminCommand {
     private static final String USAGE = "/boxadmin addcategory <category> <id> <displayName> <iconMaterial>";
 
     @Override
-    public boolean runCommand(CommandSender sender, String[] args) {
+    public boolean runCommand(@NotNull CommandSender sender, @NotNull String[] args) {
         if (!validate(sender, args)) {
             return false;
         }
@@ -47,8 +48,9 @@ class AddCategory extends BaseSubAdminCommand {
         return true;
     }
 
+    @NotNull
     @Override
-    public List<String> runTabComplete(CommandSender sender, String[] args) {
+    public List<String> runTabComplete(CommandSender sender, @NotNull String[] args) {
         List<String> result = new ArrayList<>();
 
         switch (args.length) {
@@ -67,6 +69,7 @@ class AddCategory extends BaseSubAdminCommand {
         }
     }
 
+    @NotNull
     @Override
     public String getCommandName() {
         return COMMAND_NAME;
@@ -77,6 +80,7 @@ class AddCategory extends BaseSubAdminCommand {
         return LEAST_ARG_LENGTH;
     }
 
+    @NotNull
     @Override
     public String getUsage() {
         return USAGE;
@@ -88,7 +92,7 @@ class AddCategory extends BaseSubAdminCommand {
     }
 
     @Override
-    protected boolean validate(CommandSender sender, String[] args) {
+    protected boolean validate(CommandSender sender, @NotNull String[] args) {
         if (!super.validate(sender, args)) {
             return false;
         }

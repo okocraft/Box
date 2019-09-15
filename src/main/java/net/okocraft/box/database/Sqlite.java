@@ -11,14 +11,18 @@ import java.sql.SQLException;
 import org.bukkit.Bukkit;
 
 import net.okocraft.box.Box;
+import org.jetbrains.annotations.Nullable;
 
 public class Sqlite {
 
+    @Nullable
     private static final Box box = Box.getInstance();
+    @Nullable
     private static Connection connection;
 
     private Sqlite() {}
 
+    @Nullable
     static Connection getConnection() {
         if (connection == null) {
             connection = connect();
@@ -26,6 +30,7 @@ public class Sqlite {
         return connection;
     }
 
+    @Nullable
     private static Connection connect() {
         if (!existJDBC()) {
             box.getLogger().severe("There's no JDBC driver. Disabling plugin...");

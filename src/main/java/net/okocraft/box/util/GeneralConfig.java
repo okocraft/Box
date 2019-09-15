@@ -22,9 +22,6 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import lombok.Getter;
 import net.md_5.bungee.api.ChatColor;
 import net.okocraft.box.Box;
@@ -40,19 +37,21 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import net.okocraft.box.gui.Category;
 import net.okocraft.box.gui.CategorySelectorGUI;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author LazyGon
  */
 public class GeneralConfig {
+    @org.jetbrains.annotations.Nullable
     private final Box plugin;
 
+    @NotNull
     @Getter
     private final CustomConfig itemCustomConfig;
 
     // FileConfiguration
-    @Getter
-    private FileConfiguration defaultConfig;
     @Getter
     private FileConfiguration itemConfig;
 
@@ -84,6 +83,12 @@ public class GeneralConfig {
     @Getter
     private boolean autoStoreEnabledByDefault;
 
+    // Box Stick Item setting
+    @Getter
+    private String boxStickDisplayName;
+    @Getter
+    private List<String> boxStickLore;
+
     @Getter
     private List<String> disabledWorlds;
 
@@ -91,8 +96,6 @@ public class GeneralConfig {
     private List<World> replantWorlds;
 
     // Item Template
-    @Getter
-    private String itemTemplateName;
     @Getter
     private List<String> itemTemplateLore;
 
@@ -123,7 +126,6 @@ public class GeneralConfig {
         plugin.saveDefaultConfig();
         itemCustomConfig.saveDefaultConfig();
 
-        defaultConfig = plugin.getConfig();
         itemConfig = itemCustomConfig.getConfig();
 
         // Bind variables
@@ -136,7 +138,6 @@ public class GeneralConfig {
     public void reload() {
         itemCustomConfig.initConfig();
 
-        defaultConfig = plugin.getConfig();
         itemConfig = itemCustomConfig.getConfig();
 
         initConfig();
@@ -163,9 +164,6 @@ public class GeneralConfig {
         // Footer
         initFooterConfig();
 
-        itemTemplateName = Optional.ofNullable(itemConfig.getString("ItemTemplate.display_name"))
-                .orElseGet(() -> "&6%item_jp% &8| &6%item_en%").replaceAll("&([a-f0-9])", "§$1");
-
         itemTemplateLore = itemConfig.getStringList("ItemTemplate.lore").stream()
                 .map(line -> line.replaceAll("&([a-f0-9])", "§$1")).collect(Collectors.toList());
 
@@ -191,7 +189,12 @@ public class GeneralConfig {
                                     .replaceAll("%category_item_display_name%",
                                             categorySection.getString("display_name"))
                                     .replaceAll("%category%", sectionName);
-                            Material icon = Items.valueOf(categorySection.getString("icon").toUpperCase()).getMaterial();
+                            String iconName = categorySection.getString("icon");
+                            ItemStack icon = Items.getItemStack(iconName.toUpperCase());
+                            if (icon == null) {
+                                plugin.getLogger().warning("The icon name " + iconName + " is invalid.");
+                                return;
+                            }
                             allItems.addAll(items);
                             categories.put(sectionName, new Category(sectionName, displayName, icon, items));
                         });
@@ -204,6 +207,16 @@ public class GeneralConfig {
         priceConfig.saveDefaultConfig();
         sellPrice = allItems.stream().collect(Collectors.toMap(Function.identity(),
                 itemName -> priceConfig.getConfig().getDouble(itemName), (i1, i2) -> i1, HashMap::new));
+
+        boxStickDisplayName = ChatColor.translateAlternateColorCodes('&',
+                plugin.getConfig().getString("General.BoxStick.DisplayName", "&9Box Stick"));
+        boxStickLore = plugin.getConfig().getStringList("General.BoxStick.Lore");
+        if (boxStickLore.isEmpty()) {
+            boxStickLore.add("§r");
+            boxStickLore.add("§7利き手じゃない手にこれを持つと、利き手の");
+            boxStickLore.add("§7アイテムを使った時にBoxから消費します。");
+        }
+        boxStickLore.replaceAll(loreLine -> ChatColor.translateAlternateColorCodes('&', loreLine));
     }
 
     /**
@@ -226,7 +239,7 @@ public class GeneralConfig {
                         String displayName = categoryGuiName
                                 .replaceAll("%category_item_display_name%", categorySection.getString("display_name"))
                                 .replaceAll("%category%", name);
-                        Material icon = Material.valueOf(categorySection.getString("icon").toUpperCase());
+                        ItemStack icon = Items.getItemStack(categorySection.getString("icon").toUpperCase());
                         categories.put(name, new Category(name, displayName, icon, items));
                     });
 
@@ -246,6 +259,8 @@ public class GeneralConfig {
      * @see GeneralConfig#initConfig()
      */
     private void initSoundConfig() {
+        FileConfiguration defaultConfig = plugin.getConfig();
+
         float DEFAULT_SOUND_VOLUME = 1.0F;
         float DEFAULT_SOUND_PITCH = 1.0F;
 
@@ -294,8 +309,8 @@ public class GeneralConfig {
      * @see GeneralConfig#initConfig()
      */
     private void initAutoStoreConfig() {
-        autoStoreEnabled = defaultConfig.getBoolean("General.AutoStore.Enabled", false);
-        autoStoreEnabledByDefault = defaultConfig.getBoolean("General.AutoStore.PlayerDefault", false);
+        autoStoreEnabled = plugin.getConfig().getBoolean("General.AutoStore.Enabled", false);
+        autoStoreEnabledByDefault = plugin.getConfig().getBoolean("General.AutoStore.PlayerDefault", false);
     }
 
     /**
@@ -307,7 +322,7 @@ public class GeneralConfig {
      * @see GeneralConfig#initConfig()
      */
     private void initDisabledWorldConfig() {
-        disabledWorlds = defaultConfig.getStringList("General.DisabledWorld");
+        disabledWorlds = plugin.getConfig().getStringList("General.DisabledWorld");
     }
 
     /**
@@ -319,7 +334,7 @@ public class GeneralConfig {
      * @see GeneralConfig#initConfig()
      */
     private void initReplantWorldConfig() {
-        replantWorlds = defaultConfig.getStringList("General.ReplantWorld").stream().map(Bukkit::getWorld)
+        replantWorlds = plugin.getConfig().getStringList("General.ReplantWorld").stream().map(Bukkit::getWorld)
                 .filter(Objects::nonNull).collect(Collectors.toList());
     }
 
@@ -373,8 +388,9 @@ public class GeneralConfig {
      *
      * @return メタ情報(パラメタ)を適用したアイテム。
      */
-    @Nonnull
-    private static ItemStack createFooterItem(Material material, int stackAmount, String displayName) {
+    @NotNull
+    private static ItemStack createFooterItem(@NotNull Material material, int stackAmount,
+            @NotNull String displayName) {
         ItemStack item = new ItemStack(material, stackAmount);
         Optional<ItemMeta> itemMeta = Optional.ofNullable(item.getItemMeta());
 
@@ -396,7 +412,7 @@ public class GeneralConfig {
      *
      * @return {@code Optional<Sound>}
      */
-    @Nonnull
+    @NotNull
     private static Optional<Sound> getSound(@Nullable String sound) {
         if (sound == null) {
             return Optional.empty();

@@ -26,11 +26,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import java.util.logging.Level;
 
-import javax.annotation.Nonnull;
-
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * リソース（YAML 設定）を取り扱うクラス。
@@ -41,16 +40,19 @@ public class CustomConfig {
     /**
      * プラグイン。
      */
+    @NotNull
     private final Plugin plugin;
 
     /**
      * 設定の実体ファイル。
      */
+    @NotNull
     private final File file;
 
     /**
      * 設定の実体ファイル名。
      */
+    @NotNull
     private final String name;
 
     /**
@@ -58,7 +60,7 @@ public class CustomConfig {
      */
     private FileConfiguration config;
 
-    CustomConfig(@Nonnull Plugin plugin, @Nonnull String name) {
+    CustomConfig(@NotNull Plugin plugin, @NotNull String name) {
         this.plugin = plugin;
         this.name = name;
 
@@ -72,7 +74,7 @@ public class CustomConfig {
      *
      * @return FileConfiguration
      */
-    @Nonnull
+    @NotNull
     FileConfiguration getConfig() {
         if (config == null) {
             initConfig();

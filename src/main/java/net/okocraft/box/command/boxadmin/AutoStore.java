@@ -26,11 +26,13 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.StringUtil;
 
 import net.okocraft.box.database.Items;
 import net.okocraft.box.database.PlayerData;
 import net.okocraft.box.util.PlayerUtil;
+import org.jetbrains.annotations.NotNull;
 
 class AutoStore extends BaseSubAdminCommand {
 
@@ -40,7 +42,7 @@ class AutoStore extends BaseSubAdminCommand {
 
     @Override
     @SuppressWarnings("deprecation")
-    public boolean runCommand(CommandSender sender, String[] args) {
+    public boolean runCommand(@NotNull CommandSender sender, @NotNull String[] args) {
         if (!validate(sender, args)) {
             return false;
         }
@@ -65,55 +67,40 @@ class AutoStore extends BaseSubAdminCommand {
             // If switchTo is neither true nor false
             if (!args[3].equalsIgnoreCase("true") && !args[3].equalsIgnoreCase("false")) {
                 sender.sendMessage(MESSAGE_CONFIG.getInvalidArguments());
-                
+
                 return false;
             }
 
-            autoStoreAll(sender, player, args[3].equalsIgnoreCase("true"));
-            return true;
+            boolean switchTo = args[3].equalsIgnoreCase("true");
+
+            if (PlayerData.setAutoStoreAll(player, switchTo)) {
+                sender.sendMessage(MESSAGE_CONFIG.getAutoStoreSettingChangedAll().replaceAll("%isEnabled%",
+                        Boolean.toString(switchTo)));
+                return true;
+            } else {
+                sender.sendMessage(MESSAGE_CONFIG.getErrorOccurred());
+                return false;
+            }
         }
-        
-        
+
         // autostore Item [true|false]
-        Items item = Items.valueOf(args[2].toUpperCase());
+        String itemName = args[2].toUpperCase();
+        ItemStack item = Items.getItemStack(itemName);
         boolean now = PlayerData.getAutoStore((OfflinePlayer) sender, item);
         boolean switchTo = args.length > 3 ? args[3].equalsIgnoreCase("true") : !now;
-        autoStore(sender, player, item, switchTo);
-        return true;
-    }
 
-    /**
-     * アイテム１つのautoStore設定を変更する。
-     * 
-     * @param sender
-     * @param itemName
-     * @param switchTo
-     */
-    private void autoStore(CommandSender sender, OfflinePlayer player, Items item, boolean switchTo) {
-        sender.sendMessage(
-                MESSAGE_CONFIG.getAutoStoreSettingChanged()
-                        .replaceAll("%item%", item.name()).replaceAll("%isEnabled%", Boolean.toString(switchTo))
-        );
-        PlayerData.setAutoStore(player, item, switchTo);
-    }
-
-    /**
-     * アイテムすべてのautoStore設定を変更する。
-     * 
-     * @param sender
-     * @param player
-     * @param switchTo
-     */
-    private void autoStoreAll(CommandSender sender, OfflinePlayer player, boolean switchTo) {
-        sender.sendMessage(
-                MESSAGE_CONFIG.getAutoStoreSettingChangedAll()
-                        .replaceAll("%isEnabled%", Boolean.toString(switchTo))
-        );
-        PlayerData.setAutoStoreAll(player, switchTo);
+        if (PlayerData.setAutoStore(player, item, switchTo)) {
+            sender.sendMessage(MESSAGE_CONFIG.getAutoStoreSettingChanged().replaceAll("%item%", itemName)
+                    .replaceAll("%isEnabled%", Boolean.toString(switchTo)));
+            return true;
+        } else {
+            sender.sendMessage(MESSAGE_CONFIG.getErrorOccurred());
+            return false;
+        }
     }
 
     @Override
-    public List<String> runTabComplete(CommandSender sender, String[] args) {
+    public List<String> runTabComplete(CommandSender sender, @NotNull String[] args) {
         List<String> result = new ArrayList<>();
 
         List<String> players = new ArrayList<>(PlayerData.getPlayers().values());
@@ -144,6 +131,7 @@ class AutoStore extends BaseSubAdminCommand {
         return result;
     }
 
+    @NotNull
     @Override
     public String getCommandName() {
         return COMMAND_NAME;
@@ -154,6 +142,7 @@ class AutoStore extends BaseSubAdminCommand {
         return LEAST_ARG_LENGTH;
     }
 
+    @NotNull
     @Override
     public String getUsage() {
         return USAGE;
@@ -165,7 +154,7 @@ class AutoStore extends BaseSubAdminCommand {
     }
 
     @Override
-    protected boolean validate(CommandSender sender, String[] args) {
+    protected boolean validate(@NotNull CommandSender sender, @NotNull String[] args) {
         if (!super.validate(sender, args)) {
             return false;
         }

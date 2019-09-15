@@ -29,6 +29,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.util.StringUtil;
 
 import net.okocraft.box.util.OtherUtil;
+import org.jetbrains.annotations.NotNull;
 
 class Help extends BaseSubAdminCommand {
 
@@ -37,7 +38,7 @@ class Help extends BaseSubAdminCommand {
     private static final String USAGE = "/boxadmin help [page]";
 
     @Override
-    public boolean runCommand(CommandSender sender, String[] args) {
+    public boolean runCommand(@NotNull CommandSender sender, @NotNull String[] args) {
         if (!validate(sender, args)) {
             return false;
         }
@@ -66,8 +67,9 @@ class Help extends BaseSubAdminCommand {
         return true;
     }
 
+    @NotNull
     @Override
-    public List<String> runTabComplete(CommandSender sender, String[] args) {
+    public List<String> runTabComplete(CommandSender sender, @NotNull String[] args) {
         List<String> result = new ArrayList<>();
 
         int mapSize = INSTANCE.getAdminCommand().getSubCommandMapSize();
@@ -79,6 +81,7 @@ class Help extends BaseSubAdminCommand {
         return result;
     }
 
+    @NotNull
     @Override
     public String getCommandName() {
         return COMMAND_NAME;
@@ -89,6 +92,7 @@ class Help extends BaseSubAdminCommand {
         return LEAST_ARG_LENGTH;
     }
 
+    @NotNull
     @Override
     public String getUsage() {
         return USAGE;

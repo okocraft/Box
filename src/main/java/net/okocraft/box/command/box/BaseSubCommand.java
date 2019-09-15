@@ -19,9 +19,11 @@
 package net.okocraft.box.command.box;
 
 import net.okocraft.box.command.BaseBoxCommand;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class BaseSubCommand extends BaseBoxCommand {
 
+    @NotNull
     @Override
     public String getPermissionNode() {
         return "box." + getCommandName();

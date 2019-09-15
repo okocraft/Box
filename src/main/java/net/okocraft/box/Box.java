@@ -32,13 +32,14 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import net.milkbowl.vault.economy.Economy;
 import net.okocraft.box.command.boxadmin.BoxAdmin;
-//import net.okocraft.box.database.Migrater;
 import net.okocraft.box.database.PlayerData;
 import net.okocraft.box.database.Sqlite;
 import net.okocraft.box.gui.CategorySelectorGUI;
 import net.okocraft.box.listeners.BoxStick;
 import net.okocraft.box.listeners.EntityPickupItem;
 import net.okocraft.box.listeners.Replant;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author OKOCRAFT
@@ -47,11 +48,13 @@ public class Box extends JavaPlugin {
     /**
      * プラグイン Box のインスタンス。
      */
+    @Nullable
     private static Box instance;
 
     /**
      * ロガー。
      */
+    @NotNull
     @Getter
     private final Logger log;
 
@@ -137,6 +140,7 @@ public class Box extends JavaPlugin {
      *
      * @return インスタンス
      */
+    @Nullable
     public static Box getInstance() {
         if (instance == null) {
             instance = (Box) Bukkit.getPluginManager().getPlugin("Box");
@@ -153,7 +157,6 @@ public class Box extends JavaPlugin {
 
         // Events should be registered in its own initializer
         new PlayerData(this);
-//        Migrater.migrate();
         new EntityPickupItem(this);
         new BoxStick();
         new Replant();
@@ -193,6 +196,6 @@ public class Box extends JavaPlugin {
             return false;
         }
         economy = rsp.getProvider();
-        return economy != null;
+        return true;
 	}
 }

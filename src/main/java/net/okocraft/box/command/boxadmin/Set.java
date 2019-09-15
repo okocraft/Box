@@ -23,12 +23,14 @@ import java.util.List;
 
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.StringUtil;
 
 import net.okocraft.box.database.Items;
 import net.okocraft.box.database.PlayerData;
 import net.okocraft.box.util.OtherUtil;
 import net.okocraft.box.util.PlayerUtil;
+import org.jetbrains.annotations.NotNull;
 
 class Set extends BaseSubAdminCommand {
 
@@ -37,12 +39,13 @@ class Set extends BaseSubAdminCommand {
     private static final String USAGE = "/boxadmin set <player> <ITEM> <amount>";
 
     @Override
-    public boolean runCommand(CommandSender sender, String[] args) {
+    public boolean runCommand(@NotNull CommandSender sender, @NotNull String[] args) {
         if (!validate(sender, args)) {
             return false;
         }
         OfflinePlayer player = PlayerUtil.getOfflinePlayer(args[1]);
-        Items item = Items.valueOf(args[2].toUpperCase());
+        String itemName = args[2].toUpperCase();
+        ItemStack item = Items.getItemStack(itemName);
 
         long amount = args.length < 4 ? 0 : OtherUtil.parseLongOrDefault(args[3], 0);
 
@@ -51,7 +54,7 @@ class Set extends BaseSubAdminCommand {
         sender.sendMessage(
                 MESSAGE_CONFIG.getSuccessSet()
                         .replaceAll("%player%", player.getName())
-                        .replaceAll("%item%", item.name())
+                        .replaceAll("%item%", itemName)
                         .replaceAll("%amount%", String.valueOf(amount))
         );
 
@@ -59,7 +62,7 @@ class Set extends BaseSubAdminCommand {
     }
 
     @Override
-    public List<String> runTabComplete(CommandSender sender, String[] args) {
+    public List<String> runTabComplete(CommandSender sender, @NotNull String[] args) {
         List<String> result = new ArrayList<>();
 
         List<String> players = new ArrayList<>(PlayerData.getPlayers().values());
@@ -89,6 +92,7 @@ class Set extends BaseSubAdminCommand {
         return result;
     }
 
+    @NotNull
     @Override
     public String getCommandName() {
         return COMMAND_NAME;
@@ -99,6 +103,7 @@ class Set extends BaseSubAdminCommand {
         return LEAST_ARG_LENGTH;
     }
 
+    @NotNull
     @Override
     public String getUsage() {
         return USAGE;
@@ -110,7 +115,7 @@ class Set extends BaseSubAdminCommand {
     }
 
     @Override
-    protected boolean validate(CommandSender sender, String[] args) {
+    protected boolean validate(@NotNull CommandSender sender, @NotNull String[] args) {
         if (!super.validate(sender, args)) {
             return false;
         }

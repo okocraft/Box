@@ -30,6 +30,8 @@ import org.bukkit.entity.Player;
 
 import net.okocraft.box.Box;
 import net.okocraft.box.database.PlayerData;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * プレイヤー名やそのインスタンスを取り扱うツール群。
@@ -39,6 +41,7 @@ import net.okocraft.box.database.PlayerData;
  */
 public class PlayerUtil {
 
+    @Nullable
     private static final Box INSTANCE = Box.getInstance();
     private static final GeneralConfig CONFIG = INSTANCE.getGeneralConfig();
 
@@ -49,7 +52,7 @@ public class PlayerUtil {
      *
      * @return UUID なら {@code true}
      */
-    public static boolean isUUID(String string) {
+    public static boolean isUUID(@NotNull String string) {
         try {
             UUID.fromString(string);
             return true;
@@ -58,8 +61,9 @@ public class PlayerUtil {
         }
     }
 
+    @NotNull
     @SuppressWarnings("deprecation")
-    public static OfflinePlayer getOfflinePlayer(String uuidOrName) {
+    public static OfflinePlayer getOfflinePlayer(@NotNull String uuidOrName) {
         if (isUUID(uuidOrName)) {
             return Bukkit.getOfflinePlayer(UUID.fromString(uuidOrName));
         } else {
@@ -78,7 +82,7 @@ public class PlayerUtil {
      * 
      * @return 登録されている時true、されていないならfalse
      */
-    public static boolean existPlayer(CommandSender sender, String player) {
+    public static boolean existPlayer(@NotNull CommandSender sender, @NotNull String player) {
         Map<String, String> players = PlayerData.getPlayers();
         if (isUUID(player)) {
             if (players.containsKey(player)) {
@@ -100,7 +104,7 @@ public class PlayerUtil {
      * @param player プレイヤー
      * @param sound  流す音声
      */
-    public static void playSound(Player player, Sound sound) {
+    public static void playSound(@NotNull Player player, @NotNull Sound sound) {
         player.playSound(
                 player.getLocation(),
                 sound,

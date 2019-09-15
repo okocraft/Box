@@ -31,6 +31,7 @@ import org.bukkit.util.StringUtil;
 
 import net.okocraft.box.database.PlayerData;
 import net.okocraft.box.util.OtherUtil;
+import org.jetbrains.annotations.NotNull;
 
 class AutoStoreList extends BaseSubCommand {
 
@@ -39,7 +40,7 @@ class AutoStoreList extends BaseSubCommand {
     private static final String USAGE = "/box autostorelist <page>";
 
     @Override
-    public boolean runCommand(CommandSender sender, String[] args) {
+    public boolean runCommand(@NotNull CommandSender sender, @NotNull String[] args) {
         if (!validate(sender, args)) {
             return false;
         }
@@ -66,8 +67,9 @@ class AutoStoreList extends BaseSubCommand {
         return true;
     }
 
+    @NotNull
     @Override
-    public List<String> runTabComplete(CommandSender sender, String[] args) {
+    public List<String> runTabComplete(CommandSender sender, @NotNull String[] args) {
         List<String> result = new ArrayList<>();
 
         int items = CONFIG.getAllItems().size();
@@ -80,6 +82,7 @@ class AutoStoreList extends BaseSubCommand {
         return result;
     }
 
+    @NotNull
     @Override
     public String getCommandName() {
         return COMMAND_NAME;
@@ -90,6 +93,7 @@ class AutoStoreList extends BaseSubCommand {
         return LEAST_ARG_LENGTH;
     }
 
+    @NotNull
     @Override
     public String getUsage() {
         return USAGE;
@@ -101,7 +105,7 @@ class AutoStoreList extends BaseSubCommand {
     }
 
     @Override
-    protected boolean validate(CommandSender sender, String[] args) {
+    protected boolean validate(CommandSender sender, @NotNull String[] args) {
         if (!super.validate(sender, args)) {
             return false;
         }

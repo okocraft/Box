@@ -40,9 +40,12 @@ import org.bukkit.persistence.PersistentDataType;
 import net.okocraft.box.Box;
 import net.okocraft.box.util.GeneralConfig;
 import net.okocraft.box.util.MessageConfig;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class CategorySelectorGUI implements Listener {
 
+    @Nullable
     private static final Box INSTANCE = Box.getInstance();
     private static final GeneralConfig CONFIG = INSTANCE.getGeneralConfig();
     private static final MessageConfig MESSAGE_CONFIG = INSTANCE.getMessageConfig();
@@ -55,6 +58,7 @@ public class CategorySelectorGUI implements Listener {
     private static List<Integer> flameSlots = List.of(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 17, 18, 26, 27, 35, 36, 44, 45, 46,
             47, 48, 49, 50, 51, 52, 53);
 
+    @Nullable
     private static CategorySelectorGUI categorySelector;
 
     /**
@@ -114,7 +118,7 @@ public class CategorySelectorGUI implements Listener {
      * @param event
      */
     @EventHandler(priority = EventPriority.NORMAL)
-    public void onClick(InventoryClickEvent event) {
+    public void onClick(@NotNull InventoryClickEvent event) {
         if (event.isCancelled()) {
             return;
         }

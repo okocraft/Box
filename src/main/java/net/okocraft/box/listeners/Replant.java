@@ -37,11 +37,13 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import net.okocraft.box.Box;
-import net.okocraft.box.database.Items;
 import net.okocraft.box.database.PlayerData;
 import net.okocraft.box.util.GeneralConfig;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class Replant implements Listener {
+    @Nullable
     private static final Box INSTANCE = Box.getInstance();
     private static final GeneralConfig CONFIG = INSTANCE.getGeneralConfig();
 
@@ -92,7 +94,7 @@ public class Replant implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGH)
-    public void replantSeed(BlockBreakEvent event) {
+    public void replantSeed(@NotNull BlockBreakEvent event) {
 
         if (event.isCancelled())
             return;
@@ -142,7 +144,7 @@ public class Replant implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGH)
-    public void replantSapling(BlockBreakEvent event) {
+    public void replantSapling(@NotNull BlockBreakEvent event) {
         if (event.isCancelled()) {
             return;
         }
@@ -183,7 +185,7 @@ public class Replant implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGH)
-    public void cancelBreakingDirt(BlockBreakEvent event) {
+    public void cancelBreakingDirt(@NotNull BlockBreakEvent event) {
         if (event.isCancelled()) {
             return;
         }
@@ -201,7 +203,7 @@ public class Replant implements Listener {
     }
     
     @EventHandler
-    public void cancelBoneMeal(PlayerInteractEvent event) {
+    public void cancelBoneMeal(@NotNull PlayerInteractEvent event) {
         Block clickedBlock = event.getClickedBlock();
         if (clickedBlock == null) {
             return;
@@ -219,12 +221,12 @@ public class Replant implements Listener {
         event.setCancelled(true);
     }
 
-    private void takeSeed(Player player, Material seed) {
+    private void takeSeed(@NotNull Player player, @NotNull Material seed) {
         if (!PLANTS.containsValue(seed)) {
             return;
         }
 
-        Items seedItem = Items.valueOf(seed.name());
+        ItemStack seedItem = new ItemStack(seed);
         long stock = PlayerData.getItemAmount(player, seedItem);
 
         if (stock >= 1) {
@@ -234,7 +236,7 @@ public class Replant implements Listener {
         }
     }
     
-    private boolean hasSeed(Player player, Material seed) {
+    private boolean hasSeed(@NotNull Player player, @NotNull Material seed) {
         if (!PLANTS.containsValue(seed)) {
             return false;
         }
@@ -243,6 +245,6 @@ public class Replant implements Listener {
             return true;
         }
 
-        return PlayerData.getItemAmount(player, Items.valueOf(seed.name())) > 0;
+        return PlayerData.getItemAmount(player, new ItemStack(seed)) > 0;
     }
 }

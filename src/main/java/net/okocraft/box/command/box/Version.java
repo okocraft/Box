@@ -21,6 +21,7 @@ package net.okocraft.box.command.box;
 import java.util.List;
 
 import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
 
 class Version extends BaseSubCommand {
 
@@ -29,7 +30,7 @@ class Version extends BaseSubCommand {
     private static final String USAGE = "/box version";
 
     @Override
-    public boolean runCommand(CommandSender sender, String[] args) {
+    public boolean runCommand(@NotNull CommandSender sender, @NotNull String[] args) {
         if (!validate(sender, args)) {
             return false;
         }
@@ -42,6 +43,7 @@ class Version extends BaseSubCommand {
         return List.of();
     }
 
+    @NotNull
     @Override
     public String getCommandName() {
         return COMMAND_NAME;
@@ -52,6 +54,7 @@ class Version extends BaseSubCommand {
         return LEAST_ARG_LENGTH;
     }
 
+    @NotNull
     @Override
     public String getUsage() {
         return USAGE;

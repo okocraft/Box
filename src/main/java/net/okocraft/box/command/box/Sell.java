@@ -26,12 +26,14 @@ import java.util.stream.Collectors;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.StringUtil;
 
 import net.milkbowl.vault.economy.Economy;
 import net.okocraft.box.database.Items;
 import net.okocraft.box.database.PlayerData;
 import net.okocraft.box.util.OtherUtil;
+import org.jetbrains.annotations.NotNull;
 
 class Sell extends BaseSubCommand {
 
@@ -40,12 +42,13 @@ class Sell extends BaseSubCommand {
     private static final String USAGE = "/box sell <ITEM> [amount]";
 
     @Override
-    public boolean runCommand(CommandSender sender, String[] args) {
+    public boolean runCommand(@NotNull CommandSender sender, @NotNull String[] args) {
         if (!validate(sender, args)) {
             return false;
         }
 
-        Items item = Items.valueOf(args[1].toUpperCase());
+        String itemName = args[1].toUpperCase();
+        ItemStack item = Items.getItemStack(itemName);
         long amount = args.length == 2 ? 1L : Math.max(OtherUtil.parseLongOrDefault(args[2], 1L), 1L);
         long currentAmount = PlayerData.getItemAmount((OfflinePlayer) sender, item);
 
@@ -59,7 +62,7 @@ class Sell extends BaseSubCommand {
         }
 
         Economy economy = INSTANCE.getEconomy();
-        double price = CONFIG.getSellPrice().getOrDefault(item.name(), 0D) * amount;
+        double price = CONFIG.getSellPrice().getOrDefault(itemName, 0D) * amount;
         
         PlayerData.setItemAmount((OfflinePlayer) sender, item, currentAmount - amount);
         economy.depositPlayer((OfflinePlayer) sender, price);
@@ -68,7 +71,7 @@ class Sell extends BaseSubCommand {
         sender.sendMessage(
                 MESSAGE_CONFIG.getSuccessSell()
                         .replaceAll("%amount%", String.valueOf(amount))
-                        .replaceAll("%item%", item.name())
+                        .replaceAll("%item%", itemName)
                         .replaceAll("%price%", String.valueOf(price))
                         .replaceAll("%newamount%", String.valueOf(currentAmount - amount))
                         .replaceAll("%newbalance%", String.valueOf(Math.round((balance + price)*10)/10))
@@ -78,7 +81,7 @@ class Sell extends BaseSubCommand {
     }
 
     @Override
-    public List<String> runTabComplete(CommandSender sender, String[] args) {
+    public List<String> runTabComplete(CommandSender sender, @NotNull String[] args) {
         List<String> result = new ArrayList<>();
 
         List<String> items = PlayerData.getItemsAmount((OfflinePlayer) sender).entrySet()
@@ -94,7 +97,7 @@ class Sell extends BaseSubCommand {
             return List.of();
         }
 
-        String stock = Long.toString(PlayerData.getItemAmount((OfflinePlayer) sender, Items.valueOf(itemName)));
+        String stock = Long.toString(PlayerData.getItemAmount((OfflinePlayer) sender, Items.getItemStack(itemName)));
 
         if (args.length == 3) {
             return StringUtil.copyPartialMatches(args[2], List.of("1", stock), result);
@@ -103,6 +106,7 @@ class Sell extends BaseSubCommand {
         return result;
     }
 
+    @NotNull
     @Override
     public String getCommandName() {
         return COMMAND_NAME;
@@ -113,6 +117,7 @@ class Sell extends BaseSubCommand {
         return LEAST_ARG_LENGTH;
     }
 
+    @NotNull
     @Override
     public String getUsage() {
         return USAGE;
@@ -124,7 +129,7 @@ class Sell extends BaseSubCommand {
     }
 
     @Override
-    protected boolean validate(CommandSender sender, String[] args) {
+    protected boolean validate(CommandSender sender, @NotNull String[] args) {
         if (!super.validate(sender, args)) {
             return false;
         }

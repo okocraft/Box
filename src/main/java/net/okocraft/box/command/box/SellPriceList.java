@@ -27,6 +27,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.util.StringUtil;
 
 import net.okocraft.box.util.OtherUtil;
+import org.jetbrains.annotations.NotNull;
 
 class SellPriceList extends BaseSubCommand {
 
@@ -35,7 +36,7 @@ class SellPriceList extends BaseSubCommand {
     private static final String USAGE = "/box sellpricelist [page]";
 
     @Override
-    public boolean runCommand(CommandSender sender, String[] args) {
+    public boolean runCommand(@NotNull CommandSender sender, @NotNull String[] args) {
         if (!validate(sender, args)) {
             return false;
         }
@@ -60,8 +61,9 @@ class SellPriceList extends BaseSubCommand {
         return true;
     }
 
+    @NotNull
     @Override
-    public List<String> runTabComplete(CommandSender sender, String[] args) {
+    public List<String> runTabComplete(CommandSender sender, @NotNull String[] args) {
         List<String> result = new ArrayList<>();
 
         int items = CONFIG.getSellPrice().size();
@@ -76,6 +78,7 @@ class SellPriceList extends BaseSubCommand {
         return result;
     }
 
+    @NotNull
     @Override
     public String getCommandName() {
         return COMMAND_NAME;
@@ -86,6 +89,7 @@ class SellPriceList extends BaseSubCommand {
         return LEAST_ARG_LENGTH;
     }
 
+    @NotNull
     @Override
     public String getUsage() {
         return USAGE;
@@ -97,7 +101,7 @@ class SellPriceList extends BaseSubCommand {
     }
 
     @Override
-    protected boolean validate(CommandSender sender, String[] args) {
+    protected boolean validate(@NotNull CommandSender sender, @NotNull String[] args) {
         if (!super.validate(sender, args)) {
             return false;
         }

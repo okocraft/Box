@@ -25,9 +25,12 @@ import org.bukkit.command.CommandSender;
 import net.okocraft.box.Box;
 import net.okocraft.box.util.GeneralConfig;
 import net.okocraft.box.util.MessageConfig;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public interface BoxCommand {
 
+    @Nullable
     static final Box INSTANCE = Box.getInstance();
     static final GeneralConfig CONFIG = INSTANCE.getGeneralConfig();
     static final MessageConfig MESSAGE_CONFIG = INSTANCE.getMessageConfig();
@@ -55,6 +58,7 @@ public interface BoxCommand {
      * 
      * @return コマンドの名前
      */
+    @NotNull
     String getCommandName();
 
     /**
@@ -62,6 +66,7 @@ public interface BoxCommand {
      * 
      * @return 権限
      */
+    @NotNull
     String getPermissionNode();
 
     /**
@@ -76,6 +81,7 @@ public interface BoxCommand {
      * 
      * @return 引数の内容
      */
+    @NotNull
     String getUsage();
 
     /**

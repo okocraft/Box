@@ -24,10 +24,12 @@ import java.util.List;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.StringUtil;
 
 import net.okocraft.box.database.Items;
 import net.okocraft.box.database.PlayerData;
+import org.jetbrains.annotations.NotNull;
 
 class AutoStore extends BaseSubCommand {
 
@@ -36,7 +38,7 @@ class AutoStore extends BaseSubCommand {
     private static final String USAGE = "/box autostore < <ITEM> [true|false] | ALL <true|false> >";
 
     @Override
-    public boolean runCommand(CommandSender sender, String[] args) {
+    public boolean runCommand(@NotNull CommandSender sender, @NotNull String[] args) {
         if (!validate(sender, args)) {
             return false;
         }
@@ -47,66 +49,53 @@ class AutoStore extends BaseSubCommand {
             // If switchTo is neither true nor false
             if (!args[2].equalsIgnoreCase("true") && !args[2].equalsIgnoreCase("false")) {
                 sender.sendMessage(MESSAGE_CONFIG.getInvalidArguments());
-                
+
                 return false;
             }
 
-            autoStoreAll(sender, args[2].equalsIgnoreCase("true"));
-            return true;
+            boolean switchTo = args[2].equalsIgnoreCase("true");
+            if (PlayerData.setAutoStoreAll((OfflinePlayer) sender, switchTo)) {
+                sender.sendMessage(MESSAGE_CONFIG.getAutoStoreSettingChangedAll().replaceAll("%isEnabled%",
+                        Boolean.toString(switchTo)));
+                
+                return true;
+            } else {
+                sender.sendMessage(MESSAGE_CONFIG.getErrorOccurred());
+                return false;
+            }
         }
-        
-        
+
         // autostore Item [true|false]
-        Items item = Items.valueOf(args[1].toUpperCase());
+        String itemName = args[1].toUpperCase();
+        ItemStack item = Items.getItemStack(itemName);
         boolean now = PlayerData.getAutoStore((OfflinePlayer) sender, item);
         boolean switchTo = args.length > 2 ? args[2].equalsIgnoreCase("true") : !now;
-        autoStore(sender, item, switchTo);
-        return true;
-    }
 
-    /**
-     * アイテム１つのautoStore設定を変更する。
-     * 
-     * @param sender
-     * @param item
-     * @param switchTo
-     */
-    private void autoStore(CommandSender sender, Items item, boolean switchTo) {
-        sender.sendMessage(
-                MESSAGE_CONFIG.getAutoStoreSettingChanged()
-                        .replaceAll("%item%", item.name()).replaceAll("%isEnabled%", Boolean.toString(switchTo))
-        );
-        PlayerData.setAutoStore((OfflinePlayer) sender, item, switchTo);
-    }
-
-    /**
-     * アイテムすべてのautoStore設定を変更する。
-     * 
-     * @param sender
-     * @param switchTo
-     */
-    private void autoStoreAll(CommandSender sender, boolean switchTo) {
-        sender.sendMessage(
-                MESSAGE_CONFIG.getAutoStoreSettingChangedAll()
-                        .replaceAll("%isEnabled%", Boolean.toString(switchTo))
-        );
-        PlayerData.setAutoStoreAll((OfflinePlayer) sender, switchTo);
+        if (PlayerData.setAutoStore((OfflinePlayer) sender, item, switchTo)) {
+            sender.sendMessage(
+                    MESSAGE_CONFIG.getAutoStoreSettingChanged().replaceAll("%item%", itemName)
+                            .replaceAll("%isEnabled%", Boolean.toString(switchTo)));
+            return true;
+        } else {
+            sender.sendMessage(MESSAGE_CONFIG.getErrorOccurred());
+            return false;
+        }
     }
 
     @Override
-    public List<String> runTabComplete(CommandSender sender, String[] args) {
+    public List<String> runTabComplete(CommandSender sender, @NotNull String[] args) {
         List<String> result = new ArrayList<>();
 
-        List<String> items = new ArrayList<>(CONFIG.getAllItems());
-        items.add("ALL");
+        List<String> ItemStack = new ArrayList<>(CONFIG.getAllItems());
+        ItemStack.add("ALL");
 
         if (args.length == 2) {
-            return StringUtil.copyPartialMatches(args[1], items, result);
+            return StringUtil.copyPartialMatches(args[1], ItemStack, result);
         }
 
         String item = args[1].toUpperCase();
 
-        if (!items.contains(item)) {
+        if (!ItemStack.contains(item)) {
             return List.of();
         }
 
@@ -117,6 +106,7 @@ class AutoStore extends BaseSubCommand {
         return result;
     }
 
+    @NotNull
     @Override
     public String getCommandName() {
         return COMMAND_NAME;
@@ -127,6 +117,7 @@ class AutoStore extends BaseSubCommand {
         return LEAST_ARG_LENGTH;
     }
 
+    @NotNull
     @Override
     public String getUsage() {
         return USAGE;
@@ -138,11 +129,11 @@ class AutoStore extends BaseSubCommand {
     }
 
     @Override
-    protected boolean validate(CommandSender sender, String[] args) {
+    protected boolean validate(CommandSender sender, @NotNull String[] args) {
         if (!super.validate(sender, args)) {
             return false;
         }
-        
+
         if (!(sender instanceof Player)) {
             sender.sendMessage(MESSAGE_CONFIG.getPlayerOnly());
             return false;

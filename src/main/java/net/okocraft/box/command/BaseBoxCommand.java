@@ -4,6 +4,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import net.okocraft.box.util.OtherUtil;
+import org.jetbrains.annotations.NotNull;
 
 /*
  * Box
@@ -37,7 +38,7 @@ public abstract class BaseBoxCommand implements BoxCommand {
      * 
      * @return 満たしていればtrue
      */
-    protected boolean validate(CommandSender sender, String[] args) {
+    protected boolean validate(CommandSender sender, @NotNull String[] args) {
         if ((sender instanceof Player) && !sender.hasPermission(getPermissionNode())) {
             sender.sendMessage(MESSAGE_CONFIG.getPermissionDenied());
             return false;

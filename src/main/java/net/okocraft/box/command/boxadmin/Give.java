@@ -23,12 +23,14 @@ import java.util.List;
 
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.StringUtil;
 
 import net.okocraft.box.database.Items;
 import net.okocraft.box.database.PlayerData;
 import net.okocraft.box.util.OtherUtil;
 import net.okocraft.box.util.PlayerUtil;
+import org.jetbrains.annotations.NotNull;
 
 class Give extends BaseSubAdminCommand {
 
@@ -36,12 +38,13 @@ class Give extends BaseSubAdminCommand {
     private static final int LEAST_ARG_LENGTH = 3;
     private static final String USAGE = "/boxadmin give <player> <ITEM> [amount]";
     @Override
-    public boolean runCommand(CommandSender sender, String[] args) {
+    public boolean runCommand(@NotNull CommandSender sender, @NotNull String[] args) {
         if (!validate(sender, args)) {
             return false;
         }
         OfflinePlayer player = PlayerUtil.getOfflinePlayer(args[1]);
-        Items item = Items.valueOf(args[2].toUpperCase());
+        String itemName = args[2].toUpperCase();
+        ItemStack item = Items.getItemStack(itemName);
         long amount = args.length < 4 ? 1 : OtherUtil.parseLongOrDefault(args[3], 1);
         long currentAmount = PlayerData.getItemAmount(player, item);
 
@@ -50,7 +53,7 @@ class Give extends BaseSubAdminCommand {
         sender.sendMessage(
                 MESSAGE_CONFIG.getSuccessGiveAdmin()
                         .replaceAll("%player%", player.getName())
-                        .replaceAll("%item%", item.name())
+                        .replaceAll("%item%", itemName)
                         .replaceAll("%amount%", Long.toString(amount))
                         .replaceAll("%newamount%", Long.toString(currentAmount + amount))
         );
@@ -59,7 +62,7 @@ class Give extends BaseSubAdminCommand {
     }
 
     @Override
-    public List<String> runTabComplete(CommandSender sender, String[] args) {
+    public List<String> runTabComplete(CommandSender sender, @NotNull String[] args) {
         List<String> result = new ArrayList<>();
 
         List<String> players = new ArrayList<>(PlayerData.getPlayers().values());
@@ -89,6 +92,7 @@ class Give extends BaseSubAdminCommand {
         return result;
     }
 
+    @NotNull
     @Override
     public String getCommandName() {
         return COMMAND_NAME;
@@ -99,6 +103,7 @@ class Give extends BaseSubAdminCommand {
         return LEAST_ARG_LENGTH;
     }
 
+    @NotNull
     @Override
     public String getUsage() {
         return USAGE;
@@ -110,7 +115,7 @@ class Give extends BaseSubAdminCommand {
     }
 
     @Override
-    protected boolean validate(CommandSender sender, String[] args) {
+    protected boolean validate(@NotNull CommandSender sender, @NotNull String[] args) {
         if (!super.validate(sender, args)) {
             return false;
         }
