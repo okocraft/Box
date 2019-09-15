@@ -19,6 +19,7 @@
 package net.okocraft.box.command.box;
 
 import java.util.List;
+
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -72,7 +73,7 @@ class GetStick extends BaseSubCommand {
         if (!super.validate(sender, args)) {
             return false;
         }
-        
+
         if (!(sender instanceof Player)) {
             sender.sendMessage(MESSAGE_CONFIG.getPlayerOnly());
             return false;

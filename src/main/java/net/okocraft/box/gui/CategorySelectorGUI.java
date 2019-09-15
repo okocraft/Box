@@ -43,7 +43,7 @@ import net.okocraft.box.util.MessageConfig;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class CategorySelectorGUI implements Listener {
+public final class CategorySelectorGUI implements Listener {
 
     @Nullable
     private static final Box INSTANCE = Box.getInstance();
@@ -77,7 +77,7 @@ public class CategorySelectorGUI implements Listener {
         flame.setItemMeta(flameMeta);
         flameSlots.forEach(slot -> GUI.setItem(slot, flame));
 
-        List<ItemStack> itemList = CONFIG.getCategories().values().stream().map(category -> category.getIconItem())
+        List<ItemStack> itemList = CONFIG.getCategories().values().stream().map(Category::getIconItem)
                 .collect(Collectors.toList());
         GUI.addItem(itemList.toArray(new ItemStack[itemList.size()]));
     }
@@ -114,7 +114,7 @@ public class CategorySelectorGUI implements Listener {
 
     /**
      * カテゴリ選択GUIへのクリックを検知して、適切なカテゴリGUIに遷移させる。
-     * 
+     *
      * @param event
      */
     @EventHandler(priority = EventPriority.NORMAL)
@@ -158,6 +158,5 @@ public class CategorySelectorGUI implements Listener {
 
         new CategoryGUI(player, categoryName, 1);
 
-        return;
     }
 }

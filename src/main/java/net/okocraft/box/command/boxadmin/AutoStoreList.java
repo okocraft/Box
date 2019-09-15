@@ -45,12 +45,16 @@ class AutoStoreList extends BaseSubAdminCommand {
         if (!validate(sender, args)) {
             return false;
         }
-        
+
         OfflinePlayer player = PlayerUtil.getOfflinePlayer(args[1].toLowerCase());
+        if (!player.hasPlayedBefore()) {
+            sender.sendMessage(MESSAGE_CONFIG.getNoPlayerFound());
+            return false;
+        }
         Map<String, Boolean> autoStoreData = PlayerData.getAutoStoreAll(player);
         int maxLine = autoStoreData.size();
         int maxPage = maxLine % 9 == 0 ? maxLine / 9 : maxLine / 9 + 1;
-        int page = Math.max(maxPage, (args.length >= 2 ? OtherUtil.parseIntOrDefault(args[2], 1) : 1));
+        int page = Math.max(maxPage, (args.length >= 3 ? OtherUtil.parseIntOrDefault(args[2], 1) : 1));
         int currentLine = Math.min(maxLine, page * 9);
 
         sender.sendMessage(
@@ -93,7 +97,7 @@ class AutoStoreList extends BaseSubAdminCommand {
         @SuppressWarnings("deprecation")
         int items = PlayerData.getAutoStoreAll(Bukkit.getOfflinePlayer(playerName)).size();
         int maxPage = items % 9 == 0 ? items / 9 : items / 9 + 1;
-        List<String> pages  = IntStream.rangeClosed(1, maxPage).boxed().map(String::valueOf).collect(Collectors.toList());
+        List<String> pages = IntStream.rangeClosed(1, maxPage).boxed().map(String::valueOf).collect(Collectors.toList());
         if (args.length == 3) {
             return StringUtil.copyPartialMatches(args[2], pages, result);
         }
@@ -128,11 +132,8 @@ class AutoStoreList extends BaseSubAdminCommand {
         if (!super.validate(sender, args)) {
             return false;
         }
-        
-        if (!PlayerUtil.existPlayer(sender, args[1].toLowerCase())) {
-            return false;
-        }
 
-        return true;
+        return PlayerUtil.existPlayer(sender, args[1].toLowerCase());
+
     }
 }

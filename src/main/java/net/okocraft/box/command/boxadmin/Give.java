@@ -37,6 +37,7 @@ class Give extends BaseSubAdminCommand {
     private static final String COMMAND_NAME = "give";
     private static final int LEAST_ARG_LENGTH = 3;
     private static final String USAGE = "/boxadmin give <player> <ITEM> [amount]";
+
     @Override
     public boolean runCommand(@NotNull CommandSender sender, @NotNull String[] args) {
         if (!validate(sender, args)) {

@@ -39,17 +39,19 @@ import org.jetbrains.annotations.Nullable;
  * @author akaregi
  * @since v1.1.0
  */
-public class PlayerUtil {
+public final class PlayerUtil {
 
     @Nullable
     private static final Box INSTANCE = Box.getInstance();
     private static final GeneralConfig CONFIG = INSTANCE.getGeneralConfig();
 
+    private PlayerUtil() {
+    }
+
     /**
      * 文字列を検証して UUID かどうか判定する。
      *
      * @param entry 検証する文字列
-     *
      * @return UUID なら {@code true}
      */
     public static boolean isUUID(@NotNull String string) {
@@ -70,17 +72,14 @@ public class PlayerUtil {
             return Bukkit.getOfflinePlayer(uuidOrName);
         }
     }
-    
+
     /**
      * データベースにプレイヤーが登録されていない時、senderにエラーメッセージを送信してfalseを返す。
-     * 
-     * @author akaregi
-     * 
-     * @since v1.1.0
-     * 
+     *
      * @param sender
-     * 
      * @return 登録されている時true、されていないならfalse
+     * @author akaregi
+     * @since v1.1.0
      */
     public static boolean existPlayer(@NotNull CommandSender sender, @NotNull String player) {
         Map<String, String> players = PlayerData.getPlayers();
@@ -93,7 +92,7 @@ public class PlayerUtil {
                 return true;
             }
         }
-        
+
         sender.sendMessage(Box.getInstance().getMessageConfig().getNoPlayerFound());
         return false;
     }

@@ -18,7 +18,14 @@
 
 package net.okocraft.box.util;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -185,29 +192,27 @@ public class GeneralConfig {
         // コンフィグに書かれた順番で表示するためにLinkedHashMapを使っている。
         allItems = new HashSet<>();
         categories = new LinkedHashMap<>();
-        Optional.ofNullable(itemConfig.getConfigurationSection("categories")).ifPresent(categoriesSection -> {
-            categoriesSection.getKeys(false).forEach(sectionName -> {
-                Optional.ofNullable(categoriesSection.getConfigurationSection(sectionName))
-                        .ifPresent(categorySection -> {
-                            List<String> items = categorySection.getStringList("item");
-                            if (items.isEmpty()) {
-                                return;
-                            }
-                            String displayName = categoryGuiName
-                                    .replaceAll("%category_item_display_name%",
-                                            categorySection.getString("display_name"))
-                                    .replaceAll("%category%", sectionName);
-                            String iconName = categorySection.getString("icon");
-                            ItemStack icon = Items.getItemStack(iconName.toUpperCase());
-                            if (icon == null) {
-                                plugin.getLogger().warning("The icon name " + iconName + " is invalid.");
-                                return;
-                            }
-                            allItems.addAll(items);
-                            categories.put(sectionName, new Category(sectionName, displayName, icon, items));
-                        });
-            });
-        });
+        Optional.ofNullable(itemConfig.getConfigurationSection("categories")).ifPresent(categoriesSection -> categoriesSection.getKeys(false).forEach(sectionName -> {
+            Optional.ofNullable(categoriesSection.getConfigurationSection(sectionName))
+                    .ifPresent(categorySection -> {
+                        List<String> items = categorySection.getStringList("item");
+                        if (items.isEmpty()) {
+                            return;
+                        }
+                        String displayName = categoryGuiName
+                                .replaceAll("%category_item_display_name%",
+                                        categorySection.getString("display_name"))
+                                .replaceAll("%category%", sectionName);
+                        String iconName = categorySection.getString("icon");
+                        ItemStack icon = Items.getItemStack(iconName.toUpperCase());
+                        if (icon == null) {
+                            plugin.getLogger().warning("The icon name " + iconName + " is invalid.");
+                            return;
+                        }
+                        allItems.addAll(items);
+                        categories.put(sectionName, new Category(sectionName, displayName, icon, items));
+                    });
+        }));
 
         allItems.removeIf(item -> !Items.contains(item));
 
@@ -226,7 +231,7 @@ public class GeneralConfig {
             boxStickLore.add("§7アイテムを使った時にBoxから消費します。");
         }
         boxStickLore.replaceAll(loreLine -> ChatColor.translateAlternateColorCodes('&', loreLine));
-        
+
         boxStickEnabledBlockPlace = defaultConfig.getBoolean("General.BoxStick.Enabled.BlockPlace");
         boxStickEnabledFood = defaultConfig.getBoolean("General.BoxStick.Enabled.Food");
         boxStickEnabledPotion = defaultConfig.getBoolean("General.BoxStick.Enabled.Potion");
@@ -240,24 +245,21 @@ public class GeneralConfig {
         itemCustomConfig.initConfig();
         itemConfig = itemCustomConfig.getConfig();
 
-        Optional.ofNullable(itemConfig.getConfigurationSection("categories")).ifPresent(categoriesSection -> {
-            categoriesSection.getKeys(false).stream().filter(sectionName -> !categories.containsKey(sectionName))
-                    .filter(sectionName -> itemConfig.isConfigurationSection("categories." + sectionName))
-                    .map(sectionName -> itemConfig.getConfigurationSection("categories." + sectionName))
-                    .forEach(categorySection -> {
-                        List<String> items = categorySection.getStringList("item");
-                        if (items.isEmpty()) {
-                            return;
-                        }
-                        String name = categorySection.getName();
-                        String displayName = categoryGuiName
-                                .replaceAll("%category_item_display_name%", categorySection.getString("display_name"))
-                                .replaceAll("%category%", name);
-                        ItemStack icon = Items.getItemStack(categorySection.getString("icon").toUpperCase());
-                        categories.put(name, new Category(name, displayName, icon, items));
-                    });
-
-        });
+        Optional.ofNullable(itemConfig.getConfigurationSection("categories")).ifPresent(categoriesSection -> categoriesSection.getKeys(false).stream().filter(sectionName -> !categories.containsKey(sectionName))
+                .filter(sectionName -> itemConfig.isConfigurationSection("categories." + sectionName))
+                .map(sectionName -> itemConfig.getConfigurationSection("categories." + sectionName))
+                .forEach(categorySection -> {
+                    List<String> items = categorySection.getStringList("item");
+                    if (items.isEmpty()) {
+                        return;
+                    }
+                    String name = categorySection.getName();
+                    String displayName = categoryGuiName
+                            .replaceAll("%category_item_display_name%", categorySection.getString("display_name"))
+                            .replaceAll("%category%", name);
+                    ItemStack icon = Items.getItemStack(categorySection.getString("icon").toUpperCase());
+                    categories.put(name, new Category(name, displayName, icon, items));
+                }));
 
         allItems.removeIf(item -> !Items.contains(item));
 
@@ -268,9 +270,8 @@ public class GeneralConfig {
      * 音設定初期化
      *
      * @author akaregi
-     * @since v1.1.0
-     *
      * @see GeneralConfig#initConfig()
+     * @since v1.1.0
      */
     private void initSoundConfig() {
         FileConfiguration defaultConfig = plugin.getConfig();
@@ -318,9 +319,8 @@ public class GeneralConfig {
      * AutoStore 設定初期化
      *
      * @author akaregi
-     * @since v1.1.0
-     *
      * @see GeneralConfig#initConfig()
+     * @since v1.1.0
      */
     private void initAutoStoreConfig() {
         autoStoreEnabled = plugin.getConfig().getBoolean("General.AutoStore.Enabled", false);
@@ -331,9 +331,8 @@ public class GeneralConfig {
      * DisabledWorld 設定初期化
      *
      * @author akaregi
-     * @since v1.1.0
-     *
      * @see GeneralConfig#initConfig()
+     * @since v1.1.0
      */
     private void initDisabledWorldConfig() {
         disabledWorlds = plugin.getConfig().getStringList("General.DisabledWorld");
@@ -343,9 +342,8 @@ public class GeneralConfig {
      * ReplantWorld 設定初期化
      *
      * @author LazyGon
-     * @since v1.1.0
-     *
      * @see GeneralConfig#initConfig()
+     * @since v1.1.0
      */
     private void initReplantWorldConfig() {
         replantWorlds = plugin.getConfig().getStringList("General.ReplantWorld").stream().map(Bukkit::getWorld)
@@ -354,11 +352,10 @@ public class GeneralConfig {
 
     /**
      * フッター初期化
-     * 
-     * @author akaregi
-     * @since v1.1.0
      *
+     * @author akaregi
      * @see GeneralConfig#initConfig()
+     * @since v1.1.0
      */
     private void initFooterConfig() {
         // ページ送り
@@ -393,18 +390,16 @@ public class GeneralConfig {
     /**
      * フッターに使うアイテムを作成する。
      *
-     * @author akaregi
-     * @since v1.1.0
-     *
      * @param material    アイテムの種類。
      * @param stackAmount アイテムの量。
      * @param displayName 表示名。
-     *
      * @return メタ情報(パラメタ)を適用したアイテム。
+     * @author akaregi
+     * @since v1.1.0
      */
     @NotNull
     private static ItemStack createFooterItem(@NotNull Material material, int stackAmount,
-            @NotNull String displayName) {
+                                              @NotNull String displayName) {
         ItemStack item = new ItemStack(material, stackAmount);
         Optional<ItemMeta> itemMeta = Optional.ofNullable(item.getItemMeta());
 
@@ -419,12 +414,10 @@ public class GeneralConfig {
     /**
      * {@code String} から {@code Sound} に変換する。
      *
+     * @param sound 変換元
+     * @return {@code Optional<Sound>}
      * @author akaregi
      * @since v1.1.0
-     *
-     * @param sound 変換元
-     *
-     * @return {@code Optional<Sound>}
      */
     @NotNull
     private static Optional<Sound> getSound(@Nullable String sound) {

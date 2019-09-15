@@ -44,6 +44,7 @@ public class BoxStick implements Listener {
 
     @Getter
     private static ItemStack stick;
+
     static {
         initBoxStick();
     }
@@ -111,7 +112,7 @@ public class BoxStick implements Listener {
     }
 
     @EventHandler
-    public void itemBreak(PlayerItemBreakEvent event) {
+    public void itemBreak(@NotNull PlayerItemBreakEvent event) {
         if (!CONFIG.isBoxStickEnabledTool()) {
             return;
         }
@@ -125,7 +126,7 @@ public class BoxStick implements Listener {
     }
 
     @EventHandler
-    public void potionThrow(PlayerInteractEvent event) {
+    public void potionThrow(@NotNull PlayerInteractEvent event) {
         if (!CONFIG.isBoxStickEnabledPotion()) {
             return;
         }

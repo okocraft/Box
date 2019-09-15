@@ -20,11 +20,12 @@ public final class Items {
     @NotNull
     private static Set<String> items = getItems();
 
-    private Items() {}
+    private Items() {
+    }
 
     /**
      * すべてのデータベース上に格納されるアイテムを含むSetを取得する。
-     * 
+     *
      * @return
      */
     @NotNull
@@ -34,29 +35,30 @@ public final class Items {
         }
         items = new LinkedHashSet<>() {
             private static final long serialVersionUID = 1L;
+
             {
                 for (Material item : Material.values()) {
                     switch (item) {
-                    case POTION:
-                    case SPLASH_POTION:
-                    case LINGERING_POTION:
-                    case TIPPED_ARROW:
-                        String potionItemName = item.name();
-                        for (PotionType potionType : PotionType.values()) {
-                            String potionTypeName = potionType.name();
-                            if (potionType.isExtendable()) {
-                                add(potionItemName + "_" + potionTypeName + "_EXTENDED");
+                        case POTION:
+                        case SPLASH_POTION:
+                        case LINGERING_POTION:
+                        case TIPPED_ARROW:
+                            String potionItemName = item.name();
+                            for (PotionType potionType : PotionType.values()) {
+                                String potionTypeName = potionType.name();
+                                if (potionType.isExtendable()) {
+                                    add(potionItemName + "_" + potionTypeName + "_EXTENDED");
+                                }
+
+                                if (potionType.isUpgradeable()) {
+                                    add(potionItemName + "_" + potionTypeName + "_UPGRADED");
+                                }
+
+                                add(potionItemName + "_" + potionTypeName);
+
                             }
-
-                            if (potionType.isUpgradeable()) {
-                                add(potionItemName + "_" + potionTypeName + "_UPGRADED");
-                            }
-
-                            add(potionItemName + "_" + potionTypeName);
-
-                        }
-                    default:
-                        add(item.name());
+                        default:
+                            add(item.name());
                     }
                 }
             }
@@ -67,7 +69,7 @@ public final class Items {
 
     /**
      * 指定したItemStackのデータベース上の名前を取得する。
-     * 
+     *
      * @param item
      * @param ignoreMeta falseの場合、メタを持っているアイテムを指定するとnullを返すようになる。
      * @return 名前 または null
@@ -76,42 +78,42 @@ public final class Items {
     public static String getName(@NotNull ItemStack item, boolean ignoreMeta) {
         Material type = item.getType();
         switch (type) {
-        case POTION:
-        case SPLASH_POTION:
-        case LINGERING_POTION:
-        case TIPPED_ARROW:
-            PotionData data = ((PotionMeta) item.getItemMeta()).getBasePotionData();
+            case POTION:
+            case SPLASH_POTION:
+            case LINGERING_POTION:
+            case TIPPED_ARROW:
+                PotionData data = ((PotionMeta) item.getItemMeta()).getBasePotionData();
 
-            PotionType potionType = data.getType();
+                PotionType potionType = data.getType();
 
-            if (potionType == PotionType.UNCRAFTABLE) {
+                if (potionType == PotionType.UNCRAFTABLE) {
+                    if (ignoreMeta) {
+                        return type.name();
+                    }
+                    return item.hasItemMeta() ? null : type.name();
+                }
+
+                boolean extended = data.isExtended();
+                boolean upgraded = data.isUpgraded();
+
+                if (extended && upgraded) {
+                    return null;
+                }
+
+                String extendedPart = data.isExtended() ? "_EXTENDED" : "";
+                String upgradedPart = data.isUpgraded() ? "_UPGRADED" : "";
+                String name = type.name() + "_" + potionType.name() + extendedPart + upgradedPart;
+
+                if (ignoreMeta) {
+                    return name;
+                }
+                return getItemStack(name).getItemMeta().equals(item.getItemMeta()) ? name : null;
+
+            default:
                 if (ignoreMeta) {
                     return type.name();
                 }
                 return item.hasItemMeta() ? null : type.name();
-            }
-
-            boolean extended = data.isExtended();
-            boolean upgraded = data.isUpgraded();
-
-            if (extended && upgraded) {
-                return null;
-            }
-
-            String extendedPart = data.isExtended() ? "_EXTENDED" : "";
-            String upgradedPart = data.isUpgraded() ? "_UPGRADED" : "";
-            String name = type.name() + "_" + potionType.name() + extendedPart + upgradedPart;
-
-            if (ignoreMeta) {
-                return name;
-            }
-            return getItemStack(name).getItemMeta().equals(item.getItemMeta()) ? name : null;
-
-        default:
-            if (ignoreMeta) {
-                return type.name();
-            }
-            return item.hasItemMeta() ? null : type.name();
         }
     }
 

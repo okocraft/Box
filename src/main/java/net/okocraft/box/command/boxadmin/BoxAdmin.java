@@ -48,30 +48,31 @@ public class BoxAdmin extends BaseBoxCommand implements CommandExecutor, TabComp
     private final int subCommandMapSize;
 
     public BoxAdmin() {
-        subCommandMap = new HashMap<String, BoxCommand>() {
+        subCommandMap = new HashMap<>() {
             private static final long serialVersionUID = 1L;
+
             {
                 Help help = new Help();
                 put(help.getCommandName(), help);
-    
+
                 AddCategory addCategory = new AddCategory();
                 put(addCategory.getCommandName(), addCategory);
-    
+
                 AutoStoreList autoStoreList = new AutoStoreList();
                 put(autoStoreList.getCommandName(), autoStoreList);
-    
+
                 AutoStore autoStore = new AutoStore();
                 put(autoStore.getCommandName(), autoStore);
-    
+
                 Give give = new Give();
                 put(give.getCommandName(), give);
-    
+
                 Set set = new Set();
                 put(set.getCommandName(), set);
-    
+
                 Take take = new Take();
                 put(take.getCommandName(), take);
-    
+
                 Reload reload = new Reload();
                 put(reload.getCommandName(), reload);
             }
@@ -83,11 +84,11 @@ public class BoxAdmin extends BaseBoxCommand implements CommandExecutor, TabComp
             pluginCommand.setExecutor(this);
             pluginCommand.setTabCompleter(this);
         });
-        
+
     }
 
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, Command command, String label, @NotNull String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (!validate(sender, args)) {
             return false;
         }
@@ -101,7 +102,7 @@ public class BoxAdmin extends BaseBoxCommand implements CommandExecutor, TabComp
     }
 
     @Override
-    public List<String> onTabComplete(@NotNull CommandSender sender, Command command, String alias, @NotNull String[] args) {
+    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
         if (args.length == 0) {
             return null;
         }
@@ -113,7 +114,7 @@ public class BoxAdmin extends BaseBoxCommand implements CommandExecutor, TabComp
         if (args.length == 1) {
             return StringUtil.copyPartialMatches(args[0], permedSubCommands, new ArrayList<>());
         }
-        
+
         BoxCommand subCommand = subCommandMap.get(args[0].toLowerCase());
         if (subCommand == null || !permedSubCommands.contains(subCommand.getCommandName())) {
             return List.of();
@@ -124,7 +125,7 @@ public class BoxAdmin extends BaseBoxCommand implements CommandExecutor, TabComp
     @NotNull
     @Override
     public String getDescription() {
-        return "";    
+        return "";
     }
 
     @NotNull

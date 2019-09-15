@@ -44,12 +44,12 @@ class Reload extends BaseSubAdminCommand {
         if (args.length == 2) {
             String type = args[1].toLowerCase();
             switch (type) {
-            case "listener":
-                INSTANCE.registerEvents();
-                break;
-            case "config":
-                reloadConfig(sender);
-                break;
+                case "listener":
+                    INSTANCE.registerEvents();
+                    break;
+                case "config":
+                    reloadConfig(sender);
+                    break;
             }
         }
 

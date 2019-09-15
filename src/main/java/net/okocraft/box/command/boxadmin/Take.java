@@ -50,7 +50,7 @@ class Take extends BaseSubAdminCommand {
         ItemStack item = Items.getItemStack(itemName);
         long amount = args.length < 4 ? 1 : OtherUtil.parseLongOrDefault(args[3], 1);
         long currentAmount = PlayerData.getItemAmount(player, item);
-        
+
         long value = currentAmount - amount;
         PlayerData.setItemAmount(player, item, value);
 

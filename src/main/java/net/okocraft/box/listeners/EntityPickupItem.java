@@ -71,11 +71,11 @@ public class EntityPickupItem implements Listener {
         if (!Box.getInstance().getGeneralConfig().getAllItems().contains(pickedItemName)) {
             return;
         }
-        
+
         if (!PlayerData.getAutoStore(player, pickedItem)) {
             return;
         }
-        
+
         long stock = PlayerData.getItemAmount(player, pickedItem);
         PlayerData.setItemAmount(player, pickedItem, stock + event.getItem().getItemStack().getAmount());
 

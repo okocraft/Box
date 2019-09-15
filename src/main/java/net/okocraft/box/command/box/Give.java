@@ -55,7 +55,7 @@ class Give extends BaseSubCommand {
             sender.sendMessage(MESSAGE_CONFIG.getNoPlayerFound());
             return false;
         }
-        
+
         String itemName = args[2].toUpperCase();
         ItemStack item = Items.getItemStack(itemName);
 
@@ -129,7 +129,7 @@ class Give extends BaseSubCommand {
         if (!items.contains(itemName)) {
             return List.of();
         }
-        
+
         long stock = PlayerData.getItemAmount((OfflinePlayer) sender, Items.getItemStack(itemName));
 
         if (stock < 1) {
@@ -175,7 +175,7 @@ class Give extends BaseSubCommand {
         if (!super.validate(sender, args)) {
             return false;
         }
-        
+
         if (!(sender instanceof Player)) {
             sender.sendMessage(MESSAGE_CONFIG.getPlayerOnly());
             return false;
@@ -195,11 +195,11 @@ class Give extends BaseSubCommand {
         Map<String, String> players = PlayerData.getPlayers();
         // プレイヤーがデータベースに登録されていない
         if (
-            (!players.containsKey(args[1].toLowerCase()) &&
-            !players.containsValue(args[1].toLowerCase())) ||
-            (!players.containsKey(sender.getName().toLowerCase()) &&
-            !players.containsValue(sender.getName().toLowerCase()))
-        ){
+                (!players.containsKey(args[1].toLowerCase()) &&
+                        !players.containsValue(args[1].toLowerCase())) ||
+                        (!players.containsKey(sender.getName().toLowerCase()) &&
+                                !players.containsValue(sender.getName().toLowerCase()))
+        ) {
             sender.sendMessage(MESSAGE_CONFIG.getNoPlayerFound());
             return false;
         }

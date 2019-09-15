@@ -54,18 +54,18 @@ class AddCategory extends BaseSubAdminCommand {
         List<String> result = new ArrayList<>();
 
         switch (args.length) {
-        case 2:
-            return StringUtil.copyPartialMatches(args[1], List.of("<category>"), result);
-        case 3:
-            return StringUtil.copyPartialMatches(args[2], List.of("<id>"), result);
-        case 4:
-            return StringUtil.copyPartialMatches(args[3], List.of("<display_name>"), result);
-        case 5:
-        List<String> items = Arrays.stream(Material.values())
-                .map(Material::name).collect(Collectors.toList());
-            return StringUtil.copyPartialMatches(args[4], items, result);
-        default:
-            return result;
+            case 2:
+                return StringUtil.copyPartialMatches(args[1], List.of("<category>"), result);
+            case 3:
+                return StringUtil.copyPartialMatches(args[2], List.of("<id>"), result);
+            case 4:
+                return StringUtil.copyPartialMatches(args[3], List.of("<display_name>"), result);
+            case 5:
+                List<String> items = Arrays.stream(Material.values())
+                        .map(Material::name).collect(Collectors.toList());
+                return StringUtil.copyPartialMatches(args[4], items, result);
+            default:
+                return result;
         }
     }
 

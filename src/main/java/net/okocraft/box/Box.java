@@ -96,8 +96,8 @@ public class Box extends JavaPlugin {
     private Economy economy;
 
     public Box() {
-        log      = getLogger();
-        version  = getClass().getPackage().getImplementationVersion();
+        log = getLogger();
+        version = getClass().getPackage().getImplementationVersion();
     }
 
     @Override
@@ -183,10 +183,10 @@ public class Box extends JavaPlugin {
 
     /**
      * economyをセットする。
-     * 
+     *
      * @return 成功したらtrue　失敗したらfalse
      */
-	private boolean setupEconomy() {
+    private boolean setupEconomy() {
         if (getServer().getPluginManager().getPlugin("Vault") == null) {
             log.severe("Vault was not found.");
             return false;
@@ -197,5 +197,5 @@ public class Box extends JavaPlugin {
         }
         economy = rsp.getProvider();
         return true;
-	}
+    }
 }

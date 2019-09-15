@@ -126,7 +126,7 @@ public class PlayerData implements Listener {
     }
 
     public static boolean addItemAmount(@NotNull OfflinePlayer player, @NotNull ItemStack item,
-            long amount) {
+                                        long amount) {
         String itemName = Items.getName(item, true);
         if (itemName == null) {
             return false;
@@ -198,8 +198,8 @@ public class PlayerData implements Listener {
             Sqlite.executeSql("INSERT INTO " + itemTableName + " (uuid, player) VALUES ('" + uuid + "', '" + name
                     + "') ON CONFLICT(uuid) DO UPDATE SET player = '" + name + "' WHERE uuid = '" + uuid + "'");
             // データを拾う。
-            itemData.put(player, loadItemData((OfflinePlayer) player));
-            autoStoreData.put(player, loadAutoStoreData((OfflinePlayer) player));
+            itemData.put(player, loadItemData(player));
+            autoStoreData.put(player, loadAutoStoreData(player));
         });
     }
 
@@ -397,7 +397,6 @@ public class PlayerData implements Listener {
             statement.executeBatch();
         } catch (SQLException e) {
             e.printStackTrace();
-            return;
         }
     }
 }

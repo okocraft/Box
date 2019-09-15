@@ -13,14 +13,15 @@ import org.bukkit.Bukkit;
 import net.okocraft.box.Box;
 import org.jetbrains.annotations.Nullable;
 
-public class Sqlite {
+public final class Sqlite {
 
     @Nullable
     private static final Box box = Box.getInstance();
     @Nullable
     private static Connection connection;
 
-    private Sqlite() {}
+    private Sqlite() {
+    }
 
     @Nullable
     static Connection getConnection() {
@@ -37,7 +38,7 @@ public class Sqlite {
             Bukkit.getPluginManager().disablePlugin(box);
             return null;
         }
-        
+
         final File dbFile = box.getDataFolder().toPath().resolve("data.db").toFile();
         if (!dbFile.exists()) {
             try {

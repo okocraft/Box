@@ -70,9 +70,8 @@ public class CustomConfig {
     /**
      * 設定を取得する。
      *
-     * @author LazyGon
-     *
      * @return FileConfiguration
+     * @author LazyGon
      */
     @NotNull
     FileConfiguration getConfig() {

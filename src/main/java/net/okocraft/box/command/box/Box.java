@@ -41,40 +41,41 @@ public class Box extends BaseBoxCommand implements CommandExecutor, TabCompleter
 
     private static final String COMMAND_NAME = "box";
     private static final String USAGE = "/box [args...]";
-    
+
     @Getter
     private Map<String, BaseSubCommand> subCommandMap;
     @Getter
     private final int subCommandMapSize;
 
     public Box() {
-        subCommandMap = new HashMap<String, BaseSubCommand>(){
+        subCommandMap = new HashMap<>() {
             private static final long serialVersionUID = 1L;
+
             {
                 Version version = new Version();
                 put(version.getCommandName(), version);
-    
+
                 Help help = new Help();
                 put(help.getCommandName(), help);
-    
+
                 AutoStoreList autoStoreList = new AutoStoreList();
                 put(autoStoreList.getCommandName(), autoStoreList);
-    
+
                 AutoStore autoStore = new AutoStore();
                 put(autoStore.getCommandName(), autoStore);
-    
+
                 GetStick getStick = new GetStick();
                 put(getStick.getCommandName(), getStick);
-    
+
                 Give give = new Give();
                 put(give.getCommandName(), give);
-    
+
                 Sell sell = new Sell();
                 put(sell.getCommandName(), sell);
-    
+
                 SellPrice sellPrice = new SellPrice();
                 put(sellPrice.getCommandName(), sellPrice);
-    
+
                 SellPriceList sellPriceList = new SellPriceList();
                 put(sellPriceList.getCommandName(), sellPriceList);
             }
@@ -89,7 +90,7 @@ public class Box extends BaseBoxCommand implements CommandExecutor, TabCompleter
     }
 
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, Command command, String label, @NotNull String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (args.length == 0) {
             return runCommand(sender, args);
         }
@@ -102,7 +103,7 @@ public class Box extends BaseBoxCommand implements CommandExecutor, TabCompleter
     }
 
     @Override
-    public List<String> onTabComplete(@NotNull CommandSender sender, Command command, String alias, @NotNull String[] args) {
+    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
         if (args.length == 0) {
             return null;
         }
@@ -118,7 +119,7 @@ public class Box extends BaseBoxCommand implements CommandExecutor, TabCompleter
                     new ArrayList<>()
             );
         }
-        
+
         BaseSubCommand subCommand = subCommandMap.get(args[0].toLowerCase());
         if (subCommand == null || !permedSubCommands.contains(subCommand.getCommandName())) {
             return List.of();
@@ -129,7 +130,7 @@ public class Box extends BaseBoxCommand implements CommandExecutor, TabCompleter
     @Override
     public boolean runCommand(CommandSender sender, String[] args) {
         if (!(sender instanceof Player)) {
-            MESSAGE_CONFIG.getErrorOccurredOnGUI();
+            sender.sendMessage(MESSAGE_CONFIG.getPlayerOnly());
             return false;
         }
         ((Player) sender).openInventory(CategorySelectorGUI.GUI);

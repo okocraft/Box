@@ -47,7 +47,7 @@ class Help extends BaseSubAdminCommand {
 
         Map<String, String> commandDescriptionMap = new LinkedHashMap<>() {
             private static final long serialVersionUID = 1L;
-            
+
             {
                 commands.getSubCommandMap().values()
                         .forEach(subCommand -> put(subCommand.getUsage(), subCommand.getDescription()));
@@ -60,9 +60,7 @@ class Help extends BaseSubAdminCommand {
         page = Math.min(page, maxPage);
 
         sender.sendMessage(MESSAGE_CONFIG.getAdminCommandHelpHeader());
-        commandDescriptionMap.entrySet().stream().skip(9 * (page - 1)).limit(9).forEach(entry -> {
-            sender.sendMessage("§b" + entry.getKey() + "§7 - " + entry.getValue());
-        });
+        commandDescriptionMap.entrySet().stream().skip(9 * (page - 1)).limit(9).forEach(entry -> sender.sendMessage("§b" + entry.getKey() + "§7 - " + entry.getValue()));
 
         return true;
     }
@@ -74,7 +72,7 @@ class Help extends BaseSubAdminCommand {
 
         int mapSize = INSTANCE.getAdminCommand().getSubCommandMapSize();
         int maxPage = mapSize % 9 == 0 ? mapSize / 9 : mapSize / 9 + 1;
-        List<String> pages  = IntStream.rangeClosed(1, maxPage).boxed().map(String::valueOf).collect(Collectors.toList());
+        List<String> pages = IntStream.rangeClosed(1, maxPage).boxed().map(String::valueOf).collect(Collectors.toList());
         if (args.length == 2) {
             return StringUtil.copyPartialMatches(args[1], pages, result);
         }

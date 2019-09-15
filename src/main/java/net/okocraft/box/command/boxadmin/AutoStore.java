@@ -173,7 +173,7 @@ class AutoStore extends BaseSubAdminCommand {
             return false;
         }
 
-        if (args.length >= 4 && (!args[3].equalsIgnoreCase("true") || !args[3].equalsIgnoreCase("false"))) {
+        if (args.length >= 4 && !args[3].equalsIgnoreCase("true") && !args[3].equalsIgnoreCase("false")) {
             sender.sendMessage(MESSAGE_CONFIG.getInvalidArguments());
             return false;
         }

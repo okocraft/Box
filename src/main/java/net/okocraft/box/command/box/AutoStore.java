@@ -57,7 +57,7 @@ class AutoStore extends BaseSubCommand {
             if (PlayerData.setAutoStoreAll((OfflinePlayer) sender, switchTo)) {
                 sender.sendMessage(MESSAGE_CONFIG.getAutoStoreSettingChangedAll().replaceAll("%isEnabled%",
                         Boolean.toString(switchTo)));
-                
+
                 return true;
             } else {
                 sender.sendMessage(MESSAGE_CONFIG.getErrorOccurred());

@@ -38,7 +38,7 @@ public class Category {
         this.name = name;
         this.displayName = ChatColor.translateAlternateColorCodes('&', displayName);
         this.icon = icon;
-        this.items = items.stream().filter(itemName -> Items.contains(itemName))
+        this.items = items.stream().filter(Items::contains)
                 .map(Items::getItemStack)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());

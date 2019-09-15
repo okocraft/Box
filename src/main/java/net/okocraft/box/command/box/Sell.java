@@ -63,10 +63,10 @@ class Sell extends BaseSubCommand {
 
         Economy economy = INSTANCE.getEconomy();
         double price = CONFIG.getSellPrice().getOrDefault(itemName, 0D) * amount;
-        
+
         PlayerData.setItemAmount((OfflinePlayer) sender, item, currentAmount - amount);
         economy.depositPlayer((OfflinePlayer) sender, price);
-        
+
         double balance = economy.getBalance((OfflinePlayer) sender);
         sender.sendMessage(
                 MESSAGE_CONFIG.getSuccessSell()
@@ -74,7 +74,7 @@ class Sell extends BaseSubCommand {
                         .replaceAll("%item%", itemName)
                         .replaceAll("%price%", String.valueOf(price))
                         .replaceAll("%newamount%", String.valueOf(currentAmount - amount))
-                        .replaceAll("%newbalance%", String.valueOf(Math.round((balance + price)*10)/10))
+                        .replaceAll("%newbalance%", String.valueOf(Math.round((balance + price) * 10) / 10))
         );
 
         return true;
@@ -87,7 +87,7 @@ class Sell extends BaseSubCommand {
         List<String> items = PlayerData.getItemsAmount((OfflinePlayer) sender).entrySet()
                 .parallelStream().filter(entry -> entry.getValue() != 0L).map(Map.Entry::getKey)
                 .collect(Collectors.toList());
-        
+
         if (args.length == 2) {
             return StringUtil.copyPartialMatches(args[1], items, result);
         }
@@ -133,7 +133,7 @@ class Sell extends BaseSubCommand {
         if (!super.validate(sender, args)) {
             return false;
         }
-        
+
         if (!(sender instanceof Player)) {
             sender.sendMessage(MESSAGE_CONFIG.getPlayerOnly());
             return false;
@@ -143,7 +143,7 @@ class Sell extends BaseSubCommand {
             sender.sendMessage(MESSAGE_CONFIG.getEconomyIsNull());
             return false;
         }
-        
+
         if (!CONFIG.getAllItems().contains(args[1].toUpperCase())) {
             sender.sendMessage(MESSAGE_CONFIG.getNoItemFound());
             return false;

@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -103,12 +104,12 @@ public class GenerateItemConfig implements Listener {
         itemConfig.set(categoryPath + ".id", id);
         itemConfig.set(categoryPath + ".display_name", displayName);
         itemConfig.set(categoryPath + ".icon", icon.name());
-        
+
         List<String> items = Arrays.stream(chestSnapInv.getContents())
-                .filter(itemStack -> itemStack != null)
+                .filter(Objects::nonNull)
                 .map(itemStack -> Items.getName(itemStack, false))
                 .collect(Collectors.toList());
-        
+
         itemConfig.set(categoryPath + ".item", items);
 
         CONFIG.getItemCustomConfig().saveConfig();

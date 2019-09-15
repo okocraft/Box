@@ -26,18 +26,19 @@ import org.bukkit.plugin.PluginManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class OtherUtil {
+public final class OtherUtil {
+
+    private OtherUtil() {
+    }
 
     /**
      * numberを解析してint型にして返す。numberのフォーマットがintではないときはdefを返す。
-     * 
+     *
+     * @param number 解析する文字列
+     * @param def    解析に失敗したときに返す数字
+     * @return int型の数字。
      * @author LazyGon
      * @since v1.1.0
-     * 
-     * @param number 解析する文字列
-     * @param def 解析に失敗したときに返す数字
-     * 
-     * @return int型の数字。
      */
     public static int parseIntOrDefault(@NotNull String number, int def) {
         try {
@@ -49,14 +50,12 @@ public class OtherUtil {
 
     /**
      * numberを解析してlong型にして返す。numberのフォーマットがlongではないときはdefを返す。
-     * 
+     *
+     * @param number 解析する文字列
+     * @param def    解析に失敗したときに返す数字
+     * @return long型の数字。
      * @author LazyGon
      * @since v1.1.0
-     * 
-     * @param number 解析する文字列
-     * @param def 解析に失敗したときに返す数字
-     * 
-     * @return long型の数字。
      */
     public static long parseLongOrDefault(@NotNull String number, long def) {
         try {
@@ -68,8 +67,8 @@ public class OtherUtil {
 
     /**
      * パーミッションを登録する。
-     * 
-     * @param permName 登録する権限の文字列
+     *
+     * @param permName       登録する権限の文字列
      * @param parentPermName {@code permName} の親権限の文字列
      */
     public static void registerPermission(@NotNull String permName, @Nullable String parentPermName) {
@@ -79,11 +78,9 @@ public class OtherUtil {
         if (!optionalPerm.isPresent()) {
             Permission perm = new Permission(permName);
 
-            Optional.ofNullable(parentPermName).ifPresent(_parentPermName -> {
-                Optional.ofNullable(pm.getPermission(_parentPermName)).ifPresent(parentPerm -> {
-                    perm.addParent(parentPerm, true);
-                });
-            });
+            Optional.ofNullable(parentPermName).ifPresent(_parentPermName -> Optional.ofNullable(pm.getPermission(_parentPermName)).ifPresent(parentPerm -> {
+                perm.addParent(parentPerm, true);
+            }));
 
             pm.getPermissions().add(perm);
         }
@@ -91,7 +88,7 @@ public class OtherUtil {
 
     /**
      * パーミッションを登録する。
-     * 
+     *
      * @param permName 登録する権限の文字列
      */
     public static void registerPermission(@NotNull String permName) {

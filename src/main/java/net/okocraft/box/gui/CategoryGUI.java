@@ -68,7 +68,7 @@ class CategoryGUI implements Listener {
 
     /**
      * コンストラクタ
-     * 
+     *
      * @param player       カテゴリ選択GUIでアイコンをクリックしたプレイヤー
      * @param categoryName 選択されたカテゴリの名前
      * @param quantity     引き出し・預け入れ量
@@ -86,16 +86,11 @@ class CategoryGUI implements Listener {
         this.gui = Bukkit.createInventory(null, 54, category.getDisplayName());
         this.items = new ArrayList<>() {
             private static final long serialVersionUID = 1L;
+
             {
                 category.getItems().forEach(item -> {
                     ItemStack itemStack = item.clone();
-                    // meta設定
-                    ItemMeta meta = itemStack.getItemMeta();
-                    long stock = PlayerData.getItemAmount(player, item);
-                    List<String> itemLore = new ArrayList<>(CONFIG.getItemTemplateLore());
-                    itemLore.replaceAll(loreLine -> replacePlaceholders(loreLine, stock, quantity));
-                    meta.setLore(itemLore);
-                    itemStack.setItemMeta(meta);
+                    updateLore(itemStack);
                     add(itemStack);
                 });
             }
@@ -108,7 +103,7 @@ class CategoryGUI implements Listener {
 
     /**
      * originalのプレホルを受け取った情報で置換する。
-     * 
+     *
      * @param original プレホルを含むオリジナル文字列
      * @param jp       アイテムの日本語名
      * @param en       アイテムの英語名
@@ -125,7 +120,7 @@ class CategoryGUI implements Listener {
 
     /**
      * 今開いているguiのページを指定したページに移動させる。
-     * 
+     *
      * @param page 目的のページ
      */
     private void setPage(int page) {
@@ -151,7 +146,7 @@ class CategoryGUI implements Listener {
 
     /**
      * 取引量を変える。
-     * 
+     *
      * @param newQuantity 新しい取引量
      */
     private void setQuantity(int newQuantity) {
@@ -180,7 +175,7 @@ class CategoryGUI implements Listener {
 
     /**
      * アイテムを引き出す。
-     * 
+     *
      * @param item 引き出すアイテム
      */
     private void withdraw(@NotNull ItemStack item) {
@@ -201,7 +196,7 @@ class CategoryGUI implements Listener {
 
     /**
      * アイテムを預ける。
-     * 
+     *
      * @param item 預けるアイテム
      */
     private void deposit(@NotNull ItemStack item) {
@@ -221,7 +216,7 @@ class CategoryGUI implements Listener {
 
     /**
      * GUIの初期化や、アイテムの取引などで変動したloreを追随させるためのメソッド。
-     * 
+     *
      * @param item loreを更新するアイテム
      */
     private void updateLore(@NotNull ItemStack item) {
@@ -251,7 +246,7 @@ class CategoryGUI implements Listener {
     }
 
     @EventHandler(priority = EventPriority.LOW)
-    private void onClicked(InventoryClickEvent event) {
+    private void onClicked(@NotNull InventoryClickEvent event) {
         if (player != event.getWhoClicked()) {
             return;
         }
@@ -306,24 +301,24 @@ class CategoryGUI implements Listener {
             int difference = 0;
 
             switch (clickedSlot) {
-            case 46:
-                difference = -64;
-                break;
-            case 47:
-                difference = -8;
-                break;
-            case 48:
-                difference = -1;
-                break;
-            case 50:
-                difference = 1;
-                break;
-            case 51:
-                difference = 8;
-                break;
-            case 52:
-                difference = 64;
-                break;
+                case 46:
+                    difference = -64;
+                    break;
+                case 47:
+                    difference = -8;
+                    break;
+                case 48:
+                    difference = -1;
+                    break;
+                case 50:
+                    difference = 1;
+                    break;
+                case 51:
+                    difference = 8;
+                    break;
+                case 52:
+                    difference = 64;
+                    break;
             }
 
             // 既に取引数が上限または下限に達している場合

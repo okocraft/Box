@@ -40,7 +40,7 @@ class SellPriceList extends BaseSubCommand {
         if (!validate(sender, args)) {
             return false;
         }
-        
+
         int maxLine = CONFIG.getAllItems().size();
         int maxPage = maxLine % 9 == 0 ? maxLine / 9 : maxLine / 9 + 1;
         int page = Math.min(maxPage, (args.length >= 2 ? OtherUtil.parseIntOrDefault(args[1], 1) : 1));

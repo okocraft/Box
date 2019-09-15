@@ -1,6 +1,6 @@
 /*
  * Box
- * Copyright (C) 2019 OKOCRAFT 
+ * Copyright (C) 2019 OKOCRAFT
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -327,12 +327,10 @@ public class MessageConfig {
     /**
      * 設定ファイルからメッセージを取得し、それにBoxのprefixをつけて返す。
      *
+     * @param key YAML キー
+     * @return メッセージ
      * @author akaregi
      * @since v1.1.0
-     *
-     * @param key YAML キー
-     *
-     * @return メッセージ
      */
     @NotNull
     private String getMessage(@NotNull String key) {
@@ -341,14 +339,11 @@ public class MessageConfig {
 
     /**
      * 設定ファイルからメッセージを取得する。
-     * 
-     * @author LazyGon
-     * 
-     * @since v1.1.0
-     * 
+     *
      * @param key YAML キー
-     * 
      * @return 生メッセージ
+     * @author LazyGon
+     * @since v1.1.0
      */
     @NotNull
     private String getRawMessage(@NotNull String key) {
@@ -357,13 +352,11 @@ public class MessageConfig {
 
     /**
      * jarの中にあるmessages.ymlからメッセージを取得する。
-     * 
+     *
+     * @param key YAML キー
+     * @return メッセージ
      * @author LazyGon
      * @since v1.1.0
-     * 
-     * @param key YAML キー
-     * 
-     * @return メッセージ
      */
     private String getDefaultMessage(@NotNull String key) {
         InputStream messageConfigStream = Optional.ofNullable(Box.getInstance().getResource("messages.yml"))
@@ -377,11 +370,10 @@ public class MessageConfig {
 
     /**
      * 設定ファイルからプラグインのプレフィックスを取得する。
-     * 
+     *
+     * @return prefix
      * @author LazyGon
      * @since v1.1.0
-     * 
-     * @return prefix
      */
     @NotNull
     private String getPrefix() {
@@ -391,7 +383,7 @@ public class MessageConfig {
 
     /**
      * {@link ChatColor#translateAlternateColorCodes(char, String)}
-     * 
+     *
      * @param target
      * @return replaced target
      */

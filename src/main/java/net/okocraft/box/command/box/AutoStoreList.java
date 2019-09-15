@@ -45,7 +45,7 @@ class AutoStoreList extends BaseSubCommand {
             return false;
         }
 
-        
+
         Set<String> allItems = CONFIG.getAllItems();
 
         int maxLine = allItems.size();
