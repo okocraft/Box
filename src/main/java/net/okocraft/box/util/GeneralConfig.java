@@ -88,6 +88,14 @@ public class GeneralConfig {
     private String boxStickDisplayName;
     @Getter
     private List<String> boxStickLore;
+    @Getter
+    private boolean boxStickEnabledBlockPlace;
+    @Getter
+    private boolean boxStickEnabledFood;
+    @Getter
+    private boolean boxStickEnabledPotion;
+    @Getter
+    private boolean boxStickEnabledTool;
 
     @Getter
     private List<String> disabledWorlds;
@@ -208,15 +216,21 @@ public class GeneralConfig {
         sellPrice = allItems.stream().collect(Collectors.toMap(Function.identity(),
                 itemName -> priceConfig.getConfig().getDouble(itemName), (i1, i2) -> i1, HashMap::new));
 
+        FileConfiguration defaultConfig = plugin.getConfig();
         boxStickDisplayName = ChatColor.translateAlternateColorCodes('&',
-                plugin.getConfig().getString("General.BoxStick.DisplayName", "&9Box Stick"));
-        boxStickLore = plugin.getConfig().getStringList("General.BoxStick.Lore");
+                defaultConfig.getString("General.BoxStick.DisplayName", "&9Box Stick"));
+        boxStickLore = defaultConfig.getStringList("General.BoxStick.Lore");
         if (boxStickLore.isEmpty()) {
             boxStickLore.add("§r");
             boxStickLore.add("§7利き手じゃない手にこれを持つと、利き手の");
             boxStickLore.add("§7アイテムを使った時にBoxから消費します。");
         }
         boxStickLore.replaceAll(loreLine -> ChatColor.translateAlternateColorCodes('&', loreLine));
+        
+        boxStickEnabledBlockPlace = defaultConfig.getBoolean("General.BoxStick.Enabled.BlockPlace");
+        boxStickEnabledFood = defaultConfig.getBoolean("General.BoxStick.Enabled.Food");
+        boxStickEnabledPotion = defaultConfig.getBoolean("General.BoxStick.Enabled.Potion");
+        boxStickEnabledTool = defaultConfig.getBoolean("General.BoxStick.Enabled.Tool");
     }
 
     /**

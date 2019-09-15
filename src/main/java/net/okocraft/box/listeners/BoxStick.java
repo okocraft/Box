@@ -9,6 +9,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.ThrownPotion;
@@ -31,7 +32,6 @@ import net.okocraft.box.Box;
 import net.okocraft.box.database.Items;
 import net.okocraft.box.database.PlayerData;
 import net.okocraft.box.util.GeneralConfig;
-import net.okocraft.box.util.PlayerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -54,6 +54,9 @@ public class BoxStick implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void blockPlace(@NotNull BlockPlaceEvent event) {
+        if (!CONFIG.isBoxStickEnabledBlockPlace()) {
+            return;
+        }
         Player player = event.getPlayer();
         ItemStack handItem = event.getItemInHand();
         if (useItemFromDatabase(handItem, player)) {
@@ -98,6 +101,9 @@ public class BoxStick implements Listener {
 
     @EventHandler
     public void itemConsume(@NotNull PlayerItemConsumeEvent event) {
+        if (!CONFIG.isBoxStickEnabledFood()) {
+            return;
+        }
         if (useItemFromDatabase(event.getItem(), event.getPlayer())) {
             event.setItem(event.getItem().clone());
         }
@@ -106,10 +112,23 @@ public class BoxStick implements Listener {
 
     @EventHandler
     public void itemBreak(PlayerItemBreakEvent event) {
+        if (!CONFIG.isBoxStickEnabledTool()) {
+            return;
+        }
+
+        Player player = event.getPlayer();
+        ItemStack item = event.getBrokenItem();
+        if (useItemFromDatabase(new ItemStack(item.getType()), player)) {
+            item.setAmount(2);
+            player.playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, SoundCategory.PLAYERS, 1F, 1F);
+        }
     }
 
     @EventHandler
     public void potionThrow(PlayerInteractEvent event) {
+        if (!CONFIG.isBoxStickEnabledPotion()) {
+            return;
+        }
         if (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK) {
             return;
         }
@@ -133,11 +152,14 @@ public class BoxStick implements Listener {
             thrownPotion.setItem(handItem.clone());
             thrownPotion.setVelocity(player.getLocation().getDirection().multiply(0.5));
 
+            Sound potionThrowSound;
             if (handItemType == Material.SPLASH_POTION) {
-                PlayerUtil.playSound(player, Sound.ENTITY_SPLASH_POTION_THROW);
+                potionThrowSound = Sound.ENTITY_SPLASH_POTION_THROW;
             } else {
-                PlayerUtil.playSound(player, Sound.ENTITY_LINGERING_POTION_THROW);
+                potionThrowSound = Sound.ENTITY_LINGERING_POTION_THROW;
             }
+
+            player.playSound(player.getLocation(), potionThrowSound, SoundCategory.PLAYERS, 1F, 0.5F);
 
         }
     }
@@ -145,10 +167,6 @@ public class BoxStick implements Listener {
     private boolean useItemFromDatabase(@NotNull ItemStack item, @NotNull Player player) {
 
         if (player.getGameMode() == GameMode.CREATIVE) {
-            return false;
-        }
-
-        if (!INSTANCE.getConfig().getBoolean("General.BoxStick.Enabled")) {
             return false;
         }
 

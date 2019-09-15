@@ -21,7 +21,11 @@ General: # PL設定
   ReplantWorld:
     - pf
   BoxStick: # 左手に持つとアイテムをデータベースから使うための棒。DisplayNameやLoreなどを変えても昔の棒は機能する。
-    Enabled: true
+    Enabled:
+      BlockPlace: true # ブロック設置時に自動補充
+      Food: true # 食べたときに自動補充
+      Potion: true # ポーション投げ放題
+      Tool: true # エンチャントや名前付けや説明文などのアイテムメタがない、耐久力を持つアイテムを自動補充。
     DisplayName: "&9Box Stick"
     Lore:
       - "&r"
