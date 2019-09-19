@@ -10,15 +10,13 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.ThrownPotion;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.player.PlayerItemBreakEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.ItemStack;
@@ -126,15 +124,19 @@ public class BoxStick implements Listener {
     }
 
     @EventHandler
-    public void potionThrow(@NotNull PlayerInteractEvent event) {
+    public void potionThrow(@NotNull ProjectileLaunchEvent event) {
         if (!CONFIG.isBoxStickEnabledPotion()) {
             return;
         }
-        if (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK) {
+
+        ThrownPotion thrownPotion = (ThrownPotion) event.getEntity();
+        if (!(thrownPotion.getShooter() instanceof Player)) {
             return;
         }
+        
+        Player player = (Player) thrownPotion.getShooter();
 
-        ItemStack handItem = event.getItem();
+        ItemStack handItem = player.getInventory().getItemInMainHand();
         if (handItem == null) {
             return;
         }
@@ -144,24 +146,8 @@ public class BoxStick implements Listener {
             return;
         }
 
-        Player player = event.getPlayer();
         if (useItemFromDatabase(handItem, player)) {
-            event.setCancelled(true);
-
-            ThrownPotion thrownPotion = (ThrownPotion) player.getWorld()
-                    .spawnEntity(player.getLocation().add(0, 1.5, 0), EntityType.SPLASH_POTION);
-            thrownPotion.setItem(handItem.clone());
-            thrownPotion.setVelocity(player.getLocation().getDirection().multiply(0.5));
-
-            Sound potionThrowSound;
-            if (handItemType == Material.SPLASH_POTION) {
-                potionThrowSound = Sound.ENTITY_SPLASH_POTION_THROW;
-            } else {
-                potionThrowSound = Sound.ENTITY_LINGERING_POTION_THROW;
-            }
-
-            player.playSound(player.getLocation(), potionThrowSound, SoundCategory.PLAYERS, 1F, 0.5F);
-
+            handItem.setAmount(handItem.getAmount() + 1);
         }
     }
 
