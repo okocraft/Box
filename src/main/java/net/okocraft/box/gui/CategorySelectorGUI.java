@@ -33,6 +33,7 @@ import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
@@ -43,7 +44,7 @@ import net.okocraft.box.util.MessageConfig;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public final class CategorySelectorGUI implements Listener {
+public final class CategorySelectorGUI implements Listener, InventoryHolder {
 
     @Nullable
     private static final Box INSTANCE = Box.getInstance();
@@ -53,23 +54,20 @@ public final class CategorySelectorGUI implements Listener {
     private static final NamespacedKey CATEGORY_SELECTOR_KEY = new NamespacedKey(INSTANCE, "categoryselector");
     private static final NamespacedKey CATEGORY_NAME_KEY = new NamespacedKey(INSTANCE, "categoryname");
 
-    public static final Inventory GUI = Bukkit.createInventory(null, 54, CONFIG.getCategorySelectionGuiName());
+    private static CategorySelectorGUI categorySelector = new CategorySelectorGUI();
+    public static Inventory GUI = initGUI();
 
-    private static List<Integer> flameSlots = List.of(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 17, 18, 26, 27, 35, 36, 44, 45, 46,
+    private static final List<Integer> flameSlots = List.of(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 17, 18, 26, 27, 35, 36, 44, 45, 46,
             47, 48, 49, 50, 51, 52, 53);
 
-    @Nullable
-    private static CategorySelectorGUI categorySelector;
-
     /**
-     * コンストラクタ
+     * コンストラクタ禁止
      */
     private CategorySelectorGUI() {
-        initGUI();
     }
 
-    public static void initGUI() {
-        GUI.clear();
+    public static Inventory initGUI() {
+        GUI = Bukkit.createInventory(categorySelector, 54, CONFIG.getCategorySelectionGuiName());
         ItemStack flame = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
         ItemMeta flameMeta = flame.getItemMeta();
         flameMeta.setDisplayName("§r");
@@ -80,16 +78,18 @@ public final class CategorySelectorGUI implements Listener {
         List<ItemStack> itemList = CONFIG.getCategories().values().stream().map(Category::getIconItem)
                 .collect(Collectors.toList());
         GUI.addItem(itemList.toArray(new ItemStack[itemList.size()]));
+        return GUI;
+    }
+
+    @Override
+    public Inventory getInventory() {
+        return GUI;
     }
 
     /**
      * リスナーを動かす。カテゴリーGUIと違ってカテゴリー選択GUIはonEnableのときから常にリスナーをオンにしておく。
      */
     public static void startListener() {
-        if (categorySelector != null) {
-            return;
-        }
-        categorySelector = new CategorySelectorGUI();
         Bukkit.getPluginManager().registerEvents(categorySelector, INSTANCE);
     }
 
@@ -97,11 +97,7 @@ public final class CategorySelectorGUI implements Listener {
      * リスナーを止める。
      */
     public static void stopListener() {
-        if (categorySelector == null) {
-            return;
-        }
         HandlerList.unregisterAll(categorySelector);
-        categorySelector = null;
     }
 
     /**
@@ -109,6 +105,8 @@ public final class CategorySelectorGUI implements Listener {
      */
     public static void restartListener() {
         stopListener();
+        categorySelector = new CategorySelectorGUI();
+        GUI = initGUI();
         startListener();
     }
 
@@ -122,12 +120,13 @@ public final class CategorySelectorGUI implements Listener {
         if (event.isCancelled()) {
             return;
         }
-        Player player = (Player) event.getWhoClicked();
-        InventoryAction action = event.getAction();
         Inventory inventory = event.getClickedInventory();
-        if (inventory == null || inventory.getItem(0) == null || !GUI.getItem(0).isSimilar(inventory.getItem(0))) {
+        if (inventory.getHolder() != this) {
             return;
         }
+
+        Player player = (Player) event.getWhoClicked();
+        InventoryAction action = event.getAction();
         event.setCancelled(true);
 
         if (CONFIG.getDisabledWorlds().contains(event.getWhoClicked().getWorld().getName())) {

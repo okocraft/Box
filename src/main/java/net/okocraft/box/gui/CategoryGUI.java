@@ -37,6 +37,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -49,7 +50,7 @@ import net.okocraft.box.util.PlayerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-class CategoryGUI implements Listener {
+class CategoryGUI implements Listener, InventoryHolder {
 
     @Nullable
     private static final Box INSTANCE = Box.getInstance();
@@ -83,7 +84,7 @@ class CategoryGUI implements Listener {
         this.category = categories.get(categoryName);
         this.page = 1;
         this.quantity = quantity;
-        this.gui = Bukkit.createInventory(null, 54, category.getDisplayName());
+        this.gui = Bukkit.createInventory(this, 54, category.getDisplayName());
         this.items = new ArrayList<>() {
             private static final long serialVersionUID = 1L;
 
@@ -228,6 +229,11 @@ class CategoryGUI implements Listener {
         item.setItemMeta(meta);
     }
 
+    @Override
+    public Inventory getInventory() {
+        return gui;
+    }
+
     @EventHandler
     public void onQuit(@NotNull PlayerQuitEvent event) {
         if (event.getPlayer() != player) {
@@ -251,9 +257,7 @@ class CategoryGUI implements Listener {
             return;
         }
 
-        Inventory inv = event.getInventory();
-
-        if (inv == null || !gui.getItem(0).isSimilar(inv.getItem(0))) {
+        if (event.getInventory().getHolder() != this) {
             return;
         }
 
