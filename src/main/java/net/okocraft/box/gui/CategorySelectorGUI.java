@@ -54,11 +54,11 @@ public final class CategorySelectorGUI implements Listener, InventoryHolder {
     private static final NamespacedKey CATEGORY_SELECTOR_KEY = new NamespacedKey(INSTANCE, "categoryselector");
     private static final NamespacedKey CATEGORY_NAME_KEY = new NamespacedKey(INSTANCE, "categoryname");
 
-    private static CategorySelectorGUI categorySelector = new CategorySelectorGUI();
-    public static Inventory GUI = initGUI();
-
     private static final List<Integer> flameSlots = List.of(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 17, 18, 26, 27, 35, 36, 44, 45, 46,
             47, 48, 49, 50, 51, 52, 53);
+
+    private static CategorySelectorGUI categorySelector = new CategorySelectorGUI();
+    public static Inventory GUI = initGUI();
 
     /**
      * コンストラクタ禁止
