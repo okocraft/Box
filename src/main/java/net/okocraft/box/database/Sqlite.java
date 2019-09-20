@@ -65,6 +65,7 @@ public final class Sqlite {
 
             try {
                 if (!connection.isClosed()) {
+                    executeSql("VACUUM");
                     connection.close();
                 }
                 connection = null;
