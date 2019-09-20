@@ -120,7 +120,7 @@ public final class CategorySelectorGUI implements Listener, InventoryHolder {
         if (event.isCancelled()) {
             return;
         }
-        Inventory inventory = event.getClickedInventory();
+        Inventory inventory = event.getInventory();
         if (inventory.getHolder() != this) {
             return;
         }
