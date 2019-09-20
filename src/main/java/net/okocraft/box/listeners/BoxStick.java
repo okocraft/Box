@@ -129,13 +129,16 @@ public class BoxStick implements Listener {
             return;
         }
 
+        if (!(event.getEntity() instanceof ThrownPotion)) {
+            return;
+        }
+
         ThrownPotion thrownPotion = (ThrownPotion) event.getEntity();
         if (!(thrownPotion.getShooter() instanceof Player)) {
             return;
         }
         
         Player player = (Player) thrownPotion.getShooter();
-
         ItemStack handItem = player.getInventory().getItemInMainHand();
         if (handItem == null) {
             return;
