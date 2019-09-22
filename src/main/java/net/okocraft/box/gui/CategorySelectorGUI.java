@@ -135,6 +135,9 @@ public final class CategorySelectorGUI implements Listener, InventoryHolder {
         }
 
         int clickedSlot = event.getSlot();
+        if (clickedSlot == -999) {
+            return;
+        }
         ItemStack clickedItem = inventory.getItem(clickedSlot);
 
         if (clickedItem == null || clickedItem.getType() == Material.AIR) {
