@@ -138,7 +138,7 @@ public class PlayerData implements Listener {
 
         if (player.isOnline()) {
             long previous = getItemAmount(player, item);
-            if (amount + previous > 0) {
+            if (amount + previous >= 0) {
                 return getPlayerItemData(player.getPlayer()).put(itemName, amount + previous) == previous;
             } else {
                 return false;
