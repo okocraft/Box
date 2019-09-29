@@ -23,7 +23,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import lombok.Getter;
 import net.okocraft.box.Box;
@@ -58,43 +57,12 @@ public class BoxStick implements Listener {
         }
         Player player = event.getPlayer();
         ItemStack handItem = event.getItemInHand();
-        if (useItemFromDatabase(handItem, player)) {
-            PlayerInventory inv = player.getInventory();
-            ItemStack clone = handItem.clone();
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    ItemStack mainHandItem = inv.getItemInMainHand();
-                    if (mainHandItem.equals(handItem)) {
-                        if (mainHandItem.getAmount() == mainHandItem.getMaxStackSize()) {
-                            clone.setAmount(1);
-                            if (inv.addItem(clone).containsValue(clone)) {
-                                PlayerData.addItemAmount(player, handItem, 1);
-                            }
-                        } else {
-                            inv.setItemInMainHand(clone);
-                        }
-                        return;
-                    }
-
-                    ItemStack offHandItem = inv.getItemInOffHand();
-                    if (offHandItem.equals(handItem)) {
-                        if (offHandItem.getAmount() == offHandItem.getMaxStackSize()) {
-                            if (inv.addItem(clone).containsValue(clone)) {
-                                PlayerData.addItemAmount(player, handItem, 1);
-                            }
-                        } else {
-                            inv.setItemInOffHand(clone);
-                        }
-                        return;
-                    }
-
-                    if (inv.addItem(clone).containsValue(clone)) {
-                        PlayerData.addItemAmount(player, handItem, 1);
-                    }
-                }
-            }.runTaskLater(INSTANCE, 1L);
-
+        ItemStack mainHandItem = player.getInventory().getItemInMainHand();
+        if (handItem.getType() == mainHandItem.getType()) {
+            if (useItemFromDatabase(handItem, player)) {
+                mainHandItem.setAmount(mainHandItem.getAmount() + 1);
+                player.getInventory().setItemInMainHand(mainHandItem);
+            }
         }
     }
 
@@ -137,7 +105,7 @@ public class BoxStick implements Listener {
         if (!(thrownPotion.getShooter() instanceof Player)) {
             return;
         }
-        
+
         Player player = (Player) thrownPotion.getShooter();
         ItemStack handItem = player.getInventory().getItemInMainHand();
         if (handItem == null) {
