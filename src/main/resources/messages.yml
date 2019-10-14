@@ -1,121 +1,199 @@
 plugin:
-  prefix: "§8[§6Box§8]§7 "
-  # %version% バージョン名
-  version: "バージョン %version%"
-  reload: "&7設定を再読込しました。"
-
-error:
-  notEnoughArguments: "&c引数が足りません。"
-  notEnoughStoredItems: "&c在庫が足りません。"
-  notEnoughMoney: "&cお金が足りません。"
-  noPlayerFound: "&cその名前のプレイヤーは登録されていません。"
-  noItemFound: "&cその名前のアイテムは登録されていません。"
-  noParameterExist: "&c指定された引数は存在しません。"
-  invalidArguments: "&c引数が正しくありません。"
-  invalidNumber: "&c数字が正しくありません。"
-  errorOccurred: "&cエラーが発生し処理を続行できませんでした。"
-  errorOccurredGUI: "&cエラーが発生し GUI を開けませんでした。"
-  errorFetchCategoryName: "&cカテゴリ名の取得に失敗しました。"
-  errorFetchItemConfig: "&cアイテム設定の取得に失敗しました。"
-  playerOnly: "&cこのコマンドはプレイヤーのみ実行できます。"
-  permissionDenied: "&c権限がありません。"
-  giveMyself: "&c自分自身にはアイテムを渡せません。"
-  economyIsNull: "&c経済がインストールされていません。"
+  version: ${project.version}
+  prefix: "&8[&6Box&8]&r"
 
 command:
-  commandHelpHeader: '&7Box Help'
-  adminCommandHelpHeader: '&7Box Admin Help'
-  disabledWorld: "&cこのワールドでは/boxは使用できません。"
-  # %player%    プレイヤー
-  # %item%      アイテム
-  # %amount%    設定される量
-  successSet: '&b%player%&7 のボックスの &b%item%&7 を &b%amount%&7 にしました。'
-  # %player%    プレイヤー
-  # %item%      アイテム
-  # %amount%    変化した量
-  # %newamount% 現在量
-  successTake: '&b%player%&7 のボックスの &b%item%&7 を &b%amount%&7 減らしました(現在 &b%newamount%&7 個)。'
-  # %player%    プレイヤー
-  # %item%      アイテム
-  # %amount%    変化した量
-  # %newamount% 現在量
-  successGive: '&b%player%&7 に &b%item%&7 を &b%amount%&7 個渡しました(現在 &b%newamount%&7 個)。'
-  # %player%    プレイヤー
-  # %item%      アイテム
-  # %amount%    変化した量
-  # %newamount% 現在量
-  successReceive: '&b%player%&7 から &b%item%&7 を &b%amount%&7 個受け取りました(現在 &b%newamount%&7 個)。'
-  # %amount%    変化した量
-  # %item%      アイテム
-  # %price%     金額
-  # %newamount% 現在量
-  # %newbalance% 現在の所持金
-  successSell: '&b%amount%&7 個の &b%item%&7 を &b%price%&7 で売りました。(現在 &b%newamount%&7 個、&b%newbalance%&7 円)。'
-  # %player%    プレイヤー
-  # %item%      アイテム
-  # %amount%    変化した量
-  # %newamount% 現在量
-  successGiveAdmin: '&b%player%&7 のボックスの &b%item%&7 を &b%amount%&7 増やしました(現在 &b%newamount%&7)。'
+  general:
+    info:
+    error:
+      in-disabled-world: "&cBoxを利用できないワールドにいます！"
+      not-enough-arguments: "&c引数が足りません。"
+      not-enough-stock: "&c在庫が足りません。"
+      not-enough-money: "&cお金が足りません。"
+      player-not-found: "&cプレイヤーが見つかりませんでした。"
+      item-not-found: "&cそのアイテムは存在しません。"
+      invalid-argument: "&c%argument% という引数は存在しません。"
+      invalid-number: "&c数字が正しくありません。"
+      category-not-found: "&cそのカテゴリーは存在しません。"
+      player-only: "&cこのコマンドはプレイヤーにしか使えません。"
+      no-permission: "&c%permission% の権限がありません。"
+      unknown-exception: "&c予期せぬエラーが発生しました。管理者に報告してください。"
+  box:
+    auto-store:
+      description: "&7自動収納の設定を変更します。"
+      info:
+        changed: "&b%item% &7の自動収納を &b%is-enabled%&7 にしました。"
+        changed-all: "&7すべてのアイテムの自動収納を &b%is-enabled% &7にしました。"
+    auto-store-list:
+      description: "&7自動収納の設定を表示します。"
+      info:
+        header: "&b%player%&7 の自動収納設定 &a%current-line%&7 / %max-line%"
+        format: "&b%item%&7: &b%is-enabled%"
+    give:
+      description: "&7誰かにアイテムを与えます。"
+      info:
+        sender: "&b%player%&7 に &b%item%&7 を &b%amount%&7 個渡しました(現在 &b%new-amount%&7 個)。"
+        player: "&b%sender%&7 から &b%item%&7 を &b%amount%&7 個受け取りました(現在 &b%new-amount%&7 個)。"
+      error:
+        cannot-give-myself: "&c自分自身にアイテムを渡すことはできません。"
+    help:
+      description: "&7ヘルプを表示します。"
+      info:
+        header: "&7Box Help"
+        format: "&b%command% &7- &b%description%"
+    version:
+      description: "&7バージョンを表示します。"
+      info:
+        format: "バージョン %version%"
+  box-admin:
+    add-category:
+      info:
+        choose-chest: "&7チェストをクリックしてください。"
+        success: "&7新たなカテゴリが追加されました。"
+      error:
+        not-chest-and-cancelled: "&cブロックがチェストではなかったので、キャンセルされました！"
+    give:
+      description: "&7誰かにアイテムを与えます。"
+      info:
+        sender: "&b%player%&7 の &b%item%&7 を &b%amount%&7 個増やしました。"
+        player: "&b%sender%&7 から &b%item%&7 を &b%amount%&7 個受け取りました(現在 &b%new-amount%&7 個)。"
+    take:
+      description: "&7誰かのアイテムを減らします。"
+      info:
+        sender: "&b%player%&7 の &b%item%&7 を &b%amount%&7 個減らしました。"
+        player: "&b%sender%&7 に &b%item%&7 を &b%amount%&7 個減らされました(現在 &b%new-amount%&7 個)。"
+    set:
+      description: "&7誰かのアイテム量をセットします。"
+      info:
+        sender: "&b%player%&7 の &b%item%&7 を &b%amount%&7 個に設定しました。"
+        player: "&b%sender%&7 があなたの &b%item%&7 を &b%amount%&7 個に設定しました。"
+    help:
+      description: "&7ヘルプを表示します。"
+      info:
+        header: "&7Box Help"
+        format: "&b%command% &7- &b%description%"
+    reload:
+      descirption: "&7設定を再読込します。"
+      info:
+        success: "&7設定を再読込しました。"
 
-commandDescription:
-  box: 'アイテム取引GUIを開く。引数を入れると各サブコマンドを実行する。'
-  autoStore: '自動収納の設定を変更する。'
-  autoStoreList: '自動収納の設定の一覧を表示する。'
-  give: '収納しているアイテムを相手に渡す。'
-  sell: '収納しているアイテムを売る。'
-  sellPrice: '指定したアイテムの売却価格を確認する。'
-  sellPriceList: 'アイテム売却価格の一覧を表示する。'
-  help: 'このヘルプを表示する。'
-  version: 'boxプラグインのバージョンを表示する。'
-
-adminCommandDescription:
-  addCategory: '実行後にクリックしたチェストの中身を設定に変換する。'
-  autoStore: '別のプレイヤーの自動収納の設定を変更する。'
-  autoStoreList: '別のプレイヤーの自動収納の設定の一覧を表示する。'
-  give: '相手のデータベース上のアイテムを増やす。'
-  take: '相手のデータベース上のアイテムを減らす。'
-  set: '相手のデータベース上のアイテムを指定した値にする。'
-  help: 'このヘルプを表示する。'
-  reload: 'リロードする。設定量によってはラグが発生する。'
-
-autoStore:
-  enabled: "&7自動収納を&a有効&7にしました。"
-  disabled: "&7自動収納を&c無効&7にしました。"
-  # %item%        アイテム
-  # %isEnabled%
-  settingChanged: "&b%item%&7 の自動収納を &b%isEnabled%&7 にしました。"
-  # %isEnabled%
-  settingChangedAll: "&7すべてのアイテムの自動収納を &b%isEnabled%&7 にしました。"
-  # %newValue%
-  settingChangedPage: "&b%page%ページ&7目のアイテムの自動収納を &b%newValue%&7 にしました。"
-  # %player%      プレイヤー
-  # %currentLine% 現在のページ
-  # %maxLine%     最大のページ
-  listHeader: "&b%player%&7 の自動収納設定 &a%currentLine%&7 / %maxLine%"
-  # %item%        アイテム
-  # %isEnabled%
-  listFormat: "&b%item%&7: &b%isEnabled%"
-
-price:
-  # %currentLine% 現在のページの最後の行
-  # %maxLine% 一番最後の行
-  sellPriceListHeader: "&7sellコマンドの価格 &6%currentLine%&6 / %maxLine%"
-  # %item%  アイテム
-  # %price% 価格
-  sellPriceFormat: "&b%item%&7: &b%price%"
-
-database:
-  connectionReset: "&7データベースへの接続をリセットしました。"
-  invalidValue: "&c不正な値が記録されています。管理者に報告して下さい。"
-  noColumn: "&cその名前の列はありません。"
-  # %uuid%   UUID
-  # %player% プレイヤー名
-  playerAdded: "&7データベースに &b%uuid%&7 - &b%player%&7 を追加しました。"
-  # %uuid%   UUID
-  # %player% プレイヤー名
-  playerRemoved: "&7データベースから &b%uuid%&7 - &b%player%&7 を削除しました。"
-
-map:
-  playersRecord: "&7記録されているプレイヤー"
-  columnsList: "&7列リスト"
-  format: "%s - %s"
+# plugin:
+#   prefix: "§8[§6Box§8]§7 "
+#   # %version% バージョン名
+#   reload: "&7設定を再読込しました。"
+# 
+# error:
+#   notEnoughArguments: "&c引数が足りません。"
+#   notEnoughStoredItems: "&c在庫が足りません。"
+#   notEnoughMoney: "&cお金が足りません。"
+#   noPlayerFound: "&cその名前のプレイヤーは登録されていません。"
+#   noItemFound: "&cその名前のアイテムは登録されていません。"
+#   noParameterExist: "&c指定された引数は存在しません。"
+#   invalidArguments: "&c引数が正しくありません。"
+#   invalidNumber: "&c数字が正しくありません。"
+#   errorOccurred: "&cエラーが発生し処理を続行できませんでした。"
+#   errorOccurredGUI: "&cエラーが発生し GUI を開けませんでした。"
+#   errorFetchCategoryName: "&cカテゴリ名の取得に失敗しました。"
+#   errorFetchItemConfig: "&cアイテム設定の取得に失敗しました。"
+#   playerOnly: "&cこのコマンドはプレイヤーのみ実行できます。"
+#   permissionDenied: "&c権限がありません。"
+#   giveMyself: "&c自分自身にはアイテムを渡せません。"
+#   economyIsNull: "&c経済がインストールされていません。"
+# 
+# command:
+#   commandHelpHeader: ''
+#   adminCommandHelpHeader: '&7Box Admin Help'
+#   disabledWorld: "&cこのワールドでは/boxは使用できません。"
+#   # %player%    プレイヤー
+#   # %item%      アイテム
+#   # %amount%    設定される量
+#   successSet: '&b%player%&7 のボックスの &b%item%&7 を &b%amount%&7 にしました。'
+#   # %player%    プレイヤー
+#   # %item%      アイテム
+#   # %amount%    変化した量
+#   # %newamount% 現在量
+#   successTake: '&b%player%&7 のボックスの &b%item%&7 を &b%amount%&7 減らしました(現在 &b%newamount%&7 個)。'
+#   # %player%    プレイヤー
+#   # %item%      アイテム
+#   # %amount%    変化した量
+#   # %newamount% 現在量
+#   successGive: ''
+#   # %player%    プレイヤー
+#   # %item%      アイテム
+#   # %amount%    変化した量
+#   # %newamount% 現在量
+#   successReceive: '&b%player%&7 から &b%item%&7 を &b%amount%&7 個受け取りました(現在 &b%newamount%&7 個)。'
+#   # %amount%    変化した量
+#   # %item%      アイテム
+#   # %price%     金額
+#   # %newamount% 現在量
+#   # %newbalance% 現在の所持金
+#   successSell: '&b%amount%&7 個の &b%item%&7 を &b%price%&7 で売りました。(現在 &b%newamount%&7 個、&b%newbalance%&7 円)。'
+#   # %player%    プレイヤー
+#   # %item%      アイテム
+#   # %amount%    変化した量
+#   # %newamount% 現在量
+#   successGiveAdmin: '&b%player%&7 のボックスの &b%item%&7 を &b%amount%&7 増やしました(現在 &b%newamount%&7)。'
+# 
+# commandDescription:
+#   box: 'アイテム取引GUIを開く。引数を入れると各サブコマンドを実行する。'
+#   autoStore: '自動収納の設定を変更する。'
+#   autoStoreList: '自動収納の設定の一覧を表示する。'
+#   give: '収納しているアイテムを相手に渡す。'
+#   sell: '収納しているアイテムを売る。'
+#   sellPrice: '指定したアイテムの売却価格を確認する。'
+#   sellPriceList: 'アイテム売却価格の一覧を表示する。'
+#   help: 'このヘルプを表示する。'
+#   version: 'boxプラグインのバージョンを表示する。'
+# 
+# adminCommandDescription:
+#   addCategory: '実行後にクリックしたチェストの中身を設定に変換する。'
+#   autoStore: '別のプレイヤーの自動収納の設定を変更する。'
+#   autoStoreList: '別のプレイヤーの自動収納の設定の一覧を表示する。'
+#   give: '相手のデータベース上のアイテムを増やす。'
+#   take: '相手のデータベース上のアイテムを減らす。'
+#   set: '相手のデータベース上のアイテムを指定した値にする。'
+#   help: 'このヘルプを表示する。'
+#   reload: 'リロードする。設定量によってはラグが発生する。'
+# 
+# autoStore:
+#   enabled: "&7自動収納を&a有効&7にしました。"
+#   disabled: "&7自動収納を&c無効&7にしました。"
+#   # %item%        アイテム
+#   # %isEnabled%
+#   settingChanged: "&b%item%&7 の自動収納を &b%isEnabled%&7 にしました。"
+#   # %isEnabled%
+#   settingChangedAll: ""
+#   # %newValue%
+#   settingChangedPage: "&b%page%ページ&7目のアイテムの自動収納を &b%newValue%&7 にしました。"
+#   # %player%      プレイヤー
+#   # %currentLine% 現在のページ
+#   # %maxLine%     最大のページ
+#   listHeader: ""
+#   # %item%        アイテム
+#   # %isEnabled%
+#   listFormat: "&b%item%&7: &b%isEnabled%"
+# 
+# price:
+#   # %currentLine% 現在のページの最後の行
+#   # %maxLine% 一番最後の行
+#   sellPriceListHeader: "&7sellコマンドの価格 &6%currentLine%&6 / %maxLine%"
+#   # %item%  アイテム
+#   # %price% 価格
+#   sellPriceFormat: "&b%item%&7: &b%price%"
+# 
+# database:
+#   connectionReset: "&7データベースへの接続をリセットしました。"
+#   invalidValue: "&c不正な値が記録されています。管理者に報告して下さい。"
+#   noColumn: "&cその名前の列はありません。"
+#   # %uuid%   UUID
+#   # %player% プレイヤー名
+#   playerAdded: "&7データベースに &b%uuid%&7 - &b%player%&7 を追加しました。"
+#   # %uuid%   UUID
+#   # %player% プレイヤー名
+#   playerRemoved: "&7データベースから &b%uuid%&7 - &b%player%&7 を削除しました。"
+# 
+# map:
+#   playersRecord: "&7記録されているプレイヤー"
+#   columnsList: "&7列リスト"
+#   format: "%s - %s"

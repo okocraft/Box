@@ -18,19 +18,15 @@
 
 package net.okocraft.box.util;
 
-import java.util.Map;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import net.okocraft.box.Box;
-import net.okocraft.box.database.PlayerData;
-import org.jetbrains.annotations.NotNull;
+import net.okocraft.box.config.Config.Sounds;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -42,8 +38,7 @@ import org.jetbrains.annotations.Nullable;
 public final class PlayerUtil {
 
     @Nullable
-    private static final Box INSTANCE = Box.getInstance();
-    private static final GeneralConfig CONFIG = INSTANCE.getGeneralConfig();
+    private static final Box plugin = Box.getInstance();
 
     private PlayerUtil() {
     }
@@ -54,18 +49,12 @@ public final class PlayerUtil {
      * @param entry 検証する文字列
      * @return UUID なら {@code true}
      */
-    public static boolean isUUID(@NotNull String string) {
-        try {
-            UUID.fromString(string);
-            return true;
-        } catch (IllegalArgumentException e) {
-            return false;
-        }
+    public static boolean isUUID(String string) {
+        return string.matches("^(\\w{4})\\1-\\1-\\1-\\1-\\1\\1\\1$");
     }
 
-    @NotNull
     @SuppressWarnings("deprecation")
-    public static OfflinePlayer getOfflinePlayer(@NotNull String uuidOrName) {
+    public static OfflinePlayer getOfflinePlayer(String uuidOrName) {
         if (isUUID(uuidOrName)) {
             return Bukkit.getOfflinePlayer(UUID.fromString(uuidOrName));
         } else {
@@ -74,27 +63,13 @@ public final class PlayerUtil {
     }
 
     /**
-     * データベースにプレイヤーが登録されていない時、senderにエラーメッセージを送信してfalseを返す。
+     * プレイヤーに音声を流す。
      *
-     * @param sender
-     * @return 登録されている時true、されていないならfalse
-     * @author akaregi
-     * @since v1.1.0
+     * @param player プレイヤー
+     * @param sound  流す音声
      */
-    public static boolean existPlayer(@NotNull CommandSender sender, @NotNull String player) {
-        Map<String, String> players = PlayerData.getPlayers();
-        if (isUUID(player)) {
-            if (players.containsKey(player)) {
-                return true;
-            }
-        } else {
-            if (players.containsValue(player)) {
-                return true;
-            }
-        }
-
-        sender.sendMessage(Box.getInstance().getMessageConfig().getNoPlayerFound());
-        return false;
+    public static void playSound(Player player, Sounds sound) {
+        playSound(player, sound, false);
     }
 
     /**
@@ -103,13 +78,13 @@ public final class PlayerUtil {
      * @param player プレイヤー
      * @param sound  流す音声
      */
-    public static void playSound(@NotNull Player player, @NotNull Sound sound) {
+    public static void playSound(Player player, Sounds sound, boolean randomPitch) {
         player.playSound(
                 player.getLocation(),
-                sound,
+                sound.getSound(),
                 SoundCategory.MASTER,
-                CONFIG.getSoundPitch(),
-                CONFIG.getSoundVolume()
+                (sound.getMaxVolume() + sound.getMinVolume()) / 2,
+                randomPitch ? sound.getPitchRandomly() : (sound.getMaxPitch() + sound.getMinPitch()) / 2
         );
     }
 }

@@ -16,15 +16,21 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.okocraft.box.command.boxadmin;
+package net.okocraft.box.command.box;
 
-import net.okocraft.box.command.BaseBoxCommand;
-import org.jetbrains.annotations.NotNull;
+import net.okocraft.box.command.BoxCommand;
+import net.okocraft.box.command.box.Box.SubCommands;
+import net.okocraft.box.config.Messages;
 
-public abstract class BaseSubAdminCommand extends BaseBoxCommand {
-    @NotNull
+public abstract class BoxSubCommand extends BoxCommand {
+
     @Override
     public String getPermissionNode() {
-        return "boxadmin." + getCommandName();
+        return "box." + SubCommands.get(this).toString();
+    }
+
+    @Override
+    public String getDescription() {
+        return Messages.getMessage("command.box." + SubCommands.get(this).toString() + ".description");
     }
 }

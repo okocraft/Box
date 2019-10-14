@@ -19,21 +19,22 @@
 package net.okocraft.box.command;
 
 import java.util.List;
+import java.util.Locale;
 
 import org.bukkit.command.CommandSender;
 
 import net.okocraft.box.Box;
-import net.okocraft.box.util.GeneralConfig;
-import net.okocraft.box.util.MessageConfig;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import net.okocraft.box.config.Messages;
 
-public interface BoxCommand {
+public abstract class BoxCommand {
 
-    @Nullable
-    static final Box INSTANCE = Box.getInstance();
-    static final GeneralConfig CONFIG = INSTANCE.getGeneralConfig();
-    static final MessageConfig MESSAGE_CONFIG = INSTANCE.getMessageConfig();
+    protected static final Box plugin = Box.getInstance();
+
+    /**
+     * コンストラクタ
+     */
+    protected BoxCommand() {
+    }
 
     /**
      * 各コマンドの処理
@@ -42,7 +43,7 @@ public interface BoxCommand {
      * @param args   引数
      * @return コマンドが成功したらtrue
      */
-    boolean runCommand(CommandSender sender, String[] args);
+    public abstract boolean runCommand(CommandSender sender, String[] args);
 
     /**
      * 各コマンドのタブ補完の処理
@@ -51,43 +52,57 @@ public interface BoxCommand {
      * @param args   引数
      * @return その時のタブ補完のリスト
      */
-    List<String> runTabComplete(CommandSender sender, String[] args);
+    public abstract List<String> runTabComplete(CommandSender sender, String[] args);
 
     /**
      * コマンドの名前を取得する。
      *
      * @return コマンドの名前
      */
-    @NotNull
-    String getCommandName();
+    public String getName() {
+        return this.getClass().getSimpleName().toLowerCase(Locale.ROOT);
+    }
 
     /**
      * このコマンドの権限を取得する。
      *
      * @return 権限
      */
-    @NotNull
-    String getPermissionNode();
+    public String getPermissionNode() {
+        return getName();
+    }
 
     /**
      * 最低限必要な引数の長さを取得する。
      *
      * @return 最低限の引数の長さ
      */
-    int getLeastArgLength();
+    public abstract int getLeastArgLength();
 
     /**
      * コマンドの引数の内容を取得する。例: "/box autostoreList [page]"
      *
      * @return 引数の内容
      */
-    @NotNull
-    String getUsage();
+    public abstract String getUsage();
 
     /**
      * コマンドの説明を取得する。例: "アイテムの自動収納の設定をリストにして表示する。"
      *
      * @return コマンドの説明
      */
-    String getDescription();
+    public String getDescription() {
+        return Messages.getMessage("command." + getName() + ".desctiption");
+    }
+
+    /**
+     * このコマンドを使う権限があるか調べる。
+     * 
+     * @param sender
+     * @return 権限があればtrue なければfalse
+     * @see CommandSender#hasPermission(String)
+     */
+    public boolean hasPermission(CommandSender sender) {
+        return sender.hasPermission(getPermissionNode());
+    }
 }

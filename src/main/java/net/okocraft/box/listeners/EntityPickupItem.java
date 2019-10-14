@@ -27,31 +27,25 @@ import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
-import net.okocraft.box.util.GeneralConfig;
 import net.okocraft.box.util.PlayerUtil;
-import net.okocraft.box.Box;
+import net.okocraft.box.config.Categories;
+import net.okocraft.box.config.Config;
 import net.okocraft.box.database.Items;
 import net.okocraft.box.database.PlayerData;
-import org.jetbrains.annotations.NotNull;
 
 public class EntityPickupItem implements Listener {
-    private final GeneralConfig config;
 
-    public EntityPickupItem(@NotNull Plugin plugin) {
-        // Register this event
+    public EntityPickupItem(Plugin plugin) {
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
-
-        // Initialize...
-        this.config = Box.getInstance().getGeneralConfig();
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void onPickupItem(@NotNull EntityPickupItemEvent event) {
+    public void onPickupItem(EntityPickupItemEvent event) {
         if (event.isCancelled()) {
             return;
         }
 
-        if (!config.isAutoStoreEnabled()) {
+        if (!Config.isAutoStoreEnabled()) {
             return;
         }
 
@@ -59,7 +53,7 @@ public class EntityPickupItem implements Listener {
             return;
         }
 
-        if (config.getDisabledWorlds().contains(event.getEntity().getWorld().getName())) {
+        if (Config.getDisabledWorlds().contains(event.getEntity().getWorld())) {
             return;
         }
 
@@ -68,7 +62,7 @@ public class EntityPickupItem implements Listener {
 
         String pickedItemName = Items.getName(pickedItem, false);
 
-        if (!Box.getInstance().getGeneralConfig().getAllItems().contains(pickedItemName)) {
+        if (!Categories.getAllItems().contains(pickedItemName)) {
             return;
         }
 
@@ -82,6 +76,6 @@ public class EntityPickupItem implements Listener {
         event.getItem().remove();
         event.setCancelled(true);
 
-        PlayerUtil.playSound(player, config.getTakeInSound());
+        PlayerUtil.playSound(player, Config.Sounds.DEPOSIT, true);
     }
 }

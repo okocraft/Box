@@ -9,7 +9,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionType;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 //((.*)\(.*\),) (.*)
@@ -17,7 +16,6 @@ import org.jetbrains.annotations.Nullable;
 
 public final class Items {
 
-    @NotNull
     private static Set<String> items = getItems();
 
     private Items() {
@@ -28,7 +26,6 @@ public final class Items {
      *
      * @return
      */
-    @NotNull
     public static Set<String> getItems() {
         if (items != null) {
             return Collections.unmodifiableSet(items);
@@ -39,26 +36,26 @@ public final class Items {
             {
                 for (Material item : Material.values()) {
                     switch (item) {
-                        case POTION:
-                        case SPLASH_POTION:
-                        case LINGERING_POTION:
-                        case TIPPED_ARROW:
-                            String potionItemName = item.name();
-                            for (PotionType potionType : PotionType.values()) {
-                                String potionTypeName = potionType.name();
-                                if (potionType.isExtendable()) {
-                                    add(potionItemName + "_" + potionTypeName + "_EXTENDED");
-                                }
-
-                                if (potionType.isUpgradeable()) {
-                                    add(potionItemName + "_" + potionTypeName + "_UPGRADED");
-                                }
-
-                                add(potionItemName + "_" + potionTypeName);
-
+                    case POTION:
+                    case SPLASH_POTION:
+                    case LINGERING_POTION:
+                    case TIPPED_ARROW:
+                        String potionItemName = item.name();
+                        for (PotionType potionType : PotionType.values()) {
+                            String potionTypeName = potionType.name();
+                            if (potionType.isExtendable()) {
+                                add(potionItemName + "_" + potionTypeName + "_EXTENDED");
                             }
-                        default:
-                            add(item.name());
+
+                            if (potionType.isUpgradeable()) {
+                                add(potionItemName + "_" + potionTypeName + "_UPGRADED");
+                            }
+
+                            add(potionItemName + "_" + potionTypeName);
+
+                        }
+                    default:
+                        add(item.name());
                     }
                 }
             }
@@ -75,50 +72,50 @@ public final class Items {
      * @return 名前 または null
      */
     @Nullable
-    public static String getName(@NotNull ItemStack item, boolean ignoreMeta) {
+    public static String getName(ItemStack item, boolean ignoreMeta) {
         Material type = item.getType();
         switch (type) {
-            case POTION:
-            case SPLASH_POTION:
-            case LINGERING_POTION:
-            case TIPPED_ARROW:
-                PotionData data = ((PotionMeta) item.getItemMeta()).getBasePotionData();
+        case POTION:
+        case SPLASH_POTION:
+        case LINGERING_POTION:
+        case TIPPED_ARROW:
+            PotionData data = ((PotionMeta) item.getItemMeta()).getBasePotionData();
 
-                PotionType potionType = data.getType();
+            PotionType potionType = data.getType();
 
-                if (potionType == PotionType.UNCRAFTABLE) {
-                    if (ignoreMeta) {
-                        return type.name();
-                    }
-                    return item.hasItemMeta() ? null : type.name();
-                }
-
-                boolean extended = data.isExtended();
-                boolean upgraded = data.isUpgraded();
-
-                if (extended && upgraded) {
-                    return null;
-                }
-
-                String extendedPart = data.isExtended() ? "_EXTENDED" : "";
-                String upgradedPart = data.isUpgraded() ? "_UPGRADED" : "";
-                String name = type.name() + "_" + potionType.name() + extendedPart + upgradedPart;
-
-                if (ignoreMeta) {
-                    return name;
-                }
-                return getItemStack(name).getItemMeta().equals(item.getItemMeta()) ? name : null;
-
-            default:
+            if (potionType == PotionType.UNCRAFTABLE) {
                 if (ignoreMeta) {
                     return type.name();
                 }
                 return item.hasItemMeta() ? null : type.name();
+            }
+
+            boolean extended = data.isExtended();
+            boolean upgraded = data.isUpgraded();
+
+            if (extended && upgraded) {
+                return null;
+            }
+
+            String extendedPart = data.isExtended() ? "_EXTENDED" : "";
+            String upgradedPart = data.isUpgraded() ? "_UPGRADED" : "";
+            String name = type.name() + "_" + potionType.name() + extendedPart + upgradedPart;
+
+            if (ignoreMeta) {
+                return name;
+            }
+            return getItemStack(name).getItemMeta().equals(item.getItemMeta()) ? name : null;
+
+        default:
+            if (ignoreMeta) {
+                return type.name();
+            }
+            return item.hasItemMeta() ? null : type.name();
         }
     }
 
     @Nullable
-    public static ItemStack getItemStack(@NotNull String itemName) {
+    public static ItemStack getItemStack(String itemName) {
         try {
             return new ItemStack(Material.valueOf(itemName));
         } catch (IllegalArgumentException e) {
@@ -161,7 +158,8 @@ public final class Items {
     }
 
     @org.jetbrains.annotations.Nullable
-    private static ItemStack createPotion(@NotNull Material potionItem, @NotNull PotionType type, boolean extended, boolean upgraded) {
+    private static ItemStack createPotion(Material potionItem, PotionType type, boolean extended,
+            boolean upgraded) {
         ItemStack potion = new ItemStack(potionItem);
         if (potion.getItemMeta() instanceof PotionMeta) {
 

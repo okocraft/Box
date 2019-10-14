@@ -19,22 +19,21 @@
 package net.okocraft.box.command.box;
 
 import java.util.List;
+import java.util.Map;
 
 import org.bukkit.command.CommandSender;
-import org.jetbrains.annotations.NotNull;
 
-class Version extends BaseSubCommand {
+import net.okocraft.box.Box;
+import net.okocraft.box.config.Messages;
 
-    private static final String COMMAND_NAME = "version";
-    private static final int LEAST_ARG_LENGTH = 1;
-    private static final String USAGE = "/box version";
+class Version extends BoxSubCommand {
+
+    Version() {
+    }
 
     @Override
-    public boolean runCommand(@NotNull CommandSender sender, @NotNull String[] args) {
-        if (!validate(sender, args)) {
-            return false;
-        }
-        sender.sendMessage(MESSAGE_CONFIG.getVersionInfo().replaceAll("%version%", INSTANCE.getVersion()));
+    public boolean runCommand(CommandSender sender, String[] args) {
+        Messages.sendMessage(sender, "command.box.version.info.format", Map.of("%version%", Box.getVersion()));
         return true;
     }
 
@@ -43,25 +42,13 @@ class Version extends BaseSubCommand {
         return List.of();
     }
 
-    @NotNull
-    @Override
-    public String getCommandName() {
-        return COMMAND_NAME;
-    }
-
     @Override
     public int getLeastArgLength() {
-        return LEAST_ARG_LENGTH;
+        return 1;
     }
 
-    @NotNull
     @Override
     public String getUsage() {
-        return USAGE;
-    }
-
-    @Override
-    public String getDescription() {
-        return MESSAGE_CONFIG.getVersionDesc();
+        return "/box version";
     }
 }

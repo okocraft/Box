@@ -18,19 +18,15 @@
 
 package net.okocraft.box.listeners;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -41,34 +37,34 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 
 import net.okocraft.box.Box;
+import net.okocraft.box.config.Categories;
+import net.okocraft.box.config.Messages;
 import net.okocraft.box.database.Items;
-import net.okocraft.box.util.GeneralConfig;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class GenerateItemConfig implements Listener {
+public class GenerateCategory implements Listener {
 
     @Nullable
-    private static final Box INSTANCE = Box.getInstance();
-    private static final GeneralConfig CONFIG = INSTANCE.getGeneralConfig();
+    private static final Box plugin = Box.getInstance();
 
     private final Player player;
-    private final String category;
     private final String id;
     private final String displayName;
-    private final Material icon;
+    private final String icon;
 
-    public GenerateItemConfig(Player player, String category, String id, String displayName, @NotNull String icon) {
-        Bukkit.getPluginManager().registerEvents(this, INSTANCE);
+    public GenerateCategory(Player player, String id, String displayName, String icon) {
         this.player = player;
-        this.category = category;
         this.id = id;
         this.displayName = displayName;
-        this.icon = Optional.ofNullable(Material.getMaterial(icon)).orElse(Material.AIR);
+        this.icon = icon;
+        if (!Items.contains(icon)) {
+            return;
+        }
+        Bukkit.getPluginManager().registerEvents(this, plugin);
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
-    public void onChestClick(@NotNull PlayerInteractEvent event) {
+    public void onChestClick(PlayerInteractEvent event) {
         if (event.getPlayer() != player) {
             return;
         }
@@ -77,7 +73,7 @@ public class GenerateItemConfig implements Listener {
 
         if (chest == null || event.getClickedBlock().getType() != Material.CHEST) {
             event.setCancelled(true);
-            player.sendMessage("ブロックがチェストではなかったため、キャンセルされました。");
+            Messages.sendMessage(player, "command.box-admin.add-category.error.not-chest-and-cancelled");
             HandlerList.unregisterAll(this);
             return;
         }
@@ -85,41 +81,18 @@ public class GenerateItemConfig implements Listener {
         HandlerList.unregisterAll(this);
         event.setCancelled(true);
 
-        File file = INSTANCE.getDataFolder().toPath().resolve(category + ".yml").toFile();
-        if (!file.exists()) {
-            try {
-                file.createNewFile();
-            } catch (IOException ex) {
-                ex.printStackTrace();
-                player.sendMessage("ファイルを作ることができなかったため、キャンセルされました。");
-                return;
-            }
-        }
-
         Chest chestData = (Chest) chest.getState();
         Inventory chestSnapInv = chestData.getSnapshotInventory();
-
-        FileConfiguration itemConfig = CONFIG.getItemConfig();
-        String categoryPath = "categories." + category;
-        itemConfig.set(categoryPath + ".id", id);
-        itemConfig.set(categoryPath + ".display_name", displayName);
-        itemConfig.set(categoryPath + ".icon", icon.name());
-
         List<String> items = Arrays.stream(chestSnapInv.getContents())
                 .filter(Objects::nonNull)
                 .map(itemStack -> Items.getName(itemStack, false))
                 .collect(Collectors.toList());
-
-        itemConfig.set(categoryPath + ".item", items);
-
-        CONFIG.getItemCustomConfig().saveConfig();
-        CONFIG.addCategory();
-
-        player.sendMessage("新たなカテゴリの追加が完了しました。");
+        Categories.addCategory(id, displayName, items, icon);
+        Messages.sendMessage(player, "command.box-admin.add-category.info.success");
     }
 
     @EventHandler
-    public void onQuit(@NotNull PlayerQuitEvent event) {
+    public void onQuit(PlayerQuitEvent event) {
         if (event.getPlayer() == player) {
             HandlerList.unregisterAll(this);
         }

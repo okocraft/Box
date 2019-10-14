@@ -19,8 +19,9 @@
 package net.okocraft.box.command.box;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -32,96 +33,105 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 
-import lombok.Getter;
-import net.okocraft.box.command.BaseBoxCommand;
+import net.okocraft.box.command.BoxCommand;
+import net.okocraft.box.config.Messages;
 import net.okocraft.box.gui.CategorySelectorGUI;
-import org.jetbrains.annotations.NotNull;
 
-public class Box extends BaseBoxCommand implements CommandExecutor, TabCompleter {
+public class Box extends BoxCommand implements CommandExecutor, TabCompleter {
 
-    private static final String COMMAND_NAME = "box";
-    private static final String USAGE = "/box [args...]";
+    static enum SubCommands {
+        VERSION(new Version()), HELP(new Help()), AUTO_STORE_LIST(new AutoStoreList()), AUTO_STORE(new AutoStore()),
+        STICK(new Stick()), GIVE(new Give());
 
-    @Getter
-    private Map<String, BaseSubCommand> subCommandMap;
-    @Getter
-    private final int subCommandMapSize;
+        private final BoxSubCommand subCommand;
 
-    public Box() {
-        subCommandMap = new HashMap<>() {
-            private static final long serialVersionUID = 1L;
+        private SubCommands(BoxSubCommand subCommand) {
+            this.subCommand = subCommand;
+        }
 
-            {
-                Version version = new Version();
-                put(version.getCommandName(), version);
+        public BoxSubCommand getSubCommand() {
+            return subCommand;
+        }
 
-                Help help = new Help();
-                put(help.getCommandName(), help);
-
-                AutoStoreList autoStoreList = new AutoStoreList();
-                put(autoStoreList.getCommandName(), autoStoreList);
-
-                AutoStore autoStore = new AutoStore();
-                put(autoStore.getCommandName(), autoStore);
-
-                GetStick getStick = new GetStick();
-                put(getStick.getCommandName(), getStick);
-
-                Give give = new Give();
-                put(give.getCommandName(), give);
-
-                Sell sell = new Sell();
-                put(sell.getCommandName(), sell);
-
-                SellPrice sellPrice = new SellPrice();
-                put(sellPrice.getCommandName(), sellPrice);
-
-                SellPriceList sellPriceList = new SellPriceList();
-                put(sellPriceList.getCommandName(), sellPriceList);
+        public static SubCommands get(String name) {
+            for (SubCommands subCommand : values()) {
+                if (subCommand.getSubCommand().getName().equalsIgnoreCase(name)) {
+                    return subCommand;
+                }
             }
-        };
+            return null;
+        }
 
-        subCommandMapSize = subCommandMap.size();
+        static SubCommands get(BoxSubCommand boxSubCommand) {
+            for (SubCommands subCommand : values()) {
+                if (subCommand.getSubCommand() == boxSubCommand) {
+                    return subCommand;
+                }
+            }
+            return null;
+        }
 
-        Optional.ofNullable(INSTANCE.getCommand(getCommandName())).ifPresent(pluginCommand -> {
+        @Override
+        public String toString() {
+            return name().replaceAll("_", "-").toLowerCase(Locale.ROOT);
+        }
+    }
+
+    private static final Box instance = new Box();
+
+    private Box() {
+        Optional.ofNullable(plugin.getCommand(getName())).ifPresent(pluginCommand -> {
             pluginCommand.setExecutor(this);
             pluginCommand.setTabCompleter(this);
         });
     }
 
+    public static void load() {}
+
+    static Box getInstance() {
+        return instance;
+    }
+
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (args.length == 0) {
             return runCommand(sender, args);
         }
-        BaseSubCommand subCommand = subCommandMap.get(args[0].toLowerCase());
-        if (subCommand == null) {
-            sender.sendMessage(MESSAGE_CONFIG.getNoParamExist());
+
+        SubCommands subCommands = SubCommands.get(args[0]);
+        if (subCommands == null) {
+            Messages.sendMessage(sender, "command.general.error.invalid-argument",
+                    Map.of("%argument%", args[0]));
             return false;
         }
+
+        BoxSubCommand subCommand = subCommands.getSubCommand();
+
+        if (!subCommand.hasPermission(sender)) {
+            Messages.sendMessage(sender, "command.general.error.no-permission", Map.of("%permission%", subCommand.getPermissionNode()));
+            return false;
+        }
+
+        if (subCommand.getLeastArgLength() > args.length) {
+            Messages.sendMessage(sender, "command.general.error.not-enough-arguments");
+            return false;
+        }
+
         return subCommand.runCommand(sender, args);
     }
 
     @Override
-    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
-        if (args.length == 0) {
-            return null;
-        }
-
-        List<String> permedSubCommands = subCommandMap.entrySet().stream()
-                .filter(entry -> sender.hasPermission(entry.getValue().getPermissionNode()))
-                .map(Map.Entry::getKey).collect(Collectors.toList());
+    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+        List<String> subCommands = Arrays.stream(SubCommands.values()).map(SubCommands::getSubCommand)
+                .filter(subCommand -> subCommand.hasPermission(sender)).map(BoxSubCommand::getName)
+                .collect(Collectors.toList());
 
         if (args.length == 1) {
-            return StringUtil.copyPartialMatches(
-                    args[0],
-                    permedSubCommands,
-                    new ArrayList<>()
-            );
+            return StringUtil.copyPartialMatches(args[0], subCommands, new ArrayList<>());
         }
 
-        BaseSubCommand subCommand = subCommandMap.get(args[0].toLowerCase());
-        if (subCommand == null || !permedSubCommands.contains(subCommand.getCommandName())) {
+        BoxSubCommand subCommand = SubCommands.get(args[0].toLowerCase(Locale.ROOT)).getSubCommand();
+        if (subCommand == null || !subCommands.contains(subCommand.getName())) {
             return List.of();
         }
         return subCommand.runTabComplete(sender, args);
@@ -130,40 +140,21 @@ public class Box extends BaseBoxCommand implements CommandExecutor, TabCompleter
     @Override
     public boolean runCommand(CommandSender sender, String[] args) {
         if (!(sender instanceof Player)) {
-            sender.sendMessage(MESSAGE_CONFIG.getPlayerOnly());
+            Messages.sendMessage(sender, "command.general.error.player-only");
             return false;
         }
         ((Player) sender).openInventory(CategorySelectorGUI.GUI);
         return true;
     }
 
-    @NotNull
     @Override
     public List<String> runTabComplete(CommandSender sender, String[] args) {
         throw new UnsupportedOperationException("Non subcommand could not be completed with this method.");
     }
 
-    @NotNull
-    @Override
-    public String getCommandName() {
-        return COMMAND_NAME;
-    }
-
-    @Override
-    public String getDescription() {
-        return MESSAGE_CONFIG.getBoxDesc();
-    }
-
-    @NotNull
     @Override
     public String getUsage() {
-        return USAGE;
-    }
-
-    @NotNull
-    @Override
-    public String getPermissionNode() {
-        return getCommandName();
+        return "/box [args...]";
     }
 
     @Override

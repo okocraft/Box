@@ -11,4 +11,71 @@ commands:
   boxadmin:
     description: Admin Command of Box plugin.
     aliases: [boxadmin, okoboxadmin, okostrageadmin]
-    permission: boxadmin
+    permission: box-admin
+
+permissions:
+# command permissions
+  box-admin.*:
+    description: Includes all admin command permissions.
+    default: op
+    children:
+      box-admin.addcategory: true
+      box-admin.autostore: true
+      box-admin.autostorelist: true
+      box-admin.give: true
+      box-admin.help: true
+      box-admin.reload: true
+      box-admin.set: true
+      box-admin.take: true
+      box-admin.creative: true
+      box-admin: true
+  box-admin:
+    default: op
+  box-admin.add-category:
+    default: op
+  box-admin.auto-store:
+    default: op
+  box-admin.auto-store-list:
+    default: op
+  box-admin.give:
+    default: op
+  box-admin.help:
+    default: op
+  box-admin.reload:
+    default: op
+  box-admin.set:
+    default: op
+  box-admin.take:
+    default: op
+  box.*:
+    description: Includes all normal command permissions.
+    default: op
+    children:
+      box.auto-store: true
+      box.auto-store-list: true
+      box.give: true
+      box.help: true
+      box.version: true
+      box.stick: true
+  box.auto-store:
+    default: true
+  box.auto-store-list:
+    default: true
+  box.give:
+    default: true
+  box.help:
+    default: true
+  box.version:
+    default: true
+  box.stick:
+    default: true
+
+# bypass permissions
+  box.worldedit.item.unrestricted:
+    default: op
+  box.worldedit.disallow.unrestricted:
+    default: op
+
+# special permissions
+  box-admin.creative:
+    default: op

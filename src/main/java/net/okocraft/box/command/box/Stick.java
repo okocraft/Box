@@ -23,18 +23,15 @@ import java.util.List;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import net.okocraft.box.config.Messages;
 import net.okocraft.box.listeners.BoxStick;
-import org.jetbrains.annotations.NotNull;
 
-class GetStick extends BaseSubCommand {
-
-    private static final String COMMAND_NAME = "stick";
-    private static final int LEAST_ARG_LENGTH = 1;
-    private static final String USAGE = "/box stick";
+class Stick extends BoxSubCommand {
 
     @Override
-    public boolean runCommand(@NotNull CommandSender sender, @NotNull String[] args) {
-        if (!validate(sender, args)) {
+    public boolean runCommand(CommandSender sender, String[] args) {
+        if (!(sender instanceof Player)) {
+            Messages.sendMessage(sender, "command.general.error.player-only");
             return false;
         }
 
@@ -46,39 +43,13 @@ class GetStick extends BaseSubCommand {
         return List.of();
     }
 
-    @NotNull
-    @Override
-    public String getCommandName() {
-        return COMMAND_NAME;
-    }
-
     @Override
     public int getLeastArgLength() {
-        return LEAST_ARG_LENGTH;
+        return 1;
     }
 
-    @NotNull
     @Override
     public String getUsage() {
-        return USAGE;
-    }
-
-    @Override
-    public String getDescription() {
-        return MESSAGE_CONFIG.getSellDesc();
-    }
-
-    @Override
-    protected boolean validate(CommandSender sender, @NotNull String[] args) {
-        if (!super.validate(sender, args)) {
-            return false;
-        }
-
-        if (!(sender instanceof Player)) {
-            sender.sendMessage(MESSAGE_CONFIG.getPlayerOnly());
-            return false;
-        }
-
-        return true;
+        return "/box stick";
     }
 }

@@ -1,33 +1,115 @@
-General: # PL設定
-  SoundSetting: # 効果音設定
-    Pitch: 1.0
-    Volume: 1.0
-    Sounds:
-      Open: BLOCK_CHEST_OPEN # メニューを開く, カテゴリークリック時
-      TakeIn: ENTITY_ITEM_PICKUP # 拾う and 預ける
-      TakeOut: BLOCK_STONE_BUTTON_CLICK_ON # 取り出す
-      NotEnough: ENTITY_ENDERMAN_TELEPORT # 不足
-      Decrease: BLOCK_TRIPWIRE_CLICK_OFF # 単位を減らす
-      Increase: BLOCK_TRIPWIRE_CLICK_ON # 単位を増やす
-      ReturnToSelectionGui: ENTITY_EXPERIENCE_ORB_PICKUP # カテゴリ選択GUIに戻る
-      ChangePage: ENTITY_EXPERIENCE_ORB_PICKUP # ページ変更
-  AutoStore: # 自動格納
-    Enabled: true # 自動格納を鯖設定として有効化するか
-    PlayerDefault: false # プレイヤーの初期設定
-  DisabledWorld: # 使えなくするワールド
-    - Playground
-    - lobby_5
-    - Jail
-  ReplantWorld:
-    - pf
-  BoxStick: # 左手に持つとアイテムをデータベースから使うための棒。DisplayNameやLoreなどを変えても昔の棒は機能する。
-    Enabled:
-      BlockPlace: true # ブロック設置時に自動補充
-      Food: true # 食べたときに自動補充
-      Potion: true # ポーション投げ放題
-      Tool: true # エンチャントや名前付けや説明文などのアイテムメタがない、耐久力を持つアイテムを自動補充。
-    DisplayName: "&9Box Stick"
-    Lore:
+version: ${project.version}
+
+gui:
+  max-quantity: 640
+  category-selection-gui:
+    title: "カテゴリー選択"
+    item-format:
+      display-name: "&6%category-name%"
+      lore:
+       - "%category-description%"
+  category-gui-title: "%category-name%"
+  transaction-item-format:
+    display-name: "&6%item-name% &8| &6%category-name%" # display-nameが指定されていない場合は無視されてデフォルトの名前が表示される。
+    lore:
+      - ""
+      - "&7* 左クリックで &b%item-quantity% &7個預け入れ *"
+      - "&7* 右クリックで &b%item-quantity% &7個取り出し *"
+      - ""
+      - "&7在庫: &b%stock% 個"
+  buy-and-sell-item-format:
+    display-name: "&6%item-name% &8| &6%category-name%"
+    lore:
+      - ""
+      - "&7* 左クリックで &b%item-quantity% &7個購入 *"
+      - "&7* 右クリックで &b%item-quantity% &7個売却 *"
+      - ""
+      - "&7所持金: &b%balance% 円"
+      - "&7買価: &b%buy-price% 円"
+      - "&7売価: &b%sell-price% 円"
+      - "&7在庫: &b%stock% 個"
+  craft-item-format:
+    display-name: "&6%item-name% &8| &6%category-name%"
+    lore:
+      - ""
+      - "&7* 左クリックで &b%item-quantity% &7回分(&b%amount%&7個)作成 *"
+      - ""
+      - "&7在庫: &b%stock% 個"
+      - "&7素材:"
+      - "%materials%" # this placeholder inserts multiple line. and other string will be ignored.
+    materials-placeholder-format: "&7  %material%: %material-stock% / %amount%"
+  page-function-item-name:
+    previous-page: "&6前のページ &8| &6Previous Page"
+    decrease: "&c減らす"
+    change-unit: "&7増減単位を変更 (右クリックで1/2倍、クリックで2倍)"
+    increase: "&b増やす"
+    back-menu: "&6戻る &8| &6Return"
+    transaction: "引き出し・預け入れモードにする"
+    buy-and-sell: "売買モードにする"
+    craft: "クラフト"
+    next-page: "&6次のページ &8| &6Next Page"
+
+sound-settings: # 効果音設定 固定ピッチの音はminとmaxの平均となる。ランダムピッチの場合はminとmaxの間を取り、2以上の場合は2に切り詰められる。
+  open: # メニューを開く, カテゴリークリック時
+    sound: BLOCK_CHEST_OPEN
+    pitch: [0.75, 1.25] # [min, max]
+    volume: [0.75, 1.25] # [min, max]
+  deposit: # 拾う and 預ける
+    sound: ENTITY_ITEM_PICKUP
+    pitch: [1.75, 3.0]
+    volume: [1.75, 3.0]
+  withdraw: # 取り出す
+    sound: BLOCK_STONE_BUTTON_CLICK_ON
+    pitch: [0.75, 1.25]
+    volume: [0.75, 1.25]
+  buy: # 買う
+    sound: ENTITY_ITEM_PICKUP
+    pitch: [0.75, 1.25]
+    volume: [0.75, 1.25]
+  sell: # 売る
+    sound: BLOCK_STONE_BUTTON_CLICK_ON
+    pitch: [0.75, 1.25]
+    volume: [0.75, 1.25]
+  not-enough: # 不足
+    sound: ENTITY_ENDERMAN_TELEPORT
+    pitch: [0.75, 1.25]
+    volume: [0.75, 1.25]
+  decrease-unit: # 単位を減らす
+    sound: BLOCK_TRIPWIRE_CLICK_OFF
+    pitch: [0.75, 1.25]
+    volume: [0.75, 1.25]
+  increase-unit: # 単位を増やす
+    sound: BLOCK_TRIPWIRE_CLICK_ON
+    pitch: [0.75, 1.25]
+    volume: [0.75, 1.25]
+  back: # 前のメニューに戻る
+    sound: ENTITY_EXPERIENCE_ORB_PICKUP
+    pitch: [0.75, 1.25]
+    volume: [0.75, 1.25]
+  change-page: # 同じメニュー内でページを変更する
+    sound: ENTITY_EXPERIENCE_ORB_PICKUP
+    pitch: [0.75, 1.25]
+    volume: [0.75, 1.25]
+auto-store: # 自動格納
+  enabled: true # 自動格納を鯖設定として有効化するか
+  default: false # プレイヤーの初期設定
+disabled-worlds: # 使えなくするワールド
+  - Playground
+  - lobby_5
+  - Jail
+
+# TODO: 別PLで実装
+auto-replant-worlds: # Boxの在庫から自動植え直しを行うワールド
+  - pf
+box-stick: # 左手に持つとアイテムをデータベースから使うための棒。DisplayNameやLoreなどを変えても昔の棒は機能する。
+  enabled:
+    block-place: true # ブロック設置時に自動補充
+    food: true # 食べたときに自動補充
+    potion: true # ポーション投げ放題
+    tool: true # エンチャントや名前付けや説明文などのアイテムメタがない、耐久力を持つアイテムを自動補充。
+  item:
+    display-name: "&9Box Stick"
+    lore:
       - "&r"
       - "§7利き手じゃない手にこれを持つと、利き手の"
       - "§7アイテムを使った時にBoxから消費します。"

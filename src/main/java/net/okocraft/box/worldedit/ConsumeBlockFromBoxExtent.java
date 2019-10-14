@@ -35,7 +35,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import net.okocraft.box.Box;
+import net.okocraft.box.config.Categories;
 import net.okocraft.box.database.PlayerData;
 
 /**
@@ -84,7 +84,7 @@ public class ConsumeBlockFromBoxExtent extends AbstractDelegateExtent {
 
             if (!block.getBlockType().getMaterial().isAir()) {
                 Material material = Material.matchMaterial(block.getBlockType().getId());
-                if (!Box.getInstance().getGeneralConfig().getAllItems().contains(material.name())) {
+                if (!Categories.getAllItems().contains(material.name())) {
                     return false;
                 }
                 ItemStack item = new ItemStack(material);
@@ -100,14 +100,15 @@ public class ConsumeBlockFromBoxExtent extends AbstractDelegateExtent {
                 }
             }
 
-            if (!existing.getBlockType().getMaterial().isAir()) {
+            // 削ったブロックをインベントリにしまう処理。
+            /*if (!existing.getBlockType().getMaterial().isAir()) {
                 Material material = Material.matchMaterial(existing.getBlockType().getId());
-                if (!Box.getInstance().getGeneralConfig().getAllItems().contains(material.name())) {
+                if (!Categories.getAllItems().contains(material.name())) {
                     return false;
                 }
                 ItemStack item = new ItemStack(material);
                 PlayerData.addItemAmount(player, item, 1);
-            }
+            }*/
         }
 
         return super.setBlock(position, block);

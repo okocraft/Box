@@ -20,52 +20,43 @@ package net.okocraft.box.command.boxadmin;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.util.StringUtil;
-import org.jetbrains.annotations.NotNull;
 
-class Reload extends BaseSubAdminCommand {
+import net.okocraft.box.config.Config;
+import net.okocraft.box.config.Messages;
 
-    private static final String COMMAND_NAME = "reload";
-    private static final int LEAST_ARG_LENGTH = 1;
-    private static final String USAGE = "/boxadmin reload";
+class Reload extends BoxAdminSubCommand {
+
+    Reload() {
+    }
 
     @Override
-    public boolean runCommand(@NotNull CommandSender sender, @NotNull String[] args) {
-        if (!validate(sender, args)) {
-            return false;
-        }
-
+    public boolean runCommand(CommandSender sender, String[] args) {
         if (args.length == 1) {
-            reloadConfig(sender);
+            Config.reloadAllConfigs();
         }
 
         if (args.length == 2) {
-            String type = args[1].toLowerCase();
+            String type = args[1].toLowerCase(Locale.ROOT);
             switch (type) {
-                case "listener":
-                    INSTANCE.registerEvents();
-                    break;
-                case "config":
-                    reloadConfig(sender);
-                    break;
+            case "listener":
+                plugin.registerEvents();
+                break;
+            case "config":
+                Config.reloadAllConfigs();
+                break;
             }
         }
 
-        sender.sendMessage(MESSAGE_CONFIG.getConfigReloaded());
+        Messages.sendMessage(sender, "command.box-admin.reload.info.success");
         return true;
     }
 
-    private void reloadConfig(CommandSender sender) {
-        INSTANCE.reloadConfig();
-        CONFIG.reload();
-        MESSAGE_CONFIG.reload();
-    }
-
-    @NotNull
     @Override
-    public List<String> runTabComplete(CommandSender sender, @NotNull String[] args) {
+    public List<String> runTabComplete(CommandSender sender, String[] args) {
         List<String> result = new ArrayList<>();
         List<String> subCommands = List.of("listener", "config");
 
@@ -76,25 +67,14 @@ class Reload extends BaseSubAdminCommand {
         return result;
     }
 
-    @NotNull
-    @Override
-    public String getCommandName() {
-        return COMMAND_NAME;
-    }
-
     @Override
     public int getLeastArgLength() {
-        return LEAST_ARG_LENGTH;
+        return 1;
     }
 
-    @NotNull
     @Override
     public String getUsage() {
-        return USAGE;
+        return "/boxadmin reload";
     }
 
-    @Override
-    public String getDescription() {
-        return MESSAGE_CONFIG.getReloadDesc();
-    }
 }

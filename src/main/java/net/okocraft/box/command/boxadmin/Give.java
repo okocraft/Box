@@ -20,50 +20,69 @@ package net.okocraft.box.command.boxadmin;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.StringUtil;
 
+import net.okocraft.box.config.Categories;
+import net.okocraft.box.config.Messages;
 import net.okocraft.box.database.Items;
 import net.okocraft.box.database.PlayerData;
 import net.okocraft.box.util.OtherUtil;
 import net.okocraft.box.util.PlayerUtil;
-import org.jetbrains.annotations.NotNull;
 
-class Give extends BaseSubAdminCommand {
-
-    private static final String COMMAND_NAME = "give";
-    private static final int LEAST_ARG_LENGTH = 3;
-    private static final String USAGE = "/boxadmin give <player> <ITEM> [amount]";
+class Give extends BoxAdminSubCommand {
+    Give() {
+    }
 
     @Override
-    public boolean runCommand(@NotNull CommandSender sender, @NotNull String[] args) {
-        if (!validate(sender, args)) {
+    public boolean runCommand(CommandSender sender, String[] args) {
+        if (!PlayerData.exist(args[1])) {
+            Messages.sendMessage(sender, "command.general.error.player-not-found");
             return false;
         }
+
         OfflinePlayer player = PlayerUtil.getOfflinePlayer(args[1]);
-        String itemName = args[2].toUpperCase();
+        if (!player.hasPlayedBefore() || player.getName() == null) {
+            Messages.sendMessage(sender, "command.general.error.player-not-found");
+            return false;
+        }
+
+        String itemName = args[2].toUpperCase(Locale.ROOT);
+        if (!Categories.getAllItems().contains(itemName)) {
+            Messages.sendMessage(sender, "command.general.error.item-not-found");
+            return false;
+        }
         ItemStack item = Items.getItemStack(itemName);
         long amount = args.length < 4 ? 1 : OtherUtil.parseLongOrDefault(args[3], 1);
-        long currentAmount = PlayerData.getItemAmount(player, item);
+        long stock = PlayerData.getItemAmount(player, item);
 
-        PlayerData.setItemAmount(player, item, currentAmount + amount);
+        PlayerData.setItemAmount(player, item, stock + amount);
 
-        sender.sendMessage(
-                MESSAGE_CONFIG.getSuccessGiveAdmin()
-                        .replaceAll("%player%", player.getName())
-                        .replaceAll("%item%", itemName)
-                        .replaceAll("%amount%", Long.toString(amount))
-                        .replaceAll("%newamount%", Long.toString(currentAmount + amount))
-        );
+        Messages.sendMessage(sender, "command.box.give.info.sender", Map.of(
+                "%player%", player.getName(),
+                "%item%", itemName,
+                "%amount%", String.valueOf(amount)
+        ));
+        
+        if (player.isOnline()) {
+            Messages.sendMessage(player.getPlayer(), "command.box.give.info.player", Map.of(
+                    "%sender%", sender.getName(),
+                    "%item%", itemName,
+                    "%amount%", String.valueOf(amount),
+                    "%new-amount%", stock + amount
+            ));
+        }
 
         return true;
     }
 
     @Override
-    public List<String> runTabComplete(CommandSender sender, @NotNull String[] args) {
+    public List<String> runTabComplete(CommandSender sender, String[] args) {
         List<String> result = new ArrayList<>();
 
         List<String> players = new ArrayList<>(PlayerData.getPlayers().values());
@@ -72,17 +91,17 @@ class Give extends BaseSubAdminCommand {
             return StringUtil.copyPartialMatches(args[1], players, result);
         }
 
-        if (!players.contains(args[1].toLowerCase())) {
+        if (!players.contains(args[1].toLowerCase(Locale.ROOT))) {
             return List.of();
         }
 
-        List<String> items = new ArrayList<>(CONFIG.getAllItems());
+        List<String> items = Categories.getAllItems();
 
         if (args.length == 3) {
             return StringUtil.copyPartialMatches(args[2], items, result);
         }
 
-        if (!items.contains(args[2].toUpperCase())) {
+        if (!items.contains(args[2].toUpperCase(Locale.ROOT))) {
             return List.of();
         }
 
@@ -93,44 +112,13 @@ class Give extends BaseSubAdminCommand {
         return result;
     }
 
-    @NotNull
-    @Override
-    public String getCommandName() {
-        return COMMAND_NAME;
-    }
-
     @Override
     public int getLeastArgLength() {
-        return LEAST_ARG_LENGTH;
+        return 3;
     }
 
-    @NotNull
     @Override
     public String getUsage() {
-        return USAGE;
-    }
-
-    @Override
-    public String getDescription() {
-        return MESSAGE_CONFIG.getGiveAdminDesc();
-    }
-
-    @Override
-    protected boolean validate(@NotNull CommandSender sender, @NotNull String[] args) {
-        if (!super.validate(sender, args)) {
-            return false;
-        }
-
-        if (!PlayerUtil.existPlayer(sender, args[1].toLowerCase())) {
-            sender.sendMessage(MESSAGE_CONFIG.getNoPlayerFound());
-            return false;
-        }
-
-        if (!CONFIG.getAllItems().contains(args[2].toUpperCase())) {
-            sender.sendMessage(MESSAGE_CONFIG.getNoItemFound());
-            return false;
-        }
-
-        return true;
+        return "/boxadmin give <player> <ITEM> [amount]";
     }
 }

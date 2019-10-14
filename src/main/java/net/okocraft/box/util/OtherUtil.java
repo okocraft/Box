@@ -21,10 +21,6 @@ package net.okocraft.box.util;
 import java.util.Optional;
 
 import org.bukkit.Bukkit;
-import org.bukkit.permissions.Permission;
-import org.bukkit.plugin.PluginManager;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public final class OtherUtil {
 
@@ -40,7 +36,7 @@ public final class OtherUtil {
      * @author LazyGon
      * @since v1.1.0
      */
-    public static int parseIntOrDefault(@NotNull String number, int def) {
+    public static int parseIntOrDefault(String number, int def) {
         try {
             return Integer.parseInt(number);
         } catch (NumberFormatException exception) {
@@ -57,7 +53,7 @@ public final class OtherUtil {
      * @author LazyGon
      * @since v1.1.0
      */
-    public static long parseLongOrDefault(@NotNull String number, long def) {
+    public static long parseLongOrDefault(String number, long def) {
         try {
             return Long.parseLong(number);
         } catch (NumberFormatException exception) {
@@ -65,37 +61,7 @@ public final class OtherUtil {
         }
     }
 
-    /**
-     * パーミッションを登録する。
-     *
-     * @param permName       登録する権限の文字列
-     * @param parentPermName {@code permName} の親権限の文字列
-     */
-    public static void registerPermission(@NotNull String permName, @Nullable String parentPermName) {
-        PluginManager pm = Bukkit.getPluginManager();
-        Optional<Permission> optionalPerm = Optional.ofNullable(pm.getPermission(permName));
-
-        if (!optionalPerm.isPresent()) {
-            Permission perm = new Permission(permName);
-
-            Optional.ofNullable(parentPermName).ifPresent(_parentPermName -> Optional.ofNullable(pm.getPermission(_parentPermName)).ifPresent(parentPerm -> {
-                perm.addParent(parentPerm, true);
-            }));
-
-            pm.getPermissions().add(perm);
-        }
-    }
-
-    /**
-     * パーミッションを登録する。
-     *
-     * @param permName 登録する権限の文字列
-     */
-    public static void registerPermission(@NotNull String permName) {
-        registerPermission(permName, null);
-    }
-
-    public static void debugMsg(@NotNull String message) {
+    public static void debugMsg(String message) {
         Optional.ofNullable(Bukkit.getPlayer("lazy_gon")).ifPresent(lazy -> lazy.sendMessage(message));
     }
 }

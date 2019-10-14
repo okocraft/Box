@@ -28,39 +28,36 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 
-import net.okocraft.box.listeners.GenerateItemConfig;
-import org.jetbrains.annotations.NotNull;
+import net.okocraft.box.config.Messages;
+import net.okocraft.box.listeners.GenerateCategory;
 
-class AddCategory extends BaseSubAdminCommand {
-
-    private static final String COMMAND_NAME = "addcategory";
-    private static final int LEAST_ARG_LENGTH = 5;
-    private static final String USAGE = "/boxadmin addcategory <category> <id> <displayName> <iconMaterial>";
-
+class AddCategory extends BoxAdminSubCommand {
+    
+    AddCategory() {
+    }
+    
     @Override
-    public boolean runCommand(@NotNull CommandSender sender, @NotNull String[] args) {
-        if (!validate(sender, args)) {
+    public boolean runCommand(CommandSender sender, String[] args) {
+        if (!(sender instanceof Player)) {
+            Messages.sendMessage(sender, "command.general.error.player-only");
             return false;
         }
 
-        sender.sendMessage("[Box] チェストを選択してください");
-        new GenerateItemConfig((Player) sender, args[1], args[2], args[3], args[4]);
+        Messages.sendMessage(sender, "command.box-admin.add-category.info.choose-chest");
+        new GenerateCategory((Player) sender, args[1], args[2], args[3]);
         return true;
     }
 
-    @NotNull
-    @Override
-    public List<String> runTabComplete(CommandSender sender, @NotNull String[] args) {
+        @Override
+    public List<String> runTabComplete(CommandSender sender, String[] args) {
         List<String> result = new ArrayList<>();
 
         switch (args.length) {
             case 2:
-                return StringUtil.copyPartialMatches(args[1], List.of("<category>"), result);
-            case 3:
                 return StringUtil.copyPartialMatches(args[2], List.of("<id>"), result);
-            case 4:
+            case 3:
                 return StringUtil.copyPartialMatches(args[3], List.of("<display_name>"), result);
-            case 5:
+            case 4:
                 List<String> items = Arrays.stream(Material.values())
                         .map(Material::name).collect(Collectors.toList());
                 return StringUtil.copyPartialMatches(args[4], items, result);
@@ -69,39 +66,13 @@ class AddCategory extends BaseSubAdminCommand {
         }
     }
 
-    @NotNull
-    @Override
-    public String getCommandName() {
-        return COMMAND_NAME;
-    }
-
     @Override
     public int getLeastArgLength() {
-        return LEAST_ARG_LENGTH;
+        return 5;
     }
 
-    @NotNull
-    @Override
+        @Override
     public String getUsage() {
-        return USAGE;
-    }
-
-    @Override
-    public String getDescription() {
-        return MESSAGE_CONFIG.getAddCategoryDesc();
-    }
-
-    @Override
-    protected boolean validate(CommandSender sender, @NotNull String[] args) {
-        if (!super.validate(sender, args)) {
-            return false;
-        }
-
-        if (!(sender instanceof Player)) {
-            sender.sendMessage(MESSAGE_CONFIG.getPlayerOnly());
-            return false;
-        }
-
-        return true;
+        return "/boxadmin addcategory <category> <id> <displayName> <iconMaterial>";
     }
 }

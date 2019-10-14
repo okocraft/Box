@@ -20,81 +20,87 @@ package net.okocraft.box.command.box;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.StringUtil;
 
+import net.okocraft.box.config.Categories;
+import net.okocraft.box.config.Messages;
 import net.okocraft.box.database.Items;
 import net.okocraft.box.database.PlayerData;
 import net.okocraft.box.util.OtherUtil;
-import org.jetbrains.annotations.NotNull;
+import net.okocraft.box.util.PlayerUtil;
 
-class Give extends BaseSubCommand {
+class Give extends BoxSubCommand {
 
-    private static final String COMMAND_NAME = "give";
-    private static final int LEAST_ARG_LENGTH = 3;
-    private static final String USAGE = "/box give <player> <ITEM> [amount]";
+    Give() {
+    }
 
     @Override
-    public boolean runCommand(@NotNull CommandSender sender, @NotNull String[] args) {
-        if (!validate(sender, args)) {
+    public boolean runCommand(CommandSender sender, String[] args) {
+        if (!(sender instanceof Player)) {
+            Messages.sendMessage(sender, "command.general.error.player-only");
             return false;
         }
 
-        @SuppressWarnings("deprecation")
-        OfflinePlayer player = Bukkit.getOfflinePlayer(args[1]);
-
-        if (!player.hasPlayedBefore()) {
-            sender.sendMessage(MESSAGE_CONFIG.getNoPlayerFound());
+        if (sender.getName().equalsIgnoreCase(args[1])) {
+            Messages.sendMessage(sender, "command.box.give.error.cannot-give-myself");
             return false;
         }
 
-        String itemName = args[2].toUpperCase();
+        if (!PlayerData.exist(args[1])) {
+            Messages.sendMessage(sender, "command.general.error.player-not-found");
+            return false;
+        }
+
+        OfflinePlayer player = PlayerUtil.getOfflinePlayer(args[1]);
+
+        if (!player.hasPlayedBefore() || player.getName() == null) {
+            Messages.sendMessage(sender, "command.general.error.player-not-found");
+            return false;
+        }
+
+        String itemName = args[2].toUpperCase(Locale.ROOT);
+        if (!Categories.getAllItems().contains(itemName)) {
+            Messages.sendMessage(sender, "command.general.error.item-not-found");
+            return false;
+        }
         ItemStack item = Items.getItemStack(itemName);
 
         long amount = args.length == 3 ? 1L : OtherUtil.parseLongOrDefault(args[3], 1L);
+        amount = Math.max(amount, 1);
 
-        if (amount < 1) {
-            sender.sendMessage(MESSAGE_CONFIG.getInvalidArguments());
+        long senderStock = PlayerData.getItemAmount((OfflinePlayer) sender, item);
+        long otherStock = PlayerData.getItemAmount(player, item);
+
+        if (senderStock - amount < 0) {
+            Messages.sendMessage(sender, "command.general.error.not-enough-stock");
             return false;
         }
 
-        long senderAmount = PlayerData.getItemAmount((OfflinePlayer) sender, item);
-        long otherAmount = PlayerData.getItemAmount(player, item);
+        PlayerData.setItemAmount((OfflinePlayer) sender, item, senderStock - amount);
+        PlayerData.setItemAmount(player, item, otherStock + amount);
 
-        if (senderAmount - amount < 0) {
-            sender.sendMessage(
-                    MESSAGE_CONFIG.getNotEnoughStoredItem()
-            );
-
-            return false;
-        }
-
-        PlayerData.setItemAmount((OfflinePlayer) sender, item, senderAmount - amount);
-        PlayerData.setItemAmount(player, item, otherAmount + amount);
-
-        sender.sendMessage(
-                MESSAGE_CONFIG.getSuccessGive()
-                        .replaceAll("%player%", player.getName())
-                        .replaceAll("%item%", itemName)
-                        .replaceAll("%amount%", Long.toString(amount))
-                        .replaceAll("%newamount%", Long.toString(senderAmount - amount))
+        Messages.sendMessage(sender, "command.box.give.info.sender", Map.of(
+                "%player%", player.getName(),
+                "%item%", itemName,
+                "%amount%", String.valueOf(amount),
+                "%new-amount%", senderStock - amount)
         );
-
+        
         if (player.isOnline()) {
-            player.getPlayer().sendMessage(
-                    MESSAGE_CONFIG.getSuccessReceive()
-                            .replaceAll("%player%", sender.getName())
-                            .replaceAll("%item%", itemName)
-                            .replaceAll("%amount%", Long.toString(amount))
-                            .replaceAll("%newamount%", Long.toString(otherAmount + amount))
+            Messages.sendMessage(player.getPlayer(), "command.box.give.info.player", Map.of(
+                    "%sender%", sender.getName(),
+                    "%item%", itemName,
+                    "%amount%", String.valueOf(amount),
+                    "%new-amount%", otherStock + amount)
             );
         }
 
@@ -102,7 +108,7 @@ class Give extends BaseSubCommand {
     }
 
     @Override
-    public List<String> runTabComplete(CommandSender sender, @NotNull String[] args) {
+    public List<String> runTabComplete(CommandSender sender, String[] args) {
         List<String> result = new ArrayList<>();
         List<String> players = new ArrayList<>(PlayerData.getPlayers().values());
 
@@ -110,21 +116,20 @@ class Give extends BaseSubCommand {
             return StringUtil.copyPartialMatches(args[1], players, result);
         }
 
-        String player = args[1].toLowerCase();
+        String player = args[1].toLowerCase(Locale.ROOT);
 
         if (!players.contains(player)) {
             return List.of();
         }
 
-        List<String> items = PlayerData.getItemsAmount((OfflinePlayer) sender).entrySet()
-                .parallelStream().filter(entry -> entry.getValue() != 0L).map(Map.Entry::getKey)
-                .collect(Collectors.toList());
+        List<String> items = PlayerData.getItemsAmount((OfflinePlayer) sender).entrySet().parallelStream()
+                .filter(entry -> entry.getValue() != 0L).map(Map.Entry::getKey).collect(Collectors.toList());
 
         if (args.length == 3) {
             return StringUtil.copyPartialMatches(args[2], items, result);
         }
 
-        String itemName = args[2].toUpperCase();
+        String itemName = args[2].toUpperCase(Locale.ROOT);
 
         if (!items.contains(itemName)) {
             return List.of();
@@ -136,8 +141,8 @@ class Give extends BaseSubCommand {
             return List.of();
         }
 
-        List<String> amountList = IntStream.iterate(1, n -> n * 10).limit(10).filter(n -> n < stock)
-                .boxed().map(String::valueOf).collect(Collectors.toList());
+        List<String> amountList = IntStream.iterate(1, n -> n * 10).limit(10).filter(n -> n < stock).boxed()
+                .map(String::valueOf).collect(Collectors.toList());
         amountList.add(String.valueOf(stock));
 
         if (args.length == 4) {
@@ -147,63 +152,13 @@ class Give extends BaseSubCommand {
         return result;
     }
 
-    @NotNull
-    @Override
-    public String getCommandName() {
-        return COMMAND_NAME;
-    }
-
     @Override
     public int getLeastArgLength() {
-        return LEAST_ARG_LENGTH;
+        return 3;
     }
 
-    @NotNull
-    @Override
+        @Override
     public String getUsage() {
-        return USAGE;
-    }
-
-    @Override
-    public String getDescription() {
-        return MESSAGE_CONFIG.getGiveDesc();
-    }
-
-
-    @Override
-    protected boolean validate(CommandSender sender, @NotNull String[] args) {
-        if (!super.validate(sender, args)) {
-            return false;
-        }
-
-        if (!(sender instanceof Player)) {
-            sender.sendMessage(MESSAGE_CONFIG.getPlayerOnly());
-            return false;
-        }
-
-        if (sender.getName().equalsIgnoreCase(args[1])) {
-            sender.sendMessage(MESSAGE_CONFIG.getCannotGiveYourself());
-            return false;
-        }
-
-        // アイテムが登録されていない
-        if (!CONFIG.getAllItems().contains(args[2].toUpperCase())) {
-            sender.sendMessage(MESSAGE_CONFIG.getNoItemFound());
-            return false;
-        }
-
-        Map<String, String> players = PlayerData.getPlayers();
-        // プレイヤーがデータベースに登録されていない
-        if (
-                (!players.containsKey(args[1].toLowerCase()) &&
-                        !players.containsValue(args[1].toLowerCase())) ||
-                        (!players.containsKey(sender.getName().toLowerCase()) &&
-                                !players.containsValue(sender.getName().toLowerCase()))
-        ) {
-            sender.sendMessage(MESSAGE_CONFIG.getNoPlayerFound());
-            return false;
-        }
-
-        return true;
+        return "/box give <player> <ITEM> [amount]";
     }
 }

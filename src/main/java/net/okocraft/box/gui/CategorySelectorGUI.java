@@ -31,6 +31,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
@@ -39,21 +40,17 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
 import net.okocraft.box.Box;
-import net.okocraft.box.util.GeneralConfig;
-import net.okocraft.box.util.MessageConfig;
-import org.jetbrains.annotations.NotNull;
+import net.okocraft.box.config.Categories;
+import net.okocraft.box.config.Config;
+import net.okocraft.box.config.Messages;
+import net.okocraft.box.config.Categories.Category;
 import org.jetbrains.annotations.Nullable;
 
 public final class CategorySelectorGUI implements Listener, InventoryHolder {
 
     @Nullable
-    private static final Box INSTANCE = Box.getInstance();
-    private static final GeneralConfig CONFIG = INSTANCE.getGeneralConfig();
-    private static final MessageConfig MESSAGE_CONFIG = INSTANCE.getMessageConfig();
-
-    private static final NamespacedKey CATEGORY_SELECTOR_KEY = new NamespacedKey(INSTANCE, "categoryselector");
-    private static final NamespacedKey CATEGORY_NAME_KEY = new NamespacedKey(INSTANCE, "categoryname");
-
+    private static final Box plugin = Box.getInstance();
+    private static final NamespacedKey CATEGORY_NAME_KEY = new NamespacedKey(plugin, "categoryname");
     private static final List<Integer> flameSlots = List.of(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 17, 18, 26, 27, 35, 36, 44, 45, 46,
             47, 48, 49, 50, 51, 52, 53);
 
@@ -67,15 +64,14 @@ public final class CategorySelectorGUI implements Listener, InventoryHolder {
     }
 
     public static Inventory initGUI() {
-        GUI = Bukkit.createInventory(categorySelector, 54, CONFIG.getCategorySelectionGuiName());
+        GUI = Bukkit.createInventory(categorySelector, 54, Config.CategorySelectionGui.getName());
         ItemStack flame = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
         ItemMeta flameMeta = flame.getItemMeta();
         flameMeta.setDisplayName("§r");
-        flameMeta.getPersistentDataContainer().set(CATEGORY_SELECTOR_KEY, PersistentDataType.INTEGER, 1);
         flame.setItemMeta(flameMeta);
         flameSlots.forEach(slot -> GUI.setItem(slot, flame));
 
-        List<ItemStack> itemList = CONFIG.getCategories().values().stream().map(Category::getIconItem)
+        List<ItemStack> itemList = Categories.getAllCategories().stream().map(Category::getIcon)
                 .collect(Collectors.toList());
         GUI.addItem(itemList.toArray(new ItemStack[itemList.size()]));
         return GUI;
@@ -90,7 +86,7 @@ public final class CategorySelectorGUI implements Listener, InventoryHolder {
      * リスナーを動かす。カテゴリーGUIと違ってカテゴリー選択GUIはonEnableのときから常にリスナーをオンにしておく。
      */
     public static void startListener() {
-        Bukkit.getPluginManager().registerEvents(categorySelector, INSTANCE);
+        Bukkit.getPluginManager().registerEvents(categorySelector, plugin);
     }
 
     /**
@@ -110,13 +106,24 @@ public final class CategorySelectorGUI implements Listener, InventoryHolder {
         startListener();
     }
 
+    @EventHandler
+    public void onInventoryOpen(InventoryOpenEvent event) {
+        if (event.getView().getTopInventory().getHolder() != this) {
+            return;
+        }
+        if (Config.getDisabledWorlds().contains(event.getPlayer().getWorld())) {
+            event.setCancelled(true);
+            Messages.sendMessage(event.getPlayer(), "command.general.error.in-disabled-world");
+        }
+    }
+
     /**
      * カテゴリ選択GUIへのクリックを検知して、適切なカテゴリGUIに遷移させる。
      *
      * @param event
      */
     @EventHandler(priority = EventPriority.NORMAL)
-    public void onClick(@NotNull InventoryClickEvent event) {
+    public void onClick(InventoryClickEvent event) {
         if (event.isCancelled()) {
             return;
         }
@@ -129,8 +136,8 @@ public final class CategorySelectorGUI implements Listener, InventoryHolder {
         InventoryAction action = event.getAction();
         event.setCancelled(true);
 
-        if (CONFIG.getDisabledWorlds().contains(event.getWhoClicked().getWorld().getName())) {
-            player.sendMessage(MESSAGE_CONFIG.getDisabledWorld());
+        if (Config.getDisabledWorlds().contains(event.getWhoClicked().getWorld())) {
+            Messages.sendMessage(player, "command.general.error.in-disabled-world");
             return;
         }
 
@@ -158,7 +165,7 @@ public final class CategorySelectorGUI implements Listener, InventoryHolder {
 
         player.closeInventory();
 
-        new CategoryGUI(player, categoryName, 1);
+        new CategoryGUI(player, Categories.getCategory(categoryName), 1);
 
     }
 }

@@ -9,6 +9,7 @@ import java.sql.Statement;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
@@ -28,7 +29,9 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import net.okocraft.box.Box;
-import org.jetbrains.annotations.NotNull;
+import net.okocraft.box.config.Config;
+import net.okocraft.box.util.PlayerUtil;
+
 import org.jetbrains.annotations.Nullable;
 
 public class PlayerData implements Listener {
@@ -50,7 +53,7 @@ public class PlayerData implements Listener {
         syncDatabaseItems();
     }
 
-    public PlayerData(@NotNull Plugin plugin) {
+    public PlayerData(Plugin plugin) {
         Bukkit.getPluginManager().registerEvents(this, plugin);
 
         new BukkitRunnable() {
@@ -61,13 +64,13 @@ public class PlayerData implements Listener {
         }.runTaskTimerAsynchronously(Box.getInstance(), 20 * 60 * 15, 20 * 60 * 15);
     }
 
-    public static boolean setAutoStoreAll(@NotNull OfflinePlayer player, boolean enabled) {
+    public static boolean setAutoStoreAll(OfflinePlayer player, boolean enabled) {
         if (player.isOnline()) {
             getPlayerAutoStoreData(player).replaceAll((item, current) -> enabled);
             return true;
         } else {
             StringBuilder values = new StringBuilder(
-                    "'" + player.getUniqueId().toString() + "', '" + player.getName().toLowerCase() + "', ");
+                    "'" + player.getUniqueId().toString() + "', '" + player.getName().toLowerCase(Locale.ROOT) + "', ");
             String enabledStr = enabled ? "1, " : "0, ";
             for (int i = 1; i <= Items.getItems().size(); i++) {
                 values.append(enabledStr);
@@ -78,7 +81,7 @@ public class PlayerData implements Listener {
         }
     }
 
-    public static boolean setAutoStore(@NotNull OfflinePlayer player, @NotNull ItemStack item, boolean enabled) {
+    public static boolean setAutoStore(OfflinePlayer player, ItemStack item, boolean enabled) {
         String itemName = Items.getName(item, false);
         if (itemName == null) {
             return false;
@@ -97,16 +100,15 @@ public class PlayerData implements Listener {
         }
     }
 
-    public static boolean getAutoStore(@NotNull OfflinePlayer player, @NotNull ItemStack item) {
+    public static boolean getAutoStore(OfflinePlayer player, ItemStack item) {
         return getPlayerAutoStoreData(player).get(Items.getName(item, true));
     }
 
-    @NotNull
-    public static Map<String, Boolean> getAutoStoreAll(@NotNull OfflinePlayer player) {
+    public static Map<String, Boolean> getAutoStoreAll(OfflinePlayer player) {
         return new LinkedHashMap<>(getPlayerAutoStoreData(player));
     }
 
-    public static boolean setItemAmount(@NotNull OfflinePlayer player, @NotNull ItemStack item, long amount) {
+    public static boolean setItemAmount(OfflinePlayer player, ItemStack item, long amount) {
         String itemName = Items.getName(item, true);
         if (itemName == null) {
             return false;
@@ -125,7 +127,7 @@ public class PlayerData implements Listener {
         }
     }
 
-    public static boolean addItemAmount(@NotNull OfflinePlayer player, @NotNull ItemStack item,
+    public static boolean addItemAmount(OfflinePlayer player, ItemStack item,
                                         long amount) {
         String itemName = Items.getName(item, true);
         if (itemName == null) {
@@ -155,12 +157,11 @@ public class PlayerData implements Listener {
         }
     }
 
-    public static long getItemAmount(@NotNull OfflinePlayer player, @NotNull ItemStack item) {
+    public static long getItemAmount(OfflinePlayer player, ItemStack item) {
         return getPlayerItemData(player).get(Items.getName(item, true));
     }
 
-    @NotNull
-    public static Map<String, Long> getItemsAmount(@NotNull OfflinePlayer player) {
+    public static Map<String, Long> getItemsAmount(OfflinePlayer player) {
         return new LinkedHashMap<>(getPlayerItemData(player));
     }
 
@@ -178,11 +179,21 @@ public class PlayerData implements Listener {
         }
     }
 
+    public static boolean exist(String name) {
+        name = name.toLowerCase(Locale.ROOT);
+        Map<String, String> players = getPlayers();
+        if (PlayerUtil.isUUID(name)) {
+            return players.containsKey(name);
+        } else {
+            return players.containsValue(name);
+        }
+    }
+
     @EventHandler
-    public void onJoin(@NotNull PlayerJoinEvent event) {
+    public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         String uuid = player.getUniqueId().toString();
-        String name = player.getName().toLowerCase();
+        String name = player.getName().toLowerCase(Locale.ROOT);
 
         threadPool.submit(() -> {
             // 昔同じ名前のプレイヤーがログインしてた場合、古い方を殲滅する。
@@ -204,7 +215,7 @@ public class PlayerData implements Listener {
     }
 
     @EventHandler
-    public void onQuit(@NotNull PlayerQuitEvent event) {
+    public void onQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
 
         threadPool.submit(() -> {
@@ -220,7 +231,7 @@ public class PlayerData implements Listener {
         });
     }
 
-    private static Map<String, Boolean> getPlayerAutoStoreData(@NotNull OfflinePlayer player) {
+    private static Map<String, Boolean> getPlayerAutoStoreData(OfflinePlayer player) {
         if (player.isOnline()) {
             Player onlinePlayer = player.getPlayer();
             Map<String, Boolean> data = autoStoreData.get(onlinePlayer);
@@ -235,7 +246,7 @@ public class PlayerData implements Listener {
         }
     }
 
-    private static Map<String, Long> getPlayerItemData(@NotNull OfflinePlayer player) {
+    private static Map<String, Long> getPlayerItemData(OfflinePlayer player) {
         if (player.isOnline()) {
             Player onlinePlayer = player.getPlayer();
 
@@ -254,7 +265,7 @@ public class PlayerData implements Listener {
         }
     }
 
-    private static Map<String, Long> loadItemData(@NotNull OfflinePlayer player) {
+    private static Map<String, Long> loadItemData(OfflinePlayer player) {
         String sqlState = "SELECT * FROM " + itemTableName + " WHERE uuid = '" + player.getUniqueId().toString() + "'";
         try (PreparedStatement statement = connection.prepareStatement(sqlState)) {
             ResultSet rs = statement.executeQuery();
@@ -272,7 +283,7 @@ public class PlayerData implements Listener {
         }
     }
 
-    private static Map<String, Boolean> loadAutoStoreData(@NotNull OfflinePlayer player) {
+    private static Map<String, Boolean> loadAutoStoreData(OfflinePlayer player) {
         String sqlState = "SELECT * FROM " + autoStoreTableName + " WHERE uuid = '" + player.getUniqueId().toString()
                 + "'";
         try (PreparedStatement statement = connection.prepareStatement(sqlState)) {
@@ -299,7 +310,7 @@ public class PlayerData implements Listener {
         });
     }
 
-    private static void saveItemData(@NotNull Player player) {
+    private static void saveItemData(Player player) {
         String uuid = player.getUniqueId().toString();
         Map<String, Long> playerItemData = itemData.get(player);
         if (playerItemData == null) {
@@ -307,7 +318,7 @@ public class PlayerData implements Listener {
         }
         StringBuilder columns = new StringBuilder(" (uuid, player, ");
         StringBuilder values = new StringBuilder(" VALUES ('").append(uuid).append("', '")
-                .append(player.getName().toLowerCase()).append("', ");
+                .append(player.getName().toLowerCase(Locale.ROOT)).append("', ");
 
         playerItemData.forEach((column, value) -> {
             columns.append(column).append(", ");
@@ -319,7 +330,7 @@ public class PlayerData implements Listener {
         Sqlite.executeSql("REPLACE INTO " + itemTableName + columns.toString() + values.toString());
     }
 
-    private static void saveAutoStoreData(@NotNull Player player) {
+    private static void saveAutoStoreData(Player player) {
         String uuid = player.getUniqueId().toString();
         Map<String, Boolean> playerAutoStoreData = autoStoreData.get(player);
         if (playerAutoStoreData == null) {
@@ -328,7 +339,7 @@ public class PlayerData implements Listener {
 
         StringBuilder columns = new StringBuilder(" (uuid, player, ");
         StringBuilder values = new StringBuilder(" VALUES ('").append(uuid).append("', '")
-                .append(player.getName().toLowerCase()).append("', ");
+                .append(player.getName().toLowerCase(Locale.ROOT)).append("', ");
 
         playerAutoStoreData.forEach((column, value) -> {
             columns.append(column).append(", ");
@@ -377,7 +388,7 @@ public class PlayerData implements Listener {
 
             String initState = stateBuilder.delete(stateBuilder.length() - 2, stateBuilder.length()).append(")")
                     .toString();
-            int defaultAutoStore = Box.getInstance().getGeneralConfig().isAutoStoreEnabledByDefault() ? 1 : 0;
+            int defaultAutoStore = Config.getDefaultAutoStoreValue() ? 1 : 0;
 
             statement.addBatch(initState.replace("%table%", autoStoreTableName).replace("%default_value%",
                     Integer.toString(defaultAutoStore)));

@@ -22,8 +22,11 @@ public class PreventReplacingDisallowExtent extends AbstractDelegateExtent {
     @Override
     public <B extends BlockStateHolder<B>> boolean setBlock(BlockVector3 location, B block) throws WorldEditException {
         if (!player.hasPermission("box.worldedit.disallowblock.unrestricted")) {
-            BlockState existing = getExtent().getBlock(location);        
+            BlockState existing = getExtent().getBlock(location);
             if (WorldEdit.getInstance().getConfiguration().disallowedBlocks.contains(existing.getBlockType().getId())) {
+                return false;
+            }
+            if (WorldEdit.getInstance().getConfiguration().disallowedBlocks.contains(block.getBlockType().getId())) {
                 return false;
             }
         }

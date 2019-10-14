@@ -20,66 +20,56 @@ package net.okocraft.box.command.boxadmin;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.util.StringUtil;
 
+import net.okocraft.box.config.Messages;
 import net.okocraft.box.database.PlayerData;
 import net.okocraft.box.util.OtherUtil;
 import net.okocraft.box.util.PlayerUtil;
-import org.jetbrains.annotations.NotNull;
 
-class AutoStoreList extends BaseSubAdminCommand {
-
-    private static final String COMMAND_NAME = "autostorelist";
-    private static final int LEAST_ARG_LENGTH = 3;
-    private static final String USAGE = "/boxadmin autostorelist <player> <page>";
+class AutoStoreList extends BoxAdminSubCommand {
+    
+    AutoStoreList() {
+    }
 
     @Override
-    public boolean runCommand(@NotNull CommandSender sender, @NotNull String[] args) {
-        if (!validate(sender, args)) {
+    public boolean runCommand(CommandSender sender, String[] args) {
+        String playerName = args[1].toLowerCase(Locale.ROOT);
+        if (!PlayerData.exist(playerName)) {
+            Messages.sendMessage(sender, "command.general.error.player-not-found");
             return false;
         }
-
-        OfflinePlayer player = PlayerUtil.getOfflinePlayer(args[1].toLowerCase());
-        if (!player.hasPlayedBefore()) {
-            sender.sendMessage(MESSAGE_CONFIG.getNoPlayerFound());
-            return false;
-        }
+        OfflinePlayer player = PlayerUtil.getOfflinePlayer(playerName);
         Map<String, Boolean> autoStoreData = PlayerData.getAutoStoreAll(player);
         int maxLine = autoStoreData.size();
         int maxPage = maxLine % 9 == 0 ? maxLine / 9 : maxLine / 9 + 1;
         int page = Math.max(maxPage, (args.length >= 3 ? OtherUtil.parseIntOrDefault(args[2], 1) : 1));
         int currentLine = Math.min(maxLine, page * 9);
 
-        sender.sendMessage(
-                MESSAGE_CONFIG.getAutoStoreListHeader()
-                        .replaceAll("%player%", player.getName())
-                        .replaceAll("%page%", String.valueOf(page))
-                        .replaceAll("%currentLine%", String.valueOf(currentLine))
-                        .replaceAll("%maxLine%", String.valueOf(maxLine))
+        Messages.sendMessage(sender, "command.box.auto-store-list.info.header", Map.of(
+                "%player%", player.getName(),
+                "%page%", String.valueOf(page),
+                "%current-line%", String.valueOf(currentLine),
+                "%max-line%", String.valueOf(maxLine))
         );
-
-        autoStoreData.entrySet().stream().skip((page - 1) * 9).limit(9).forEach(entry ->
-                sender.sendMessage(
-                        MESSAGE_CONFIG.getAutoStoreListFormat()
-                                .replaceAll("%item%", entry.getKey())
-                                .replaceAll("%isEnabled%", Boolean.toString(entry.getValue()))
-                                .replaceAll("%currentLine%", Integer.toString(currentLine))
-                                .replaceAll("%maxLine%", String.valueOf(maxLine))
-                )
-        );
-
+        PlayerData.getAutoStoreAll((OfflinePlayer) sender).entrySet().stream().skip((page - 1) * 9).limit(9)
+                .forEach(entry ->
+                        Messages.sendMessage(sender, false, "command.box.auto-store-list.info.format", Map.of(
+                                "%item%", entry.getKey(),
+                                "%is-enabled%", entry.getValue().toString()
+                        )));
         return true;
     }
 
     @Override
-    public List<String> runTabComplete(CommandSender sender, @NotNull String[] args) {
+    public List<String> runTabComplete(CommandSender sender, String[] args) {
         List<String> result = new ArrayList<>();
 
         List<String> players = new ArrayList<>(PlayerData.getPlayers().values());
@@ -88,14 +78,13 @@ class AutoStoreList extends BaseSubAdminCommand {
             return StringUtil.copyPartialMatches(args[1], players, result);
         }
 
-        String playerName = args[1].toLowerCase();
+        String playerName = args[1].toLowerCase(Locale.ROOT);
 
         if (!players.contains(playerName)) {
             return List.of();
         }
 
-        @SuppressWarnings("deprecation")
-        int items = PlayerData.getAutoStoreAll(Bukkit.getOfflinePlayer(playerName)).size();
+        int items = PlayerData.getAutoStoreAll(PlayerUtil.getOfflinePlayer(playerName)).size();
         int maxPage = items % 9 == 0 ? items / 9 : items / 9 + 1;
         List<String> pages = IntStream.rangeClosed(1, maxPage).boxed().map(String::valueOf).collect(Collectors.toList());
         if (args.length == 3) {
@@ -104,36 +93,14 @@ class AutoStoreList extends BaseSubAdminCommand {
         return result;
     }
 
-    @NotNull
-    @Override
-    public String getCommandName() {
-        return COMMAND_NAME;
-    }
 
     @Override
     public int getLeastArgLength() {
-        return LEAST_ARG_LENGTH;
+        return 3;
     }
 
-    @NotNull
     @Override
     public String getUsage() {
-        return USAGE;
-    }
-
-    @Override
-    public String getDescription() {
-        return MESSAGE_CONFIG.getAutoStoreListDesc();
-    }
-
-
-    @Override
-    protected boolean validate(@NotNull CommandSender sender, @NotNull String[] args) {
-        if (!super.validate(sender, args)) {
-            return false;
-        }
-
-        return PlayerUtil.existPlayer(sender, args[1].toLowerCase());
-
+        return "/boxadmin autostorelist <player> <page>";
     }
 }

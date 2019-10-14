@@ -1,22 +1,4 @@
-/*
- * Box
- * Copyright (C) 2019 OKOCRAFT
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
-
-package net.okocraft.box.util;
+package net.okocraft.box.config;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,52 +10,45 @@ import java.util.logging.Level;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.plugin.Plugin;
-import org.jetbrains.annotations.NotNull;
+
+import net.okocraft.box.Box;
 
 /**
- * リソース（YAML 設定）を取り扱うクラス。
+ * Class for manipulating yaml files.
  *
  * @author LazyGon
  */
 public class CustomConfig {
-    /**
-     * プラグイン。
-     */
-    @NotNull
-    private final Plugin plugin;
 
-    /**
-     * 設定の実体ファイル。
-     */
-    @NotNull
+    private static final Box plugin = Box.getInstance();
     private final File file;
-
-    /**
-     * 設定の実体ファイル名。
-     */
-    @NotNull
     private final String name;
-
-    /**
-     * 設定。
-     */
     private FileConfiguration config;
 
-    CustomConfig(@NotNull Plugin plugin, @NotNull String name) {
-        this.plugin = plugin;
+    CustomConfig(String name) {
         this.name = name;
+        this.file = new File(plugin.getDataFolder(), this.name);
+        initConfig();
+        if (file.isDirectory()) {
+            throw new IllegalArgumentException("file must not be directory");
+        }
+    }
 
-        file = new File(plugin.getDataFolder(), this.name);
+    CustomConfig(File file) {
+        if (!file.isFile()) {
+            throw new IllegalArgumentException("file must not be directory");
+        }
+        this.file = file;
+        this.name = file.getName();
+        initConfig();
     }
 
     /**
-     * 設定を取得する。
+     * Gets FileConfiguration of {@code file}.
      *
      * @return FileConfiguration
      * @author LazyGon
      */
-    @NotNull
     FileConfiguration getConfig() {
         if (config == null) {
             initConfig();
@@ -83,11 +58,12 @@ public class CustomConfig {
     }
 
     /**
-     * 設定を読み込む。
+     * Loads FileConfiguration from {@code file}.
      *
      * @author LazyGon
      */
     void initConfig() {
+        saveDefaultConfig();
         config = YamlConfiguration.loadConfiguration(file);
         Optional<InputStream> inputStream = Optional.ofNullable(plugin.getResource(name));
         inputStream.ifPresent(stream -> config.setDefaults(YamlConfiguration.loadConfiguration(
@@ -96,7 +72,7 @@ public class CustomConfig {
     }
 
     /**
-     * デフォルトの設定ファイルを保存する。
+     * Saves default file which is included in jar.
      *
      * @author LazyGon
      */

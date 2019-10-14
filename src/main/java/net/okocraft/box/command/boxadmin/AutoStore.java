@@ -20,87 +20,82 @@ package net.okocraft.box.command.boxadmin;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
-import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.StringUtil;
 
+import net.okocraft.box.config.Categories;
+import net.okocraft.box.config.Messages;
 import net.okocraft.box.database.Items;
 import net.okocraft.box.database.PlayerData;
 import net.okocraft.box.util.PlayerUtil;
-import org.jetbrains.annotations.NotNull;
 
-class AutoStore extends BaseSubAdminCommand {
+class AutoStore extends BoxAdminSubCommand {
 
-    private static final String COMMAND_NAME = "autostore";
-    private static final int LEAST_ARG_LENGTH = 3;
-    private static final String USAGE = "/boxadmin autostore <player> < <ITEM> [true|false] | ALL <true|false> >";
-
+    AutoStore() {
+    }
+    
     @Override
-    @SuppressWarnings("deprecation")
-    public boolean runCommand(@NotNull CommandSender sender, @NotNull String[] args) {
-        if (!validate(sender, args)) {
+    public boolean runCommand(CommandSender sender, String[] args) {
+        String playerName = args[1].toLowerCase(Locale.ROOT);
+        if (!PlayerData.exist(playerName)) {
+            Messages.sendMessage(sender, "command.general.error.player-not-found");
             return false;
         }
-
-        String playerName = args[1].toLowerCase();
-        Map<String, String> players = PlayerData.getPlayers();
-        if (!players.containsKey(playerName) && players.containsValue(playerName)) {
-            sender.sendMessage(MESSAGE_CONFIG.getNoPlayerFound());
-            return false;
-        }
-
-        OfflinePlayer player;
-        try {
-            player = Bukkit.getOfflinePlayer(UUID.fromString(playerName));
-        } catch (IllegalArgumentException e) {
-            player = Bukkit.getOfflinePlayer(playerName);
-        }
+        OfflinePlayer player = PlayerUtil.getOfflinePlayer(playerName);
 
         // autostore all <true|false>
-        if (args.length > 3 && args[2].equalsIgnoreCase("ALL")) {
+        if (args[2].equalsIgnoreCase("ALL")) {
+            if (args.length == 2) {
+                Messages.sendMessage(sender, "command.general.error.not-enough-arguments");
+                return false;
+            }
 
-            // If switchTo is neither true nor false
+            // switchToがtrueでもfalseでもない場合
             if (!args[3].equalsIgnoreCase("true") && !args[3].equalsIgnoreCase("false")) {
-                sender.sendMessage(MESSAGE_CONFIG.getInvalidArguments());
-
+                Messages.sendMessage(sender, "command.general.error.invalid-argument",
+                        Map.of("%argument%", args[3].toLowerCase(Locale.ROOT)));
                 return false;
             }
 
             boolean switchTo = args[3].equalsIgnoreCase("true");
 
             if (PlayerData.setAutoStoreAll(player, switchTo)) {
-                sender.sendMessage(MESSAGE_CONFIG.getAutoStoreSettingChangedAll().replaceAll("%isEnabled%",
-                        Boolean.toString(switchTo)));
+                Messages.sendMessage(sender, "command.box.auto-store.info.changed-all",
+                        Map.of("%is-enabled%", String.valueOf(switchTo)));
                 return true;
             } else {
-                sender.sendMessage(MESSAGE_CONFIG.getErrorOccurred());
+                Messages.sendMessage(sender, "command.general.error.unknown-exception");
                 return false;
             }
         }
 
         // autostore Item [true|false]
-        String itemName = args[2].toUpperCase();
+        String itemName = args[2].toUpperCase(Locale.ROOT);
+        if (!Categories.getAllItems().contains(itemName)) {
+            Messages.sendMessage(sender, "command.general.error.item-not-found");
+            return false;
+        }
         ItemStack item = Items.getItemStack(itemName);
         boolean now = PlayerData.getAutoStore((OfflinePlayer) sender, item);
         boolean switchTo = args.length > 3 ? args[3].equalsIgnoreCase("true") : !now;
 
         if (PlayerData.setAutoStore(player, item, switchTo)) {
-            sender.sendMessage(MESSAGE_CONFIG.getAutoStoreSettingChanged().replaceAll("%item%", itemName)
-                    .replaceAll("%isEnabled%", Boolean.toString(switchTo)));
+            Messages.sendMessage(sender, "command.box.auto-store.info.changed",
+                    Map.of("%item%", itemName, "%is-enabled%", String.valueOf(switchTo)));
             return true;
         } else {
-            sender.sendMessage(MESSAGE_CONFIG.getErrorOccurred());
+            Messages.sendMessage(sender, "command.general.error.unknown-exception");
             return false;
         }
     }
 
     @Override
-    public List<String> runTabComplete(CommandSender sender, @NotNull String[] args) {
+    public List<String> runTabComplete(CommandSender sender, String[] args) {
         List<String> result = new ArrayList<>();
 
         List<String> players = new ArrayList<>(PlayerData.getPlayers().values());
@@ -109,18 +104,18 @@ class AutoStore extends BaseSubAdminCommand {
             return StringUtil.copyPartialMatches(args[1], players, result);
         }
 
-        if (!players.contains(args[1].toLowerCase())) {
+        if (!players.contains(args[1].toLowerCase(Locale.ROOT))) {
             return List.of();
         }
 
-        List<String> items = new ArrayList<>(CONFIG.getAllItems());
+        List<String> items = new ArrayList<>(Categories.getAllItems());
         items.add("ALL");
 
         if (args.length == 3) {
             return StringUtil.copyPartialMatches(args[2], items, result);
         }
 
-        if (!items.contains(args[2].toUpperCase())) {
+        if (!items.contains(args[2].toUpperCase(Locale.ROOT))) {
             return List.of();
         }
 
@@ -131,53 +126,13 @@ class AutoStore extends BaseSubAdminCommand {
         return result;
     }
 
-    @NotNull
-    @Override
-    public String getCommandName() {
-        return COMMAND_NAME;
-    }
-
     @Override
     public int getLeastArgLength() {
-        return LEAST_ARG_LENGTH;
+        return 3;
     }
 
-    @NotNull
-    @Override
+        @Override
     public String getUsage() {
-        return USAGE;
-    }
-
-    @Override
-    public String getDescription() {
-        return MESSAGE_CONFIG.getAutoStoreDesc();
-    }
-
-    @Override
-    protected boolean validate(@NotNull CommandSender sender, @NotNull String[] args) {
-        if (!super.validate(sender, args)) {
-            return false;
-        }
-
-        if (!PlayerUtil.existPlayer(sender, args[1].toLowerCase())) {
-            return false;
-        }
-
-        if (!args[2].equalsIgnoreCase("ALL") && !CONFIG.getAllItems().contains(args[2].toUpperCase())) {
-            sender.sendMessage(MESSAGE_CONFIG.getNoItemFound());
-            return false;
-        }
-
-        if (args.length < 4 && args[2].equalsIgnoreCase("ALL")) {
-            sender.sendMessage(MESSAGE_CONFIG.getNotEnoughArguments());
-            return false;
-        }
-
-        if (args.length >= 4 && !args[3].equalsIgnoreCase("true") && !args[3].equalsIgnoreCase("false")) {
-            sender.sendMessage(MESSAGE_CONFIG.getInvalidArguments());
-            return false;
-        }
-
-        return true;
+        return "/boxadmin autostore <player> < <ITEM> [true|false] | ALL <true|false> >";
     }
 }

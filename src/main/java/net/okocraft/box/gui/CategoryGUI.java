@@ -19,13 +19,15 @@
 package net.okocraft.box.gui;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.IntStream;
+import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -42,30 +44,58 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import lombok.Getter;
+import net.milkbowl.vault.economy.Economy;
 import net.okocraft.box.Box;
+import net.okocraft.box.config.Config;
+import net.okocraft.box.config.Prices;
+import net.okocraft.box.config.Categories.Category;
+import net.okocraft.box.config.Config.PageFunctionItems;
 import net.okocraft.box.database.Items;
 import net.okocraft.box.database.PlayerData;
-import net.okocraft.box.util.GeneralConfig;
+import net.okocraft.box.util.CraftRecipes;
 import net.okocraft.box.util.PlayerUtil;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 class CategoryGUI implements Listener, InventoryHolder {
 
     @Nullable
-    private static final Box INSTANCE = Box.getInstance();
-    private static final GeneralConfig CONFIG = INSTANCE.getGeneralConfig();
+    private static final Box plugin = Box.getInstance();
 
-    @NotNull
     private final Player player;
-    private final Category category;
+    // private final Category category;
     @Getter
     private int page;
-    @Getter
-    private int quantity;
+    private int quantity = 1;
     private Inventory gui;
-    @NotNull
     private final List<ItemStack> items;
+    private Operations operation = Operations.TRANSACTION;
+
+    public enum Operations {
+        TRANSACTION(50), BUY_AND_SALL(51), CRAFT(52);
+
+        private int slot;
+
+        private Operations(int slot) {
+            this.slot = slot;
+        }
+
+        public int getSlot() {
+            return slot;
+        }
+
+        public Operations get() {
+            return this;
+        }
+
+        public static Operations get(int slot) {
+            for (Operations operation : values()) {
+                if (operation.getSlot() == slot) {
+                    return operation;
+                }
+            }
+            return null;
+        }
+    }
 
     /**
      * コンストラクタ
@@ -75,29 +105,25 @@ class CategoryGUI implements Listener, InventoryHolder {
      * @param quantity     引き出し・預け入れ量
      * @throws IllegalArgumentException カテゴリ名が登録されていないとき。
      */
-    public CategoryGUI(@NotNull Player player, String categoryName, int quantity) throws IllegalArgumentException {
-        Map<String, Category> categories = CONFIG.getCategories();
-        if (!categories.containsKey(categoryName)) {
-            throw new IllegalArgumentException("Category " + categoryName + " is not registered.");
-        }
+    public CategoryGUI(Player player, Category category, int quantity) throws IllegalArgumentException {
         this.player = player;
-        this.category = categories.get(categoryName);
+        // this.category = category;
         this.page = 1;
-        this.quantity = quantity;
+        this.quantity = Math.min(quantity, Config.getMaxQuantity());
         this.gui = Bukkit.createInventory(this, 54, category.getDisplayName());
         this.items = new ArrayList<>() {
             private static final long serialVersionUID = 1L;
 
             {
                 category.getItems().forEach(item -> {
-                    ItemStack itemStack = item.clone();
+                    ItemStack itemStack = Items.getItemStack(item);
                     updateLore(itemStack);
                     add(itemStack);
                 });
             }
         };
 
-        Bukkit.getPluginManager().registerEvents(this, INSTANCE);
+        Bukkit.getPluginManager().registerEvents(this, plugin);
         setPage(page);
         player.openInventory(gui);
     }
@@ -106,16 +132,20 @@ class CategoryGUI implements Listener, InventoryHolder {
      * originalのプレホルを受け取った情報で置換する。
      *
      * @param original プレホルを含むオリジナル文字列
-     * @param jp       アイテムの日本語名
-     * @param en       アイテムの英語名
-     * @param stock    アイテムの在庫
-     * @param quantity 一度のアイテムの取引量
+     * @param item     プレホルの情報を割り出すアイテム
      * @return 置換された文字列
      */
-    @NotNull
-    private String replacePlaceholders(@NotNull String original, long stock, int quantity) {
-        return original.replaceAll("%item_quantity%", Integer.toString(quantity))
-                .replaceAll("%stock%", String.valueOf(stock))
+    private String replacePlaceholders(String original, ItemStack item) {
+        Economy economy = plugin.getEconomy();
+        if (economy == null) {
+            return original;
+        }
+        return original.replaceAll("%balance%", String.valueOf(economy.getBalance(player)))
+                .replaceAll("%item-quantity%", Integer.toString(quantity))
+                .replaceAll("%stock%", String.valueOf(PlayerData.getItemAmount(player, item)))
+                .replaceAll("%buy-price%", String.valueOf(Prices.getBuyPrice(item)))
+                .replaceAll("%sell-price%", String.valueOf(Prices.getSellPrice(item)))
+                .replaceAll("%amount%", String.valueOf(quantity * CraftRecipes.getResultAmount(item)))
                 .replaceAll("&([a-f0-9])", "§$1");
     }
 
@@ -128,21 +158,37 @@ class CategoryGUI implements Listener, InventoryHolder {
         if (page <= 0 || page > 64) {
             return;
         }
+        List<ItemStack> items = new ArrayList<>(this.items);
+        if (operation == Operations.BUY_AND_SALL) {
+            items.removeIf(item -> Prices.getBuyPrice(item) == 0 && Prices.getSellPrice(item) == 0);
+            items.removeIf(item -> PlayerData.getItemAmount(player, item) == 0
+                    && Prices.getBuyPrice(item) > plugin.getEconomy().getBalance(player));
+        } else if (operation == Operations.CRAFT) {
+            items = CraftRecipes.filterUnavailable(player, items, quantity);
+        }
         int maxPage = (items.size() % 45 == 0) ? items.size() / 45 : items.size() / 45 + 1;
         page = Math.min(page, maxPage);
+        page = Math.max(page, 1);
         this.page = page;
         gui.clear();
-        Map<Integer, ItemStack> footers = CONFIG.getFooterItemStacks();
-        footers.get(45).setAmount(page - 1);
-        if (page == maxPage) {
-            footers.get(53).setAmount(0);
-        } else {
-            footers.get(53).setAmount(page == 64 ? 0 : page + 1);
+        List<ItemStack> functionItems = Arrays.stream(Config.PageFunctionItems.values()).map(PageFunctionItems::get)
+                .collect(Collectors.toList());
+        for (int i = 0; i < functionItems.size(); i++) {
+            if (i == 0) {
+                functionItems.get(i).setAmount(page - 1);
+            } else if (i == 8) {
+                if (page == maxPage) {
+                    functionItems.get(i).setAmount(0);
+                } else {
+                    functionItems.get(i).setAmount(page == 64 ? 0 : page + 1);
+                }
+            }
+            gui.setItem(i + 45, functionItems.get(i));
         }
-        IntStream.range(45, 54).boxed().forEach(slot -> gui.setItem(slot, footers.get(slot)));
+        gui.getItem(operation.getSlot()).addUnsafeEnchantment(Enchantment.DURABILITY, 1);
         gui.addItem(items.stream().skip(45 * (page - 1)).limit(45).toArray(ItemStack[]::new));
         updateLores();
-        PlayerUtil.playSound(player, CONFIG.getChangePageSound());
+        PlayerUtil.playSound(player, Config.Sounds.CHANGE_PAGE);
     }
 
     /**
@@ -151,10 +197,11 @@ class CategoryGUI implements Listener, InventoryHolder {
      * @param newQuantity 新しい取引量
      */
     private void setQuantity(int newQuantity) {
+        newQuantity = Math.min(newQuantity, Config.getMaxQuantity());
         if (quantity < newQuantity) {
-            PlayerUtil.playSound(player, CONFIG.getIncreaseSound());
+            PlayerUtil.playSound(player, Config.Sounds.INCREASE_UNIT);
         } else if (quantity > newQuantity) {
-            PlayerUtil.playSound(player, CONFIG.getDecreaseSound());
+            PlayerUtil.playSound(player, Config.Sounds.DECREASE_UNIT);
         } else {
             return;
         }
@@ -178,41 +225,131 @@ class CategoryGUI implements Listener, InventoryHolder {
      * アイテムを引き出す。
      *
      * @param item 引き出すアイテム
+     * @return 引き出したあとの在庫数
      */
-    private void withdraw(@NotNull ItemStack item) {
+    private long withdraw(ItemStack item) {
         long stock = PlayerData.getItemAmount(player, item);
         long tempQuantity = quantity;
         if (stock == 0) {
-            PlayerUtil.playSound(player, CONFIG.getNotEnoughSound());
-            return;
+            PlayerUtil.playSound(player, Config.Sounds.NOT_ENOUGH);
+            return stock;
         }
         tempQuantity = Math.min(stock, tempQuantity);
         ItemStack givenItem = Items.getItemStack(Items.getName(item, true));
         givenItem.setAmount((int) tempQuantity);
         int nonAdded = player.getInventory().addItem(givenItem).values().stream().mapToInt(ItemStack::getAmount).sum();
         PlayerData.setItemAmount(player, item, stock + nonAdded - tempQuantity);
-        PlayerUtil.playSound(player, CONFIG.getTakeOutSound());
+        PlayerUtil.playSound(player, Config.Sounds.WITHDRAW);
         updateLore(item);
+        return (long) (stock + nonAdded - tempQuantity);
     }
 
     /**
      * アイテムを預ける。
      *
      * @param item 預けるアイテム
+     * @return 預けたあとの在庫数
      */
-    private void deposit(@NotNull ItemStack item) {
+    private long deposit(ItemStack item) {
         long stock = PlayerData.getItemAmount(player, item);
         ItemStack takenItem = Items.getItemStack(Items.getName(item, true));
         takenItem.setAmount(quantity);
         int nonRemoved = player.getInventory().removeItem(takenItem).values().stream().mapToInt(ItemStack::getAmount)
                 .sum();
         if (nonRemoved == quantity) {
-            PlayerUtil.playSound(player, CONFIG.getNotEnoughSound());
-            return;
+            PlayerUtil.playSound(player, Config.Sounds.NOT_ENOUGH);
+            return stock;
         }
         PlayerData.setItemAmount(player, item, stock - nonRemoved + quantity);
-        PlayerUtil.playSound(player, CONFIG.getTakeInSound());
+        PlayerUtil.playSound(player, Config.Sounds.DEPOSIT);
         updateLore(item);
+        return (long) (stock - nonRemoved + quantity);
+    }
+
+    /**
+     * アイテムを売る
+     * 
+     * @param item 売るアイテム。
+     * @return 売ったアイテム数
+     */
+    private long sell(ItemStack item) {
+        double price = Prices.getSellPrice(item);
+        long stock = PlayerData.getItemAmount(player, item);
+        long tempQuantity = quantity;
+
+        if (stock == 0 || price == 0) {
+            PlayerUtil.playSound(player, Config.Sounds.NOT_ENOUGH);
+            return 0;
+        } else if (stock < tempQuantity) {
+            tempQuantity = stock;
+        }
+
+        Economy economy = plugin.getEconomy();
+        economy.depositPlayer(player, tempQuantity * price);
+        PlayerData.setItemAmount(player, item, stock - tempQuantity);
+        PlayerUtil.playSound(player, Config.Sounds.SELL);
+        updateLore(item);
+        return tempQuantity;
+    }
+
+    /**
+     * アイテムを売る
+     * 
+     * @param item 売るアイテム。
+     * @return 買って得たアイテム数
+     */
+    private long buy(ItemStack item) {
+        double price = Prices.getBuyPrice(item);
+        Economy economy = plugin.getEconomy();
+        double balance = economy.getBalance(player);
+        long stock = PlayerData.getItemAmount(player, item);
+
+        int tempQuantity = quantity;
+        if (balance == 0 || price == 0) {
+            PlayerUtil.playSound(player, Config.Sounds.NOT_ENOUGH);
+            return 0;
+        } else if (price * quantity > balance) {
+            tempQuantity = (int) (balance / price);
+        }
+
+        economy.withdrawPlayer(player, tempQuantity * price);
+        PlayerData.setItemAmount(player, item, stock + tempQuantity);
+        PlayerUtil.playSound(player, Config.Sounds.SELL);
+        updateLore(item);
+        return tempQuantity;
+    }
+
+    private long craft(ItemStack item) {
+        Map<String, Integer> stacked = CraftRecipes.getIngredient(item);
+        long tempQuantity = quantity;
+        for (Map.Entry<String, Integer> entry : stacked.entrySet()) {
+            // 材料の在庫から、作れるアイテム数を割り出す
+            long materialStock = PlayerData.getItemAmount(player, Items.getItemStack(entry.getKey()));
+            tempQuantity = Math.min(entry.getValue() * tempQuantity, materialStock) / entry.getValue();
+        }
+        if (tempQuantity == 0) {
+            PlayerUtil.playSound(player, Config.Sounds.NOT_ENOUGH);
+            return 0;
+        }
+        for (Map.Entry<String, Integer> entry : stacked.entrySet()) {
+            ItemStack ingredient = Items.getItemStack(entry.getKey());
+            long stock = PlayerData.getItemAmount(player, ingredient);
+            PlayerData.setItemAmount(player, ingredient, stock - tempQuantity * entry.getValue());
+        }
+        long stock = PlayerData.getItemAmount(player, item);
+        long add = tempQuantity * CraftRecipes.getResultAmount(item);
+        PlayerData.setItemAmount(player, item, stock + add);
+        updateLore(item);
+        return add;
+    }
+
+    private void select(Operations operation) {
+        if (operation == null || this.operation == operation) {
+            return;
+        }
+        this.operation = operation;
+        setPage(page);
+        return;
     }
 
     /**
@@ -220,11 +357,37 @@ class CategoryGUI implements Listener, InventoryHolder {
      *
      * @param item loreを更新するアイテム
      */
-    private void updateLore(@NotNull ItemStack item) {
+    private void updateLore(ItemStack item) {
         ItemMeta meta = item.getItemMeta();
-        long stock = PlayerData.getItemAmount(player, item);
-        List<String> itemLore = new ArrayList<>(CONFIG.getItemTemplateLore());
-        itemLore.replaceAll(loreLine -> replacePlaceholders(loreLine, stock, quantity));
+        List<String> itemLore;
+        switch (operation) {
+        case BUY_AND_SALL:
+            itemLore = Config.BuyAndSellGui.getItemLoreFormat();
+            break;
+        case CRAFT:
+            itemLore = Config.CraftGui.getItemLoreFormat();
+            break;
+        default:
+            itemLore = Config.TransactionGui.getItemLoreFormat();
+            break;
+        }
+        itemLore.replaceAll(loreLine -> replacePlaceholders(loreLine, item));
+        if (operation == Operations.CRAFT) {
+            List<String> ingredientsLore = CraftRecipes.getIngredient(item)
+                    .entrySet().stream().map(entry -> Config.CraftGui.getItemRecipeLineFormat()
+                            .replaceAll("%material%", entry.getKey())
+                            .replaceAll("%material-stock%",
+                                    String.valueOf(PlayerData.getItemAmount(player, Items.getItemStack(entry.getKey()))))
+                            .replaceAll("%amount%", String.valueOf(entry.getValue() * quantity))
+                            .replaceAll("&([a-f0-9])", "§$1"))
+                    .collect(Collectors.toList());
+            for (int i = itemLore.size() - 1; i >= 0; i--) {
+                if (itemLore.get(i).contains("%materials%")) {
+                    itemLore.remove(i);
+                    itemLore.addAll(i, ingredientsLore);
+                }
+            }
+        }
         meta.setLore(itemLore);
         item.setItemMeta(meta);
     }
@@ -235,7 +398,7 @@ class CategoryGUI implements Listener, InventoryHolder {
     }
 
     @EventHandler
-    public void onQuit(@NotNull PlayerQuitEvent event) {
+    public void onQuit(PlayerQuitEvent event) {
         if (event.getPlayer() != player) {
             return;
         }
@@ -243,7 +406,7 @@ class CategoryGUI implements Listener, InventoryHolder {
     }
 
     @EventHandler
-    public void onGuiClosed(@NotNull InventoryCloseEvent event) {
+    public void onGuiClosed(InventoryCloseEvent event) {
         if (event.getPlayer() != player) {
             return;
         }
@@ -252,7 +415,7 @@ class CategoryGUI implements Listener, InventoryHolder {
     }
 
     @EventHandler(priority = EventPriority.LOW)
-    private void onClicked(@NotNull InventoryClickEvent event) {
+    private void onClicked(InventoryClickEvent event) {
         if (player != event.getWhoClicked()) {
             return;
         }
@@ -264,7 +427,7 @@ class CategoryGUI implements Listener, InventoryHolder {
         InventoryAction action = event.getAction();
         event.setCancelled(true);
 
-        if (CONFIG.getDisabledWorlds().contains(event.getWhoClicked().getWorld().getName())) {
+        if (Config.getDisabledWorlds().contains(event.getWhoClicked().getWorld())) {
             return;
         }
 
@@ -293,48 +456,54 @@ class CategoryGUI implements Listener, InventoryHolder {
 
         // カテゴリー選択GUIに戻る
         if (clickedSlot == 49) {
-            PlayerUtil.playSound(player, CONFIG.getBackToGuiSound());
+            PlayerUtil.playSound(player, Config.Sounds.MENU_BACK);
             player.closeInventory();
             player.openInventory(CategorySelectorGUI.GUI);
             return;
         }
 
-        // 取引数増減
-        if (List.of(46, 47, 48, 50, 51, 52).contains(clickedSlot)) {
-            int currentQuantity = quantity;
-            int difference = 0;
-
-            switch (clickedSlot) {
-                case 46:
-                    difference = -64;
-                    break;
-                case 47:
-                    difference = -8;
-                    break;
-                case 48:
-                    difference = -1;
-                    break;
-                case 50:
-                    difference = 1;
-                    break;
-                case 51:
-                    difference = 8;
-                    break;
-                case 52:
-                    difference = 64;
-                    break;
+        // 取引数変更単位を調節
+        if (clickedSlot == 47) {
+            ItemStack changeUnitItem = gui.getItem(47);
+            if (changeUnitItem == null) {
+                return;
             }
+            double multiplier = event.isRightClick() ? 0.5 : 2;
+            int result = Math.max((int) (gui.getItem(46).getAmount() * multiplier), 1);
+            result = Math.min(result, 64);
+            gui.getItem(46).setAmount(result);
+            gui.getItem(48).setAmount(result);
+            return;
+        }
+
+        // 取引数増減
+        if (clickedSlot == 46 || clickedSlot == 48) {
+
+            int currentQuantity = quantity;
+            int difference = (clickedSlot == 46 ? -1 : 1) * gui.getItem(46).getAmount();
 
             // 既に取引数が上限または下限に達している場合
-            if ((currentQuantity == 640 && difference > 0) || (currentQuantity == 1 && difference < 0)) {
+            if ((currentQuantity == Config.getMaxQuantity() && difference > 0)
+                    || (currentQuantity == 1 && difference < 0)) {
                 return;
             }
 
             // 取引数が上限または下限をに達した場合に制限をかける処理
             currentQuantity = Math.max(currentQuantity + difference, 1);
-            currentQuantity = Math.min(currentQuantity, 640);
+            currentQuantity = Math.min(currentQuantity, Config.getMaxQuantity());
 
             setQuantity(currentQuantity);
+            return;
+        }
+
+        if (clickedSlot == 50) {
+            select(Operations.TRANSACTION);
+            return;
+        } else if (clickedSlot == 51) {
+            select(Operations.BUY_AND_SALL);
+            return;
+        } else if (clickedSlot == 52) {
+            select(Operations.CRAFT);
             return;
         }
 
@@ -343,19 +512,29 @@ class CategoryGUI implements Listener, InventoryHolder {
             ItemStack item = Items.getItemStack(Items.getName(clickedItem, true));
             item.setAmount(quantity);
             if (event.isRightClick()) {
-                PlayerUtil.playSound(player, CONFIG.getTakeOutSound());
+                PlayerUtil.playSound(player, Config.Sounds.WITHDRAW);
                 player.getInventory().addItem(item);
             } else {
-                PlayerUtil.playSound(player, CONFIG.getTakeOutSound());
+                PlayerUtil.playSound(player, Config.Sounds.DEPOSIT);
                 player.getInventory().removeItem(item);
             }
             return;
         }
 
         if (event.isRightClick()) {
-            withdraw(clickedItem);
+            if (operation == Operations.BUY_AND_SALL) {
+                sell(clickedItem);
+            } else if (operation == Operations.TRANSACTION) {
+                withdraw(clickedItem);
+            }
         } else {
-            deposit(clickedItem);
+            if (operation == Operations.BUY_AND_SALL) {
+                buy(clickedItem);
+            } else if (operation == Operations.CRAFT) {
+                craft(clickedItem);
+            } else {
+                deposit(clickedItem);
+            }
         }
     }
 }

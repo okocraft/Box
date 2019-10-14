@@ -26,18 +26,17 @@ import org.bukkit.persistence.PersistentDataType;
 
 import lombok.Getter;
 import net.okocraft.box.Box;
+import net.okocraft.box.config.Categories;
+import net.okocraft.box.config.Config;
 import net.okocraft.box.database.Items;
 import net.okocraft.box.database.PlayerData;
-import net.okocraft.box.util.GeneralConfig;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class BoxStick implements Listener {
 
     @Nullable
-    private static final Box INSTANCE = Box.getInstance();
-    private static final GeneralConfig CONFIG = INSTANCE.getGeneralConfig();
-    private static final NamespacedKey stickKey = new NamespacedKey(INSTANCE, "boxstick");
+    private static final Box plugin = Box.getInstance();
+    private static final NamespacedKey stickKey = new NamespacedKey(plugin, "boxstick");
 
     @Getter
     private static ItemStack stick;
@@ -47,12 +46,12 @@ public class BoxStick implements Listener {
     }
 
     public BoxStick() {
-        Bukkit.getPluginManager().registerEvents(this, INSTANCE);
+        Bukkit.getPluginManager().registerEvents(this, plugin);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void blockPlace(@NotNull BlockPlaceEvent event) {
-        if (!CONFIG.isBoxStickEnabledBlockPlace()) {
+    public void blockPlace(BlockPlaceEvent event) {
+        if (!Config.BoxStick.isEnabledBlockPlace()) {
             return;
         }
         Player player = event.getPlayer();
@@ -67,8 +66,8 @@ public class BoxStick implements Listener {
     }
 
     @EventHandler
-    public void itemConsume(@NotNull PlayerItemConsumeEvent event) {
-        if (!CONFIG.isBoxStickEnabledFood()) {
+    public void itemConsume(PlayerItemConsumeEvent event) {
+        if (!Config.BoxStick.isEnabledFood()) {
             return;
         }
         if (useItemFromDatabase(event.getItem(), event.getPlayer())) {
@@ -78,8 +77,8 @@ public class BoxStick implements Listener {
     }
 
     @EventHandler
-    public void itemBreak(@NotNull PlayerItemBreakEvent event) {
-        if (!CONFIG.isBoxStickEnabledTool()) {
+    public void itemBreak(PlayerItemBreakEvent event) {
+        if (!Config.BoxStick.isEnabledTool()) {
             return;
         }
 
@@ -92,8 +91,8 @@ public class BoxStick implements Listener {
     }
 
     @EventHandler
-    public void potionThrow(@NotNull ProjectileLaunchEvent event) {
-        if (!CONFIG.isBoxStickEnabledPotion()) {
+    public void potionThrow(ProjectileLaunchEvent event) {
+        if (!Config.BoxStick.isEnabledPotion()) {
             return;
         }
 
@@ -122,13 +121,13 @@ public class BoxStick implements Listener {
         }
     }
 
-    private boolean useItemFromDatabase(@NotNull ItemStack item, @NotNull Player player) {
+    private boolean useItemFromDatabase(ItemStack item, Player player) {
 
         if (player.getGameMode() == GameMode.CREATIVE) {
             return false;
         }
 
-        if (CONFIG.getDisabledWorlds().contains(player.getWorld().getName())) {
+        if (Config.getDisabledWorlds().contains(player.getWorld())) {
             return false;
         }
 
@@ -145,7 +144,7 @@ public class BoxStick implements Listener {
         }
 
         String itemName = Items.getName(item, false);
-        if (itemName == null || !CONFIG.getAllItems().contains(itemName)) {
+        if (itemName == null || !Categories.getAllItems().contains(itemName)) {
             return false;
         }
 
@@ -163,9 +162,9 @@ public class BoxStick implements Listener {
             {
                 ItemMeta meta = getItemMeta();
                 meta.setDisplayName(ChatColor.translateAlternateColorCodes('&',
-                        INSTANCE.getConfig().getString("General.BoxStick.DisplayName", "&9Box Stick")));
+                        plugin.getConfig().getString("General.BoxStick.DisplayName", "&9Box Stick")));
 
-                List<String> lore = INSTANCE.getConfig().getStringList("General.BoxStick.Lore");
+                List<String> lore = plugin.getConfig().getStringList("General.BoxStick.Lore");
                 if (lore.isEmpty()) {
                     lore.add("§r");
                     lore.add("§7利き手じゃない手にこれを持つと、利き手の");

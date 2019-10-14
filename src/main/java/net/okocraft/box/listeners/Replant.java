@@ -37,15 +37,13 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import net.okocraft.box.Box;
+import net.okocraft.box.config.Config;
 import net.okocraft.box.database.PlayerData;
-import net.okocraft.box.util.GeneralConfig;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class Replant implements Listener {
     @Nullable
-    private static final Box INSTANCE = Box.getInstance();
-    private static final GeneralConfig CONFIG = INSTANCE.getGeneralConfig();
+    private static final Box plugin = Box.getInstance();
 
     private static final Map<Material, Material> PLANTS = new HashMap<>() {
         private static final long serialVersionUID = 1L;
@@ -90,18 +88,18 @@ public class Replant implements Listener {
     };
 
     public Replant() {
-        Bukkit.getPluginManager().registerEvents(this, INSTANCE);
+        Bukkit.getPluginManager().registerEvents(this, plugin);
     }
 
     @EventHandler(priority = EventPriority.HIGH)
-    public void replantSeed(@NotNull BlockBreakEvent event) {
+    public void replantSeed(BlockBreakEvent event) {
 
         if (event.isCancelled())
             return;
 
         Block brokenBlock = event.getBlock();
 
-        if (!CONFIG.getReplantWorlds().contains(brokenBlock.getWorld())) {
+        if (!Config.getAutoReplantWorlds().contains(brokenBlock.getWorld())) {
             return;
         }
 
@@ -140,18 +138,18 @@ public class Replant implements Listener {
 
                 takeSeed(player, seed);
             }
-        }.runTaskLater(INSTANCE, 3L);
+        }.runTaskLater(plugin, 3L);
     }
 
     @EventHandler(priority = EventPriority.HIGH)
-    public void replantSapling(@NotNull BlockBreakEvent event) {
+    public void replantSapling(BlockBreakEvent event) {
         if (event.isCancelled()) {
             return;
         }
 
         Block treeBlock = event.getBlock();
 
-        if (!CONFIG.getReplantWorlds().contains(treeBlock.getWorld())) {
+        if (!Config.getAutoReplantWorlds().contains(treeBlock.getWorld())) {
             return;
         }
 
@@ -181,11 +179,11 @@ public class Replant implements Listener {
                 blockLoc.getBlock().setType(sapling);
                 blockLoc.getBlock().setBlockData(sapling.createBlockData());
             }
-        }.runTaskLater(INSTANCE, 3L);
+        }.runTaskLater(plugin, 3L);
     }
 
     @EventHandler(priority = EventPriority.HIGH)
-    public void cancelBreakingDirt(@NotNull BlockBreakEvent event) {
+    public void cancelBreakingDirt(BlockBreakEvent event) {
         if (event.isCancelled()) {
             return;
         }
@@ -203,7 +201,7 @@ public class Replant implements Listener {
     }
 
     @EventHandler
-    public void cancelBoneMeal(@NotNull PlayerInteractEvent event) {
+    public void cancelBoneMeal(PlayerInteractEvent event) {
         Block clickedBlock = event.getClickedBlock();
         if (clickedBlock == null) {
             return;
@@ -221,7 +219,7 @@ public class Replant implements Listener {
         event.setCancelled(true);
     }
 
-    private void takeSeed(@NotNull Player player, @NotNull Material seed) {
+    private void takeSeed(Player player, Material seed) {
         if (!PLANTS.containsValue(seed)) {
             return;
         }
@@ -236,7 +234,7 @@ public class Replant implements Listener {
         }
     }
 
-    private boolean hasSeed(@NotNull Player player, @NotNull Material seed) {
+    private boolean hasSeed(Player player, Material seed) {
         if (!PLANTS.containsValue(seed)) {
             return false;
         }
