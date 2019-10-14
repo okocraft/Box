@@ -99,7 +99,8 @@ public class BoxAdmin extends BoxCommand implements CommandExecutor, TabComplete
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (args.length == 0) {
-            return runCommand(sender, args);
+            Messages.sendMessage(sender, "command.general.error.not-enough-arguments");
+            return false;
         }
 
         SubCommands subCommands = SubCommands.get(args[0]);
