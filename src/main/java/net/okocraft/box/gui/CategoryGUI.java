@@ -43,7 +43,6 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import lombok.Getter;
 import net.milkbowl.vault.economy.Economy;
 import net.okocraft.box.Box;
 import net.okocraft.box.config.Config;
@@ -63,7 +62,6 @@ class CategoryGUI implements Listener, InventoryHolder {
 
     private final Player player;
     // private final Category category;
-    @Getter
     private int page;
     private int quantity = 1;
     private Inventory gui;

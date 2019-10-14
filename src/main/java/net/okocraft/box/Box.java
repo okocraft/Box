@@ -18,7 +18,6 @@
 
 package net.okocraft.box;
 
-import lombok.Getter;
 import net.okocraft.box.util.CraftRecipes;
 import net.okocraft.box.worldedit.WorldEditEventListener;
 
@@ -51,7 +50,6 @@ public class Box extends JavaPlugin {
     /**
      * 経済
      */
-    @Getter
     private Economy economy;
 
     @Override
@@ -161,5 +159,12 @@ public class Box extends JavaPlugin {
         }
         economy = rsp.getProvider();
         return true;
+    }
+
+    /**
+     * @return the economy
+     */
+    public Economy getEconomy() {
+        return economy;
     }
 }

@@ -24,7 +24,6 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
-import lombok.Getter;
 import net.okocraft.box.Box;
 import net.okocraft.box.config.Categories;
 import net.okocraft.box.config.Config;
@@ -37,8 +36,6 @@ public class BoxStick implements Listener {
     @Nullable
     private static final Box plugin = Box.getInstance();
     private static final NamespacedKey stickKey = new NamespacedKey(plugin, "boxstick");
-
-    @Getter
     private static ItemStack stick;
 
     static {
@@ -47,6 +44,13 @@ public class BoxStick implements Listener {
 
     public BoxStick() {
         Bukkit.getPluginManager().registerEvents(this, plugin);
+    }
+
+    /**
+     * @return the box stick
+     */
+    public static ItemStack getStick() {
+        return stick;
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
