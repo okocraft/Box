@@ -82,7 +82,7 @@ public class Box extends JavaPlugin {
         Sqlite.disconnect();
 
         unregisterEvents();
-        cancelTasks();
+        Bukkit.getScheduler().cancelTasks(this);
 
         getLogger().info(String.format("Box v%s has been disabled!", getVersion()));
     }
@@ -134,13 +134,6 @@ public class Box extends JavaPlugin {
         if (Bukkit.getPluginManager().isPluginEnabled("WorldEdit")) {
             WorldEditEventListener.unregister();
         }
-    }
-
-    /**
-     * 登録したタスクを終了する。
-     */
-    private void cancelTasks() {
-        Bukkit.getScheduler().cancelTasks(this);
     }
 
     /**
