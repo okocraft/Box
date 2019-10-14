@@ -28,10 +28,6 @@ public final class Config {
     private Config() {
     }
 
-    public static String getConfigVersion() {
-        return get().getString("version", "0.0.0");
-    }
-
     public static class CategorySelectionGui {
         public static String getName() {
             return get().getString("gui.category-selection-gui.title", "カテゴリー選択");
