@@ -115,7 +115,8 @@ public final class Categories {
         }
         List<String> items = get().getStringList(categoryName + ".item");
         String displayName = Config.CategorySelectionGui.getItemNameFormat()
-                .replaceAll("%category-name%", get().getString(categoryName + ".display-name", categoryName));
+                .replaceAll("%category-name%", categoryName)
+                .replaceAll("%display-name%", get().getString(categoryName + ".display-name", categoryName + ".display-name"));
         ItemStack icon = Items.getItemStack(get().getString(categoryName + ".icon").toUpperCase(Locale.ROOT));
         Category result = instance.new Category(categoryName, displayName, icon, items);
         categoryCache.put(categoryName, result);
