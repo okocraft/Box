@@ -166,6 +166,5 @@ public final class CategorySelectorGUI implements Listener, InventoryHolder {
         player.closeInventory();
 
         new CategoryGUI(player, Categories.getCategory(categoryName), 1);
-
     }
 }
