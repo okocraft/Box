@@ -34,7 +34,7 @@ public final class Config {
         }
 
         public static String getItemNameFormat() {
-            return get().getString("gui.category-selection-gui.item-format.display-name", "&6%display-name%");
+            return get().getString("gui.category-selection-gui.item-format.display-name", "&6%display-name% &8| &6%category-name%");
         }
 
         public static List<String> getItemLoreFormat() {
