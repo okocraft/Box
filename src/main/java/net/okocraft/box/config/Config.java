@@ -106,10 +106,20 @@ public final class Config {
             return item.clone();
         }
 
+        public String getDisplayName() {
+            String key = "gui.page-function-items." + toString() + ".display-name";
+            return ChatColor.translateAlternateColorCodes('&', Config.get().getString(key, key));
+        }
+        
+        public List<String> getLore() {
+            String key = "gui.page-function-items." + toString() + ".lore";
+            List<String> lore = Config.get().getStringList(key);
+            lore.replaceAll(loreLine -> ChatColor.translateAlternateColorCodes('&', loreLine));
+            return lore;
+        }
+
         private void init() {
-            String key = "gui.page-function-item-name." + name().replace("_", "-").toLowerCase(Locale.ROOT);
-            String displayName = ChatColor.translateAlternateColorCodes('&', Config.get().getString(key, key));
-            item = createPageFunctionItem(material, displayName);
+            item = createPageFunctionItem(material, getDisplayName(), getLore());
         }
 
         private static void reload() {
@@ -122,22 +132,30 @@ public final class Config {
          * フッターに使うアイテムを作成する。
          *
          * @param material    アイテムの種類。
-         * @param stackAmount アイテムの量。
          * @param displayName 表示名。
+         * @param lore        アイテムの説明文
          * @return メタ情報(パラメタ)を適用したアイテム。
          * @author akaregi
          * @since v1.1.0
          */
-        private static ItemStack createPageFunctionItem(Material material, String displayName) {
+        private static ItemStack createPageFunctionItem(Material material, String displayName, List<String> lore) {
             if (material == null) {
                 return new ItemStack(Material.AIR);
             }
-            ItemStack item = new ItemStack(material);
-            ItemMeta meta = item.getItemMeta();
-            meta.setDisplayName(displayName);
-            meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-            item.setItemMeta(meta);
-            return item;
+            return new ItemStack(material) {
+                {
+                    ItemMeta meta = getItemMeta();
+                    meta.setDisplayName(displayName);
+                    meta.setLore(lore);
+                    meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+                    setItemMeta(meta);
+                }
+            };
+        }
+
+        @Override
+        public String toString() {
+            return name().replace("_", "-").toLowerCase(Locale.ROOT);
         }
     }
 

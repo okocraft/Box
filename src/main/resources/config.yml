@@ -34,28 +34,60 @@ gui:
       - ""
       - "&7在庫: &b%stock% 個"
       - "&7素材:"
-      - "%materials%" # this placeholder inserts multiple line. and other string will be ignored.
+      - "%materials%" # このプレースホルダーは複数行を挿入します。プレースホルダー以外の文字は無視されます。
     materials-placeholder-format: "&7  %material%: %material-stock% / %amount%"
-  page-function-item-name:
-    previous-page: "&6前のページ &8| &6Previous Page"
-    decrease: "&c減らす"
-    change-unit: "&7増減単位を変更 (右クリックで1/2倍、クリックで2倍)"
-    increase: "&b増やす"
-    back-menu: "&6戻る &8| &6Return"
-    transaction: "引き出し・預け入れモードにする"
-    buy-and-sell: "売買モードにする"
-    craft: "クラフト"
-    next-page: "&6次のページ &8| &6Next Page"
+  page-function-items:
+    previous-page:
+      display-name: "&6前のページ &8| &6Previous Page"
+      lore: []
+    decrease:
+      display-name: "&c減らす"
+      lore: []
+    change-unit:
+      display-name: "&7増減単位を変更 (右クリックで1/2倍、クリックで2倍)"
+      lore:
+        - ""
+        - "&7* 右クリックで1/2倍、クリックで2倍 *"
+        - ""
+    increase:
+      display-name: "&b増やす"
+      lore: []
+    back-menu:
+      display-name: "&6戻る &8| &6Return"
+      lore: []
+    transaction:
+      display-name: "&f引き出し・預け入れ"
+      lore:
+        - ""
+        - "&7* クリックで引き出し・預け入れモードにする *"
+        - "&7* Shift + 右クリックで手持ちの全てのアイテムを預ける *"
+        - ""
+    buy-and-sell:
+      display-name: "&f売り買い"
+      lore:
+        - ""
+        - "&7* クリックで売買モードにする *"
+        - "&c* Shift + 右クリックで手持ちの全てのアイテムを売却する *"
+        - ""
+    craft:
+      display-name: "&fクラフト"
+      lore:
+        - ""
+        - "&7* クリックでクラフトモードにする *"
+        - ""
+    next-page:
+      display-name: "&6次のページ &8| &6Next Page"
+      lore: []
 
-sound-settings: # 効果音設定 固定ピッチの音はminとmaxの平均となる。ランダムピッチの場合はminとmaxの間を取り、2以上の場合は2に切り詰められる。
+sound-settings: # 効果音設定 固定ピッチの音はminとmaxの平均となる。ランダムピッチの場合はminとmaxの間をとった後、それが2以上の場合は2に切り詰められる。
   open: # メニューを開く, カテゴリークリック時
     sound: BLOCK_CHEST_OPEN
     pitch: [0.75, 1.25] # [min, max]
     volume: [0.75, 1.25] # [min, max]
   deposit: # 拾う and 預ける
     sound: ENTITY_ITEM_PICKUP
-    pitch: [1.75, 3.0]
-    volume: [1.75, 3.0]
+    pitch: [1.5, 3.0] #2の確率を上げる。
+    volume: [1.5, 3.0]
   withdraw: # 取り出す
     sound: BLOCK_STONE_BUTTON_CLICK_ON
     pitch: [0.75, 1.25]

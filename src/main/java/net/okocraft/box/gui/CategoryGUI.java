@@ -33,6 +33,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -46,6 +47,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import net.milkbowl.vault.economy.Economy;
 import net.okocraft.box.Box;
 import net.okocraft.box.config.Config;
+import net.okocraft.box.config.Messages;
 import net.okocraft.box.config.Prices;
 import net.okocraft.box.config.Categories.Category;
 import net.okocraft.box.config.Config.PageFunctionItems;
@@ -341,6 +343,49 @@ class CategoryGUI implements Listener, InventoryHolder {
         return add;
     }
 
+    private void storeAll() {
+        boolean isModified = false;
+        ItemStack[] contents = player.getInventory().getContents();
+        for (int i = 0; i < contents.length; i++) {
+            ItemStack item = contents[i];
+            if (item == null || Items.getName(item, false) == null) {
+                continue;
+            }
+            long stock = PlayerData.getItemAmount(player, item);
+            int amount = item.getAmount();
+            amount -= player.getInventory().removeItem(item).values().stream().map(ItemStack::getAmount).mapToInt(Integer::valueOf).sum();
+            PlayerData.setItemAmount(player, item, stock + amount);
+            isModified = true;
+        }
+        if (isModified) {
+            PlayerUtil.playSound(player, Config.Sounds.DEPOSIT);
+            updateLores();
+        }
+    }
+
+    private double sellAll() {
+        double sum = 0D;
+        ItemStack[] contents = player.getInventory().getContents();
+        for (int i = 0; i < contents.length; i++) {
+            ItemStack item = contents[i];
+            if (item == null || Items.getName(item, false) == null) {
+                continue;
+            }
+            int amount = item.getAmount();
+            amount -= player.getInventory().removeItem(item).values().stream().map(ItemStack::getAmount).mapToInt(Integer::valueOf).sum();
+            double price = Prices.getSellPrice(item) * amount;
+            sum += price;
+        }
+        if (sum > 0) {
+            plugin.getEconomy().depositPlayer(player, sum);
+            PlayerUtil.playSound(player, Config.Sounds.SELL);
+            if (operation == Operations.BUY_AND_SALL) {
+                updateLores();
+            }
+        }
+        return sum;
+    }
+
     private void select(Operations operation) {
         if (operation == null || this.operation == operation) {
             return;
@@ -371,11 +416,11 @@ class CategoryGUI implements Listener, InventoryHolder {
         }
         itemLore.replaceAll(loreLine -> replacePlaceholders(loreLine, item));
         if (operation == Operations.CRAFT) {
-            List<String> ingredientsLore = CraftRecipes.getIngredient(item)
-                    .entrySet().stream().map(entry -> Config.CraftGui.getItemRecipeLineFormat()
-                            .replaceAll("%material%", entry.getKey())
+            List<String> ingredientsLore = CraftRecipes.getIngredient(item).entrySet().stream()
+                    .map(entry -> Config.CraftGui.getItemRecipeLineFormat().replaceAll("%material%", entry.getKey())
                             .replaceAll("%material-stock%",
-                                    String.valueOf(PlayerData.getItemAmount(player, Items.getItemStack(entry.getKey()))))
+                                    String.valueOf(
+                                            PlayerData.getItemAmount(player, Items.getItemStack(entry.getKey()))))
                             .replaceAll("%amount%", String.valueOf(entry.getValue() * quantity))
                             .replaceAll("&([a-f0-9])", "§$1"))
                     .collect(Collectors.toList());
@@ -495,12 +540,24 @@ class CategoryGUI implements Listener, InventoryHolder {
         }
 
         if (clickedSlot == 50) {
-            select(Operations.TRANSACTION);
+            if (event.getClick() == ClickType.SHIFT_RIGHT) {
+                Messages.sendMessage(player, "gui.store-all");
+                storeAll();
+            } else if (event.isLeftClick()) {
+                select(Operations.TRANSACTION);
+            }
             return;
         } else if (clickedSlot == 51) {
-            select(Operations.BUY_AND_SALL);
+            if (event.getClick() == ClickType.SHIFT_RIGHT) {
+                double money = sellAll();
+                if (money > 0) {
+                    Messages.sendMessage(player, "gui.sell-all", Map.of("%money%", money));
+                }
+            } else if (event.isLeftClick()) {
+                select(Operations.BUY_AND_SALL);
+            }
             return;
-        } else if (clickedSlot == 52) {
+        } else if (clickedSlot == 52 && event.isLeftClick()) {
             select(Operations.CRAFT);
             return;
         }
