@@ -31,11 +31,11 @@ public final class Messages {
      */
     public static void sendMessage(CommandSender sender, boolean addPrefix, String path, Map<String, Object> placeholders) {
         String prefix = addPrefix ? get().getString("command.general.info.plugin-prefix", "&8[&6Box&8]&r") + " " : "";
-        String message = ChatColor.translateAlternateColorCodes('&', prefix + getMessage(path));
+        String message = prefix + getMessage(path);
         for (Map.Entry<String, Object> placeholder : placeholders.entrySet()) {
             message = message.replace(placeholder.getKey(), placeholder.getValue().toString());
         }
-        sender.sendMessage(message);
+        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
         return;
     }
 
@@ -80,6 +80,12 @@ public final class Messages {
         sendMessage(sender, addPrefix, path, Map.of());
     }
 
+    /**
+     * Gets message from key. Returned messages will not translated its color code.
+     * 
+     * @param path
+     * @return
+     */
     public static String getMessage(String path) {
         return get().getString(path, path);
     }
