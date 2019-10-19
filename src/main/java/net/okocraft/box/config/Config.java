@@ -12,75 +12,113 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import net.okocraft.box.Box;
+public final class Config extends CustomConfig {
 
-public final class Config {
+    private static final Config CONFIG = new Config("config.yml");
+    private static final CategorySelectorGuiConfig CATEGORY_SELECTION_GUI_CONFIG = CONFIG.new CategorySelectorGuiConfig();
+    private static final TransactionGui TRANSACTION_GUI_CONFIG = CONFIG.new TransactionGui();
+    private static final BuyAndSellGui BUY_AND_SELL_GUI_CONFIG = CONFIG.new BuyAndSellGui();
+    private static final CraftGui CRAFT_GUI_CONFIG = CONFIG.new CraftGui();
+    private static final BoxStick BOX_STICK_CONFIG = CONFIG.new BoxStick();
 
-    private static Box plugin = Box.getInstance();
-    private static FileConfiguration config = plugin.getConfig();
-
-    private Config() {
+    private Config(String name) {
+        super(name);
     }
 
-    public static class CategorySelectionGui {
-        public static String getName() {
+    public static Config getConfig() {
+        return CONFIG;
+    }
+
+    public static CategorySelectorGuiConfig getCategorySelectionConfig() {
+        return CATEGORY_SELECTION_GUI_CONFIG;
+    }
+
+    public static TransactionGui getTransactionGuiConfig() {
+        return TRANSACTION_GUI_CONFIG;
+    }
+
+    public static BuyAndSellGui getBuyAndSellGuiConfig() {
+        return BUY_AND_SELL_GUI_CONFIG;
+    }
+
+    public static CraftGui getCraftGuiConfig() {
+        return CRAFT_GUI_CONFIG;
+    }
+
+    public static BoxStick getBoxStickConfig() {
+        return BOX_STICK_CONFIG;
+    }
+
+    public class CategorySelectorGuiConfig {
+
+        private CategorySelectorGuiConfig() {
+        }
+
+        public String getName() {
             return get().getString("gui.category-selection-gui.title", "カテゴリー選択");
         }
 
-        public static String getItemNameFormat() {
+        public String getItemNameFormat() {
             return get().getString("gui.category-selection-gui.item-format.display-name", "&6%display-name% &8| &6%category-name%");
         }
 
-        public static List<String> getItemLoreFormat() {
+        public List<String> getItemLoreFormat() {
             return get().getStringList("gui.category-selection-gui.item-format.lore");
         }
     }
 
-    public static String getCategoryGuiTitle() {
+    public String getCategoryGuiTitle() {
         return get().getString("gui.category-gui-title", "%category-name%");
     }
 
-    public static class TransactionGui {
-        public static String getItemNameFormat() {
+    public class TransactionGui {
+
+        private TransactionGui() {
+        }
+
+        public String getItemNameFormat() {
             return get().getString("gui.transaction-item-format.display-name", "&6%item-name% &8| &6%category-name%");
         }
 
-        public static List<String> getItemLoreFormat() {
+        public List<String> getItemLoreFormat() {
             return get().getStringList("gui.transaction-item-format.lore");
         }
     }
 
-    public static class BuyAndSellGui {
-        public static String getItemNameFormat() {
+    public class BuyAndSellGui {
+
+        private BuyAndSellGui() {
+        }
+
+        public String getItemNameFormat() {
             return get().getString("gui.buy-and-sell-item-format.display-name", "&6%item-name% &8| &6%category-name%");
         }
 
-        public static List<String> getItemLoreFormat() {
+        public List<String> getItemLoreFormat() {
             return get().getStringList("gui.buy-and-sell-item-format.lore");
         }
     }
 
-    public static class CraftGui {
-        public static String getItemNameFormat() {
+    public class CraftGui {
+        public String getItemNameFormat() {
             return get().getString("gui.craft-item-format.display-name", "&6%item-name% &8| &6%category-name%");
         }
 
-        public static List<String> getItemLoreFormat() {
+        public List<String> getItemLoreFormat() {
             return get().getStringList("gui.craft-item-format.lore");
         }
 
-        public static String getItemRecipeLineFormat() {
+        public String getItemRecipeLineFormat() {
             return get().getString("gui.craft-item-format.materials-placeholder-format", "  %material%: %amount%");
         }
     }
 
-    public static enum PageFunctionItems {
+    public enum PageFunctionItems {
         PREVIOUS_PAGE(Material.ARROW),
         DECREASE(Material.RED_STAINED_GLASS_PANE),
         CHANGE_UNIT(Material.PURPLE_STAINED_GLASS_PANE),
@@ -99,7 +137,7 @@ public final class Config {
             init();
         }
 
-        public ItemStack get() {
+        public ItemStack getItem() {
             if (item == null) {
                 init();
             }
@@ -108,12 +146,12 @@ public final class Config {
 
         public String getDisplayName() {
             String key = "gui.page-function-items." + toString() + ".display-name";
-            return ChatColor.translateAlternateColorCodes('&', Config.get().getString(key, key));
+            return ChatColor.translateAlternateColorCodes('&', getConfig().get().getString(key, key));
         }
         
         public List<String> getLore() {
             String key = "gui.page-function-items." + toString() + ".lore";
-            List<String> lore = Config.get().getStringList(key);
+            List<String> lore = getConfig().get().getStringList(key);
             lore.replaceAll(loreLine -> ChatColor.translateAlternateColorCodes('&', loreLine));
             return lore;
         }
@@ -138,7 +176,7 @@ public final class Config {
          * @author akaregi
          * @since v1.1.0
          */
-        private static ItemStack createPageFunctionItem(Material material, String displayName, List<String> lore) {
+        private ItemStack createPageFunctionItem(Material material, String displayName, List<String> lore) {
             if (material == null) {
                 return new ItemStack(Material.AIR);
             }
@@ -159,7 +197,7 @@ public final class Config {
         }
     }
 
-    public static enum Sounds {
+    public enum Sounds {
         OPEN(Sound.BLOCK_CHEST_OPEN),
         DEPOSIT(Sound.ENTITY_ITEM_PICKUP),
         WITHDRAW(Sound.BLOCK_STONE_BUTTON_CLICK_ON),
@@ -179,7 +217,7 @@ public final class Config {
         
         public Sound getSound() {
             try {
-                return Sound.valueOf(get().getString("sound-settings." + toString() + ".sound", ""));
+                return Sound.valueOf(getConfig().get().getString("sound-settings." + toString() + ".sound", ""));
             } catch (IllegalArgumentException e) {
                 return defaultSound;
             }
@@ -215,7 +253,7 @@ public final class Config {
          * @return property for the sound.
          */
         private float getSoundProperty(boolean isPitch, boolean isMax) {
-            List<Double> property = get().getDoubleList("sound-settings." + toString() + (isPitch ? ".pitch" : ".volume"));
+            List<Double> property = getConfig().get().getDoubleList("sound-settings." + toString() + (isPitch ? ".pitch" : ".volume"));
             if (property.size() != 2) {
                 return isMax ? 1.25F : 0.75F;
             }
@@ -223,7 +261,7 @@ public final class Config {
             return Math.max(Math.min((float) property.get(isMax ? 1 : 0).doubleValue(), 2.0F), 0F);
         }
         
-        private static final Random random = new Random();
+        private final Random random = new Random();
         private float getSoundPropertyValueRandomly(boolean isPitch) {            
             float max = isPitch ? getMaxPitch() : getMaxVolume();
             float min = isPitch ? getMinPitch() : getMinVolume();
@@ -236,39 +274,43 @@ public final class Config {
         }
     }
 
-    public static int getMaxQuantity() {
+    public int getMaxQuantity() {
         return get().getInt("gui.max-quantity", 640);
     }
 
-    public static boolean isAutoStoreEnabled() {
+    public boolean isAutoStoreEnabled() {
         return get().getBoolean("auto-store.enabled", true);
     }
 
-    public static boolean getDefaultAutoStoreValue() {
+    public boolean getDefaultAutoStoreValue() {
         return get().getBoolean("auto-store.default", false);
     }
 
-    public static class BoxStick {
-        public static boolean isEnabledBlockPlace() {
-            return Config.get().getBoolean("box-stick.enabled.block-place", true);
+    public class BoxStick {
+
+        private BoxStick() {
         }
 
-        public static boolean isEnabledFood() {
-            return Config.get().getBoolean("box-stick.enabled.food", true);
+        public boolean isEnabledBlockPlace() {
+            return get().getBoolean("box-stick.enabled.block-place", true);
         }
 
-        public static boolean isEnabledPotion() {
-            return Config.get().getBoolean("box-stick.enabled.potion", true);
+        public boolean isEnabledFood() {
+            return get().getBoolean("box-stick.enabled.food", true);
         }
 
-        public static boolean isEnabledTool() {
-            return Config.get().getBoolean("box-stick.enabled.tool", true);
+        public boolean isEnabledPotion() {
+            return get().getBoolean("box-stick.enabled.potion", true);
         }
 
-        public static ItemStack get() {
+        public boolean isEnabledTool() {
+            return get().getBoolean("box-stick.enabled.tool", true);
+        }
+
+        public ItemStack getStick() {
             String displayName = ChatColor.translateAlternateColorCodes('&',
-                    Config.get().getString("box-stick.item.display-name", "&9Box Stick"));
-            List<String> lore = Config.get().getStringList("box-stick.item.lore");
+                    get().getString("box-stick.item.display-name", "&9Box Stick"));
+            List<String> lore = get().getStringList("box-stick.item.lore");
             ItemStack item = new ItemStack(Material.STICK);
             ItemMeta meta = item.getItemMeta();
             meta.setDisplayName(displayName);
@@ -278,11 +320,11 @@ public final class Config {
         }
     }
 
-    public static List<World> getDisabledWorlds() {
+    public List<World> getDisabledWorlds() {
         return get().getStringList("disabled-worlds").stream().map(Bukkit::getWorld).filter(Objects::nonNull).collect(Collectors.toList());
     }
 
-    public static List<World> getAutoReplantWorlds() {
+    public List<World> getAutoReplantWorlds() {
         return get().getStringList("auto-replant-worlds").stream().map(Bukkit::getWorld).filter(Objects::nonNull).collect(Collectors.toList());
     }
 
@@ -290,38 +332,17 @@ public final class Config {
      * Reload config. If this method used before {@code JailConfig.save()}, the data
      * on memory will be lost.
      */
-    public static void reload() {
+    @Override
+    public void reload() {
         Bukkit.getOnlinePlayers().forEach(Player::closeInventory);
-        saveDefault();
-        plugin.reloadConfig();
-        config = plugin.getConfig();
         PageFunctionItems.reload();
+        super.reload();
     }
 
-    /**
-     * Saves data on memory to yaml.
-     */
-    public static void save() {
-        plugin.saveConfig();
-    }
-
-    /**
-     * Copies yaml from jar to data folder.
-     */
-    public static void saveDefault() {
-        plugin.saveDefaultConfig();
-    }
-
-    static FileConfiguration get() {
-        if (config == null) {
-            reload();
-        }
-        return config;
-    }
-
-    public static void reloadAllConfigs() {
+    public void reloadAllConfigs() {
         reload();
-        Messages.reload();
-        Prices.reload();
+        Categories.getInstance().reload();
+        Messages.getInstance().reload();
+        Prices.getInstance().reload();
     }
 }

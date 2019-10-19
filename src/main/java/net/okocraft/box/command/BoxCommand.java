@@ -29,6 +29,7 @@ import net.okocraft.box.config.Messages;
 public abstract class BoxCommand {
 
     protected static final Box plugin = Box.getInstance();
+    protected static final Messages MESSAGES = Messages.getInstance();
 
     /**
      * コンストラクタ
@@ -92,7 +93,7 @@ public abstract class BoxCommand {
      * @return コマンドの説明
      */
     public String getDescription() {
-        return Messages.getMessage("command." + getName() + ".desctiption");
+        return MESSAGES.getMessage("command." + getName() + ".desctiption");
     }
 
     /**

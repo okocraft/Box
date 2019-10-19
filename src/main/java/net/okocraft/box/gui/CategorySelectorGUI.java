@@ -64,14 +64,14 @@ public final class CategorySelectorGUI implements Listener, InventoryHolder {
     }
 
     public static Inventory initGUI() {
-        GUI = Bukkit.createInventory(categorySelector, 54, Config.CategorySelectionGui.getName());
-        ItemStack flame = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
+        GUI = Bukkit.createInventory(categorySelector, 54, Config.getCategorySelectionConfig().getName());
+        ItemStack flame = new ItemStack(Material.BLACK_STAINED_GLASS_PANE); 
         ItemMeta flameMeta = flame.getItemMeta();
         flameMeta.setDisplayName("§r");
         flame.setItemMeta(flameMeta);
         flameSlots.forEach(slot -> GUI.setItem(slot, flame));
 
-        List<ItemStack> itemList = Categories.getAllCategories().stream().map(Category::getIcon)
+        List<ItemStack> itemList = Categories.getInstance().getAllCategories().stream().map(Category::getIcon)
                 .collect(Collectors.toList());
         GUI.addItem(itemList.toArray(new ItemStack[itemList.size()]));
         return GUI;
@@ -111,9 +111,9 @@ public final class CategorySelectorGUI implements Listener, InventoryHolder {
         if (event.getView().getTopInventory().getHolder() != this) {
             return;
         }
-        if (Config.getDisabledWorlds().contains(event.getPlayer().getWorld())) {
+        if (Config.getConfig().getDisabledWorlds().contains(event.getPlayer().getWorld())) {
             event.setCancelled(true);
-            Messages.sendMessage(event.getPlayer(), "command.general.error.in-disabled-world");
+            Messages.getInstance().sendMessage(event.getPlayer(), "command.general.error.in-disabled-world");
         }
     }
 
@@ -136,8 +136,8 @@ public final class CategorySelectorGUI implements Listener, InventoryHolder {
         InventoryAction action = event.getAction();
         event.setCancelled(true);
 
-        if (Config.getDisabledWorlds().contains(event.getWhoClicked().getWorld())) {
-            Messages.sendMessage(player, "command.general.error.in-disabled-world");
+        if (Config.getConfig().getDisabledWorlds().contains(event.getWhoClicked().getWorld())) {
+            Messages.getInstance().sendMessage(player, "command.general.error.in-disabled-world");
             return;
         }
 
@@ -165,6 +165,6 @@ public final class CategorySelectorGUI implements Listener, InventoryHolder {
 
         player.closeInventory();
 
-        new CategoryGUI(player, Categories.getCategory(categoryName), 1);
+        new CategoryGUI(player, Categories.getInstance().getCategory(categoryName), 1);
     }
 }

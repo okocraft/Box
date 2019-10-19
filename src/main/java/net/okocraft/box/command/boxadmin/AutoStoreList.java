@@ -29,7 +29,6 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.util.StringUtil;
 
-import net.okocraft.box.config.Messages;
 import net.okocraft.box.database.PlayerData;
 import net.okocraft.box.util.OtherUtil;
 import net.okocraft.box.util.PlayerUtil;
@@ -43,7 +42,7 @@ class AutoStoreList extends BoxAdminSubCommand {
     public boolean runCommand(CommandSender sender, String[] args) {
         String playerName = args[1].toLowerCase(Locale.ROOT);
         if (!PlayerData.exist(playerName)) {
-            Messages.sendMessage(sender, "command.general.error.player-not-found");
+            MESSAGES.sendMessage(sender, "command.general.error.player-not-found");
             return false;
         }
         OfflinePlayer player = PlayerUtil.getOfflinePlayer(playerName);
@@ -53,7 +52,7 @@ class AutoStoreList extends BoxAdminSubCommand {
         int page = Math.max(maxPage, (args.length >= 3 ? OtherUtil.parseIntOrDefault(args[2], 1) : 1));
         int currentLine = Math.min(maxLine, page * 9);
 
-        Messages.sendMessage(sender, "command.box.auto-store-list.info.header", Map.of(
+        MESSAGES.sendMessage(sender, "command.box.auto-store-list.info.header", Map.of(
                 "%player%", player.getName(),
                 "%page%", String.valueOf(page),
                 "%current-line%", String.valueOf(currentLine),
@@ -61,7 +60,7 @@ class AutoStoreList extends BoxAdminSubCommand {
         );
         PlayerData.getAutoStoreAll((OfflinePlayer) sender).entrySet().stream().skip((page - 1) * 9).limit(9)
                 .forEach(entry ->
-                        Messages.sendMessage(sender, false, "command.box.auto-store-list.info.format", Map.of(
+                        MESSAGES.sendMessage(sender, false, "command.box.auto-store-list.info.format", Map.of(
                                 "%item%", entry.getKey(),
                                 "%is-enabled%", entry.getValue().toString()
                         )));

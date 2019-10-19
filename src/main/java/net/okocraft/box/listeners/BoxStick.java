@@ -55,7 +55,7 @@ public class BoxStick implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void blockPlace(BlockPlaceEvent event) {
-        if (!Config.BoxStick.isEnabledBlockPlace()) {
+        if (!Config.getBoxStickConfig().isEnabledBlockPlace()) {
             return;
         }
         Player player = event.getPlayer();
@@ -71,7 +71,7 @@ public class BoxStick implements Listener {
 
     @EventHandler
     public void itemConsume(PlayerItemConsumeEvent event) {
-        if (!Config.BoxStick.isEnabledFood()) {
+        if (!Config.getBoxStickConfig().isEnabledFood()) {
             return;
         }
         if (useItemFromDatabase(event.getItem(), event.getPlayer())) {
@@ -82,7 +82,7 @@ public class BoxStick implements Listener {
 
     @EventHandler
     public void itemBreak(PlayerItemBreakEvent event) {
-        if (!Config.BoxStick.isEnabledTool()) {
+        if (!Config.getBoxStickConfig().isEnabledTool()) {
             return;
         }
 
@@ -96,7 +96,7 @@ public class BoxStick implements Listener {
 
     @EventHandler
     public void potionThrow(ProjectileLaunchEvent event) {
-        if (!Config.BoxStick.isEnabledPotion()) {
+        if (!Config.getBoxStickConfig().isEnabledPotion()) {
             return;
         }
 
@@ -131,7 +131,7 @@ public class BoxStick implements Listener {
             return false;
         }
 
-        if (Config.getDisabledWorlds().contains(player.getWorld())) {
+        if (Config.getConfig().getDisabledWorlds().contains(player.getWorld())) {
             return false;
         }
 
@@ -148,7 +148,7 @@ public class BoxStick implements Listener {
         }
 
         String itemName = Items.getName(item, false);
-        if (itemName == null || !Categories.getAllItems().contains(itemName)) {
+        if (itemName == null || !Categories.getInstance().getAllItems().contains(itemName)) {
             return false;
         }
 

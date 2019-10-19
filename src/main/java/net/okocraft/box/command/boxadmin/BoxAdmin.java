@@ -33,7 +33,6 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.util.StringUtil;
 
 import net.okocraft.box.command.BoxCommand;
-import net.okocraft.box.config.Messages;
 
 public class BoxAdmin extends BoxCommand implements CommandExecutor, TabCompleter {
 
@@ -99,13 +98,13 @@ public class BoxAdmin extends BoxCommand implements CommandExecutor, TabComplete
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (args.length == 0) {
-            Messages.sendMessage(sender, "command.general.error.not-enough-arguments");
+            MESSAGES.sendMessage(sender, "command.general.error.not-enough-arguments");
             return false;
         }
 
         SubCommands subCommands = SubCommands.get(args[0]);
         if (subCommands == null) {
-            Messages.sendMessage(sender, "command.general.error.invalid-argument",
+            MESSAGES.sendMessage(sender, "command.general.error.invalid-argument",
                     Map.of("%argument%", args[0]));
             return false;
         }
@@ -113,12 +112,12 @@ public class BoxAdmin extends BoxCommand implements CommandExecutor, TabComplete
         BoxAdminSubCommand subCommand = subCommands.getSubCommand();
 
         if (!subCommand.hasPermission(sender)) {
-            Messages.sendMessage(sender, "command.general.error.no-permission", Map.of("%permission%", subCommand.getPermissionNode()));
+            MESSAGES.sendMessage(sender, "command.general.error.no-permission", Map.of("%permission%", subCommand.getPermissionNode()));
             return false;
         }
 
         if (subCommand.getLeastArgLength() > args.length) {
-            Messages.sendMessage(sender, "command.general.error.not-enough-arguments");
+            MESSAGES.sendMessage(sender, "command.general.error.not-enough-arguments");
             return false;
         }
 

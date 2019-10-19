@@ -54,7 +54,7 @@ public class Box extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        Config.reloadAllConfigs();
+        Config.getConfig().reloadAllConfigs();
 
         if (!setupEconomy()) {
             getLogger().severe("Box failed to setup economy.");

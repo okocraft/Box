@@ -20,7 +20,6 @@ package net.okocraft.box.command.boxadmin;
 
 import net.okocraft.box.command.BoxCommand;
 import net.okocraft.box.command.boxadmin.BoxAdmin.SubCommands;
-import net.okocraft.box.config.Messages;
 
 
 public abstract class BoxAdminSubCommand extends BoxCommand {
@@ -32,6 +31,6 @@ public abstract class BoxAdminSubCommand extends BoxCommand {
     
     @Override
     public String getDescription() {
-        return Messages.getMessage("command.box-admin." + SubCommands.get(this).toString() + ".description");
+        return MESSAGES.getMessage("command.box-admin." + SubCommands.get(this).toString() + ".description");
     }
 }

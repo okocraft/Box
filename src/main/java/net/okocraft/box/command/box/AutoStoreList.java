@@ -30,7 +30,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 
 import net.okocraft.box.config.Categories;
-import net.okocraft.box.config.Messages;
 import net.okocraft.box.database.PlayerData;
 import net.okocraft.box.util.OtherUtil;
 
@@ -42,16 +41,16 @@ class AutoStoreList extends BoxSubCommand {
     @Override
     public boolean runCommand(CommandSender sender, String[] args) {
         if (!(sender instanceof Player)) {
-            Messages.sendMessage(sender, "command.general.error.player-only");
+            MESSAGES.sendMessage(sender, "command.general.error.player-only");
             return false;
         }
 
-        int maxLine = Categories.getAllItems().size();
+        int maxLine = Categories.getInstance().getAllItems().size();
         int maxPage = maxLine % 9 == 0 ? maxLine / 9 : maxLine / 9 + 1;
         int page = Math.min(maxPage, (args.length >= 2 ? OtherUtil.parseIntOrDefault(args[1], 1) : 1));
         int currentLine = Math.min(maxLine, page * 9);
 
-        Messages.sendMessage(sender, "command.box.auto-store-list.info.header", Map.of(
+        MESSAGES.sendMessage(sender, "command.box.auto-store-list.info.header", Map.of(
                 "%player%", sender.getName(),
                 "%page%", String.valueOf(page),
                 "%current-line%", String.valueOf(currentLine),
@@ -59,7 +58,7 @@ class AutoStoreList extends BoxSubCommand {
         );
         PlayerData.getAutoStoreAll((OfflinePlayer) sender).entrySet().stream().skip((page - 1) * 9).limit(9)
                 .forEach(entry ->
-                        Messages.sendMessage(sender, false, "command.box.auto-store-list.info.format", Map.of(
+                        MESSAGES.sendMessage(sender, false, "command.box.auto-store-list.info.format", Map.of(
                                 "%item%", entry.getKey(),
                                 "%is-enabled%", entry.getValue().toString()
                         )));
@@ -68,7 +67,7 @@ class AutoStoreList extends BoxSubCommand {
 
     @Override
     public List<String> runTabComplete(CommandSender sender, String[] args) {
-        int items = Categories.getAllItems().size();
+        int items = Categories.getInstance().getAllItems().size();
         int maxPage = items % 9 == 0 ? items / 9 : items / 9 + 1;
         List<String> pages = IntStream.rangeClosed(1, maxPage).boxed().map(String::valueOf)
                 .collect(Collectors.toList());

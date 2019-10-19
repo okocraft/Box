@@ -18,7 +18,7 @@ import net.okocraft.box.Box;
  *
  * @author LazyGon
  */
-public class CustomConfig {
+public abstract class CustomConfig {
 
     private static final Box plugin = Box.getInstance();
     private final File file;
@@ -28,7 +28,7 @@ public class CustomConfig {
     CustomConfig(String name) {
         this.name = name;
         this.file = new File(plugin.getDataFolder(), this.name);
-        initConfig();
+        reload();
         if (file.isDirectory()) {
             throw new IllegalArgumentException("file must not be directory");
         }
@@ -40,7 +40,7 @@ public class CustomConfig {
         }
         this.file = file;
         this.name = file.getName();
-        initConfig();
+        reload();
     }
 
     /**
@@ -49,9 +49,9 @@ public class CustomConfig {
      * @return FileConfiguration
      * @author LazyGon
      */
-    FileConfiguration getConfig() {
+    protected FileConfiguration get() {
         if (config == null) {
-            initConfig();
+            reload();
         }
 
         return config;
@@ -62,8 +62,8 @@ public class CustomConfig {
      *
      * @author LazyGon
      */
-    void initConfig() {
-        saveDefaultConfig();
+    protected void reload() {
+        saveDefault();
         config = YamlConfiguration.loadConfiguration(file);
         Optional<InputStream> inputStream = Optional.ofNullable(plugin.getResource(name));
         inputStream.ifPresent(stream -> config.setDefaults(YamlConfiguration.loadConfiguration(
@@ -76,7 +76,7 @@ public class CustomConfig {
      *
      * @author LazyGon
      */
-    void saveDefaultConfig() {
+    protected void saveDefault() {
         if (!file.exists()) {
             plugin.saveResource(name, false);
         }
@@ -87,11 +87,11 @@ public class CustomConfig {
      *
      * @author LazyGon
      */
-    public void saveConfig() {
+    protected void save() {
         if (config == null)
             return;
         try {
-            getConfig().save(file);
+            get().save(file);
         } catch (IOException e) {
             plugin.getLogger().log(Level.SEVERE, "Could not save config to " + file, e);
         }

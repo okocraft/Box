@@ -29,7 +29,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.util.StringUtil;
 
 import net.okocraft.box.command.boxadmin.BoxAdmin.SubCommands;
-import net.okocraft.box.config.Messages;
 import net.okocraft.box.util.OtherUtil;
 
 class Help extends BoxAdminSubCommand {
@@ -44,9 +43,9 @@ class Help extends BoxAdminSubCommand {
         int maxPage = subCommandsSize % 9 == 0 ? subCommandsSize / 9 : subCommandsSize / 9 + 1;
         page = Math.min(page, maxPage);
 
-        Messages.sendMessage(sender, "command.box-admin.help.info.header");
+        MESSAGES.sendMessage(sender, "command.box-admin.help.info.header");
         Arrays.stream(SubCommands.values()).skip(9 * (page - 1)).limit(9).map(SubCommands::getSubCommand).forEach(subCommand -> 
-                Messages.sendMessage(sender, false, "command.box.help.info.format", Map.of("%command%", subCommand.getName(), "%description%", subCommand.getDescription())));
+                MESSAGES.sendMessage(sender, false, "command.box.help.info.format", Map.of("%command%", subCommand.getName(), "%description%", subCommand.getDescription())));
         return true;
     }
 

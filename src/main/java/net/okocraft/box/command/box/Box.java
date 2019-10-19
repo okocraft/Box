@@ -34,7 +34,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 
 import net.okocraft.box.command.BoxCommand;
-import net.okocraft.box.config.Messages;
 import net.okocraft.box.gui.CategorySelectorGUI;
 
 public class Box extends BoxCommand implements CommandExecutor, TabCompleter {
@@ -100,7 +99,7 @@ public class Box extends BoxCommand implements CommandExecutor, TabCompleter {
 
         SubCommands subCommands = SubCommands.get(args[0]);
         if (subCommands == null) {
-            Messages.sendMessage(sender, "command.general.error.invalid-argument",
+            MESSAGES.sendMessage(sender, "command.general.error.invalid-argument",
                     Map.of("%argument%", args[0]));
             return false;
         }
@@ -108,12 +107,12 @@ public class Box extends BoxCommand implements CommandExecutor, TabCompleter {
         BoxSubCommand subCommand = subCommands.getSubCommand();
 
         if (!subCommand.hasPermission(sender)) {
-            Messages.sendMessage(sender, "command.general.error.no-permission", Map.of("%permission%", subCommand.getPermissionNode()));
+            MESSAGES.sendMessage(sender, "command.general.error.no-permission", Map.of("%permission%", subCommand.getPermissionNode()));
             return false;
         }
 
         if (subCommand.getLeastArgLength() > args.length) {
-            Messages.sendMessage(sender, "command.general.error.not-enough-arguments");
+            MESSAGES.sendMessage(sender, "command.general.error.not-enough-arguments");
             return false;
         }
 
@@ -140,7 +139,7 @@ public class Box extends BoxCommand implements CommandExecutor, TabCompleter {
     @Override
     public boolean runCommand(CommandSender sender, String[] args) {
         if (!(sender instanceof Player)) {
-            Messages.sendMessage(sender, "command.general.error.player-only");
+            MESSAGES.sendMessage(sender, "command.general.error.player-only");
             return false;
         }
         ((Player) sender).openInventory(CategorySelectorGUI.GUI);

@@ -23,7 +23,6 @@ import java.util.List;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import net.okocraft.box.config.Messages;
 import net.okocraft.box.listeners.BoxStick;
 
 class Stick extends BoxSubCommand {
@@ -31,7 +30,7 @@ class Stick extends BoxSubCommand {
     @Override
     public boolean runCommand(CommandSender sender, String[] args) {
         if (!(sender instanceof Player)) {
-            Messages.sendMessage(sender, "command.general.error.player-only");
+            MESSAGES.sendMessage(sender, "command.general.error.player-only");
             return false;
         }
 

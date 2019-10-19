@@ -28,7 +28,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 
-import net.okocraft.box.config.Messages;
 import net.okocraft.box.listeners.GenerateCategory;
 
 class AddCategory extends BoxAdminSubCommand {
@@ -39,11 +38,11 @@ class AddCategory extends BoxAdminSubCommand {
     @Override
     public boolean runCommand(CommandSender sender, String[] args) {
         if (!(sender instanceof Player)) {
-            Messages.sendMessage(sender, "command.general.error.player-only");
+            MESSAGES.sendMessage(sender, "command.general.error.player-only");
             return false;
         }
 
-        Messages.sendMessage(sender, "command.box-admin.add-category.info.choose-chest");
+        MESSAGES.sendMessage(sender, "command.box-admin.add-category.info.choose-chest");
         new GenerateCategory((Player) sender, args[1], args[2], args[3]);
         return true;
     }

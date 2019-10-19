@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
@@ -19,18 +18,13 @@ import org.bukkit.persistence.PersistentDataType;
 import net.okocraft.box.Box;
 import net.okocraft.box.database.Items;
 
-public final class Categories {
-    
-    private static Box plugin = Box.getInstance();
-    private static final Categories instance = new Categories();
-    private static final NamespacedKey CATEGORY_NAME_KEY = new NamespacedKey(plugin, "categoryname");
-    
-    private static CustomConfig categories = new CustomConfig("categories.yml");
-    static {
-        saveDefault();
-    }
+public final class Categories extends CustomConfig {
 
-    private static Map<String, Category> categoryCache = new HashMap<>();
+    private static Box plugin = Box.getInstance();
+    private static final NamespacedKey CATEGORY_NAME_KEY = new NamespacedKey(plugin, "categoryname");
+    private static final Categories INSTANCE = new Categories("categories.yml");
+
+    private Map<String, Category> categoryCache = new HashMap<>();
 
     public class Category {
 
@@ -71,28 +65,30 @@ public final class Categories {
         }
     }
 
-    /**
-     * Cannot use constructor
-     */
-    private Categories() {
+    private Categories(String name) {
+        super(name);
     }
 
-    public static String getDisplayName(String categoryName) throws IllegalArgumentException {
+    public static Categories getInstance() {
+        return INSTANCE;
+    }
+
+    public String getDisplayName(String categoryName) throws IllegalArgumentException {
         Category category = getCategory(categoryName);
         return category.getName();
     }
 
-    public static ItemStack getIcon(String categoryName) throws IllegalArgumentException {
+    public ItemStack getIcon(String categoryName) throws IllegalArgumentException {
         Category category = getCategory(categoryName);
         return category.getIcon();
     }
     
-    public static List<String> getItems(String categoryName) throws IllegalArgumentException {
+    public List<String> getItems(String categoryName) throws IllegalArgumentException {
         Category category = getCategory(categoryName);
         return category.getItems();
     }
 
-    public static Category addCategory(String id, String displayName, List<String> items, String iconItem) throws IllegalArgumentException {
+    public Category addCategory(String id, String displayName, List<String> items, String iconItem) throws IllegalArgumentException {
         displayName = ChatColor.translateAlternateColorCodes('&', displayName);
         items.removeIf(itemName -> !Items.contains(itemName));
         if (!Items.contains(iconItem)) {
@@ -106,7 +102,7 @@ public final class Categories {
         return getCategory(id);
     }
 
-    public static Category getCategory(String categoryName) throws IllegalArgumentException {
+    public Category getCategory(String categoryName) throws IllegalArgumentException {
         if (categoryCache.containsKey(categoryName)) {
             return categoryCache.get(categoryName);
         }
@@ -114,27 +110,27 @@ public final class Categories {
             throw new IllegalArgumentException("The category \"" + categoryName + "\" does not exist.");
         }
         List<String> items = get().getStringList(categoryName + ".item");
-        String displayName = Config.CategorySelectionGui.getItemNameFormat()
+        String displayName = Config.getCategorySelectionConfig().getItemNameFormat()
                 .replaceAll("%category-name%", categoryName)
                 .replaceAll("%display-name%", get().getString(categoryName + ".display-name", categoryName + ".display-name"));
         ItemStack icon = Items.getItemStack(get().getString(categoryName + ".icon").toUpperCase(Locale.ROOT));
-        Category result = instance.new Category(categoryName, displayName, icon, items);
+        Category result = INSTANCE.new Category(categoryName, displayName, icon, items);
         categoryCache.put(categoryName, result);
         return result;
     }
 
-    public static List<Category> getAllCategories() {
+    public List<Category> getAllCategories() {
         List<Category> categories = new ArrayList<>();
         get().getValues(false).keySet()
                 .forEach(categoryName -> categories.add(getCategory(categoryName)));
         return categories;
     }
 
-    public static boolean exist(String categoryName) {
+    public boolean exist(String categoryName) {
         return get().contains(categoryName);
     }
 
-    public static List<String> getAllItems() {
+    public List<String> getAllItems() {
         return getAllCategories().stream().flatMap(category -> category.getItems().stream()).distinct().collect(Collectors.toList());
     }
 
@@ -142,31 +138,9 @@ public final class Categories {
      * Reload config. If this method used before {@code JailConfig.save()}, the
      * data on memory will be lost.
      */
-    public static void reload() {
+    @Override
+    public void reload() {
         categoryCache.clear();
-        categories.initConfig();
-    }
-
-    /**
-     * Saves data on memory to yaml.
-     */
-    public static void save() {
-        categories.saveConfig();
-    }
-
-    /**
-     * Copies yaml from jar to data folder.
-     */
-    public static void saveDefault() {
-        categories.saveDefaultConfig();
-    }
-
-    /**
-     * Gets FileConfiguration of config.
-     * 
-     * @return config.
-     */
-    static FileConfiguration get() {
-        return categories.getConfig();
+        super.reload();
     }
 }

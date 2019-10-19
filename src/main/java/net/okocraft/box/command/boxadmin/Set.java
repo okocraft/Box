@@ -29,7 +29,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.StringUtil;
 
 import net.okocraft.box.config.Categories;
-import net.okocraft.box.config.Messages;
 import net.okocraft.box.database.Items;
 import net.okocraft.box.database.PlayerData;
 import net.okocraft.box.util.OtherUtil;
@@ -43,33 +42,33 @@ class Set extends BoxAdminSubCommand {
     @Override
     public boolean runCommand(CommandSender sender, String[] args) {
         if (!PlayerData.exist(args[1])) {
-            Messages.sendMessage(sender, "command.general.error.player-not-found");
+            MESSAGES.sendMessage(sender, "command.general.error.player-not-found");
             return false;
         }
 
         OfflinePlayer player = PlayerUtil.getOfflinePlayer(args[1]);
         if (!player.hasPlayedBefore() || player.getName() == null) {
-            Messages.sendMessage(sender, "command.general.error.player-not-found");
+            MESSAGES.sendMessage(sender, "command.general.error.player-not-found");
             return false;
         }
 
         String itemName = args[2].toUpperCase(Locale.ROOT);
-        if (!Categories.getAllItems().contains(itemName)) {
-            Messages.sendMessage(sender, "command.general.error.item-not-found");
+        if (!Categories.getInstance().getAllItems().contains(itemName)) {
+            MESSAGES.sendMessage(sender, "command.general.error.item-not-found");
             return false;
         }
         ItemStack item = Items.getItemStack(itemName);
         long amount = args.length < 4 ? 1 : OtherUtil.parseLongOrDefault(args[3], 1);
         PlayerData.setItemAmount(player, item, amount);
 
-        Messages.sendMessage(sender, "command.box-admin.set.info.sender", Map.of(
+        MESSAGES.sendMessage(sender, "command.box-admin.set.info.sender", Map.of(
                 "%player%", player.getName(),
                 "%item%", itemName,
                 "%amount%", String.valueOf(amount)
         ));
         
         if (player.isOnline()) {
-            Messages.sendMessage(player.getPlayer(), "command.box-admin.set.info.player", Map.of(
+            MESSAGES.sendMessage(player.getPlayer(), "command.box-admin.set.info.player", Map.of(
                     "%sender%", sender.getName(),
                     "%item%", itemName,
                     "%amount%", String.valueOf(amount)
@@ -93,7 +92,7 @@ class Set extends BoxAdminSubCommand {
             return List.of();
         }
 
-        List<String> items = new ArrayList<>(Categories.getAllItems());
+        List<String> items = new ArrayList<>(Categories.getInstance().getAllItems());
 
         if (args.length == 3) {
             return StringUtil.copyPartialMatches(args[2], items, result);

@@ -20,7 +20,6 @@ package net.okocraft.box.command.box;
 
 import net.okocraft.box.command.BoxCommand;
 import net.okocraft.box.command.box.Box.SubCommands;
-import net.okocraft.box.config.Messages;
 
 public abstract class BoxSubCommand extends BoxCommand {
 
@@ -31,6 +30,6 @@ public abstract class BoxSubCommand extends BoxCommand {
 
     @Override
     public String getDescription() {
-        return Messages.getMessage("command.box." + SubCommands.get(this).toString() + ".description");
+        return MESSAGES.getMessage("command.box." + SubCommands.get(this).toString() + ".description");
     }
 }

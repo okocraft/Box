@@ -24,7 +24,6 @@ import java.util.Map;
 import org.bukkit.command.CommandSender;
 
 import net.okocraft.box.Box;
-import net.okocraft.box.config.Messages;
 
 class Version extends BoxSubCommand {
 
@@ -33,7 +32,7 @@ class Version extends BoxSubCommand {
 
     @Override
     public boolean runCommand(CommandSender sender, String[] args) {
-        Messages.sendMessage(sender, "command.box.version.info.format", Map.of("%version%", Box.getVersion()));
+        MESSAGES.sendMessage(sender, "command.box.version.info.format", Map.of("%version%", Box.getVersion()));
         return true;
     }
 

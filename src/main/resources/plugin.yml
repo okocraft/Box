@@ -70,6 +70,13 @@ permissions:
   box.stick:
     default: true
 
+  # アイテム割引が優先され、重複しない。
+  # アイテム割引が0またはアイテム割引の権限がない場合、カテゴリ割引が適応。
+  box.discount.item.*: # 例. box.discount.item.dirt
+    default: false
+  box.discount.category.*: # 例. box.discount.category.building_blocks
+    default: false
+
 # bypass permissions
   box.worldedit.item.unrestricted:
     default: op

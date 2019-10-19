@@ -99,7 +99,7 @@ public class Replant implements Listener {
 
         Block brokenBlock = event.getBlock();
 
-        if (!Config.getAutoReplantWorlds().contains(brokenBlock.getWorld())) {
+        if (!Config.getConfig().getAutoReplantWorlds().contains(brokenBlock.getWorld())) {
             return;
         }
 
@@ -149,7 +149,7 @@ public class Replant implements Listener {
 
         Block treeBlock = event.getBlock();
 
-        if (!Config.getAutoReplantWorlds().contains(treeBlock.getWorld())) {
+        if (!Config.getConfig().getAutoReplantWorlds().contains(treeBlock.getWorld())) {
             return;
         }
 

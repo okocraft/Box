@@ -84,7 +84,7 @@ public class ConsumeBlockFromBoxExtent extends AbstractDelegateExtent {
 
             if (!block.getBlockType().getMaterial().isAir()) {
                 Material material = Material.matchMaterial(block.getBlockType().getId());
-                if (!Categories.getAllItems().contains(material.name())) {
+                if (!Categories.getInstance().getAllItems().contains(material.name())) {
                     return false;
                 }
                 ItemStack item = new ItemStack(material);
@@ -103,7 +103,7 @@ public class ConsumeBlockFromBoxExtent extends AbstractDelegateExtent {
             // 削ったブロックをインベントリにしまう処理。
             /*if (!existing.getBlockType().getMaterial().isAir()) {
                 Material material = Material.matchMaterial(existing.getBlockType().getId());
-                if (!Categories.getAllItems().contains(material.name())) {
+                if (!Categories.getInstance().getAllItems().contains(material.name())) {
                     return false;
                 }
                 ItemStack item = new ItemStack(material);

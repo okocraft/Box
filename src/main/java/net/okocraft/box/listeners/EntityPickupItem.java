@@ -45,7 +45,7 @@ public class EntityPickupItem implements Listener {
             return;
         }
 
-        if (!Config.isAutoStoreEnabled()) {
+        if (!Config.getConfig().isAutoStoreEnabled()) {
             return;
         }
 
@@ -53,7 +53,7 @@ public class EntityPickupItem implements Listener {
             return;
         }
 
-        if (Config.getDisabledWorlds().contains(event.getEntity().getWorld())) {
+        if (Config.getConfig().getDisabledWorlds().contains(event.getEntity().getWorld())) {
             return;
         }
 
@@ -62,7 +62,7 @@ public class EntityPickupItem implements Listener {
 
         String pickedItemName = Items.getName(pickedItem, false);
 
-        if (!Categories.getAllItems().contains(pickedItemName)) {
+        if (!Categories.getInstance().getAllItems().contains(pickedItemName)) {
             return;
         }
 

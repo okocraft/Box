@@ -73,7 +73,7 @@ public class GenerateCategory implements Listener {
 
         if (chest == null || event.getClickedBlock().getType() != Material.CHEST) {
             event.setCancelled(true);
-            Messages.sendMessage(player, "command.box-admin.add-category.error.not-chest-and-cancelled");
+            Messages.getInstance().sendMessage(player, "command.box-admin.add-category.error.not-chest-and-cancelled");
             HandlerList.unregisterAll(this);
             return;
         }
@@ -87,8 +87,8 @@ public class GenerateCategory implements Listener {
                 .filter(Objects::nonNull)
                 .map(itemStack -> Items.getName(itemStack, false))
                 .collect(Collectors.toList());
-        Categories.addCategory(id, displayName, items, icon);
-        Messages.sendMessage(player, "command.box-admin.add-category.info.success");
+        Categories.getInstance().addCategory(id, displayName, items, icon);
+        Messages.getInstance().sendMessage(player, "command.box-admin.add-category.info.success");
     }
 
     @EventHandler

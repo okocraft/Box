@@ -4,32 +4,28 @@ import java.util.Map;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
 
-public final class Messages {
+public final class Messages extends CustomConfig {
+    
+    private static final Messages INSTANCE = new Messages("messages.yml");
+    
+    Messages(String name) {
+        super(name);
+    }
 
-    private static CustomConfig messages = new CustomConfig("messages.yml");
-
-    /**
-     * Cannot use constructor.
-     */
-    private Messages() {
+    public static Messages getInstance() {
+        return INSTANCE;
     }
 
     /**
-     * Send message to player. The message will be their own language or English. To
-     * add language, make yaml file named their own locale in languages folder, like
-     * this {@code JailWorker/languages/en_us.yml}. {@code placeholder}'s key will be
-     * replaced with its value.
+     * Send message to player.
      * 
      * @param player
      * @param addPrefix
      * @param path
      * @param placeholders
-     * 
-     * @see https://minecraft.gamepedia.com/Language
      */
-    public static void sendMessage(CommandSender sender, boolean addPrefix, String path, Map<String, Object> placeholders) {
+    public void sendMessage(CommandSender sender, boolean addPrefix, String path, Map<String, Object> placeholders) {
         String prefix = addPrefix ? get().getString("command.general.info.plugin-prefix", "&8[&6Box&8]&r") + " " : "";
         String message = prefix + getMessage(path);
         for (Map.Entry<String, Object> placeholder : placeholders.entrySet()) {
@@ -40,43 +36,34 @@ public final class Messages {
     }
 
     /**
-     * Send message to player. The message will be their own language or English. To
-     * add language, make yaml file named their own locale in languages folder, like
-     * this {@code JailWorker/languages/en_us.yml}. {@code placeholder}'s key will be
-     * replaced with its value.
+     * Send message to player.
      * 
      * @param player
      * @param path
      * @param placeholders
-     * 
-     * @see https://minecraft.gamepedia.com/Language
      */
-    public static void sendMessage(CommandSender sender, String path, Map<String, Object> placeholders) {
+    public void sendMessage(CommandSender sender, String path, Map<String, Object> placeholders) {
         sendMessage(sender, true, path, placeholders);
     }
 
     /**
-     * Send message to player. The message will be their own language or English. To
-     * add language, make yaml file named their own locale in languages folder, like
-     * this {@code JailWorker/languages/en_us.yml}.
+     * Send message to player.
      * 
      * @param sender
      * @param path
      */
-    public static void sendMessage(CommandSender sender, String path) {
+    public void sendMessage(CommandSender sender, String path) {
         sendMessage(sender, path, Map.of());
     }
 
     /**
-     * Send message to player. The message will be their own language or English. To
-     * add language, make yaml file named their own locale in languages folder, like
-     * this {@code JailWorker/languages/en_us.yml}.
+     * Send message to player.
      * 
      * @param sender
      * @param addPrefix
      * @param path
      */
-    public static void sendMessage(CommandSender sender, boolean addPrefix, String path) {
+    public void sendMessage(CommandSender sender, boolean addPrefix, String path) {
         sendMessage(sender, addPrefix, path, Map.of());
     }
 
@@ -86,38 +73,7 @@ public final class Messages {
      * @param path
      * @return
      */
-    public static String getMessage(String path) {
+    public String getMessage(String path) {
         return get().getString(path, path);
-    }
-
-    /**
-     * Reload config. If this method used before {@code JailConfig.save()}, the
-     * data on memory will be lost.
-     */
-    public static void reload() {
-        messages.initConfig();
-    }
-
-    /**
-     * Saves data on memory to yaml.
-     */
-    public static void save() {
-        messages.saveConfig();
-    }
-
-    /**
-     * Copies yaml from jar to data folder.
-     */
-    public static void saveDefault() {
-        messages.saveDefaultConfig();
-    }
-
-    /**
-     * Gets FileConfiguration of config.
-     * 
-     * @return config.
-     */
-    static FileConfiguration get() {
-        return messages.getConfig();
     }
 }

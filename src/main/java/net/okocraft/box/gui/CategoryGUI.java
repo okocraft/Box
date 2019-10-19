@@ -61,6 +61,7 @@ class CategoryGUI implements Listener, InventoryHolder {
 
     @Nullable
     private static final Box plugin = Box.getInstance();
+    private static final Prices PRICES = Prices.getInstance();
 
     private final Player player;
     // private final Category category;
@@ -109,7 +110,7 @@ class CategoryGUI implements Listener, InventoryHolder {
         this.player = player;
         // this.category = category;
         this.page = 1;
-        this.quantity = Math.min(quantity, Config.getMaxQuantity());
+        this.quantity = Math.min(quantity, Config.getConfig().getMaxQuantity());
         this.gui = Bukkit.createInventory(this, 54, category.getDisplayName());
         this.items = new ArrayList<>() {
             private static final long serialVersionUID = 1L;
@@ -143,8 +144,8 @@ class CategoryGUI implements Listener, InventoryHolder {
         return original.replaceAll("%balance%", String.valueOf(economy.getBalance(player)))
                 .replaceAll("%item-quantity%", Integer.toString(quantity))
                 .replaceAll("%stock%", String.valueOf(PlayerData.getItemAmount(player, item)))
-                .replaceAll("%buy-price%", String.valueOf(Prices.getBuyPrice(item)))
-                .replaceAll("%sell-price%", String.valueOf(Prices.getSellPrice(item)))
+                .replaceAll("%buy-price%", String.valueOf(PRICES.getBuyPrice(item)))
+                .replaceAll("%sell-price%", String.valueOf(PRICES.getSellPrice(item)))
                 .replaceAll("%amount%", String.valueOf(quantity * CraftRecipes.getResultAmount(item)))
                 .replaceAll("&([a-f0-9])", "§$1");
     }
@@ -160,9 +161,9 @@ class CategoryGUI implements Listener, InventoryHolder {
         }
         List<ItemStack> items = new ArrayList<>(this.items);
         if (operation == Operations.BUY_AND_SALL) {
-            items.removeIf(item -> Prices.getBuyPrice(item) == 0 && Prices.getSellPrice(item) == 0);
+            items.removeIf(item -> PRICES.getBuyPrice(item) == 0 && PRICES.getSellPrice(item) == 0);
             items.removeIf(item -> PlayerData.getItemAmount(player, item) == 0
-                    && Prices.getBuyPrice(item) > plugin.getEconomy().getBalance(player));
+                    && PRICES.getBuyPrice(item) > plugin.getEconomy().getBalance(player));
         } else if (operation == Operations.CRAFT) {
             items = CraftRecipes.filterUnavailable(player, items, quantity);
         }
@@ -171,7 +172,7 @@ class CategoryGUI implements Listener, InventoryHolder {
         page = Math.max(page, 1);
         this.page = page;
         gui.clear();
-        List<ItemStack> functionItems = Arrays.stream(Config.PageFunctionItems.values()).map(PageFunctionItems::get)
+        List<ItemStack> functionItems = Arrays.stream(Config.PageFunctionItems.values()).map(PageFunctionItems::getItem)
                 .collect(Collectors.toList());
         for (int i = 0; i < functionItems.size(); i++) {
             if (i == 0) {
@@ -197,7 +198,7 @@ class CategoryGUI implements Listener, InventoryHolder {
      * @param newQuantity 新しい取引量
      */
     private void setQuantity(int newQuantity) {
-        newQuantity = Math.min(newQuantity, Config.getMaxQuantity());
+        newQuantity = Math.min(newQuantity, Config.getConfig().getMaxQuantity());
         if (quantity < newQuantity) {
             PlayerUtil.playSound(player, Config.Sounds.INCREASE_UNIT);
         } else if (quantity > newQuantity) {
@@ -273,7 +274,7 @@ class CategoryGUI implements Listener, InventoryHolder {
      * @return 売ったアイテム数
      */
     private long sell(ItemStack item) {
-        double price = Prices.getSellPrice(item);
+        double price = PRICES.getSellPrice(item);
         long stock = PlayerData.getItemAmount(player, item);
         long tempQuantity = quantity;
 
@@ -299,7 +300,7 @@ class CategoryGUI implements Listener, InventoryHolder {
      * @return 買って得たアイテム数
      */
     private long buy(ItemStack item) {
-        double price = Prices.getBuyPrice(item);
+        double price = PRICES.getBuyPrice(item);
         Economy economy = plugin.getEconomy();
         double balance = economy.getBalance(player);
         long stock = PlayerData.getItemAmount(player, item);
@@ -373,7 +374,7 @@ class CategoryGUI implements Listener, InventoryHolder {
             }
             int amount = item.getAmount();
             amount -= player.getInventory().removeItem(item).values().stream().map(ItemStack::getAmount).mapToInt(Integer::valueOf).sum();
-            double price = Prices.getSellPrice(item) * amount;
+            double price = PRICES.getSellPrice(item) * amount;
             sum += price;
         }
         if (sum > 0) {
@@ -405,19 +406,19 @@ class CategoryGUI implements Listener, InventoryHolder {
         List<String> itemLore;
         switch (operation) {
         case BUY_AND_SALL:
-            itemLore = Config.BuyAndSellGui.getItemLoreFormat();
+            itemLore = Config.getBuyAndSellGuiConfig().getItemLoreFormat();
             break;
         case CRAFT:
-            itemLore = Config.CraftGui.getItemLoreFormat();
+            itemLore = Config.getCraftGuiConfig().getItemLoreFormat();
             break;
         default:
-            itemLore = Config.TransactionGui.getItemLoreFormat();
+            itemLore = Config.getTransactionGuiConfig().getItemLoreFormat();
             break;
         }
         itemLore.replaceAll(loreLine -> replacePlaceholders(loreLine, item));
         if (operation == Operations.CRAFT) {
             List<String> ingredientsLore = CraftRecipes.getIngredient(item).entrySet().stream()
-                    .map(entry -> Config.CraftGui.getItemRecipeLineFormat().replaceAll("%material%", entry.getKey())
+                    .map(entry -> Config.getCraftGuiConfig().getItemRecipeLineFormat().replaceAll("%material%", entry.getKey())
                             .replaceAll("%material-stock%",
                                     String.valueOf(
                                             PlayerData.getItemAmount(player, Items.getItemStack(entry.getKey()))))
@@ -470,7 +471,7 @@ class CategoryGUI implements Listener, InventoryHolder {
         InventoryAction action = event.getAction();
         event.setCancelled(true);
 
-        if (Config.getDisabledWorlds().contains(event.getWhoClicked().getWorld())) {
+        if (Config.getConfig().getDisabledWorlds().contains(event.getWhoClicked().getWorld())) {
             return;
         }
 
@@ -526,14 +527,14 @@ class CategoryGUI implements Listener, InventoryHolder {
             int difference = (clickedSlot == 46 ? -1 : 1) * gui.getItem(46).getAmount();
 
             // 既に取引数が上限または下限に達している場合
-            if ((currentQuantity == Config.getMaxQuantity() && difference > 0)
+            if ((currentQuantity == Config.getConfig().getMaxQuantity() && difference > 0)
                     || (currentQuantity == 1 && difference < 0)) {
                 return;
             }
 
             // 取引数が上限または下限をに達した場合に制限をかける処理
             currentQuantity = Math.max(currentQuantity + difference, 1);
-            currentQuantity = Math.min(currentQuantity, Config.getMaxQuantity());
+            currentQuantity = Math.min(currentQuantity, Config.getConfig().getMaxQuantity());
 
             setQuantity(currentQuantity);
             return;
@@ -541,7 +542,7 @@ class CategoryGUI implements Listener, InventoryHolder {
 
         if (clickedSlot == 50) {
             if (event.getClick() == ClickType.SHIFT_RIGHT) {
-                Messages.sendMessage(player, "gui.store-all");
+                Messages.getInstance().sendMessage(player, "gui.store-all");
                 storeAll();
             } else if (event.isLeftClick()) {
                 select(Operations.TRANSACTION);
@@ -551,7 +552,7 @@ class CategoryGUI implements Listener, InventoryHolder {
             if (event.getClick() == ClickType.SHIFT_RIGHT) {
                 double money = sellAll();
                 if (money > 0) {
-                    Messages.sendMessage(player, "gui.sell-all", Map.of("%money%", money));
+                    Messages.getInstance().sendMessage(player, "gui.sell-all", Map.of("%money%", money));
                 }
             } else if (event.isLeftClick()) {
                 select(Operations.BUY_AND_SALL);

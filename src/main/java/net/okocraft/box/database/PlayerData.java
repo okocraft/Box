@@ -388,7 +388,7 @@ public class PlayerData implements Listener {
 
             String initState = stateBuilder.delete(stateBuilder.length() - 2, stateBuilder.length()).append(")")
                     .toString();
-            int defaultAutoStore = Config.getDefaultAutoStoreValue() ? 1 : 0;
+            int defaultAutoStore = Config.getConfig().getDefaultAutoStoreValue() ? 1 : 0;
 
             statement.addBatch(initState.replace("%table%", autoStoreTableName).replace("%default_value%",
                     Integer.toString(defaultAutoStore)));

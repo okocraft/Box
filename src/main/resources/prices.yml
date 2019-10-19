@@ -1,3 +1,13 @@
+discount: # 購入にのみ適応。適応後の値段 = 元の値段 * (1 - amount)
+  category:
+    section-name: "building_blocks" 
+    amount: 0.2
+  item:
+  # item のほうが category より優先され、categoryは無視される。
+  # 権限がcategoryのみの場合はcategoryの割引が適応。
+    STONE: 0.1
+  
+
 ACACIA_LEAVES:
   sell: 0.3
   buy: 4.0
