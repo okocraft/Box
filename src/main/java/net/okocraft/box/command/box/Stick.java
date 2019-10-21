@@ -23,7 +23,7 @@ import java.util.List;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import net.okocraft.box.listeners.BoxStick;
+import net.okocraft.box.config.Config;
 
 class Stick extends BoxSubCommand {
 
@@ -34,7 +34,7 @@ class Stick extends BoxSubCommand {
             return false;
         }
 
-        return ((Player) sender).getInventory().addItem(BoxStick.getStick()).isEmpty();
+        return ((Player) sender).getInventory().addItem(Config.getBoxStickConfig().getStick()).isEmpty();
     }
 
     @Override
