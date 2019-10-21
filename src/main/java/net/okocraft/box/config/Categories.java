@@ -140,7 +140,10 @@ public final class Categories extends CustomConfig {
      */
     @Override
     public void reload() {
-        categoryCache.clear();
         super.reload();
+        if (INSTANCE != null) {
+            // INSTANCE が null になるのは初期化時のみ
+            categoryCache.clear();
+        }
     }
 }

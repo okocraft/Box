@@ -335,8 +335,11 @@ public final class Config extends CustomConfig {
     @Override
     public void reload() {
         Bukkit.getOnlinePlayers().forEach(Player::closeInventory);
-        PageFunctionItems.reload();
         super.reload();
+        if (CONFIG != null) {
+            // CONFIG が nullになるのはConfigクラスの初期化時のみ
+        PageFunctionItems.reload();
+        }
     }
 
     public void reloadAllConfigs() {
