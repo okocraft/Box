@@ -25,7 +25,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Ageable;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.type.Sapling;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -53,6 +56,7 @@ public class Replant implements Listener {
             put(Material.POTATOES, Material.POTATO);
             put(Material.CARROTS, Material.CARROT);
             put(Material.BEETROOTS, Material.BEETROOT_SEEDS);
+            put(Material.NETHER_WART, Material.NETHER_WART);
         }
     };
 
@@ -92,24 +96,41 @@ public class Replant implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGH)
-    public void replantSeed(BlockBreakEvent event) {
-
-        if (event.isCancelled())
-            return;
-
-        Block brokenBlock = event.getBlock();
-
-        if (!Config.getConfig().getAutoReplantWorlds().contains(brokenBlock.getWorld())) {
+    public void onBlockBreak(BlockBreakEvent event) {
+        Block block = event.getBlock();
+        if (!Config.getConfig().getAutoReplantWorlds().contains(block.getWorld())) {
             return;
         }
 
+        Material type = block.getType();
+
+        if (isFarmLand(block) || isYoungPlant(block)) {
+            event.setCancelled(true);
+            return;
+        }
+
+        if (PLANTS.containsKey(type)) {
+            replantSeed(event);
+            return;
+        }
+        
+        if (TREES.containsKey(type)) {
+            replantSapling(block);
+            return;
+        }
+
+        if (type == Material.CHORUS_FLOWER || type == Material.CHORUS_PLANT) {
+            replantChorus(block);
+            return;
+        }
+
+
+    }
+
+    private void replantSeed(BlockBreakEvent event) {
+        Block brokenBlock = event.getBlock();
         Material brokenBlockType = brokenBlock.getType();
         Player player = event.getPlayer();
-
-        if (!PLANTS.containsKey(brokenBlockType)) {
-            return;
-        }
-
         Material seed = PLANTS.get(brokenBlockType);
 
         if (!hasSeed(player, seed)) {
@@ -117,87 +138,82 @@ public class Replant implements Listener {
             return;
         }
 
-        Ageable blockDataAgable = (Ageable) brokenBlock.getBlockData();
-        if (blockDataAgable.getAge() != blockDataAgable.getMaximumAge()) {
-            event.setCancelled(true);
-            return;
-        }
-
-        Ageable newBlockDataAgeable = (Ageable) blockDataAgable.clone();
-        newBlockDataAgeable.setAge(0);
-
         new BukkitRunnable() {
 
             @Override
             public void run() {
                 Block block = brokenBlock.getLocation().getBlock();
-                if (!block.getType().equals(Material.AIR))
+                if (!block.getType().equals(Material.AIR)) {
                     return;
-                block.setType(brokenBlockType);
-                block.setBlockData(newBlockDataAgeable);
+                }
 
+                block.setType(brokenBlockType);
                 takeSeed(player, seed);
             }
         }.runTaskLater(plugin, 3L);
     }
 
-    @EventHandler(priority = EventPriority.HIGH)
-    public void replantSapling(BlockBreakEvent event) {
-        if (event.isCancelled()) {
-            return;
-        }
-
-        Block treeBlock = event.getBlock();
-
-        if (!Config.getConfig().getAutoReplantWorlds().contains(treeBlock.getWorld())) {
-            return;
-        }
-
-        Material treeMaterial = treeBlock.getType();
-
-        if (TREES.containsValue(treeMaterial)) {
-            event.setCancelled(true);
-            return;
-        }
-
-        if (!TREES.containsKey(treeMaterial)) {
-            return;
-        }
-
-        Material sapling = TREES.get(treeMaterial);
-
-        Material blockBelow = treeBlock.getLocation().add(0D, -1D, 0D).getBlock().getBlockData().getMaterial();
-        if (!blockBelow.equals(Material.DIRT) && !blockBelow.equals(Material.GRASS_BLOCK)
-                && !blockBelow.equals(Material.PODZOL)) {
+    private void replantSapling(Block block) {
+        Material sapling = TREES.get(block.getType());
+        Material blockBelow = block.getRelative(BlockFace.DOWN).getBlockData().getMaterial();
+        
+        if (blockBelow != Material.DIRT && blockBelow != Material.GRASS_BLOCK && blockBelow != Material.PODZOL) {
             return;
         }
 
         new BukkitRunnable() {
             @Override
             public void run() {
-                Location blockLoc = treeBlock.getLocation();
+                Location blockLoc = block.getLocation();
                 blockLoc.getBlock().setType(sapling);
                 blockLoc.getBlock().setBlockData(sapling.createBlockData());
             }
         }.runTaskLater(plugin, 3L);
     }
 
-    @EventHandler(priority = EventPriority.HIGH)
-    public void cancelBreakingDirt(BlockBreakEvent event) {
-        if (event.isCancelled()) {
-            return;
+    private boolean isYoungPlant(Block block) {
+        BlockData blockData = block.getBlockData();
+        if (blockData instanceof Ageable) {
+            Ageable ageable = (Ageable) blockData;
+            return ageable.getAge() < ageable.getMaximumAge();
         }
 
-        Material ground = event.getBlock().getType();
-        if (!ground.equals(Material.DIRT) && !ground.equals(Material.GRASS_BLOCK)
-                && !ground.equals(Material.PODZOL)) {
-            return;
+        if (blockData instanceof Sapling) {
+            Sapling sapling = (Sapling) blockData;
+            return sapling.getStage() < sapling.getMaximumStage();
         }
 
-        Material sapling = event.getBlock().getLocation().add(0, 1, 0).getBlock().getType();
-        if (TREES.containsValue(sapling)) {
-            event.setCancelled(true);
+        if (block.getType() == Material.CHORUS_FLOWER) {
+            return block.getRelative(BlockFace.DOWN).getType() == Material.END_STONE;
         }
+
+        return false;
+    }
+
+    private boolean isFarmLand(Block block) {
+
+        Material ground = block.getType();
+        Material plant = block.getRelative(BlockFace.UP).getType();
+
+        if (TREES.containsKey(plant)
+                && (ground == Material.DIRT || ground == Material.GRASS_BLOCK || ground == Material.PODZOL)) {
+            return true;
+        }
+
+        if (PLANTS.containsKey(plant) && ground == Material.FARMLAND) {
+            return true;
+        }
+
+        if ((plant == Material.CHORUS_FLOWER || plant == Material.CHORUS_PLANT) && ground == Material.END_STONE) {
+            return true;
+        }
+
+        // 作物がネザーウォートなら下は必ずソウルサンドなのでチェック不要
+        if (plant == Material.NETHER_WART) {
+            return true;
+        }
+
+        return false;
     }
 
     @EventHandler
@@ -209,14 +225,38 @@ public class Replant implements Listener {
         if (!TREES.containsValue(clickedBlock.getType())) {
             return;
         }
-        if (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
             return;
         }
-        if (!event.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.BONE_MEAL)
-                && !event.getPlayer().getInventory().getItemInOffHand().getType().equals(Material.BONE_MEAL)) {
+        if (event.getPlayer().getInventory().getItemInMainHand().getType() != Material.BONE_MEAL
+                && event.getPlayer().getInventory().getItemInOffHand().getType() != Material.BONE_MEAL) {
             return;
         }
         event.setCancelled(true);
+    }
+
+    private void replantChorus(Block chorus) {
+        if (chorus.getType() != Material.CHORUS_PLANT && chorus.getType() != Material.CHORUS_FLOWER) {
+            return;
+        }
+
+        if (chorus.getRelative(BlockFace.DOWN).getType() == Material.END_STONE) {
+            chorus.setType(Material.CHORUS_FLOWER);
+            return;
+        }
+
+        new BukkitRunnable(){
+        
+            @Override
+            public void run() {
+                chorus.breakNaturally();
+                replantChorus(chorus.getRelative(BlockFace.NORTH));
+                replantChorus(chorus.getRelative(BlockFace.EAST));
+                replantChorus(chorus.getRelative(BlockFace.WEST));
+                replantChorus(chorus.getRelative(BlockFace.SOUTH));
+                replantChorus(chorus.getRelative(BlockFace.DOWN));
+            }
+        }.runTaskLater(plugin, 1L);
     }
 
     private void takeSeed(Player player, Material seed) {
