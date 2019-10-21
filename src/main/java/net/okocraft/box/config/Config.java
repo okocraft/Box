@@ -10,12 +10,16 @@ import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
+
+import net.okocraft.box.Box;
 
 public final class Config extends CustomConfig {
 
@@ -313,6 +317,7 @@ public final class Config extends CustomConfig {
             List<String> lore = get().getStringList("box-stick.item.lore");
             ItemStack item = new ItemStack(Material.STICK);
             ItemMeta meta = item.getItemMeta();
+            meta.getPersistentDataContainer().set(new NamespacedKey(Box.getInstance(), "boxstick"), PersistentDataType.INTEGER, 1);
             meta.setDisplayName(displayName);
             meta.setLore(lore);
             item.setItemMeta(meta);
@@ -338,7 +343,7 @@ public final class Config extends CustomConfig {
         super.reload();
         if (CONFIG != null) {
             // CONFIG が nullになるのはConfigクラスの初期化時のみ
-        PageFunctionItems.reload();
+            PageFunctionItems.reload();
         }
     }
 

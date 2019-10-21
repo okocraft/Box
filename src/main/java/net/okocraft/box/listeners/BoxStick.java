@@ -1,10 +1,6 @@
 package net.okocraft.box.listeners;
 
-import java.util.List;
-import java.util.Optional;
-
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -17,40 +13,48 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemBreakEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
+import org.jetbrains.annotations.Nullable;
 
 import net.okocraft.box.Box;
 import net.okocraft.box.config.Categories;
 import net.okocraft.box.config.Config;
 import net.okocraft.box.database.Items;
 import net.okocraft.box.database.PlayerData;
-import org.jetbrains.annotations.Nullable;
+import net.okocraft.box.gui.CategorySelectorGUI;
 
 public class BoxStick implements Listener {
 
     @Nullable
     private static final Box plugin = Box.getInstance();
     private static final NamespacedKey stickKey = new NamespacedKey(plugin, "boxstick");
-    private static ItemStack stick;
-
-    static {
-        initBoxStick();
-    }
 
     public BoxStick() {
         Bukkit.getPluginManager().registerEvents(this, plugin);
     }
 
-    /**
-     * @return the box stick
-     */
-    public static ItemStack getStick() {
-        return stick;
+    @EventHandler
+    public void onInteractWithStick(PlayerInteractEvent event) {
+        if (event.getHand() == EquipmentSlot.OFF_HAND) {
+            return;
+        }
+
+        if (!isBoxStick(event.getPlayer().getEquipment().getItemInMainHand())) {
+            return;
+        }
+
+        if (Config.getConfig().getDisabledWorlds().contains(event.getPlayer().getWorld())) {
+            return;
+        }
+
+        event.getPlayer().openInventory(CategorySelectorGUI.GUI);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -141,9 +145,7 @@ public class BoxStick implements Listener {
             return false;
         }
 
-        if (Optional.ofNullable(
-                offHandItem.getItemMeta().getPersistentDataContainer().get(stickKey, PersistentDataType.INTEGER))
-                .orElse(0) != 1) {
+        if (!isBoxStick(offHandItem)) {
             return false;
         }
 
@@ -161,25 +163,21 @@ public class BoxStick implements Listener {
         return true;
     }
 
-    public static void initBoxStick() {
-        stick = new ItemStack(Material.STICK) {
-            {
-                ItemMeta meta = getItemMeta();
-                meta.setDisplayName(ChatColor.translateAlternateColorCodes('&',
-                        plugin.getConfig().getString("General.BoxStick.DisplayName", "&9Box Stick")));
+    public static boolean isBoxStick(ItemStack item) {
+        if (item == null) {
+            return false;
+        }
 
-                List<String> lore = plugin.getConfig().getStringList("General.BoxStick.Lore");
-                if (lore.isEmpty()) {
-                    lore.add("§r");
-                    lore.add("§7利き手じゃない手にこれを持つと、利き手の");
-                    lore.add("§7アイテムを使った時にBoxから消費します。");
-                }
-                lore.replaceAll(loreLine -> ChatColor.translateAlternateColorCodes('&', loreLine));
-                meta.setLore(lore);
+        ItemMeta meta = item.getItemMeta();
+        if (meta == null) {
+            return false;
+        }
 
-                meta.getPersistentDataContainer().set(stickKey, PersistentDataType.INTEGER, 1);
-                setItemMeta(meta);
-            }
-        };
+        Integer data = meta.getPersistentDataContainer().get(stickKey, PersistentDataType.INTEGER);
+        if (data == null || data != 1) {
+            return false;
+        }
+        
+        return true;
     }
 }
