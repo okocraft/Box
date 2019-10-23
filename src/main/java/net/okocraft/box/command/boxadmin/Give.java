@@ -62,14 +62,14 @@ class Give extends BoxAdminSubCommand {
 
         PlayerData.setItemAmount(player, item, stock + amount);
 
-        MESSAGES.sendMessage(sender, "command.box.give.info.sender", Map.of(
+        MESSAGES.sendMessage(sender, "command.box-admin.give.info.sender", Map.of(
                 "%player%", player.getName(),
                 "%item%", itemName,
                 "%amount%", String.valueOf(amount)
         ));
         
         if (player.isOnline()) {
-            MESSAGES.sendMessage(player.getPlayer(), "command.box.give.info.player", Map.of(
+            MESSAGES.sendMessage(player.getPlayer(), "command.box-admin.give.info.player", Map.of(
                     "%sender%", sender.getName(),
                     "%item%", itemName,
                     "%amount%", String.valueOf(amount),
