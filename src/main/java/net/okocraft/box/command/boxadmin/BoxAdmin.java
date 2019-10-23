@@ -134,7 +134,12 @@ public class BoxAdmin extends BoxCommand implements CommandExecutor, TabComplete
             return StringUtil.copyPartialMatches(args[0], subCommands, new ArrayList<>());
         }
 
-        BoxAdminSubCommand subCommand = SubCommands.get(args[0].toLowerCase(Locale.ROOT)).getSubCommand();
+        String subCommmandName = args[0].toLowerCase(Locale.ROOT);
+        if (!subCommands.contains(subCommmandName)) {
+            return List.of();
+        }
+
+        BoxAdminSubCommand subCommand = SubCommands.get(subCommmandName).getSubCommand();
         if (subCommand == null || !subCommands.contains(subCommand.getName())) {
             return List.of();
         }

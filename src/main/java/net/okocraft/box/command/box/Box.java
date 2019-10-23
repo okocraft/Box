@@ -129,7 +129,12 @@ public class Box extends BoxCommand implements CommandExecutor, TabCompleter {
             return StringUtil.copyPartialMatches(args[0], subCommands, new ArrayList<>());
         }
 
-        BoxSubCommand subCommand = SubCommands.get(args[0].toLowerCase(Locale.ROOT)).getSubCommand();
+        String subCommandName = args[0].toLowerCase(Locale.ROOT);
+        if (!subCommands.contains(subCommandName)) {
+            return List.of();
+        }
+
+        BoxSubCommand subCommand = SubCommands.get(subCommandName).getSubCommand();
         if (subCommand == null || !subCommands.contains(subCommand.getName())) {
             return List.of();
         }
