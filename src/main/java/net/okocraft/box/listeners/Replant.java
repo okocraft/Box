@@ -38,11 +38,11 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.Nullable;
 
 import net.okocraft.box.Box;
 import net.okocraft.box.config.Config;
 import net.okocraft.box.database.PlayerData;
-import org.jetbrains.annotations.Nullable;
 
 public class Replant implements Listener {
     @Nullable
@@ -218,6 +218,9 @@ public class Replant implements Listener {
 
     @EventHandler
     public void cancelBoneMeal(PlayerInteractEvent event) {
+        if (!Config.getConfig().getAutoReplantWorlds().contains(event.getPlayer().getWorld())) {
+            return;
+        }
         Block clickedBlock = event.getClickedBlock();
         if (clickedBlock == null) {
             return;
