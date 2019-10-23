@@ -68,7 +68,8 @@ class Take extends BoxAdminSubCommand {
         MESSAGES.sendMessage(sender, "command.box-admin.take.info.sender", Map.of(
                 "%player%", player.getName(),
                 "%item%", itemName,
-                "%amount%", String.valueOf(amount)
+                "%amount%", String.valueOf(amount),
+                "%new-amount%", stock - amount
         ));
         
         if (player.isOnline()) {
