@@ -243,16 +243,16 @@ public class Replant implements Listener {
             return;
         }
 
-        if (chorus.getRelative(BlockFace.DOWN).getType() == Material.END_STONE) {
-            chorus.setType(Material.CHORUS_FLOWER);
-            return;
-        }
-
-        new BukkitRunnable(){
         
+        new BukkitRunnable(){
+            
             @Override
             public void run() {
                 chorus.breakNaturally();
+                if (chorus.getRelative(BlockFace.DOWN).getType() == Material.END_STONE) {
+                    chorus.setType(Material.CHORUS_FLOWER);
+                    return;
+                }
                 replantChorus(chorus.getRelative(BlockFace.NORTH));
                 replantChorus(chorus.getRelative(BlockFace.EAST));
                 replantChorus(chorus.getRelative(BlockFace.WEST));
