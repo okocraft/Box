@@ -123,8 +123,6 @@ public class Replant implements Listener {
             replantChorus(block);
             return;
         }
-
-
     }
 
     private void replantSeed(BlockBreakEvent event) {
@@ -172,10 +170,13 @@ public class Replant implements Listener {
     }
 
     private boolean isYoungPlant(Block block) {
-        BlockData blockData = block.getBlockData();
-        if (blockData instanceof Ageable) {
-            Ageable ageable = (Ageable) blockData;
-            return ageable.getAge() < ageable.getMaximumAge();
+        BlockData blockData = block.getBlockData();        
+        if (block.getType() == Material.SUGAR_CANE) {
+            return block.getRelative(BlockFace.DOWN).getType() != Material.SUGAR_CANE;
+        }
+
+        if (block.getType() == Material.CHORUS_FLOWER) {
+            return block.getRelative(BlockFace.DOWN).getType() == Material.END_STONE;
         }
 
         if (blockData instanceof Sapling) {
@@ -183,8 +184,9 @@ public class Replant implements Listener {
             return sapling.getStage() < sapling.getMaximumStage();
         }
 
-        if (block.getType() == Material.CHORUS_FLOWER) {
-            return block.getRelative(BlockFace.DOWN).getType() == Material.END_STONE;
+        if (blockData instanceof Ageable) {
+            Ageable ageable = (Ageable) blockData;
+            return ageable.getAge() < ageable.getMaximumAge();
         }
 
         return false;
