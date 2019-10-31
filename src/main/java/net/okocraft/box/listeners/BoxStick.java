@@ -67,7 +67,7 @@ public class BoxStick implements Listener {
         ItemStack mainHandItem = player.getInventory().getItemInMainHand();
         if (handItem.getType() == mainHandItem.getType()) {
             if (useItemFromDatabase(handItem, player)) {
-                mainHandItem.setAmount(mainHandItem.getAmount() + 1);
+                mainHandItem.setAmount(mainHandItem.getAmount());
                 player.getInventory().setItemInMainHand(mainHandItem);
             }
         }
