@@ -57,6 +57,7 @@ public class Replant implements Listener {
             put(Material.CARROTS, Material.CARROT);
             put(Material.BEETROOTS, Material.BEETROOT_SEEDS);
             put(Material.NETHER_WART, Material.NETHER_WART);
+            put(Material.SWEET_BERRY_BUSH, Material.SWEET_BERRIES);
         }
     };
 
