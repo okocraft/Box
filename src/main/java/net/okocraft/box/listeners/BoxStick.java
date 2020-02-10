@@ -19,6 +19,7 @@ import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.Nullable;
@@ -92,7 +93,13 @@ public class BoxStick implements Listener {
 
         Player player = event.getPlayer();
         ItemStack item = event.getBrokenItem();
-        if (useItemFromDatabase(new ItemStack(item.getType()), player)) {
+        ItemStack clone = item.clone();
+        ItemMeta meta = clone.getItemMeta();
+        if (meta instanceof Damageable) {
+            ((Damageable) meta).setDamage(0);
+        }
+        clone.setItemMeta(meta);
+        if (useItemFromDatabase(clone, player)) {
             item.setAmount(2);
             player.playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, SoundCategory.PLAYERS, 1F, 1F);
         }
@@ -151,6 +158,10 @@ public class BoxStick implements Listener {
 
         String itemName = Items.getName(item, false);
         if (itemName == null || !Categories.getInstance().getAllItems().contains(itemName)) {
+            return false;
+        }
+
+        if (!item.getEnchantments().isEmpty()) {
             return false;
         }
 
