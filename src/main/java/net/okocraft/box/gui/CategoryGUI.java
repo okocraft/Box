@@ -20,8 +20,10 @@ package net.okocraft.box.gui;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
@@ -238,11 +240,115 @@ class CategoryGUI implements Listener, InventoryHolder {
         tempQuantity = Math.min(stock, tempQuantity);
         ItemStack givenItem = Items.getItemStack(Items.getName(item, true));
         givenItem.setAmount((int) tempQuantity);
-        int nonAdded = player.getInventory().addItem(givenItem).values().stream().mapToInt(ItemStack::getAmount).sum();
+        int nonAdded = addItem(player.getInventory(), splitStack(givenItem)).values().stream().mapToInt(ItemStack::getAmount).sum();
         PlayerData.setItemAmount(player, item, stock + nonAdded - tempQuantity);
         PlayerUtil.playSound(player, Config.Sounds.WITHDRAW);
         updateLore(item);
         return (long) (stock + nonAdded - tempQuantity);
+    }
+
+
+    private int firstPartial(Inventory inv, ItemStack item) {
+        if (item == null) {
+            return -1;
+        }
+        ItemStack[] inventory = inv.getStorageContents();
+        ItemStack filteredItem = item.clone();
+        for (int i = 0; i < inventory.length; i++) {
+            ItemStack cItem = inventory[i];
+            if (cItem != null && cItem.getAmount() < cItem.getMaxStackSize() && cItem.isSimilar(filteredItem)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private Map<Integer, ItemStack> addItem(Inventory inv, ItemStack... items) {
+        Objects.requireNonNull(items, "Item cannot be null");
+        Map<Integer, ItemStack> leftover = new HashMap<Integer, ItemStack>();
+
+        /* TODO: some optimization
+         *  - Create a 'firstPartial' with a 'fromIndex'
+         *  - Record the lastPartial per Material
+         *  - Cache firstEmpty result
+         */
+
+        for (int i = 0; i < items.length; i++) {
+            ItemStack item = items[i];
+            while (true) {
+                // Do we already have a stack of it?
+                
+                int firstPartial = firstPartial(inv, item);
+
+                // Drat! no partial stack
+                if (firstPartial == -1) {
+                    // Find a free spot!
+                    int firstFree = inv.firstEmpty();
+
+                    if (firstFree == -1) {
+                        // No space at all!
+                        leftover.put(i, item);
+                        break;
+                    } else {
+                        // More than a single stack!
+                        if (item.getAmount() > item.getMaxStackSize()) {
+                            ItemStack stack = item.clone();
+                            stack.setAmount(item.getMaxStackSize());
+                            inv.setItem(firstFree, stack);
+                            item.setAmount(item.getAmount() - item.getMaxStackSize());
+                        } else {
+                            // Just store it
+                            inv.setItem(firstFree, item);
+                            break;
+                        }
+                    }
+                } else {
+                    // So, apparently it might only partially fit, well lets do just that
+                    ItemStack partialItem = inv.getItem(firstPartial);
+
+                    int amount = item.getAmount();
+                    int partialAmount = partialItem.getAmount();
+                    int maxAmount = partialItem.getMaxStackSize();
+
+                    // Check if it fully fits
+                    if (amount + partialAmount <= maxAmount) {
+                        partialItem.setAmount(amount + partialAmount);
+                        // To make sure the packet is sent to the client
+                        inv.setItem(firstPartial, partialItem);
+                        break;
+                    }
+
+                    // It fits partially
+                    partialItem.setAmount(maxAmount);
+                    // To make sure the packet is sent to the client
+                    inv.setItem(firstPartial, partialItem);
+                    item.setAmount(amount + partialAmount - maxAmount);
+                }
+            }
+        }
+        return leftover;
+    }
+
+    private ItemStack[] splitStack(ItemStack item) {
+        item = item.clone();
+        int amount = item.getAmount();
+        int maxSize = item.getMaxStackSize();
+
+        List<ItemStack> resultList = new ArrayList<>();
+        while(amount - maxSize > 0) {
+            ItemStack split = item.clone();
+            split.setAmount(maxSize);
+            resultList.add(split);
+            amount -= maxSize;
+        }
+
+        if (amount > 0) {
+            item.setAmount(amount);
+            resultList.add(item);
+            amount = 0;
+        }
+
+        return resultList.toArray(ItemStack[]::new);
     }
 
     /**
@@ -569,7 +675,7 @@ class CategoryGUI implements Listener, InventoryHolder {
             item.setAmount(quantity);
             if (event.isRightClick()) {
                 PlayerUtil.playSound(player, Config.Sounds.WITHDRAW);
-                player.getInventory().addItem(item);
+                addItem(player.getInventory(), item);
             } else {
                 PlayerUtil.playSound(player, Config.Sounds.DEPOSIT);
                 player.getInventory().removeItem(item);
