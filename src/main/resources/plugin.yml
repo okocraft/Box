@@ -1,7 +1,7 @@
 name: ${project.artifactId}
 version: ${project.version}
 api-version: "1.14"
-main: net.okocraft.box.Box
+main: ${project.groupId}.${project.artifactId}
 author: LazyGon
 softdepend: ["WorldEdit", "Vault"]
 commands:
@@ -10,7 +10,7 @@ commands:
     aliases: [box, okobox, b]
   boxadmin:
     description: Admin Command of Box plugin.
-    aliases: [boxadmin, okoboxadmin, okostrageadmin]
+    aliases: [boxadmin]
     permission: box-admin
 
 permissions:
