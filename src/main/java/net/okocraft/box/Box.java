@@ -19,7 +19,6 @@
 package net.okocraft.box;
 
 import net.okocraft.box.util.CraftRecipes;
-import net.okocraft.box.worldedit.WorldEditEventListener;
 
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
@@ -113,9 +112,6 @@ public class Box extends JavaPlugin {
 
         // Events should be registered in its own initializer
         new PlayerData(this);
-        if (Bukkit.getPluginManager().isPluginEnabled("WorldEdit")) {
-            WorldEditEventListener.register();
-        }
         new EntityPickupItem(this);
         new BoxStick();
         new Replant();
@@ -131,9 +127,6 @@ public class Box extends JavaPlugin {
      */
     private void unregisterEvents() {
         HandlerList.unregisterAll(this);
-        if (Bukkit.getPluginManager().isPluginEnabled("WorldEdit")) {
-            WorldEditEventListener.unregister();
-        }
     }
 
     /**
