@@ -23,36 +23,44 @@ command:
       player-only: "&cこのコマンドはプレイヤーにしか使えません。"
       no-permission: "&c%permission% の権限がありません。"
       unknown-exception: "&c予期せぬエラーが発生しました。管理者に報告してください。"
+  command-description:
+    autostore: "&7自動収納の設定を変更します。"
+    autostorelist: "&7自動収納の設定を表示します。"
+    give: "&7誰かにアイテムを与えます。"
+    stick: "&7オフハンドに持つとアイテム消費先がBoxになる杖を手に入れます。"
+    help: "&7ヘルプを表示します。"
+    version: "&7バージョンを表示します。"
+  admin-command-description:
+    addcategory: "&7チェストをクリックして、中にはいっているアイテムをもとにカテゴリを追加します。"
+    give: "&7誰かにアイテムを与えます。"
+    take: "&7誰かのアイテムを減らします。"
+    set: "&7誰かのアイテム量をセットします。"
+    help: "&7ヘルプを表示します。"
+    version: "&7設定を再読込します。"
   box:
     auto-store:
-      description: "&7自動収納の設定を変更します。"
       info:
         changed: "&b%item% &7の自動収納を &b%is-enabled%&7 にしました。"
         changed-all: "&7すべてのアイテムの自動収納を &b%is-enabled% &7にしました。"
     auto-store-list:
-      description: "&7自動収納の設定を表示します。"
       info:
         header: "&b%player%&7 の自動収納設定 &a%current-line%&7 / %max-line%"
         format: "&b%item%&7: &b%is-enabled%"
     give:
-      description: "&7誰かにアイテムを与えます。"
       info:
         sender: "&b%player%&7 に &b%item%&7 を &b%amount%&7 個渡しました(現在 &b%new-amount%&7 個)。"
         player: "&b%sender%&7 から &b%item%&7 を &b%amount%&7 個受け取りました(現在 &b%new-amount%&7 個)。"
       error:
         cannot-give-myself: "&c自分自身にアイテムを渡すことはできません。"
     stick:
-      description: "&7オフハンドに持つとアイテム消費先がBoxになる杖を手に入れます。"
       info:
         get-stick: "&7Box Stickを手に入れました！"
         tip: "&7オフハンドにこの杖を持つと、アイテムの消費先がBoxになります。"
     help:
-      description: "&7ヘルプを表示します。"
       info:
         header: "&7Box Help"
         format: "&b%command% &7- &b%description%"
     version:
-      description: "&7バージョンを表示します。"
       info:
         format: "バージョン %version%"
   box-admin:
@@ -63,26 +71,21 @@ command:
       error:
         not-chest-and-cancelled: "&cブロックがチェストではなかったので、キャンセルされました！"
     give:
-      description: "&7誰かにアイテムを与えます。"
       info:
         sender: "&b%player%&7 の &b%item%&7 を &b%amount%&7 個増やしました(現在 &b%new-amount%&7 個)。"
         player: "&b%sender%&7 から &b%item%&7 を &b%amount%&7 個受け取りました(現在 &b%new-amount%&7 個)。"
     take:
-      description: "&7誰かのアイテムを減らします。"
       info:
         sender: "&b%player%&7 の &b%item%&7 を &b%amount%&7 個減らしました(現在 &b%new-amount%&7 個)。"
         player: "&b%sender%&7 に &b%item%&7 を &b%amount%&7 個減らされました(現在 &b%new-amount%&7 個)。"
     set:
-      description: "&7誰かのアイテム量をセットします。"
       info:
         sender: "&b%player%&7 の &b%item%&7 を &b%amount%&7 個に設定しました。"
         player: "&b%sender%&7 があなたの &b%item%&7 を &b%amount%&7 個に設定しました。"
     help:
-      description: "&7ヘルプを表示します。"
       info:
         header: "&7Box Help"
         format: "&b%command% &7- &b%description%"
     reload:
-      descirption: "&7設定を再読込します。"
       info:
         success: "&7設定を再読込しました。"
