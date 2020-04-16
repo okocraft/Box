@@ -19,7 +19,7 @@ import net.okocraft.box.Box;
 import net.okocraft.box.config.Config;
 import net.okocraft.box.config.Messages;
 
-public class Commands implements CommandExecutor, TabCompleter {
+public abstract class Commands implements CommandExecutor, TabCompleter {
 
     protected final Box plugin = Box.getInstance();
     protected final Config config = plugin.getAPI().getConfig();
@@ -54,18 +54,10 @@ public class Commands implements CommandExecutor, TabCompleter {
     }
 
     public Commands(String parent) {
-        // super("", null, 0, false, "/" + parent + " <args...>", new String[0]);
         parent = parent.toLowerCase(Locale.ROOT);
         PluginCommand pluginCommand = Objects.requireNonNull(plugin.getCommand(parent), "The command " + parent + " is not written in plugin.yml");
         pluginCommand.setExecutor(this);
         pluginCommand.setTabCompleter(this);
-
-        // register(new AddCommand());
-        // register(new RemoveCommand());
-        // register(new SpawnCommand());
-        // register(new GUICommand());
-        // register(new TradeCommand());
-        // register(new GiveCommand());
     }
 
     @Override
