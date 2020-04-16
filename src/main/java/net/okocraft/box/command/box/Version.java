@@ -32,7 +32,7 @@ class Version extends BoxSubCommand {
 
     @Override
     public boolean runCommand(CommandSender sender, String[] args) {
-        MESSAGES.sendMessage(sender, "command.box.version.info.format", Map.of("%version%", Box.getVersion()));
+        messages.sendMessage(sender, "command.box.version.info.format", Map.of("%version%", Box.getVersion()));
         return true;
     }
 

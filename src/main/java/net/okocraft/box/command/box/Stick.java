@@ -23,18 +23,16 @@ import java.util.List;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import net.okocraft.box.config.Config;
-
 class Stick extends BoxSubCommand {
 
     @Override
     public boolean runCommand(CommandSender sender, String[] args) {
         if (!(sender instanceof Player)) {
-            MESSAGES.sendMessage(sender, "command.general.error.player-only");
+            messages.sendMessage(sender, "command.general.error.player-only");
             return false;
         }
 
-        return ((Player) sender).getInventory().addItem(Config.getBoxStickConfig().getStick()).isEmpty();
+        return ((Player) sender).getInventory().addItem(config.getBoxStickConfig().getStick()).isEmpty();
     }
 
     @Override

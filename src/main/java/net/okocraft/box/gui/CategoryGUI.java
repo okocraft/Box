@@ -57,12 +57,12 @@ import net.okocraft.box.database.Items;
 import net.okocraft.box.database.PlayerData;
 import net.okocraft.box.util.CraftRecipes;
 import net.okocraft.box.util.PlayerUtil;
-import org.jetbrains.annotations.Nullable;
 
 class CategoryGUI implements Listener, InventoryHolder {
 
-    @Nullable
-    private static final Box plugin = Box.getInstance();
+    private final Box plugin = Box.getInstance();
+    private final Config config = plugin.getAPI().getConfig();
+    private final Messages messages = plugin.getAPI().getMessages();
     private static final Prices PRICES = Prices.getInstance();
 
     private final Player player;
@@ -112,7 +112,7 @@ class CategoryGUI implements Listener, InventoryHolder {
         this.player = player;
         // this.category = category;
         this.page = 1;
-        this.quantity = Math.min(quantity, Config.getConfig().getMaxQuantity());
+        this.quantity = Math.min(quantity, config.getMaxQuantity());
         this.gui = Bukkit.createInventory(this, 54, category.getDisplayName());
         this.items = new ArrayList<>() {
             private static final long serialVersionUID = 1L;
@@ -200,7 +200,7 @@ class CategoryGUI implements Listener, InventoryHolder {
      * @param newQuantity 新しい取引量
      */
     private void setQuantity(int newQuantity) {
-        newQuantity = Math.min(newQuantity, Config.getConfig().getMaxQuantity());
+        newQuantity = Math.min(newQuantity, config.getMaxQuantity());
         if (quantity < newQuantity) {
             PlayerUtil.playSound(player, Config.Sounds.INCREASE_UNIT);
         } else if (quantity > newQuantity) {
@@ -512,19 +512,19 @@ class CategoryGUI implements Listener, InventoryHolder {
         List<String> itemLore;
         switch (operation) {
         case BUY_AND_SALL:
-            itemLore = Config.getBuyAndSellGuiConfig().getItemLoreFormat();
+            itemLore = config.getShopGUIConfig().getItemLoreFormat();
             break;
         case CRAFT:
-            itemLore = Config.getCraftGuiConfig().getItemLoreFormat();
+            itemLore = config.getCraftGUIConfig().getItemLoreFormat();
             break;
         default:
-            itemLore = Config.getTransactionGuiConfig().getItemLoreFormat();
+            itemLore = config.getBankGUIConfig().getItemLoreFormat();
             break;
         }
         itemLore.replaceAll(loreLine -> replacePlaceholders(loreLine, item));
         if (operation == Operations.CRAFT) {
             List<String> ingredientsLore = CraftRecipes.getIngredient(item).entrySet().stream()
-                    .map(entry -> Config.getCraftGuiConfig().getItemRecipeLineFormat().replaceAll("%material%", entry.getKey())
+                    .map(entry -> config.getCraftGUIConfig().getItemRecipeLineFormat().replaceAll("%material%", entry.getKey())
                             .replaceAll("%material-stock%",
                                     String.valueOf(
                                             PlayerData.getItemAmount(player, Items.getItemStack(entry.getKey()))))
@@ -577,7 +577,7 @@ class CategoryGUI implements Listener, InventoryHolder {
         InventoryAction action = event.getAction();
         event.setCancelled(true);
 
-        if (Config.getConfig().getDisabledWorlds().contains(event.getWhoClicked().getWorld())) {
+        if (config.getDisabledWorlds().contains(event.getWhoClicked().getWorld())) {
             return;
         }
 
@@ -633,14 +633,14 @@ class CategoryGUI implements Listener, InventoryHolder {
             int difference = (clickedSlot == 46 ? -1 : 1) * gui.getItem(46).getAmount();
 
             // 既に取引数が上限または下限に達している場合
-            if ((currentQuantity == Config.getConfig().getMaxQuantity() && difference > 0)
+            if ((currentQuantity == config.getMaxQuantity() && difference > 0)
                     || (currentQuantity == 1 && difference < 0)) {
                 return;
             }
 
             // 取引数が上限または下限をに達した場合に制限をかける処理
             currentQuantity = Math.max(currentQuantity + difference, 1);
-            currentQuantity = Math.min(currentQuantity, Config.getConfig().getMaxQuantity());
+            currentQuantity = Math.min(currentQuantity, config.getMaxQuantity());
 
             setQuantity(currentQuantity);
             return;
@@ -648,7 +648,7 @@ class CategoryGUI implements Listener, InventoryHolder {
 
         if (clickedSlot == 50) {
             if (event.getClick() == ClickType.SHIFT_RIGHT) {
-                Messages.getInstance().sendMessage(player, "gui.store-all");
+                messages.sendMessage(player, "gui.store-all");
                 storeAll();
             } else if (event.isLeftClick()) {
                 select(Operations.TRANSACTION);
@@ -658,7 +658,7 @@ class CategoryGUI implements Listener, InventoryHolder {
             if (event.getClick() == ClickType.SHIFT_RIGHT) {
                 double money = sellAll();
                 if (money > 0) {
-                    Messages.getInstance().sendMessage(player, "gui.sell-all", Map.of("%money%", money));
+                    messages.sendMessage(player, "gui.sell-all", Map.of("%money%", money));
                 }
             } else if (event.isLeftClick()) {
                 select(Operations.BUY_AND_SALL);

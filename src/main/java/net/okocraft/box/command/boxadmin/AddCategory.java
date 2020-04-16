@@ -38,11 +38,11 @@ class AddCategory extends BoxAdminSubCommand {
     @Override
     public boolean runCommand(CommandSender sender, String[] args) {
         if (!(sender instanceof Player)) {
-            MESSAGES.sendMessage(sender, "command.general.error.player-only");
+            messages.sendMessage(sender, "command.general.error.player-only");
             return false;
         }
 
-        MESSAGES.sendMessage(sender, "command.box-admin.add-category.info.choose-chest");
+        messages.sendMessage(sender, "command.box-admin.add-category.info.choose-chest");
         new GenerateCategory((Player) sender, args[1], args[2], args[3]);
         return true;
     }

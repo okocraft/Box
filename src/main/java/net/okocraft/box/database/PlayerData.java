@@ -29,12 +29,12 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import net.okocraft.box.Box;
-import net.okocraft.box.config.Config;
 import net.okocraft.box.util.PlayerUtil;
 
 import org.jetbrains.annotations.Nullable;
 
 public class PlayerData implements Listener {
+
     private static final Map<Player, Map<String, Boolean>> autoStoreData = new HashMap<>();
     private static final Map<Player, Map<String, Long>> itemData = new HashMap<>();
 
@@ -388,7 +388,7 @@ public class PlayerData implements Listener {
 
             String initState = stateBuilder.delete(stateBuilder.length() - 2, stateBuilder.length()).append(")")
                     .toString();
-            int defaultAutoStore = Config.getConfig().getDefaultAutoStoreValue() ? 1 : 0;
+            int defaultAutoStore = Box.getInstance().getAPI().getConfig().getDefaultAutoStoreValue() ? 1 : 0;
 
             statement.addBatch(initState.replace("%table%", autoStoreTableName).replace("%default_value%",
                     Integer.toString(defaultAutoStore)));

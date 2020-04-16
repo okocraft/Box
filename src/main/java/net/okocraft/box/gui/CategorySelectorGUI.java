@@ -50,7 +50,9 @@ public final class CategorySelectorGUI implements Listener, InventoryHolder {
 
     @Nullable
     private static final Box plugin = Box.getInstance();
-    private static final NamespacedKey CATEGORY_NAME_KEY = new NamespacedKey(plugin, "categoryname");
+    private final Config config = plugin.getAPI().getConfig();
+    private final Messages messages = plugin.getAPI().getMessages();
+    private final NamespacedKey categoryNameKey = new NamespacedKey(plugin, "categoryname");
     private static final List<Integer> flameSlots = List.of(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 17, 18, 26, 27, 35, 36, 44, 45, 46,
             47, 48, 49, 50, 51, 52, 53);
 
@@ -64,7 +66,7 @@ public final class CategorySelectorGUI implements Listener, InventoryHolder {
     }
 
     public static Inventory initGUI() {
-        GUI = Bukkit.createInventory(categorySelector, 54, Config.getCategorySelectionConfig().getName());
+        GUI = Bukkit.createInventory(categorySelector, 54, plugin.getAPI().getConfig().getCategorySelectionConfig().getName());
         ItemStack flame = new ItemStack(Material.BLACK_STAINED_GLASS_PANE); 
         ItemMeta flameMeta = flame.getItemMeta();
         flameMeta.setDisplayName("§r");
@@ -111,9 +113,9 @@ public final class CategorySelectorGUI implements Listener, InventoryHolder {
         if (event.getView().getTopInventory().getHolder() != this) {
             return;
         }
-        if (Config.getConfig().getDisabledWorlds().contains(event.getPlayer().getWorld())) {
+        if (config.getDisabledWorlds().contains(event.getPlayer().getWorld())) {
             event.setCancelled(true);
-            Messages.getInstance().sendMessage(event.getPlayer(), "command.general.error.in-disabled-world");
+            messages.sendMessage(event.getPlayer(), "command.general.error.in-disabled-world");
         }
     }
 
@@ -136,8 +138,8 @@ public final class CategorySelectorGUI implements Listener, InventoryHolder {
         InventoryAction action = event.getAction();
         event.setCancelled(true);
 
-        if (Config.getConfig().getDisabledWorlds().contains(event.getWhoClicked().getWorld())) {
-            Messages.getInstance().sendMessage(player, "command.general.error.in-disabled-world");
+        if (config.getDisabledWorlds().contains(event.getWhoClicked().getWorld())) {
+            messages.sendMessage(player, "command.general.error.in-disabled-world");
             return;
         }
 
@@ -160,7 +162,7 @@ public final class CategorySelectorGUI implements Listener, InventoryHolder {
         }
 
         // NOTE: NPE はItemStackがAIRの場合のみしか起こらない。
-        String categoryName = clickedItem.getItemMeta().getPersistentDataContainer().get(CATEGORY_NAME_KEY,
+        String categoryName = clickedItem.getItemMeta().getPersistentDataContainer().get(categoryNameKey,
                 PersistentDataType.STRING);
 
         player.closeInventory();

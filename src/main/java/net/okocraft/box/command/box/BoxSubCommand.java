@@ -30,6 +30,6 @@ public abstract class BoxSubCommand extends BoxCommand {
 
     @Override
     public String getDescription() {
-        return MESSAGES.getMessage("command.box." + SubCommands.get(this).toString() + ".description");
+        return messages.getMessage("command.box." + SubCommands.get(this).toString() + ".description");
     }
 }

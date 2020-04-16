@@ -24,12 +24,14 @@ import java.util.Locale;
 import org.bukkit.command.CommandSender;
 
 import net.okocraft.box.Box;
+import net.okocraft.box.config.Config;
 import net.okocraft.box.config.Messages;
 
 public abstract class BoxCommand {
 
-    protected static final Box plugin = Box.getInstance();
-    protected static final Messages MESSAGES = Messages.getInstance();
+    protected final Box plugin = Box.getInstance();
+    protected final Config config = plugin.getAPI().getConfig();
+    protected final Messages messages = plugin.getAPI().getMessages();
 
     /**
      * コンストラクタ
@@ -93,7 +95,7 @@ public abstract class BoxCommand {
      * @return コマンドの説明
      */
     public String getDescription() {
-        return MESSAGES.getMessage("command." + getName() + ".desctiption");
+        return messages.getMessage("command." + getName() + ".desctiption");
     }
 
     /**

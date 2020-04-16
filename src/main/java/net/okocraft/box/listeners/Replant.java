@@ -38,15 +38,15 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.jetbrains.annotations.Nullable;
 
 import net.okocraft.box.Box;
 import net.okocraft.box.config.Config;
 import net.okocraft.box.database.PlayerData;
 
 public class Replant implements Listener {
-    @Nullable
-    private static final Box plugin = Box.getInstance();
+
+    private final Box plugin = Box.getInstance();
+    private final Config config = plugin.getAPI().getConfig();
 
     private static final Map<Material, Material> PLANTS = new HashMap<>() {
         private static final long serialVersionUID = 1L;
@@ -99,7 +99,7 @@ public class Replant implements Listener {
     @EventHandler(priority = EventPriority.HIGH)
     public void onBlockBreak(BlockBreakEvent event) {
         Block block = event.getBlock();
-        if (!Config.getConfig().getAutoReplantWorlds().contains(block.getWorld())) {
+        if (!config.getAutoReplantWorlds().contains(block.getWorld())) {
             return;
         }
 
@@ -221,7 +221,7 @@ public class Replant implements Listener {
 
     @EventHandler
     public void cancelBoneMeal(PlayerInteractEvent event) {
-        if (!Config.getConfig().getAutoReplantWorlds().contains(event.getPlayer().getWorld())) {
+        if (!config.getAutoReplantWorlds().contains(event.getPlayer().getWorld())) {
             return;
         }
         Block clickedBlock = event.getClickedBlock();

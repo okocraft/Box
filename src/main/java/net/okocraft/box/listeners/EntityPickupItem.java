@@ -28,12 +28,15 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
 import net.okocraft.box.util.PlayerUtil;
+import net.okocraft.box.Box;
 import net.okocraft.box.config.Categories;
 import net.okocraft.box.config.Config;
 import net.okocraft.box.database.Items;
 import net.okocraft.box.database.PlayerData;
 
 public class EntityPickupItem implements Listener {
+
+    private Config config = Box.getInstance().getAPI().getConfig();
 
     public EntityPickupItem(Plugin plugin) {
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
@@ -45,7 +48,7 @@ public class EntityPickupItem implements Listener {
             return;
         }
 
-        if (!Config.getConfig().isAutoStoreEnabled()) {
+        if (!config.isAutoStoreEnabled()) {
             return;
         }
 
@@ -53,7 +56,7 @@ public class EntityPickupItem implements Listener {
             return;
         }
 
-        if (Config.getConfig().getDisabledWorlds().contains(event.getEntity().getWorld())) {
+        if (config.getDisabledWorlds().contains(event.getEntity().getWorld())) {
             return;
         }
 

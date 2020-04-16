@@ -33,9 +33,9 @@ import net.okocraft.box.gui.CategorySelectorGUI;
 
 public class BoxStick implements Listener {
 
-    @Nullable
-    private static final Box plugin = Box.getInstance();
-    private static final NamespacedKey stickKey = new NamespacedKey(plugin, "boxstick");
+    private final Box plugin = Box.getInstance();
+    private final Config config = plugin.getAPI().getConfig();
+    private final NamespacedKey stickKey = new NamespacedKey(plugin, "boxstick");
 
     public BoxStick() {
         Bukkit.getPluginManager().registerEvents(this, plugin);
@@ -51,7 +51,7 @@ public class BoxStick implements Listener {
             return;
         }
 
-        if (Config.getConfig().getDisabledWorlds().contains(event.getPlayer().getWorld())) {
+        if (config.getDisabledWorlds().contains(event.getPlayer().getWorld())) {
             return;
         }
 
@@ -60,7 +60,7 @@ public class BoxStick implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void blockPlace(BlockPlaceEvent event) {
-        if (!Config.getBoxStickConfig().isEnabledBlockPlace()) {
+        if (!config.getBoxStickConfig().isEnabledBlockPlace()) {
             return;
         }
         Player player = event.getPlayer();
@@ -76,7 +76,7 @@ public class BoxStick implements Listener {
 
     @EventHandler
     public void itemConsume(PlayerItemConsumeEvent event) {
-        if (!Config.getBoxStickConfig().isEnabledFood()) {
+        if (!config.getBoxStickConfig().isEnabledFood()) {
             return;
         }
         if (useItemFromDatabase(event.getItem(), event.getPlayer())) {
@@ -87,7 +87,7 @@ public class BoxStick implements Listener {
 
     @EventHandler
     public void itemBreak(PlayerItemBreakEvent event) {
-        if (!Config.getBoxStickConfig().isEnabledTool()) {
+        if (!config.getBoxStickConfig().isEnabledTool()) {
             return;
         }
 
@@ -107,7 +107,7 @@ public class BoxStick implements Listener {
 
     @EventHandler
     public void potionThrow(ProjectileLaunchEvent event) {
-        if (!Config.getBoxStickConfig().isEnabledPotion()) {
+        if (!config.getBoxStickConfig().isEnabledPotion()) {
             return;
         }
 
@@ -142,7 +142,7 @@ public class BoxStick implements Listener {
             return false;
         }
 
-        if (Config.getConfig().getDisabledWorlds().contains(player.getWorld())) {
+        if (config.getDisabledWorlds().contains(player.getWorld())) {
             return false;
         }
 
@@ -174,7 +174,7 @@ public class BoxStick implements Listener {
         return true;
     }
 
-    public static boolean isBoxStick(ItemStack item) {
+    private boolean isBoxStick(ItemStack item) {
         if (item == null) {
             return false;
         }

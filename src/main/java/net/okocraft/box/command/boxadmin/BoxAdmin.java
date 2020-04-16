@@ -98,13 +98,13 @@ public class BoxAdmin extends BoxCommand implements CommandExecutor, TabComplete
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (args.length == 0) {
-            MESSAGES.sendMessage(sender, "command.general.error.not-enough-arguments");
+            messages.sendMessage(sender, "command.general.error.not-enough-arguments");
             return false;
         }
 
         SubCommands subCommands = SubCommands.get(args[0]);
         if (subCommands == null) {
-            MESSAGES.sendMessage(sender, "command.general.error.invalid-argument",
+            messages.sendMessage(sender, "command.general.error.invalid-argument",
                     Map.of("%argument%", args[0]));
             return false;
         }
@@ -112,12 +112,12 @@ public class BoxAdmin extends BoxCommand implements CommandExecutor, TabComplete
         BoxAdminSubCommand subCommand = subCommands.getSubCommand();
 
         if (!subCommand.hasPermission(sender)) {
-            MESSAGES.sendMessage(sender, "command.general.error.no-permission", Map.of("%permission%", subCommand.getPermissionNode()));
+            messages.sendMessage(sender, "command.general.error.no-permission", Map.of("%permission%", subCommand.getPermissionNode()));
             return false;
         }
 
         if (subCommand.getLeastArgLength() > args.length) {
-            MESSAGES.sendMessage(sender, "command.general.error.not-enough-arguments");
+            messages.sendMessage(sender, "command.general.error.not-enough-arguments");
             return false;
         }
 

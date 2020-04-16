@@ -25,7 +25,6 @@ import java.util.Locale;
 import org.bukkit.command.CommandSender;
 import org.bukkit.util.StringUtil;
 
-import net.okocraft.box.config.Config;
 import net.okocraft.box.gui.CategorySelectorGUI;
 
 class Reload extends BoxAdminSubCommand {
@@ -36,7 +35,7 @@ class Reload extends BoxAdminSubCommand {
     @Override
     public boolean runCommand(CommandSender sender, String[] args) {
         if (args.length == 1) {
-            Config.getConfig().reloadAllConfigs();
+            config.reloadAllConfigs();
             CategorySelectorGUI.initGUI();
         }
 
@@ -47,13 +46,13 @@ class Reload extends BoxAdminSubCommand {
                 plugin.registerEvents();
                 break;
             case "config":
-                Config.getConfig().reloadAllConfigs();
+                config.reloadAllConfigs();
                 CategorySelectorGUI.initGUI();
                 break;
             }
         }
 
-        MESSAGES.sendMessage(sender, "command.box-admin.reload.info.success");
+        messages.sendMessage(sender, "command.box-admin.reload.info.success");
         return true;
     }
 

@@ -41,7 +41,7 @@ class AutoStoreList extends BoxSubCommand {
     @Override
     public boolean runCommand(CommandSender sender, String[] args) {
         if (!(sender instanceof Player)) {
-            MESSAGES.sendMessage(sender, "command.general.error.player-only");
+            messages.sendMessage(sender, "command.general.error.player-only");
             return false;
         }
 
@@ -50,7 +50,7 @@ class AutoStoreList extends BoxSubCommand {
         int page = Math.min(maxPage, (args.length >= 2 ? OtherUtil.parseIntOrDefault(args[1], 1) : 1));
         int currentLine = Math.min(maxLine, page * 9);
 
-        MESSAGES.sendMessage(sender, "command.box.auto-store-list.info.header", Map.of(
+        messages.sendMessage(sender, "command.box.auto-store-list.info.header", Map.of(
                 "%player%", sender.getName(),
                 "%page%", String.valueOf(page),
                 "%current-line%", String.valueOf(currentLine),
@@ -58,7 +58,7 @@ class AutoStoreList extends BoxSubCommand {
         );
         PlayerData.getAutoStoreAll((OfflinePlayer) sender).entrySet().stream().skip((page - 1) * 9).limit(9)
                 .forEach(entry ->
-                        MESSAGES.sendMessage(sender, false, "command.box.auto-store-list.info.format", Map.of(
+                        messages.sendMessage(sender, false, "command.box.auto-store-list.info.format", Map.of(
                                 "%item%", entry.getKey(),
                                 "%is-enabled%", entry.getValue().toString()
                         )));

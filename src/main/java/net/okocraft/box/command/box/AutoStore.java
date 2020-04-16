@@ -41,31 +41,31 @@ class AutoStore extends BoxSubCommand {
     @Override
     public boolean runCommand(CommandSender sender, String[] args) {
         if (!(sender instanceof Player)) {
-            MESSAGES.sendMessage(sender, "command.general.error.player-only");
+            messages.sendMessage(sender, "command.general.error.player-only");
             return false;
         }
 
         // autostore all <true|false>
         if (args[1].equalsIgnoreCase("ALL")) {
             if (args.length == 2) {
-                MESSAGES.sendMessage(sender, "command.general.error.not-enough-arguments");
+                messages.sendMessage(sender, "command.general.error.not-enough-arguments");
                 return false;
             }
 
             // switchToがtrueでもfalseでもない場合
             if (!args[2].equalsIgnoreCase("true") && !args[2].equalsIgnoreCase("false")) {
-                MESSAGES.sendMessage(sender, "command.general.error.invalid-argument",
+                messages.sendMessage(sender, "command.general.error.invalid-argument",
                         Map.of("%argument%", args[2].toLowerCase(Locale.ROOT)));
                 return false;
             }
 
             boolean switchTo = args[2].equalsIgnoreCase("true");
             if (PlayerData.setAutoStoreAll((OfflinePlayer) sender, switchTo)) {
-                MESSAGES.sendMessage(sender, "command.box.auto-store.info.changed-all",
+                messages.sendMessage(sender, "command.box.auto-store.info.changed-all",
                         Map.of("%is-enabled%", String.valueOf(switchTo)));
                 return true;
             } else {
-                MESSAGES.sendMessage(sender, "command.general.error.unknown-exception");
+                messages.sendMessage(sender, "command.general.error.unknown-exception");
                 return false;
             }
         }
@@ -73,7 +73,7 @@ class AutoStore extends BoxSubCommand {
         // autostore Item [true|false]
         String itemName = args[1].toUpperCase(Locale.ROOT);
         if (!Categories.getInstance().getAllItems().contains(itemName)) {
-            MESSAGES.sendMessage(sender, "command.general.error.item-not-found");
+            messages.sendMessage(sender, "command.general.error.item-not-found");
             return false;
         }
         ItemStack item = Items.getItemStack(itemName);
@@ -81,11 +81,11 @@ class AutoStore extends BoxSubCommand {
         boolean switchTo = args.length > 2 ? args[2].equalsIgnoreCase("true") : !now;
 
         if (PlayerData.setAutoStore((OfflinePlayer) sender, item, switchTo)) {
-            MESSAGES.sendMessage(sender, "command.box.auto-store.info.changed",
+            messages.sendMessage(sender, "command.box.auto-store.info.changed",
                     Map.of("%item%", itemName, "%is-enabled%", String.valueOf(switchTo)));
             return true;
         } else {
-            MESSAGES.sendMessage(sender, "command.general.error.unknown-exception");
+            messages.sendMessage(sender, "command.general.error.unknown-exception");
             return false;
         }
     }

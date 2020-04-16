@@ -23,44 +23,41 @@ import net.okocraft.box.Box;
 
 public final class Config extends CustomConfig {
 
-    private static final Config CONFIG = new Config("config.yml");
-    private static final CategorySelectorGuiConfig CATEGORY_SELECTION_GUI_CONFIG = CONFIG.new CategorySelectorGuiConfig();
-    private static final TransactionGui TRANSACTION_GUI_CONFIG = CONFIG.new TransactionGui();
-    private static final BuyAndSellGui BUY_AND_SELL_GUI_CONFIG = CONFIG.new BuyAndSellGui();
-    private static final CraftGui CRAFT_GUI_CONFIG = CONFIG.new CraftGui();
-    private static final BoxStick BOX_STICK_CONFIG = CONFIG.new BoxStick();
+    private static Config INSTANCE;
+    private final CategorySelectorConfig categorySelectorConfig = new CategorySelectorConfig();
+    private final BankGUIConfig bankGUIConfig = new BankGUIConfig();
+    private final ShopGUIConfig shopGUIConfig = new ShopGUIConfig();
+    private final CraftGUIConfig craftGUIConfig = new CraftGUIConfig();
+    private final BoxStickConfig boxStickConfig = new BoxStickConfig();
 
-    private Config(String name) {
-        super(name);
+    public Config() {
+        super("config.yml");
+        INSTANCE = this;
     }
 
-    public static Config getConfig() {
-        return CONFIG;
+    public CategorySelectorConfig getCategorySelectionConfig() {
+        return categorySelectorConfig;
     }
 
-    public static CategorySelectorGuiConfig getCategorySelectionConfig() {
-        return CATEGORY_SELECTION_GUI_CONFIG;
+    public BankGUIConfig getBankGUIConfig() {
+        return bankGUIConfig;
     }
 
-    public static TransactionGui getTransactionGuiConfig() {
-        return TRANSACTION_GUI_CONFIG;
+    public ShopGUIConfig getShopGUIConfig() {
+        return shopGUIConfig;
     }
 
-    public static BuyAndSellGui getBuyAndSellGuiConfig() {
-        return BUY_AND_SELL_GUI_CONFIG;
+    public CraftGUIConfig getCraftGUIConfig() {
+        return craftGUIConfig;
     }
 
-    public static CraftGui getCraftGuiConfig() {
-        return CRAFT_GUI_CONFIG;
+    public BoxStickConfig getBoxStickConfig() {
+        return boxStickConfig;
     }
 
-    public static BoxStick getBoxStickConfig() {
-        return BOX_STICK_CONFIG;
-    }
+    public class CategorySelectorConfig {
 
-    public class CategorySelectorGuiConfig {
-
-        private CategorySelectorGuiConfig() {
+        private CategorySelectorConfig() {
         }
 
         public String getName() {
@@ -80,9 +77,9 @@ public final class Config extends CustomConfig {
         return get().getString("gui.category-gui-title", "%category-name%");
     }
 
-    public class TransactionGui {
+    public class BankGUIConfig {
 
-        private TransactionGui() {
+        private BankGUIConfig() {
         }
 
         public String getItemNameFormat() {
@@ -94,9 +91,9 @@ public final class Config extends CustomConfig {
         }
     }
 
-    public class BuyAndSellGui {
+    public class ShopGUIConfig {
 
-        private BuyAndSellGui() {
+        private ShopGUIConfig() {
         }
 
         public String getItemNameFormat() {
@@ -108,7 +105,7 @@ public final class Config extends CustomConfig {
         }
     }
 
-    public class CraftGui {
+    public class CraftGUIConfig {
         public String getItemNameFormat() {
             return get().getString("gui.craft-item-format.display-name", "&6%item-name% &8| &6%category-name%");
         }
@@ -150,12 +147,12 @@ public final class Config extends CustomConfig {
 
         public String getDisplayName() {
             String key = "gui.page-function-items." + toString() + ".display-name";
-            return ChatColor.translateAlternateColorCodes('&', getConfig().get().getString(key, key));
+            return ChatColor.translateAlternateColorCodes('&', INSTANCE.get().getString(key, key));
         }
         
         public List<String> getLore() {
             String key = "gui.page-function-items." + toString() + ".lore";
-            List<String> lore = getConfig().get().getStringList(key);
+            List<String> lore = INSTANCE.get().getStringList(key);
             lore.replaceAll(loreLine -> ChatColor.translateAlternateColorCodes('&', loreLine));
             return lore;
         }
@@ -221,7 +218,7 @@ public final class Config extends CustomConfig {
         
         public Sound getSound() {
             try {
-                return Sound.valueOf(getConfig().get().getString("sound-settings." + toString() + ".sound", ""));
+                return Sound.valueOf(INSTANCE.get().getString("sound-settings." + toString() + ".sound", ""));
             } catch (IllegalArgumentException e) {
                 return defaultSound;
             }
@@ -257,7 +254,7 @@ public final class Config extends CustomConfig {
          * @return property for the sound.
          */
         private float getSoundProperty(boolean isPitch, boolean isMax) {
-            List<Double> property = getConfig().get().getDoubleList("sound-settings." + toString() + (isPitch ? ".pitch" : ".volume"));
+            List<Double> property = INSTANCE.get().getDoubleList("sound-settings." + toString() + (isPitch ? ".pitch" : ".volume"));
             if (property.size() != 2) {
                 return isMax ? 1.25F : 0.75F;
             }
@@ -290,9 +287,9 @@ public final class Config extends CustomConfig {
         return get().getBoolean("auto-store.default", false);
     }
 
-    public class BoxStick {
+    public class BoxStickConfig {
 
-        private BoxStick() {
+        private BoxStickConfig() {
         }
 
         public boolean isEnabledBlockPlace() {
@@ -341,16 +338,13 @@ public final class Config extends CustomConfig {
     public void reload() {
         Bukkit.getOnlinePlayers().forEach(Player::closeInventory);
         super.reload();
-        if (CONFIG != null) {
-            // CONFIG が nullになるのはConfigクラスの初期化時のみ
-            PageFunctionItems.reload();
-        }
+        PageFunctionItems.reload();
     }
 
     public void reloadAllConfigs() {
         reload();
         Categories.getInstance().reload();
-        Messages.getInstance().reload();
+        Box.getInstance().getAPI().getMessages().reload();
         Prices.getInstance().reload();
     }
 }

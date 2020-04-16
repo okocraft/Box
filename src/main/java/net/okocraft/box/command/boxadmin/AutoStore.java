@@ -42,7 +42,7 @@ class AutoStore extends BoxAdminSubCommand {
     public boolean runCommand(CommandSender sender, String[] args) {
         String playerName = args[1].toLowerCase(Locale.ROOT);
         if (!PlayerData.exist(playerName)) {
-            MESSAGES.sendMessage(sender, "command.general.error.player-not-found");
+            messages.sendMessage(sender, "command.general.error.player-not-found");
             return false;
         }
         OfflinePlayer player = PlayerUtil.getOfflinePlayer(playerName);
@@ -50,13 +50,13 @@ class AutoStore extends BoxAdminSubCommand {
         // autostore all <true|false>
         if (args[2].equalsIgnoreCase("ALL")) {
             if (args.length == 2) {
-                MESSAGES.sendMessage(sender, "command.general.error.not-enough-arguments");
+                messages.sendMessage(sender, "command.general.error.not-enough-arguments");
                 return false;
             }
 
             // switchToがtrueでもfalseでもない場合
             if (!args[3].equalsIgnoreCase("true") && !args[3].equalsIgnoreCase("false")) {
-                MESSAGES.sendMessage(sender, "command.general.error.invalid-argument",
+                messages.sendMessage(sender, "command.general.error.invalid-argument",
                         Map.of("%argument%", args[3].toLowerCase(Locale.ROOT)));
                 return false;
             }
@@ -64,11 +64,11 @@ class AutoStore extends BoxAdminSubCommand {
             boolean switchTo = args[3].equalsIgnoreCase("true");
 
             if (PlayerData.setAutoStoreAll(player, switchTo)) {
-                MESSAGES.sendMessage(sender, "command.box.auto-store.info.changed-all",
+                messages.sendMessage(sender, "command.box.auto-store.info.changed-all",
                         Map.of("%is-enabled%", String.valueOf(switchTo)));
                 return true;
             } else {
-                MESSAGES.sendMessage(sender, "command.general.error.unknown-exception");
+                messages.sendMessage(sender, "command.general.error.unknown-exception");
                 return false;
             }
         }
@@ -76,7 +76,7 @@ class AutoStore extends BoxAdminSubCommand {
         // autostore Item [true|false]
         String itemName = args[2].toUpperCase(Locale.ROOT);
         if (!Categories.getInstance().getAllItems().contains(itemName)) {
-            MESSAGES.sendMessage(sender, "command.general.error.item-not-found");
+            messages.sendMessage(sender, "command.general.error.item-not-found");
             return false;
         }
         ItemStack item = Items.getItemStack(itemName);
@@ -84,11 +84,11 @@ class AutoStore extends BoxAdminSubCommand {
         boolean switchTo = args.length > 3 ? args[3].equalsIgnoreCase("true") : !now;
 
         if (PlayerData.setAutoStore(player, item, switchTo)) {
-            MESSAGES.sendMessage(sender, "command.box.auto-store.info.changed",
+            messages.sendMessage(sender, "command.box.auto-store.info.changed",
                     Map.of("%item%", itemName, "%is-enabled%", String.valueOf(switchTo)));
             return true;
         } else {
-            MESSAGES.sendMessage(sender, "command.general.error.unknown-exception");
+            messages.sendMessage(sender, "command.general.error.unknown-exception");
             return false;
         }
     }

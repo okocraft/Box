@@ -42,33 +42,33 @@ class Set extends BoxAdminSubCommand {
     @Override
     public boolean runCommand(CommandSender sender, String[] args) {
         if (!PlayerData.exist(args[1])) {
-            MESSAGES.sendMessage(sender, "command.general.error.player-not-found");
+            messages.sendMessage(sender, "command.general.error.player-not-found");
             return false;
         }
 
         OfflinePlayer player = PlayerUtil.getOfflinePlayer(args[1]);
         if (!player.hasPlayedBefore() || player.getName() == null) {
-            MESSAGES.sendMessage(sender, "command.general.error.player-not-found");
+            messages.sendMessage(sender, "command.general.error.player-not-found");
             return false;
         }
 
         String itemName = args[2].toUpperCase(Locale.ROOT);
         if (!Categories.getInstance().getAllItems().contains(itemName)) {
-            MESSAGES.sendMessage(sender, "command.general.error.item-not-found");
+            messages.sendMessage(sender, "command.general.error.item-not-found");
             return false;
         }
         ItemStack item = Items.getItemStack(itemName);
         long amount = args.length < 4 ? 1 : OtherUtil.parseLongOrDefault(args[3], 1);
         PlayerData.setItemAmount(player, item, amount);
 
-        MESSAGES.sendMessage(sender, "command.box-admin.set.info.sender", Map.of(
+        messages.sendMessage(sender, "command.box-admin.set.info.sender", Map.of(
                 "%player%", player.getName(),
                 "%item%", itemName,
                 "%amount%", String.valueOf(amount)
         ));
         
         if (player.isOnline()) {
-            MESSAGES.sendMessage(player.getPlayer(), "command.box-admin.set.info.player", Map.of(
+            messages.sendMessage(player.getPlayer(), "command.box-admin.set.info.player", Map.of(
                     "%sender%", sender.getName(),
                     "%item%", itemName,
                     "%amount%", String.valueOf(amount)

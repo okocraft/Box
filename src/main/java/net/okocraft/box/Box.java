@@ -27,7 +27,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import net.milkbowl.vault.economy.Economy;
 import net.okocraft.box.command.boxadmin.BoxAdmin;
-import net.okocraft.box.config.Config;
 import net.okocraft.box.database.PlayerData;
 import net.okocraft.box.database.Sqlite;
 import net.okocraft.box.gui.CategorySelectorGUI;
@@ -51,13 +50,14 @@ public class Box extends JavaPlugin {
      */
     private Economy economy;
 
+    private BoxAPI api;
+
     @Override
     public void onEnable() {
-        Config.getConfig().reloadAllConfigs();
+        economy = provideEconomy();
 
-        if (!setupEconomy()) {
-            getLogger().severe("Box failed to setup economy.");
-        }
+        this.api = new BoxAPI();
+        api.getConfig().reloadAllConfigs();
 
         registerEvents();
 
@@ -129,28 +129,42 @@ public class Box extends JavaPlugin {
         HandlerList.unregisterAll(this);
     }
 
-    /**
-     * economyをセットする。
-     *
-     * @return 成功したらtrue 失敗したらfalse
-     */
-    private boolean setupEconomy() {
-        if (getServer().getPluginManager().getPlugin("Vault") == null) {
-            getLogger().severe("Vault was not found.");
-            return false;
-        }
-        RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
-        if (rsp == null) {
-            return false;
-        }
-        economy = rsp.getProvider();
-        return true;
+    public BoxAPI getAPI() {
+        return api;
     }
 
     /**
-     * @return the economy
+     * Economyクラスのインスタンスをサービスプロバイダーから取得する
+     *
+     * @return Economyのインスタンス
+     * 
+     * @throws IllegalStateException Vaultがロードされていない時
+     * @throws IllegalStateException EconomyクラスがServiceProviderに登録されていない時
+     */
+    private Economy provideEconomy() throws IllegalStateException {
+        if (getServer().getPluginManager().getPlugin("Vault") == null) {
+            throw new IllegalStateException("Vault was not found.");
+        }
+        
+        RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
+        if (rsp == null) {
+            throw new IllegalStateException("Economy is not registered on service provider.");
+        }
+        return rsp.getProvider();
+    }
+
+
+    /**
+     * Economyクラスのインスタンスを取得する
+     *
+     * @return Economyのインスタンス
+     * 
+     * @throws IllegalStateException Economyクラスのインスタンスがまだロードされていない時
      */
     public Economy getEconomy() {
+        if (economy == null) {
+            throw new IllegalStateException("Economy is not setup yet.");
+        }
         return economy;
     }
 }

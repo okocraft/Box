@@ -31,6 +31,6 @@ public abstract class BoxAdminSubCommand extends BoxCommand {
     
     @Override
     public String getDescription() {
-        return MESSAGES.getMessage("command.box-admin." + SubCommands.get(this).toString() + ".description");
+        return messages.getMessage("command.box-admin." + SubCommands.get(this).toString() + ".description");
     }
 }

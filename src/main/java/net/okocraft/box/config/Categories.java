@@ -20,8 +20,9 @@ import net.okocraft.box.database.Items;
 
 public final class Categories extends CustomConfig {
 
-    private static Box plugin = Box.getInstance();
-    private static final NamespacedKey CATEGORY_NAME_KEY = new NamespacedKey(plugin, "categoryname");
+    private final Box plugin = Box.getInstance();
+    private final Config config = plugin.getAPI().getConfig();
+    private final NamespacedKey categoryNameKey = new NamespacedKey(plugin, "categoryname");
     private static final Categories INSTANCE = new Categories("categories.yml");
 
     private Map<String, Category> categoryCache = new HashMap<>();
@@ -43,7 +44,7 @@ public final class Categories extends CustomConfig {
             if (icon.getType() != Material.AIR) {
                 ItemMeta meta = icon.getItemMeta();
                 meta.setDisplayName(this.displayName);
-                meta.getPersistentDataContainer().set(CATEGORY_NAME_KEY, PersistentDataType.STRING, this.name);
+                meta.getPersistentDataContainer().set(categoryNameKey, PersistentDataType.STRING, this.name);
                 icon.setItemMeta(meta);
             }
         }
@@ -110,7 +111,7 @@ public final class Categories extends CustomConfig {
             throw new IllegalArgumentException("The category \"" + categoryName + "\" does not exist.");
         }
         List<String> items = get().getStringList(categoryName + ".item");
-        String displayName = Config.getCategorySelectionConfig().getItemNameFormat()
+        String displayName = config.getCategorySelectionConfig().getItemNameFormat()
                 .replaceAll("%category-name%", categoryName)
                 .replaceAll("%display-name%", get().getString(categoryName + ".display-name", categoryName + ".display-name"));
         ItemStack icon = Items.getItemStack(get().getString(categoryName + ".icon").toUpperCase(Locale.ROOT));

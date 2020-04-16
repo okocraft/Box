@@ -43,9 +43,9 @@ class Help extends BoxSubCommand {
         int maxPage = subCommandsSize % 9 == 0 ? subCommandsSize / 9 : subCommandsSize / 9 + 1;
         page = Math.min(page, maxPage);
 
-        MESSAGES.sendMessage(sender, "command.box.help.info.header");
+        messages.sendMessage(sender, "command.box.help.info.header");
         Arrays.stream(SubCommands.values()).skip(9 * (page - 1)).limit(9).map(SubCommands::getSubCommand).forEach(subCommand -> 
-                MESSAGES.sendMessage(sender, false, "command.box.help.info.format", Map.of("%command%", subCommand.getName(), "%description%", subCommand.getDescription())));
+                messages.sendMessage(sender, false, "command.box.help.info.format", Map.of("%command%", subCommand.getName(), "%description%", subCommand.getDescription())));
         return true;
     }
 

@@ -40,12 +40,11 @@ import net.okocraft.box.Box;
 import net.okocraft.box.config.Categories;
 import net.okocraft.box.config.Messages;
 import net.okocraft.box.database.Items;
-import org.jetbrains.annotations.Nullable;
 
 public class GenerateCategory implements Listener {
 
-    @Nullable
-    private static final Box plugin = Box.getInstance();
+    private final Box plugin = Box.getInstance();
+    private final Messages messages = plugin.getAPI().getMessages();
 
     private final Player player;
     private final String id;
@@ -73,7 +72,7 @@ public class GenerateCategory implements Listener {
 
         if (chest == null || event.getClickedBlock().getType() != Material.CHEST) {
             event.setCancelled(true);
-            Messages.getInstance().sendMessage(player, "command.box-admin.add-category.error.not-chest-and-cancelled");
+            messages.sendMessage(player, "command.box-admin.add-category.error.not-chest-and-cancelled");
             HandlerList.unregisterAll(this);
             return;
         }
@@ -88,7 +87,7 @@ public class GenerateCategory implements Listener {
                 .map(itemStack -> Items.getName(itemStack, false))
                 .collect(Collectors.toList());
         Categories.getInstance().addCategory(id, displayName, items, icon);
-        Messages.getInstance().sendMessage(player, "command.box-admin.add-category.info.success");
+        messages.sendMessage(player, "command.box-admin.add-category.info.success");
     }
 
     @EventHandler

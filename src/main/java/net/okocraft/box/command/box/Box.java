@@ -99,7 +99,7 @@ public class Box extends BoxCommand implements CommandExecutor, TabCompleter {
 
         SubCommands subCommands = SubCommands.get(args[0]);
         if (subCommands == null) {
-            MESSAGES.sendMessage(sender, "command.general.error.invalid-argument",
+            messages.sendMessage(sender, "command.general.error.invalid-argument",
                     Map.of("%argument%", args[0]));
             return false;
         }
@@ -107,12 +107,12 @@ public class Box extends BoxCommand implements CommandExecutor, TabCompleter {
         BoxSubCommand subCommand = subCommands.getSubCommand();
 
         if (!subCommand.hasPermission(sender)) {
-            MESSAGES.sendMessage(sender, "command.general.error.no-permission", Map.of("%permission%", subCommand.getPermissionNode()));
+            messages.sendMessage(sender, "command.general.error.no-permission", Map.of("%permission%", subCommand.getPermissionNode()));
             return false;
         }
 
         if (subCommand.getLeastArgLength() > args.length) {
-            MESSAGES.sendMessage(sender, "command.general.error.not-enough-arguments");
+            messages.sendMessage(sender, "command.general.error.not-enough-arguments");
             return false;
         }
 
@@ -144,7 +144,7 @@ public class Box extends BoxCommand implements CommandExecutor, TabCompleter {
     @Override
     public boolean runCommand(CommandSender sender, String[] args) {
         if (!(sender instanceof Player)) {
-            MESSAGES.sendMessage(sender, "command.general.error.player-only");
+            messages.sendMessage(sender, "command.general.error.player-only");
             return false;
         }
         ((Player) sender).openInventory(CategorySelectorGUI.GUI);

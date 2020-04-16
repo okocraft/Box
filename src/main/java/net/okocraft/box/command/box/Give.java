@@ -45,30 +45,30 @@ class Give extends BoxSubCommand {
     @Override
     public boolean runCommand(CommandSender sender, String[] args) {
         if (!(sender instanceof Player)) {
-            MESSAGES.sendMessage(sender, "command.general.error.player-only");
+            messages.sendMessage(sender, "command.general.error.player-only");
             return false;
         }
 
         if (sender.getName().equalsIgnoreCase(args[1])) {
-            MESSAGES.sendMessage(sender, "command.box.give.error.cannot-give-myself");
+            messages.sendMessage(sender, "command.box.give.error.cannot-give-myself");
             return false;
         }
 
         if (!PlayerData.exist(args[1])) {
-            MESSAGES.sendMessage(sender, "command.general.error.player-not-found");
+            messages.sendMessage(sender, "command.general.error.player-not-found");
             return false;
         }
 
         OfflinePlayer player = PlayerUtil.getOfflinePlayer(args[1]);
 
         if (!player.hasPlayedBefore() || player.getName() == null) {
-            MESSAGES.sendMessage(sender, "command.general.error.player-not-found");
+            messages.sendMessage(sender, "command.general.error.player-not-found");
             return false;
         }
 
         String itemName = args[2].toUpperCase(Locale.ROOT);
         if (!Categories.getInstance().getAllItems().contains(itemName)) {
-            MESSAGES.sendMessage(sender, "command.general.error.item-not-found");
+            messages.sendMessage(sender, "command.general.error.item-not-found");
             return false;
         }
         ItemStack item = Items.getItemStack(itemName);
@@ -80,14 +80,14 @@ class Give extends BoxSubCommand {
         long otherStock = PlayerData.getItemAmount(player, item);
 
         if (senderStock - amount < 0) {
-            MESSAGES.sendMessage(sender, "command.general.error.not-enough-stock");
+            messages.sendMessage(sender, "command.general.error.not-enough-stock");
             return false;
         }
 
         PlayerData.setItemAmount((OfflinePlayer) sender, item, senderStock - amount);
         PlayerData.setItemAmount(player, item, otherStock + amount);
 
-        MESSAGES.sendMessage(sender, "command.box.give.info.sender", Map.of(
+        messages.sendMessage(sender, "command.box.give.info.sender", Map.of(
                 "%player%", player.getName(),
                 "%item%", itemName,
                 "%amount%", String.valueOf(amount),
@@ -95,7 +95,7 @@ class Give extends BoxSubCommand {
         );
         
         if (player.isOnline()) {
-            MESSAGES.sendMessage(player.getPlayer(), "command.box.give.info.player", Map.of(
+            messages.sendMessage(player.getPlayer(), "command.box.give.info.player", Map.of(
                     "%sender%", sender.getName(),
                     "%item%", itemName,
                     "%amount%", String.valueOf(amount),

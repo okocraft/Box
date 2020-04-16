@@ -20,7 +20,7 @@ import net.okocraft.box.Box;
  */
 public abstract class CustomConfig {
 
-    private static final Box plugin = Box.getInstance();
+    private final Box plugin = Box.getInstance();
     private final File file;
     private final String name;
     private FileConfiguration config;
