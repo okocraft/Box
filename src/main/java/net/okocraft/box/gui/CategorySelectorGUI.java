@@ -113,7 +113,7 @@ public final class CategorySelectorGUI implements Listener, InventoryHolder {
         if (event.getView().getTopInventory().getHolder() != this) {
             return;
         }
-        if (config.getDisabledWorlds().contains(event.getPlayer().getWorld())) {
+        if (config.getDisabledWorlds().contains(event.getPlayer().getWorld().getName())) {
             event.setCancelled(true);
             messages.sendMessage(event.getPlayer(), "command.general.error.in-disabled-world");
         }
@@ -138,7 +138,7 @@ public final class CategorySelectorGUI implements Listener, InventoryHolder {
         InventoryAction action = event.getAction();
         event.setCancelled(true);
 
-        if (config.getDisabledWorlds().contains(event.getWhoClicked().getWorld())) {
+        if (config.getDisabledWorlds().contains(event.getWhoClicked().getWorld().getName())) {
             messages.sendMessage(player, "command.general.error.in-disabled-world");
             return;
         }

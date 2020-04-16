@@ -26,7 +26,8 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import net.milkbowl.vault.economy.Economy;
-import net.okocraft.box.command.boxadmin.BoxAdmin;
+import net.okocraft.box.command.box.BoxCommand;
+import net.okocraft.box.command.boxadmin.BoxAdminCommand;
 import net.okocraft.box.database.PlayerData;
 import net.okocraft.box.database.Sqlite;
 import net.okocraft.box.gui.CategorySelectorGUI;
@@ -61,9 +62,8 @@ public class Box extends JavaPlugin {
 
         registerEvents();
 
-        // Load static class.
-        net.okocraft.box.command.box.Box.load();
-        BoxAdmin.load();
+        new BoxCommand();
+        new BoxAdminCommand();
 
         PlayerData.loadOnlinePlayersData();
 

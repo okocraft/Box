@@ -56,7 +56,7 @@ public class EntityPickupItem implements Listener {
             return;
         }
 
-        if (config.getDisabledWorlds().contains(event.getEntity().getWorld())) {
+        if (config.getDisabledWorlds().contains(event.getEntity().getWorld().getName())) {
             return;
         }
 

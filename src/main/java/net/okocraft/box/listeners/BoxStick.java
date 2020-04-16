@@ -22,7 +22,6 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
-import org.jetbrains.annotations.Nullable;
 
 import net.okocraft.box.Box;
 import net.okocraft.box.config.Categories;
@@ -51,7 +50,7 @@ public class BoxStick implements Listener {
             return;
         }
 
-        if (config.getDisabledWorlds().contains(event.getPlayer().getWorld())) {
+        if (config.getDisabledWorlds().contains(event.getPlayer().getWorld().getName())) {
             return;
         }
 
@@ -142,7 +141,7 @@ public class BoxStick implements Listener {
             return false;
         }
 
-        if (config.getDisabledWorlds().contains(player.getWorld())) {
+        if (config.getDisabledWorlds().contains(player.getWorld().getName())) {
             return false;
         }
 

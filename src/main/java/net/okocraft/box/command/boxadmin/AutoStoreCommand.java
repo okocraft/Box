@@ -21,7 +21,6 @@ package net.okocraft.box.command.boxadmin;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -33,16 +32,24 @@ import net.okocraft.box.database.Items;
 import net.okocraft.box.database.PlayerData;
 import net.okocraft.box.util.PlayerUtil;
 
-class AutoStore extends BoxAdminSubCommand {
+class AutoStoreCommand extends BaseAdminCommand {
 
-    AutoStore() {
+    AutoStoreCommand() {
+        super(
+            "autostore",
+            "boxadmin.autostore",
+            3,
+            false,
+            "/boxadmin autostore < <ITEM> [true|false] | ALL <true|false> >",
+            new String[] {"as"}
+        );
     }
     
     @Override
     public boolean runCommand(CommandSender sender, String[] args) {
         String playerName = args[1].toLowerCase(Locale.ROOT);
         if (!PlayerData.exist(playerName)) {
-            messages.sendMessage(sender, "command.general.error.player-not-found");
+            messages.sendPlayerNotFound(sender);
             return false;
         }
         OfflinePlayer player = PlayerUtil.getOfflinePlayer(playerName);
@@ -50,25 +57,23 @@ class AutoStore extends BoxAdminSubCommand {
         // autostore all <true|false>
         if (args[2].equalsIgnoreCase("ALL")) {
             if (args.length == 2) {
-                messages.sendMessage(sender, "command.general.error.not-enough-arguments");
+                messages.sendNotEnoughArguments(sender);
                 return false;
             }
 
             // switchToがtrueでもfalseでもない場合
             if (!args[3].equalsIgnoreCase("true") && !args[3].equalsIgnoreCase("false")) {
-                messages.sendMessage(sender, "command.general.error.invalid-argument",
-                        Map.of("%argument%", args[3].toLowerCase(Locale.ROOT)));
+                messages.sendInvalidArgument(sender, args[3].toLowerCase(Locale.ROOT));
                 return false;
             }
 
             boolean switchTo = args[3].equalsIgnoreCase("true");
 
             if (PlayerData.setAutoStoreAll(player, switchTo)) {
-                messages.sendMessage(sender, "command.box.auto-store.info.changed-all",
-                        Map.of("%is-enabled%", String.valueOf(switchTo)));
+                messages.sendAutoStoreAll(sender, switchTo);
                 return true;
             } else {
-                messages.sendMessage(sender, "command.general.error.unknown-exception");
+                messages.sendUnknownError(sender);
                 return false;
             }
         }
@@ -76,7 +81,7 @@ class AutoStore extends BoxAdminSubCommand {
         // autostore Item [true|false]
         String itemName = args[2].toUpperCase(Locale.ROOT);
         if (!Categories.getInstance().getAllItems().contains(itemName)) {
-            messages.sendMessage(sender, "command.general.error.item-not-found");
+            messages.sendItemNotFound(sender);
             return false;
         }
         ItemStack item = Items.getItemStack(itemName);
@@ -84,11 +89,10 @@ class AutoStore extends BoxAdminSubCommand {
         boolean switchTo = args.length > 3 ? args[3].equalsIgnoreCase("true") : !now;
 
         if (PlayerData.setAutoStore(player, item, switchTo)) {
-            messages.sendMessage(sender, "command.box.auto-store.info.changed",
-                    Map.of("%item%", itemName, "%is-enabled%", String.valueOf(switchTo)));
+            messages.sendAutoStore(sender, itemName, switchTo);
             return true;
         } else {
-            messages.sendMessage(sender, "command.general.error.unknown-exception");
+            messages.sendUnknownError(sender);
             return false;
         }
     }
@@ -123,15 +127,5 @@ class AutoStore extends BoxAdminSubCommand {
         }
 
         return result;
-    }
-
-    @Override
-    public int getLeastArgLength() {
-        return 3;
-    }
-
-        @Override
-    public String getUsage() {
-        return "/boxadmin autostore <player> < <ITEM> [true|false] | ALL <true|false> >";
     }
 }

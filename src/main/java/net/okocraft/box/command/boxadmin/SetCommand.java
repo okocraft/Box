@@ -21,7 +21,6 @@ package net.okocraft.box.command.boxadmin;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -34,45 +33,44 @@ import net.okocraft.box.database.PlayerData;
 import net.okocraft.box.util.OtherUtil;
 import net.okocraft.box.util.PlayerUtil;
 
-class Set extends BoxAdminSubCommand {
-    
-    Set() {
+class SetCommand extends BaseAdminCommand {
+
+    SetCommand() {
+        super(
+            "set",
+            "boxadmin.set",
+            3,
+            false,
+            "/boxadmin set <player> <ITEM> <amount>",
+            new String[0]
+        );
     }
 
     @Override
     public boolean runCommand(CommandSender sender, String[] args) {
         if (!PlayerData.exist(args[1])) {
-            messages.sendMessage(sender, "command.general.error.player-not-found");
+            messages.sendPlayerNotFound(sender);
             return false;
         }
 
         OfflinePlayer player = PlayerUtil.getOfflinePlayer(args[1]);
         if (!player.hasPlayedBefore() || player.getName() == null) {
-            messages.sendMessage(sender, "command.general.error.player-not-found");
+            messages.sendPlayerNotFound(sender);
             return false;
         }
 
         String itemName = args[2].toUpperCase(Locale.ROOT);
         if (!Categories.getInstance().getAllItems().contains(itemName)) {
-            messages.sendMessage(sender, "command.general.error.item-not-found");
+            messages.sendItemNotFound(sender);
             return false;
         }
         ItemStack item = Items.getItemStack(itemName);
         long amount = args.length < 4 ? 1 : OtherUtil.parseLongOrDefault(args[3], 1);
         PlayerData.setItemAmount(player, item, amount);
 
-        messages.sendMessage(sender, "command.box-admin.set.info.sender", Map.of(
-                "%player%", player.getName(),
-                "%item%", itemName,
-                "%amount%", String.valueOf(amount)
-        ));
-        
+        messages.sendSetInfoToSender(sender, player.getName(), itemName, amount);            
         if (player.isOnline()) {
-            messages.sendMessage(player.getPlayer(), "command.box-admin.set.info.player", Map.of(
-                    "%sender%", sender.getName(),
-                    "%item%", itemName,
-                    "%amount%", String.valueOf(amount)
-            ));
+            messages.sendSetInfoToTarget(sender, sender.getName(), itemName, amount);
         }
 
         return true;

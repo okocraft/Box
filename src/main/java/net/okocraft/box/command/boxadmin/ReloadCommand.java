@@ -27,9 +27,17 @@ import org.bukkit.util.StringUtil;
 
 import net.okocraft.box.gui.CategorySelectorGUI;
 
-class Reload extends BoxAdminSubCommand {
+class ReloadCommand extends BaseAdminCommand {
 
-    Reload() {
+    ReloadCommand() {
+        super(
+            "reload",
+            "boxadmin.reload",
+            1,
+            false,
+            "/boxadmin reload",
+            new String[0]
+        );
     }
 
     @Override
@@ -52,7 +60,7 @@ class Reload extends BoxAdminSubCommand {
             }
         }
 
-        messages.sendMessage(sender, "command.box-admin.reload.info.success");
+        messages.sendReloadSuccess(sender);
         return true;
     }
 
@@ -67,15 +75,4 @@ class Reload extends BoxAdminSubCommand {
 
         return result;
     }
-
-    @Override
-    public int getLeastArgLength() {
-        return 1;
-    }
-
-    @Override
-    public String getUsage() {
-        return "/boxadmin reload";
-    }
-
 }

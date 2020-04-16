@@ -21,7 +21,6 @@ package net.okocraft.box.command.boxadmin;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -36,27 +35,35 @@ import net.okocraft.box.database.PlayerData;
 import net.okocraft.box.util.OtherUtil;
 import net.okocraft.box.util.PlayerUtil;
 
-class Take extends BoxAdminSubCommand {
-    
-    Take() {
+class TakeCommand extends BaseAdminCommand {
+
+    TakeCommand() {
+        super(
+            "take",
+            "boxadmin.take",
+            3,
+            false,
+            "/boxadmin take <player> <ITEM> [amount]",
+            new String[0]
+        );
     }
 
     @Override
     public boolean runCommand(CommandSender sender, String[] args) {
         if (!PlayerData.exist(args[1])) {
-            messages.sendMessage(sender, "command.general.error.player-not-found");
+            messages.sendPlayerNotFound(sender);
             return false;
         }
 
         OfflinePlayer player = PlayerUtil.getOfflinePlayer(args[1]);
         if (!player.hasPlayedBefore() || player.getName() == null) {
-            messages.sendMessage(sender, "command.general.error.player-not-found");
+            messages.sendPlayerNotFound(sender);
             return false;
         }
 
         String itemName = args[2].toUpperCase(Locale.ROOT);
         if (!Categories.getInstance().getAllItems().contains(itemName)) {
-            messages.sendMessage(sender, "command.general.error.item-not-found");
+            messages.sendItemNotFound(sender);
             return false;
         }
         ItemStack item = Items.getItemStack(itemName);
@@ -65,20 +72,9 @@ class Take extends BoxAdminSubCommand {
 
         PlayerData.setItemAmount(player, item, stock - amount);
 
-        messages.sendMessage(sender, "command.box-admin.take.info.sender", Map.of(
-                "%player%", player.getName(),
-                "%item%", itemName,
-                "%amount%", String.valueOf(amount),
-                "%new-amount%", stock - amount
-        ));
-        
+        messages.sendTakeInfoToSender(sender, player.getName(), itemName, amount, stock - amount);        
         if (player.isOnline()) {
-            messages.sendMessage(player.getPlayer(), "command.box-admin.take.info.player", Map.of(
-                    "%sender%", sender.getName(),
-                    "%item%", itemName,
-                    "%amount%", String.valueOf(amount),
-                    "%new-amount%", stock - amount
-            ));
+            messages.sendTakeInfoToTarget(sender, sender.getName(), itemName, amount, stock - amount);
         }
 
         return true;
@@ -123,15 +119,5 @@ class Take extends BoxAdminSubCommand {
         }
 
         return result;
-    }
-
-    @Override
-    public int getLeastArgLength() {
-        return 3;
-    }
-
-    @Override
-    public String getUsage() {
-        return "/boxadmin take <player> <ITEM> [amount]";
     }
 }

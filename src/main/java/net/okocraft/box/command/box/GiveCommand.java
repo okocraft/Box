@@ -27,48 +27,52 @@ import java.util.stream.IntStream;
 
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.StringUtil;
 
+import net.okocraft.box.command.BaseCommand;
 import net.okocraft.box.config.Categories;
 import net.okocraft.box.database.Items;
 import net.okocraft.box.database.PlayerData;
 import net.okocraft.box.util.OtherUtil;
 import net.okocraft.box.util.PlayerUtil;
 
-class Give extends BoxSubCommand {
+class GiveCommand extends BaseCommand {
 
-    Give() {
+    GiveCommand() {
+        super(
+            "give",
+            "box.give",
+            3,
+            true,
+            "/box give <player> <ITEM> [amount]",
+            new String[0]
+        );
     }
 
     @Override
     public boolean runCommand(CommandSender sender, String[] args) {
-        if (!(sender instanceof Player)) {
-            messages.sendMessage(sender, "command.general.error.player-only");
-            return false;
-        }
 
         if (sender.getName().equalsIgnoreCase(args[1])) {
-            messages.sendMessage(sender, "command.box.give.error.cannot-give-myself");
+            messages.sendCannotGiveMyself(sender);
             return false;
         }
 
         if (!PlayerData.exist(args[1])) {
-            messages.sendMessage(sender, "command.general.error.player-not-found");
+            messages.sendPlayerNotFound(sender);
             return false;
         }
 
         OfflinePlayer player = PlayerUtil.getOfflinePlayer(args[1]);
 
         if (!player.hasPlayedBefore() || player.getName() == null) {
-            messages.sendMessage(sender, "command.general.error.player-not-found");
+            messages.sendPlayerNotFound(sender);
             return false;
         }
 
         String itemName = args[2].toUpperCase(Locale.ROOT);
         if (!Categories.getInstance().getAllItems().contains(itemName)) {
-            messages.sendMessage(sender, "command.general.error.item-not-found");
+            messages.sendItemNotFound(sender);
             return false;
         }
         ItemStack item = Items.getItemStack(itemName);
@@ -80,27 +84,16 @@ class Give extends BoxSubCommand {
         long otherStock = PlayerData.getItemAmount(player, item);
 
         if (senderStock - amount < 0) {
-            messages.sendMessage(sender, "command.general.error.not-enough-stock");
+            messages.sendNotEnoughStock(sender);
             return false;
         }
 
         PlayerData.setItemAmount((OfflinePlayer) sender, item, senderStock - amount);
         PlayerData.setItemAmount(player, item, otherStock + amount);
-
-        messages.sendMessage(sender, "command.box.give.info.sender", Map.of(
-                "%player%", player.getName(),
-                "%item%", itemName,
-                "%amount%", String.valueOf(amount),
-                "%new-amount%", senderStock - amount)
-        );
+        messages.sendGiveInfoToSender(sender, player.getName(), itemName, amount, senderStock - amount);
         
         if (player.isOnline()) {
-            messages.sendMessage(player.getPlayer(), "command.box.give.info.player", Map.of(
-                    "%sender%", sender.getName(),
-                    "%item%", itemName,
-                    "%amount%", String.valueOf(amount),
-                    "%new-amount%", otherStock + amount)
-            );
+            messages.sendGiveInfoToTarget(player.getPlayer(), sender.getName(), itemName, amount, otherStock + amount);
         }
 
         return true;
@@ -149,15 +142,5 @@ class Give extends BoxSubCommand {
         }
 
         return result;
-    }
-
-    @Override
-    public int getLeastArgLength() {
-        return 3;
-    }
-
-        @Override
-    public String getUsage() {
-        return "/box give <player> <ITEM> [amount]";
     }
 }

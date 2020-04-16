@@ -3,16 +3,13 @@ package net.okocraft.box.config;
 
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -322,12 +319,12 @@ public final class Config extends CustomConfig {
         }
     }
 
-    public List<World> getDisabledWorlds() {
-        return get().getStringList("disabled-worlds").stream().map(Bukkit::getWorld).filter(Objects::nonNull).collect(Collectors.toList());
+    public List<String> getDisabledWorlds() {
+        return get().getStringList("disabled-worlds");
     }
 
-    public List<World> getAutoReplantWorlds() {
-        return get().getStringList("auto-replant-worlds").stream().map(Bukkit::getWorld).filter(Objects::nonNull).collect(Collectors.toList());
+    public List<String> getAutoReplantWorlds() {
+        return get().getStringList("auto-replant-worlds");
     }
 
     /**

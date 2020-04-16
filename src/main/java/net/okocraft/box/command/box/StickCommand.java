@@ -23,12 +23,25 @@ import java.util.List;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-class Stick extends BoxSubCommand {
+import net.okocraft.box.command.BaseCommand;
+
+class StickCommand extends BaseCommand {
+
+    StickCommand() {
+        super(
+            "stick",
+            "box.stick",
+            1,
+            true,
+            "/box stick",
+            new String[0]
+        );
+    }
 
     @Override
     public boolean runCommand(CommandSender sender, String[] args) {
         if (!(sender instanceof Player)) {
-            messages.sendMessage(sender, "command.general.error.player-only");
+            messages.sendPlayerOnly(sender);
             return false;
         }
 
@@ -38,15 +51,5 @@ class Stick extends BoxSubCommand {
     @Override
     public List<String> runTabComplete(CommandSender sender, String[] args) {
         return List.of();
-    }
-
-    @Override
-    public int getLeastArgLength() {
-        return 1;
-    }
-
-    @Override
-    public String getUsage() {
-        return "/box stick";
     }
 }

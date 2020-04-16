@@ -30,19 +30,23 @@ import org.bukkit.util.StringUtil;
 
 import net.okocraft.box.listeners.GenerateCategory;
 
-class AddCategory extends BoxAdminSubCommand {
-    
-    AddCategory() {
+class AddCategoryCommand extends BaseAdminCommand {
+
+    AddCategoryCommand() {
+        super(
+            "addcategory",
+            "boxadmin.addcategory",
+            5,
+            true,
+            "/boxadmin addcategory <category> <id> <displayName> <iconMaterial>",
+            new String[] {"ac"}
+        );
     }
     
     @Override
     public boolean runCommand(CommandSender sender, String[] args) {
-        if (!(sender instanceof Player)) {
-            messages.sendMessage(sender, "command.general.error.player-only");
-            return false;
-        }
 
-        messages.sendMessage(sender, "command.box-admin.add-category.info.choose-chest");
+        messages.sendChooseChest(sender);
         new GenerateCategory((Player) sender, args[1], args[2], args[3]);
         return true;
     }
@@ -63,15 +67,5 @@ class AddCategory extends BoxAdminSubCommand {
             default:
                 return result;
         }
-    }
-
-    @Override
-    public int getLeastArgLength() {
-        return 5;
-    }
-
-        @Override
-    public String getUsage() {
-        return "/boxadmin addcategory <category> <id> <displayName> <iconMaterial>";
     }
 }

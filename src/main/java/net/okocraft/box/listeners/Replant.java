@@ -99,7 +99,7 @@ public class Replant implements Listener {
     @EventHandler(priority = EventPriority.HIGH)
     public void onBlockBreak(BlockBreakEvent event) {
         Block block = event.getBlock();
-        if (!config.getAutoReplantWorlds().contains(block.getWorld())) {
+        if (!config.getAutoReplantWorlds().contains(block.getWorld().getName())) {
             return;
         }
 
@@ -221,7 +221,7 @@ public class Replant implements Listener {
 
     @EventHandler
     public void cancelBoneMeal(PlayerInteractEvent event) {
-        if (!config.getAutoReplantWorlds().contains(event.getPlayer().getWorld())) {
+        if (!config.getAutoReplantWorlds().contains(event.getPlayer().getWorld().getName())) {
             return;
         }
         Block clickedBlock = event.getClickedBlock();

@@ -19,56 +19,53 @@
 package net.okocraft.box.command.box;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.util.StringUtil;
 
-import net.okocraft.box.command.box.Box.SubCommands;
+import net.okocraft.box.command.BaseCommand;
 import net.okocraft.box.util.OtherUtil;
 
-class Help extends BoxSubCommand {
+class HelpCommand extends BaseCommand {
 
-    Help() {
+    HelpCommand() {
+        super(
+            "help",
+            "box.help",
+            1,
+            true,
+            "/box help [page]",
+            new String[0]
+        );
     }
 
     @Override
     public boolean runCommand(CommandSender sender, String[] args) {
-        int subCommandsSize = SubCommands.values().length;
+        List<BaseCommand> registeredCommands = BoxCommand.getInstance().getRegisteredCommands();
+        int subCommandsSize = registeredCommands.size();
         int page = args.length > 1 ? OtherUtil.parseIntOrDefault(args[1], 1) : 1;
         int maxPage = subCommandsSize % 9 == 0 ? subCommandsSize / 9 : subCommandsSize / 9 + 1;
         page = Math.min(page, maxPage);
 
-        messages.sendMessage(sender, "command.box.help.info.header");
-        Arrays.stream(SubCommands.values()).skip(9 * (page - 1)).limit(9).map(SubCommands::getSubCommand).forEach(subCommand -> 
-                messages.sendMessage(sender, false, "command.box.help.info.format", Map.of("%command%", subCommand.getName(), "%description%", subCommand.getDescription())));
+        messages.sendHelpHeader(sender);
+        registeredCommands.stream().skip(9 * (page - 1)).limit(9).forEach(subCommand -> 
+                messages.sendHelpFormat(sender, subCommand.getName(), subCommand.getDescription()));
         return true;
     }
 
     @Override
     public List<String> runTabComplete(CommandSender sender, String[] args) {
         List<String> result = new ArrayList<>();
-
-        int subCommandsSize = SubCommands.values().length;
+        List<BaseCommand> registeredCommands = BoxCommand.getInstance().getRegisteredCommands();
+        int subCommandsSize = registeredCommands.size();
         int maxPage = subCommandsSize % 9 == 0 ? subCommandsSize / 9 : subCommandsSize / 9 + 1;
         List<String> pages = IntStream.rangeClosed(1, maxPage).boxed().map(String::valueOf).collect(Collectors.toList());
         if (args.length == 2) {
             return StringUtil.copyPartialMatches(args[1], pages, result);
         }
         return result;
-    }
-
-    @Override
-    public int getLeastArgLength() {
-        return 1;
-    }
-
-    @Override
-    public String getUsage() {
-        return "/box help [page]";
     }
 }

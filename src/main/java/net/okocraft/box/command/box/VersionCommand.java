@@ -19,35 +19,33 @@
 package net.okocraft.box.command.box;
 
 import java.util.List;
-import java.util.Map;
 
 import org.bukkit.command.CommandSender;
 
 import net.okocraft.box.Box;
+import net.okocraft.box.command.BaseCommand;
 
-class Version extends BoxSubCommand {
+class VersionCommand extends BaseCommand {
 
-    Version() {
+    VersionCommand() {
+        super(
+            "version",
+            "box.version",
+            1,
+            true,
+            "/box version",
+            new String[0]
+        );
     }
 
     @Override
     public boolean runCommand(CommandSender sender, String[] args) {
-        messages.sendMessage(sender, "command.box.version.info.format", Map.of("%version%", Box.getVersion()));
+        messages.sendVersion(sender, Box.getVersion());
         return true;
     }
 
     @Override
     public List<String> runTabComplete(CommandSender sender, String[] args) {
         return List.of();
-    }
-
-    @Override
-    public int getLeastArgLength() {
-        return 1;
-    }
-
-    @Override
-    public String getUsage() {
-        return "/box version";
     }
 }

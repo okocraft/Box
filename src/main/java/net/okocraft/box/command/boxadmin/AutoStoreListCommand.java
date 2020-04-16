@@ -33,16 +33,24 @@ import net.okocraft.box.database.PlayerData;
 import net.okocraft.box.util.OtherUtil;
 import net.okocraft.box.util.PlayerUtil;
 
-class AutoStoreList extends BoxAdminSubCommand {
-    
-    AutoStoreList() {
+class AutoStoreListCommand extends BaseAdminCommand {
+
+    AutoStoreListCommand() {
+        super(
+            "autostorelist",
+            "boxadmin.autostorelist",
+            3,
+            false,
+            "/boxadmin autostorelist <player> <page>",
+            new String[] {"asl"}
+        );
     }
 
     @Override
     public boolean runCommand(CommandSender sender, String[] args) {
         String playerName = args[1].toLowerCase(Locale.ROOT);
         if (!PlayerData.exist(playerName)) {
-            messages.sendMessage(sender, "command.general.error.player-not-found");
+            messages.sendPlayerNotFound(sender);
             return false;
         }
         OfflinePlayer player = PlayerUtil.getOfflinePlayer(playerName);
@@ -51,19 +59,9 @@ class AutoStoreList extends BoxAdminSubCommand {
         int maxPage = maxLine % 9 == 0 ? maxLine / 9 : maxLine / 9 + 1;
         int page = Math.max(maxPage, (args.length >= 3 ? OtherUtil.parseIntOrDefault(args[2], 1) : 1));
         int currentLine = Math.min(maxLine, page * 9);
-
-        messages.sendMessage(sender, "command.box.auto-store-list.info.header", Map.of(
-                "%player%", player.getName(),
-                "%page%", String.valueOf(page),
-                "%current-line%", String.valueOf(currentLine),
-                "%max-line%", String.valueOf(maxLine))
-        );
+        messages.sendAutoStoreListHeader(sender, player.getName(), page, currentLine, maxLine);
         PlayerData.getAutoStoreAll((OfflinePlayer) sender).entrySet().stream().skip((page - 1) * 9).limit(9)
-                .forEach(entry ->
-                        messages.sendMessage(sender, false, "command.box.auto-store-list.info.format", Map.of(
-                                "%item%", entry.getKey(),
-                                "%is-enabled%", entry.getValue().toString()
-                        )));
+                .forEach(entry -> messages.sendAutoStoreListFormat(sender, entry.getKey(), entry.getValue()));
         return true;
     }
 
@@ -90,16 +88,5 @@ class AutoStoreList extends BoxAdminSubCommand {
             return StringUtil.copyPartialMatches(args[2], pages, result);
         }
         return result;
-    }
-
-
-    @Override
-    public int getLeastArgLength() {
-        return 3;
-    }
-
-    @Override
-    public String getUsage() {
-        return "/boxadmin autostorelist <player> <page>";
     }
 }

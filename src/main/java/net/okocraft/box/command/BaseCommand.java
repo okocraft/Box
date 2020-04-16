@@ -1,25 +1,7 @@
-/*
- * Box
- * Copyright (C) 2019 OKOCRAFT
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
-
 package net.okocraft.box.command;
 
+import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 
 import org.bukkit.command.CommandSender;
 
@@ -27,16 +9,26 @@ import net.okocraft.box.Box;
 import net.okocraft.box.config.Config;
 import net.okocraft.box.config.Messages;
 
-public abstract class BoxCommand {
+public abstract class BaseCommand {
 
     protected final Box plugin = Box.getInstance();
     protected final Config config = plugin.getAPI().getConfig();
     protected final Messages messages = plugin.getAPI().getMessages();
 
-    /**
-     * コンストラクタ
-     */
-    protected BoxCommand() {
+    private final String name;
+    private final String permissionNode;
+    private final int leastArgLength;
+    private final boolean isPlayerOnly;
+    private final String usage;
+    private final List<String> alias;
+
+    protected BaseCommand(String name, String permissionNode, int leastArgLength, boolean isPlayerOnly, String usage, String ... alias) {
+        this.name = name;
+        this.permissionNode = permissionNode;
+        this.leastArgLength = leastArgLength;
+        this.isPlayerOnly = isPlayerOnly;
+        this.usage = usage;
+        this.alias = Arrays.asList(alias);
     }
 
     /**
@@ -63,7 +55,7 @@ public abstract class BoxCommand {
      * @return コマンドの名前
      */
     public String getName() {
-        return this.getClass().getSimpleName().toLowerCase(Locale.ROOT);
+        return name;
     }
 
     /**
@@ -72,7 +64,16 @@ public abstract class BoxCommand {
      * @return 権限
      */
     public String getPermissionNode() {
-        return getName();
+        return permissionNode;
+    }
+
+    /**
+     * プレイヤーのみが使用可能なコマンドかどうかを取得する
+     * 
+     * @return
+     */
+    public boolean isPlayerOnly() {
+        return isPlayerOnly;
     }
 
     /**
@@ -80,14 +81,26 @@ public abstract class BoxCommand {
      *
      * @return 最低限の引数の長さ
      */
-    public abstract int getLeastArgLength();
+    public int getLeastArgLength() {
+        return leastArgLength;
+    }
+
+    public boolean isValidArgsLength(int argsLength) {
+        return getLeastArgLength() <= argsLength;
+    }
 
     /**
      * コマンドの引数の内容を取得する。例: "/box autostoreList [page]"
      *
      * @return 引数の内容
      */
-    public abstract String getUsage();
+    public String getUsage() {
+        return usage;
+    }
+
+    public List<String> getAlias() {
+        return alias;
+    }
 
     /**
      * コマンドの説明を取得する。例: "アイテムの自動収納の設定をリストにして表示する。"
@@ -95,7 +108,7 @@ public abstract class BoxCommand {
      * @return コマンドの説明
      */
     public String getDescription() {
-        return messages.getMessage("command." + getName() + ".desctiption");
+        return messages.getMessage("command.command-description." + getName());
     }
 
     /**
@@ -106,6 +119,10 @@ public abstract class BoxCommand {
      * @see CommandSender#hasPermission(String)
      */
     public boolean hasPermission(CommandSender sender) {
+        if (permissionNode == null || permissionNode.isEmpty()) {
+            return true;
+        }
+
         return sender.hasPermission(getPermissionNode());
     }
 }

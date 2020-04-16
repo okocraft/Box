@@ -16,20 +16,19 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.okocraft.box.command.box;
+package net.okocraft.box.command.boxadmin;
 
-import net.okocraft.box.command.BoxCommand;
-import net.okocraft.box.command.box.Box.SubCommands;
+import net.okocraft.box.command.BaseCommand;
 
-public abstract class BoxSubCommand extends BoxCommand {
-
-    @Override
-    public String getPermissionNode() {
-        return "box." + SubCommands.get(this).toString();
+public abstract class BaseAdminCommand extends BaseCommand {
+    
+    protected BaseAdminCommand(String name, String permissionNode, int leastArgLength, boolean isPlayerOnly,
+            String usage, String[] alias) {
+        super(name, permissionNode, leastArgLength, isPlayerOnly, usage, alias);
     }
 
     @Override
     public String getDescription() {
-        return messages.getMessage("command.box." + SubCommands.get(this).toString() + ".description");
+        return messages.getMessage("command.admin-command-description." + getName());
     }
 }
