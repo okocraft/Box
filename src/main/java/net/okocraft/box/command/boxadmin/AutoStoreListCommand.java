@@ -25,13 +25,13 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.util.StringUtil;
 
 import net.okocraft.box.database.PlayerData;
 import net.okocraft.box.util.OtherUtil;
-import net.okocraft.box.util.PlayerUtil;
 
 class AutoStoreListCommand extends BaseAdminCommand {
 
@@ -53,7 +53,9 @@ class AutoStoreListCommand extends BaseAdminCommand {
             messages.sendPlayerNotFound(sender);
             return false;
         }
-        OfflinePlayer player = PlayerUtil.getOfflinePlayer(playerName);
+        
+        @SuppressWarnings("deprecation")
+        OfflinePlayer player = Bukkit.getOfflinePlayer(playerName);
         Map<String, Boolean> autoStoreData = PlayerData.getAutoStoreAll(player);
         int maxLine = autoStoreData.size();
         int maxPage = maxLine % 9 == 0 ? maxLine / 9 : maxLine / 9 + 1;
@@ -81,7 +83,9 @@ class AutoStoreListCommand extends BaseAdminCommand {
             return List.of();
         }
 
-        int items = PlayerData.getAutoStoreAll(PlayerUtil.getOfflinePlayer(playerName)).size();
+        @SuppressWarnings("deprecation")
+        OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(playerName);
+        int items = PlayerData.getAutoStoreAll(offlinePlayer).size();
         int maxPage = items % 9 == 0 ? items / 9 : items / 9 + 1;
         List<String> pages = IntStream.rangeClosed(1, maxPage).boxed().map(String::valueOf).collect(Collectors.toList());
         if (args.length == 3) {

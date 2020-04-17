@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.inventory.ItemStack;
@@ -34,7 +35,6 @@ import net.okocraft.box.command.BaseCommand;
 import net.okocraft.box.database.Items;
 import net.okocraft.box.database.PlayerData;
 import net.okocraft.box.util.OtherUtil;
-import net.okocraft.box.util.PlayerUtil;
 
 class GiveCommand extends BaseCommand {
 
@@ -62,7 +62,8 @@ class GiveCommand extends BaseCommand {
             return false;
         }
 
-        OfflinePlayer player = PlayerUtil.getOfflinePlayer(args[1]);
+        @SuppressWarnings("deprecation")
+        OfflinePlayer player = Bukkit.getOfflinePlayer(args[1]);
 
         if (!player.hasPlayedBefore() || player.getName() == null) {
             messages.sendPlayerNotFound(sender);

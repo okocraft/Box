@@ -12,6 +12,7 @@ import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Function;
@@ -29,7 +30,6 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import net.okocraft.box.Box;
-import net.okocraft.box.util.PlayerUtil;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -182,9 +182,10 @@ public class PlayerData implements Listener {
     public static boolean exist(String name) {
         name = name.toLowerCase(Locale.ROOT);
         Map<String, String> players = getPlayers();
-        if (PlayerUtil.isUUID(name)) {
+        try {
+            UUID.fromString(name);
             return players.containsKey(name);
-        } else {
+        } catch (IllegalArgumentException e) {
             return players.containsValue(name);
         }
     }

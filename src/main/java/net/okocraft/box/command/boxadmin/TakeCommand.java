@@ -24,6 +24,7 @@ import java.util.Locale;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.inventory.ItemStack;
@@ -32,7 +33,6 @@ import org.bukkit.util.StringUtil;
 import net.okocraft.box.database.Items;
 import net.okocraft.box.database.PlayerData;
 import net.okocraft.box.util.OtherUtil;
-import net.okocraft.box.util.PlayerUtil;
 
 class TakeCommand extends BaseAdminCommand {
 
@@ -54,7 +54,8 @@ class TakeCommand extends BaseAdminCommand {
             return false;
         }
 
-        OfflinePlayer player = PlayerUtil.getOfflinePlayer(args[1]);
+        @SuppressWarnings("deprecation")
+        OfflinePlayer player = Bukkit.getOfflinePlayer(args[1]);
         if (!player.hasPlayedBefore() || player.getName() == null) {
             messages.sendPlayerNotFound(sender);
             return false;
@@ -107,7 +108,9 @@ class TakeCommand extends BaseAdminCommand {
             return List.of();
         }
 
-        long stock = PlayerData.getItemAmount(PlayerUtil.getOfflinePlayer(playerName), Items.getItemStack(item));
+        @SuppressWarnings("deprecation")
+        OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(playerName);
+        long stock = PlayerData.getItemAmount(offlinePlayer, Items.getItemStack(item));
 
         List<String> amountList = IntStream.iterate(1, n -> n * 10).limit(10).filter(n -> n < stock)
                 .boxed().map(String::valueOf).collect(Collectors.toList());

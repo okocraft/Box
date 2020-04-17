@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.inventory.ItemStack;
@@ -29,7 +30,6 @@ import org.bukkit.util.StringUtil;
 
 import net.okocraft.box.database.Items;
 import net.okocraft.box.database.PlayerData;
-import net.okocraft.box.util.PlayerUtil;
 
 class AutoStoreCommand extends BaseAdminCommand {
 
@@ -51,7 +51,9 @@ class AutoStoreCommand extends BaseAdminCommand {
             messages.sendPlayerNotFound(sender);
             return false;
         }
-        OfflinePlayer player = PlayerUtil.getOfflinePlayer(playerName);
+        
+        @SuppressWarnings("deprecation")
+        OfflinePlayer player = Bukkit.getOfflinePlayer(playerName);
 
         // autostore all <true|false>
         if (args[2].equalsIgnoreCase("ALL")) {
