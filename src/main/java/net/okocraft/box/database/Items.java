@@ -157,7 +157,7 @@ public final class Items {
         return items.contains(name);
     }
 
-    @org.jetbrains.annotations.Nullable
+    @Nullable
     private static ItemStack createPotion(Material potionItem, PotionType type, boolean extended,
             boolean upgraded) {
         ItemStack potion = new ItemStack(potionItem);

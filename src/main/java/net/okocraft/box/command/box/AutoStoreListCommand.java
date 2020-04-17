@@ -28,7 +28,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.util.StringUtil;
 
 import net.okocraft.box.command.BaseCommand;
-import net.okocraft.box.config.Categories;
 import net.okocraft.box.database.PlayerData;
 import net.okocraft.box.util.OtherUtil;
 
@@ -48,7 +47,7 @@ class AutoStoreListCommand extends BaseCommand {
     @Override
     public boolean runCommand(CommandSender sender, String[] args) {
 
-        int maxLine = Categories.getInstance().getAllItems().size();
+        int maxLine = categories.getAllItems().size();
         int maxPage = maxLine % 9 == 0 ? maxLine / 9 : maxLine / 9 + 1;
         int page = Math.min(maxPage, (args.length >= 2 ? OtherUtil.parseIntOrDefault(args[1], 1) : 1));
         int currentLine = Math.min(maxLine, page * 9);
@@ -61,7 +60,7 @@ class AutoStoreListCommand extends BaseCommand {
 
     @Override
     public List<String> runTabComplete(CommandSender sender, String[] args) {
-        int items = Categories.getInstance().getAllItems().size();
+        int items = categories.getAllItems().size();
         int maxPage = items % 9 == 0 ? items / 9 : items / 9 + 1;
         List<String> pages = IntStream.rangeClosed(1, maxPage).boxed().map(String::valueOf)
                 .collect(Collectors.toList());

@@ -45,7 +45,7 @@ class StickCommand extends BaseCommand {
             return false;
         }
 
-        return ((Player) sender).getInventory().addItem(config.getBoxStickConfig().getStick()).isEmpty();
+        return ((Player) sender).getInventory().addItem(config.getStick()).isEmpty();
     }
 
     @Override

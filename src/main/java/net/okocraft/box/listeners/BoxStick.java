@@ -24,7 +24,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
 import net.okocraft.box.Box;
-import net.okocraft.box.config.Categories;
 import net.okocraft.box.config.Config;
 import net.okocraft.box.database.Items;
 import net.okocraft.box.database.PlayerData;
@@ -54,12 +53,12 @@ public class BoxStick implements Listener {
             return;
         }
 
-        event.getPlayer().openInventory(CategorySelectorGUI.GUI);
+        event.getPlayer().openInventory(new CategorySelectorGUI().getInventory());
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void blockPlace(BlockPlaceEvent event) {
-        if (!config.getBoxStickConfig().isEnabledBlockPlace()) {
+        if (!event.getPlayer().hasPermission("box.stick.block")) {
             return;
         }
         Player player = event.getPlayer();
@@ -75,7 +74,7 @@ public class BoxStick implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void itemConsume(PlayerItemConsumeEvent event) {
-        if (!config.getBoxStickConfig().isEnabledFood()) {
+        if (!event.getPlayer().hasPermission("box.stick.food")) {
             return;
         }
         if (useItemFromDatabase(event.getItem(), event.getPlayer())) {
@@ -86,7 +85,7 @@ public class BoxStick implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void itemBreak(PlayerItemBreakEvent event) {
-        if (!config.getBoxStickConfig().isEnabledTool()) {
+        if (!event.getPlayer().hasPermission("box.stick.tool")) {
             return;
         }
 
@@ -106,9 +105,6 @@ public class BoxStick implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void potionThrow(ProjectileLaunchEvent event) {
-        if (!config.getBoxStickConfig().isEnabledPotion()) {
-            return;
-        }
 
         if (!(event.getEntity() instanceof ThrownPotion)) {
             return;
@@ -120,6 +116,9 @@ public class BoxStick implements Listener {
         }
 
         Player player = (Player) thrownPotion.getShooter();
+        if (!player.hasPermission("box.stick.potion")) {
+            return;
+        }
         ItemStack handItem = player.getInventory().getItemInMainHand();
         if (handItem == null) {
             return;
@@ -145,6 +144,10 @@ public class BoxStick implements Listener {
             return false;
         }
 
+        if (!player.hasPermission("box.stick")) {
+            return false;
+        }
+
         PlayerInventory inv = player.getInventory();
         ItemStack offHandItem = inv.getItemInOffHand();
         if (offHandItem.getType() != Material.STICK) {
@@ -156,7 +159,7 @@ public class BoxStick implements Listener {
         }
 
         String itemName = Items.getName(item, false);
-        if (itemName == null || !Categories.getInstance().getAllItems().contains(itemName)) {
+        if (itemName == null || !plugin.getAPI().getCategories().getAllItems().contains(itemName)) {
             return false;
         }
 

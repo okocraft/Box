@@ -27,7 +27,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.StringUtil;
 
-import net.okocraft.box.config.Categories;
 import net.okocraft.box.database.Items;
 import net.okocraft.box.database.PlayerData;
 import net.okocraft.box.util.PlayerUtil;
@@ -80,7 +79,7 @@ class AutoStoreCommand extends BaseAdminCommand {
 
         // autostore Item [true|false]
         String itemName = args[2].toUpperCase(Locale.ROOT);
-        if (!Categories.getInstance().getAllItems().contains(itemName)) {
+        if (!categories.getAllItems().contains(itemName)) {
             messages.sendItemNotFound(sender);
             return false;
         }
@@ -111,7 +110,7 @@ class AutoStoreCommand extends BaseAdminCommand {
             return List.of();
         }
 
-        List<String> items = new ArrayList<>(Categories.getInstance().getAllItems());
+        List<String> items = new ArrayList<>(categories.getAllItems());
         items.add("ALL");
 
         if (args.length == 3) {

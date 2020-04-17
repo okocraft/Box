@@ -22,11 +22,8 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.SoundCategory;
-import org.bukkit.entity.Player;
 
 import net.okocraft.box.Box;
-import net.okocraft.box.config.Config.Sounds;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -60,31 +57,5 @@ public final class PlayerUtil {
         } else {
             return Bukkit.getOfflinePlayer(uuidOrName);
         }
-    }
-
-    /**
-     * プレイヤーに音声を流す。
-     *
-     * @param player プレイヤー
-     * @param sound  流す音声
-     */
-    public static void playSound(Player player, Sounds sound) {
-        playSound(player, sound, false);
-    }
-
-    /**
-     * プレイヤーに音声を流す。
-     *
-     * @param player プレイヤー
-     * @param sound  流す音声
-     */
-    public static void playSound(Player player, Sounds sound, boolean randomPitch) {
-        player.playSound(
-                player.getLocation(),
-                sound.getSound(),
-                SoundCategory.MASTER,
-                (sound.getMaxVolume() + sound.getMinVolume()) / 2,
-                randomPitch ? sound.getPitchRandomly() : (sound.getMaxPitch() + sound.getMinPitch()) / 2
-        );
     }
 }

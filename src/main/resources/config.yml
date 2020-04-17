@@ -1,3 +1,5 @@
+max-quantity: 640
+
 gui:
   max-quantity: 640
   category-selection-gui:
@@ -11,16 +13,16 @@ gui:
     display-name: "&6%item-name% &8| &6%category-name%" # display-nameが指定されていない場合は無視されてデフォルトの名前が表示される。
     lore:
       - ""
-      - "&7* 左クリックで &b%item-quantity% &7個預け入れ *"
-      - "&7* 右クリックで &b%item-quantity% &7個取り出し *"
+      - "&7* 左クリックで &b%quantity% &7個預け入れ *"
+      - "&7* 右クリックで &b%quantity% &7個取り出し *"
       - ""
       - "&7在庫: &b%stock% 個"
   buy-and-sell-item-format:
     display-name: "&6%item-name% &8| &6%category-name%"
     lore:
       - ""
-      - "&7* 左クリックで &b%item-quantity% &7個購入 *"
-      - "&7* 右クリックで &b%item-quantity% &7個売却 *"
+      - "&7* 左クリックで &b%quantity% &7個購入 *"
+      - "&7* 右クリックで &b%quantity% &7個売却 *"
       - ""
       - "&7所持金: &b%balance% 円"
       - "&7買価: &b%buy-price% 円"
@@ -30,7 +32,7 @@ gui:
     display-name: "&6%item-name% &8| &6%category-name%"
     lore:
       - ""
-      - "&7* 左クリックで &b%item-quantity% &7回分(&b%amount%&7個)作成 *"
+      - "&7* 左クリックで &b%quantity% &7回分(&b%amount%&7個)作成 *"
       - ""
       - "&7在庫: &b%stock% 個"
       - "&7素材:"
@@ -130,15 +132,10 @@ disabled-worlds: # 使えなくするワールド
 # TODO: 別PLで実装
 auto-replant-worlds: # Boxの在庫から自動植え直しを行うワールド
   - public_facility
+
 box-stick: # 左手に持つとアイテムをデータベースから使うための棒。DisplayNameやLoreなどを変えても昔の棒は機能する。
-  enabled:
-    block-place: true # ブロック設置時に自動補充
-    food: true # 食べたときに自動補充
-    potion: true # ポーション投げ放題
-    tool: true # エンチャントや名前付けや説明文などのアイテムメタがない、耐久力を持つアイテムを自動補充。
-  item:
-    display-name: "&9Box Stick"
-    lore:
-      - "&r"
-      - "§7利き手じゃない手にこれを持つと、利き手の"
-      - "§7アイテムを使った時にBoxから消費します。"
+  display-name: "&9Box Stick"
+  lore:
+    - "§r"
+    - "§7利き手じゃない手にこれを持つと、利き手の"
+    - "§7アイテムを使った時にBoxから消費します。"

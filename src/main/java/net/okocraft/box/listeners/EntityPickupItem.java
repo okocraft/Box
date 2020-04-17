@@ -27,7 +27,6 @@ import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
-import net.okocraft.box.util.PlayerUtil;
 import net.okocraft.box.Box;
 import net.okocraft.box.config.Categories;
 import net.okocraft.box.config.Config;
@@ -36,7 +35,9 @@ import net.okocraft.box.database.PlayerData;
 
 public class EntityPickupItem implements Listener {
 
-    private Config config = Box.getInstance().getAPI().getConfig();
+    private Box plugin = Box.getInstance();
+    private Config config = plugin.getAPI().getConfig();
+    private Categories categories = plugin.getAPI().getCategories();
 
     public EntityPickupItem(Plugin plugin) {
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
@@ -65,7 +66,7 @@ public class EntityPickupItem implements Listener {
 
         String pickedItemName = Items.getName(pickedItem, false);
 
-        if (!Categories.getInstance().getAllItems().contains(pickedItemName)) {
+        if (!categories.getAllItems().contains(pickedItemName)) {
             return;
         }
 
@@ -78,7 +79,6 @@ public class EntityPickupItem implements Listener {
 
         event.getItem().remove();
         event.setCancelled(true);
-
-        PlayerUtil.playSound(player, Config.Sounds.DEPOSIT, true);
+        config.playDepositSound(player);
     }
 }

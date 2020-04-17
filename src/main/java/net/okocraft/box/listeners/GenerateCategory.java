@@ -45,6 +45,7 @@ public class GenerateCategory implements Listener {
 
     private final Box plugin = Box.getInstance();
     private final Messages messages = plugin.getAPI().getMessages();
+    private final Categories categories = plugin.getAPI().getCategories();
 
     private final Player player;
     private final String id;
@@ -86,7 +87,7 @@ public class GenerateCategory implements Listener {
                 .filter(Objects::nonNull)
                 .map(itemStack -> Items.getName(itemStack, false))
                 .collect(Collectors.toList());
-        Categories.getInstance().addCategory(id, displayName, items, icon);
+        categories.addCategory(id, displayName, items, icon);
         messages.sendMessage(player, "command.box-admin.add-category.info.success");
     }
 

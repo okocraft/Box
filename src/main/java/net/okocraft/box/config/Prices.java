@@ -7,14 +7,8 @@ import net.okocraft.box.database.Items;
 
 public final class Prices extends CustomConfig {
 
-    private static final Prices config = new Prices("prices.yml");
-
-    private Prices(String name) {
-        super(name);
-    }
-
-    public static Prices getInstance() {
-        return config;
+    public Prices() {
+        super("prices.yml");
     }
 
     public double getSellPrice(ItemStack item) {

@@ -171,7 +171,7 @@ public class Replant implements Listener {
     }
 
     private boolean isYoungPlant(Block block) {
-        BlockData blockData = block.getBlockData();        
+        BlockData blockData = block.getBlockData();
         if (block.getType() == Material.SUGAR_CANE) {
             return block.getRelative(BlockFace.DOWN).getType() != Material.SUGAR_CANE;
         }

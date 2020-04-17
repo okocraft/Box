@@ -3,7 +3,7 @@ version: ${project.version}
 api-version: "1.14"
 main: ${project.groupId}.${project.artifactId}
 author: LazyGon
-softdepend: ["WorldEdit", "Vault"]
+softdepend: ["Vault"]
 commands:
   box:
     description: Base Command of Box plugin.
@@ -56,7 +56,7 @@ permissions:
       box.give: true
       box.help: true
       box.version: true
-      box.stick: true
+      box.stick.*: true
   box.auto-store:
     default: true
   box.auto-store-list:
@@ -67,22 +67,25 @@ permissions:
     default: true
   box.version:
     default: true
+  box.stick.*:
+    default: true
+    children:
+      box.stick: true
+      box.stick.block: true
+      box.stick.food: true
+      box.stick.potion: true
+      box.stick.tool: true
   box.stick:
     default: true
-
-  # アイテム割引が優先され、重複しない。
-  # アイテム割引が0またはアイテム割引の権限がない場合、カテゴリ割引が適応。
-  box.discount.item.*: # 例. box.discount.item.dirt
-    default: false
-  box.discount.category.*: # 例. box.discount.category.building_blocks
-    default: false
-
-# bypass permissions
-  box.worldedit.item.unrestricted:
-    default: op
-  box.worldedit.disallow.unrestricted:
-    default: op
+  box.stick.block:
+    default: true
+  box.stick.food:
+    default: true
+  box.stick.potion:
+    default: true
+  box.stick.tool:
+    default: true
 
 # special permissions
   box-admin.creative:
-    default: op
+    default: false

@@ -31,7 +31,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.StringUtil;
 
 import net.okocraft.box.command.BaseCommand;
-import net.okocraft.box.config.Categories;
 import net.okocraft.box.database.Items;
 import net.okocraft.box.database.PlayerData;
 import net.okocraft.box.util.OtherUtil;
@@ -71,7 +70,7 @@ class GiveCommand extends BaseCommand {
         }
 
         String itemName = args[2].toUpperCase(Locale.ROOT);
-        if (!Categories.getInstance().getAllItems().contains(itemName)) {
+        if (!categories.getAllItems().contains(itemName)) {
             messages.sendItemNotFound(sender);
             return false;
         }

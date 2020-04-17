@@ -6,6 +6,7 @@ import java.util.List;
 import org.bukkit.command.CommandSender;
 
 import net.okocraft.box.Box;
+import net.okocraft.box.config.Categories;
 import net.okocraft.box.config.Config;
 import net.okocraft.box.config.Messages;
 
@@ -14,6 +15,7 @@ public abstract class BaseCommand {
     protected final Box plugin = Box.getInstance();
     protected final Config config = plugin.getAPI().getConfig();
     protected final Messages messages = plugin.getAPI().getMessages();
+    protected final Categories categories = plugin.getAPI().getCategories();
 
     private final String name;
     private final String permissionNode;

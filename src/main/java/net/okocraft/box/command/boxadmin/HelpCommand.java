@@ -52,7 +52,7 @@ class HelpCommand extends BaseAdminCommand {
 
         messages.sendHelpHeader(sender);
         registeredCommands.stream().skip(9 * (page - 1)).limit(9).forEach(subCommand -> 
-                messages.sendHelpFormat(sender, subCommand.getName(), subCommand.getDescription()));        
+                messages.sendHelpFormat(sender, subCommand.getName(), subCommand.getDescription()));
         return true;
     }
 

@@ -29,7 +29,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.StringUtil;
 
-import net.okocraft.box.config.Categories;
 import net.okocraft.box.database.Items;
 import net.okocraft.box.database.PlayerData;
 import net.okocraft.box.util.OtherUtil;
@@ -62,7 +61,7 @@ class TakeCommand extends BaseAdminCommand {
         }
 
         String itemName = args[2].toUpperCase(Locale.ROOT);
-        if (!Categories.getInstance().getAllItems().contains(itemName)) {
+        if (!categories.getAllItems().contains(itemName)) {
             messages.sendItemNotFound(sender);
             return false;
         }
@@ -72,7 +71,7 @@ class TakeCommand extends BaseAdminCommand {
 
         PlayerData.setItemAmount(player, item, stock - amount);
 
-        messages.sendTakeInfoToSender(sender, player.getName(), itemName, amount, stock - amount);        
+        messages.sendTakeInfoToSender(sender, player.getName(), itemName, amount, stock - amount);
         if (player.isOnline()) {
             messages.sendTakeInfoToTarget(sender, sender.getName(), itemName, amount, stock - amount);
         }

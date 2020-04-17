@@ -18,155 +18,69 @@
 
 package net.okocraft.box.gui;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.HandlerList;
-import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryOpenEvent;
-import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
 import net.okocraft.box.Box;
-import net.okocraft.box.config.Categories;
-import net.okocraft.box.config.Config;
-import net.okocraft.box.config.Messages;
-import net.okocraft.box.config.Categories.Category;
-import org.jetbrains.annotations.Nullable;
 
-public final class CategorySelectorGUI implements Listener, InventoryHolder {
+public final class CategorySelectorGUI extends BaseGUI implements Clickable {
 
-    @Nullable
-    private static final Box plugin = Box.getInstance();
-    private final Config config = plugin.getAPI().getConfig();
-    private final Messages messages = plugin.getAPI().getMessages();
     private final NamespacedKey categoryNameKey = new NamespacedKey(plugin, "categoryname");
-    private static final List<Integer> flameSlots = List.of(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 17, 18, 26, 27, 35, 36, 44, 45, 46,
+    private final List<Integer> frameSlots = List.of(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 17, 18, 26, 27, 35, 36, 44, 45, 46,
             47, 48, 49, 50, 51, 52, 53);
 
-    private static CategorySelectorGUI categorySelector = new CategorySelectorGUI();
-    public static Inventory GUI = initGUI();
+    public CategorySelectorGUI() {
+        super(54, Box.getInstance().getAPI().getLayouts().getCategorySelectorGUITitle());
+        
+        
+        ItemStack frame = layout.getFrame();
+        @SuppressWarnings("serial")
+        Map<Integer, ItemStack> pageCommonItems = new HashMap<>() {{
+            for (int frameSlot : frameSlots) {
+                put(frameSlot, frame);
+            }
+        }};
+        putPageCommonItems(pageCommonItems);
 
-    /**
-     * コンストラクタ禁止
-     */
-    private CategorySelectorGUI() {
-    }
-
-    public static Inventory initGUI() {
-        GUI = Bukkit.createInventory(categorySelector, 54, plugin.getAPI().getConfig().getCategorySelectionConfig().getName());
-        ItemStack flame = new ItemStack(Material.BLACK_STAINED_GLASS_PANE); 
-        ItemMeta flameMeta = flame.getItemMeta();
-        flameMeta.setDisplayName("§r");
-        flame.setItemMeta(flameMeta);
-        flameSlots.forEach(slot -> GUI.setItem(slot, flame));
-
-        List<ItemStack> itemList = Categories.getInstance().getAllCategories().stream().map(Category::getIcon)
+        List<ItemStack> itemList = categories.getCategories().stream().map(categories::getIcon)
                 .collect(Collectors.toList());
-        GUI.addItem(itemList.toArray(new ItemStack[itemList.size()]));
-        return GUI;
+        addAllItem(itemList);
+        setPage(getPage()); 
     }
 
     @Override
-    public Inventory getInventory() {
-        return GUI;
-    }
-
-    /**
-     * リスナーを動かす。カテゴリーGUIと違ってカテゴリー選択GUIはonEnableのときから常にリスナーをオンにしておく。
-     */
-    public static void startListener() {
-        Bukkit.getPluginManager().registerEvents(categorySelector, plugin);
-    }
-
-    /**
-     * リスナーを止める。
-     */
-    public static void stopListener() {
-        HandlerList.unregisterAll(categorySelector);
-    }
-
-    /**
-     * リスナーを再起動する。
-     */
-    public static void restartListener() {
-        stopListener();
-        categorySelector = new CategorySelectorGUI();
-        GUI = initGUI();
-        startListener();
-    }
-
-    @EventHandler
-    public void onInventoryOpen(InventoryOpenEvent event) {
-        if (event.getView().getTopInventory().getHolder() != this) {
+    public void onClicked(InventoryClickEvent event) {
+        ItemStack clickedItem = event.getCurrentItem();
+        if (clickedItem.getItemMeta() == null) {
             return;
         }
-        if (config.getDisabledWorlds().contains(event.getPlayer().getWorld().getName())) {
-            event.setCancelled(true);
-            messages.sendMessage(event.getPlayer(), "command.general.error.in-disabled-world");
+
+        String categoryName = getCategoryName(clickedItem);
+        if (categoryName != null) {
+            event.getWhoClicked().openInventory(new StrageGUI((Player) event.getWhoClicked(), categoryName, 1).getInventory());
         }
     }
 
-    /**
-     * カテゴリ選択GUIへのクリックを検知して、適切なカテゴリGUIに遷移させる。
-     *
-     * @param event
-     */
-    @EventHandler(priority = EventPriority.NORMAL)
-    public void onClick(InventoryClickEvent event) {
-        if (event.isCancelled()) {
-            return;
-        }
-        Inventory inventory = event.getInventory();
-        if (inventory.getHolder() != this) {
-            return;
-        }
-
-        Player player = (Player) event.getWhoClicked();
-        InventoryAction action = event.getAction();
-        event.setCancelled(true);
-
-        if (config.getDisabledWorlds().contains(event.getWhoClicked().getWorld().getName())) {
-            messages.sendMessage(player, "command.general.error.in-disabled-world");
-            return;
-        }
-
-        int clickedSlot = event.getSlot();
-        if (clickedSlot == -999) {
-            return;
-        }
-        ItemStack clickedItem = inventory.getItem(clickedSlot);
-
-        if (clickedItem == null || clickedItem.getType() == Material.AIR) {
-            return;
-        }
-
-        if (action == InventoryAction.NOTHING || inventory.getType() == InventoryType.PLAYER) {
-            return;
-        }
-
-        if (flameSlots.contains(clickedSlot)) {
-            return;
-        }
-
-        // NOTE: NPE はItemStackがAIRの場合のみしか起こらない。
-        String categoryName = clickedItem.getItemMeta().getPersistentDataContainer().get(categoryNameKey,
+    private String getCategoryName(ItemStack item) {
+        return item.getItemMeta().getPersistentDataContainer().get(categoryNameKey,
                 PersistentDataType.STRING);
+    }
 
-        player.closeInventory();
-
-        new CategoryGUI(player, Categories.getInstance().getCategory(categoryName), 1);
+    @Override
+    protected ItemStack applyPlaceholder(ItemStack item, Map<String, String> placeholder) {
+        String categoryName = getCategoryName(item);
+        if (categoryName != null) {
+            placeholder.put("%category-name%", categoryName);
+            placeholder.put("%display-name%", categories.getDisplayName(categoryName));
+        }
+        return super.applyPlaceholder(item, placeholder);
     }
 }

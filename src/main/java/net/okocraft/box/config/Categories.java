@@ -1,95 +1,84 @@
 package net.okocraft.box.config;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import net.okocraft.box.Box;
 import net.okocraft.box.database.Items;
 
-public final class Categories extends CustomConfig {
+public class Categories extends CustomConfig {
 
     private final Box plugin = Box.getInstance();
-    private final Config config = plugin.getAPI().getConfig();
+
     private final NamespacedKey categoryNameKey = new NamespacedKey(plugin, "categoryname");
-    private static final Categories INSTANCE = new Categories("categories.yml");
 
-    private Map<String, Category> categoryCache = new HashMap<>();
+    private Set<String> allItems;
 
-    public class Category {
-
-        private final String name;
-        private final String displayName;
-        private final ItemStack icon;
-        private final List<String> items;
-    
-        public Category(String name, String displayName, ItemStack icon, List<String> items) {
-            this.name = name;
-            this.displayName = ChatColor.translateAlternateColorCodes('&', displayName);
-            this.icon = icon;
-            this.items = items;
-            this.items.removeIf(itemName -> !Items.contains(itemName));
-    
-            if (icon.getType() != Material.AIR) {
-                ItemMeta meta = icon.getItemMeta();
-                meta.setDisplayName(this.displayName);
-                meta.getPersistentDataContainer().set(categoryNameKey, PersistentDataType.STRING, this.name);
-                icon.setItemMeta(meta);
-            }
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public String getDisplayName() {
-            return displayName;
-        }
-
-        public List<String> getItems() {
-            return Collections.unmodifiableList(items);
-        }
-
-        public ItemStack getIcon() {
-            return icon.clone();
-        }
+    public Categories() {
+        super("categories.yml");
     }
 
-    private Categories(String name) {
-        super(name);
+    public List<String> getCategories() {
+        return get().getKeys(false).stream()
+                .filter(category -> Objects.nonNull(getDisplayName(category)))
+                .filter(category -> Objects.nonNull(getIcon(category)))
+                .filter(category -> !getItems(category).isEmpty())
+                .collect(Collectors.toList());
     }
 
-    public static Categories getInstance() {
-        return INSTANCE;
+    public String getDisplayName(String category) {
+        return get().getString(category + ".display-name");
     }
 
-    public String getDisplayName(String categoryName) throws IllegalArgumentException {
-        Category category = getCategory(categoryName);
-        return category.getName();
+    public ItemStack getIcon(String category) {
+        ItemStack item = Items.getItemStack(get().getString(category + ".icon", ""));
+        if (item == null) {
+            return item;
+        }
+        item = plugin.getAPI().getLayouts().setCategorySelectorEntryMeta(item);
+        ItemMeta meta = item.getItemMeta();
+        meta.getPersistentDataContainer().set(categoryNameKey, PersistentDataType.STRING, category);
+        item.setItemMeta(meta);
+        return item;
     }
 
-    public ItemStack getIcon(String categoryName) throws IllegalArgumentException {
-        Category category = getCategory(categoryName);
-        return category.getIcon();
+    public List<ItemStack> getItems(String category) {
+        return get().getStringList(category + ".item").stream()
+                .map(Items::getItemStack)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+    }
+
+    public Set<String> getAllItems() {
+        if (allItems != null) {
+            new BukkitRunnable(){
+            
+                @Override
+                public void run() {
+                    Set<String> items = getCategories().stream().flatMap(category -> get().getStringList(category + ".item").stream()).collect(Collectors.toSet());
+                    if (allItems.containsAll(items)) {
+                        allItems = items;
+                    }
+                }
+            }.runTaskAsynchronously(plugin);
+
+            return allItems;
+        }
+
+        allItems = getCategories().stream().flatMap(category -> get().getStringList(category + ".item").stream()).collect(Collectors.toSet());
+        return allItems;
     }
     
-    public List<String> getItems(String categoryName) throws IllegalArgumentException {
-        Category category = getCategory(categoryName);
-        return category.getItems();
-    }
-
-    public Category addCategory(String id, String displayName, List<String> items, String iconItem) throws IllegalArgumentException {
+    public void addCategory(String id, String displayName, List<String> items, String iconItem) throws IllegalArgumentException {
         displayName = ChatColor.translateAlternateColorCodes('&', displayName);
         items.removeIf(itemName -> !Items.contains(itemName));
         if (!Items.contains(iconItem)) {
@@ -100,51 +89,5 @@ public final class Categories extends CustomConfig {
         get().set(id + ".icon", iconItem);
         get().set(id + ".item", items);
         save();
-        return getCategory(id);
-    }
-
-    public Category getCategory(String categoryName) throws IllegalArgumentException {
-        if (categoryCache.containsKey(categoryName)) {
-            return categoryCache.get(categoryName);
-        }
-        if (!get().contains(categoryName)) {
-            throw new IllegalArgumentException("The category \"" + categoryName + "\" does not exist.");
-        }
-        List<String> items = get().getStringList(categoryName + ".item");
-        String displayName = config.getCategorySelectionConfig().getItemNameFormat()
-                .replaceAll("%category-name%", categoryName)
-                .replaceAll("%display-name%", get().getString(categoryName + ".display-name", categoryName + ".display-name"));
-        ItemStack icon = Items.getItemStack(get().getString(categoryName + ".icon").toUpperCase(Locale.ROOT));
-        Category result = INSTANCE.new Category(categoryName, displayName, icon, items);
-        categoryCache.put(categoryName, result);
-        return result;
-    }
-
-    public List<Category> getAllCategories() {
-        List<Category> categories = new ArrayList<>();
-        get().getValues(false).keySet()
-                .forEach(categoryName -> categories.add(getCategory(categoryName)));
-        return categories;
-    }
-
-    public boolean exist(String categoryName) {
-        return get().contains(categoryName);
-    }
-
-    public List<String> getAllItems() {
-        return getAllCategories().stream().flatMap(category -> category.getItems().stream()).distinct().collect(Collectors.toList());
-    }
-
-    /**
-     * Reload config. If this method used before {@code JailConfig.save()}, the
-     * data on memory will be lost.
-     */
-    @Override
-    public void reload() {
-        super.reload();
-        if (INSTANCE != null) {
-            // INSTANCE が null になるのは初期化時のみ
-            categoryCache.clear();
-        }
     }
 }

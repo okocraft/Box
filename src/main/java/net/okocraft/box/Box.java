@@ -31,9 +31,9 @@ import net.okocraft.box.command.box.BoxCommand;
 import net.okocraft.box.command.boxadmin.BoxAdminCommand;
 import net.okocraft.box.database.PlayerData;
 import net.okocraft.box.database.Sqlite;
-import net.okocraft.box.gui.CategorySelectorGUI;
 import net.okocraft.box.listeners.BoxStick;
 import net.okocraft.box.listeners.EntityPickupItem;
+import net.okocraft.box.listeners.PlayerListener;
 import net.okocraft.box.listeners.Replant;
 
 /**
@@ -116,13 +116,11 @@ public class Box extends JavaPlugin {
         unregisterEvents();
 
         // Events should be registered in its own initializer
+        new PlayerListener().start();
         new PlayerData(this);
         new EntityPickupItem(this);
         new BoxStick();
         new Replant();
-
-        // GUI
-        CategorySelectorGUI.restartListener();
 
         getLogger().info("Events have been registered.");
     }
