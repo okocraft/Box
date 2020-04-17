@@ -22,7 +22,6 @@ import java.util.List;
 
 import org.bukkit.command.CommandSender;
 
-import net.okocraft.box.Box;
 import net.okocraft.box.command.BaseCommand;
 
 class VersionCommand extends BaseCommand {
@@ -40,7 +39,7 @@ class VersionCommand extends BaseCommand {
 
     @Override
     public boolean runCommand(CommandSender sender, String[] args) {
-        messages.sendVersion(sender, Box.getVersion());
+        messages.sendVersion(sender, plugin.getVersion());
         return true;
     }
 

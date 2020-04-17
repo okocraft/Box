@@ -22,6 +22,7 @@ import net.okocraft.box.util.CraftRecipes;
 
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -34,7 +35,6 @@ import net.okocraft.box.gui.CategorySelectorGUI;
 import net.okocraft.box.listeners.BoxStick;
 import net.okocraft.box.listeners.EntityPickupItem;
 import net.okocraft.box.listeners.Replant;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * @author OKOCRAFT
@@ -43,7 +43,6 @@ public class Box extends JavaPlugin {
     /**
      * プラグイン Box のインスタンス。
      */
-    @Nullable
     private static Box instance;
 
     /**
@@ -90,18 +89,24 @@ public class Box extends JavaPlugin {
      * このクラスのインスタンスを返す。
      *
      * @return インスタンス
+     * 
+     * @throws IllegalStateException プラグインがまだロードされていないのに呼び出されたらスローされる。
+     * @throws ClassCastException 同名の別プラグインがロードされている状態で呼び出されたらスローされる。
      */
-    @Nullable
-    public static Box getInstance() {
+    public static Box getInstance() throws IllegalStateException, ClassCastException {
         if (instance == null) {
-            instance = (Box) Bukkit.getPluginManager().getPlugin("Box");
+            Plugin plugin = Bukkit.getPluginManager().getPlugin("Box");
+            if (plugin == null) {
+                throw new IllegalStateException("The plugin Box is not loaded yet.");
+            }
+            instance = (Box) plugin;
         }
 
         return instance;
     }
 
-    public static String getVersion() {
-        return Box.class.getPackage().getImplementationVersion();
+    public String getVersion() {
+        return getDescription().getVersion();
     }
 
     /**

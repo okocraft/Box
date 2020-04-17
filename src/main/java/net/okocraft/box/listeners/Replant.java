@@ -96,7 +96,7 @@ public class Replant implements Listener {
         Bukkit.getPluginManager().registerEvents(this, plugin);
     }
 
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent event) {
         Block block = event.getBlock();
         if (!config.getAutoReplantWorlds().contains(block.getWorld().getName())) {
@@ -219,7 +219,7 @@ public class Replant implements Listener {
         return false;
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void cancelBoneMeal(PlayerInteractEvent event) {
         if (!config.getAutoReplantWorlds().contains(event.getPlayer().getWorld().getName())) {
             return;

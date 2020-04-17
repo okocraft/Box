@@ -57,7 +57,7 @@ public class BoxStick implements Listener {
         event.getPlayer().openInventory(CategorySelectorGUI.GUI);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void blockPlace(BlockPlaceEvent event) {
         if (!config.getBoxStickConfig().isEnabledBlockPlace()) {
             return;
@@ -73,7 +73,7 @@ public class BoxStick implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void itemConsume(PlayerItemConsumeEvent event) {
         if (!config.getBoxStickConfig().isEnabledFood()) {
             return;
@@ -84,7 +84,7 @@ public class BoxStick implements Listener {
 
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void itemBreak(PlayerItemBreakEvent event) {
         if (!config.getBoxStickConfig().isEnabledTool()) {
             return;
@@ -104,7 +104,7 @@ public class BoxStick implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void potionThrow(ProjectileLaunchEvent event) {
         if (!config.getBoxStickConfig().isEnabledPotion()) {
             return;
