@@ -40,7 +40,9 @@ public abstract class BaseCommand {
      * @param args   引数
      * @return コマンドが成功したらtrue
      */
-    public abstract boolean runCommand(CommandSender sender, String[] args);
+    public boolean runCommand(CommandSender sender, String[] args) {
+        return false;
+    }
 
     /**
      * 各コマンドのタブ補完の処理
@@ -49,7 +51,9 @@ public abstract class BaseCommand {
      * @param args   引数
      * @return その時のタブ補完のリスト
      */
-    public abstract List<String> runTabComplete(CommandSender sender, String[] args);
+    public List<String> runTabComplete(CommandSender sender, String[] args) {
+        return List.of();
+    }
 
     /**
      * コマンドの名前を取得する。

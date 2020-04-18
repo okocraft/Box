@@ -18,8 +18,6 @@
 
 package net.okocraft.box.command.box;
 
-import java.util.List;
-
 import org.bukkit.command.CommandSender;
 
 import net.okocraft.box.command.BaseCommand;
@@ -41,10 +39,5 @@ class VersionCommand extends BaseCommand {
     public boolean runCommand(CommandSender sender, String[] args) {
         messages.sendVersion(sender, plugin.getVersion());
         return true;
-    }
-
-    @Override
-    public List<String> runTabComplete(CommandSender sender, String[] args) {
-        return List.of();
     }
 }

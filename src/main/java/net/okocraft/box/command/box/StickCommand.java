@@ -18,8 +18,6 @@
 
 package net.okocraft.box.command.box;
 
-import java.util.List;
-
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -46,10 +44,5 @@ class StickCommand extends BaseCommand {
         }
 
         return ((Player) sender).getInventory().addItem(config.getStick()).isEmpty();
-    }
-
-    @Override
-    public List<String> runTabComplete(CommandSender sender, String[] args) {
-        return List.of();
     }
 }
