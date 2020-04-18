@@ -18,12 +18,7 @@
 
 package net.okocraft.box.command.boxadmin;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-
 import org.bukkit.command.CommandSender;
-import org.bukkit.util.StringUtil;
 
 class ReloadCommand extends BaseAdminCommand {
 
@@ -40,35 +35,7 @@ class ReloadCommand extends BaseAdminCommand {
 
     @Override
     public boolean runCommand(CommandSender sender, String[] args) {
-        if (args.length == 1) {
-            config.reloadAllConfigs();
-        }
-
-        if (args.length == 2) {
-            String type = args[1].toLowerCase(Locale.ROOT);
-            switch (type) {
-            case "listener":
-                plugin.registerEvents();
-                break;
-            case "config":
-                config.reloadAllConfigs();
-                break;
-            }
-        }
-
-        messages.sendReloadSuccess(sender);
+        plugin.getAPI().reloadAllConfigs();
         return true;
-    }
-
-    @Override
-    public List<String> runTabComplete(CommandSender sender, String[] args) {
-        List<String> result = new ArrayList<>();
-        List<String> subCommands = List.of("listener", "config");
-
-        if (args.length == 2) {
-            return StringUtil.copyPartialMatches(args[1], subCommands, result);
-        }
-
-        return result;
     }
 }

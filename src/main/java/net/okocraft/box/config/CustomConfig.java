@@ -62,7 +62,7 @@ public abstract class CustomConfig {
      *
      * @author LazyGon
      */
-    protected void reload() {
+    public void reload() {
         saveDefault();
         config = YamlConfiguration.loadConfiguration(file);
         Optional<InputStream> inputStream = Optional.ofNullable(plugin.getResource(name));

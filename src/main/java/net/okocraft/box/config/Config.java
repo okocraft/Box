@@ -18,7 +18,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
 import net.okocraft.box.Box;
-import net.okocraft.box.BoxAPI;
 
 public final class Config extends CustomConfig {
 
@@ -127,21 +126,9 @@ public final class Config extends CustomConfig {
         return item;   
     }
 
-    /**
-     * Reload config. If this method used before {@code JailConfig.save()}, the data
-     * on memory will be lost.
-     */
     @Override
     public void reload() {
         Bukkit.getOnlinePlayers().forEach(Player::closeInventory);
         super.reload();
-    }
-
-    public void reloadAllConfigs() {
-        reload();
-        BoxAPI api = Box.getInstance().getAPI();
-        api.getCategories().reload();
-        api.getMessages().reload();
-        api.getPrices().reload();
     }
 }

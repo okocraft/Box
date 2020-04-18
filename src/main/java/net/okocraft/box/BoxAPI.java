@@ -15,6 +15,7 @@ public final class BoxAPI {
     private final Categories categories = new Categories();
 
     BoxAPI() {
+        reloadAllConfigs();
     }
 
     public Config getConfig() {
@@ -35,5 +36,13 @@ public final class BoxAPI {
 
     public Categories getCategories() {
         return categories;
+    }
+
+    public void reloadAllConfigs() {
+        config.reload();
+        messages.reload();
+        layout.reload();
+        prices.reload();
+        categories.reload();
     }
 }

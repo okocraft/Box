@@ -21,7 +21,6 @@ package net.okocraft.box;
 import net.okocraft.box.util.CraftRecipes;
 
 import org.bukkit.Bukkit;
-import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -54,10 +53,10 @@ public class Box extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        instance = this;
         economy = provideEconomy();
 
         this.api = new BoxAPI();
-        api.getConfig().reloadAllConfigs();
 
         registerEvents();
 
@@ -78,9 +77,6 @@ public class Box extends JavaPlugin {
 
         PlayerData.saveOnlinePlayersData();
         Sqlite.disconnect();
-
-        unregisterEvents();
-        Bukkit.getScheduler().cancelTasks(this);
 
         getLogger().info(String.format("Box v%s has been disabled!", getVersion()));
     }
@@ -112,8 +108,7 @@ public class Box extends JavaPlugin {
     /**
      * イベントを Bukkit サーバに登録する。
      */
-    public void registerEvents() {
-        unregisterEvents();
+    private void registerEvents() {
 
         // Events should be registered in its own initializer
         new PlayerListener().start();
@@ -123,13 +118,6 @@ public class Box extends JavaPlugin {
         new Replant();
 
         getLogger().info("Events have been registered.");
-    }
-
-    /**
-     * 登録したイベントを Bukkit サーバから削除する。
-     */
-    private void unregisterEvents() {
-        HandlerList.unregisterAll(this);
     }
 
     public BoxAPI getAPI() {
