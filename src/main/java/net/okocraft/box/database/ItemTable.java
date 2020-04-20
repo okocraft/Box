@@ -48,7 +48,7 @@ final class ItemTable {
 
     ItemTable(@NotNull Database database) {
         this.database = database;
-        database.execute("CREATE TABLE IF NOT EXISTS " + TABLE + " (id INTEGER AUTO_INCREMENT, item TEXT NOT NULL, PRIMARY KEY (id))");
+        database.execute("CREATE TABLE IF NOT EXISTS " + TABLE + " (id INTEGER PRIMARY KEY " + (database.isSQLite() ? "AUTOINCREMENT" : "AUTO_INCREMENT") + ", item TEXT NOT NULL)");
         loadItems();
         updateItems();
         addDefaultItems();
@@ -83,9 +83,9 @@ final class ItemTable {
 
         StringBuilder sb = new StringBuilder("UPDATE " + TABLE + " SET item = CASE id");
         itemStrings.forEach((id, item) -> {
-            sb.append(" WHEN ").append(id).append(" THEN ").append(item);
+            sb.append(" WHEN ").append(id).append(" THEN ").append("'").append(item).append("'");
         });
-        sb.append(" END");
+        sb.append(" ELSE item END");
 
         database.execute(sb.toString());
     }

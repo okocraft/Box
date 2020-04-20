@@ -18,6 +18,8 @@ class Database {
     /** データベースへの接続。 */
     private final Connection connection;
 
+    private final boolean isSQLite;
+
     /**
      * 初期設定でSQLiteに接続する。
      * 
@@ -31,6 +33,7 @@ class Database {
         config.setJdbcUrl("jdbc:sqlite:" + dbPath.toFile().getPath());
         hikari = new HikariDataSource(config);
         connection = hikari.getConnection();
+        isSQLite = true;
     }
 
     /**
@@ -66,17 +69,11 @@ class Database {
         config.addDataSourceProperty("maintainTimeStats", false);
         hikari = new HikariDataSource(config);
         connection = hikari.getConnection();
+        isSQLite = false;
     }
 
-    /**
-     * 独自設定でデータベースに接続する。
-     * 
-     * @param config 設定
-     * @throws SQLException {@code Connection}の生成中に例外が発生した場合
-     */
-    Database(HikariConfig config) throws SQLException {
-        hikari = new HikariDataSource(config);
-        connection = hikari.getConnection();
+    public boolean isSQLite() {
+        return isSQLite;
     }
 
     /**
