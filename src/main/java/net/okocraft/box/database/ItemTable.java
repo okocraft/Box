@@ -30,6 +30,7 @@ import org.bukkit.potion.PotionType;
 import org.jetbrains.annotations.NotNull;
 
 import net.okocraft.box.Box;
+import net.okocraft.box.BoxAPI;
 
 /**
  * このクラスで扱うアイテムのIDは、プレイヤーのデータを保存しているテーブルのcolumnとなる。このクラスはメタを持たない単純なアイテムは常に全てのテーブルにあることを保証する。
@@ -104,6 +105,7 @@ final class ItemTable {
             ItemStack add = new ItemStack(material);
             if (!(add.getItemMeta() instanceof PotionMeta)) {
                 register(add);
+                continue;
             }
 
             PotionMeta meta = (PotionMeta) add.getItemMeta();
@@ -113,14 +115,18 @@ final class ItemTable {
                 ItemStack clone = add.clone();
                 clone.setItemMeta(meta);
                 register(clone);
-                clonedMeta.setBasePotionData(new PotionData(type, true, false));
-                clone = add.clone();
-                clone.setItemMeta(meta);
-                register(clone);
-                clonedMeta.setBasePotionData(new PotionData(type, false, true));
-                clone = add.clone();
-                clone.setItemMeta(meta);
-                register(clone);
+                if (type.isExtendable()) {
+                    clonedMeta.setBasePotionData(new PotionData(type, true, false));
+                    clone = add.clone();
+                    clone.setItemMeta(meta);
+                    register(clone);
+                }
+                if (type.isUpgradeable()) {
+                    clonedMeta.setBasePotionData(new PotionData(type, false, true));
+                    clone = add.clone();
+                    clone.setItemMeta(meta);
+                    register(clone);
+                }
             }
         }
     }
