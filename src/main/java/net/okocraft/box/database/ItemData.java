@@ -30,6 +30,8 @@ public class ItemData {
 
     @Nullable
     public String getName(ItemStack item) {
+        item = item.clone();
+        item.setAmount(1);
         return names.inverse().get(item);
     }
     

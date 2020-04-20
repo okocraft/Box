@@ -1,11 +1,14 @@
 package net.okocraft.box.gui;
 
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataType;
 
 public abstract class CategoryGUI extends QuantityGUI {
 
     private final String categoryName;
+    private final NamespacedKey realItemKey = new NamespacedKey(plugin, "realitem");
 
     public CategoryGUI(Player player, String categoryName, String guiTitle, int quantity) {
         super(player, guiTitle, 54, quantity, 45, 53, 49, 46, 47, 48);
@@ -40,5 +43,17 @@ public abstract class CategoryGUI extends QuantityGUI {
     public void setPage(int page) {
         super.setPage(page);
         update();
+    }
+
+    public String getRealItemName(ItemStack guiItem) {
+        return guiItem.getItemMeta().getPersistentDataContainer().get(realItemKey, PersistentDataType.STRING);
+    }
+
+    public ItemStack getRealItem(ItemStack guiItem) {
+        String realItemName = getRealItemName(guiItem);
+        if (realItemName == null) {
+            return null;
+        }
+        return itemData.getItemStack(realItemName);
     }
 }

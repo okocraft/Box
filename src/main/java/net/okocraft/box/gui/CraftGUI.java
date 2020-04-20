@@ -32,7 +32,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import net.okocraft.box.Box;
-import net.okocraft.box.database.PlayerData;
 import net.okocraft.box.util.CraftRecipes;
 
 /**
@@ -95,8 +94,7 @@ class CraftGUI extends CategoryGUI {
 
     @Override
     protected ItemStack applyPlaceholder(ItemStack item, Map<String, String> placeholder) {
-        // TODO: meta?
-        placeholder.put("%item-name%", Objects.requireNonNullElse(itemData.getName(item, false), item.getType().toString()));
+        placeholder.put("%item-name%", Objects.requireNonNullElse(getRealItemName(item), item.getType().toString()));
         placeholder.put("%category-name%", getCategoryName());
         placeholder.put("%stock%", String.valueOf(playerData.getStock(getPlayer(), item)));
         placeholder.put("%amount%", String.valueOf(getQuantity() * CraftRecipes.getResultAmount(item)));

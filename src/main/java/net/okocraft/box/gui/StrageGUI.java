@@ -31,7 +31,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import net.okocraft.box.Box;
-import net.okocraft.box.database.PlayerData;
 /**
  * アイテムの取引GUIの実装
  */
@@ -101,7 +100,7 @@ class StrageGUI extends CategoryGUI {
 
     @Override
     protected ItemStack applyPlaceholder(ItemStack item, Map<String, String> placeholder) {
-        placeholder.put("%item-name%", Objects.requireNonNullElse(Items.getName(item, false), item.getType().toString()));
+        placeholder.put("%item-name%", Objects.requireNonNullElse(getRealItemName(item), item.getType().toString()));
         placeholder.put("%category-name%", getCategoryName());
         placeholder.put("%stock%", String.valueOf(playerData.getStock(getPlayer(), item)));
         return super.applyPlaceholder(item, placeholder);
@@ -115,7 +114,7 @@ class StrageGUI extends CategoryGUI {
      */
     private int withdraw(ItemStack item) {
         Player player = getPlayer();
-        ItemStack givenItem = itemData.getItemStack(Items.getName(item, true));
+        ItemStack givenItem = getRealItem(item);
         int stock = playerData.getStock(player, givenItem);
         int quantity = Math.min(stock, getQuantity());
         if (stock == 0) {
@@ -224,7 +223,7 @@ class StrageGUI extends CategoryGUI {
      */
     private int deposit(ItemStack item) {
         Player player = getPlayer();
-        ItemStack takenItem = Items.getItemStack(Items.getName(item, true));
+        ItemStack takenItem = getRealItem(item);
         int stock = playerData.getStock(player, takenItem);
         int quantity = getQuantity();
         // itemData.getItemStack(Items.getName(item, true));
@@ -259,7 +258,7 @@ class StrageGUI extends CategoryGUI {
         ItemStack[] contents = getPlayer().getInventory().getContents();
         for (int i = 0; i < contents.length; i++) {
             ItemStack item = contents[i];
-            if (item == null || itemData.getName(item, false) == null) {
+            if (item == null || itemData.getName(item) == null) {
                 continue;
             }
             int stock = playerData.getStock(getPlayer(), item);

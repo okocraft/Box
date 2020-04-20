@@ -33,7 +33,6 @@ import org.bukkit.inventory.ItemStack;
 import net.milkbowl.vault.economy.Economy;
 import net.okocraft.box.Box;
 import net.okocraft.box.config.Prices;
-import net.okocraft.box.database.PlayerData;
 
 /**
  * アイテムの取引GUIの実装
@@ -127,7 +126,7 @@ class ShopGUI extends CategoryGUI {
 
     @Override
     protected ItemStack applyPlaceholder(ItemStack item, Map<String, String> placeholder) {
-        placeholder.put("%item-name%", Objects.requireNonNullElse(Items.getName(item, false), item.getType().toString()));
+        placeholder.put("%item-name%", Objects.requireNonNullElse(getRealItemName(item), item.getType().toString()));
         placeholder.put("%category-name%", getCategoryName());
         placeholder.put("%balance%", String.valueOf(economy.getBalance(getPlayer())));
         placeholder.put("%stock%", String.valueOf(playerData.getStock(getPlayer(), item)));
@@ -145,7 +144,7 @@ class ShopGUI extends CategoryGUI {
      */
     private int sell(ItemStack item) {
         Player player = getPlayer();
-        ItemStack soldItem = itemData.getItemStack(Items.getName(item, true));
+        ItemStack soldItem = getRealItem(item);
         double price = prices.getSellPrice(soldItem);
         int stock = playerData.getStock(player, soldItem);
         int quantity = getQuantity();
@@ -173,7 +172,7 @@ class ShopGUI extends CategoryGUI {
      */
     private int buy(ItemStack item) {
         Player player = getPlayer();
-        ItemStack boughtItem = itemData.getItemStack(Items.getName(item, true));
+        ItemStack boughtItem = getRealItem(item);
         double price = prices.getBuyPrice(boughtItem);
         double balance = economy.getBalance(player);
         int stock = playerData.getStock(player, boughtItem);
@@ -211,7 +210,7 @@ class ShopGUI extends CategoryGUI {
         ItemStack[] contents = player.getInventory().getContents();
         for (int i = 0; i < contents.length; i++) {
             ItemStack item = contents[i];
-            if (item == null || itemData.getName(item, false) == null) {
+            if (item == null || itemData.getName(item) == null) {
                 continue;
             }
             int amount = item.getAmount();

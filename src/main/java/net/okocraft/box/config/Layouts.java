@@ -3,10 +3,16 @@ package net.okocraft.box.config;
 import java.util.List;
 
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
+
+import net.okocraft.box.Box;
 
 public class Layouts extends CustomConfig {
+
+    private final NamespacedKey realItemKey = new NamespacedKey(Box.getInstance(), "realitem");
 
     public Layouts() {
         super("layout.yml");
@@ -134,6 +140,7 @@ public class Layouts extends CustomConfig {
     }
 
     public ItemStack setStrageEntryMeta(ItemStack entry) {
+        setRealItemTag(entry);
         setIconMeta(entry, "gui-entry.strage");
         return entry;
     }
@@ -143,6 +150,7 @@ public class Layouts extends CustomConfig {
     }
 
     public ItemStack setShopEntryMeta(ItemStack entry) {
+        setRealItemTag(entry);
         setIconMeta(entry, "gui-entry.shop");
         return entry;
     }
@@ -152,6 +160,7 @@ public class Layouts extends CustomConfig {
     }
 
     public ItemStack setCraftEntryMeta(ItemStack entry) {
+        setRealItemTag(entry);
         setIconMeta(entry, "gui-entry.craft");
         return entry;
     }
@@ -167,6 +176,16 @@ public class Layouts extends CustomConfig {
         ItemMeta meta = icon.getItemMeta();
         meta.setDisplayName(getDisplayName(iconKey));
         meta.setLore(getLore(iconKey));
+        icon.setItemMeta(meta);
+        return icon; 
+    }
+
+    private ItemStack setRealItemTag(ItemStack icon) {
+        if (icon == null || icon.getItemMeta() == null) {
+            return icon;
+        }
+        ItemMeta meta = icon.getItemMeta();
+        meta.getPersistentDataContainer().set(realItemKey, PersistentDataType.STRING, Box.getInstance().getAPI().getItemData().getName(icon));
         icon.setItemMeta(meta);
         return icon; 
     }
