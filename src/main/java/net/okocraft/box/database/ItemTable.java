@@ -153,7 +153,11 @@ final class ItemTable {
 
         if (id != -1) {
             items.forcePut(id, item);
-            Box.getInstance().getAPI().getItemData().loadName(item);
+            BoxAPI api = Box.getInstance().getAPI();
+            // on instantiate this plugin, api is null.
+            if (api != null) {
+                api.getItemData().loadName(item);
+            }
         }
 
         return id;
