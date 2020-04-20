@@ -211,14 +211,12 @@ class ShopGUI extends CategoryGUI {
         ItemStack[] contents = player.getInventory().getContents();
         for (int i = 0; i < contents.length; i++) {
             ItemStack item = contents[i];
-            ItemStack index = item.clone();
-            index.setAmount(1);
-            if (item == null || itemData.getName(index) == null) {
+            if (item == null || itemData.getName(item) == null) {
                 continue;
             }
             int amount = item.getAmount();
             amount -= player.getInventory().removeItem(item).values().stream().map(ItemStack::getAmount).mapToInt(Integer::valueOf).sum();
-            double price = prices.getSellPrice(index) * amount;
+            double price = prices.getSellPrice(item) * amount;
             sum += price;
         }
         if (sum > 0) {

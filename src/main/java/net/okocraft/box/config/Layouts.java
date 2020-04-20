@@ -136,9 +136,7 @@ public class Layouts extends CustomConfig {
     }
 
     private ItemStack setEntryMeta(ItemStack entry, String iconKey) {
-        ItemStack clone = entry.clone();
-        clone.setAmount(1); // amount must be 1 to get name from map.
-        String realItemName = Box.getInstance().getAPI().getItemData().getName(clone);
+        String realItemName = Box.getInstance().getAPI().getItemData().getName(entry);
         if (realItemName == null) {
             realItemName = entry.getItemMeta().getPersistentDataContainer().get(realItemKey, PersistentDataType.STRING);
         }

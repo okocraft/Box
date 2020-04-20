@@ -93,80 +93,111 @@ public class PlayerData {
     }
 
     public void setAutoStoreAll(OfflinePlayer player, Map<ItemStack, Boolean> enabled) {
+        Map<ItemStack, Boolean> replaced = new HashMap<>();
+        enabled.forEach((item, value) -> {
+            ItemStack clone = item.clone();
+            clone.setAmount(1);
+            replaced.put(clone, value);
+        });
         if (player.isOnline()) {
-            getAutoStoreAll(player).replaceAll((item, value) -> enabled.get(item));
+            getAutoStoreAll(player).replaceAll((item, value) -> replaced.get(item));
         }
 
         threadPool.submit(() -> playerDataTable.setAutoStoreAll(player, enabled));
     }
 
     public void setAutoStore(OfflinePlayer player, ItemStack item, boolean enabled) {
+        ItemStack clone = item.clone();
+        clone.setAmount(1);
         if (player.isOnline()) {
-            getAutoStoreAll(player).put(item, enabled);
+            getAutoStoreAll(player).put(clone, enabled);
         }
 
-        threadPool.submit(() -> playerDataTable.setAutoStore(player, item, enabled));
+        threadPool.submit(() -> playerDataTable.setAutoStore(player, clone, enabled));
     }
 
     public boolean getAutoStore(OfflinePlayer player, ItemStack item) {
+        ItemStack clone = item.clone();
+        clone.setAmount(1);
         return player.isOnline()
-                ? getAutoStoreAll(player).getOrDefault(item, false)
-                : playerDataTable.getAutoStore(player, item); 
+                ? getAutoStoreAll(player).getOrDefault(clone, false)
+                : playerDataTable.getAutoStore(player, clone); 
     }
 
     public Map<ItemStack, Boolean> getAutoStoreAll(OfflinePlayer player) {
         if (player.isOnline()) {
+            Map<ItemStack, Boolean> result;
             if (autostore.containsKey(player)) {
-                return autostore.get(player);
+                result = autostore.get(player);
             } else {
-                Map<ItemStack, Boolean> result = playerDataTable.getAutoStoreAll(player);
+                result = playerDataTable.getAutoStoreAll(player);
                 autostore.put(player.getPlayer(), result);
-                return result;
             }
+
+            
+            Map<ItemStack, Boolean> clone = new HashMap<>();
+            result.forEach((item, value) -> clone.put(item.clone(), value));
+            return clone;
         }
 
         return playerDataTable.getAutoStoreAll(player);
     }
 
     public void setStock(OfflinePlayer player, ItemStack item, int stock) {
+        ItemStack clone = item.clone();
+        clone.setAmount(1);
         if (player.isOnline()) {
-            getStockAll(player).put(item, stock);
+            getStockAll(player).put(clone, stock);
         }
 
-        threadPool.submit(() -> playerDataTable.setStock(player, item, stock));
+        threadPool.submit(() -> playerDataTable.setStock(player, clone, stock));
     }
 
     public void setStockAll(OfflinePlayer player, Map<ItemStack, Integer> stock) {
+        Map<ItemStack, Integer> clone = new HashMap<>();
+        stock.forEach((item, value) -> {
+            ItemStack cloneItem = item.clone();
+            cloneItem.setAmount(1);
+            clone.put(cloneItem, value);
+        });
         if (player.isOnline()) {
-            getStockAll(player).replaceAll((item, value) -> stock.getOrDefault(item, 0));
+            getStockAll(player).replaceAll((item, value) -> clone.getOrDefault(item, 0));
         }
 
-        threadPool.submit(() -> playerDataTable.setStockAll(player, stock));
+        threadPool.submit(() -> playerDataTable.setStockAll(player, clone));
     }
 
     public void addStock(OfflinePlayer player, ItemStack item, int amount) {
+        ItemStack clone = item.clone();
+        clone.setAmount(1);
         if (player.isOnline()) {
-            getStockAll(player).put(item, getStock(player, item) + amount);
+            getStockAll(player).put(clone, getStock(player, clone) + amount);
         }
 
-        threadPool.submit(() -> playerDataTable.addStock(player, item, amount));
+        threadPool.submit(() -> playerDataTable.addStock(player, clone, amount));
     }
 
     public int getStock(OfflinePlayer player, ItemStack item) {
+        ItemStack clone = item.clone();
+        clone.setAmount(1);
         return player.isOnline()
-                ? getStockAll(player).getOrDefault(item, 0)
-                : playerDataTable.getStock(player, item); 
+                ? getStockAll(player).getOrDefault(clone, 0)
+                : playerDataTable.getStock(player, clone); 
     }
 
     public Map<ItemStack, Integer> getStockAll(OfflinePlayer player) {
         if (player.isOnline()) {
+            Map<ItemStack, Integer> result;
             if (stock.containsKey(player)) {
-                return stock.get(player);
+                result = stock.get(player);
             } else {
-                Map<ItemStack, Integer> result = playerDataTable.getStockAll(player);
+                result = playerDataTable.getStockAll(player);
                 stock.put(player.getPlayer(), result);
-                return result;
             }
+
+            Map<ItemStack, Integer> clone = new HashMap<>();
+            result.forEach((item, value) -> clone.put(item.clone(), value));
+            return clone;
         }
 
         return playerDataTable.getStockAll(player);
