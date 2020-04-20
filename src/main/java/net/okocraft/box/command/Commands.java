@@ -89,7 +89,6 @@ public abstract class Commands implements CommandExecutor, TabCompleter {
 
         if (!subCommand.isValidArgsLength(args.length)) {
             messages.sendNotEnoughArguments(sender);
-            messages.sendNotEnoughArguments(sender);
             messages.sendUsage(sender, subCommand.getUsage());
             return false;
         }
