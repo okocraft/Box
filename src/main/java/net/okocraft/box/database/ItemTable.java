@@ -49,7 +49,7 @@ final class ItemTable {
 
     ItemTable(@NotNull Database database) {
         this.database = database;
-        database.execute("CREATE TABLE IF NOT EXISTS " + TABLE + " (id INTEGER PRIMARY KEY " + (database.isSQLite() ? "AUTOINCREMENT" : "AUTO_INCREMENT") + ", item TEXT NOT NULL)");
+        database.execute("CREATE TABLE IF NOT EXISTS " + TABLE + " (id INTEGER PRIMARY KEY " + (database.isSQLite() ? "AUTOINCREMENT" : "AUTO_INCREMENT") + ", item TEXT UNIQUE NOT NULL)");
         loadItems();
         updateItems();
         addDefaultItems();

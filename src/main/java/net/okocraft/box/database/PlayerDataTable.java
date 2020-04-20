@@ -33,8 +33,7 @@ class PlayerDataTable {
     PlayerDataTable(Database database, ItemTable itemTable) {
         this.database = database;
         this.itemTable = itemTable;
-        database.execute("CREATE TABLE IF NOT EXISTS " + TABLE + " (id INTEGER PRIMARY KEY " + (database.isSQLite() ? "AUTOINCREMENT" : "AUTO_INCREMENT") + ", player CHAR(36) NOT NULL, itemid INTEGER NOT NULL, stock INTEGER NOT NULL DEFAULT 0, autostore INTEGER NOT NULL DEFAULT 0)");
-        database.execute("CREATE INDEX IF NOT EXISTS playerindex ON " + TABLE + "(player, itemid)");
+        database.execute("CREATE TABLE IF NOT EXISTS " + TABLE + " (id INTEGER PRIMARY KEY " + (database.isSQLite() ? "AUTOINCREMENT" : "AUTO_INCREMENT") + ", player CHAR(36) NOT NULL, itemid INTEGER NOT NULL, stock INTEGER NOT NULL DEFAULT 0, autostore INTEGER NOT NULL DEFAULT 0, UNIQUE(player, itemid))");
     }
 
     void setAutoStoreAll(OfflinePlayer player, boolean enabled) {
