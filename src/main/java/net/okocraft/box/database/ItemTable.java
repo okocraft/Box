@@ -103,8 +103,9 @@ final class ItemTable {
             }
 
             ItemStack add = new ItemStack(material);
+            register(add);
+
             if (!(add.getItemMeta() instanceof PotionMeta)) {
-                register(add);
                 continue;
             }
 

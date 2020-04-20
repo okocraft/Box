@@ -14,6 +14,8 @@ import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionType;
 import org.jetbrains.annotations.Nullable;
 
+import net.okocraft.box.Box;
+
 /**
  * 以前のBoxのタブ補完の互換性を確保する実装。
  */
@@ -64,6 +66,7 @@ public class ItemData {
         int id = itemTable.getId(item);
         ItemMeta meta = item.getItemMeta();
         if (meta instanceof PotionMeta) {
+            Box.getInstance().getLogger().info("POTION META LOADING. " + item.getType().name());
             // FOR COMPATIBILITY.
             // names all creative items.
             PotionMeta potionMeta = (PotionMeta) meta;
