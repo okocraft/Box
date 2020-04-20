@@ -33,7 +33,6 @@ import org.bukkit.inventory.ItemStack;
 import net.milkbowl.vault.economy.Economy;
 import net.okocraft.box.Box;
 import net.okocraft.box.config.Prices;
-import net.okocraft.box.database.Items;
 import net.okocraft.box.database.PlayerData;
 
 /**
@@ -114,7 +113,7 @@ class ShopGUI extends CategoryGUI {
     private void filterUnavailable() {
         List<ItemStack> items = new ArrayList<>(getItems());
         items.removeIf(item -> prices.getBuyPrice(item) == 0 && prices.getSellPrice(item) == 0);
-        items.removeIf(item -> prices.getBuyPrice(item) == 0 && PlayerData.getItemAmount(getPlayer(), item) == 0);
+        items.removeIf(item -> prices.getBuyPrice(item) == 0 && playerData.getStock(getPlayer(), item) == 0);
         items.removeIf(item -> prices.getSellPrice(item) == 0 && economy.getBalance(getPlayer()) < prices.getBuyPrice(item));
         clearItems();
         addAllItem(items);
@@ -131,7 +130,7 @@ class ShopGUI extends CategoryGUI {
         placeholder.put("%item-name%", Objects.requireNonNullElse(Items.getName(item, false), item.getType().toString()));
         placeholder.put("%category-name%", getCategoryName());
         placeholder.put("%balance%", String.valueOf(economy.getBalance(getPlayer())));
-        placeholder.put("%stock%", String.valueOf(PlayerData.getItemAmount(getPlayer(), item)));
+        placeholder.put("%stock%", String.valueOf(playerData.getStock(getPlayer(), item)));
         placeholder.put("%buy-price%", String.valueOf(prices.getBuyPrice(item)));
         placeholder.put("%sell-price%", String.valueOf(prices.getSellPrice(item)));
         return super.applyPlaceholder(item, placeholder);
@@ -144,12 +143,12 @@ class ShopGUI extends CategoryGUI {
      * @param item 売るアイテム。
      * @return 売ったアイテム数
      */
-    private long sell(ItemStack item) {
+    private int sell(ItemStack item) {
         Player player = getPlayer();
-        ItemStack soldItem = Items.getItemStack(Items.getName(item, true));
+        ItemStack soldItem = itemData.getItemStack(Items.getName(item, true));
         double price = prices.getSellPrice(soldItem);
-        long stock = PlayerData.getItemAmount(player, soldItem);
-        long quantity = getQuantity();
+        int stock = playerData.getStock(player, soldItem);
+        int quantity = getQuantity();
 
         if (stock == 0 || price == 0) {
             config.playNotEnoughSound(player);
@@ -160,7 +159,7 @@ class ShopGUI extends CategoryGUI {
         }
 
         economy.depositPlayer(player, quantity * price);
-        PlayerData.setItemAmount(player, soldItem, stock - quantity);
+        playerData.setStock(player, soldItem, stock - quantity);
         config.playSellSound(player);
         update();
         return quantity;
@@ -172,12 +171,12 @@ class ShopGUI extends CategoryGUI {
      * @param item 売るアイテム。
      * @return 買って得たアイテム数
      */
-    private long buy(ItemStack item) {
+    private int buy(ItemStack item) {
         Player player = getPlayer();
-        ItemStack boughtItem = Items.getItemStack(Items.getName(item, true));
+        ItemStack boughtItem = itemData.getItemStack(Items.getName(item, true));
         double price = prices.getBuyPrice(boughtItem);
         double balance = economy.getBalance(player);
-        long stock = PlayerData.getItemAmount(player, boughtItem);
+        int stock = playerData.getStock(player, boughtItem);
         int quantity = getQuantity();
 
         if (balance == 0 || price == 0) {
@@ -195,7 +194,7 @@ class ShopGUI extends CategoryGUI {
         }
 
         economy.withdrawPlayer(player, quantity * price);
-        PlayerData.setItemAmount(player, boughtItem, stock + quantity);
+        playerData.setStock(player, boughtItem, stock + quantity);
         config.playBuySound(player);
         update();
         return quantity;
@@ -212,7 +211,7 @@ class ShopGUI extends CategoryGUI {
         ItemStack[] contents = player.getInventory().getContents();
         for (int i = 0; i < contents.length; i++) {
             ItemStack item = contents[i];
-            if (item == null || Items.getName(item, false) == null) {
+            if (item == null || itemData.getName(item, false) == null) {
                 continue;
             }
             int amount = item.getAmount();

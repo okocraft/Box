@@ -28,8 +28,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import net.milkbowl.vault.economy.Economy;
 import net.okocraft.box.command.box.BoxCommand;
 import net.okocraft.box.command.boxadmin.BoxAdminCommand;
-import net.okocraft.box.database.PlayerData;
-import net.okocraft.box.database.Sqlite;
 import net.okocraft.box.listeners.BoxStick;
 import net.okocraft.box.listeners.EntityPickupItem;
 import net.okocraft.box.listeners.PlayerListener;
@@ -63,8 +61,6 @@ public class Box extends JavaPlugin {
         new BoxCommand();
         new BoxAdminCommand();
 
-        PlayerData.loadOnlinePlayersData();
-
         // Load static class CraftRecipes
         CraftRecipes.load();
 
@@ -74,10 +70,7 @@ public class Box extends JavaPlugin {
 
     @Override
     public void onDisable() {
-
-        PlayerData.saveOnlinePlayersData();
-        Sqlite.disconnect();
-
+        api.getPlayerData().dispose();
         getLogger().info(String.format("Box v%s has been disabled!", getVersion()));
     }
 
@@ -112,7 +105,6 @@ public class Box extends JavaPlugin {
 
         // Events should be registered in its own initializer
         new PlayerListener().start();
-        new PlayerData(this);
         new EntityPickupItem(this);
         new BoxStick();
         new Replant();

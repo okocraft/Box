@@ -31,7 +31,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import net.okocraft.box.Box;
-import net.okocraft.box.database.Items;
 import net.okocraft.box.database.PlayerData;
 /**
  * アイテムの取引GUIの実装
@@ -104,7 +103,7 @@ class StrageGUI extends CategoryGUI {
     protected ItemStack applyPlaceholder(ItemStack item, Map<String, String> placeholder) {
         placeholder.put("%item-name%", Objects.requireNonNullElse(Items.getName(item, false), item.getType().toString()));
         placeholder.put("%category-name%", getCategoryName());
-        placeholder.put("%stock%", String.valueOf(PlayerData.getItemAmount(getPlayer(), item)));
+        placeholder.put("%stock%", String.valueOf(playerData.getStock(getPlayer(), item)));
         return super.applyPlaceholder(item, placeholder);
     }
 
@@ -114,11 +113,11 @@ class StrageGUI extends CategoryGUI {
      * @param item 引き出すアイテム
      * @return 引き出したあとの在庫数
      */
-    private long withdraw(ItemStack item) {
+    private int withdraw(ItemStack item) {
         Player player = getPlayer();
-        ItemStack givenItem = Items.getItemStack(Items.getName(item, true));
-        long stock = PlayerData.getItemAmount(player, givenItem);
-        long quantity = Math.min(stock, getQuantity());
+        ItemStack givenItem = itemData.getItemStack(Items.getName(item, true));
+        int stock = playerData.getStock(player, givenItem);
+        int quantity = Math.min(stock, getQuantity());
         if (stock == 0) {
             config.playNotEnoughSound(player);
             return stock;
@@ -128,12 +127,12 @@ class StrageGUI extends CategoryGUI {
                 .mapToInt(ItemStack::getAmount).sum();
         config.playWithdrawSound(player);
         if (player.getGameMode() != GameMode.CREATIVE && !player.hasPermission("box-admin.creative")) {
-            PlayerData.setItemAmount(player, givenItem, stock + nonAdded - quantity);
+            playerData.setStock(player, givenItem, stock + nonAdded - quantity);
             update(item);
-            return (long) (stock + nonAdded - quantity);
+            return stock + nonAdded - quantity;
         }
 
-        return (long) stock;
+        return stock;
     }
 
     private int firstPartial(Inventory inv, ItemStack item) {
@@ -223,12 +222,12 @@ class StrageGUI extends CategoryGUI {
      * @param item 預けるアイテム
      * @return 預けたあとの在庫数
      */
-    private long deposit(ItemStack item) {
+    private int deposit(ItemStack item) {
         Player player = getPlayer();
         ItemStack takenItem = Items.getItemStack(Items.getName(item, true));
-        long stock = PlayerData.getItemAmount(player, takenItem);
+        int stock = playerData.getStock(player, takenItem);
         int quantity = getQuantity();
-        // Items.getItemStack(Items.getName(item, true));
+        // itemData.getItemStack(Items.getName(item, true));
         takenItem = takenItem.clone();
         takenItem.setAmount(quantity);
         int nonRemoved = player.getInventory().removeItem(takenItem).values().stream().mapToInt(ItemStack::getAmount)
@@ -239,12 +238,12 @@ class StrageGUI extends CategoryGUI {
         }
         config.playDepositSound(player);
         if (player.getGameMode() != GameMode.CREATIVE && !player.hasPermission("box-admin.creative")) {
-            PlayerData.setItemAmount(player, takenItem, stock - nonRemoved + quantity);
+            playerData.setStock(player, takenItem, stock - nonRemoved + quantity);
             update(item);
-            return (long) (stock - nonRemoved + quantity);
+            return stock - nonRemoved + quantity;
         }
 
-        return (long) stock;
+        return stock;
     }
 
     @Override
@@ -260,13 +259,13 @@ class StrageGUI extends CategoryGUI {
         ItemStack[] contents = getPlayer().getInventory().getContents();
         for (int i = 0; i < contents.length; i++) {
             ItemStack item = contents[i];
-            if (item == null || Items.getName(item, false) == null) {
+            if (item == null || itemData.getName(item, false) == null) {
                 continue;
             }
-            long stock = PlayerData.getItemAmount(getPlayer(), item);
+            int stock = playerData.getStock(getPlayer(), item);
             int amount = item.getAmount();
             amount -= getPlayer().getInventory().removeItem(item).values().stream().map(ItemStack::getAmount).mapToInt(Integer::valueOf).sum();
-            PlayerData.setItemAmount(getPlayer(), item, stock + amount);
+            playerData.setStock(getPlayer(), item, stock + amount);
             isModified = true;
         }
         if (isModified) {

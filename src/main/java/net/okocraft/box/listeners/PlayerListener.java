@@ -8,6 +8,8 @@ import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 
 import net.okocraft.box.Box;
@@ -73,5 +75,15 @@ public class PlayerListener implements Listener {
         if (inv.getHolder() instanceof Clickable) {
             ((Clickable) inv.getHolder()).onClicked(event);
         }
+    }
+
+    @EventHandler
+    public void onQuit(PlayerQuitEvent event) {
+        plugin.getAPI().getPlayerData().removeCache(event.getPlayer());
+    }
+    
+    @EventHandler
+    public void onJoin(PlayerJoinEvent event) {
+        plugin.getAPI().getPlayerData().loadCache(event.getPlayer());
     }
 }

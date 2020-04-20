@@ -28,9 +28,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.StringUtil;
 
-import net.okocraft.box.database.Items;
-import net.okocraft.box.database.PlayerData;
-
 class AutoStoreCommand extends BaseAdminCommand {
 
     AutoStoreCommand() {
@@ -47,13 +44,14 @@ class AutoStoreCommand extends BaseAdminCommand {
     @Override
     public boolean runCommand(CommandSender sender, String[] args) {
         String playerName = args[1].toLowerCase(Locale.ROOT);
-        if (!PlayerData.exist(playerName)) {
+
+        @SuppressWarnings("deprecation")
+        OfflinePlayer player = Bukkit.getOfflinePlayer(playerName);
+
+        if (!player.hasPlayedBefore() || player.getName() == null) {
             messages.sendPlayerNotFound(sender);
             return false;
         }
-        
-        @SuppressWarnings("deprecation")
-        OfflinePlayer player = Bukkit.getOfflinePlayer(playerName);
 
         // autostore all <true|false>
         if (args[2].equalsIgnoreCase("ALL")) {
@@ -70,13 +68,9 @@ class AutoStoreCommand extends BaseAdminCommand {
 
             boolean switchTo = args[3].equalsIgnoreCase("true");
 
-            if (PlayerData.setAutoStoreAll(player, switchTo)) {
-                messages.sendAutoStoreAll(sender, switchTo);
-                return true;
-            } else {
-                messages.sendUnknownError(sender);
-                return false;
-            }
+            playerData.setAutoStoreAll(player, switchTo);
+            messages.sendAutoStoreAll(sender, switchTo);
+            return true;
         }
 
         // autostore Item [true|false]
@@ -85,24 +79,20 @@ class AutoStoreCommand extends BaseAdminCommand {
             messages.sendItemNotFound(sender);
             return false;
         }
-        ItemStack item = Items.getItemStack(itemName);
-        boolean now = PlayerData.getAutoStore((OfflinePlayer) sender, item);
+        ItemStack item = itemData.getItemStack(itemName);
+        boolean now = playerData.getAutoStore((OfflinePlayer) sender, item);
         boolean switchTo = args.length > 3 ? args[3].equalsIgnoreCase("true") : !now;
 
-        if (PlayerData.setAutoStore(player, item, switchTo)) {
-            messages.sendAutoStore(sender, itemName, switchTo);
-            return true;
-        } else {
-            messages.sendUnknownError(sender);
-            return false;
-        }
+        playerData.setAutoStore(player, item, switchTo);
+        messages.sendAutoStore(sender, itemName, switchTo);
+        return true;
     }
 
     @Override
     public List<String> runTabComplete(CommandSender sender, String[] args) {
         List<String> result = new ArrayList<>();
 
-        List<String> players = new ArrayList<>(PlayerData.getPlayers().values());
+        List<String> players = playerData.getPlayers();
 
         if (args.length == 2) {
             return StringUtil.copyPartialMatches(args[1], players, result);

@@ -28,7 +28,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.util.StringUtil;
 
 import net.okocraft.box.command.BaseCommand;
-import net.okocraft.box.database.PlayerData;
 import net.okocraft.box.util.OtherUtil;
 
 class AutoStoreListCommand extends BaseCommand {
@@ -53,7 +52,7 @@ class AutoStoreListCommand extends BaseCommand {
         int currentLine = Math.min(maxLine, page * 9);
 
         messages.sendAutoStoreListHeader(sender, sender.getName(), page, currentLine, maxLine);
-        PlayerData.getAutoStoreAll((OfflinePlayer) sender).entrySet().stream().skip((page - 1) * 9).limit(9)
+        playerData.getAutoStoreAll((OfflinePlayer) sender).entrySet().stream().skip((page - 1) * 9).limit(9)
                 .forEach(entry -> messages.sendAutoStoreListFormat(sender, entry.getKey(), entry.getValue()));
         return true;
     }

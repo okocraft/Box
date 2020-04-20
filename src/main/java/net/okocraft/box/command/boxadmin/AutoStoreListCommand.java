@@ -28,9 +28,9 @@ import java.util.stream.IntStream;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.StringUtil;
 
-import net.okocraft.box.database.PlayerData;
 import net.okocraft.box.util.OtherUtil;
 
 class AutoStoreListCommand extends BaseAdminCommand {
@@ -49,20 +49,22 @@ class AutoStoreListCommand extends BaseAdminCommand {
     @Override
     public boolean runCommand(CommandSender sender, String[] args) {
         String playerName = args[1].toLowerCase(Locale.ROOT);
-        if (!PlayerData.exist(playerName)) {
-            messages.sendPlayerNotFound(sender);
-            return false;
-        }
         
         @SuppressWarnings("deprecation")
         OfflinePlayer player = Bukkit.getOfflinePlayer(playerName);
-        Map<String, Boolean> autoStoreData = PlayerData.getAutoStoreAll(player);
+
+        if (!player.hasPlayedBefore() || player.getName() == null) {
+            messages.sendPlayerNotFound(sender);
+            return false;
+        }
+
+        Map<ItemStack, Boolean> autoStoreData = playerData.getAutoStoreAll(player);
         int maxLine = autoStoreData.size();
         int maxPage = maxLine % 9 == 0 ? maxLine / 9 : maxLine / 9 + 1;
         int page = Math.max(maxPage, (args.length >= 3 ? OtherUtil.parseIntOrDefault(args[2], 1) : 1));
         int currentLine = Math.min(maxLine, page * 9);
         messages.sendAutoStoreListHeader(sender, player.getName(), page, currentLine, maxLine);
-        PlayerData.getAutoStoreAll((OfflinePlayer) sender).entrySet().stream().skip((page - 1) * 9).limit(9)
+        playerData.getAutoStoreAll((OfflinePlayer) sender).entrySet().stream().skip((page - 1) * 9).limit(9)
                 .forEach(entry -> messages.sendAutoStoreListFormat(sender, entry.getKey(), entry.getValue()));
         return true;
     }
@@ -71,7 +73,7 @@ class AutoStoreListCommand extends BaseAdminCommand {
     public List<String> runTabComplete(CommandSender sender, String[] args) {
         List<String> result = new ArrayList<>();
 
-        List<String> players = new ArrayList<>(PlayerData.getPlayers().values());
+        List<String> players = playerData.getPlayers();
 
         if (args.length == 2) {
             return StringUtil.copyPartialMatches(args[1], players, result);
@@ -85,7 +87,7 @@ class AutoStoreListCommand extends BaseAdminCommand {
 
         @SuppressWarnings("deprecation")
         OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(playerName);
-        int items = PlayerData.getAutoStoreAll(offlinePlayer).size();
+        int items = playerData.getAutoStoreAll(offlinePlayer).size();
         int maxPage = items % 9 == 0 ? items / 9 : items / 9 + 1;
         List<String> pages = IntStream.rangeClosed(1, maxPage).boxed().map(String::valueOf).collect(Collectors.toList());
         if (args.length == 3) {

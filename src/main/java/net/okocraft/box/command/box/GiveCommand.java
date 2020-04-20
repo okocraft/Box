@@ -32,8 +32,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.StringUtil;
 
 import net.okocraft.box.command.BaseCommand;
-import net.okocraft.box.database.Items;
-import net.okocraft.box.database.PlayerData;
 import net.okocraft.box.util.OtherUtil;
 
 class GiveCommand extends BaseCommand {
@@ -57,14 +55,8 @@ class GiveCommand extends BaseCommand {
             return false;
         }
 
-        if (!PlayerData.exist(args[1])) {
-            messages.sendPlayerNotFound(sender);
-            return false;
-        }
-
         @SuppressWarnings("deprecation")
         OfflinePlayer player = Bukkit.getOfflinePlayer(args[1]);
-
         if (!player.hasPlayedBefore() || player.getName() == null) {
             messages.sendPlayerNotFound(sender);
             return false;
@@ -75,21 +67,21 @@ class GiveCommand extends BaseCommand {
             messages.sendItemNotFound(sender);
             return false;
         }
-        ItemStack item = Items.getItemStack(itemName);
+        ItemStack item = itemData.getItemStack(itemName);
 
-        long amount = args.length == 3 ? 1L : OtherUtil.parseLongOrDefault(args[3], 1L);
+        int amount = args.length == 3 ? 1 : OtherUtil.parseIntOrDefault(args[3], 1);
         amount = Math.max(amount, 1);
 
-        long senderStock = PlayerData.getItemAmount((OfflinePlayer) sender, item);
-        long otherStock = PlayerData.getItemAmount(player, item);
+        int senderStock = playerData.getStock((OfflinePlayer) sender, item);
+        int otherStock = playerData.getStock(player, item);
 
         if (senderStock - amount < 0) {
             messages.sendNotEnoughStock(sender);
             return false;
         }
 
-        PlayerData.setItemAmount((OfflinePlayer) sender, item, senderStock - amount);
-        PlayerData.setItemAmount(player, item, otherStock + amount);
+        playerData.setStock((OfflinePlayer) sender, item, senderStock - amount);
+        playerData.setStock(player, item, otherStock + amount);
         messages.sendGiveInfoToSender(sender, player.getName(), itemName, amount, senderStock - amount);
         
         if (player.isOnline()) {
@@ -102,7 +94,7 @@ class GiveCommand extends BaseCommand {
     @Override
     public List<String> runTabComplete(CommandSender sender, String[] args) {
         List<String> result = new ArrayList<>();
-        List<String> players = new ArrayList<>(PlayerData.getPlayers().values());
+        List<String> players = playerData.getPlayers();
 
         if (args.length == 2) {
             return StringUtil.copyPartialMatches(args[1], players, result);
@@ -114,8 +106,8 @@ class GiveCommand extends BaseCommand {
             return List.of();
         }
 
-        List<String> items = PlayerData.getItemsAmount((OfflinePlayer) sender).entrySet().parallelStream()
-                .filter(entry -> entry.getValue() != 0L).map(Map.Entry::getKey).collect(Collectors.toList());
+        List<String> items = playerData.getStockAll((OfflinePlayer) sender).entrySet().parallelStream()
+                .filter(entry -> entry.getValue() != 0L).map(Map.Entry::getKey).map(itemData::getName).collect(Collectors.toList());
 
         if (args.length == 3) {
             return StringUtil.copyPartialMatches(args[2], items, result);
@@ -127,7 +119,7 @@ class GiveCommand extends BaseCommand {
             return List.of();
         }
 
-        long stock = PlayerData.getItemAmount((OfflinePlayer) sender, Items.getItemStack(itemName));
+        int stock = playerData.getStock((OfflinePlayer) sender, itemData.getItemStack(itemName));
 
         if (stock < 1) {
             return List.of();

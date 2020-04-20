@@ -28,8 +28,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.StringUtil;
 
 import net.okocraft.box.command.BaseCommand;
-import net.okocraft.box.database.Items;
-import net.okocraft.box.database.PlayerData;
 
 class AutoStoreCommand extends BaseCommand {
 
@@ -61,13 +59,9 @@ class AutoStoreCommand extends BaseCommand {
             }
 
             boolean switchTo = args[2].equalsIgnoreCase("true");
-            if (PlayerData.setAutoStoreAll((OfflinePlayer) sender, switchTo)) {
-                messages.sendAutoStoreAll(sender, switchTo);
-                return true;
-            } else {
-                messages.sendUnknownError(sender);
-                return false;
-            }
+            playerData.setAutoStoreAll((OfflinePlayer) sender, switchTo);
+            messages.sendAutoStoreAll(sender, switchTo);
+            return true;
         }
 
         // autostore Item [true|false]
@@ -76,17 +70,13 @@ class AutoStoreCommand extends BaseCommand {
             messages.sendItemNotFound(sender);
             return false;
         }
-        ItemStack item = Items.getItemStack(itemName);
-        boolean now = PlayerData.getAutoStore((OfflinePlayer) sender, item);
+        ItemStack item = itemData.getItemStack(itemName);
+        boolean now = playerData.getAutoStore((OfflinePlayer) sender, item);
         boolean switchTo = args.length > 2 ? args[2].equalsIgnoreCase("true") : !now;
 
-        if (PlayerData.setAutoStore((OfflinePlayer) sender, item, switchTo)) {
-            messages.sendAutoStore(sender, itemName, switchTo);
-            return true;
-        } else {
-            messages.sendUnknownError(sender);
-            return false;
-        }
+        playerData.setAutoStore((OfflinePlayer) sender, item, switchTo);
+        messages.sendAutoStore(sender, itemName, switchTo);
+        return true;
     }
 
     @Override

@@ -16,11 +16,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.okocraft.box.command.boxadmin;
+package net.okocraft.box.command.box;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -30,25 +31,38 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.StringUtil;
 
+import net.okocraft.box.command.BaseCommand;
 import net.okocraft.box.util.OtherUtil;
 
-class TakeCommand extends BaseAdminCommand {
+class ItemInfoCommand extends BaseCommand {
 
-    TakeCommand() {
+    ItemInfoCommand() {
         super(
-            "take",
-            "boxadmin.take",
-            3,
-            false,
-            "/boxadmin take <player> <ITEM> [amount]",
-            new String[0]
+            "iteminfo",
+            "box.iteminfo",
+            2,
+            true,
+            "/box iteminfo <ITEM>",
+            new String[] {"iinfo"}
         );
     }
 
     @Override
     public boolean runCommand(CommandSender sender, String[] args) {
+
+        if (sender.getName().equalsIgnoreCase(args[1])) {
+            messages.sendCannotGiveMyself(sender);
+            return false;
+        }
+
         @SuppressWarnings("deprecation")
         OfflinePlayer player = Bukkit.getOfflinePlayer(args[1]);
+
+        if (!player.hasPlayedBefore() || player.getName() == null) {
+            messages.sendPlayerNotFound(sender);
+            return false;
+        }
+
         if (!player.hasPlayedBefore() || player.getName() == null) {
             messages.sendPlayerNotFound(sender);
             return false;
@@ -60,14 +74,24 @@ class TakeCommand extends BaseAdminCommand {
             return false;
         }
         ItemStack item = itemData.getItemStack(itemName);
-        int amount = args.length < 4 ? 1 : OtherUtil.parseIntOrDefault(args[3], 1);
-        int stock = playerData.getStock(player, item);
 
-        playerData.setStock(player, item, stock - amount);
+        int amount = args.length == 3 ? 1 : OtherUtil.parseIntOrDefault(args[3], 1);
+        amount = Math.max(amount, 1);
 
-        messages.sendTakeInfoToSender(sender, player.getName(), itemName, amount, stock - amount);
+        int senderStock = playerData.getStock((OfflinePlayer) sender, item);
+        int otherStock = playerData.getStock(player, item);
+
+        if (senderStock - amount < 0) {
+            messages.sendNotEnoughStock(sender);
+            return false;
+        }
+
+        playerData.setStock((OfflinePlayer) sender, item, senderStock - amount);
+        playerData.setStock(player, item, otherStock + amount);
+        messages.sendGiveInfoToSender(sender, player.getName(), itemName, amount, senderStock - amount);
+        
         if (player.isOnline()) {
-            messages.sendTakeInfoToTarget(sender, sender.getName(), itemName, amount, stock - amount);
+            messages.sendGiveInfoToTarget(player.getPlayer(), sender.getName(), itemName, amount, otherStock + amount);
         }
 
         return true;
@@ -76,37 +100,39 @@ class TakeCommand extends BaseAdminCommand {
     @Override
     public List<String> runTabComplete(CommandSender sender, String[] args) {
         List<String> result = new ArrayList<>();
-
         List<String> players = playerData.getPlayers();
 
         if (args.length == 2) {
             return StringUtil.copyPartialMatches(args[1], players, result);
         }
 
-        String playerName = args[1].toLowerCase(Locale.ROOT);
+        String player = args[1].toLowerCase(Locale.ROOT);
 
-        if (!players.contains(playerName)) {
+        if (!players.contains(player)) {
             return List.of();
         }
 
-        List<String> items = new ArrayList<>(itemData.getNames());
+        List<String> items = playerData.getStockAll((OfflinePlayer) sender).entrySet().parallelStream()
+                .filter(entry -> entry.getValue() != 0L).map(Map.Entry::getKey).map(itemData::getName).collect(Collectors.toList());
 
         if (args.length == 3) {
             return StringUtil.copyPartialMatches(args[2], items, result);
         }
 
-        String item = args[2].toUpperCase(Locale.ROOT);
+        String itemName = args[2].toUpperCase(Locale.ROOT);
 
-        if (!items.contains(item)) {
+        if (!items.contains(itemName)) {
             return List.of();
         }
 
-        @SuppressWarnings("deprecation")
-        OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(playerName);
-        int stock = playerData.getStock(offlinePlayer, itemData.getItemStack(item));
+        int stock = playerData.getStock((OfflinePlayer) sender, itemData.getItemStack(itemName));
 
-        List<String> amountList = IntStream.iterate(1, n -> n * 10).limit(10).filter(n -> n < stock)
-                .boxed().map(String::valueOf).collect(Collectors.toList());
+        if (stock < 1) {
+            return List.of();
+        }
+
+        List<String> amountList = IntStream.iterate(1, n -> n * 10).limit(10).filter(n -> n < stock).boxed()
+                .map(String::valueOf).collect(Collectors.toList());
         amountList.add(String.valueOf(stock));
 
         if (args.length == 4) {

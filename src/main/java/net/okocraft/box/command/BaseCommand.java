@@ -9,6 +9,8 @@ import net.okocraft.box.Box;
 import net.okocraft.box.config.Categories;
 import net.okocraft.box.config.Config;
 import net.okocraft.box.config.Messages;
+import net.okocraft.box.database.ItemData;
+import net.okocraft.box.database.PlayerData;
 
 public abstract class BaseCommand {
 
@@ -16,6 +18,8 @@ public abstract class BaseCommand {
     protected final Config config = plugin.getAPI().getConfig();
     protected final Messages messages = plugin.getAPI().getMessages();
     protected final Categories categories = plugin.getAPI().getCategories();
+    protected final PlayerData playerData = plugin.getAPI().getPlayerData();
+    protected final ItemData itemData = plugin.getAPI().getItemData();
 
     private final String name;
     private final String permissionNode;

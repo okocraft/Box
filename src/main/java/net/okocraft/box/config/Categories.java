@@ -13,11 +13,12 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import net.okocraft.box.Box;
-import net.okocraft.box.database.Items;
+import net.okocraft.box.database.ItemData;
 
 public class Categories extends CustomConfig {
 
     private final Box plugin = Box.getInstance();
+    private final ItemData itemData = plugin.getAPI().getItemData();
 
     private final NamespacedKey categoryNameKey = new NamespacedKey(plugin, "categoryname");
 
@@ -40,7 +41,7 @@ public class Categories extends CustomConfig {
     }
 
     public ItemStack getIcon(String category) {
-        ItemStack item = Items.getItemStack(get().getString(category + ".icon", ""));
+        ItemStack item = itemData.getItemStack(get().getString(category + ".icon", ""));
         if (item == null) {
             return item;
         }
@@ -53,7 +54,7 @@ public class Categories extends CustomConfig {
 
     public List<ItemStack> getItems(String category) {
         return get().getStringList(category + ".item").stream()
-                .map(Items::getItemStack)
+                .map(itemData::getItemStack)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
@@ -80,10 +81,11 @@ public class Categories extends CustomConfig {
     
     public void addCategory(String id, String displayName, List<String> items, String iconItem) throws IllegalArgumentException {
         displayName = ChatColor.translateAlternateColorCodes('&', displayName);
-        items.removeIf(itemName -> !Items.contains(itemName));
-        if (!Items.contains(iconItem)) {
-            throw new IllegalArgumentException("The item" + iconItem + " is not registered");
-        }
+        // TODO: register unexisting items on addcategory.
+        // items.removeIf(itemName -> !itemData.contains(itemName));
+        // if (!Items.contains(iconItem)) {
+        //     throw new IllegalArgumentException("The item" + iconItem + " is not registered");
+        // }
         get().createSection(id);
         get().set(id + ".display-name", displayName);
         get().set(id + ".icon", iconItem);

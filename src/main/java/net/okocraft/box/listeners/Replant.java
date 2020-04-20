@@ -47,6 +47,7 @@ public class Replant implements Listener {
 
     private final Box plugin = Box.getInstance();
     private final Config config = plugin.getAPI().getConfig();
+    private final PlayerData playerData = plugin.getAPI().getPlayerData();
 
     private static final Map<Material, Material> PLANTS = new HashMap<>() {
         private static final long serialVersionUID = 1L;
@@ -271,10 +272,10 @@ public class Replant implements Listener {
         }
 
         ItemStack seedItem = new ItemStack(seed);
-        long stock = PlayerData.getItemAmount(player, seedItem);
+        int stock = playerData.getStock(player, seedItem);
 
         if (stock >= 1) {
-            PlayerData.setItemAmount(player, seedItem, stock - 1);
+            playerData.setStock(player, seedItem, stock - 1);
         } else {
             player.getInventory().removeItem(new ItemStack(seed));
         }
@@ -289,6 +290,6 @@ public class Replant implements Listener {
             return true;
         }
 
-        return PlayerData.getItemAmount(player, new ItemStack(seed)) > 0;
+        return playerData.getStock(player, new ItemStack(seed)) > 0;
     }
 }

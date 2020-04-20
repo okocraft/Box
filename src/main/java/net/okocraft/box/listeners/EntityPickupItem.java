@@ -30,14 +30,16 @@ import org.bukkit.plugin.Plugin;
 import net.okocraft.box.Box;
 import net.okocraft.box.config.Categories;
 import net.okocraft.box.config.Config;
-import net.okocraft.box.database.Items;
+import net.okocraft.box.database.ItemData;
 import net.okocraft.box.database.PlayerData;
 
 public class EntityPickupItem implements Listener {
 
-    private Box plugin = Box.getInstance();
-    private Config config = plugin.getAPI().getConfig();
-    private Categories categories = plugin.getAPI().getCategories();
+    private final Box plugin = Box.getInstance();
+    private final Config config = plugin.getAPI().getConfig();
+    private final Categories categories = plugin.getAPI().getCategories();
+    private final PlayerData playerData = plugin.getAPI().getPlayerData();
+    private final ItemData itemData = plugin.getAPI().getItemData();
 
     public EntityPickupItem(Plugin plugin) {
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
@@ -64,18 +66,18 @@ public class EntityPickupItem implements Listener {
         Player player = (Player) event.getEntity();
         ItemStack pickedItem = event.getItem().getItemStack();
 
-        String pickedItemName = Items.getName(pickedItem, false);
+        String pickedItemName = itemData.getName(pickedItem);
 
         if (!categories.getAllItems().contains(pickedItemName)) {
             return;
         }
 
-        if (!PlayerData.getAutoStore(player, pickedItem)) {
+        if (!playerData.getAutoStore(player, pickedItem)) {
             return;
         }
 
-        long stock = PlayerData.getItemAmount(player, pickedItem);
-        PlayerData.setItemAmount(player, pickedItem, stock + event.getItem().getItemStack().getAmount());
+        int stock = playerData.getStock(player, pickedItem);
+        playerData.setStock(player, pickedItem, stock + event.getItem().getItemStack().getAmount());
 
         event.getItem().remove();
         event.setCancelled(true);

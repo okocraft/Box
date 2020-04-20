@@ -25,7 +25,7 @@ import org.bukkit.persistence.PersistentDataType;
 
 import net.okocraft.box.Box;
 import net.okocraft.box.config.Config;
-import net.okocraft.box.database.Items;
+import net.okocraft.box.database.ItemData;
 import net.okocraft.box.database.PlayerData;
 import net.okocraft.box.gui.CategorySelectorGUI;
 
@@ -33,6 +33,8 @@ public class BoxStick implements Listener {
 
     private final Box plugin = Box.getInstance();
     private final Config config = plugin.getAPI().getConfig();
+    private final PlayerData playerData = plugin.getAPI().getPlayerData();
+    private final ItemData itemData = plugin.getAPI().getItemData();
     private final NamespacedKey stickKey = new NamespacedKey(plugin, "boxstick");
 
     public BoxStick() {
@@ -158,7 +160,7 @@ public class BoxStick implements Listener {
             return false;
         }
 
-        String itemName = Items.getName(item, false);
+        String itemName = itemData.getName(item);
         if (itemName == null || !plugin.getAPI().getCategories().getAllItems().contains(itemName)) {
             return false;
         }
@@ -167,12 +169,12 @@ public class BoxStick implements Listener {
             return false;
         }
 
-        long stock = PlayerData.getItemAmount(player, item);
+        int stock = playerData.getStock(player, item);
         if (stock < 1) {
             return false;
         }
 
-        PlayerData.setItemAmount(player, item, stock - 1);
+        playerData.setStock(player, item, stock - 1);
         return true;
     }
 

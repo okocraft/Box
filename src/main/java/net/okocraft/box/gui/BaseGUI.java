@@ -21,6 +21,8 @@ import net.okocraft.box.config.Categories;
 import net.okocraft.box.config.Config;
 import net.okocraft.box.config.Layouts;
 import net.okocraft.box.config.Messages;
+import net.okocraft.box.database.ItemData;
+import net.okocraft.box.database.PlayerData;
 
 /**
  * ページ切り替えメソッドや、サブクラスで拡張すべきプレースホルダ置換メソッドを搭載したGUI基底クラス。
@@ -41,6 +43,12 @@ public abstract class BaseGUI implements InventoryHolder {
     
     /** GUIアイコン管理クラス */
     protected Layouts layout = plugin.getAPI().getLayouts();
+
+    /** プレイヤーデータ管理クラス */
+    protected PlayerData playerData = plugin.getAPI().getPlayerData();
+
+    /** アイテム名取得クラス */
+    protected ItemData itemData = plugin.getAPI().getItemData();
     
     /** GUIの実体 */
     private final Inventory GUI;

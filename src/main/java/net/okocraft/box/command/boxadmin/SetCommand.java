@@ -28,8 +28,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.StringUtil;
 
-import net.okocraft.box.database.Items;
-import net.okocraft.box.database.PlayerData;
 import net.okocraft.box.util.OtherUtil;
 
 class SetCommand extends BaseAdminCommand {
@@ -47,11 +45,6 @@ class SetCommand extends BaseAdminCommand {
 
     @Override
     public boolean runCommand(CommandSender sender, String[] args) {
-        if (!PlayerData.exist(args[1])) {
-            messages.sendPlayerNotFound(sender);
-            return false;
-        }
-
         @SuppressWarnings("deprecation")
         OfflinePlayer player = Bukkit.getOfflinePlayer(args[1]);
         if (!player.hasPlayedBefore() || player.getName() == null) {
@@ -64,9 +57,9 @@ class SetCommand extends BaseAdminCommand {
             messages.sendItemNotFound(sender);
             return false;
         }
-        ItemStack item = Items.getItemStack(itemName);
-        long amount = args.length < 4 ? 1 : OtherUtil.parseLongOrDefault(args[3], 1);
-        PlayerData.setItemAmount(player, item, amount);
+        ItemStack item = itemData.getItemStack(itemName);
+        int amount = args.length < 4 ? 1 : OtherUtil.parseIntOrDefault(args[3], 1);
+        playerData.setStock(player, item, amount);
 
         messages.sendSetInfoToSender(sender, player.getName(), itemName, amount);
         if (player.isOnline()) {
@@ -80,7 +73,7 @@ class SetCommand extends BaseAdminCommand {
     public List<String> runTabComplete(CommandSender sender, String[] args) {
         List<String> result = new ArrayList<>();
 
-        List<String> players = new ArrayList<>(PlayerData.getPlayers().values());
+        List<String> players = playerData.getPlayers();
 
         if (args.length == 2) {
             return StringUtil.copyPartialMatches(args[1], players, result);

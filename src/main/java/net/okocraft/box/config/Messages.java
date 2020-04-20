@@ -4,6 +4,9 @@ import java.util.Map;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.inventory.ItemStack;
+
+import net.okocraft.box.Box;
 
 public final class Messages extends CustomConfig {
     
@@ -110,9 +113,9 @@ public final class Messages extends CustomConfig {
         );
     }
 
-    public void sendAutoStoreListFormat(CommandSender sender, String item, boolean isEnabled) {
+    public void sendAutoStoreListFormat(CommandSender sender, ItemStack item, boolean isEnabled) {
         sendMessage(sender, false, "command.box.auto-store-list.info.format", Map.of(
-            "%item%", item,
+            "%item%", Box.getInstance().getAPI().getItemData().getName(item),
             "%is-enabled%", String.valueOf(isEnabled)
         ));
     }

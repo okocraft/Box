@@ -32,7 +32,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import net.okocraft.box.Box;
-import net.okocraft.box.database.Items;
 import net.okocraft.box.database.PlayerData;
 import net.okocraft.box.util.CraftRecipes;
 
@@ -96,9 +95,10 @@ class CraftGUI extends CategoryGUI {
 
     @Override
     protected ItemStack applyPlaceholder(ItemStack item, Map<String, String> placeholder) {
-        placeholder.put("%item-name%", Objects.requireNonNullElse(Items.getName(item, false), item.getType().toString()));
+        // TODO: meta?
+        placeholder.put("%item-name%", Objects.requireNonNullElse(itemData.getName(item, false), item.getType().toString()));
         placeholder.put("%category-name%", getCategoryName());
-        placeholder.put("%stock%", String.valueOf(PlayerData.getItemAmount(getPlayer(), item)));
+        placeholder.put("%stock%", String.valueOf(playerData.getStock(getPlayer(), item)));
         placeholder.put("%amount%", String.valueOf(getQuantity() * CraftRecipes.getResultAmount(item)));
         return super.applyPlaceholder(item, placeholder);
     }
@@ -126,7 +126,7 @@ class CraftGUI extends CategoryGUI {
                 .map(entry -> ChatColor.translateAlternateColorCodes('&', layout.getMaterialsPlaceholderFormat()
                         .replaceAll("%material%", entry.getKey())
                         .replaceAll("%material-stock%", String.valueOf(
-                                PlayerData.getItemAmount(getPlayer(), Items.getItemStack(entry.getKey()))))
+                                playerData.getStock(getPlayer(), itemData.getItemStack(entry.getKey()))))
                         .replaceAll("%amount%", String.valueOf(entry.getValue() * getQuantity())))
                 ).collect(Collectors.toList());
         for (int i = lore.size() - 1; i >= 0; i--) {
@@ -146,13 +146,13 @@ class CraftGUI extends CategoryGUI {
      * @param item 作ろうとしているアイテムのGUI表示
      * @return 作られたアイテムの数
      */
-    private long craft(ItemStack item) {
+    private int craft(ItemStack item) {
         Map<String, Integer> stacked = CraftRecipes.getIngredient(item);
-        long tempQuantity = getQuantity();
+        int tempQuantity = getQuantity();
         Player player = getPlayer();
         for (Map.Entry<String, Integer> entry : stacked.entrySet()) {
             // 材料の在庫から、作れるアイテム数を割り出す
-            long materialStock = PlayerData.getItemAmount(player, Items.getItemStack(entry.getKey()));
+            int materialStock = playerData.getStock(player, itemData.getItemStack(entry.getKey()));
             tempQuantity = Math.min(entry.getValue() * tempQuantity, materialStock) / entry.getValue();
         }
         if (tempQuantity == 0) {
@@ -160,13 +160,13 @@ class CraftGUI extends CategoryGUI {
             return 0;
         }
         for (Map.Entry<String, Integer> entry : stacked.entrySet()) {
-            ItemStack ingredient = Items.getItemStack(entry.getKey());
-            long stock = PlayerData.getItemAmount(player, ingredient);
-            PlayerData.setItemAmount(player, ingredient, stock - tempQuantity * entry.getValue());
+            ItemStack ingredient = itemData.getItemStack(entry.getKey());
+            int stock = playerData.getStock(player, ingredient);
+            playerData.setStock(player, ingredient, stock - tempQuantity * entry.getValue());
         }
-        long stock = PlayerData.getItemAmount(player, item);
-        long add = tempQuantity * CraftRecipes.getResultAmount(item);
-        PlayerData.setItemAmount(player, item, stock + add);
+        int stock = playerData.getStock(player, item);
+        int add = tempQuantity * CraftRecipes.getResultAmount(item);
+        playerData.setStock(player, item, stock + add);
         update();
         return add;
     }

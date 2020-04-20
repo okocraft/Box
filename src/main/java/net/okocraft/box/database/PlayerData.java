@@ -1,414 +1,192 @@
 package net.okocraft.box.database;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
+import java.nio.file.Path;
 import java.sql.SQLException;
-import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.Locale;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.scheduler.BukkitRunnable;
 
-import net.okocraft.box.Box;
+public class PlayerData {
 
-import org.jetbrains.annotations.Nullable;
+    private final Database database;
+    private final ItemTable itemTable;
+    private final PlayerDataTable playerDataTable;
 
-public class PlayerData implements Listener {
+    private final Map<Player, Map<ItemStack, Boolean>> autostore = new HashMap<>();
+    private final Map<Player, Map<ItemStack, Integer>> stock = new HashMap<>();
+    private final Set<String> players = new HashSet<>();
 
-    private static final Map<Player, Map<String, Boolean>> autoStoreData = new HashMap<>();
-    private static final Map<Player, Map<String, Long>> itemData = new HashMap<>();
+    private final ExecutorService threadPool = Executors.newSingleThreadExecutor();
 
-    @Nullable
-    private static Connection connection = Sqlite.getConnection();
-    private static final String autoStoreTableName = "autostore_data";
-    private static final String itemTableName = "item_data";
-
-    private static final ExecutorService threadPool = Executors.newSingleThreadExecutor();
-
-    static {
-        Sqlite.executeSql("CREATE TABLE IF NOT EXISTS " + autoStoreTableName
-                + " (uuid TEXT PRIMARY KEY NOT NULL, player TEXT NOT NULL)");
-        Sqlite.executeSql("CREATE TABLE IF NOT EXISTS " + itemTableName
-                + " (uuid TEXT PRIMARY KEY NOT NULL, player TEXT NOT NULL)");
-        syncDatabaseItems();
-    }
-
-    public PlayerData(Plugin plugin) {
-        Bukkit.getPluginManager().registerEvents(this, plugin);
-
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                saveOnlinePlayersData();
-            }
-        }.runTaskTimerAsynchronously(Box.getInstance(), 20 * 60 * 15, 20 * 60 * 15);
-    }
-
-    public static boolean setAutoStoreAll(OfflinePlayer player, boolean enabled) {
-        if (player.isOnline()) {
-            getPlayerAutoStoreData(player).replaceAll((item, current) -> enabled);
-            return true;
-        } else {
-            StringBuilder values = new StringBuilder(
-                    "'" + player.getUniqueId().toString() + "', '" + player.getName().toLowerCase(Locale.ROOT) + "', ");
-            String enabledStr = enabled ? "1, " : "0, ";
-            for (int i = 1; i <= Items.getItems().size(); i++) {
-                values.append(enabledStr);
-            }
-            values = values.delete(values.length() - 2, values.length());
-
-            return Sqlite.executeSql("REPLACE INTO " + autoStoreTableName + " VALUES (" + values.toString() + ")");
-        }
-    }
-
-    public static boolean setAutoStore(OfflinePlayer player, ItemStack item, boolean enabled) {
-        String itemName = Items.getName(item, false);
-        if (itemName == null) {
-            return false;
-        }
-
-        if (player.isOnline()) {
-            boolean previous = getAutoStore(player, item);
-            if (enabled == previous) {
-                return true;
-            } else {
-                return getPlayerAutoStoreData(player).put(itemName, enabled) == previous;
-            }
-        } else {
-            return Sqlite.executeSql("UPDATE OR IGNORE " + autoStoreTableName + " SET " + itemName + " = "
-                    + (enabled ? "1" : "0") + " WHERE uuid = '" + player.getUniqueId().toString() + "'");
-        }
-    }
-
-    public static boolean getAutoStore(OfflinePlayer player, ItemStack item) {
-        return getPlayerAutoStoreData(player).get(Items.getName(item, true));
-    }
-
-    public static Map<String, Boolean> getAutoStoreAll(OfflinePlayer player) {
-        return new LinkedHashMap<>(getPlayerAutoStoreData(player));
-    }
-
-    public static boolean setItemAmount(OfflinePlayer player, ItemStack item, long amount) {
-        String itemName = Items.getName(item, true);
-        if (itemName == null) {
-            return false;
-        }
-
-        if (player.isOnline()) {
-            long previous = getItemAmount(player, item);
-            if (amount == previous) {
-                return true;
-            } else {
-                return getPlayerItemData(player.getPlayer()).put(itemName, amount) == previous;
-            }
-        } else {
-            return Sqlite.executeSql("UPDATE OR IGNORE " + itemTableName + " SET " + itemName + " = " + amount
-                    + " WHERE uuid = '" + player.getUniqueId().toString() + "'");
-        }
-    }
-
-    public static boolean addItemAmount(OfflinePlayer player, ItemStack item,
-                                        long amount) {
-        String itemName = Items.getName(item, true);
-        if (itemName == null) {
-            return false;
-        }
-
-        if (amount == 0) {
-            return true;
-        }
-
-        if (player.isOnline()) {
-            long previous = getItemAmount(player, item);
-            if (amount + previous >= 0) {
-                return getPlayerItemData(player.getPlayer()).put(itemName, amount + previous) == previous;
-            } else {
-                return false;
-            }
-        } else {
-            if (amount < 0) {
-                return Sqlite.executeSql("UPDATE OR IGNORE " + itemTableName + " SET " + itemName + " = " + itemName
-                        + " + " + amount + " WHERE uuid = '" + player.getUniqueId().toString() + "' AND " + itemName
-                        + " >= " + (-1 * amount));
-            } else {
-                return Sqlite.executeSql("UPDATE OR IGNORE " + itemTableName + " SET " + itemName + " = " + itemName
-                        + " + " + amount + " WHERE uuid = '" + player.getUniqueId().toString() + "'");
-            }
-        }
-    }
-
-    public static long getItemAmount(OfflinePlayer player, ItemStack item) {
-        return getPlayerItemData(player).get(Items.getName(item, true));
-    }
-
-    public static Map<String, Long> getItemsAmount(OfflinePlayer player) {
-        return new LinkedHashMap<>(getPlayerItemData(player));
-    }
-
-    public static Map<String, String> getPlayers() {
-        Map<String, String> result = new HashMap<>();
-        try (PreparedStatement sql = connection.prepareStatement("SELECT uuid, player FROM " + autoStoreTableName)) {
-            ResultSet rs = sql.executeQuery();
-            while (rs.next()) {
-                result.put(rs.getString("uuid"), rs.getString("player"));
-            }
-            return result;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return Map.of();
-        }
-    }
-
-    public static boolean exist(String name) {
-        name = name.toLowerCase(Locale.ROOT);
-        Map<String, String> players = getPlayers();
+    public PlayerData(Path dbPath) {
         try {
-            UUID.fromString(name);
-            return players.containsKey(name);
-        } catch (IllegalArgumentException e) {
-            return players.containsValue(name);
+            this.database = new Database(dbPath);
+        } catch (SQLException e) {
+            throw new ExceptionInInitializerError(e);
         }
+
+        this.itemTable = new ItemTable(database);
+        this.playerDataTable = new PlayerDataTable(database, itemTable);
+
+        loadPlayerNames();
     }
 
-    @EventHandler
-    public void onJoin(PlayerJoinEvent event) {
-        Player player = event.getPlayer();
-        String uuid = player.getUniqueId().toString();
-        String name = player.getName().toLowerCase(Locale.ROOT);
-
-        threadPool.submit(() -> {
-            // 昔同じ名前のプレイヤーがログインしてた場合、古い方を殲滅する。
-            Sqlite.executeSql(
-                    "UPDATE OR IGNORE " + autoStoreTableName + " SET player = '' WHERE player = '" + name + "'");
-            Sqlite.executeSql(
-                    "UPDATE OR IGNORE " + autoStoreTableName + " SET player = '' WHERE uuid = '" + uuid + "'");
-            Sqlite.executeSql("UPDATE OR IGNORE " + itemTableName + " SET player = '' WHERE player = '" + name + "'");
-            Sqlite.executeSql("UPDATE OR IGNORE " + itemTableName + " SET player = '' WHERE uuid = '" + uuid + "'");
-            // 新しいプレイヤーだったら登録し、すでにuuidが登録されている場合はプレイヤーの名前だけ上書きする。
-            Sqlite.executeSql("INSERT INTO " + autoStoreTableName + " (uuid, player) VALUES ('" + uuid + "', '" + name
-                    + "') ON CONFLICT(uuid) DO UPDATE SET player = '" + name + "' WHERE uuid = '" + uuid + "'");
-            Sqlite.executeSql("INSERT INTO " + itemTableName + " (uuid, player) VALUES ('" + uuid + "', '" + name
-                    + "') ON CONFLICT(uuid) DO UPDATE SET player = '" + name + "' WHERE uuid = '" + uuid + "'");
-            // データを拾う。
-            itemData.put(player, loadItemData(player));
-            autoStoreData.put(player, loadAutoStoreData(player));
-        });
+    ItemTable getItemTable() {
+        return itemTable;
     }
 
-    @EventHandler
-    public void onQuit(PlayerQuitEvent event) {
-        Player player = event.getPlayer();
-
-        threadPool.submit(() -> {
-            saveItemData(player);
-            saveAutoStoreData(player);
-        });
-    }
-
-    public static void loadOnlinePlayersData() {
-        Bukkit.getOnlinePlayers().forEach(player -> {
-            getPlayerAutoStoreData(player);
-            getPlayerItemData(player);
-        });
-    }
-
-    private static Map<String, Boolean> getPlayerAutoStoreData(OfflinePlayer player) {
-        if (player.isOnline()) {
-            Player onlinePlayer = player.getPlayer();
-            Map<String, Boolean> data = autoStoreData.get(onlinePlayer);
-            if (data == null) {
-                data = loadAutoStoreData(player);
-                autoStoreData.put(onlinePlayer, data);
-            }
-
-            return data;
-        } else {
-            return loadAutoStoreData(player);
-        }
-    }
-
-    private static Map<String, Long> getPlayerItemData(OfflinePlayer player) {
-        if (player.isOnline()) {
-            Player onlinePlayer = player.getPlayer();
-
-            Map<String, Long> data = itemData.get(player);
-            if (data == null) {
-                data = loadItemData(onlinePlayer);
-                if (data == null) {
-                    onlinePlayer.sendMessage("data is null.");
+    private void loadPlayerNames() {
+        database.query("SELECT player FROM box_playerdata", rs -> {
+            try {
+                while (rs.next()) {
+                    String playerName = Bukkit.getOfflinePlayer(UUID.fromString(rs.getString("player"))).getName();
+                    if (playerName != null) {
+                        players.add(playerName);
+                    }
                 }
-                itemData.put(onlinePlayer, data);
+            } catch (IllegalArgumentException | SQLException e) {
+                e.printStackTrace();
             }
 
-            return data;
-        } else {
-            return loadItemData(player);
-        }
-    }
-
-    private static Map<String, Long> loadItemData(OfflinePlayer player) {
-        String sqlState = "SELECT * FROM " + itemTableName + " WHERE uuid = '" + player.getUniqueId().toString() + "'";
-        try (PreparedStatement statement = connection.prepareStatement(sqlState)) {
-            ResultSet rs = statement.executeQuery();
-            Map<String, Long> result = new LinkedHashMap<>();
-            rs.next();
-
-            for (String item : Items.getItems()) {
-                result.put(item, rs.getLong(item));
-            }
-
-            return result;
-        } catch (SQLException e) {
-            return Items.getItems().stream()
-                    .collect(Collectors.toMap(Function.identity(), item -> 0L, (e1, e2) -> e1, LinkedHashMap::new));
-        }
-    }
-
-    private static Map<String, Boolean> loadAutoStoreData(OfflinePlayer player) {
-        String sqlState = "SELECT * FROM " + autoStoreTableName + " WHERE uuid = '" + player.getUniqueId().toString()
-                + "'";
-        try (PreparedStatement statement = connection.prepareStatement(sqlState)) {
-            ResultSet rs = statement.executeQuery();
-            Map<String, Boolean> result = new LinkedHashMap<>();
-            rs.next();
-
-            for (String item : Items.getItems()) {
-                result.put(item, rs.getLong(item) == 1);
-            }
-
-            return result;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return Items.getItems().stream()
-                    .collect(Collectors.toMap(Function.identity(), item -> false, (e1, e2) -> e1, LinkedHashMap::new));
-        }
-    }
-
-    public static void saveOnlinePlayersData() {
-        Bukkit.getOnlinePlayers().forEach(player -> {
-            saveItemData(player);
-            saveAutoStoreData(player);
+            return null;
         });
     }
 
-    private static void saveItemData(Player player) {
-        String uuid = player.getUniqueId().toString();
-        Map<String, Long> playerItemData = itemData.get(player);
-        if (playerItemData == null) {
-            return;
-        }
-        StringBuilder columns = new StringBuilder(" (uuid, player, ");
-        StringBuilder values = new StringBuilder(" VALUES ('").append(uuid).append("', '")
-                .append(player.getName().toLowerCase(Locale.ROOT)).append("', ");
-
-        playerItemData.forEach((column, value) -> {
-            columns.append(column).append(", ");
-            values.append(value).append(", ");
-        });
-        columns.delete(columns.length() - 2, columns.length()).append(")");
-        values.delete(values.length() - 2, values.length()).append(")");
-
-        Sqlite.executeSql("REPLACE INTO " + itemTableName + columns.toString() + values.toString());
+    public List<String> getPlayers() {
+        return new ArrayList<>(players);
     }
 
-    private static void saveAutoStoreData(Player player) {
-        String uuid = player.getUniqueId().toString();
-        Map<String, Boolean> playerAutoStoreData = autoStoreData.get(player);
-        if (playerAutoStoreData == null) {
-            return;
-        }
-
-        StringBuilder columns = new StringBuilder(" (uuid, player, ");
-        StringBuilder values = new StringBuilder(" VALUES ('").append(uuid).append("', '")
-                .append(player.getName().toLowerCase(Locale.ROOT)).append("', ");
-
-        playerAutoStoreData.forEach((column, value) -> {
-            columns.append(column).append(", ");
-            values.append(value ? "1" : "0").append(", ");
-        });
-        columns.delete(columns.length() - 2, columns.length()).append(")");
-        values.delete(values.length() - 2, values.length()).append(")");
-
-        Sqlite.executeSql("REPLACE INTO " + autoStoreTableName + columns.toString() + values.toString());
+    /**
+     * @see Database#dispose()
+     */
+    public void dispose() {
+        database.dispose();
     }
 
-    private static void syncDatabaseItems() {
-        Set<String> columns;
-        try (PreparedStatement statement = connection
-                .prepareStatement("SELECT * FROM " + autoStoreTableName + " WHERE 0 = 1")) {
-            ResultSetMetaData rsMeta = statement.executeQuery().getMetaData();
+    public void loadCache(Player player) {
+        stock.put(player, getStockAll(player));
+        autostore.put(player, getAutoStoreAll(player));
+    }
 
-            columns = new HashSet<>();
-            for (int i = 1; i <= rsMeta.getColumnCount(); i++) {
-                columns.add(rsMeta.getColumnName(i));
+    public void removeCache(Player player) {
+        playerDataTable.setAutoStoreAll(player, autostore.remove(player));
+        playerDataTable.setStockAll(player, stock.remove(player));
+    }
+
+    public void setAutoStoreAll(OfflinePlayer player, boolean enabled) {
+        if (player.isOnline()) {
+            getAutoStoreAll(player).replaceAll((item, value) -> enabled);
+        }
+
+        threadPool.submit(() -> playerDataTable.setAutoStoreAll(player, enabled));
+    }
+
+    public void setAutoStoreAll(OfflinePlayer player, Map<ItemStack, Boolean> enabled) {
+        if (player.isOnline()) {
+            getAutoStoreAll(player).replaceAll((item, value) -> enabled.get(item));
+        }
+
+        threadPool.submit(() -> playerDataTable.setAutoStoreAll(player, enabled));
+    }
+
+    public void setAutoStore(OfflinePlayer player, ItemStack item, boolean enabled) {
+        if (player.isOnline()) {
+            getAutoStoreAll(player).put(item, enabled);
+        }
+
+        threadPool.submit(() -> playerDataTable.setAutoStore(player, item, enabled));
+    }
+
+    public boolean getAutoStore(OfflinePlayer player, ItemStack item) {
+        return player.isOnline()
+                ? getAutoStoreAll(player).getOrDefault(item, false)
+                : playerDataTable.getAutoStore(player, item); 
+    }
+
+    public Map<ItemStack, Boolean> getAutoStoreAll(OfflinePlayer player) {
+        if (player.isOnline()) {
+            if (autostore.containsKey(player)) {
+                return autostore.get(player);
+            } else {
+                Map<ItemStack, Boolean> result = playerDataTable.getAutoStoreAll(player);
+                autostore.put(player.getPlayer(), result);
+                return result;
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return;
         }
 
-        if (columns.isEmpty()) {
-            return;
+        return playerDataTable.getAutoStoreAll(player);
+    }
+
+    public void setStock(OfflinePlayer player, ItemStack item, int stock) {
+        if (player.isOnline()) {
+            getStockAll(player).put(item, stock);
         }
 
-        try (Statement statement = connection.createStatement()) {
-            statement.addBatch("BEGIN TRANSACTION");
-            statement.addBatch("ALTER TABLE " + autoStoreTableName + " RENAME TO temp_" + autoStoreTableName + "");
-            statement.addBatch("ALTER TABLE " + itemTableName + " RENAME TO temp_" + itemTableName + "");
+        threadPool.submit(() -> playerDataTable.setStock(player, item, stock));
+    }
 
-            StringBuilder stateBuilder = new StringBuilder(
-                    "CREATE TABLE IF NOT EXISTS %table% (uuid TEXT PRIMARY KEY NOT NULL, player TEXT NOT NULL, ");
-            StringBuilder itemsName = new StringBuilder();
+    public void setStockAll(OfflinePlayer player, Map<ItemStack, Integer> stock) {
+        if (player.isOnline()) {
+            getStockAll(player).replaceAll((item, value) -> stock.getOrDefault(item, 0));
+        }
 
-            Items.getItems().forEach(item -> {
-                if (columns.contains(item)) {
-                    itemsName.append(item).append(", ");
-                }
-                stateBuilder.append(item).append(" INTEGER NOT NULL DEFAULT %default_value%, ");
-            });
+        threadPool.submit(() -> playerDataTable.setStockAll(player, stock));
+    }
 
-            String initState = stateBuilder.delete(stateBuilder.length() - 2, stateBuilder.length()).append(")")
-                    .toString();
-            int defaultAutoStore = Box.getInstance().getAPI().getConfig().getDefaultAutoStoreValue() ? 1 : 0;
+    public void addStock(OfflinePlayer player, ItemStack item, int amount) {
+        if (player.isOnline()) {
+            getStockAll(player).put(item, getStock(player, item) + amount);
+        }
 
-            statement.addBatch(initState.replace("%table%", autoStoreTableName).replace("%default_value%",
-                    Integer.toString(defaultAutoStore)));
-            statement.addBatch(initState.replace("%table%", itemTableName).replace("%default_value%", "0"));
+        threadPool.submit(() -> playerDataTable.addStock(player, item, amount));
+    }
 
-            if (itemsName.length() > 2) {
-                itemsName.delete(itemsName.length() - 2, itemsName.length());
-                statement.addBatch("INSERT INTO " + autoStoreTableName + " (uuid, player, " + itemsName.toString()
-                        + ") SELECT uuid, player, " + itemsName.toString() + " FROM temp_" + autoStoreTableName);
-                statement.addBatch("INSERT INTO " + itemTableName + " (uuid, player, " + itemsName.toString()
-                        + ") SELECT uuid, player, " + itemsName.toString() + " FROM temp_" + itemTableName);
+    public int getStock(OfflinePlayer player, ItemStack item) {
+        return player.isOnline()
+                ? getStockAll(player).getOrDefault(item, 0)
+                : playerDataTable.getStock(player, item); 
+    }
+
+    public Map<ItemStack, Integer> getStockAll(OfflinePlayer player) {
+        if (player.isOnline()) {
+            if (stock.containsKey(player)) {
+                return stock.get(player);
+            } else {
+                Map<ItemStack, Integer> result = playerDataTable.getStockAll(player);
+                stock.put(player.getPlayer(), result);
+                return result;
             }
-
-            statement.addBatch("DROP TABLE temp_" + autoStoreTableName);
-            statement.addBatch("DROP TABLE temp_" + itemTableName);
-            statement.addBatch("COMMIT");
-            statement.executeBatch();
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
+
+        return playerDataTable.getStockAll(player);
+    }
+
+    public boolean storeAll(Player player) {
+        boolean isModified = false;
+        ItemStack[] contents = player.getInventory().getContents();
+        for (int i = 0; i < contents.length; i++) {
+            ItemStack item = contents[i];
+            if (itemTable.getId(item) == -1) {
+                continue;
+            }
+            int stock = getStock(player, item);
+            int amount = item.getAmount();
+            amount -= player.getInventory().removeItem(item).values().stream().map(ItemStack::getAmount).mapToInt(Integer::valueOf).sum();
+            setStock(player, item, stock + amount);
+            isModified = true;
+        }
+
+        return isModified;
     }
 }

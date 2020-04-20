@@ -39,13 +39,14 @@ import org.bukkit.inventory.Inventory;
 import net.okocraft.box.Box;
 import net.okocraft.box.config.Categories;
 import net.okocraft.box.config.Messages;
-import net.okocraft.box.database.Items;
+import net.okocraft.box.database.ItemData;
 
 public class GenerateCategory implements Listener {
 
     private final Box plugin = Box.getInstance();
     private final Messages messages = plugin.getAPI().getMessages();
     private final Categories categories = plugin.getAPI().getCategories();
+    private final ItemData itemData = plugin.getAPI().getItemData();
 
     private final Player player;
     private final String id;
@@ -57,7 +58,7 @@ public class GenerateCategory implements Listener {
         this.id = id;
         this.displayName = displayName;
         this.icon = icon;
-        if (!Items.contains(icon)) {
+        if (!itemData.getNames().contains(icon)) {
             return;
         }
         Bukkit.getPluginManager().registerEvents(this, plugin);
@@ -85,7 +86,8 @@ public class GenerateCategory implements Listener {
         Inventory chestSnapInv = chestData.getSnapshotInventory();
         List<String> items = Arrays.stream(chestSnapInv.getContents())
                 .filter(Objects::nonNull)
-                .map(itemStack -> Items.getName(itemStack, false))
+                .map(itemStack -> itemData.getName(itemStack))
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
         categories.addCategory(id, displayName, items, icon);
         messages.sendMessage(player, "command.box-admin.add-category.info.success");
