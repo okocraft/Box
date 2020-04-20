@@ -45,12 +45,8 @@ public class EntityPickupItem implements Listener {
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPickupItem(EntityPickupItemEvent event) {
-        if (event.isCancelled()) {
-            return;
-        }
-
         if (!config.isAutoStoreEnabled()) {
             return;
         }

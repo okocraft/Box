@@ -50,12 +50,8 @@ public class PlayerListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onInventoryClick(InventoryClickEvent event) {
-        if (event.isCancelled()) {
-            return;
-        }
-
         Inventory inv = event.getView().getTopInventory();
         if (inv == null || !(inv.getHolder() instanceof BaseGUI)) {
             return;

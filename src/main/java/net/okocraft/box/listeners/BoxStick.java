@@ -41,7 +41,7 @@ public class BoxStick implements Listener {
         Bukkit.getPluginManager().registerEvents(this, plugin);
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onInteractWithStick(PlayerInteractEvent event) {
         if (event.getHand() == EquipmentSlot.OFF_HAND) {
             return;
