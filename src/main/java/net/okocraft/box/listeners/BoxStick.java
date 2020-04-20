@@ -160,21 +160,19 @@ public class BoxStick implements Listener {
             return false;
         }
 
-        String itemName = itemData.getName(item);
+        ItemStack index = item.clone();
+        index.setAmount(1);
+        String itemName = itemData.getName(index);
         if (itemName == null || !plugin.getAPI().getCategories().getAllItems().contains(itemName)) {
             return false;
         }
 
-        if (!item.getEnchantments().isEmpty()) {
-            return false;
-        }
-
-        int stock = playerData.getStock(player, item);
+        int stock = playerData.getStock(player, index);
         if (stock < 1) {
             return false;
         }
 
-        playerData.setStock(player, item, stock - 1);
+        playerData.setStock(player, index, stock - 1);
         return true;
     }
 
