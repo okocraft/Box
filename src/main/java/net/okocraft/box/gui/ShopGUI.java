@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.bukkit.entity.Player;
@@ -126,13 +125,16 @@ class ShopGUI extends CategoryGUI {
 
     @Override
     protected ItemStack applyPlaceholder(ItemStack item, Map<String, String> placeholder) {
-        ItemStack realItem = Objects.requireNonNullElse(getRealItem(item), item);
-        placeholder.put("%item-name%", Objects.requireNonNullElse(getRealItemName(item), item.getType().toString()));
         placeholder.put("%category-name%", getCategoryName());
         placeholder.put("%balance%", String.valueOf(economy.getBalance(getPlayer())));
-        placeholder.put("%stock%", String.valueOf(playerData.getStock(getPlayer(), realItem)));
-        placeholder.put("%buy-price%", String.valueOf(prices.getBuyPrice(realItem)));
-        placeholder.put("%sell-price%", String.valueOf(prices.getSellPrice(realItem)));
+        
+        ItemStack realItem = getRealItem(item);
+        if (realItem != null) {
+            placeholder.put("%item-name%", getRealItemName(item));
+            placeholder.put("%stock%", String.valueOf(playerData.getStock(getPlayer(), realItem)));
+            placeholder.put("%buy-price%", String.valueOf(prices.getBuyPrice(realItem)));
+            placeholder.put("%sell-price%", String.valueOf(prices.getSellPrice(realItem)));
+        }
         return super.applyPlaceholder(item, placeholder);
     }
 

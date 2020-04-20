@@ -95,9 +95,11 @@ public class PlayerData {
     public void setAutoStoreAll(OfflinePlayer player, Map<ItemStack, Boolean> enabled) {
         Map<ItemStack, Boolean> replaced = new HashMap<>();
         enabled.forEach((item, value) -> {
-            ItemStack clone = item.clone();
-            clone.setAmount(1);
-            replaced.put(clone, value);
+            if (item != null) {
+                ItemStack clone = item.clone();
+                clone.setAmount(1);
+                replaced.put(clone, value);
+            }
         });
         if (player.isOnline()) {
             getAutoStoreAll(player).replaceAll((item, value) -> replaced.get(item));
@@ -107,6 +109,9 @@ public class PlayerData {
     }
 
     public void setAutoStore(OfflinePlayer player, ItemStack item, boolean enabled) {
+        if (item == null) {
+            return;
+        }
         ItemStack clone = item.clone();
         clone.setAmount(1);
         if (player.isOnline()) {
@@ -117,6 +122,9 @@ public class PlayerData {
     }
 
     public boolean getAutoStore(OfflinePlayer player, ItemStack item) {
+        if (item == null) {
+            return false;
+        }
         ItemStack clone = item.clone();
         clone.setAmount(1);
         return player.isOnline()
@@ -136,7 +144,11 @@ public class PlayerData {
 
             
             Map<ItemStack, Boolean> clone = new HashMap<>();
-            result.forEach((item, value) -> clone.put(item.clone(), value));
+            result.forEach((item, value) -> {
+                if (item != null) {
+                    clone.put(item.clone(), value);
+                }
+            });
             return clone;
         }
 
@@ -144,6 +156,9 @@ public class PlayerData {
     }
 
     public void setStock(OfflinePlayer player, ItemStack item, int stock) {
+        if (item == null) {
+            return;
+        }
         ItemStack clone = item.clone();
         clone.setAmount(1);
         if (player.isOnline()) {
@@ -156,9 +171,11 @@ public class PlayerData {
     public void setStockAll(OfflinePlayer player, Map<ItemStack, Integer> stock) {
         Map<ItemStack, Integer> clone = new HashMap<>();
         stock.forEach((item, value) -> {
-            ItemStack cloneItem = item.clone();
-            cloneItem.setAmount(1);
-            clone.put(cloneItem, value);
+            if (item != null) {
+                ItemStack cloneItem = item.clone();
+                cloneItem.setAmount(1);
+                clone.put(cloneItem, value);
+            }
         });
         if (player.isOnline()) {
             getStockAll(player).replaceAll((item, value) -> clone.getOrDefault(item, 0));
@@ -168,6 +185,9 @@ public class PlayerData {
     }
 
     public void addStock(OfflinePlayer player, ItemStack item, int amount) {
+        if (item == null) {
+            return;
+        }
         ItemStack clone = item.clone();
         clone.setAmount(1);
         if (player.isOnline()) {
@@ -178,6 +198,9 @@ public class PlayerData {
     }
 
     public int getStock(OfflinePlayer player, ItemStack item) {
+        if (item == null) {
+            return 0;
+        }
         ItemStack clone = item.clone();
         clone.setAmount(1);
         return player.isOnline()
@@ -196,7 +219,11 @@ public class PlayerData {
             }
 
             Map<ItemStack, Integer> clone = new HashMap<>();
-            result.forEach((item, value) -> clone.put(item.clone(), value));
+            result.forEach((item, value) -> {
+                if (item != null) {
+                    clone.put(item.clone(), value);
+                }
+            });
             return clone;
         }
 

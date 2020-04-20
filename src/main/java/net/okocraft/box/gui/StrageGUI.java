@@ -102,7 +102,10 @@ class StrageGUI extends CategoryGUI {
     protected ItemStack applyPlaceholder(ItemStack item, Map<String, String> placeholder) {
         placeholder.put("%item-name%", Objects.requireNonNullElse(getRealItemName(item), item.getType().toString()));
         placeholder.put("%category-name%", getCategoryName());
-        placeholder.put("%stock%", String.valueOf(playerData.getStock(getPlayer(), getRealItem(item))));
+        ItemStack realItem = getRealItem(item);
+        if (realItem != null) {
+            placeholder.put("%stock%", String.valueOf(playerData.getStock(getPlayer(), realItem)));
+        }
         return super.applyPlaceholder(item, placeholder);
     }
 
@@ -115,6 +118,9 @@ class StrageGUI extends CategoryGUI {
     private int withdraw(ItemStack item) {
         Player player = getPlayer();
         ItemStack indexItem = getRealItem(item);
+        if (indexItem == null) {
+            return 0;
+        }
         int stock = playerData.getStock(player, indexItem);
         int quantity = Math.min(stock, getQuantity());
         boolean isCreative = player.getGameMode() == GameMode.CREATIVE || player.hasPermission("box-admin.creative");
@@ -226,6 +232,9 @@ class StrageGUI extends CategoryGUI {
     private int deposit(ItemStack item) {
         Player player = getPlayer();
         ItemStack indexItem = getRealItem(item);
+        if (indexItem == null) {
+            return 0;
+        }
         int stock = playerData.getStock(player, indexItem);
         int quantity = getQuantity();
         ItemStack takenItem = indexItem.clone();
