@@ -4,8 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.bukkit.Material;
-import org.bukkit.Sound;
-import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
@@ -46,11 +44,11 @@ abstract class PagedGUI extends BaseGUI implements Clickable {
     public void onClicked(InventoryClickEvent event) {
         if (event.getSlot() == nextPageSlot) {
             setPage(getPage() + 1);
-            player.playSound(player.getLocation(), Sound.BLOCK_CHEST_OPEN, SoundCategory.MASTER, 1F, 1F);
+            config.playChangePageSound(player);
             return;
         } else if (event.getSlot() == previousPageSlot) {
             setPage(getPage() - 1);
-            player.playSound(player.getLocation(), Sound.BLOCK_CHEST_OPEN, SoundCategory.MASTER, 1F, 1F);
+            config.playChangePageSound(player);
             return;
         }
     }

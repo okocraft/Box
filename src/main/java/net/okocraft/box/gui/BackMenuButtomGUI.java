@@ -42,7 +42,7 @@ abstract class BackMenuButtomGUI extends PagedGUI {
     @Override
     public void onClicked(InventoryClickEvent event) {
         if (event.getSlot() == backMenuSlot) {
-            // PlayerUtil.playSound(getPlayer(), Config.Sounds.MENU_BACK);
+            config.playBackMenuSound(getPlayer());
             getPlayer().openInventory(new CategorySelectorGUI().getInventory());
             return;
         }

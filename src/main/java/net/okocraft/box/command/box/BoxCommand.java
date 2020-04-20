@@ -55,6 +55,7 @@ public class BoxCommand extends Commands {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender instanceof Player && args.length == 0) {
+            config.playGUIOpenSound((Player) sender);
             ((Player) sender).openInventory(new CategorySelectorGUI().getInventory());
             return false;
         }
