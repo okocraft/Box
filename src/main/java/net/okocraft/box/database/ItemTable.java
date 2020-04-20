@@ -114,18 +114,18 @@ final class ItemTable {
                 PotionMeta clonedMeta = meta.clone();
                 clonedMeta.setBasePotionData(new PotionData(type, false, false));
                 ItemStack clone = add.clone();
-                clone.setItemMeta(meta);
+                clone.setItemMeta(clonedMeta);
                 register(clone);
                 if (type.isExtendable()) {
                     clonedMeta.setBasePotionData(new PotionData(type, true, false));
                     clone = add.clone();
-                    clone.setItemMeta(meta);
+                    clone.setItemMeta(clonedMeta);
                     register(clone);
                 }
                 if (type.isUpgradeable()) {
                     clonedMeta.setBasePotionData(new PotionData(type, false, true));
                     clone = add.clone();
-                    clone.setItemMeta(meta);
+                    clone.setItemMeta(clonedMeta);
                     register(clone);
                 }
             }
