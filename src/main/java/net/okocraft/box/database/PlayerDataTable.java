@@ -66,7 +66,7 @@ class PlayerDataTable {
     void setAutoStore(OfflinePlayer player, ItemStack item, boolean enabled) {
         int itemId = itemTable.register(item);
         int enabledInt = enabled ? 1 : 0;
-        Boolean autostore = database.query("SELECT autostore FROM " + TABLE + " WHERE player = '" + player.getUniqueId() + "', itemid = " + itemId, rs -> {
+        Boolean autostore = database.query("SELECT autostore FROM " + TABLE + " WHERE player = '" + player.getUniqueId() + "' AND itemid = " + itemId, rs -> {
             try {
                 if (rs.next()) {
                     return rs.getInt("autostore") == 1;
@@ -80,13 +80,13 @@ class PlayerDataTable {
         if (autostore == null) {
             database.execute("INSERT INTO " + TABLE + " (player, itemid, stock, autostore) VALUES ('" + player.getUniqueId() + "', " + itemId + ", 0, " + enabledInt + ")");
         } else if (enabled != autostore) {
-            database.execute("UPDATE " + TABLE + " SET autostore = " + enabledInt + " WHERE player = '" + player.getUniqueId() + "', itemid = '" + itemId + "'");
+            database.execute("UPDATE " + TABLE + " SET autostore = " + enabledInt + " WHERE player = '" + player.getUniqueId() + "' AND itemid = '" + itemId + "'");
         }
     }
 
     boolean getAutoStore(OfflinePlayer player, ItemStack item) {
         int itemId = itemTable.register(item);
-        Boolean autostore = database.query("SELECT autostore FROM " + TABLE + " WHERE player = '" + player.getUniqueId() + "', itemid = " + itemId, rs -> {
+        Boolean autostore = database.query("SELECT autostore FROM " + TABLE + " WHERE player = '" + player.getUniqueId() + "' AND itemid = " + itemId, rs -> {
             try {
                 if (rs.next()) {
                     return rs.getInt("autostore") == 1;
@@ -130,7 +130,7 @@ class PlayerDataTable {
 
     void setStock(OfflinePlayer player, ItemStack item, int stock) {
         int itemId = itemTable.register(item);
-        Integer queryResult = database.query("SELECT stock FROM " + TABLE + " WHERE player = '" + player.getUniqueId() + "', itemid = " + itemId, rs -> {
+        Integer queryResult = database.query("SELECT stock FROM " + TABLE + " WHERE player = '" + player.getUniqueId() + "' AND itemid = " + itemId, rs -> {
             try {
                 if (rs.next()) {
                     return rs.getInt("stock");
@@ -144,7 +144,7 @@ class PlayerDataTable {
         if (queryResult == null) {
             database.execute("INSERT INTO " + TABLE + " (player, itemid, stock, autostore) VALUES ('" + player.getUniqueId() + "', " + itemId + ", " + stock + ", 0)");
         } else if (queryResult != stock) {
-            database.execute("UPDATE " + TABLE + " SET stock = " + stock + " WHERE player = '" + player.getUniqueId() + "', itemid = '" + itemId + "'");
+            database.execute("UPDATE " + TABLE + " SET stock = " + stock + " WHERE player = '" + player.getUniqueId() + "' AND itemid = '" + itemId + "'");
         }
     }
 
@@ -169,7 +169,7 @@ class PlayerDataTable {
 
     int getStock(OfflinePlayer player, ItemStack item) {
         int itemId = itemTable.register(item);
-        Integer stock = database.query("SELECT stock FROM " + TABLE + " WHERE player = '" + player.getUniqueId() + "', itemid = " + itemId, rs -> {
+        Integer stock = database.query("SELECT stock FROM " + TABLE + " WHERE player = '" + player.getUniqueId() + "' AND itemid = " + itemId, rs -> {
             try {
                 if (rs.next()) {
                     return rs.getInt("stock");
