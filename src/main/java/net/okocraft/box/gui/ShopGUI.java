@@ -126,12 +126,13 @@ class ShopGUI extends CategoryGUI {
 
     @Override
     protected ItemStack applyPlaceholder(ItemStack item, Map<String, String> placeholder) {
+        ItemStack realItem = Objects.requireNonNullElse(getRealItem(item), item);
         placeholder.put("%item-name%", Objects.requireNonNullElse(getRealItemName(item), item.getType().toString()));
         placeholder.put("%category-name%", getCategoryName());
         placeholder.put("%balance%", String.valueOf(economy.getBalance(getPlayer())));
-        placeholder.put("%stock%", String.valueOf(playerData.getStock(getPlayer(), item)));
-        placeholder.put("%buy-price%", String.valueOf(prices.getBuyPrice(item)));
-        placeholder.put("%sell-price%", String.valueOf(prices.getSellPrice(item)));
+        placeholder.put("%stock%", String.valueOf(playerData.getStock(getPlayer(), realItem)));
+        placeholder.put("%buy-price%", String.valueOf(prices.getBuyPrice(realItem)));
+        placeholder.put("%sell-price%", String.valueOf(prices.getSellPrice(realItem)));
         return super.applyPlaceholder(item, placeholder);
     }
 

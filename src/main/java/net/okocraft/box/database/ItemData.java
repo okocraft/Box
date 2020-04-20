@@ -37,7 +37,8 @@ public class ItemData {
     
     @Nullable
     public ItemStack getItemStack(String name) {
-        return names.get(name.toUpperCase(Locale.ROOT));
+        ItemStack item = names.get(name.toUpperCase(Locale.ROOT));
+        return item != null ? item.clone() : null;
     }
 
     public List<String> getNames() {

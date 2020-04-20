@@ -135,34 +135,42 @@ public class Layouts extends CustomConfig {
         return entry;
     }
 
-    public String getStrageGUITitle() {
-        return get().getString("strage-gui-title", "%category-name%");
+    private ItemStack setEntryMeta(ItemStack entry, String iconKey) {
+        ItemStack clone = entry.clone();
+        clone.setAmount(1); // amount must be 1 to get name from map.
+        String realItemName = Box.getInstance().getAPI().getItemData().getName(clone);
+        if (realItemName == null) {
+            realItemName = entry.getItemMeta().getPersistentDataContainer().get(realItemKey, PersistentDataType.STRING);
+        }
+        setIconMeta(entry, iconKey);
+        if (realItemName != null) {
+            setRealItemTag(entry, realItemName);
+        }
+        return entry;
     }
 
     public ItemStack setStrageEntryMeta(ItemStack entry) {
-        setRealItemTag(entry);
-        setIconMeta(entry, "gui-entry.strage");
-        return entry;
+        return setEntryMeta(entry, "gui-entry.strage");
+    }
+    
+    public ItemStack setShopEntryMeta(ItemStack entry) {
+        return setEntryMeta(entry, "gui-entry.shop");
+    }
+
+    public ItemStack setCraftEntryMeta(ItemStack entry) {
+        return setEntryMeta(entry, "gui-entry.craft");
+    }
+
+    public String getStrageGUITitle() {
+        return get().getString("strage-gui-title", "%category-name%");
     }
 
     public String getShopGUITitle() {
         return get().getString("shop-gui-title", "%category-name%");
     }
 
-    public ItemStack setShopEntryMeta(ItemStack entry) {
-        setRealItemTag(entry);
-        setIconMeta(entry, "gui-entry.shop");
-        return entry;
-    }
-
     public String getCraftGUITitle() {
         return get().getString("craft-gui-title", "%category-name%");
-    }
-
-    public ItemStack setCraftEntryMeta(ItemStack entry) {
-        setRealItemTag(entry);
-        setIconMeta(entry, "gui-entry.craft");
-        return entry;
     }
 
     public String getMaterialsPlaceholderFormat() {
@@ -180,12 +188,12 @@ public class Layouts extends CustomConfig {
         return icon; 
     }
 
-    private ItemStack setRealItemTag(ItemStack icon) {
+    private ItemStack setRealItemTag(ItemStack icon, String realItemName) {
         if (icon == null || icon.getItemMeta() == null) {
             return icon;
         }
         ItemMeta meta = icon.getItemMeta();
-        meta.getPersistentDataContainer().set(realItemKey, PersistentDataType.STRING, Box.getInstance().getAPI().getItemData().getName(icon));
+        meta.getPersistentDataContainer().set(realItemKey, PersistentDataType.STRING, realItemName);
         icon.setItemMeta(meta);
         return icon; 
     }

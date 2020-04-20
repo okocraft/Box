@@ -94,10 +94,11 @@ class CraftGUI extends CategoryGUI {
 
     @Override
     protected ItemStack applyPlaceholder(ItemStack item, Map<String, String> placeholder) {
+        ItemStack realItem = Objects.requireNonNullElse(getRealItem(item), item);
         placeholder.put("%item-name%", Objects.requireNonNullElse(getRealItemName(item), item.getType().toString()));
         placeholder.put("%category-name%", getCategoryName());
-        placeholder.put("%stock%", String.valueOf(playerData.getStock(getPlayer(), item)));
-        placeholder.put("%amount%", String.valueOf(getQuantity() * CraftRecipes.getResultAmount(item)));
+        placeholder.put("%stock%", String.valueOf(playerData.getStock(getPlayer(), realItem)));
+        placeholder.put("%amount%", String.valueOf(getQuantity() * CraftRecipes.getResultAmount(realItem)));
         return super.applyPlaceholder(item, placeholder);
     }
 
@@ -114,13 +115,14 @@ class CraftGUI extends CategoryGUI {
     @Override
     protected void update(ItemStack item) {
         applyPlaceholder(layout.setCraftEntryMeta(item));
+        ItemStack realItem = getRealItem(item);
         ItemMeta meta = item.getItemMeta();
-        if (meta == null || !meta.hasLore()) {
+        if (meta == null || !meta.hasLore() || realItem == null) {
             return;
         }
 
         List<String> lore = item.getItemMeta().getLore();
-        List<String> ingredientsLore = CraftRecipes.getIngredient(item).entrySet().stream()
+        List<String> ingredientsLore = CraftRecipes.getIngredient(realItem).entrySet().stream()
                 .map(entry -> ChatColor.translateAlternateColorCodes('&', layout.getMaterialsPlaceholderFormat()
                         .replaceAll("%material%", entry.getKey())
                         .replaceAll("%material-stock%", String.valueOf(
@@ -145,7 +147,11 @@ class CraftGUI extends CategoryGUI {
      * @return 作られたアイテムの数
      */
     private int craft(ItemStack item) {
-        Map<String, Integer> stacked = CraftRecipes.getIngredient(item);
+        ItemStack realItem = getRealItem(item);
+        if (realItem == null) {
+            return 0;
+        }
+        Map<String, Integer> stacked = CraftRecipes.getIngredient(realItem);
         int tempQuantity = getQuantity();
         Player player = getPlayer();
         for (Map.Entry<String, Integer> entry : stacked.entrySet()) {
@@ -162,9 +168,9 @@ class CraftGUI extends CategoryGUI {
             int stock = playerData.getStock(player, ingredient);
             playerData.setStock(player, ingredient, stock - tempQuantity * entry.getValue());
         }
-        int stock = playerData.getStock(player, item);
-        int add = tempQuantity * CraftRecipes.getResultAmount(item);
-        playerData.setStock(player, item, stock + add);
+        int stock = playerData.getStock(player, realItem);
+        int add = tempQuantity * CraftRecipes.getResultAmount(realItem);
+        playerData.setStock(player, realItem, stock + add);
         update();
         return add;
     }

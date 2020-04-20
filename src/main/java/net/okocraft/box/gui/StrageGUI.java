@@ -102,7 +102,7 @@ class StrageGUI extends CategoryGUI {
     protected ItemStack applyPlaceholder(ItemStack item, Map<String, String> placeholder) {
         placeholder.put("%item-name%", Objects.requireNonNullElse(getRealItemName(item), item.getType().toString()));
         placeholder.put("%category-name%", getCategoryName());
-        placeholder.put("%stock%", String.valueOf(playerData.getStock(getPlayer(), item)));
+        placeholder.put("%stock%", String.valueOf(playerData.getStock(getPlayer(), getRealItem(item))));
         return super.applyPlaceholder(item, placeholder);
     }
 
@@ -117,15 +117,16 @@ class StrageGUI extends CategoryGUI {
         ItemStack givenItem = getRealItem(item);
         int stock = playerData.getStock(player, givenItem);
         int quantity = Math.min(stock, getQuantity());
-        if (stock == 0) {
+        boolean isCreative = player.getGameMode() == GameMode.CREATIVE || player.hasPermission("box-admin.creative");
+        if (stock == 0 && !isCreative) {
             config.playNotEnoughSound(player);
             return stock;
         }
-        givenItem.setAmount((int) quantity);
+        givenItem.setAmount(quantity);
         int nonAdded = addItem(player.getInventory(), givenItem).values().stream()
                 .mapToInt(ItemStack::getAmount).sum();
         config.playWithdrawSound(player);
-        if (player.getGameMode() != GameMode.CREATIVE && !player.hasPermission("box-admin.creative")) {
+        if (!isCreative) {
             playerData.setStock(player, givenItem, stock + nonAdded - quantity);
             update(item);
             return stock + nonAdded - quantity;
@@ -229,14 +230,15 @@ class StrageGUI extends CategoryGUI {
         // itemData.getItemStack(Items.getName(item, true));
         takenItem = takenItem.clone();
         takenItem.setAmount(quantity);
+        boolean isCreative = player.getGameMode() == GameMode.CREATIVE || player.hasPermission("box-admin.creative");
         int nonRemoved = player.getInventory().removeItem(takenItem).values().stream().mapToInt(ItemStack::getAmount)
                 .sum();
-        if (nonRemoved == quantity) {
+        if (!isCreative && nonRemoved == quantity) {
             config.playNotEnoughSound(player);
             return stock;
         }
         config.playDepositSound(player);
-        if (player.getGameMode() != GameMode.CREATIVE && !player.hasPermission("box-admin.creative")) {
+        if (!isCreative) {
             playerData.setStock(player, takenItem, stock - nonRemoved + quantity);
             update(item);
             return stock - nonRemoved + quantity;
