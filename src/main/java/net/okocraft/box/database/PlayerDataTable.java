@@ -38,13 +38,25 @@ class PlayerDataTable {
 
     void setAutoStoreAll(OfflinePlayer player, boolean enabled) {
         int enabledInt = enabled ? 1 : 0;
-        StringBuilder sb = new StringBuilder("UPDATE " + TABLE + " SET autostore = CASE itemid");
-        itemTable.getAllId().forEach(itemId -> {
-            sb.append(" WHEN ").append(itemId).append(" THEN ").append(enabledInt);
-        });
-        sb.append(" END WHERE player = '" + player.getUniqueId() + "'");
 
-        database.execute(sb.toString());
+        if (enabled) {
+            StringBuilder sb = new StringBuilder("INSERT INTO " + TABLE + " (player, itemid, stock, autostore) VALUES ");
+            itemTable.getAllId().forEach(itemId -> 
+                    sb.append(" ('").append(player.getUniqueId().toString()).append("', ")
+                    .append(itemId).append(", 0, ").append(enabledInt).append("),")
+            );
+            if (sb.length() > 0) {
+                sb.deleteCharAt(sb.length() - 1);
+            }
+
+            if (database.isSQLite()) {
+                database.execute(sb.toString() + " ON CONFLICT (player, itemid) DO UPDATE SET autostore = " + enabledInt);
+            } else {
+                database.execute(sb.toString() + " ON DUPLICATE KEY UPDATE autostore = " + enabledInt);
+            }
+        } else {
+            database.execute("UPDATE " + TABLE + " SET autostore = " + enabledInt + " WHERE player = '" + player.getUniqueId() + "'");
+        }
     }
 
     void setAutoStoreAll(OfflinePlayer player, Map<ItemStack, Boolean> autostore) {
@@ -57,7 +69,7 @@ class PlayerDataTable {
                 sb.append(" WHEN ").append(itemTable.getId(item)).append(" THEN ").append(value ? 1 : 0);
             }
         });
-        sb.append(" END WHERE player = '" + player.getUniqueId() + "'");
+        sb.append(" ELSE autostore END WHERE player = '" + player.getUniqueId() + "'");
 
         database.execute(sb.toString());
     }
@@ -77,7 +89,9 @@ class PlayerDataTable {
         });
 
         if (autostore == null) {
-            database.execute("INSERT INTO " + TABLE + " (player, itemid, stock, autostore) VALUES ('" + player.getUniqueId() + "', " + itemId + ", 0, " + enabledInt + ")");
+            if (enabled) {
+                database.execute("INSERT INTO " + TABLE + " (player, itemid, stock, autostore) VALUES ('" + player.getUniqueId() + "', " + itemId + ", 0, " + enabledInt + ")");
+            }
         } else if (enabled != autostore) {
             database.execute("UPDATE " + TABLE + " SET autostore = " + enabledInt + " WHERE player = '" + player.getUniqueId() + "' AND itemid = '" + itemId + "'");
         }
@@ -85,7 +99,7 @@ class PlayerDataTable {
 
     boolean getAutoStore(OfflinePlayer player, ItemStack item) {
         int itemId = itemTable.register(item);
-        Boolean autostore = database.query("SELECT autostore FROM " + TABLE + " WHERE player = '" + player.getUniqueId() + "' AND itemid = " + itemId, rs -> {
+        return database.query("SELECT autostore FROM " + TABLE + " WHERE player = '" + player.getUniqueId() + "' AND itemid = " + itemId, rs -> {
             try {
                 if (rs.next()) {
                     return rs.getInt("autostore") == 1;
@@ -93,15 +107,8 @@ class PlayerDataTable {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-            return null;
-        });
-
-        if (autostore != null) {
-            return autostore;
-        } else {
-            database.execute("INSERT INTO " + TABLE + " (player, itemid, stock, autostore) VALUES ('" + player.getUniqueId() + "', " + itemId + ", 0, 0)");
             return false;
-        }
+        });
     }
 
     Map<ItemStack, Boolean> getAutoStoreAll(OfflinePlayer player) {
@@ -141,7 +148,9 @@ class PlayerDataTable {
         });
 
         if (queryResult == null) {
-            database.execute("INSERT INTO " + TABLE + " (player, itemid, stock, autostore) VALUES ('" + player.getUniqueId() + "', " + itemId + ", " + stock + ", 0)");
+            if (stock != 0) {
+                database.execute("INSERT INTO " + TABLE + " (player, itemid, stock, autostore) VALUES ('" + player.getUniqueId() + "', " + itemId + ", " + stock + ", 0)");
+            }
         } else if (queryResult != stock) {
             database.execute("UPDATE " + TABLE + " SET stock = " + stock + " WHERE player = '" + player.getUniqueId() + "' AND itemid = '" + itemId + "'");
         }
@@ -157,7 +166,7 @@ class PlayerDataTable {
                 sb.append(" WHEN ").append(itemTable.getId(item)).append(" THEN ").append(value);
             }
         });
-        sb.append(" END WHERE player = '" + player.getUniqueId() + "'");
+        sb.append(" ELSE stock END WHERE player = '" + player.getUniqueId() + "'");
 
         database.execute(sb.toString());
     }
@@ -168,7 +177,7 @@ class PlayerDataTable {
 
     int getStock(OfflinePlayer player, ItemStack item) {
         int itemId = itemTable.register(item);
-        Integer stock = database.query("SELECT stock FROM " + TABLE + " WHERE player = '" + player.getUniqueId() + "' AND itemid = " + itemId, rs -> {
+        return database.query("SELECT stock FROM " + TABLE + " WHERE player = '" + player.getUniqueId() + "' AND itemid = " + itemId, rs -> {
             try {
                 if (rs.next()) {
                     return rs.getInt("stock");
@@ -176,15 +185,8 @@ class PlayerDataTable {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-            return null;
-        });
-
-        if (stock != null) {
-            return stock;
-        } else {
-            database.execute("INSERT INTO " + TABLE + " (player, itemid, stock, autostore) VALUES ('" + player.getUniqueId() + "', " + itemId + ", 0, 0)");
             return 0;
-        }
+        });
     }
 
     Map<ItemStack, Integer> getStockAll(OfflinePlayer player) {

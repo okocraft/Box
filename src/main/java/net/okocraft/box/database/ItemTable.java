@@ -203,7 +203,7 @@ final class ItemTable {
     ItemStack getItem(int id) {
         ItemStack item = items.get(id);
         if (item != null) {
-            return item;
+            return item.clone();
         }
 
         return database.query("SELECT * FROM " + TABLE + " WHERE id = " + id, rs -> {
@@ -213,7 +213,7 @@ final class ItemTable {
                     result.setAmount(1);
                     items.forcePut(rs.getInt("id"), item);
                     rs.updateString("item", toString(item));
-                    return result;
+                    return result.clone();
                 }
             } catch (SQLException ignored) {
             }
