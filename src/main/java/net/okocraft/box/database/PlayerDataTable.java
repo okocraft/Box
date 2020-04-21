@@ -37,25 +37,23 @@ class PlayerDataTable {
     }
 
     void setAutoStoreAll(OfflinePlayer player, boolean enabled) {
-        int enabledInt = enabled ? 1 : 0;
-
         if (enabled) {
             StringBuilder sb = new StringBuilder("INSERT INTO " + TABLE + " (player, itemid, stock, autostore) VALUES ");
             itemTable.getAllId().forEach(itemId -> 
                     sb.append(" ('").append(player.getUniqueId().toString()).append("', ")
-                    .append(itemId).append(", 0, ").append(enabledInt).append("),")
+                    .append(itemId).append(", 0, ").append("1").append("),")
             );
             if (sb.length() > 0) {
                 sb.deleteCharAt(sb.length() - 1);
             }
 
             if (database.isSQLite()) {
-                database.execute(sb.toString() + " ON CONFLICT (player, itemid) DO UPDATE SET autostore = " + enabledInt);
+                database.execute(sb.toString() + " ON CONFLICT (player, itemid) DO UPDATE SET autostore = 1");
             } else {
-                database.execute(sb.toString() + " ON DUPLICATE KEY UPDATE autostore = " + enabledInt);
+                database.execute(sb.toString() + " ON DUPLICATE KEY UPDATE autostore = 1");
             }
         } else {
-            database.execute("UPDATE " + TABLE + " SET autostore = " + enabledInt + " WHERE player = '" + player.getUniqueId() + "'");
+            database.execute("UPDATE " + TABLE + " SET autostore = 0 WHERE player = '" + player.getUniqueId() + "'");
         }
     }
 

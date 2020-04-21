@@ -105,7 +105,7 @@ public class PlayerData {
             getAutoStoreAll(player).replaceAll((item, value) -> replaced.get(item));
         }
 
-        threadPool.submit(() -> playerDataTable.setAutoStoreAll(player, enabled));
+        threadPool.submit(() -> playerDataTable.setAutoStoreAll(player, replaced));
     }
 
     public void setAutoStore(OfflinePlayer player, ItemStack item, boolean enabled) {

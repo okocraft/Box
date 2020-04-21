@@ -86,7 +86,12 @@ final class ItemTable {
         itemStrings.forEach((id, item) -> {
             sb.append(" WHEN ").append(id).append(" THEN ").append("'").append(item).append("'");
         });
-        sb.append(" ELSE item END");
+        sb.append(" END WHERE id IN (");
+        itemStrings.keySet().forEach(id -> {
+            sb.append(id).append(", ");
+        });
+        sb.delete(sb.length() - 3, sb.length());
+        sb.append(")");
 
         database.execute(sb.toString());
     }
@@ -98,7 +103,7 @@ final class ItemTable {
     @SuppressWarnings("deprecation")
     private void addDefaultItems() {
         for (Material material : Material.values()) {
-            if (material.isLegacy()) {
+            if (material.isLegacy() || material == Material.AIR) {
                 continue;
             }
 
