@@ -134,22 +134,13 @@ public class PlayerData {
 
     public Map<ItemStack, Boolean> getAutoStoreAll(OfflinePlayer player) {
         if (player.isOnline()) {
-            Map<ItemStack, Boolean> result;
             if (autostore.containsKey(player)) {
-                result = autostore.get(player);
+                return autostore.get(player);
             } else {
-                result = playerDataTable.getAutoStoreAll(player);
+                Map<ItemStack, Boolean> result = playerDataTable.getAutoStoreAll(player);
                 autostore.put(player.getPlayer(), result);
+                return result;
             }
-
-            
-            Map<ItemStack, Boolean> clone = new HashMap<>();
-            result.forEach((item, value) -> {
-                if (item != null) {
-                    clone.put(item.clone(), value);
-                }
-            });
-            return clone;
         }
 
         return playerDataTable.getAutoStoreAll(player);
@@ -210,21 +201,13 @@ public class PlayerData {
 
     public Map<ItemStack, Integer> getStockAll(OfflinePlayer player) {
         if (player.isOnline()) {
-            Map<ItemStack, Integer> result;
             if (stock.containsKey(player)) {
-                result = stock.get(player);
+                return stock.get(player);
             } else {
-                result = playerDataTable.getStockAll(player);
+                Map<ItemStack, Integer> result = playerDataTable.getStockAll(player);
                 stock.put(player.getPlayer(), result);
+                return result;
             }
-
-            Map<ItemStack, Integer> clone = new HashMap<>();
-            result.forEach((item, value) -> {
-                if (item != null) {
-                    clone.put(item.clone(), value);
-                }
-            });
-            return clone;
         }
 
         return playerDataTable.getStockAll(player);
