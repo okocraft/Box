@@ -7,6 +7,7 @@ import java.util.Locale;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
@@ -59,6 +60,9 @@ public class ItemData {
      * @param item アイテム
      */
     void loadName(ItemStack item) {
+        if (item == null || item.getType() == Material.AIR || item.getItemMeta() == null) {
+            return;
+        }
         item = item.clone();
         item.setAmount(1);
         int id = itemTable.getId(item);
