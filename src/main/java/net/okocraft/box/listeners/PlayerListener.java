@@ -30,16 +30,21 @@ public class PlayerListener implements Listener {
         Bukkit.getPluginManager().registerEvents(this, plugin);
     }
 
-    /**
-     * {@code HandlerList.unregisterAll(this)}で、別のインスタンスでも同じクラスなら削除されるように再実装。
-     * 
-     * @param obj 比較するオブジェクト
-     * 
-     * @return オブジェクトが同じクラスならtrue。
-     */
+
     @Override
-    public boolean equals(Object obj) {
-        return obj instanceof PlayerListener;
+    public boolean equals(Object o) {
+        if (o == this)
+            return true;
+        if (!(o instanceof PlayerListener)) {
+            return false;
+        }
+        PlayerListener playerListener = (PlayerListener) o;
+        return Objects.equals(plugin, playerListener.plugin) && Objects.equals(config, playerListener.config) && Objects.equals(messages, playerListener.messages) && Objects.equals(categories, playerListener.categories) && Objects.equals(playerData, playerListener.playerData) && Objects.equals(itemData, playerListener.itemData);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(plugin, config, messages, categories, playerData, itemData);
     }
 
     @EventHandler
