@@ -14,7 +14,10 @@ id | player | itemid | stock | autostore
 package net.okocraft.box.database;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.bukkit.OfflinePlayer;
@@ -38,20 +41,7 @@ class PlayerDataTable {
 
     void setAutoStoreAll(OfflinePlayer player, boolean enabled) {
         if (enabled) {
-            StringBuilder sb = new StringBuilder("INSERT INTO " + TABLE + " (player, itemid, stock, autostore) VALUES ");
-            itemTable.getAllId().forEach(itemId -> 
-                    sb.append(" ('").append(player.getUniqueId().toString()).append("', ")
-                    .append(itemId).append(", 0, ").append("1").append("),")
-            );
-            if (sb.length() > 0) {
-                sb.deleteCharAt(sb.length() - 1);
-            }
-
-            if (database.isSQLite()) {
-                database.execute(sb.toString() + " ON CONFLICT (player, itemid) DO UPDATE SET autostore = 1");
-            } else {
-                database.execute(sb.toString() + " ON DUPLICATE KEY UPDATE autostore = 1");
-            }
+            setAutoStoreAllTrue(player, itemTable.getAllItem());
         } else {
             database.execute("UPDATE " + TABLE + " SET autostore = 0 WHERE player = '" + player.getUniqueId() + "'");
         }
@@ -61,12 +51,46 @@ class PlayerDataTable {
         if (autostore == null) {
             return;
         }
+
+        List<ItemStack> allTrue = new ArrayList<>();
+        List<ItemStack> allFalse = new ArrayList<>();
+
+        autostore.forEach((item, value) -> {
+            if (value) {
+                allTrue.add(item);
+            } else {
+                allFalse.add(item);
+            }
+        });
+
+        setAutoStoreAllTrue(player, allTrue);
+        setAutoStoreAllFlase(player, allFalse);
+    }
+
+    private void setAutoStoreAllTrue(OfflinePlayer player, Collection<ItemStack> items) {
+        StringBuilder sb = new StringBuilder("INSERT INTO " + TABLE + " (player, itemid, stock, autostore) VALUES ");
+        items.stream().map(itemTable::getId).forEach(itemId -> 
+                sb.append(" ('").append(player.getUniqueId().toString()).append("', ")
+                .append(itemId).append(", 0, ").append("1").append("),")
+        );
+        if (sb.length() > 0) {
+            sb.deleteCharAt(sb.length() - 1);
+        }
+
+        if (database.isSQLite()) {
+            database.execute(sb.toString() + " ON CONFLICT (player, itemid) DO UPDATE SET autostore = 1");
+        } else {
+            database.execute(sb.toString() + " ON DUPLICATE KEY UPDATE autostore = 1");
+        }
+    }
+
+    private void setAutoStoreAllFlase(OfflinePlayer player, Collection<ItemStack> items) {
         StringBuilder sb = new StringBuilder("UPDATE " + TABLE + " SET autostore = CASE itemid");
         StringBuilder where = new StringBuilder();
-        autostore.forEach((item, value) -> {
-            if (item != null && value != null) {
+        items.forEach(item -> {
+            if (item != null) {
                 int itemId = itemTable.getId(item);
-                sb.append(" WHEN ").append(itemId).append(" THEN ").append(value ? 1 : 0);
+                sb.append(" WHEN ").append(itemId).append(" THEN ").append(0);
                 where.append(itemId).append(", ");
             }
         });
