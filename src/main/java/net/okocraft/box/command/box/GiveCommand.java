@@ -32,7 +32,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.StringUtil;
 
 import net.okocraft.box.command.BaseCommand;
-import net.okocraft.box.util.OtherUtil;
 
 class GiveCommand extends BaseCommand {
 
@@ -69,7 +68,7 @@ class GiveCommand extends BaseCommand {
         }
         ItemStack item = itemData.getItemStack(itemName);
 
-        int amount = args.length == 3 ? 1 : OtherUtil.parseIntOrDefault(args[3], 1);
+        int amount = args.length == 3 ? 1 : parseIntOrDefault(args[3], 1);
         amount = Math.max(amount, 1);
 
         int senderStock = playerData.getStock((OfflinePlayer) sender, item);

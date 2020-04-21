@@ -135,4 +135,21 @@ public abstract class BaseCommand {
 
         return sender.hasPermission(getPermissionNode());
     }
+
+    /**
+     * numberを解析してint型にして返す。numberのフォーマットがintではないときはdefを返す。
+     *
+     * @param number 解析する文字列
+     * @param def    解析に失敗したときに返す数字
+     * @return int型の数字。
+     * @author LazyGon
+     * @since v1.1.0
+     */
+    protected int parseIntOrDefault(String number, int def) {
+        try {
+            return Integer.parseInt(number);
+        } catch (NumberFormatException exception) {
+            return def;
+        }
+    }
 }

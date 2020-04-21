@@ -28,7 +28,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.util.StringUtil;
 
 import net.okocraft.box.command.BaseCommand;
-import net.okocraft.box.util.OtherUtil;
 
 class AutoStoreListCommand extends BaseCommand {
 
@@ -48,7 +47,7 @@ class AutoStoreListCommand extends BaseCommand {
 
         int maxLine = categories.getAllItems().size();
         int maxPage = maxLine % 9 == 0 ? maxLine / 9 : maxLine / 9 + 1;
-        int page = Math.min(maxPage, (args.length >= 2 ? OtherUtil.parseIntOrDefault(args[1], 1) : 1));
+        int page = Math.min(maxPage, (args.length >= 2 ? parseIntOrDefault(args[1], 1) : 1));
         int currentLine = Math.min(maxLine, page * 9);
 
         messages.sendAutoStoreListHeader(sender, sender.getName(), page, currentLine, maxLine);

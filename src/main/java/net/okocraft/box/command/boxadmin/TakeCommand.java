@@ -30,7 +30,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.StringUtil;
 
-import net.okocraft.box.util.OtherUtil;
 
 class TakeCommand extends BaseAdminCommand {
 
@@ -60,7 +59,7 @@ class TakeCommand extends BaseAdminCommand {
             return false;
         }
         ItemStack item = itemData.getItemStack(itemName);
-        int amount = args.length < 4 ? 1 : OtherUtil.parseIntOrDefault(args[3], 1);
+        int amount = args.length < 4 ? 1 : parseIntOrDefault(args[3], 1);
         int stock = playerData.getStock(player, item);
 
         playerData.setStock(player, item, stock - amount);

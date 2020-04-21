@@ -27,7 +27,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.util.StringUtil;
 
 import net.okocraft.box.command.BaseCommand;
-import net.okocraft.box.util.OtherUtil;
 
 class HelpCommand extends BaseAdminCommand {
 
@@ -46,7 +45,7 @@ class HelpCommand extends BaseAdminCommand {
     public boolean runCommand(CommandSender sender, String[] args) {
         List<BaseCommand> registeredCommands = BoxAdminCommand.getInstance().getRegisteredCommands();
         int subCommandsSize = registeredCommands.size();
-        int page = args.length > 1 ? OtherUtil.parseIntOrDefault(args[1], 1) : 1;
+        int page = args.length > 1 ? parseIntOrDefault(args[1], 1) : 1;
         int maxPage = subCommandsSize % 9 == 0 ? subCommandsSize / 9 : subCommandsSize / 9 + 1;
         page = Math.min(page, maxPage);
 
