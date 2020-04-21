@@ -40,6 +40,7 @@ public class BoxCommand extends Commands {
         register(new AutoStoreCommand());
         register(new AutoStoreListCommand());
         register(new GiveCommand());
+        register(new ItemInfoCommand());
         register(new HelpCommand());
         register(new StickCommand());
         register(new VersionCommand());

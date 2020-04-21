@@ -20,13 +20,7 @@ package net.okocraft.box.command.box;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.StringUtil;
@@ -48,96 +42,22 @@ class ItemInfoCommand extends BaseCommand {
 
     @Override
     public boolean runCommand(CommandSender sender, String[] args) {
-
-        if (sender.getName().equalsIgnoreCase(args[1])) {
-            messages.sendCannotGiveMyself(sender);
-            return false;
-        }
-
-        @SuppressWarnings("deprecation")
-        OfflinePlayer player = Bukkit.getOfflinePlayer(args[1]);
-
-        if (!player.hasPlayedBefore() || player.getName() == null) {
-            messages.sendPlayerNotFound(sender);
-            return false;
-        }
-
-        if (!player.hasPlayedBefore() || player.getName() == null) {
-            messages.sendPlayerNotFound(sender);
-            return false;
-        }
-
-        String itemName = args[2].toUpperCase(Locale.ROOT);
-        if (!categories.getAllItems().contains(itemName)) {
+        ItemStack item = itemData.getItemStack(args[1]);
+        if (item == null) {
             messages.sendItemNotFound(sender);
             return false;
         }
-        ItemStack item = itemData.getItemStack(itemName);
 
-        int amount = args.length == 3 ? 1 : parseIntOrDefault(args[3], 1);
-        amount = Math.max(amount, 1);
-
-        int senderStock = playerData.getStock((OfflinePlayer) sender, item);
-        int otherStock = playerData.getStock(player, item);
-
-        if (senderStock - amount < 0) {
-            messages.sendNotEnoughStock(sender);
-            return false;
-        }
-
-        playerData.setStock((OfflinePlayer) sender, item, senderStock - amount);
-        playerData.setStock(player, item, otherStock + amount);
-        messages.sendGiveInfoToSender(sender, player.getName(), itemName, amount, senderStock - amount);
-        
-        if (player.isOnline()) {
-            messages.sendGiveInfoToTarget(player.getPlayer(), sender.getName(), itemName, amount, otherStock + amount);
-        }
-
+        messages.sendItemInfo(sender, item);
         return true;
     }
 
     @Override
     public List<String> runTabComplete(CommandSender sender, String[] args) {
-        List<String> result = new ArrayList<>();
-        List<String> players = playerData.getPlayers();
-
         if (args.length == 2) {
-            return StringUtil.copyPartialMatches(args[1], players, result);
+            return StringUtil.copyPartialMatches(args[1], itemData.getNames(), new ArrayList<>());
         }
 
-        String player = args[1].toLowerCase(Locale.ROOT);
-
-        if (!players.contains(player)) {
-            return List.of();
-        }
-
-        List<String> items = playerData.getStockAll((OfflinePlayer) sender).entrySet().parallelStream()
-                .filter(entry -> entry.getValue() != 0L).map(Map.Entry::getKey).map(itemData::getName).collect(Collectors.toList());
-
-        if (args.length == 3) {
-            return StringUtil.copyPartialMatches(args[2], items, result);
-        }
-
-        String itemName = args[2].toUpperCase(Locale.ROOT);
-
-        if (!items.contains(itemName)) {
-            return List.of();
-        }
-
-        int stock = playerData.getStock((OfflinePlayer) sender, itemData.getItemStack(itemName));
-
-        if (stock < 1) {
-            return List.of();
-        }
-
-        List<String> amountList = IntStream.iterate(1, n -> n * 10).limit(10).filter(n -> n < stock).boxed()
-                .map(String::valueOf).collect(Collectors.toList());
-        amountList.add(String.valueOf(stock));
-
-        if (args.length == 4) {
-            return StringUtil.copyPartialMatches(args[3], amountList, result);
-        }
-
-        return result;
+        return List.of();
     }
 }
