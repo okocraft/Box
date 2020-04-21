@@ -62,12 +62,16 @@ class PlayerDataTable {
             return;
         }
         StringBuilder sb = new StringBuilder("UPDATE " + TABLE + " SET autostore = CASE itemid");
+        StringBuilder where = new StringBuilder();
         autostore.forEach((item, value) -> {
             if (item != null && value != null) {
-                sb.append(" WHEN ").append(itemTable.getId(item)).append(" THEN ").append(value ? 1 : 0);
+                int itemId = itemTable.getId(item);
+                sb.append(" WHEN ").append(itemId).append(" THEN ").append(value ? 1 : 0);
+                where.append(itemId).append(", ");
             }
         });
-        sb.append(" ELSE autostore END WHERE player = '" + player.getUniqueId() + "'");
+        where.delete(where.length() - 3, where.length());
+        sb.append(" END WHERE player = '").append(player.getUniqueId().toString()).append("' AND itemid IN (").append(where).append(")");
 
         database.execute(sb.toString());
     }
@@ -168,13 +172,17 @@ class PlayerDataTable {
             return;
         }
         StringBuilder sb = new StringBuilder("UPDATE " + TABLE + " SET stock = CASE itemid");
+        StringBuilder where = new StringBuilder();
         stock.forEach((item, value) -> {
             if (item != null && value != null) {
-                sb.append(" WHEN ").append(itemTable.getId(item)).append(" THEN ").append(value);
+                int itemId = itemTable.getId(item);
+                sb.append(" WHEN ").append(itemId).append(" THEN ").append(value);
+                where.append(itemId).append(", ");
             }
         });
-        sb.append(" ELSE stock END WHERE player = '" + player.getUniqueId() + "'");
-
+        where.delete(where.length() - 1, where.length() - 3);
+        sb.append(" END WHERE player = '").append(player.getUniqueId().toString()).append("' AND itemid IN (").append(where).append(")");
+        
         database.execute(sb.toString());
     }
 

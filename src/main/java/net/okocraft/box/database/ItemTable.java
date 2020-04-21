@@ -83,15 +83,13 @@ final class ItemTable {
         }
 
         StringBuilder sb = new StringBuilder("UPDATE " + TABLE + " SET item = CASE id");
+        StringBuilder where = new StringBuilder();
         itemStrings.forEach((id, item) -> {
             sb.append(" WHEN ").append(id).append(" THEN ").append("'").append(item).append("'");
+            where.append(id).append(", ");
         });
-        sb.append(" END WHERE id IN (");
-        itemStrings.keySet().forEach(id -> {
-            sb.append(id).append(", ");
-        });
-        sb.delete(sb.length() - 3, sb.length());
-        sb.append(")");
+        where.delete(sb.length() - 3, sb.length());
+        sb.append(" END WHERE id IN (").append(where).append(")");
 
         database.execute(sb.toString());
     }
