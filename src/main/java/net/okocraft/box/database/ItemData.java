@@ -3,6 +3,7 @@ package net.okocraft.box.database;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -42,6 +43,14 @@ public class ItemData {
         return item != null ? item.clone() : null;
     }
 
+    public String register(ItemStack item) {
+        String itemName = getName(item);
+        if (itemName == null) {
+            itemTable.register(item);
+        }
+        return Objects.requireNonNull(loadName(item), "");
+    }
+
     public List<String> getNames() {
         return new ArrayList<>(names.keySet());
     }
@@ -59,9 +68,9 @@ public class ItemData {
      * @param id アイテムのデータベースに採番された番号
      * @param item アイテム
      */
-    void loadName(ItemStack item) {
+    String loadName(ItemStack item) {
         if (item == null || item.getType() == Material.AIR || item.getItemMeta() == null) {
-            return;
+            return null;
         }
         item = item.clone();
         item.setAmount(1);
@@ -93,14 +102,17 @@ public class ItemData {
             }
 
             names.put(name, item);
-            return;
+            return name;
         }
 
+        String name;
         if (!item.hasItemMeta()) {
-            names.put(item.getType().name(), item);
+            name = item.getType().name();
         } else {
-            names.put(item.getType().name() + ":" + id, item);
+            name = item.getType().name() + ":" + id;
         }
+        names.put(name, item);
+        return name;
     }
 
 }

@@ -65,7 +65,4 @@ public final class GUICache {
         categoryCraftGUIMap.put(categoryName, result);
         return result;
     }
-
-
-
 }

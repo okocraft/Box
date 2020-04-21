@@ -42,7 +42,6 @@ public class PlayerListener implements Listener {
         Bukkit.getPluginManager().registerEvents(this, plugin);
     }
 
-
     @Override
     public boolean equals(Object o) {
         if (o == this)

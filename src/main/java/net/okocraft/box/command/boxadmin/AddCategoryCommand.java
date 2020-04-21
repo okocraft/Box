@@ -21,14 +21,16 @@ package net.okocraft.box.command.boxadmin;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.Chest;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.util.StringUtil;
-
-import net.okocraft.box.listeners.GenerateCategory;
 
 class AddCategoryCommand extends BaseAdminCommand {
 
@@ -36,36 +38,51 @@ class AddCategoryCommand extends BaseAdminCommand {
         super(
             "addcategory",
             "boxadmin.addcategory",
-            5,
+            4,
             true,
-            "/boxadmin addcategory <category> <id> <displayName> <iconMaterial>",
+            "/boxadmin addcategory <category> <display-name> <icon>",
             new String[] {"ac"}
         );
     }
     
     @Override
     public boolean runCommand(CommandSender sender, String[] args) {
+        Player player = (Player) sender;
+        Block lookingBlock = player.getTargetBlockExact(5);
+        if (lookingBlock == null || lookingBlock.getType() != Material.CHEST) {
+            messages.sendMessage(player, "command.box-admin.add-category.error.not-chest-and-cancelled");
+            return false;
+        }
 
-        messages.sendChooseChest(sender);
-        new GenerateCategory((Player) sender, args[1], args[2], args[3]);
+        Chest chestData = (Chest) lookingBlock.getState();
+        Inventory chestSnapInv = chestData.getSnapshotInventory();
+        List<String> items = Arrays.stream(chestSnapInv.getContents())
+                .filter(Objects::nonNull)
+                .map(itemData::register)
+                .filter(itemName -> !itemName.isBlank())
+                .collect(Collectors.toList());
+
+        categories.addCategory(args[1], args[2], items, args[3]);
+        messages.sendMessage(player, "command.box-admin.add-category.info.success");
         return true;
     }
 
-        @Override
+    @Override
     public List<String> runTabComplete(CommandSender sender, String[] args) {
         List<String> result = new ArrayList<>();
 
-        switch (args.length) {
-            case 2:
-                return StringUtil.copyPartialMatches(args[2], List.of("<id>"), result);
-            case 3:
-                return StringUtil.copyPartialMatches(args[3], List.of("<display_name>"), result);
-            case 4:
-                List<String> items = Arrays.stream(Material.values())
-                        .map(Material::name).collect(Collectors.toList());
-                return StringUtil.copyPartialMatches(args[4], items, result);
-            default:
-                return result;
+        if (args.length == 2) {
+            return StringUtil.copyPartialMatches(args[1], List.of("<category>"), result);
         }
+
+        if (args.length == 3) {
+            return StringUtil.copyPartialMatches(args[2], List.of("<display-name>"), result);
+        }
+
+        if (args.length == 4) {
+            return StringUtil.copyPartialMatches(args[3], itemData.getNames(), result);
+        }
+
+        return result;
     }
 }

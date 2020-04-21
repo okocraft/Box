@@ -78,14 +78,7 @@ public class Categories extends CustomConfig {
     }
     
     public void addCategory(String id, String displayName, List<String> items, String iconItem) throws IllegalArgumentException {
-        displayName = ChatColor.translateAlternateColorCodes('&', displayName);
-        // TODO: register unexisting items on addcategory.
-        // items.removeIf(itemName -> !itemData.contains(itemName));
-        // if (!Items.contains(iconItem)) {
-        //     throw new IllegalArgumentException("The item" + iconItem + " is not registered");
-        // }
-        get().createSection(id);
-        get().set(id + ".display-name", displayName);
+        get().set(id + ".display-name", ChatColor.translateAlternateColorCodes('&', displayName));
         get().set(id + ".icon", iconItem);
         get().set(id + ".item", items);
         save();
