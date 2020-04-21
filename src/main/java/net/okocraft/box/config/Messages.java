@@ -139,7 +139,7 @@ public final class Messages extends CustomConfig {
     }
 
     public void sendAdminGiveInfoToSender(CommandSender sender, String given, String itemName, long amount, long newAmount) {
-        sendMessage(sender, "command.box-admin.give.info.sender", Map.of(
+        sendMessage(sender, "command.boxadmin.give.info.sender", Map.of(
             "%player%", given,
             "%item%", itemName,
             "%amount%", String.valueOf(amount),
@@ -148,7 +148,7 @@ public final class Messages extends CustomConfig {
     }
 
     public void sendAdminGiveInfoToTarget(CommandSender target, String giver, String itemName, long amount, long newAmount) {
-        sendMessage(target, "command.box-admin.give.info.player", Map.of(
+        sendMessage(target, "command.boxadmin.give.info.player", Map.of(
             "%sender%", giver,
             "%item%", itemName,
             "%amount%", String.valueOf(amount),
@@ -185,15 +185,15 @@ public final class Messages extends CustomConfig {
     }
 
     public void sendChooseChest(CommandSender sender) {
-        sendMessage(sender, "command.box-admin.add-category.info.choose-chest");
+        sendMessage(sender, "command.boxadmin.add-category.info.choose-chest");
     }
 
     public void sendReloadSuccess(CommandSender sender) {
-        sendMessage(sender, "command.box-admin.reload.info.success");
+        sendMessage(sender, "command.boxadmin.reload.info.success");
     }
 
     public void sendSetInfoToSender(CommandSender sender, String target, String itemName, long amount) {
-        sendMessage(sender, "command.box-admin.set.info.sender", Map.of(
+        sendMessage(sender, "command.boxadmin.set.info.sender", Map.of(
             "%player%", target,
             "%item%", itemName,
             "%amount%", String.valueOf(amount)
@@ -201,7 +201,7 @@ public final class Messages extends CustomConfig {
     }
 
     public void sendSetInfoToTarget(CommandSender target, String sender, String itemName, long amount) {
-        sendMessage(target, "command.box-admin.set.info.player", Map.of(
+        sendMessage(target, "command.boxadmin.set.info.player", Map.of(
             "%sender%", sender,
             "%item%", itemName,
             "%amount%", String.valueOf(amount)
@@ -209,7 +209,7 @@ public final class Messages extends CustomConfig {
     }
 
     public void sendTakeInfoToSender(CommandSender sender, String target, String itemName, long amount, long newAmount) {
-        sendMessage(sender, "command.box-admin.take.info.sender", Map.of(
+        sendMessage(sender, "command.boxadmin.take.info.sender", Map.of(
             "%player%", target,
             "%item%", itemName,
             "%amount%", String.valueOf(amount),
@@ -218,7 +218,7 @@ public final class Messages extends CustomConfig {
     }
 
     public void sendTakeInfoToTarget(CommandSender target, String sender, String itemName, long amount, long newAmount) {
-        sendMessage(target, "command.box-admin.give.info.player", Map.of(
+        sendMessage(target, "command.boxadmin.give.info.player", Map.of(
             "%sender%", sender,
             "%item%", itemName,
             "%amount%", String.valueOf(amount),

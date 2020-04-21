@@ -123,7 +123,7 @@ class StrageGUI extends CategoryGUI {
         }
         int stock = playerData.getStock(player, indexItem);
         int quantity = Math.min(stock, getQuantity());
-        boolean isCreative = player.getGameMode() == GameMode.CREATIVE || player.hasPermission("box-admin.creative");
+        boolean isCreative = player.getGameMode() == GameMode.CREATIVE || player.hasPermission("boxadmin.creative");
         if (stock == 0 && !isCreative) {
             config.playNotEnoughSound(player);
             return stock;
@@ -240,7 +240,7 @@ class StrageGUI extends CategoryGUI {
         ItemStack takenItem = indexItem.clone();
         takenItem = takenItem.clone();
         takenItem.setAmount(quantity);
-        boolean isCreative = player.getGameMode() == GameMode.CREATIVE || player.hasPermission("box-admin.creative");
+        boolean isCreative = player.getGameMode() == GameMode.CREATIVE || player.hasPermission("boxadmin.creative");
         int nonRemoved = player.getInventory().removeItem(takenItem).values().stream().mapToInt(ItemStack::getAmount)
                 .sum();
         if (!isCreative && nonRemoved == quantity) {

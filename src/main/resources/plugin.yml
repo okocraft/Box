@@ -11,41 +11,41 @@ commands:
   boxadmin:
     description: Admin Command of Box plugin.
     aliases: [boxadmin]
-    permission: box-admin
+    permission: boxadmin
 
 permissions:
 # command permissions
-  box-admin.*:
+  boxadmin.*:
     description: Includes all admin command permissions.
     default: op
     children:
-      box-admin.addcategory: true
-      box-admin.autostore: true
-      box-admin.autostorelist: true
-      box-admin.give: true
-      box-admin.help: true
-      box-admin.reload: true
-      box-admin.set: true
-      box-admin.take: true
-      box-admin.creative: true
-      box-admin: true
-  box-admin:
+      boxadmin.addcategory: true
+      boxadmin.autostore: true
+      boxadmin.autostorelist: true
+      boxadmin.give: true
+      boxadmin.help: true
+      boxadmin.reload: true
+      boxadmin.set: true
+      boxadmin.take: true
+      boxadmin.creative: true
+      boxadmin: true
+  boxadmin:
     default: op
-  box-admin.add-category:
+  boxadmin.add-category:
     default: op
-  box-admin.auto-store:
+  boxadmin.auto-store:
     default: op
-  box-admin.auto-store-list:
+  boxadmin.auto-store-list:
     default: op
-  box-admin.give:
+  boxadmin.give:
     default: op
-  box-admin.help:
+  boxadmin.help:
     default: op
-  box-admin.reload:
+  boxadmin.reload:
     default: op
-  box-admin.set:
+  boxadmin.set:
     default: op
-  box-admin.take:
+  boxadmin.take:
     default: op
   box.*:
     description: Includes all normal command permissions.
@@ -87,5 +87,5 @@ permissions:
     default: true
 
 # special permissions
-  box-admin.creative:
+  boxadmin.creative:
     default: false

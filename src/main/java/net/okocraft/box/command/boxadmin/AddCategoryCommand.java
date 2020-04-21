@@ -50,7 +50,7 @@ class AddCategoryCommand extends BaseAdminCommand {
         Player player = (Player) sender;
         Block lookingBlock = player.getTargetBlockExact(5);
         if (lookingBlock == null || lookingBlock.getType() != Material.CHEST) {
-            messages.sendMessage(player, "command.box-admin.add-category.error.not-chest-and-cancelled");
+            messages.sendMessage(player, "command.boxadmin.add-category.error.not-chest-and-cancelled");
             return false;
         }
 
@@ -63,7 +63,7 @@ class AddCategoryCommand extends BaseAdminCommand {
                 .collect(Collectors.toList());
 
         categories.addCategory(args[1], args[2], items, args[3]);
-        messages.sendMessage(player, "command.box-admin.add-category.info.success");
+        messages.sendMessage(player, "command.boxadmin.add-category.info.success");
         return true;
     }
 
