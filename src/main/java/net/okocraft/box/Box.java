@@ -27,7 +27,6 @@ import net.milkbowl.vault.economy.Economy;
 import net.okocraft.box.command.box.BoxCommand;
 import net.okocraft.box.command.boxadmin.BoxAdminCommand;
 import net.okocraft.box.listeners.BoxStick;
-import net.okocraft.box.listeners.EntityPickupItem;
 import net.okocraft.box.listeners.PlayerListener;
 import net.okocraft.box.listeners.Replant;
 
@@ -100,7 +99,6 @@ public class Box extends JavaPlugin {
 
         // Events should be registered in its own initializer
         new PlayerListener().start();
-        new EntityPickupItem(this);
         new BoxStick();
         new Replant();
 
