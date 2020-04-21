@@ -100,12 +100,12 @@ class CraftGUI extends CategoryGUI {
     @Override
     public void onClicked(InventoryClickEvent event) {
         if (event.getSlot() == 50) {
-            event.getWhoClicked().openInventory(new StrageGUI(getPlayer(), getCategoryName(), getQuantity()).getInventory());
+            event.getWhoClicked().openInventory(GUICache.getCache(getPlayer()).getStrageGUICache(getCategoryName(), getQuantity(), getPage()).getInventory());
             return;
         }
         
         if (event.getSlot() == 51) {
-            event.getWhoClicked().openInventory(new ShopGUI(getPlayer(), getCategoryName(), getQuantity()).getInventory());
+            event.getWhoClicked().openInventory(GUICache.getCache(getPlayer()).getShopGUICache(getCategoryName(), getQuantity(), getPage()).getInventory());
             return;
         }
 

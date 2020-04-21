@@ -65,8 +65,9 @@ public final class CategorySelectorGUI extends BaseGUI implements Clickable {
 
         String categoryName = getCategoryName(clickedItem);
         if (categoryName != null) {
-            config.playGUIOpenSound((Player) event.getWhoClicked());
-            event.getWhoClicked().openInventory(new StrageGUI((Player) event.getWhoClicked(), categoryName, 1).getInventory());
+            Player who = (Player) event.getWhoClicked();
+            config.playGUIOpenSound(who);
+            event.getWhoClicked().openInventory(GUICache.getCache(who).getStrageGUICache(categoryName, 1, 1).getInventory());
         }
     }
 

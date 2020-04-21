@@ -41,6 +41,8 @@ class ShopGUI extends CategoryGUI {
     private final Prices prices = plugin.getAPI().getPrices();
     private final Economy economy = Box.getInstance().getEconomy();
 
+    List<ItemStack> available = new ArrayList<>();
+
     /**
      * コンストラクタ
      *
@@ -59,15 +61,42 @@ class ShopGUI extends CategoryGUI {
             put(52, applyPlaceholder(layout.getCraft()));
         }};
         putPageCommonItems(pageCommonItems);
-        addAllItem(categories.getItems(categoryName).stream().map(layout::setShopEntryMeta).collect(Collectors.toList()));
-        filterUnavailable();
+        available.addAll(categories.getItems(categoryName).stream().map(layout::setShopEntryMeta).collect(Collectors.toList()));        
+        refresh();
+    }
+
+    void refresh() {
+        Map<ItemStack, Integer> stockMap = playerData.getStockAll(getPlayer());
+        List<ItemStack> items = new ArrayList<>(available);
+        items.removeIf(item -> {
+            ItemStack realItem = getRealItem(item);
+            double buyPrice = prices.getBuyPrice(realItem);
+            double sellPrice = prices.getSellPrice(realItem);
+
+            if ((buyPrice == 0 && sellPrice == 0)) {
+                return true;
+            }
+
+            if (buyPrice == 0 && stockMap.getOrDefault(realItem, 0) == 0) {
+                return true;
+            }
+
+            if (sellPrice == 0 && economy.getBalance(getPlayer()) < buyPrice) {
+                return true;
+            }
+
+            return false;
+        });
+
+        clearItems();
+        addAllItem(items);
         setPage(getPage());
     }
 
     @Override
     public void onClicked(InventoryClickEvent event) {
         if (event.getSlot() == 50) {
-            event.getWhoClicked().openInventory(new StrageGUI(getPlayer(), getCategoryName(), getQuantity()).getInventory());
+            event.getWhoClicked().openInventory(GUICache.getCache(getPlayer()).getStrageGUICache(getCategoryName(), getQuantity(), getPage()).getInventory());
             return;
         }
         
@@ -82,7 +111,7 @@ class ShopGUI extends CategoryGUI {
         }
         
         if (event.getSlot() == 52) {
-            event.getWhoClicked().openInventory(new CraftGUI(getPlayer(), getCategoryName(), getQuantity()).getInventory());
+            event.getWhoClicked().openInventory(GUICache.getCache(getPlayer()).getCraftGUICache(getCategoryName(), getQuantity(), getPage()).getInventory());
             return;
         }
 
@@ -103,18 +132,6 @@ class ShopGUI extends CategoryGUI {
         }
 
         super.onClicked(event);
-    }
-    
-    /**
-     * お金が足りなかったり、ストックが足りなくて売れないアイテムを削除する。
-     */
-    private void filterUnavailable() {
-        List<ItemStack> items = new ArrayList<>(getItems());
-        items.removeIf(item -> prices.getBuyPrice(item) == 0 && prices.getSellPrice(item) == 0);
-        items.removeIf(item -> prices.getBuyPrice(item) == 0 && playerData.getStock(getPlayer(), item) == 0);
-        items.removeIf(item -> prices.getSellPrice(item) == 0 && economy.getBalance(getPlayer()) < prices.getBuyPrice(item));
-        clearItems();
-        addAllItem(items);
     }
 
     @Override

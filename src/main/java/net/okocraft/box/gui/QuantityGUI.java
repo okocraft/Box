@@ -115,7 +115,7 @@ abstract class QuantityGUI extends BackMenuButtomGUI {
      *
      * @param newQuantity 新しい取引量
      */
-    private void setQuantity(int newQuantity) {
+    void setQuantity(int newQuantity) {
         // force 1 < newQnatity < maxQuantity
         newQuantity = Math.max(1, Math.min(newQuantity, config.getMaxQuantity()));
 
