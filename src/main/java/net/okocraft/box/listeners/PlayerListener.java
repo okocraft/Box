@@ -17,6 +17,7 @@ import net.okocraft.box.config.Config;
 import net.okocraft.box.config.Messages;
 import net.okocraft.box.gui.BaseGUI;
 import net.okocraft.box.gui.Clickable;
+import net.okocraft.box.gui.GUICache;
 
 public class PlayerListener implements Listener {
     
@@ -76,6 +77,7 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
         plugin.getAPI().getPlayerData().removeCache(event.getPlayer());
+        GUICache.removeCache(event.getPlayer());
     }
     
     @EventHandler

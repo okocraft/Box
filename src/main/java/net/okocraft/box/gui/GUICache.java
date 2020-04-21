@@ -29,6 +29,10 @@ public final class GUICache {
         return newCache;
     }
 
+    public static void removeCache(Player player) {
+        cache.remove(player);
+    }
+
     public StrageGUI getStrageGUICache(String categoryName, int quantity, int page) {
         StrageGUI result = categoryStrageGUIMap.get(categoryName);
         if (result == null) {
