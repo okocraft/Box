@@ -88,7 +88,7 @@ final class ItemTable {
             sb.append(" WHEN ").append(id).append(" THEN ").append("'").append(item).append("'");
             where.append(id).append(", ");
         });
-        where.delete(sb.length() - 3, sb.length());
+        where.delete(where.length() - 3, where.length());
         sb.append(" END WHERE id IN (").append(where).append(")");
 
         database.execute(sb.toString());
