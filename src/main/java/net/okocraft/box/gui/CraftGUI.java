@@ -22,21 +22,30 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.Recipe;
+import org.bukkit.inventory.ShapedRecipe;
+import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import net.okocraft.box.Box;
-import net.okocraft.box.util.CraftRecipes;
 
 /**
  * アイテムの取引GUIの実装
  */
 class CraftGUI extends CategoryGUI {
+
+    private final Map<ItemStack, Map<String, Integer>> recipes = new HashMap<>();
+    private final Map<ItemStack, Integer> recipeResultAmounts = new HashMap<>();
+
+    private final List<ItemStack> available = new ArrayList<>();
 
     /**
      * コンストラクタ
@@ -56,8 +65,35 @@ class CraftGUI extends CategoryGUI {
             put(52, applyPlaceholder(layout.getCraft()));
         }};
         putPageCommonItems(pageCommonItems);
-        addAllItem(categories.getItems(categoryName).stream().map(layout::setCraftEntryMeta).collect(Collectors.toList()));
-        filterUnavailable();
+        putAvailable(categories.getItems(categoryName).stream().map(layout::setCraftEntryMeta).collect(Collectors.toList()));
+        refresh();
+    }
+
+    /**
+     * ストックが足りなくて作れないアイテム調べ、作れるアイテムをGUIに配置する。
+     */
+    void refresh() {
+        Map<ItemStack, Integer> stockMap = playerData.getStockAll(getPlayer());
+        List<ItemStack> items = new ArrayList<>();
+        for (ItemStack item : available) {
+            ItemStack realItem = getRealItem(item);
+
+            Map<String, Integer> recipe = recipes.get(realItem);
+            if (recipe == null) {
+                recipe = getIngredients(realItem);
+            }
+            boolean isCraftable = true;
+            for (Map.Entry<String, Integer> entry : recipe.entrySet()) {
+                if (entry.getValue() * getQuantity() > stockMap.getOrDefault(itemData.getItemStack(entry.getKey()), 0)) {
+                    isCraftable = false;
+                }
+            }
+            if (isCraftable) {
+                items.add(item);
+            }
+        }
+        clearItems();
+        addAllItem(items);
         setPage(getPage());
     }
     
@@ -99,19 +135,32 @@ class CraftGUI extends CategoryGUI {
         if (realItem != null) {
             placeholder.put("%item-name%", getRealItemName(item));
             placeholder.put("%stock%", String.valueOf(playerData.getStock(getPlayer(), realItem)));
-            placeholder.put("%amount%", String.valueOf(getQuantity() * CraftRecipes.getResultAmount(realItem)));
+            placeholder.put("%amount%", String.valueOf(getQuantity() * recipeResultAmounts.get(realItem)));
         }
         return super.applyPlaceholder(item, placeholder);
     }
 
-    /**
-     * ストックが足りなくて作れないアイテムを削除する。
-     */
-    private void filterUnavailable() {
-        List<ItemStack> items = new ArrayList<>(getItems());
-        List<ItemStack> available = CraftRecipes.filterUnavailable(getPlayer(), items, getQuantity());
-        clearItems();
-        addAllItem(available);
+    private void putAvailable(List<ItemStack> items) {
+        for (ItemStack item : items) {
+            ItemStack realItem = getRealItem(item);
+            if (realItem == null) {
+                continue;
+            }
+
+            Map<String, Integer> ingredients = getIngredients(realItem);
+            if (ingredients.isEmpty()) {
+                continue;
+            }
+
+            int resultAmount = getCraftResultAmount(realItem);
+            if (resultAmount == 0) {
+                continue;
+            }
+
+            recipeResultAmounts.put(realItem, getCraftResultAmount(realItem));
+            recipes.put(realItem, getIngredients(realItem));
+            available.add(item);
+        }
     }
     
     @Override
@@ -124,7 +173,7 @@ class CraftGUI extends CategoryGUI {
         }
 
         List<String> lore = item.getItemMeta().getLore();
-        List<String> ingredientsLore = CraftRecipes.getIngredient(realItem).entrySet().stream()
+        List<String> ingredientsLore = recipes.get(realItem).entrySet().stream()
                 .map(entry -> ChatColor.translateAlternateColorCodes('&', layout.getMaterialsPlaceholderFormat()
                         .replaceAll("%material%", entry.getKey())
                         .replaceAll("%material-stock%", String.valueOf(
@@ -153,7 +202,7 @@ class CraftGUI extends CategoryGUI {
         if (realItem == null) {
             return 0;
         }
-        Map<String, Integer> stacked = CraftRecipes.getIngredient(realItem);
+        Map<String, Integer> stacked = getIngredients(realItem);
         int tempQuantity = getQuantity();
         Player player = getPlayer();
         for (Map.Entry<String, Integer> entry : stacked.entrySet()) {
@@ -171,9 +220,51 @@ class CraftGUI extends CategoryGUI {
             playerData.setStock(player, ingredient, stock - tempQuantity * entry.getValue());
         }
         int stock = playerData.getStock(player, realItem);
-        int add = tempQuantity * CraftRecipes.getResultAmount(realItem);
+        int add = tempQuantity * recipeResultAmounts.get(realItem);
         playerData.setStock(player, realItem, stock + add);
         update();
         return add;
+    }
+
+    private Recipe getRecipeFor(ItemStack realItem) {
+        List<Recipe> recipes = Bukkit.getRecipesFor(realItem);
+        recipes.removeIf(recipe -> !(recipe instanceof ShapelessRecipe || recipe instanceof ShapedRecipe));
+        if (recipes.size() == 0) {
+            return null;
+        }
+        return recipes.get(0);
+    }
+
+    private int getCraftResultAmount(ItemStack realItem) {
+        return getRecipeFor(realItem).getResult().getAmount();
+    }
+
+    private Map<String, Integer> getIngredients(ItemStack realItem) {
+        Recipe recipe = getRecipeFor(realItem);
+        if (recipe == null) {
+            return Map.of();
+        }
+        
+        List<ItemStack> ingredients;
+        if (recipe instanceof ShapelessRecipe) {
+            ingredients = new ArrayList<>(((ShapelessRecipe) recipe).getIngredientList());
+        } else {
+            ingredients = new ArrayList<>(((ShapedRecipe) recipe).getIngredientMap().values());
+        }
+        ingredients.removeIf(Objects::isNull);
+
+        Map<String, Integer> result = new HashMap<>();
+        for (ItemStack ingredient : ingredients) {
+            if (ingredient == null) {
+                return Map.of();
+            }
+            String ingredientName = itemData.getName(ingredient);
+            if (ingredientName == null) {
+                return Map.of();
+            }
+            result.put(ingredientName, result.getOrDefault(ingredientName, 0) + ingredient.getAmount());
+        }
+
+        return result;
     }
 }

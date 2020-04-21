@@ -18,8 +18,6 @@
 
 package net.okocraft.box;
 
-import net.okocraft.box.util.CraftRecipes;
-
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -60,9 +58,6 @@ public class Box extends JavaPlugin {
 
         new BoxCommand();
         new BoxAdminCommand();
-
-        // Load static class CraftRecipes
-        CraftRecipes.load();
 
         // GO GO GO
         getLogger().info(String.format("Box v%s has been enabled!", getVersion()));
