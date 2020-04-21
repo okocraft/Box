@@ -76,6 +76,9 @@ class PlayerDataTable {
 
     void setAutoStore(OfflinePlayer player, ItemStack item, boolean enabled) {
         int itemId = itemTable.register(item);
+        if (itemId == -1) {
+            return;
+        }
         int enabledInt = enabled ? 1 : 0;
         Boolean autostore = database.query("SELECT autostore FROM " + TABLE + " WHERE player = '" + player.getUniqueId() + "' AND itemid = " + itemId, rs -> {
             try {
@@ -99,6 +102,9 @@ class PlayerDataTable {
 
     boolean getAutoStore(OfflinePlayer player, ItemStack item) {
         int itemId = itemTable.register(item);
+        if (itemId == -1) {
+            return false;
+        }
         return database.query("SELECT autostore FROM " + TABLE + " WHERE player = '" + player.getUniqueId() + "' AND itemid = " + itemId, rs -> {
             try {
                 if (rs.next()) {
@@ -136,6 +142,9 @@ class PlayerDataTable {
 
     void setStock(OfflinePlayer player, ItemStack item, int stock) {
         int itemId = itemTable.register(item);
+        if (itemId == -1) {
+            return;
+        }
         Integer queryResult = database.query("SELECT stock FROM " + TABLE + " WHERE player = '" + player.getUniqueId() + "' AND itemid = " + itemId, rs -> {
             try {
                 if (rs.next()) {
@@ -177,6 +186,9 @@ class PlayerDataTable {
 
     int getStock(OfflinePlayer player, ItemStack item) {
         int itemId = itemTable.register(item);
+        if (itemId == -1) {
+            return 0;
+        }
         return database.query("SELECT stock FROM " + TABLE + " WHERE player = '" + player.getUniqueId() + "' AND itemid = " + itemId, rs -> {
             try {
                 if (rs.next()) {

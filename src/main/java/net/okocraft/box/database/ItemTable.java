@@ -140,6 +140,9 @@ final class ItemTable {
      * @return 新たに生成されたアイテムのID。登録済みならそのアイテムのID。登録に失敗したら-1
      */
     int register(ItemStack item) {
+        if (item == null || item.getType() == Material.AIR) {
+            return -1;
+        }
         item = item.clone();
         item.setAmount(1);
         int id = getId(item);
