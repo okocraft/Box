@@ -20,6 +20,7 @@ package net.okocraft.box.listeners;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -32,6 +33,7 @@ import org.bukkit.block.data.type.Sapling;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -93,8 +95,25 @@ public class Replant implements Listener {
         }
     };
 
-    public Replant() {
+    public void start() {
+        HandlerList.unregisterAll(this);
         Bukkit.getPluginManager().registerEvents(this, plugin);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this)
+            return true;
+        if (!(o instanceof Replant)) {
+            return false;
+        }
+        Replant replant = (Replant) o;
+        return Objects.equals(plugin, replant.plugin) && Objects.equals(config, replant.config) && Objects.equals(playerData, replant.playerData);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(plugin, config, playerData);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)

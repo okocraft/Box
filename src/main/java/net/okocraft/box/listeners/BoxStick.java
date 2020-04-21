@@ -1,5 +1,7 @@
 package net.okocraft.box.listeners;
 
+import java.util.Objects;
+
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -10,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.ThrownPotion;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
@@ -37,8 +40,25 @@ public class BoxStick implements Listener {
     private final ItemData itemData = plugin.getAPI().getItemData();
     private final NamespacedKey stickKey = new NamespacedKey(plugin, "boxstick");
 
-    public BoxStick() {
+    public void start() {
+        HandlerList.unregisterAll(this);
         Bukkit.getPluginManager().registerEvents(this, plugin);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this)
+            return true;
+        if (!(o instanceof BoxStick)) {
+            return false;
+        }
+        BoxStick boxStick = (BoxStick) o;
+        return Objects.equals(plugin, boxStick.plugin) && Objects.equals(config, boxStick.config) && Objects.equals(playerData, boxStick.playerData) && Objects.equals(itemData, boxStick.itemData) && Objects.equals(stickKey, boxStick.stickKey);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(plugin, config, playerData, itemData, stickKey);
     }
 
     @EventHandler(ignoreCancelled = true)

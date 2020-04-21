@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -71,7 +72,13 @@ public class PlayerData {
      * @see Database#dispose()
      */
     public void dispose() {
-        database.dispose();
+        Bukkit.getOnlinePlayers().forEach(this::removeCache);
+        threadPool.submit(() -> database.dispose());
+        try {
+            threadPool.awaitTermination(5L, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public void loadCache(Player player) {

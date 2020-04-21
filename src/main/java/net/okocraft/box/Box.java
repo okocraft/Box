@@ -96,13 +96,9 @@ public class Box extends JavaPlugin {
      * イベントを Bukkit サーバに登録する。
      */
     private void registerEvents() {
-
-        // Events should be registered in its own initializer
         new PlayerListener().start();
-        new BoxStick();
-        new Replant();
-
-        getLogger().info("Events have been registered.");
+        new BoxStick().start();
+        new Replant().start();
     }
 
     public BoxAPI getAPI() {
