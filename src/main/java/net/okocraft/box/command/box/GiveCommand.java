@@ -81,10 +81,10 @@ class GiveCommand extends BaseCommand {
 
         playerData.setStock((OfflinePlayer) sender, item, senderStock - amount);
         playerData.setStock(player, item, otherStock + amount);
-        messages.sendGiveInfoToSender(sender, player.getName(), itemName, amount, senderStock - amount);
+        messages.sendGiveInfoToSender(sender, player.getName(), item, amount, senderStock - amount);
         
         if (player.isOnline()) {
-            messages.sendGiveInfoToTarget(player.getPlayer(), sender.getName(), itemName, amount, otherStock + amount);
+            messages.sendGiveInfoToTarget(player.getPlayer(), sender.getName(), item, amount, otherStock + amount);
         }
 
         return true;

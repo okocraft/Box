@@ -61,10 +61,10 @@ class GiveCommand extends BaseAdminCommand {
         int stock = playerData.getStock(player, item);
 
         playerData.setStock(player, item, stock + amount);
-        messages.sendAdminGiveInfoToSender(sender, player.getName(), itemName, amount, stock + amount);
+        messages.sendAdminGiveInfoToSender(sender, player.getName(), item, amount, stock + amount);
         
         if (player.isOnline()) {
-            messages.sendAdminGiveInfoToTarget(player.getPlayer(), sender.getName(), itemName, amount, stock + amount);
+            messages.sendAdminGiveInfoToTarget(player.getPlayer(), sender.getName(), item, amount, stock + amount);
         }
 
         return true;

@@ -60,9 +60,9 @@ class SetCommand extends BaseAdminCommand {
         int amount = args.length < 4 ? 1 : parseIntOrDefault(args[3], 1);
         playerData.setStock(player, item, amount);
 
-        messages.sendSetInfoToSender(sender, player.getName(), itemName, amount);
+        messages.sendSetInfoToSender(sender, player.getName(), item, amount);
         if (player.isOnline()) {
-            messages.sendSetInfoToTarget(sender, sender.getName(), itemName, amount);
+            messages.sendSetInfoToTarget(sender, sender.getName(), item, amount);
         }
 
         return true;

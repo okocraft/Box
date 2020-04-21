@@ -75,7 +75,7 @@ class AutoStoreCommand extends BaseCommand {
         boolean switchTo = args.length > 2 ? args[2].equalsIgnoreCase("true") : !now;
 
         playerData.setAutoStore((OfflinePlayer) sender, item, switchTo);
-        messages.sendAutoStore(sender, itemName, switchTo);
+        messages.sendAutoStore(sender, item, switchTo);
         return true;
     }
 

@@ -84,7 +84,7 @@ class AutoStoreCommand extends BaseAdminCommand {
         boolean switchTo = args.length > 3 ? args[3].equalsIgnoreCase("true") : !now;
 
         playerData.setAutoStore(player, item, switchTo);
-        messages.sendAutoStore(sender, itemName, switchTo);
+        messages.sendAutoStore(sender, item, switchTo);
         return true;
     }
 

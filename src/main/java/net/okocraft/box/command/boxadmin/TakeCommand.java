@@ -64,9 +64,9 @@ class TakeCommand extends BaseAdminCommand {
 
         playerData.setStock(player, item, stock - amount);
 
-        messages.sendTakeInfoToSender(sender, player.getName(), itemName, amount, stock - amount);
+        messages.sendTakeInfoToSender(sender, player.getName(), item, amount, stock - amount);
         if (player.isOnline()) {
-            messages.sendTakeInfoToTarget(sender, sender.getName(), itemName, amount, stock - amount);
+            messages.sendTakeInfoToTarget(sender, sender.getName(), item, amount, stock - amount);
         }
 
         return true;
