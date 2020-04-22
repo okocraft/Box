@@ -20,8 +20,10 @@ package net.okocraft.box.command.box;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.StringUtil;
 
@@ -33,16 +35,25 @@ class ItemInfoCommand extends BaseCommand {
         super(
             "iteminfo",
             "box.iteminfo",
-            2,
-            true,
-            "/box iteminfo <ITEM>",
+            1,
+            false,
+            "/box iteminfo [ITEM]",
             new String[] {"iinfo"}
         );
     }
 
     @Override
     public boolean runCommand(CommandSender sender, String[] args) {
-        ItemStack item = itemData.getItemStack(args[1]);
+        ItemStack item;
+        if (args.length == 1 && sender instanceof Player) {
+            item = ((Player) sender).getInventory().getItemInMainHand();
+        } else if (args.length >= 2) {
+            item = itemData.getItemStack(args[1].toUpperCase(Locale.ROOT));
+        } else {
+            messages.sendHoldItem(sender);
+            return false;
+        }
+
         if (item == null) {
             messages.sendItemNotFound(sender);
             return false;
