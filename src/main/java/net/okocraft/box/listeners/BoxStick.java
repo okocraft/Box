@@ -61,7 +61,7 @@ public class BoxStick implements Listener {
         return Objects.hash(plugin, config, playerData, itemData, stickKey);
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler
     public void onInteractWithStick(PlayerInteractEvent event) {
         if (event.getHand() == EquipmentSlot.OFF_HAND) {
             return;
