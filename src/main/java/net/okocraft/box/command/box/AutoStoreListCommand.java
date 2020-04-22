@@ -38,7 +38,7 @@ class AutoStoreListCommand extends BaseCommand {
             2,
             true,
             "/box autostorelist <page>",
-            new String[] {"asl"}
+            new String[0]
         );
     }
 

@@ -38,7 +38,7 @@ class AutoStoreCommand extends BaseCommand {
             2,
             true,
             "/box autostore < <ITEM> [true|false] | ALL <true|false> >",
-            new String[] {"as"}
+            new String[0]
         );
     }
 

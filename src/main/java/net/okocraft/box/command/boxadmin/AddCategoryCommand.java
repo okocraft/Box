@@ -41,7 +41,7 @@ class AddCategoryCommand extends BaseAdminCommand {
             4,
             true,
             "/boxadmin addcategory <category> <display-name> <icon>",
-            new String[] {"ac"}
+            new String[0]
         );
     }
     
@@ -59,7 +59,8 @@ class AddCategoryCommand extends BaseAdminCommand {
         List<String> items = Arrays.stream(chestSnapInv.getContents())
                 .filter(Objects::nonNull)
                 .map(itemData::register)
-                .filter(itemName -> !itemName.isBlank())
+                .filter(Objects::nonNull)
+                .filter(itemName -> !itemName.isEmpty())
                 .collect(Collectors.toList());
 
         categories.addCategory(args[1], args[2], items, args[3]);

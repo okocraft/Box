@@ -41,7 +41,7 @@ class AutoStoreListCommand extends BaseAdminCommand {
             3,
             false,
             "/boxadmin autostorelist <player> <page>",
-            new String[] {"asl"}
+            new String[0]
         );
     }
 
