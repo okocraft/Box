@@ -3,13 +3,16 @@ package net.okocraft.box.database;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionData;
@@ -83,6 +86,12 @@ public class ItemData {
         if (item == null || item.getType() == Material.AIR || item.getItemMeta() == null) {
             return null;
         }
+
+        int id = itemTable.getId(item);
+        if (id == -1) {
+            return null;
+        }
+
         item = item.clone();
         item.setAmount(1);
 
@@ -92,11 +101,8 @@ public class ItemData {
             return customName;
         }
 
-        int id = itemTable.getId(item);
         ItemMeta meta = item.getItemMeta();
         if (meta instanceof PotionMeta) {
-            // FOR COMPATIBILITY.
-            // names all creative items.
             PotionMeta potionMeta = (PotionMeta) meta;
             PotionData base = potionMeta.getBasePotionData();
 
@@ -116,11 +122,33 @@ public class ItemData {
             ItemStack clone = item.clone();
             clone.setItemMeta(potionMeta);
             if (clone.hasItemMeta()) {
-                name = name + ":" + id;
+                name = item.getType().name() + ":" + id;
+            } else {
+                setCustomName(item, name);
             }
-
             names.put(name, item);
             return name;
+        }
+
+        if (item.getItemMeta() instanceof EnchantmentStorageMeta) {
+            EnchantmentStorageMeta enchantsMeta = (EnchantmentStorageMeta) item.getItemMeta();
+            Map<Enchantment, Integer> enchants = enchantsMeta.getStoredEnchants();
+            if (enchants.size() == 1) {
+                Enchantment enchant = enchants.keySet().iterator().next();
+                if (enchants.get(enchant) == enchant.getMaxLevel()) {
+                    ItemStack someItem = new ItemStack(Material.STONE);
+                    someItem.setItemMeta(enchantsMeta);
+                    String name = item.getType().name();
+                    if (someItem.hasItemMeta()) {
+                        name = name + ":" + id;
+                    } else {
+                        name = name + "_" + enchant.getKey().getKey().toUpperCase(Locale.ROOT);
+                        setCustomName(item, name);
+                    }
+                    names.put(name, item);
+                    return name;
+                }
+            }
         }
 
         String name;

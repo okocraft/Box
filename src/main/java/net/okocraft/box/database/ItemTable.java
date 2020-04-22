@@ -23,7 +23,9 @@ import com.google.common.collect.HashBiMap;
 import org.bukkit.Material;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionType;
@@ -114,28 +116,36 @@ final class ItemTable {
             ItemStack add = new ItemStack(material);
             register(add);
 
-            if (!(add.getItemMeta() instanceof PotionMeta)) {
-                continue;
+            if (add.getItemMeta() instanceof PotionMeta) {
+                PotionMeta meta = (PotionMeta) add.getItemMeta();
+                for (PotionType type : PotionType.values()) {
+                    PotionMeta clonedMeta = meta.clone();
+                    clonedMeta.setBasePotionData(new PotionData(type, false, false));
+                    ItemStack clone = add.clone();
+                    clone.setItemMeta(clonedMeta);
+                    register(clone);
+                    if (type.isExtendable()) {
+                        clonedMeta.setBasePotionData(new PotionData(type, true, false));
+                        clone = add.clone();
+                        clone.setItemMeta(clonedMeta);
+                        register(clone);
+                    }
+                    if (type.isUpgradeable()) {
+                        clonedMeta.setBasePotionData(new PotionData(type, false, true));
+                        clone = add.clone();
+                        clone.setItemMeta(clonedMeta);
+                        register(clone);
+                    }
+                }
             }
 
-            PotionMeta meta = (PotionMeta) add.getItemMeta();
-            for (PotionType type : PotionType.values()) {
-                PotionMeta clonedMeta = meta.clone();
-                clonedMeta.setBasePotionData(new PotionData(type, false, false));
-                ItemStack clone = add.clone();
-                clone.setItemMeta(clonedMeta);
-                register(clone);
-                if (type.isExtendable()) {
-                    clonedMeta.setBasePotionData(new PotionData(type, true, false));
-                    clone = add.clone();
-                    clone.setItemMeta(clonedMeta);
-                    register(clone);
-                }
-                if (type.isUpgradeable()) {
-                    clonedMeta.setBasePotionData(new PotionData(type, false, true));
-                    clone = add.clone();
-                    clone.setItemMeta(clonedMeta);
-                    register(clone);
+            if (add.getItemMeta() instanceof EnchantmentStorageMeta) {
+                for (Enchantment enchant : Enchantment.values()) {
+                    ItemStack enchantedBook = add.clone();
+                    EnchantmentStorageMeta meta = (EnchantmentStorageMeta) enchantedBook.getItemMeta();
+                    meta.addStoredEnchant(enchant, enchant.getMaxLevel(), false);
+                    enchantedBook.setItemMeta(meta);
+                    register(enchantedBook);
                 }
             }
         }
