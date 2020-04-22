@@ -56,7 +56,7 @@ class MasterTable {
         List<ItemStack> allFalse = new ArrayList<>();
 
         autostore.forEach((item, value) -> {
-            if (value) {
+            if (value != null && value) {
                 allTrue.add(item);
             } else {
                 allFalse.add(item);
@@ -95,14 +95,15 @@ class MasterTable {
     }
 
     private void setAutoStoreAllFlase(OfflinePlayer player, Collection<ItemStack> items) {
+        List<Integer> itemIds = items.stream().filter(Objects::nonNull).map(itemTable::getId).filter(id -> id != -1).collect(Collectors.toList());
+        if (itemIds.isEmpty()) {
+            return;
+        }
         StringBuilder sb = new StringBuilder("UPDATE " + TABLE + " SET autostore = CASE itemid");
         StringBuilder where = new StringBuilder();
-        items.forEach(item -> {
-            if (item != null) {
-                int itemId = itemTable.getId(item);
-                sb.append(" WHEN ").append(itemId).append(" THEN ").append(0);
-                where.append(itemId).append(", ");
-            }
+        itemIds.forEach(itemId -> {
+            sb.append(" WHEN ").append(itemId).append(" THEN ").append(0);
+            where.append(itemId).append(", ");
         });
         where.delete(where.length() - 2, where.length());
         sb.append(" END WHERE playerid = '").append(playerTable.getId(player.getUniqueId())).append("' AND itemid IN (").append(where).append(")");
@@ -111,7 +112,7 @@ class MasterTable {
     }
 
     void setAutoStore(OfflinePlayer player, ItemStack item, boolean enabled) {
-        int itemId = itemTable.register(item);
+        int itemId = itemTable.getId(item);
         if (itemId == -1) {
             return;
         }
@@ -137,7 +138,7 @@ class MasterTable {
     }
 
     boolean getAutoStore(OfflinePlayer player, ItemStack item) {
-        int itemId = itemTable.register(item);
+        int itemId = itemTable.getId(item);
         if (itemId == -1) {
             return false;
         }
@@ -177,7 +178,7 @@ class MasterTable {
     }
 
     void setStock(OfflinePlayer player, ItemStack item, int stock) {
-        int itemId = itemTable.register(item);
+        int itemId = itemTable.getId(item);
         if (itemId == -1) {
             return;
         }
@@ -195,10 +196,10 @@ class MasterTable {
         Map<ItemStack, Integer> stockToNot0 = new HashMap<>();
         stock.forEach((item, value) -> {
             if (itemTable.getId(item) != -1) {
-                if (value == 0) {
-                    stockTo0.add(item);
-                } else if (value != null) {
+                if (value != null && value != 0) {
                     stockToNot0.put(item, value);
+                } else {
+                    stockTo0.add(item);
                 }
             }
         });
@@ -253,7 +254,7 @@ class MasterTable {
     }
 
     int getStock(OfflinePlayer player, ItemStack item) {
-        int itemId = itemTable.register(item);
+        int itemId = itemTable.getId(item);
         if (itemId == -1) {
             return 0;
         }
