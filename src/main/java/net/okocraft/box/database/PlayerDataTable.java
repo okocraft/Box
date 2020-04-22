@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
@@ -78,10 +79,12 @@ class PlayerDataTable {
         }
 
         if (database.isSQLite()) {
-            database.execute(sb.toString() + " ON CONFLICT (player, itemid) DO UPDATE SET autostore = 1");
+            sb.append(" ON CONFLICT (player, itemid) DO UPDATE SET autostore = 1");
         } else {
-            database.execute(sb.toString() + " ON DUPLICATE KEY UPDATE autostore = 1");
+            sb.append(" ON DUPLICATE KEY UPDATE autostore = 1");
         }
+
+        database.execute(sb.toString());
     }
 
     private void setAutoStoreAllFlase(OfflinePlayer player, Collection<ItemStack> items) {
@@ -171,42 +174,66 @@ class PlayerDataTable {
         if (itemId == -1) {
             return;
         }
-        Integer queryResult = database.query("SELECT stock FROM " + TABLE + " WHERE player = '" + player.getUniqueId() + "' AND itemid = " + itemId, rs -> {
-            try {
-                if (rs.next()) {
-                    return rs.getInt("stock");
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            return null;
-        });
 
-        if (queryResult == null) {
-            if (stock != 0) {
-                database.execute("INSERT INTO " + TABLE + " (player, itemid, stock, autostore) VALUES ('" + player.getUniqueId() + "', " + itemId + ", " + stock + ", 0)");
-            }
-        } else if (queryResult != stock) {
-            database.execute("UPDATE " + TABLE + " SET stock = " + stock + " WHERE player = '" + player.getUniqueId() + "' AND itemid = '" + itemId + "'");
-        }
+        Map<ItemStack, Integer> map = new HashMap<>();
+        map.put(item, stock);
+        setStockAll(player, map);
     }
 
     void setStockAll(OfflinePlayer player, Map<ItemStack, Integer> stock) {
         if (stock == null) {
             return;
         }
+        List<ItemStack> stockTo0 = new ArrayList<>();
+        Map<ItemStack, Integer> stockToNot0 = new HashMap<>();
+        stock.forEach((item, value) -> {
+            if (itemTable.getId(item) == -1) {
+                if (value == 0) {
+                    stockTo0.add(item);
+                } else if (value != null) {
+                    stockToNot0.put(item, value);
+                }
+            }
+        });
+
+        setStockAll0(player, stockTo0);
+        setStockAllNot0(player, stockToNot0);
+    }
+
+    private void setStockAll0(OfflinePlayer player, List<ItemStack> stockTo0) {
         StringBuilder sb = new StringBuilder("UPDATE " + TABLE + " SET stock = CASE itemid");
         StringBuilder where = new StringBuilder();
-        stock.forEach((item, value) -> {
-            if (item != null && value != null) {
+        stockTo0.forEach(item -> {
+            if (item != null) {
                 int itemId = itemTable.getId(item);
-                sb.append(" WHEN ").append(itemId).append(" THEN ").append(value);
+                sb.append(" WHEN ").append(itemId).append(" THEN ").append(0);
                 where.append(itemId).append(", ");
             }
         });
-        where.delete(where.length() - 1, where.length() - 3);
+        where.delete(where.length() - 3, where.length());
         sb.append(" END WHERE player = '").append(player.getUniqueId().toString()).append("' AND itemid IN (").append(where).append(")");
-        
+
+        database.execute(sb.toString());
+    }
+
+    private void setStockAllNot0(OfflinePlayer player, Map<ItemStack, Integer> stock) {
+        StringBuilder sb = new StringBuilder("INSERT INTO " + TABLE + " (player, itemid, stock, autostore) VALUES ");
+        stock.forEach((item, value) ->  sb.append(" ('")
+                .append(player.getUniqueId().toString()).append("', ")
+                .append(itemTable.getId(item)).append(", ")
+                .append(Objects.requireNonNullElse(value, 0)).append(", ")
+                .append("0").append("),")
+        );
+        if (sb.length() > 0) {
+            sb.deleteCharAt(sb.length() - 1);
+        }
+
+        if (database.isSQLite()) {
+            sb.append(" ON CONFLICT (player, itemid) DO UPDATE SET stock = excluded.stock");
+        } else {
+            sb.append(" ON DUPLICATE KEY UPDATE stock = VALUES(stock)");
+        }
+
         database.execute(sb.toString());
     }
 
