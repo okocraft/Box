@@ -76,7 +76,7 @@ class WithdrawCommand extends BaseCommand {
             return StringUtil.copyPartialMatches(args[1], itemData.getNames(), result);
         }
 
-        if (!itemData.getNames().contains(args[1])) {
+        if (itemData.getItemStack(args[1]) == null) {
             return result;
         }
 
