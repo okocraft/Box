@@ -65,8 +65,12 @@ class PlayerDataTable {
             }
         });
 
-        setAutoStoreAllTrue(player, allTrue);
-        setAutoStoreAllFlase(player, allFalse);
+        if (!allTrue.isEmpty()) {
+            setAutoStoreAllTrue(player, allTrue);
+        }
+        if (!allFalse.isEmpty()) {
+            setAutoStoreAllFlase(player, allFalse);
+        }
     }
 
     private void setAutoStoreAllTrue(OfflinePlayer player, Collection<ItemStack> items) {
@@ -102,7 +106,7 @@ class PlayerDataTable {
                 where.append(itemId).append(", ");
             }
         });
-        where.delete(where.length() - 3, where.length());
+        where.delete(where.length() - 2, where.length());
         sb.append(" END WHERE player = '").append(player.getUniqueId().toString()).append("' AND itemid IN (").append(where).append(")");
 
         database.execute(sb.toString());
@@ -220,7 +224,7 @@ class PlayerDataTable {
                 where.append(itemId).append(", ");
             }
         });
-        where.delete(where.length() - 3, where.length());
+        where.delete(where.length() - 2, where.length());
         sb.append(" END WHERE player = '").append(player.getUniqueId().toString()).append("' AND itemid IN (").append(where).append(")");
 
         database.execute(sb.toString());
