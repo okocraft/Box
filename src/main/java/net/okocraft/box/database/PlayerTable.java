@@ -30,13 +30,9 @@ final class PlayerTable {
         database.execute("CREATE TABLE IF NOT EXISTS " + TABLE + " (id INTEGER PRIMARY KEY " + (database.isSQLite() ? "AUTOINCREMENT" : "AUTO_INCREMENT") + ", uuid CHAR(36) UNIQUE NOT NULL, name VARCHAR(16) UNIQUE NOT NULL)");
     }
 
-    int insert(OfflinePlayer player) {
+    private int insert(OfflinePlayer player) {
         if (player == null || player.getName() == null) {
             return -1;
-        }
-        int id = getId(player.getUniqueId());
-        if (id != -1) {
-            return id;
         }
 
         database.execute("UPDATE " + TABLE + " SET name = '' WHERE name = '" + player.getName() + "'");
