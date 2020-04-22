@@ -1,5 +1,7 @@
 package net.okocraft.box;
 
+import org.bukkit.Bukkit;
+
 import net.okocraft.box.config.Categories;
 import net.okocraft.box.config.Config;
 import net.okocraft.box.config.Layouts;
@@ -7,6 +9,7 @@ import net.okocraft.box.config.Messages;
 import net.okocraft.box.config.Prices;
 import net.okocraft.box.database.ItemData;
 import net.okocraft.box.database.PlayerData;
+import net.okocraft.box.gui.GUICache;
 
 public final class BoxAPI {
 
@@ -55,6 +58,11 @@ public final class BoxAPI {
     }
 
     public void reloadAllConfigs() {
+        Bukkit.getOnlinePlayers().forEach(player -> {
+            player.closeInventory();            
+            GUICache.removeCache(player);
+        });
+
         config.reload();
         messages.reload();
         layout.reload();

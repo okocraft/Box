@@ -83,4 +83,14 @@ public class Categories extends CustomConfig {
         get().set(id + ".item", items);
         save();
     }
+    
+    public void replaceItem(String oldName, String newName) {
+        getCategories().forEach(category -> {
+            List<String> items = get().getStringList(category + ".item");
+            items.replaceAll(item -> item.replaceAll(oldName, newName));
+            get().set(category + ".item", items);
+        });
+
+        save();
+    }
 }

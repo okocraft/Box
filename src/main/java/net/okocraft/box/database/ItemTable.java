@@ -46,10 +46,11 @@ final class ItemTable {
      * データベースにだけ存在するアイテムの場合はこのキャッシュにアイテムを追加する。
      */
     private final BiMap<Integer, ItemStack> items = HashBiMap.create();
+    private final BiMap<Integer, String> customNames = HashBiMap.create();
 
     ItemTable(@NotNull Database database) {
         this.database = database;
-        database.execute("CREATE TABLE IF NOT EXISTS " + TABLE + " (id INTEGER PRIMARY KEY " + (database.isSQLite() ? "AUTOINCREMENT" : "AUTO_INCREMENT") + ", item TEXT UNIQUE NOT NULL)");
+        database.execute("CREATE TABLE IF NOT EXISTS " + TABLE + " (id INTEGER PRIMARY KEY " + (database.isSQLite() ? "AUTOINCREMENT" : "AUTO_INCREMENT") + ", item TEXT UNIQUE NOT NULL, customname TEXT UNIQUE)");
         loadItems();
         updateItems();
         addDefaultItems();
@@ -59,12 +60,17 @@ final class ItemTable {
      * データベースから全てのアイテムを読み込み、復号化し、マップに登録する。
      */
     private void loadItems() {
-        database.query("SELECT id, item FROM " + TABLE, rs -> {
+        database.query("SELECT id, item, customname FROM " + TABLE, rs -> {
             try {
                 while (rs.next()) {
                     ItemStack item = fromString(rs.getString("item"));
                     item.setAmount(1);
-                    items.forcePut(rs.getInt("id"), item);
+                    int id = rs.getInt("id");
+                    items.forcePut(id, item);
+                    String customName = rs.getString("customname");
+                    if (customName != null) {
+                        customNames.put(id, customName);
+                    }
                 }
             } catch (SQLException ignored) {
             }
@@ -133,6 +139,27 @@ final class ItemTable {
                 }
             }
         }
+    }
+
+    boolean setCustomName(ItemStack item, String customName) {
+        item = item.clone();
+        item.setAmount(1);
+
+        int id = getId(item);
+        if (id == -1) {
+            return false;
+        }
+
+        if (customNames.containsValue(customName)) {
+            return false;
+        }
+        customNames.put(id, customName);
+        database.execute("UPDATE " + TABLE + " SET customname = '" + customName + "' WHERE id = " + id);
+        return true;
+    }
+
+    String getCustomName(ItemStack item) {
+        return customNames.get(getId(item));
     }
 
     /**

@@ -62,6 +62,17 @@ public class ItemData {
         itemTable.getAllItem().forEach(this::loadName);
     }
 
+    public boolean setCustomName(ItemStack item, String customName) {
+        item = item.clone();
+        item.setAmount(1);
+        if (itemTable.setCustomName(item, customName)) {
+            names.forcePut(customName, item);
+            return true;
+        }
+
+        return false;
+    }
+
     /**
      * アイテムの、タブ補完などでやり取りする名前を全て読み込む。
      * 
@@ -74,6 +85,13 @@ public class ItemData {
         }
         item = item.clone();
         item.setAmount(1);
+
+        String customName = itemTable.getCustomName(item);
+        if (customName != null) {
+            names.forcePut(customName, item);
+            return customName;
+        }
+
         int id = itemTable.getId(item);
         ItemMeta meta = item.getItemMeta();
         if (meta instanceof PotionMeta) {

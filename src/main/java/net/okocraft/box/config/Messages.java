@@ -269,15 +269,25 @@ public final class Messages extends CustomConfig {
     }
 
     public void sendNoPermission(CommandSender sender, String permission) {
-        sendMessage(sender, false, "command.general.error.no-permission", Map.of("%permission%", permission));
+        sendMessage(sender, "command.general.error.no-permission", Map.of("%permission%", permission));
     }
 
     public void sendUsage(CommandSender sender, String usage) {
-        sendMessage(sender, false, "command.general.info.usage", Map.of("%usage%", usage));
+        sendMessage(sender, "command.general.info.usage", Map.of("%usage%", usage));
     }
 
+    public void sendItemNameChanged(CommandSender sender, String oldName, String newName) {
+        sendMessage(sender, "command.boxadmin.customname.info.success", Map.of("%old%", oldName, "%new%", newName));
+    }
 
-    
+    public void sendHoldItem(CommandSender sender) {
+        sendMessage(sender, "command.general.error.hold-item");
+    }
+
+    public void sendItemRegistered(CommandSender sender, ItemStack item) {
+        sendMessageComponent(sender, true, "command.boxadmin.register.info.success", Map.of("%item%", toTextComponent(item)));
+    }
+
     /**
      * Converts an {@link org.bukkit.inventory.ItemStack} to a Json string for
      * sending with {@link net.md_5.bungee.api.chat.BaseComponent}'s.
