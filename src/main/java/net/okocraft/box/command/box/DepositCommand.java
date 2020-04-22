@@ -65,7 +65,7 @@ class DepositCommand extends BaseCommand {
             ItemStack item;
             int amount = 1;
             try {
-                amount = Integer.parseInt(args[1]);
+                amount = Math.max(1, Integer.parseInt(args[1]));
 
                 item = ((Player) sender).getInventory().getItemInMainHand();
                 if (itemData.getName(item) == null) {
@@ -81,14 +81,19 @@ class DepositCommand extends BaseCommand {
 
                 if (args.length >= 3) {
                     try {
-                        amount = Integer.parseInt(args[2]);
+                        amount = Math.max(1, Integer.parseInt(args[2]));
                     } catch (NumberFormatException ignored) {
                     }
                 }
             }
 
+            int stockBefore = playerData.getStock((Player) sender, item);
             int stock = deposit((Player) sender, item, amount);
-            messages.sendWithdrawItem(sender, item, amount, stock);
+            if (stockBefore == stock) {
+                messages.sendNotEnoughItem(sender);
+            } else {
+                messages.sendDepositItem(sender, item, stock - stockBefore, stock);
+            }
             return true;
         }
 

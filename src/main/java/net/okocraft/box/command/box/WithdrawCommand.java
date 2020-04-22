@@ -55,16 +55,22 @@ class WithdrawCommand extends BaseCommand {
             return false;
         }
 
+        int stockBefore = playerData.getStock((Player) sender, item);
+
         int amount = 1;
         if (args.length >= 3) {
             try {
-                amount = Integer.parseInt(args[2]);
+                amount = Math.min(stockBefore, Math.max(1, Integer.parseInt(args[2])));
             } catch (NumberFormatException ignored) {
             }
         }
 
         int stock = withdraw((Player) sender, item, amount);
-        messages.sendWithdrawItem(sender, item, amount, stock);
+        if (stockBefore == stock) {
+            messages.sendNotEnoughStock(sender);
+        } else {
+            messages.sendWithdrawItem(sender, item, amount, stock);
+        }
         return true;
     }
 

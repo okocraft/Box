@@ -119,6 +119,10 @@ public final class Messages extends CustomConfig {
         sendMessage(sender, "command.general.error.not-enough-arguments");
     }
 
+    public void sendNotEnoughItem(CommandSender sender) {
+        sendMessage(sender, "command.general.error.not-enough-item");
+    }
+
     public void sendInvalidArgument(CommandSender sender, String argument) {
         sendMessage(sender, "command.general.error.invalid-argument", Map.of("%argument%", argument));
     }
