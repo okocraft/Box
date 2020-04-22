@@ -31,11 +31,11 @@ permissions:
       boxadmin: true
   boxadmin:
     default: op
-  boxadmin.add-category:
+  boxadmin.addcategory:
     default: op
-  boxadmin.auto-store:
+  boxadmin.autostore:
     default: op
-  boxadmin.auto-store-list:
+  boxadmin.autostorelist:
     default: op
   boxadmin.give:
     default: op
@@ -51,15 +51,21 @@ permissions:
     description: Includes all normal command permissions.
     default: op
     children:
-      box.auto-store: true
-      box.auto-store-list: true
+      box.autostore: true
+      box.autostorelist: true
+      box.withdraw: true
+      box.deposit: true
       box.give: true
       box.help: true
       box.version: true
       box.stick.*: true
-  box.auto-store:
+  box.autostore:
     default: true
-  box.auto-store-list:
+  box.autostorelist:
+    default: true
+  box.withdraw:
+    default: true
+  box.deposit:
     default: true
   box.give:
     default: true
