@@ -41,6 +41,7 @@ public class BoxAdminCommand extends Commands {
         register(new SetCommand());
         register(new TakeCommand());
         register(new CustomNameCommand());
+        register(new RegisterCommand());
     }
 
     /**
