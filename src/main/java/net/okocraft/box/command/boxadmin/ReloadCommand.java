@@ -36,6 +36,7 @@ class ReloadCommand extends BaseAdminCommand {
     @Override
     public boolean runCommand(CommandSender sender, String[] args) {
         plugin.getAPI().reloadAllConfigs();
+        messages.sendReloadSuccess(sender);
         return true;
     }
 }
