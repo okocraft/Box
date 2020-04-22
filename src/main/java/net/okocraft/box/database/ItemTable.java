@@ -221,6 +221,9 @@ final class ItemTable {
      * @return アイテムのIDか、-1
      */
     int getId(ItemStack item) {
+        if (item == null) {
+            return -1;
+        }
         item = item.clone();
         item.setAmount(1);
         int id = items.inverse().getOrDefault(item, -1);
