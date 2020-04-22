@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
@@ -70,7 +71,11 @@ class PlayerDataTable {
 
     private void setAutoStoreAllTrue(OfflinePlayer player, Collection<ItemStack> items) {
         StringBuilder sb = new StringBuilder("INSERT INTO " + TABLE + " (player, itemid, stock, autostore) VALUES ");
-        items.stream().map(itemTable::getId).forEach(itemId -> 
+        List<Integer> itemIds = items.stream().map(itemTable::getId).filter(id -> id != -1).collect(Collectors.toList());
+        if (itemIds.isEmpty()) {
+            return;
+        }
+        itemIds.forEach(itemId -> 
                 sb.append(" ('").append(player.getUniqueId().toString()).append("', ")
                 .append(itemId).append(", 0, ").append("1").append("),")
         );
@@ -196,8 +201,13 @@ class PlayerDataTable {
             }
         });
 
-        setStockAll0(player, stockTo0);
-        setStockAllNot0(player, stockToNot0);
+        if (!stockTo0.isEmpty()) {
+            setStockAll0(player, stockTo0);
+        }
+        if (!stockToNot0.isEmpty()) {
+
+            setStockAllNot0(player, stockToNot0);
+        }
     }
 
     private void setStockAll0(OfflinePlayer player, List<ItemStack> stockTo0) {
