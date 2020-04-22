@@ -196,7 +196,7 @@ class PlayerDataTable {
         List<ItemStack> stockTo0 = new ArrayList<>();
         Map<ItemStack, Integer> stockToNot0 = new HashMap<>();
         stock.forEach((item, value) -> {
-            if (itemTable.getId(item) == -1) {
+            if (itemTable.getId(item) != -1) {
                 if (value == 0) {
                     stockTo0.add(item);
                 } else if (value != null) {
@@ -209,7 +209,6 @@ class PlayerDataTable {
             setStockAll0(player, stockTo0);
         }
         if (!stockToNot0.isEmpty()) {
-
             setStockAllNot0(player, stockToNot0);
         }
     }
