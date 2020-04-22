@@ -270,15 +270,13 @@ class StrageGUI extends CategoryGUI {
         ItemStack[] contents = getPlayer().getInventory().getContents();
         for (int i = 0; i < contents.length; i++) {
             ItemStack item = contents[i];
-            ItemStack index = item.clone();
-            index.setAmount(1);
-            if (item == null || itemData.getName(index) == null) {
+            if (item == null || itemData.getName(item) == null) {
                 continue;
             }
             int stock = playerData.getStock(getPlayer(), item);
             int amount = item.getAmount();
             amount -= getPlayer().getInventory().removeItem(item).values().stream().map(ItemStack::getAmount).mapToInt(Integer::valueOf).sum();
-            playerData.setStock(getPlayer(), index, stock + amount);
+            playerData.setStock(getPlayer(), item, stock + amount);
             isModified = true;
         }
         if (isModified) {
