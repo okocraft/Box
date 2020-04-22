@@ -44,6 +44,8 @@ public class BoxCommand extends Commands {
         register(new HelpCommand());
         register(new StickCommand());
         register(new VersionCommand());
+        register(new WithdrawCommand());
+        register(new DepositCommand());
     }
 
     /**

@@ -288,6 +288,18 @@ public final class Messages extends CustomConfig {
         sendMessageComponent(sender, true, "command.boxadmin.register.info.success", Map.of("%item%", toTextComponent(item)));
     }
 
+    public void sendWithdrawItem(CommandSender sender, ItemStack item, int amount, int stock) {
+        sendMessageComponent(sender, true, "command.box.withdraw.info.success", Map.of("%item%", toTextComponent(item), "%amount%", new TextComponent(String.valueOf(amount)), "%stock%", new TextComponent(String.valueOf(stock))));
+    }
+
+    public void sendDepositItem(CommandSender sender, ItemStack item, int amount, int stock) {
+        sendMessageComponent(sender, true, "command.box.deposit.info.success", Map.of("%item%", toTextComponent(item), "%amount%", new TextComponent(String.valueOf(amount)), "%stock%", new TextComponent(String.valueOf(stock))));
+    }
+
+    public void sendDepositItemAll(CommandSender sender) {
+        sendMessage(sender, "command.box.deposit.info.all-success");
+    }
+
     /**
      * Converts an {@link org.bukkit.inventory.ItemStack} to a Json string for
      * sending with {@link net.md_5.bungee.api.chat.BaseComponent}'s.
