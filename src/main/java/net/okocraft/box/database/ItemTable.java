@@ -59,7 +59,7 @@ final class ItemTable {
      * データベースから全てのアイテムを読み込み、復号化し、マップに登録する。
      */
     private void loadItems() {
-        database.query("SELECT * FROM " + TABLE, rs -> {
+        database.query("SELECT id, item FROM " + TABLE, rs -> {
             try {
                 while (rs.next()) {
                     ItemStack item = fromString(rs.getString("item"));
@@ -191,7 +191,7 @@ final class ItemTable {
         }
 
         String itemData = toString(item);
-        return database.query("SELECT * FROM " + TABLE + " WHERE item = '" + itemData + "'", rs -> {
+        return database.query("SELECT id FROM " + TABLE + " WHERE item = '" + itemData + "'", rs -> {
             try {
                 return rs.next() ? rs.getInt("id") : -1;
             } catch (SQLException e) {
@@ -212,7 +212,7 @@ final class ItemTable {
             return item.clone();
         }
 
-        return database.query("SELECT * FROM " + TABLE + " WHERE id = " + id, rs -> {
+        return database.query("SELECT id, item FROM " + TABLE + " WHERE id = " + id, rs -> {
             try {
                 if (rs.next()) {
                     ItemStack result = fromString(rs.getString("item"));
