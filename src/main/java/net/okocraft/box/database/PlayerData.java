@@ -17,6 +17,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
+
+import net.okocraft.box.Box;
 
 public class PlayerData {
 
@@ -40,7 +43,13 @@ public class PlayerData {
         this.itemTable = new ItemTable(database);
         this.playerDataTable = new PlayerDataTable(database, itemTable);
 
-        loadPlayerNames();
+        new BukkitRunnable(){
+        
+            @Override
+            public void run() {
+                loadPlayerNames();
+            }
+        }.runTaskAsynchronously(Box.getInstance());
     }
 
     ItemTable getItemTable() {
