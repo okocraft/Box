@@ -37,7 +37,7 @@ import net.okocraft.box.BoxAPI;
  */
 final class ItemTable {
 
-    private static final String TABLE = "box_items";
+    static final String TABLE = "box_items";
 
     private final Database database;
 

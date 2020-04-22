@@ -2,13 +2,9 @@ package net.okocraft.box.database;
 
 import java.nio.file.Path;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -17,19 +13,16 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
-
-import net.okocraft.box.Box;
 
 public class PlayerData {
 
     private final Database database;
     private final ItemTable itemTable;
-    private final PlayerDataTable playerDataTable;
+    private final PlayerTable playerTable;
+    private final MasterTable masterTable;
 
     private final Map<Player, Map<ItemStack, Boolean>> autostore = new HashMap<>();
     private final Map<Player, Map<ItemStack, Integer>> stock = new HashMap<>();
-    private final Set<String> players = new HashSet<>();
 
     private final ExecutorService threadPool = Executors.newSingleThreadExecutor();
 
@@ -41,40 +34,20 @@ public class PlayerData {
         }
 
         this.itemTable = new ItemTable(database);
-        this.playerDataTable = new PlayerDataTable(database, itemTable);
-
-        new BukkitRunnable(){
-        
-            @Override
-            public void run() {
-                loadPlayerNames();
-            }
-        }.runTaskAsynchronously(Box.getInstance());
+        this.playerTable = new PlayerTable(database);
+        this.masterTable = new MasterTable(database, itemTable, playerTable);
     }
 
     ItemTable getItemTable() {
         return itemTable;
     }
 
-    private void loadPlayerNames() {
-        database.query("SELECT player FROM box_playerdata", rs -> {
-            try {
-                while (rs.next()) {
-                    String playerName = Bukkit.getOfflinePlayer(UUID.fromString(rs.getString("player"))).getName();
-                    if (playerName != null) {
-                        players.add(playerName);
-                    }
-                }
-            } catch (IllegalArgumentException | SQLException e) {
-                e.printStackTrace();
-            }
-
-            return null;
-        });
+    PlayerTable getPlayerTable() {
+        return playerTable;
     }
 
     public List<String> getPlayers() {
-        return new ArrayList<>(players);
+        return getPlayerTable().getAllName();
     }
 
     /**
@@ -93,11 +66,13 @@ public class PlayerData {
     public void loadCache(Player player) {
         stock.put(player, getStockAll(player));
         autostore.put(player, getAutoStoreAll(player));
+        playerTable.loadCache(player);
     }
 
     public void removeCache(Player player) {
-        playerDataTable.setAutoStoreAll(player, autostore.remove(player));
-        playerDataTable.setStockAll(player, stock.remove(player));
+        masterTable.setAutoStoreAll(player, autostore.remove(player));
+        masterTable.setStockAll(player, stock.remove(player));
+        playerTable.removeCache(player);
     }
 
     public void setAutoStoreAll(OfflinePlayer player, boolean enabled) {
@@ -105,7 +80,7 @@ public class PlayerData {
             getAutoStoreAll(player).replaceAll((item, value) -> enabled);
         }
 
-        threadPool.submit(() -> playerDataTable.setAutoStoreAll(player, enabled));
+        threadPool.submit(() -> masterTable.setAutoStoreAll(player, enabled));
     }
 
     public void setAutoStoreAll(OfflinePlayer player, Map<ItemStack, Boolean> enabled) {
@@ -121,7 +96,7 @@ public class PlayerData {
             getAutoStoreAll(player).replaceAll((item, value) -> replaced.get(item));
         }
 
-        threadPool.submit(() -> playerDataTable.setAutoStoreAll(player, replaced));
+        threadPool.submit(() -> masterTable.setAutoStoreAll(player, replaced));
     }
 
     public void setAutoStore(OfflinePlayer player, ItemStack item, boolean enabled) {
@@ -134,7 +109,7 @@ public class PlayerData {
             getAutoStoreAll(player).put(clone, enabled);
         }
 
-        threadPool.submit(() -> playerDataTable.setAutoStore(player, clone, enabled));
+        threadPool.submit(() -> masterTable.setAutoStore(player, clone, enabled));
     }
 
     public boolean getAutoStore(OfflinePlayer player, ItemStack item) {
@@ -145,7 +120,7 @@ public class PlayerData {
         clone.setAmount(1);
         return player.isOnline()
                 ? getAutoStoreAll(player).getOrDefault(clone, false)
-                : playerDataTable.getAutoStore(player, clone); 
+                : masterTable.getAutoStore(player, clone); 
     }
 
     public Map<ItemStack, Boolean> getAutoStoreAll(OfflinePlayer player) {
@@ -153,13 +128,13 @@ public class PlayerData {
             if (autostore.containsKey(player)) {
                 return autostore.get(player);
             } else {
-                Map<ItemStack, Boolean> result = playerDataTable.getAutoStoreAll(player);
+                Map<ItemStack, Boolean> result = masterTable.getAutoStoreAll(player);
                 autostore.put(player.getPlayer(), result);
                 return result;
             }
         }
 
-        return playerDataTable.getAutoStoreAll(player);
+        return masterTable.getAutoStoreAll(player);
     }
 
     public void setStock(OfflinePlayer player, ItemStack item, int stock) {
@@ -172,7 +147,7 @@ public class PlayerData {
             getStockAll(player).put(clone, stock);
         }
 
-        threadPool.submit(() -> playerDataTable.setStock(player, clone, stock));
+        threadPool.submit(() -> masterTable.setStock(player, clone, stock));
     }
 
     public void setStockAll(OfflinePlayer player, Map<ItemStack, Integer> stock) {
@@ -188,7 +163,7 @@ public class PlayerData {
             getStockAll(player).replaceAll((item, value) -> clone.getOrDefault(item, 0));
         }
 
-        threadPool.submit(() -> playerDataTable.setStockAll(player, clone));
+        threadPool.submit(() -> masterTable.setStockAll(player, clone));
     }
 
     public void addStock(OfflinePlayer player, ItemStack item, int amount) {
@@ -201,7 +176,7 @@ public class PlayerData {
             getStockAll(player).put(clone, getStock(player, clone) + amount);
         }
 
-        threadPool.submit(() -> playerDataTable.addStock(player, clone, amount));
+        threadPool.submit(() -> masterTable.addStock(player, clone, amount));
     }
 
     public int getStock(OfflinePlayer player, ItemStack item) {
@@ -212,7 +187,7 @@ public class PlayerData {
         clone.setAmount(1);
         return player.isOnline()
                 ? getStockAll(player).getOrDefault(clone, 0)
-                : playerDataTable.getStock(player, clone); 
+                : masterTable.getStock(player, clone); 
     }
 
     public Map<ItemStack, Integer> getStockAll(OfflinePlayer player) {
@@ -220,13 +195,13 @@ public class PlayerData {
             if (stock.containsKey(player)) {
                 return stock.get(player);
             } else {
-                Map<ItemStack, Integer> result = playerDataTable.getStockAll(player);
+                Map<ItemStack, Integer> result = masterTable.getStockAll(player);
                 stock.put(player.getPlayer(), result);
                 return result;
             }
         }
 
-        return playerDataTable.getStockAll(player);
+        return masterTable.getStockAll(player);
     }
 
     public boolean storeAll(Player player) {

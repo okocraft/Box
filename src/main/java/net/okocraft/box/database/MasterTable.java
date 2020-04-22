@@ -1,16 +1,3 @@
-/*
-プレイヤーデータテーブル
-id | player | itemid | stock | autostore
-1  | uuid1  | 1      | 1     | 0
-2  | uuid2  | 1      | 1     | 0
-3  | uuid3  | 1      | 1     | 0
-4  | uuid4  | 1      | 1     | 0
-5  | uuid5  | 1      | 1     | 0
-...
-
-ロードは非同期で行い、ロード前・中にはBoxにアクセス不可とする。
-*/
-
 package net.okocraft.box.database;
 
 import java.sql.SQLException;
@@ -27,25 +14,36 @@ import org.bukkit.inventory.ItemStack;
 
 /**
  * データを主に保存しているテーブル
+ * 
+ * プレイヤーデータテーブル
+ * id | playerid | itemid | stock | autostore
+ * 1  | 1        | 1      | 1     | 0
+ * 2  | 2        | 1      | 1     | 0
+ * 3  | 3        | 1      | 1     | 0
+ * 4  | 4        | 1      | 1     | 0
+ * 5  | 5        | 1      | 1     | 0
+ * ...
  */
-class PlayerDataTable {
+class MasterTable {
 
-    private static final String TABLE = "box_playerdata";
+    private static final String TABLE = "box_master";
 
     private final Database database;
     private final ItemTable itemTable;
+    private final PlayerTable playerTable;
 
-    PlayerDataTable(Database database, ItemTable itemTable) {
+    MasterTable(Database database, ItemTable itemTable, PlayerTable playerTable) {
         this.database = database;
         this.itemTable = itemTable;
-        database.execute("CREATE TABLE IF NOT EXISTS " + TABLE + " (id INTEGER PRIMARY KEY " + (database.isSQLite() ? "AUTOINCREMENT" : "AUTO_INCREMENT") + ", player CHAR(36) NOT NULL, itemid INTEGER NOT NULL, stock INTEGER NOT NULL DEFAULT 0, autostore INTEGER NOT NULL DEFAULT 0, UNIQUE(player, itemid))");
+        this.playerTable = playerTable;
+        database.execute("CREATE TABLE IF NOT EXISTS " + TABLE + " (id INTEGER PRIMARY KEY " + (database.isSQLite() ? "AUTOINCREMENT" : "AUTO_INCREMENT") + ", playerid INTEGER NOT NULL, itemid INTEGER NOT NULL, stock INTEGER NOT NULL DEFAULT 0, autostore INTEGER NOT NULL DEFAULT 0, UNIQUE(playerid, itemid))");
     }
 
     void setAutoStoreAll(OfflinePlayer player, boolean enabled) {
         if (enabled) {
             setAutoStoreAllTrue(player, itemTable.getAllItem());
         } else {
-            database.execute("UPDATE " + TABLE + " SET autostore = 0 WHERE player = '" + player.getUniqueId() + "'");
+            database.execute("UPDATE " + TABLE + " SET autostore = 0 WHERE playerid = " + playerTable.getId(player.getUniqueId()));
         }
     }
 
@@ -74,13 +72,13 @@ class PlayerDataTable {
     }
 
     private void setAutoStoreAllTrue(OfflinePlayer player, Collection<ItemStack> items) {
-        StringBuilder sb = new StringBuilder("INSERT INTO " + TABLE + " (player, itemid, stock, autostore) VALUES ");
+        StringBuilder sb = new StringBuilder("INSERT INTO " + TABLE + " (playerid, itemid, stock, autostore) VALUES ");
         List<Integer> itemIds = items.stream().map(itemTable::getId).filter(id -> id != -1).collect(Collectors.toList());
         if (itemIds.isEmpty()) {
             return;
         }
         itemIds.forEach(itemId -> 
-                sb.append(" ('").append(player.getUniqueId().toString()).append("', ")
+                sb.append(" ('").append(playerTable.getId(player.getUniqueId())).append("', ")
                 .append(itemId).append(", 0, ").append("1").append("),")
         );
         if (sb.length() > 0) {
@@ -88,7 +86,7 @@ class PlayerDataTable {
         }
 
         if (database.isSQLite()) {
-            sb.append(" ON CONFLICT (player, itemid) DO UPDATE SET autostore = 1");
+            sb.append(" ON CONFLICT (playerid, itemid) DO UPDATE SET autostore = 1");
         } else {
             sb.append(" ON DUPLICATE KEY UPDATE autostore = 1");
         }
@@ -107,7 +105,7 @@ class PlayerDataTable {
             }
         });
         where.delete(where.length() - 2, where.length());
-        sb.append(" END WHERE player = '").append(player.getUniqueId().toString()).append("' AND itemid IN (").append(where).append(")");
+        sb.append(" END WHERE playerid = '").append(playerTable.getId(player.getUniqueId())).append("' AND itemid IN (").append(where).append(")");
 
         database.execute(sb.toString());
     }
@@ -118,7 +116,7 @@ class PlayerDataTable {
             return;
         }
         int enabledInt = enabled ? 1 : 0;
-        Boolean autostore = database.query("SELECT autostore FROM " + TABLE + " WHERE player = '" + player.getUniqueId() + "' AND itemid = " + itemId, rs -> {
+        Boolean autostore = database.query("SELECT autostore FROM " + TABLE + " WHERE playerid = '" + playerTable.getId(player.getUniqueId()) + "' AND itemid = " + itemId, rs -> {
             try {
                 if (rs.next()) {
                     return rs.getInt("autostore") == 1;
@@ -131,10 +129,10 @@ class PlayerDataTable {
 
         if (autostore == null) {
             if (enabled) {
-                database.execute("INSERT INTO " + TABLE + " (player, itemid, stock, autostore) VALUES ('" + player.getUniqueId() + "', " + itemId + ", 0, " + enabledInt + ")");
+                database.execute("INSERT INTO " + TABLE + " (playerid, itemid, stock, autostore) VALUES ('" + playerTable.getId(player.getUniqueId()) + "', " + itemId + ", 0, " + enabledInt + ")");
             }
         } else if (enabled != autostore) {
-            database.execute("UPDATE " + TABLE + " SET autostore = " + enabledInt + " WHERE player = '" + player.getUniqueId() + "' AND itemid = '" + itemId + "'");
+            database.execute("UPDATE " + TABLE + " SET autostore = " + enabledInt + " WHERE playerid = '" + playerTable.getId(player.getUniqueId()) + "' AND itemid = '" + itemId + "'");
         }
     }
 
@@ -143,7 +141,7 @@ class PlayerDataTable {
         if (itemId == -1) {
             return false;
         }
-        return database.query("SELECT autostore FROM " + TABLE + " WHERE player = '" + player.getUniqueId() + "' AND itemid = " + itemId, rs -> {
+        return database.query("SELECT autostore FROM " + TABLE + " WHERE playerid = '" + playerTable.getId(player.getUniqueId()) + "' AND itemid = " + itemId, rs -> {
             try {
                 if (rs.next()) {
                     return rs.getInt("autostore") == 1;
@@ -158,7 +156,7 @@ class PlayerDataTable {
     Map<ItemStack, Boolean> getAutoStoreAll(OfflinePlayer player) {
         Map<ItemStack, Boolean> result = new HashMap<>();
 
-        database.query("SELECT itemid, autostore FROM " + TABLE + " WHERE player = '" + player.getUniqueId() + "'", rs -> {
+        database.query("SELECT itemid, autostore FROM " + TABLE + " WHERE playerid = '" + playerTable.getId(player.getUniqueId()) + "'", rs -> {
             try {
                 while (rs.next()) {
                     result.put(itemTable.getItem(rs.getInt("itemid")), rs.getInt("autostore") == 1);
@@ -224,15 +222,15 @@ class PlayerDataTable {
             }
         });
         where.delete(where.length() - 2, where.length());
-        sb.append(" END WHERE player = '").append(player.getUniqueId().toString()).append("' AND itemid IN (").append(where).append(")");
+        sb.append(" END WHERE playerid = '").append(playerTable.getId(player.getUniqueId())).append("' AND itemid IN (").append(where).append(")");
 
         database.execute(sb.toString());
     }
 
     private void setStockAllNot0(OfflinePlayer player, Map<ItemStack, Integer> stock) {
-        StringBuilder sb = new StringBuilder("INSERT INTO " + TABLE + " (player, itemid, stock, autostore) VALUES ");
+        StringBuilder sb = new StringBuilder("INSERT INTO " + TABLE + " (playerid, itemid, stock, autostore) VALUES ");
         stock.forEach((item, value) ->  sb.append(" ('")
-                .append(player.getUniqueId().toString()).append("', ")
+                .append(playerTable.getId(player.getUniqueId())).append("', ")
                 .append(itemTable.getId(item)).append(", ")
                 .append(Objects.requireNonNullElse(value, 0)).append(", ")
                 .append("0").append("),")
@@ -242,7 +240,7 @@ class PlayerDataTable {
         }
 
         if (database.isSQLite()) {
-            sb.append(" ON CONFLICT (player, itemid) DO UPDATE SET stock = excluded.stock");
+            sb.append(" ON CONFLICT (playerid, itemid) DO UPDATE SET stock = excluded.stock");
         } else {
             sb.append(" ON DUPLICATE KEY UPDATE stock = VALUES(stock)");
         }
@@ -259,7 +257,7 @@ class PlayerDataTable {
         if (itemId == -1) {
             return 0;
         }
-        return database.query("SELECT stock FROM " + TABLE + " WHERE player = '" + player.getUniqueId() + "' AND itemid = " + itemId, rs -> {
+        return database.query("SELECT stock FROM " + TABLE + " WHERE playerid = '" + playerTable.getId(player.getUniqueId()) + "' AND itemid = " + itemId, rs -> {
             try {
                 if (rs.next()) {
                     return rs.getInt("stock");
@@ -274,7 +272,7 @@ class PlayerDataTable {
     Map<ItemStack, Integer> getStockAll(OfflinePlayer player) {
         Map<ItemStack, Integer> result = new HashMap<>();
 
-        database.query("SELECT itemid, stock FROM " + TABLE + " WHERE player = '" + player.getUniqueId() + "'", rs -> {
+        database.query("SELECT itemid, stock FROM " + TABLE + " WHERE playerid = '" + playerTable.getId(player.getUniqueId()) + "'", rs -> {
             try {
                 while (rs.next()) {
                     result.put(itemTable.getItem(rs.getInt("itemid")), rs.getInt("stock"));
