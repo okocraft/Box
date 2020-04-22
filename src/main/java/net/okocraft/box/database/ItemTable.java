@@ -13,6 +13,7 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.Base64.Encoder;
 import java.util.stream.Collectors;
@@ -279,7 +280,10 @@ final class ItemTable {
      * @return
      */
     Set<ItemStack> getAllItem() {
-        return items.values().stream().map(ItemStack::clone).collect(Collectors.toSet());
+        return items.values().stream()
+                .filter(Objects::nonNull)
+                .filter(item -> item.getItemMeta() != null)
+                .map(ItemStack::clone).collect(Collectors.toSet());
     }
 
     /**
