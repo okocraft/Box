@@ -133,7 +133,7 @@ public class PlayerData {
                 result = masterTable.getAutoStoreAll(player);
                 autostore.put(player.getPlayer(), result);
             }
-            result.keySet().removeIf(Objects::isNull);
+            result.keySet().removeIf(item -> Objects.isNull(item) || itemTable.getId(item) == -1);
             result.values().removeIf(Objects::isNull);
             return result;
         }
@@ -203,7 +203,7 @@ public class PlayerData {
                 result = masterTable.getStockAll(player);
                 stock.put(player.getPlayer(), result);
             }
-            result.keySet().removeIf(Objects::isNull);
+            result.keySet().removeIf(item -> Objects.isNull(item) || itemTable.getId(item) == -1);
             result.values().removeIf(Objects::isNull);
             return result;
         }
