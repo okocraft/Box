@@ -268,9 +268,7 @@ class CraftGUI extends CategoryGUI {
 
         Map<String, Integer> result = new HashMap<>();
         for (ItemStack ingredient : ingredients) {
-            if (ingredient == null) {
-                return Map.of();
-            }
+            setDamage(ingredient, (short) 0);
             String ingredientName = itemData.getName(ingredient);
             if (ingredientName == null) {
                 return Map.of();
@@ -279,5 +277,13 @@ class CraftGUI extends CategoryGUI {
         }
 
         return result;
+    }
+
+    private static void setDamage(ItemStack item, short damage) {
+        ItemMeta meta = item.getItemMeta();
+        if (meta != null && meta instanceof Damageable) {
+            ((Damageable) meta).setDamage(damage);
+            item.setItemMeta(meta);
+        }
     }
 }
