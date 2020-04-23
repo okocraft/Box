@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 
 import net.okocraft.box.config.Categories;
 import net.okocraft.box.config.Config;
+import net.okocraft.box.config.CraftRecipes;
 import net.okocraft.box.config.Layouts;
 import net.okocraft.box.config.Messages;
 import net.okocraft.box.config.Prices;
@@ -18,6 +19,7 @@ public final class BoxAPI {
     private final Layouts layout = new Layouts();
     private final Prices prices = new Prices();
     private final Categories categories = new Categories();
+    private final CraftRecipes craftRecipes = new CraftRecipes();
 
     private final PlayerData playerData;
     private final ItemData itemData;
@@ -47,6 +49,10 @@ public final class BoxAPI {
 
     public Categories getCategories() {
         return categories;
+    }
+
+    public CraftRecipes getCraftRecipes() {
+        return craftRecipes;
     }
 
     public PlayerData getPlayerData() {

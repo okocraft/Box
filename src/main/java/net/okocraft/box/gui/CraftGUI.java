@@ -33,14 +33,18 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.ShapelessRecipe;
+import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import net.okocraft.box.Box;
+import net.okocraft.box.config.CraftRecipes;
 
 /**
  * アイテムの取引GUIの実装
  */
 class CraftGUI extends CategoryGUI {
+
+    private final CraftRecipes craftRecipes = plugin.getAPI().getCraftRecipes();
 
     private final Map<ItemStack, Map<String, Integer>> recipes = new HashMap<>();
     private final Map<ItemStack, Integer> recipeResultAmounts = new HashMap<>();
@@ -147,18 +151,23 @@ class CraftGUI extends CategoryGUI {
                 continue;
             }
 
-            Map<String, Integer> ingredients = getIngredients(realItem);
+            Map<String, Integer> ingredients = craftRecipes.getIngredients(realItem);
+            int resultAmount = craftRecipes.getResultAmount(realItem);
+            
             if (ingredients.isEmpty()) {
-                continue;
+                ingredients = getIngredients(realItem);
+                if (ingredients.isEmpty()) {
+                    continue;
+                }
+                resultAmount = getCraftResultAmount(realItem);                
             }
 
-            int resultAmount = getCraftResultAmount(realItem);
             if (resultAmount == 0) {
                 continue;
             }
 
-            recipeResultAmounts.put(realItem, getCraftResultAmount(realItem));
-            recipes.put(realItem, getIngredients(realItem));
+            recipeResultAmounts.put(realItem, resultAmount);
+            recipes.put(realItem, ingredients);
             available.add(item);
         }
     }
@@ -202,7 +211,10 @@ class CraftGUI extends CategoryGUI {
         if (realItem == null) {
             return 0;
         }
-        Map<String, Integer> stacked = getIngredients(realItem);
+        Map<String, Integer> stacked = recipes.get(realItem);
+        if (stacked == null) {
+            return 0;
+        }
         int tempQuantity = getQuantity();
         Player player = getPlayer();
         for (Map.Entry<String, Integer> entry : stacked.entrySet()) {
@@ -229,7 +241,7 @@ class CraftGUI extends CategoryGUI {
     private Recipe getRecipeFor(ItemStack realItem) {
         List<Recipe> recipes = Bukkit.getRecipesFor(realItem);
         recipes.removeIf(recipe -> !(recipe instanceof ShapelessRecipe || recipe instanceof ShapedRecipe));
-        if (recipes.size() == 0) {
+        if (recipes.isEmpty()) {
             return null;
         }
         return recipes.get(0);
