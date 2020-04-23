@@ -115,6 +115,10 @@ public final class Messages extends CustomConfig {
         sendMessage(sender, "command.general.error.in-disabled-world");
     }
 
+    public void sendInventoryIsFull(CommandSender sender) {
+        sendMessage(sender, "command.general.error.inventory-is-full");
+    }
+
     public void sendNotEnoughArguments(CommandSender sender) {
         sendMessage(sender, "command.general.error.not-enough-arguments");
     }

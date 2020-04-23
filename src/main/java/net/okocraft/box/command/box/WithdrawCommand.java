@@ -65,9 +65,14 @@ class WithdrawCommand extends BaseCommand {
             }
         }
 
+        if (stockBefore < amount) {
+            messages.sendNotEnoughStock(sender);
+            return false;
+        }
+        
         int stock = withdraw((Player) sender, item, amount);
         if (stockBefore == stock) {
-            messages.sendNotEnoughStock(sender);
+            messages.sendInventoryIsFull(sender);
         } else {
             messages.sendWithdrawItem(sender, item, amount, stock);
         }
