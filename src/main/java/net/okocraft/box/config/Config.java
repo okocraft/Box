@@ -100,8 +100,8 @@ public final class Config extends CustomConfig {
             sound = def;
         }
 
-        float pitch = getRandomValue(key, false);
-        float volume = getRandomValue(key, true);
+        float pitch = getRandomValue(key, true);
+        float volume = getRandomValue(key, false);
 
         player.playSound(player.getLocation(), sound, SoundCategory.MASTER, volume, pitch);
     }
