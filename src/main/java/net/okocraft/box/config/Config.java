@@ -27,6 +27,30 @@ public final class Config extends CustomConfig {
         super("config.yml");
     }
 
+    public boolean usingMySQL() {
+        return get().getString("database.type", "sqlite").equalsIgnoreCase("mysql");
+    }
+
+    public String getMySQLHost() {
+        return get().getString("database.mysql-settings.host", "localhost");
+    }
+
+    public int getMySQLPort() {
+        return get().getInt("database.mysql-settings.port", 3306);
+    }
+
+    public String getMySQLUser() {
+        return get().getString("database.mysql-settings.user", "root");
+    }
+
+    public String getMySQLPass() {
+        return get().getString("database.mysql-settings.pass", "pass");
+    }
+
+    public String getMySQLDatabaseName() {
+        return get().getString("database.mysql-settings.db-name", "box_database");
+    }
+
     public List<String> getDisabledWorlds() {
         return get().getStringList("disabled-worlds");
     }

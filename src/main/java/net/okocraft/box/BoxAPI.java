@@ -27,7 +27,7 @@ public final class BoxAPI {
 
     BoxAPI() {
         reloadAllConfigs();
-        playerData = new PlayerData(Box.getInstance().getDataFolder().toPath().resolve("database.db"));
+        playerData = new PlayerData(config);
         itemData = new ItemData(playerData);
     }
 

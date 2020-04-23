@@ -1,6 +1,5 @@
 package net.okocraft.box.database;
 
-import java.nio.file.Path;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
@@ -9,11 +8,15 @@ import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
+import net.okocraft.box.Box;
+import net.okocraft.box.config.Config;
 
 public class PlayerData {
 
@@ -27,13 +30,34 @@ public class PlayerData {
 
     private final ExecutorService threadPool = Executors.newSingleThreadExecutor();
 
-    public PlayerData(Path dbPath) {
-        try {
-            this.database = new Database(dbPath);
-        } catch (SQLException e) {
-            throw new ExceptionInInitializerError(e);
+    public PlayerData(Config config) {
+        Box plugin = Box.getInstance();
+
+        Database usingDatabase = null;
+        if (config.usingMySQL()) {
+            try {
+                usingDatabase = new Database(
+                    config.getMySQLHost(),
+                    config.getMySQLPort(),
+                    config.getMySQLUser(),
+                    config.getMySQLPass(),
+                    config.getMySQLDatabaseName()
+                );
+            } catch (SQLException e) {
+                plugin.getLogger().log(Level.WARNING, "Cannot connect to MySQL server", e);
+                plugin.getLogger().warning("Switching to SQLite");
+            }
         }
 
+        if (usingDatabase == null) { 
+            try {
+                usingDatabase = new Database(plugin.getDataFolder().toPath().resolve("database.db"));
+            } catch (SQLException e) {
+                throw new ExceptionInInitializerError(e);
+            }
+        }
+
+        this.database = usingDatabase;
         this.itemTable = new ItemTable(database);
         this.playerTable = new PlayerTable(database);
         this.masterTable = new MasterTable(database, itemTable, playerTable);
