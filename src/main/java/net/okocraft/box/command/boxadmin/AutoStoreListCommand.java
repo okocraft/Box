@@ -63,7 +63,9 @@ class AutoStoreListCommand extends BaseAdminCommand {
         int page = Math.max(maxPage, (args.length >= 3 ? parseIntOrDefault(args[2], 1) : 1));
         int currentLine = Math.min(maxLine, page * 9);
         messages.sendAutoStoreListHeader(sender, player.getName(), page, currentLine, maxLine);
-        playerData.getAutoStoreAll((OfflinePlayer) sender).entrySet().stream().skip((page - 1) * 9).limit(9)
+        playerData.getAutoStoreAll((OfflinePlayer) sender).entrySet().stream()
+                .sorted((e1, e2) -> itemData.getName(e1.getKey()).compareTo(itemData.getName(e2.getKey())))
+                .skip((page - 1) * 9).limit(9)
                 .forEach(entry -> messages.sendAutoStoreListFormat(sender, entry.getKey(), entry.getValue()));
         return true;
     }
