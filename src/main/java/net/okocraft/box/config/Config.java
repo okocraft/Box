@@ -67,6 +67,10 @@ public final class Config extends CustomConfig {
         playSound(player, "sell", Sound.BLOCK_STONE_BUTTON_CLICK_ON);
     }
     
+    public void playCraftSound(Player player) {
+        playSound(player, "craft", Sound.BLOCK_ANVIL_PLACE);
+    }
+    
     public void playNotEnoughSound(Player player) {
         playSound(player, "not-enough", Sound.ENTITY_ENDERMAN_TELEPORT);
     }

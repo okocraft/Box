@@ -234,6 +234,7 @@ class CraftGUI extends CategoryGUI {
         int stock = playerData.getStock(player, realItem);
         int add = tempQuantity * recipeResultAmounts.get(realItem);
         playerData.setStock(player, realItem, stock + add);
+        config.playCraftSound(player);
         update();
         return add;
     }
