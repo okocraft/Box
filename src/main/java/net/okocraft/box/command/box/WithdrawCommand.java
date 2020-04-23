@@ -74,7 +74,7 @@ class WithdrawCommand extends BaseCommand {
         if (stockBefore == stock) {
             messages.sendInventoryIsFull(sender);
         } else {
-            messages.sendWithdrawItem(sender, item, amount, stock);
+            messages.sendWithdrawItem(sender, item, stockBefore - stock, stock);
         }
         return true;
     }
