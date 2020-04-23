@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -100,7 +101,7 @@ public class PlayerData {
     }
 
     public void setAutoStore(OfflinePlayer player, ItemStack item, boolean enabled) {
-        if (item == null) {
+        if (item == null || itemTable.getId(item) == -1) {
             return;
         }
         ItemStack clone = item.clone();
@@ -125,20 +126,23 @@ public class PlayerData {
 
     public Map<ItemStack, Boolean> getAutoStoreAll(OfflinePlayer player) {
         if (player.isOnline()) {
+            Map<ItemStack, Boolean> result;
             if (autostore.containsKey(player)) {
-                return autostore.get(player);
+                result = autostore.get(player);
             } else {
-                Map<ItemStack, Boolean> result = masterTable.getAutoStoreAll(player);
+                result = masterTable.getAutoStoreAll(player);
                 autostore.put(player.getPlayer(), result);
-                return result;
             }
+            result.keySet().removeIf(Objects::isNull);
+            result.values().removeIf(Objects::isNull);
+            return result;
         }
 
         return masterTable.getAutoStoreAll(player);
     }
 
     public void setStock(OfflinePlayer player, ItemStack item, int stock) {
-        if (item == null) {
+        if (item == null || itemTable.getId(item) == -1) {
             return;
         }
         ItemStack clone = item.clone();
@@ -192,13 +196,16 @@ public class PlayerData {
 
     public Map<ItemStack, Integer> getStockAll(OfflinePlayer player) {
         if (player.isOnline()) {
+            Map<ItemStack, Integer> result;
             if (stock.containsKey(player)) {
-                return stock.get(player);
+                result = stock.get(player);
             } else {
-                Map<ItemStack, Integer> result = masterTable.getStockAll(player);
+                result = masterTable.getStockAll(player);
                 stock.put(player.getPlayer(), result);
-                return result;
             }
+            result.keySet().removeIf(Objects::isNull);
+            result.values().removeIf(Objects::isNull);
+            return result;
         }
 
         return masterTable.getStockAll(player);
