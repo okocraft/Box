@@ -8,6 +8,7 @@ id | item
 package net.okocraft.box.database;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Base64;
 import java.util.HashMap;
@@ -53,7 +54,7 @@ final class ItemTable {
 
     ItemTable(@NotNull Database database) {
         this.database = database;
-        database.execute("CREATE TABLE IF NOT EXISTS " + TABLE + " (id INTEGER PRIMARY KEY " + (database.isSQLite() ? "AUTOINCREMENT" : "AUTO_INCREMENT") + ", item TEXT UNIQUE NOT NULL, customname TEXT UNIQUE)");
+        database.execute("CREATE TABLE IF NOT EXISTS " + TABLE + " (id INTEGER PRIMARY KEY " + (database.isSQLite() ? "AUTOINCREMENT" : "AUTO_INCREMENT") + ", item VARCHAR(4096) NOT NULL, customname VARCHAR(255) UNIQUE)");
         loadItems();
         updateItems();
         addDefaultItems();
@@ -191,11 +192,17 @@ final class ItemTable {
             return id;
         }
 
-        String sql = "INSERT INTO " + TABLE + " (item) VALUES ('" + toString(item) + "')";
+        String itemCode = toString(item);
+        if (itemCode.length() > 4096) {
+            return -1;
+        }
+
+        String sql = "INSERT INTO " + TABLE + " (item) VALUES ('" + itemCode + "')";
         try (PreparedStatement preparedStatement = database.getConnection().prepareStatement(sql,
                 java.sql.Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.executeUpdate();
-            id = preparedStatement.getGeneratedKeys().getInt(1);
+            ResultSet rs = preparedStatement.getGeneratedKeys();
+            id = rs.next() ? rs.getInt(1) : -1;
         } catch (SQLException e) {
             System.err.println("Error occurred on executing SQL: " + sql);
             e.printStackTrace();
