@@ -229,10 +229,6 @@ public final class Messages extends CustomConfig {
         sendMessage(sender, "command.box.version.info.format", Map.of("%version%", version));
     }
 
-    public void sendChooseChest(CommandSender sender) {
-        sendMessage(sender, "command.boxadmin.add-category.info.choose-chest");
-    }
-
     public void sendReloadSuccess(CommandSender sender) {
         sendMessage(sender, "command.boxadmin.reload.info.success");
     }
