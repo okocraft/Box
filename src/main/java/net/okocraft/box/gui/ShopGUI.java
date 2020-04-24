@@ -51,7 +51,7 @@ class ShopGUI extends CategoryGUI {
      * @param quantity     引き出し・預け入れ量
      * @throws IllegalArgumentException カテゴリ名が登録されていないとき。
      */
-    public ShopGUI(Player player, String categoryName, int quantity) throws IllegalArgumentException {
+    ShopGUI(Player player, String categoryName, int quantity) throws IllegalArgumentException {
         super(player, categoryName, Box.getInstance().getAPI().getLayouts().getShopGUITitle().replaceAll("%category-name%", categoryName), quantity);
         
         @SuppressWarnings("serial")
@@ -141,7 +141,7 @@ class ShopGUI extends CategoryGUI {
 
 
     @Override
-    protected ItemStack applyPlaceholder(ItemStack item, Map<String, String> placeholder) {
+    ItemStack applyPlaceholder(ItemStack item, Map<String, String> placeholder) {
         placeholder.put("%category-name%", getCategoryName());
         placeholder.put("%balance%", String.valueOf(economy.getBalance(getPlayer())));
         

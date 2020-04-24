@@ -82,11 +82,11 @@ public abstract class BaseGUI implements InventoryHolder {
         this.GUI = Bukkit.createInventory(this, GUISize, Objects.requireNonNullElse(title, ""));
     }
 
-    public int getPage() {
+    int getPage() {
         return page;
     }
 
-    public int getMaxPage() {
+    int getMaxPage() {
         return maxPage;
     }
 
@@ -95,7 +95,7 @@ public abstract class BaseGUI implements InventoryHolder {
      * 
      * @return 不変な共通アイテムのマップ
      */
-    public Map<Integer, ItemStack> getPageCommonItems() {
+    Map<Integer, ItemStack> getPageCommonItems() {
         return Collections.unmodifiableMap(pageCommonItems);
     }
 
@@ -104,7 +104,7 @@ public abstract class BaseGUI implements InventoryHolder {
      * 
      * @return 不変な非共通アイテムのリスト
      */
-    public List<ItemStack> getItems() {
+    List<ItemStack> getItems() {
         return Collections.unmodifiableList(items);
     }
 
@@ -114,7 +114,7 @@ public abstract class BaseGUI implements InventoryHolder {
      * @param slot アイテムを追加するスロット
      * @param item 追加するアイテム
      */
-    public void putPageCommonItem(int slot, ItemStack item) {
+    void putPageCommonItem(int slot, ItemStack item) {
         pageCommonItems.put(slot, item);
         pagedItems = paged();
     }
@@ -126,7 +126,7 @@ public abstract class BaseGUI implements InventoryHolder {
      * 
      * @param entries スロットとアイテムのマップ
      */
-    public void putPageCommonItems(Map<Integer, ItemStack> entries) {
+    void putPageCommonItems(Map<Integer, ItemStack> entries) {
         pageCommonItems.putAll(entries);
         pagedItems = paged();
     }
@@ -136,7 +136,7 @@ public abstract class BaseGUI implements InventoryHolder {
      * 
      * @param slot 共通なアイテムが有るスロット、なければ何もしない
      */
-    public void removePageCommonItem(int slot) {
+    void removePageCommonItem(int slot) {
         if (pageCommonItems.remove(slot) != null) {
             pagedItems = paged();
         }
@@ -149,7 +149,7 @@ public abstract class BaseGUI implements InventoryHolder {
      * 
      * @param slots 共通のアイテムがあるスロットの集合
      */
-    public void removePageCommmonItems(Collection<Integer> slots) {
+    void removePageCommmonItems(Collection<Integer> slots) {
         boolean modified = false;
         for (Integer slot : slots) {
             if (pageCommonItems.remove(slot) != null) {
@@ -167,7 +167,7 @@ public abstract class BaseGUI implements InventoryHolder {
      * 
      * @param item 消すアイテム
      */
-    public void removePageCommonItem(ItemStack item) {
+    void removePageCommonItem(ItemStack item) {
         boolean modified = false;
         for (Map.Entry<Integer, ItemStack> entry : new HashMap<>(pageCommonItems).entrySet()) {
             if (item.equals(entry.getValue())) {
@@ -187,7 +187,7 @@ public abstract class BaseGUI implements InventoryHolder {
      * 
      * @param item 追加するアイテム
      */
-    public void addItem(ItemStack item) {
+    void addItem(ItemStack item) {
         if (items.add(item)) {
             pagedItems = paged();
         }
@@ -200,7 +200,7 @@ public abstract class BaseGUI implements InventoryHolder {
      * 
      * @param itemCollection 追加するアイテムの集合
      */
-    public void addAllItem(Collection<ItemStack> itemCollection) {
+    void addAllItem(Collection<ItemStack> itemCollection) {
         if (items.addAll(itemCollection)) {
             pagedItems = paged();
         }
@@ -211,7 +211,7 @@ public abstract class BaseGUI implements InventoryHolder {
      * 
      * @param item 消すアイテム
      */
-    public void removeItem(ItemStack item) {
+    void removeItem(ItemStack item) {
         if (items.remove(item)) {
             pagedItems = paged();
         }
@@ -225,13 +225,13 @@ public abstract class BaseGUI implements InventoryHolder {
      * 
      * @param itemCollection 消すアイテムの集合
      */
-    public void removeAllItem(Collection<ItemStack> itemCollection) {
+    void removeAllItem(Collection<ItemStack> itemCollection) {
         if (items.removeAll(itemCollection)) {
             pagedItems = paged();
         }
     }
 
-    public void clearItems() {
+    void clearItems() {
         items.clear();
         pagedItems = paged();
     }
@@ -241,7 +241,7 @@ public abstract class BaseGUI implements InventoryHolder {
      * 
      * @param page 目的のページ
      */
-    public void setPage(int page) {
+    void setPage(int page) {
         this.page = Math.min(maxPage, Math.max(1, page));
         List<ItemStack> pageItems = getPageItems(this.page);
         GUI.setContents(pageItems.toArray(new ItemStack[pageItems.size()]));
@@ -254,7 +254,7 @@ public abstract class BaseGUI implements InventoryHolder {
      * @param placeholder 適応するプレースホルダ。サブクラスで中身を増やすことがあるため、{@code Map.of()} などの容量不変のマップを引数に渡さないこと。
      * @return 適応後のアイテム
      */
-    protected ItemStack applyPlaceholder(ItemStack item, Map<String, String> placeholder) {
+    ItemStack applyPlaceholder(ItemStack item, Map<String, String> placeholder) {
         if (item == null || item.getItemMeta() == null || placeholder.isEmpty()) {
             return item;
         }
@@ -278,7 +278,7 @@ public abstract class BaseGUI implements InventoryHolder {
         return item;
     }
 
-    protected ItemStack applyPlaceholder(ItemStack item) {
+    ItemStack applyPlaceholder(ItemStack item) {
         return applyPlaceholder(item, new HashMap<>());
     }
 
@@ -317,7 +317,7 @@ public abstract class BaseGUI implements InventoryHolder {
      * @param page ページ
      * @return スロット番号通りに並べられたアイテムリスト
      */
-    protected List<ItemStack> getRawPageItems(int page) {
+    List<ItemStack> getRawPageItems(int page) {
         // subListメソッドにおけるIndexOutOfBoundExceptionの条件を網羅する。
         if (page > maxPage) {
             page = maxPage;
@@ -334,7 +334,7 @@ public abstract class BaseGUI implements InventoryHolder {
      * @param page ページ
      * @return スロット番号通りに並べられたアイテムリスト
      */
-    public List<ItemStack> getPageItems(int page) {
+    List<ItemStack> getPageItems(int page) {
         List<ItemStack> result = getRawPageItems(page);
         result.replaceAll(item -> item != null ? applyPlaceholder(item) : null);
         return result;

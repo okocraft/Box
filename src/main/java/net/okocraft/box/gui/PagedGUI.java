@@ -24,7 +24,7 @@ abstract class PagedGUI extends BaseGUI implements Clickable {
      * @param player       カテゴリ選択GUIでアイコンをクリックしたプレイヤー
      * @param guiTitle     GUIのタイトル
      */
-    public PagedGUI(Player player, String guiTitle, int GUISize, int previousPageSlot, int nextPageSlot) {
+    PagedGUI(Player player, String guiTitle, int GUISize, int previousPageSlot, int nextPageSlot) {
         super(GUISize, guiTitle);
 
         this.previousPageSlot = previousPageSlot;
@@ -53,7 +53,7 @@ abstract class PagedGUI extends BaseGUI implements Clickable {
         }
     }
 
-    protected ItemStack applyPagePlaceholder(ItemStack item, Map<String, String> placeholder) {
+    ItemStack applyPagePlaceholder(ItemStack item, Map<String, String> placeholder) {
         placeholder.put("%page%", String.valueOf(getPage()));
         placeholder.put("%next-page%", String.valueOf(getPage() + 1));
         placeholder.put("%previous-page%", String.valueOf(getPage() - 1));
@@ -62,7 +62,7 @@ abstract class PagedGUI extends BaseGUI implements Clickable {
     }
 
     @Override
-    public void setPage(int page) {
+    void setPage(int page) {
         super.setPage(page);
         updatePageArrowIcon(true);
         updatePageArrowIcon(false);
@@ -89,7 +89,7 @@ abstract class PagedGUI extends BaseGUI implements Clickable {
      * 
      * @return このGUIを開いたプレイヤー
      */
-    public Player getPlayer() {
+    Player getPlayer() {
         return player;
     }
 }

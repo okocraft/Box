@@ -36,7 +36,7 @@ abstract class QuantityGUI extends BackMenuButtomGUI {
 
     private int quantity = 1;
 
-    public QuantityGUI(Player player, String guiTitle, int GUISize, int quantity, int previousPageSlot,
+    QuantityGUI(Player player, String guiTitle, int GUISize, int quantity, int previousPageSlot,
             int nextPageSlot, int backMenuSlot, int decreaseSlot, int changeUnitSlot, int increaseSlot) {
         super(player, guiTitle, GUISize, previousPageSlot, nextPageSlot, backMenuSlot);
         // super(player, guiTitle, 54, 45, 53);
@@ -79,13 +79,13 @@ abstract class QuantityGUI extends BackMenuButtomGUI {
     }
 
     @Override
-    protected ItemStack applyPlaceholder(ItemStack item, Map<String, String> placeholder) {
+    ItemStack applyPlaceholder(ItemStack item, Map<String, String> placeholder) {
         placeholder.put("%quantity%", String.valueOf(quantity));
         return super.applyPlaceholder(item, placeholder);
     }
 
     @Override
-    public void setPage(int page) {
+    void setPage(int page) {
         int decreaseAmount = 1;
         int increaseAmount = 1;
         ItemStack decreaseItem = getInventory().getItem(decreaseSlot);
@@ -135,7 +135,7 @@ abstract class QuantityGUI extends BackMenuButtomGUI {
      * 
      * @return 取引量
      */
-    public int getQuantity() {
+    int getQuantity() {
         return quantity;
     }
 }

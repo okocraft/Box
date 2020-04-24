@@ -77,7 +77,7 @@ public final class CategorySelectorGUI extends BaseGUI implements Clickable {
     }
 
     @Override
-    protected ItemStack applyPlaceholder(ItemStack item, Map<String, String> placeholder) {
+    ItemStack applyPlaceholder(ItemStack item, Map<String, String> placeholder) {
         String categoryName = getCategoryName(item);
         if (categoryName != null) {
             placeholder.put("%category-name%", categoryName);

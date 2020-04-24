@@ -44,7 +44,7 @@ class StrageGUI extends CategoryGUI {
      * @param quantity     引き出し・預け入れ量
      * @throws IllegalArgumentException カテゴリ名が登録されていないとき。
      */
-    public StrageGUI(Player player, String categoryName, int quantity) throws IllegalArgumentException {
+    StrageGUI(Player player, String categoryName, int quantity) throws IllegalArgumentException {
         super(player, categoryName, Box.getInstance().getAPI().getLayouts().getStrageGUITitle().replaceAll("%category-name%", categoryName), quantity);
         
         @SuppressWarnings("serial")
@@ -99,7 +99,7 @@ class StrageGUI extends CategoryGUI {
     }
 
     @Override
-    protected ItemStack applyPlaceholder(ItemStack item, Map<String, String> placeholder) {
+    ItemStack applyPlaceholder(ItemStack item, Map<String, String> placeholder) {
         placeholder.put("%item-name%", Objects.requireNonNullElse(getRealItemName(item), item.getType().toString()));
         placeholder.put("%category-name%", getCategoryName());
         ItemStack realItem = getRealItem(item);

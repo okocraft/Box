@@ -59,7 +59,7 @@ class CraftGUI extends CategoryGUI {
      * @param quantity     引き出し・預け入れ量
      * @throws IllegalArgumentException カテゴリ名が登録されていないとき。
      */
-    public CraftGUI(Player player, String categoryName, int quantity) throws IllegalArgumentException {
+    CraftGUI(Player player, String categoryName, int quantity) throws IllegalArgumentException {
         super(player, categoryName, Box.getInstance().getAPI().getLayouts().getCraftGUITitle().replaceAll("%category-name%", categoryName), quantity);
         
         @SuppressWarnings("serial")
@@ -132,7 +132,7 @@ class CraftGUI extends CategoryGUI {
     }
 
     @Override
-    protected ItemStack applyPlaceholder(ItemStack item, Map<String, String> placeholder) {
+    ItemStack applyPlaceholder(ItemStack item, Map<String, String> placeholder) {
         placeholder.put("%category-name%", getCategoryName());
         
         ItemStack realItem = getRealItem(item);

@@ -24,7 +24,7 @@ abstract class BackMenuButtomGUI extends PagedGUI {
      * @param nextPageSlot     次のページに進むアイテムのスロット
      * @param backMenuSlot     前のメニューに戻るアイテムのスロット
      */
-    public BackMenuButtomGUI(Player player, String guiTitle, int GUISize, int previousPageSlot, int nextPageSlot,
+    BackMenuButtomGUI(Player player, String guiTitle, int GUISize, int previousPageSlot, int nextPageSlot,
             int backMenuSlot) {
         super(player, guiTitle, GUISize, previousPageSlot, nextPageSlot);
 
