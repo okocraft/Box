@@ -52,7 +52,7 @@ class Database {
 
         // login data
         config.setDriverClassName("com.mysql.jdbc.Driver");
-        config.setJdbcUrl("jdbc:mysql://" + host + ":" + port + "/" + dbName + "?autoReconnect=true&useSSL=false");
+        config.setJdbcUrl("jdbc:mysql://" + host + ":" + port + "/" + dbName + "?autoReconnect=true&allowPublicKeyRetrieval=true&useSSL=false");
         config.setUsername(user);
         config.setPassword(password);
 
