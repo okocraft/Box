@@ -19,8 +19,8 @@
 <script type="text/javascript" src="../../../../script-dir/jquery-ui.js"></script>
 </head>
 <body class="class-declaration">
-<script type="text/javascript">var data = {"i0":9,"i1":10,"i2":10,"i3":10,"i4":9};
-var tabs = {65535:["t0","\u3059\u3079\u3066\u306E\u30E1\u30BD\u30C3\u30C9"],1:["t1","static\u30E1\u30BD\u30C3\u30C9"],2:["t2","\u30A4\u30F3\u30B9\u30BF\u30F3\u30B9\u30FB\u30E1\u30BD\u30C3\u30C9"],8:["t4","concrete\u30E1\u30BD\u30C3\u30C9"]};
+<script type="text/javascript">var data = {"i0":9,"i1":9};
+var tabs = {65535:["t0","\u3059\u3079\u3066\u306E\u30E1\u30BD\u30C3\u30C9"],1:["t1","static\u30E1\u30BD\u30C3\u30C9"],8:["t4","concrete\u30E1\u30BD\u30C3\u30C9"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
 var tableTab = "tableTab";
@@ -109,7 +109,7 @@ extends <a href="https://docs.oracle.com/javase/10/docs/api/java.base/java/lang/
 </a>
 <h2>メソッドの概要</h2>
 <div class="memberSummary">
-<div role="tablist" aria-orientation="horizontal"><button role="tab" aria-selected="true" aria-controls="memberSummary_tabpanel" tabindex="0" onkeydown="switchTab(event)" id="t0" class="activeTableTab">すべてのメソッド</button><button role="tab" aria-selected="false" aria-controls="memberSummary_tabpanel" tabindex="-1" onkeydown="switchTab(event)" id="t1" class="tableTab" onclick="show(1);">staticメソッド</button><button role="tab" aria-selected="false" aria-controls="memberSummary_tabpanel" tabindex="-1" onkeydown="switchTab(event)" id="t2" class="tableTab" onclick="show(2);">インスタンス・メソッド</button><button role="tab" aria-selected="false" aria-controls="memberSummary_tabpanel" tabindex="-1" onkeydown="switchTab(event)" id="t4" class="tableTab" onclick="show(8);">concreteメソッド</button></div>
+<div role="tablist" aria-orientation="horizontal"><button role="tab" aria-selected="true" aria-controls="memberSummary_tabpanel" tabindex="0" onkeydown="switchTab(event)" id="t0" class="activeTableTab">すべてのメソッド</button><button role="tab" aria-selected="false" aria-controls="memberSummary_tabpanel" tabindex="-1" onkeydown="switchTab(event)" id="t1" class="tableTab" onclick="show(1);">staticメソッド</button><button role="tab" aria-selected="false" aria-controls="memberSummary_tabpanel" tabindex="-1" onkeydown="switchTab(event)" id="t4" class="tableTab" onclick="show(8);">concreteメソッド</button></div>
 <div id="memberSummary_tabpanel" role="tabpanel">
 <table aria-labelledby="t0">
 <thead>
@@ -128,33 +128,6 @@ extends <a href="https://docs.oracle.com/javase/10/docs/api/java.base/java/lang/
 </td>
 </tr>
 <tr class="rowColor" id="i1">
-<td class="colFirst"><code>net.okocraft.box.gui.CraftGUI</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getCraftGUICache(java.lang.String,int,int)">getCraftGUICache</a></span>&#8203;(<a href="https://docs.oracle.com/javase/10/docs/api/java.base/java/lang/String.html?is-external=true" title="java.lang内のクラスまたはインタフェース" class="externalLink">String</a>&nbsp;categoryName,
-int&nbsp;quantity,
-int&nbsp;page)</code></th>
-<td class="colLast">
-<div class="block">クラフトGUIのキャッシュを取得する。</div>
-</td>
-</tr>
-<tr class="altColor" id="i2">
-<td class="colFirst"><code>net.okocraft.box.gui.ShopGUI</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getShopGUICache(java.lang.String,int,int)">getShopGUICache</a></span>&#8203;(<a href="https://docs.oracle.com/javase/10/docs/api/java.base/java/lang/String.html?is-external=true" title="java.lang内のクラスまたはインタフェース" class="externalLink">String</a>&nbsp;categoryName,
-int&nbsp;quantity,
-int&nbsp;page)</code></th>
-<td class="colLast">
-<div class="block">ショップGUIのキャッシュを取得する。</div>
-</td>
-</tr>
-<tr class="rowColor" id="i3">
-<td class="colFirst"><code>net.okocraft.box.gui.StrageGUI</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getStrageGUICache(java.lang.String,int,int)">getStrageGUICache</a></span>&#8203;(<a href="https://docs.oracle.com/javase/10/docs/api/java.base/java/lang/String.html?is-external=true" title="java.lang内のクラスまたはインタフェース" class="externalLink">String</a>&nbsp;categoryName,
-int&nbsp;quantity,
-int&nbsp;page)</code></th>
-<td class="colLast">
-<div class="block">ストレージGUIのキャッシュを取得する。</div>
-</td>
-</tr>
-<tr class="altColor" id="i4">
 <td class="colFirst"><code>static void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#removeCache(org.bukkit.entity.Player)">removeCache</a></span>&#8203;(<a href="https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/Player.html?is-external=true" title="org.bukkit.entity内のクラスまたはインタフェース" class="externalLink">Player</a>&nbsp;player)</code></th>
 <td class="colLast">
@@ -205,57 +178,6 @@ int&nbsp;page)</code></th>
 <dl>
 <dt><span class="paramLabel">パラメータ:</span></dt>
 <dd><code>player</code> - プレイヤー</dd>
-</dl>
-</section>
-</li>
-<li class="blockList">
-<section class="detail">
-<h3><a id="getStrageGUICache(java.lang.String,int,int)">getStrageGUICache</a></h3>
-<div class="memberSignature"><span class="modifiers">public</span>&nbsp;<span class="returnType">net.okocraft.box.gui.StrageGUI</span>&nbsp;<span class="memberName">getStrageGUICache</span>&#8203;(<span class="arguments"><a href="https://docs.oracle.com/javase/10/docs/api/java.base/java/lang/String.html?is-external=true" title="java.lang内のクラスまたはインタフェース" class="externalLink">String</a>&nbsp;categoryName,
-int&nbsp;quantity,
-int&nbsp;page)</span></div>
-<div class="block">ストレージGUIのキャッシュを取得する。</div>
-<dl>
-<dt><span class="paramLabel">パラメータ:</span></dt>
-<dd><code>categoryName</code> - キャッシュを取得するGUIのカテゴリ</dd>
-<dd><code>quantity</code> - 取得したGUIに適応するquantity</dd>
-<dd><code>page</code> - 取得したGUIが開いているべきページ</dd>
-<dt><span class="returnLabel">戻り値:</span></dt>
-<dd>GUIのインスタンス</dd>
-</dl>
-</section>
-</li>
-<li class="blockList">
-<section class="detail">
-<h3><a id="getShopGUICache(java.lang.String,int,int)">getShopGUICache</a></h3>
-<div class="memberSignature"><span class="modifiers">public</span>&nbsp;<span class="returnType">net.okocraft.box.gui.ShopGUI</span>&nbsp;<span class="memberName">getShopGUICache</span>&#8203;(<span class="arguments"><a href="https://docs.oracle.com/javase/10/docs/api/java.base/java/lang/String.html?is-external=true" title="java.lang内のクラスまたはインタフェース" class="externalLink">String</a>&nbsp;categoryName,
-int&nbsp;quantity,
-int&nbsp;page)</span></div>
-<div class="block">ショップGUIのキャッシュを取得する。</div>
-<dl>
-<dt><span class="paramLabel">パラメータ:</span></dt>
-<dd><code>categoryName</code> - キャッシュを取得するGUIのカテゴリ</dd>
-<dd><code>quantity</code> - 取得したGUIに適応するquantity</dd>
-<dd><code>page</code> - 取得したGUIが開いているべきページ</dd>
-<dt><span class="returnLabel">戻り値:</span></dt>
-<dd>GUIのインスタンス</dd>
-</dl>
-</section>
-</li>
-<li class="blockList">
-<section class="detail">
-<h3><a id="getCraftGUICache(java.lang.String,int,int)">getCraftGUICache</a></h3>
-<div class="memberSignature"><span class="modifiers">public</span>&nbsp;<span class="returnType">net.okocraft.box.gui.CraftGUI</span>&nbsp;<span class="memberName">getCraftGUICache</span>&#8203;(<span class="arguments"><a href="https://docs.oracle.com/javase/10/docs/api/java.base/java/lang/String.html?is-external=true" title="java.lang内のクラスまたはインタフェース" class="externalLink">String</a>&nbsp;categoryName,
-int&nbsp;quantity,
-int&nbsp;page)</span></div>
-<div class="block">クラフトGUIのキャッシュを取得する。</div>
-<dl>
-<dt><span class="paramLabel">パラメータ:</span></dt>
-<dd><code>categoryName</code> - キャッシュを取得するGUIのカテゴリ</dd>
-<dd><code>quantity</code> - 取得したGUIに適応するquantity</dd>
-<dd><code>page</code> - 取得したGUIが開いているべきページ</dd>
-<dt><span class="returnLabel">戻り値:</span></dt>
-<dd>GUIのインスタンス</dd>
 </dl>
 </section>
 </li>

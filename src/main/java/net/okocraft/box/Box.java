@@ -31,6 +31,8 @@ import net.okocraft.box.listeners.PlayerListener;
 import net.okocraft.box.listeners.Replant;
 
 /**
+ * Boxプラグインのメインクラス。
+ * 
  * @author OKOCRAFT
  */
 public class Box extends JavaPlugin {
@@ -106,6 +108,11 @@ public class Box extends JavaPlugin {
         new Replant().start();
     }
 
+    /**
+     * Boxの設定とデータベースにアクセスできるAPIクラスを返す。
+     * 
+     * @return api
+     */
     public BoxAPI getAPI() {
         return api;
     }

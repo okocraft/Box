@@ -53,7 +53,7 @@ public final class GUICache {
      * @param page 取得したGUIが開いているべきページ
      * @return GUIのインスタンス
      */
-    public StrageGUI getStrageGUICache(String categoryName, int quantity, int page) {
+    StrageGUI getStrageGUICache(String categoryName, int quantity, int page) {
         StrageGUI result = categoryStrageGUIMap.get(categoryName);
         if (result == null) {
             result = new StrageGUI(owner, categoryName, quantity);
@@ -72,7 +72,7 @@ public final class GUICache {
      * @param page 取得したGUIが開いているべきページ
      * @return GUIのインスタンス
      */
-    public ShopGUI getShopGUICache(String categoryName, int quantity, int page) {
+    ShopGUI getShopGUICache(String categoryName, int quantity, int page) {
         ShopGUI result = categoryShopGUIMap.get(categoryName);
         if (result == null) {
             result = new ShopGUI(owner, categoryName, quantity);
@@ -91,7 +91,7 @@ public final class GUICache {
      * @param page 取得したGUIが開いているべきページ
      * @return GUIのインスタンス
      */
-    public CraftGUI getCraftGUICache(String categoryName, int quantity, int page) {
+    CraftGUI getCraftGUICache(String categoryName, int quantity, int page) {
         CraftGUI result = categoryCraftGUIMap.get(categoryName);
         if (result == null) {
             result = new CraftGUI(owner, categoryName, quantity);

@@ -20,7 +20,7 @@ package net.okocraft.box.command.boxadmin;
 
 import net.okocraft.box.command.BaseCommand;
 
-public abstract class BaseAdminCommand extends BaseCommand {
+abstract class BaseAdminCommand extends BaseCommand {
     
     protected BaseAdminCommand(String name, String permissionNode, int leastArgLength, boolean isPlayerOnly,
             String usage, String[] alias) {

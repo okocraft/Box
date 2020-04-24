@@ -12,6 +12,9 @@ import net.okocraft.box.database.ItemData;
 import net.okocraft.box.database.PlayerData;
 import net.okocraft.box.gui.GUICache;
 
+/**
+ * BoxプラグインのAPIクラス。{@code Box.getInstance().getAPI()}からアクセスできる。
+ */
 @SuppressWarnings("deprecation")
 public final class BoxAPI {
 
@@ -34,7 +37,6 @@ public final class BoxAPI {
 
     /**
      * {@code config.yml}の設定内容を取得するクラスを返す。
-     * データベース設定や、全体的に作用する設定を取得できる。
      * 
      * @return config
      */
@@ -44,7 +46,6 @@ public final class BoxAPI {
 
     /**
      * {@code messages.yml}の設定内容を取得・使用できるクラスを返す。
-     * メッセージの取得、またはそれを送信するメソッドを利用できる。
      * 
      * @return messages
      */
@@ -54,7 +55,6 @@ public final class BoxAPI {
 
     /**
      * {@code layout.yml}の設定内容を取得するクラスを返す。
-     * GUIに並ぶアイテムの表示名や説明文のフォーマットを取得できる。
      * 
      * @return layout
      */
@@ -64,7 +64,6 @@ public final class BoxAPI {
 
     /**
      * {@code prices.yml}の設定内容を取得するクラスを返す。
-     * 販売価格と買取価格の設定を取得できる。
      * 
      * @return prices
      */
@@ -74,7 +73,6 @@ public final class BoxAPI {
 
     /**
      * {@code categories.yml}の設定内容を取得するクラスを返す。
-     * GUIに実際に並び、取引可能なアイテムを取得できる。
      * 
      * @return categories
      */
@@ -84,7 +82,6 @@ public final class BoxAPI {
 
     /**
      * {@code crafrrecipes.yml}の設定内容を取得するクラスを返す。
-     * クラフトGUIにおいて、デフォルトで適応されるレシピを上書きするために利用される。
      * 
      * @return crafrRecipes
      */
@@ -94,7 +91,6 @@ public final class BoxAPI {
 
     /**
      * プレイヤーのデータを設定・取得できるクラスを返す。
-     * プレイヤーのデータとは、autostoreデータやstockデータなど。
      * 
      * @return playerData
      */

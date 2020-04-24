@@ -14,7 +14,10 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import net.okocraft.box.Box;
 
-public class Categories extends CustomConfig {
+/**
+ * GUIに実際に並び、取引可能なアイテムを取得できる。
+ */
+public final class Categories extends CustomConfig {
 
     private final Box plugin = Box.getInstance();
 

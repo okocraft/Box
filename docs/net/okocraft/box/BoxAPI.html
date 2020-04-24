@@ -99,6 +99,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <hr>
 <pre>public final class <span class="typeNameLabel">BoxAPI</span>
 extends <a href="https://docs.oracle.com/javase/10/docs/api/java.base/java/lang/Object.html?is-external=true" title="java.lang内のクラスまたはインタフェース" class="externalLink">Object</a></pre>
+<div class="block">BoxプラグインのAPIクラス。<code>Box.getInstance().getAPI()</code>からアクセスできる。</div>
 </section>
 <section class="summary">
 <ul class="blockList">
@@ -209,8 +210,7 @@ extends <a href="https://docs.oracle.com/javase/10/docs/api/java.base/java/lang/
 <section class="detail">
 <h3><a id="getConfig()">getConfig</a></h3>
 <div class="memberSignature"><span class="modifiers">public</span>&nbsp;<span class="returnType"><a href="config/Config.html" title="net.okocraft.box.config内のクラス">Config</a></span>&nbsp;<span class="memberName">getConfig</span>()</div>
-<div class="block"><code>config.yml</code>の設定内容を取得するクラスを返す。
- データベース設定や、全体的に作用する設定を取得できる。</div>
+<div class="block"><code>config.yml</code>の設定内容を取得するクラスを返す。</div>
 <dl>
 <dt><span class="returnLabel">戻り値:</span></dt>
 <dd>config</dd>
@@ -221,8 +221,7 @@ extends <a href="https://docs.oracle.com/javase/10/docs/api/java.base/java/lang/
 <section class="detail">
 <h3><a id="getMessages()">getMessages</a></h3>
 <div class="memberSignature"><span class="modifiers">public</span>&nbsp;<span class="returnType"><a href="config/Messages.html" title="net.okocraft.box.config内のクラス">Messages</a></span>&nbsp;<span class="memberName">getMessages</span>()</div>
-<div class="block"><code>messages.yml</code>の設定内容を取得・使用できるクラスを返す。
- メッセージの取得、またはそれを送信するメソッドを利用できる。</div>
+<div class="block"><code>messages.yml</code>の設定内容を取得・使用できるクラスを返す。</div>
 <dl>
 <dt><span class="returnLabel">戻り値:</span></dt>
 <dd>messages</dd>
@@ -233,8 +232,7 @@ extends <a href="https://docs.oracle.com/javase/10/docs/api/java.base/java/lang/
 <section class="detail">
 <h3><a id="getLayouts()">getLayouts</a></h3>
 <div class="memberSignature"><span class="modifiers">public</span>&nbsp;<span class="returnType"><a href="config/Layouts.html" title="net.okocraft.box.config内のクラス">Layouts</a></span>&nbsp;<span class="memberName">getLayouts</span>()</div>
-<div class="block"><code>layout.yml</code>の設定内容を取得するクラスを返す。
- GUIに並ぶアイテムの表示名や説明文のフォーマットを取得できる。</div>
+<div class="block"><code>layout.yml</code>の設定内容を取得するクラスを返す。</div>
 <dl>
 <dt><span class="returnLabel">戻り値:</span></dt>
 <dd>layout</dd>
@@ -245,8 +243,7 @@ extends <a href="https://docs.oracle.com/javase/10/docs/api/java.base/java/lang/
 <section class="detail">
 <h3><a id="getPrices()">getPrices</a></h3>
 <div class="memberSignature"><span class="modifiers">public</span>&nbsp;<span class="returnType"><a href="config/Prices.html" title="net.okocraft.box.config内のクラス">Prices</a></span>&nbsp;<span class="memberName">getPrices</span>()</div>
-<div class="block"><code>prices.yml</code>の設定内容を取得するクラスを返す。
- 販売価格と買取価格の設定を取得できる。</div>
+<div class="block"><code>prices.yml</code>の設定内容を取得するクラスを返す。</div>
 <dl>
 <dt><span class="returnLabel">戻り値:</span></dt>
 <dd>prices</dd>
@@ -257,8 +254,7 @@ extends <a href="https://docs.oracle.com/javase/10/docs/api/java.base/java/lang/
 <section class="detail">
 <h3><a id="getCategories()">getCategories</a></h3>
 <div class="memberSignature"><span class="modifiers">public</span>&nbsp;<span class="returnType"><a href="config/Categories.html" title="net.okocraft.box.config内のクラス">Categories</a></span>&nbsp;<span class="memberName">getCategories</span>()</div>
-<div class="block"><code>categories.yml</code>の設定内容を取得するクラスを返す。
- GUIに実際に並び、取引可能なアイテムを取得できる。</div>
+<div class="block"><code>categories.yml</code>の設定内容を取得するクラスを返す。</div>
 <dl>
 <dt><span class="returnLabel">戻り値:</span></dt>
 <dd>categories</dd>
@@ -269,8 +265,7 @@ extends <a href="https://docs.oracle.com/javase/10/docs/api/java.base/java/lang/
 <section class="detail">
 <h3><a id="getCraftRecipes()">getCraftRecipes</a></h3>
 <div class="memberSignature"><span class="modifiers">public</span>&nbsp;<span class="returnType"><a href="config/CraftRecipes.html" title="net.okocraft.box.config内のクラス">CraftRecipes</a></span>&nbsp;<span class="memberName">getCraftRecipes</span>()</div>
-<div class="block"><code>crafrrecipes.yml</code>の設定内容を取得するクラスを返す。
- クラフトGUIにおいて、デフォルトで適応されるレシピを上書きするために利用される。</div>
+<div class="block"><code>crafrrecipes.yml</code>の設定内容を取得するクラスを返す。</div>
 <dl>
 <dt><span class="returnLabel">戻り値:</span></dt>
 <dd>crafrRecipes</dd>
@@ -281,8 +276,7 @@ extends <a href="https://docs.oracle.com/javase/10/docs/api/java.base/java/lang/
 <section class="detail">
 <h3><a id="getPlayerData()">getPlayerData</a></h3>
 <div class="memberSignature"><span class="modifiers">public</span>&nbsp;<span class="returnType"><a href="database/PlayerData.html" title="net.okocraft.box.database内のクラス">PlayerData</a></span>&nbsp;<span class="memberName">getPlayerData</span>()</div>
-<div class="block">プレイヤーのデータを設定・取得できるクラスを返す。
- プレイヤーのデータとは、autostoreデータやstockデータなど。</div>
+<div class="block">プレイヤーのデータを設定・取得できるクラスを返す。</div>
 <dl>
 <dt><span class="returnLabel">戻り値:</span></dt>
 <dd>playerData</dd>

@@ -16,6 +16,9 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.okocraft.box.Box;
 import net.okocraft.box.util.ReflectionUtil;
 
+/**
+ * メッセージの取得、またはそれを送信するメソッドを利用できる。
+ */
 public final class Messages extends CustomConfig {
     
     /**

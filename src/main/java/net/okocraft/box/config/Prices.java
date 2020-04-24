@@ -4,6 +4,9 @@ import org.bukkit.inventory.ItemStack;
 
 import net.okocraft.box.Box;
 
+/**
+ * 販売価格と買取価格の設定を取得できる。
+ */
 public final class Prices extends CustomConfig {
 
     /**

@@ -10,7 +10,10 @@ import org.bukkit.persistence.PersistentDataType;
 
 import net.okocraft.box.Box;
 
-public class Layouts extends CustomConfig {
+/**
+ * GUIに並ぶアイテムの表示名や説明文のフォーマットを取得できる。
+ */
+public final class Layouts extends CustomConfig {
 
     private final NamespacedKey realItemKey = new NamespacedKey(Box.getInstance(), "realitem");
 

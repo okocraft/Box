@@ -9,7 +9,10 @@ import org.bukkit.inventory.ItemStack;
 import net.okocraft.box.Box;
 import net.okocraft.box.database.ItemData;
 
-public class CraftRecipes extends CustomConfig {
+/**
+ * クラフトGUIにおいて、デフォルトで適応されるレシピを上書きするために利用される。
+ */
+public final class CraftRecipes extends CustomConfig {
 
     private final Box plugin = Box.getInstance();
 

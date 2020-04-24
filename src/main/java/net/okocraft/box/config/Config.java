@@ -19,6 +19,9 @@ import org.bukkit.persistence.PersistentDataType;
 
 import net.okocraft.box.Box;
 
+/**
+ * データベース設定や、全体的に作用する設定を取得できる。
+ */
 public final class Config extends CustomConfig {
 
     private final Random random = new Random();

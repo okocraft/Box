@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * 以前のBoxのタブ補完の互換性を確保する実装。
+ * アイテムの内部名、その内部名から実際のアイテムスタックを取得できる
  */
 public class ItemData {
 
