@@ -48,7 +48,7 @@ SQLiteを利用する場合はそのままご利用いただけます。
 とはいえ、現状デフォルトでデータベースに存在するアイテムはポーション、スプラッシュポーション、リンガリングポーション、効果付き矢、エンチャント本以外は上記Materialリストと同じものです。<br/>
 ポーション効果があるものについては<br/>
 `<Material名>_<Potionタイプ名>_<EXTENDED>`または`<Material名>_<Potionタイプ名>_<UPGRADED>`<br/>
-となります。時間延長はEXTENDED、効果増強はUPGRADEDです。<br/>
+となります。時間延長はEXTENDED、効果増強はUPGRADEDです。PotionType名は[ここ](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/potion/PotionType.html)に書いてあります。<br/>
 エンチャント本については<br/>
 `ENCHANTED_BOOK_<Enchant名>`<br/>
 となっています。Enchant名は[ここ](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/potion/PotionType.html)で確認できます。
