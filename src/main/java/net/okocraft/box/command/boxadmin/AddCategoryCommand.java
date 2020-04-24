@@ -29,7 +29,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.StringUtil;
 
 class AddCategoryCommand extends BaseAdminCommand {
@@ -55,8 +55,9 @@ class AddCategoryCommand extends BaseAdminCommand {
         }
 
         Chest chestData = (Chest) lookingBlock.getState();
-        Inventory chestSnapInv = chestData.getSnapshotInventory();
-        List<String> items = Arrays.stream(chestSnapInv.getContents())
+        ItemStack[] chestContents = chestData.getInventory().getContents();
+        List<String> items = new ArrayList<>(Arrays.asList(chestContents))
+                .stream()
                 .filter(Objects::nonNull)
                 .map(itemData::register)
                 .filter(Objects::nonNull)
