@@ -89,6 +89,9 @@ public abstract class Commands implements CommandExecutor, TabCompleter {
         pluginCommand.setTabCompleter(this);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender instanceof Player && config.getDisabledWorlds().contains(((Player) sender).getWorld().getName())) {
@@ -124,6 +127,9 @@ public abstract class Commands implements CommandExecutor, TabCompleter {
         return subCommand.runCommand(sender, args);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         List<String> permittedCommands = getPermittedCommandNames(sender);

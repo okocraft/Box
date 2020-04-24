@@ -27,6 +27,9 @@ public class BoxAdminCommand extends Commands {
 
     private static BoxAdminCommand instance;
 
+    /**
+     * コンストラクタ
+     */
     public BoxAdminCommand() {
         super("boxadmin");
         if (instance != null) {

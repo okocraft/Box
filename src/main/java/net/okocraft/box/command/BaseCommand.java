@@ -31,6 +31,16 @@ public abstract class BaseCommand {
     private final String usage;
     private final List<String> alias;
 
+    /**
+     * コンストラクタ
+     * 
+     * @param name コマンド名
+     * @param permissionNode コマンドの権限
+     * @param leastArgLength 最低限必要な引数の数
+     * @param isPlayerOnly コンソールからも利用できるかどうか
+     * @param usage コマンドの使用法
+     * @param alias コマンドの略称
+     */
     protected BaseCommand(String name, String permissionNode, int leastArgLength, boolean isPlayerOnly, String usage, String ... alias) {
         this.name = name;
         this.permissionNode = permissionNode;
@@ -96,6 +106,12 @@ public abstract class BaseCommand {
         return leastArgLength;
     }
 
+    /**
+     * 渡した長さがこのコマンドに必要な最低限の長さに届いているかどうか調べる。
+     * 
+     * @param argsLength 調べる引数の長さ
+     * @return このコマンドを実行できる引数の長さがあるならtrue、さもなくばfalse
+     */
     public boolean isValidArgsLength(int argsLength) {
         return getLeastArgLength() <= argsLength;
     }
@@ -109,6 +125,11 @@ public abstract class BaseCommand {
         return usage;
     }
 
+    /**
+     * コマンドの略称のリストを取得する。
+     * 
+     * @return 略称のリスト
+     */
     public List<String> getAlias() {
         return alias;
     }

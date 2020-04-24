@@ -180,7 +180,9 @@ int&nbsp;leastArgLength,
 boolean&nbsp;isPlayerOnly,
 <a href="https://docs.oracle.com/javase/10/docs/api/java.base/java/lang/String.html?is-external=true" title="java.lang内のクラスまたはインタフェース" class="externalLink">String</a>&nbsp;usage,
 <a href="https://docs.oracle.com/javase/10/docs/api/java.base/java/lang/String.html?is-external=true" title="java.lang内のクラスまたはインタフェース" class="externalLink">String</a>...&nbsp;alias)</code></th>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block">コンストラクタ</div>
+</td>
 </tr>
 </tbody>
 </table>
@@ -208,7 +210,9 @@ boolean&nbsp;isPlayerOnly,
 <tr class="altColor" id="i0">
 <td class="colFirst"><code><a href="https://docs.oracle.com/javase/10/docs/api/java.base/java/util/List.html?is-external=true" title="java.util内のクラスまたはインタフェース" class="externalLink">List</a>&lt;<a href="https://docs.oracle.com/javase/10/docs/api/java.base/java/lang/String.html?is-external=true" title="java.lang内のクラスまたはインタフェース" class="externalLink">String</a>&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getAlias()">getAlias</a></span>()</code></th>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block">コマンドの略称のリストを取得する。</div>
+</td>
 </tr>
 <tr class="rowColor" id="i1">
 <td class="colFirst"><code><a href="https://docs.oracle.com/javase/10/docs/api/java.base/java/lang/String.html?is-external=true" title="java.lang内のクラスまたはインタフェース" class="externalLink">String</a></code></td>
@@ -262,7 +266,9 @@ boolean&nbsp;isPlayerOnly,
 <tr class="altColor" id="i8">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#isValidArgsLength(int)">isValidArgsLength</a></span>&#8203;(int&nbsp;argsLength)</code></th>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block">渡した長さがこのコマンドに必要な最低限の長さに届いているかどうか調べる。</div>
+</td>
 </tr>
 <tr class="rowColor" id="i9">
 <td class="colFirst"><code>protected int</code></td>
@@ -365,6 +371,16 @@ int&nbsp;leastArgLength,
 boolean&nbsp;isPlayerOnly,
 <a href="https://docs.oracle.com/javase/10/docs/api/java.base/java/lang/String.html?is-external=true" title="java.lang内のクラスまたはインタフェース" class="externalLink">String</a>&nbsp;usage,
 <a href="https://docs.oracle.com/javase/10/docs/api/java.base/java/lang/String.html?is-external=true" title="java.lang内のクラスまたはインタフェース" class="externalLink">String</a>...&nbsp;alias)</span></div>
+<div class="block">コンストラクタ</div>
+<dl>
+<dt><span class="paramLabel">パラメータ:</span></dt>
+<dd><code>name</code> - コマンド名</dd>
+<dd><code>permissionNode</code> - コマンドの権限</dd>
+<dd><code>leastArgLength</code> - 最低限必要な引数の数</dd>
+<dd><code>isPlayerOnly</code> - コンソールからも利用できるかどうか</dd>
+<dd><code>usage</code> - コマンドの使用法</dd>
+<dd><code>alias</code> - コマンドの略称</dd>
+</dl>
 </section>
 </li>
 </ul>
@@ -455,6 +471,13 @@ boolean&nbsp;isPlayerOnly,
 <section class="detail">
 <h3><a id="isValidArgsLength(int)">isValidArgsLength</a></h3>
 <div class="memberSignature"><span class="modifiers">public</span>&nbsp;<span class="returnType">boolean</span>&nbsp;<span class="memberName">isValidArgsLength</span>&#8203;(<span class="arguments">int&nbsp;argsLength)</span></div>
+<div class="block">渡した長さがこのコマンドに必要な最低限の長さに届いているかどうか調べる。</div>
+<dl>
+<dt><span class="paramLabel">パラメータ:</span></dt>
+<dd><code>argsLength</code> - 調べる引数の長さ</dd>
+<dt><span class="returnLabel">戻り値:</span></dt>
+<dd>このコマンドを実行できる引数の長さがあるならtrue、さもなくばfalse</dd>
+</dl>
 </section>
 </li>
 <li class="blockList">
@@ -472,6 +495,11 @@ boolean&nbsp;isPlayerOnly,
 <section class="detail">
 <h3><a id="getAlias()">getAlias</a></h3>
 <div class="memberSignature"><span class="modifiers">public</span>&nbsp;<span class="returnType"><a href="https://docs.oracle.com/javase/10/docs/api/java.base/java/util/List.html?is-external=true" title="java.util内のクラスまたはインタフェース" class="externalLink">List</a>&lt;<a href="https://docs.oracle.com/javase/10/docs/api/java.base/java/lang/String.html?is-external=true" title="java.lang内のクラスまたはインタフェース" class="externalLink">String</a>&gt;</span>&nbsp;<span class="memberName">getAlias</span>()</div>
+<div class="block">コマンドの略称のリストを取得する。</div>
+<dl>
+<dt><span class="returnLabel">戻り値:</span></dt>
+<dd>略称のリスト</dd>
+</dl>
 </section>
 </li>
 <li class="blockList">

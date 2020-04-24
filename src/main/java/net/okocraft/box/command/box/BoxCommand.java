@@ -61,6 +61,9 @@ public class BoxCommand extends Commands {
         return instance;
     }
     
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender instanceof Player && args.length == 0) {

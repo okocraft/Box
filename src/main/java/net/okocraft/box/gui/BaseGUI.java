@@ -340,6 +340,9 @@ public abstract class BaseGUI implements InventoryHolder {
         return result;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Inventory getInventory() {
         return GUI;
