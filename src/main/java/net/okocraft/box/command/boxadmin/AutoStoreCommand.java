@@ -37,7 +37,7 @@ class AutoStoreCommand extends BaseAdminCommand {
             "boxadmin.autostore",
             3,
             false,
-            "/boxadmin autostore < <ITEM> [true|false] | ALL <true|false> >",
+            "/boxadmin autostore <player> < <ITEM> [true|false] | ALL <true|false> >",
             new String[0]
         );
     }

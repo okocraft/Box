@@ -21,6 +21,7 @@ package net.okocraft.box.command.box;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -45,6 +46,10 @@ class DepositCommand extends BaseCommand {
     public boolean runCommand(CommandSender sender, String[] args) {
         if (args.length == 1) {
             ItemStack item = ((Player) sender).getInventory().getItemInMainHand();
+            if (item.getType() == Material.AIR) {
+                messages.sendHoldItemOrSpecifyItem(sender);
+                return false;
+            }
             String itemName = itemData.getName(item);
             if (itemName == null || categories.getAllItems().contains(itemName)) {
                 messages.sendItemNotFound(sender);
@@ -69,6 +74,10 @@ class DepositCommand extends BaseCommand {
                 amount = Math.max(1, Integer.parseInt(args[1]));
 
                 item = ((Player) sender).getInventory().getItemInMainHand();
+                if (item.getType() == Material.AIR) {
+                    messages.sendHoldItemOrSpecifyItem(sender);
+                    return false;
+                }
                 if (itemData.getName(item) == null) {
                     messages.sendItemNotFound(sender);
                     return false;

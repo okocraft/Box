@@ -26,6 +26,7 @@ command:
       no-permission: "&c%permission% の権限がありません。"
       unknown-exception: "&c予期せぬエラーが発生しました。管理者に報告してください。"
       hold-item: "&c手にアイテムを持ってください。"
+      hold-item-or-specify-item: "&c手にアイテムを持つか、アイテムを指定してください。"
   command-description:
     autostore: "&7自動収納の設定を変更します。"
     autostorelist: "&7自動収納の設定を表示します。"
@@ -34,7 +35,7 @@ command:
     help: "&7ヘルプを表示します。"
     version: "&7バージョンを表示します。"
     iteminfo: "&7アイテム情報が見れるホバーを表示します。"
-    deposit: "&7アイテムを預けます。"
+    deposit: "&7引数無しで手持ちのアイテムを預けます。ALLを指定すると手持ちのアイテムで預けられるものをすべて預けられます。アイテム名を指定すると、インベントリからそのアイテムを預けます。"
     withdraw: "&7アイテムを引き出します。"
   admin-command-description:
     autostore: "&7自動収納の設定を変更します。"
@@ -45,8 +46,8 @@ command:
     give: "&7誰かにアイテムを与えます。"
     take: "&7誰かのアイテムを減らします。"
     set: "&7誰かのアイテム量をセットします。"
+    register: "&7手に持っているアイテムをデータベースに登録します。"
     help: "&7ヘルプを表示します。"
-    version: "&7設定を再読込します。"
   box:
     auto-store:
       info:

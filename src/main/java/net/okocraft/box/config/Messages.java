@@ -292,6 +292,10 @@ public final class Messages extends CustomConfig {
         sendMessage(sender, "command.general.error.hold-item");
     }
 
+    public void sendHoldItemOrSpecifyItem(CommandSender sender) {
+        sendMessage(sender, "command.general.error.hold-item-or-specify-item");
+    }
+
     public void sendItemRegistered(CommandSender sender, ItemStack item) {
         sendMessageComponent(sender, true, "command.boxadmin.register.info.success", Map.of("%item%", toTextComponent(item)));
     }

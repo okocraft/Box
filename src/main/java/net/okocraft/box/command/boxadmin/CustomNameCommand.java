@@ -21,7 +21,7 @@ class CustomNameCommand extends BaseAdminCommand {
             "boxadmin.customname",
             2,
             false,
-            "/boxadmin customname <<before> <after> | <after>>",
+            "/boxadmin customname < <before> <after> | <after> >",
             new String[0]
         );
     }
