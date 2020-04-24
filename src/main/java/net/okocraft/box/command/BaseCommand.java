@@ -44,9 +44,7 @@ public abstract class BaseCommand {
      * @param args   引数
      * @return コマンドが成功したらtrue
      */
-    public boolean runCommand(CommandSender sender, String[] args) {
-        return false;
-    }
+    public abstract boolean runCommand(CommandSender sender, String[] args);
 
     /**
      * 各コマンドのタブ補完の処理
@@ -80,7 +78,7 @@ public abstract class BaseCommand {
     /**
      * プレイヤーのみが使用可能なコマンドかどうかを取得する
      * 
-     * @return
+     * @return プレイヤーのみ使えるコマンドならtrue、さもなくばfalse
      */
     public boolean isPlayerOnly() {
         return isPlayerOnly;
@@ -124,7 +122,7 @@ public abstract class BaseCommand {
     /**
      * このコマンドを使う権限があるか調べる。
      * 
-     * @param sender
+     * @param sender コマンド送信者
      * @return 権限があればtrue なければfalse
      * @see CommandSender#hasPermission(String)
      */
