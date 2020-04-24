@@ -69,12 +69,11 @@ public abstract class Commands implements CommandExecutor, TabCompleter {
         
         BaseCommand subCommand;
         if (args.length == 0 || (subCommand = getSubCommand(args[0])) == null) {
-            BaseCommand helpCommand = getSubCommand("help");
-            if (helpCommand == null) {
+            subCommand = getSubCommand("help");
+            if (subCommand == null) {
                 messages.sendNotEnoughArguments(sender);
                 return false;
             }
-            return helpCommand.runCommand(sender, args);
         }
 
         if (subCommand.isPlayerOnly() && !(sender instanceof Player)) {
