@@ -1,6 +1,7 @@
 package net.okocraft.box.database;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +41,8 @@ final class PlayerTable {
         try (PreparedStatement preparedStatement = database.getConnection().prepareStatement(sql,
                 java.sql.Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.executeUpdate();
-            return preparedStatement.getGeneratedKeys().getInt(1);
+            ResultSet rs = preparedStatement.getGeneratedKeys();
+            return rs.next() ? rs.getInt(1) : -1;
         } catch (SQLException e) {
             System.err.println("Error occurred on executing SQL: " + sql);
             e.printStackTrace();
