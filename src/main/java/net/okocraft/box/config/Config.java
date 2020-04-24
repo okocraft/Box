@@ -64,11 +64,7 @@ public final class Config extends CustomConfig {
     }
 
     public boolean isAutoStoreEnabled() {
-        return get().getBoolean("auto-store.enabled", true);
-    }
-
-    public boolean getDefaultAutoStoreValue() {
-        return get().getBoolean("auto-store.default", false);
+        return get().getBoolean("autostore", true);
     }
 
     public void playGUIOpenSound(Player player) {
