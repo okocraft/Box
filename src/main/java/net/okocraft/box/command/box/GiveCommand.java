@@ -106,7 +106,11 @@ class GiveCommand extends BaseCommand {
         }
 
         List<String> items = playerData.getStockAll((OfflinePlayer) sender).entrySet().parallelStream()
-                .filter(entry -> entry.getValue() != 0L).map(Map.Entry::getKey).map(itemData::getName).collect(Collectors.toList());
+                .filter(entry -> entry.getValue() != 0)
+                .map(Map.Entry::getKey)
+                .map(itemData::getName)
+                .filter(categories.getAllItems()::contains)
+                .collect(Collectors.toList());
 
         if (args.length == 3) {
             return StringUtil.copyPartialMatches(args[2], items, result);

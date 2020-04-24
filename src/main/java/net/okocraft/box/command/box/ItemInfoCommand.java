@@ -54,7 +54,7 @@ class ItemInfoCommand extends BaseCommand {
             return false;
         }
 
-        if (item == null) {
+        if (item == null || categories.getAllItems().contains(itemData.getName(item))) {
             messages.sendItemNotFound(sender);
             return false;
         }
@@ -65,6 +65,8 @@ class ItemInfoCommand extends BaseCommand {
 
     @Override
     public List<String> runTabComplete(CommandSender sender, String[] args) {
+        List<String> items = itemData.getNames();
+        items.retainAll(categories.getAllItems());
         if (args.length == 2) {
             return StringUtil.copyPartialMatches(args[1], itemData.getNames(), new ArrayList<>());
         }

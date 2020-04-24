@@ -20,6 +20,7 @@ package net.okocraft.box.command.box;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -51,9 +52,12 @@ class AutoStoreListCommand extends BaseCommand {
         int currentLine = Math.min(maxLine, page * 9);
 
         messages.sendAutoStoreListHeader(sender, sender.getName(), page, currentLine, maxLine);
+        Set<String> items = categories.getAllItems();
         playerData.getAutoStoreAll((OfflinePlayer) sender).entrySet().stream()
-                .filter(entry -> itemData.getName(entry.getKey()) != null)
-                .sorted((e1, e2) -> itemData.getName(e1.getKey()).compareTo(itemData.getName(e2.getKey())))
+                .filter(entry -> {
+                    String item = itemData.getName(entry.getKey());
+                    return item != null && items.contains(item);
+                }).sorted((e1, e2) -> itemData.getName(e1.getKey()).compareTo(itemData.getName(e2.getKey())))
                 .skip((page - 1) * 9).limit(9)
                 .forEach(entry -> messages.sendAutoStoreListFormat(sender, entry.getKey(), entry.getValue()));
         return true;

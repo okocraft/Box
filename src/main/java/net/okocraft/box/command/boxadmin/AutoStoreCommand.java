@@ -21,6 +21,7 @@ package net.okocraft.box.command.boxadmin;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -102,14 +103,15 @@ class AutoStoreCommand extends BaseAdminCommand {
             return List.of();
         }
 
-        List<String> items = new ArrayList<>(categories.getAllItems());
-        items.add("ALL");
+        Set<String> itemSet = categories.getAllItems();
+        itemSet.add("ALL");
+        List<String> itemList = new ArrayList<>(itemSet);
 
         if (args.length == 3) {
-            return StringUtil.copyPartialMatches(args[2], items, result);
+            return StringUtil.copyPartialMatches(args[2], itemList, result);
         }
 
-        if (!items.contains(args[2].toUpperCase(Locale.ROOT))) {
+        if (!itemSet.contains(args[2].toUpperCase(Locale.ROOT))) {
             return List.of();
         }
 

@@ -21,6 +21,7 @@ package net.okocraft.box.command.box;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -83,16 +84,17 @@ class AutoStoreCommand extends BaseCommand {
     public List<String> runTabComplete(CommandSender sender, String[] args) {
         List<String> result = new ArrayList<>();
 
-        List<String> ItemStack = new ArrayList<>(categories.getAllItems());
-        ItemStack.add("ALL");
+        Set<String> itemSet = categories.getAllItems();
+        itemSet.add("ALL");
+        List<String> itemList = new ArrayList<>(itemSet);
 
         if (args.length == 2) {
-            return StringUtil.copyPartialMatches(args[1], ItemStack, result);
+            return StringUtil.copyPartialMatches(args[1], itemList, result);
         }
 
         String item = args[1].toUpperCase(Locale.ROOT);
 
-        if (!ItemStack.contains(item)) {
+        if (!itemSet.contains(item)) {
             return List.of();
         }
 

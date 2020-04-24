@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -63,9 +64,12 @@ class AutoStoreListCommand extends BaseAdminCommand {
         int page = Math.max(maxPage, (args.length >= 3 ? parseIntOrDefault(args[2], 1) : 1));
         int currentLine = Math.min(maxLine, page * 9);
         messages.sendAutoStoreListHeader(sender, player.getName(), page, currentLine, maxLine);
+        Set<String> items = categories.getAllItems();
         playerData.getAutoStoreAll((OfflinePlayer) sender).entrySet().stream()
-                .filter(entry -> itemData.getName(entry.getKey()) != null)
-                .sorted((e1, e2) -> itemData.getName(e1.getKey()).compareTo(itemData.getName(e2.getKey())))
+                .filter(entry -> {
+                    String item = itemData.getName(entry.getKey());
+                    return item != null && items.contains(item);
+                }).sorted((e1, e2) -> itemData.getName(e1.getKey()).compareTo(itemData.getName(e2.getKey())))
                 .skip((page - 1) * 9).limit(9)
                 .forEach(entry -> messages.sendAutoStoreListFormat(sender, entry.getKey(), entry.getValue()));
         return true;

@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -48,8 +49,12 @@ class WithdrawCommand extends BaseCommand {
 
     @Override
     public boolean runCommand(CommandSender sender, String[] args) {
-
-        ItemStack item = itemData.getItemStack(args[1].toUpperCase(Locale.ROOT));
+        String itemName = args[1].toUpperCase(Locale.ROOT);
+        if (!categories.getAllItems().contains(itemName)) {
+            messages.sendItemNotFound(sender);
+            return false;
+        }
+        ItemStack item = itemData.getItemStack(itemName);
         if (item == null) {
             messages.sendItemNotFound(sender);
             return false;
@@ -81,21 +86,22 @@ class WithdrawCommand extends BaseCommand {
 
     @Override
     public List<String> runTabComplete(CommandSender sender, String[] args) {
-        List<String> result = new ArrayList<>();
-
+        Set<String> itemSet = categories.getAllItems();
+        itemSet.retainAll(itemData.getNames());
+        List<String> itemList = new ArrayList<>(itemSet);
         if (args.length == 2) {
-            return StringUtil.copyPartialMatches(args[1], itemData.getNames(), result);
+            return StringUtil.copyPartialMatches(args[1], itemList, new ArrayList<>());
         }
 
-        if (itemData.getItemStack(args[1]) == null) {
-            return result;
+        if (itemSet.contains(args[1].toUpperCase(Locale.ROOT))) {
+            return List.of();
         }
 
         if (args.length == 3) {
-            return StringUtil.copyPartialMatches(args[2], List.of("1", "32", "64", "512", "1024"), result);
+            return StringUtil.copyPartialMatches(args[2], List.of("1", "32", "64", "512", "1024"), new ArrayList<>());
         }
 
-        return result;
+        return List.of();
     }
 
     /**

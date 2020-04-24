@@ -45,7 +45,8 @@ class DepositCommand extends BaseCommand {
     public boolean runCommand(CommandSender sender, String[] args) {
         if (args.length == 1) {
             ItemStack item = ((Player) sender).getInventory().getItemInMainHand();
-            if (itemData.getName(item) == null) {
+            String itemName = itemData.getName(item);
+            if (itemName == null || categories.getAllItems().contains(itemName)) {
                 messages.sendItemNotFound(sender);
                 return false;
             }
@@ -109,8 +110,8 @@ class DepositCommand extends BaseCommand {
 
         Player player = (Player) sender;
         ItemStack item = player.getInventory().getItemInMainHand();
-        
-        if (itemData.getName(item) == null) {
+        String itemName = itemData.getName(item);
+        if (itemName == null && categories.getAllItems().contains(itemName)) {
 
             if (args.length == 2) {
                 return StringUtil.copyPartialMatches(args[1], itemData.getNames(), new ArrayList<>());
@@ -179,7 +180,11 @@ class DepositCommand extends BaseCommand {
         ItemStack[] contents = player.getInventory().getContents();
         for (int i = 0; i < contents.length; i++) {
             ItemStack item = contents[i];
-            if (item == null || itemData.getName(item) == null) {
+            if (item == null) {
+                continue;
+            }
+            String itemName = itemData.getName(item);
+            if (itemName == null || categories.getAllItems().contains(itemName)) {
                 continue;
             }
             int stock = playerData.getStock(player, item);
