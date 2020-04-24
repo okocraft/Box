@@ -44,7 +44,7 @@ public final class Config extends CustomConfig {
     }
 
     public String getMySQLPass() {
-        return get().getString("database.mysql-settings.pass", "pass");
+        return get().getString("database.mysql-settings.password", "pass");
     }
 
     public String getMySQLDatabaseName() {
