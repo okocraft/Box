@@ -95,6 +95,9 @@ public class Replant implements Listener {
         }
     };
 
+    /**
+     * このリスナーをBukkitに登録し、稼働させる。
+     */
     public void start() {
         HandlerList.unregisterAll(this);
         Bukkit.getPluginManager().registerEvents(this, plugin);

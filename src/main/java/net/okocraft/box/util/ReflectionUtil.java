@@ -43,7 +43,7 @@ public class ReflectionUtil {
     private static Map<Class<?>, Map<String, Field>> loadedFields = new HashMap<>();
 
     /**
-     * Gets the version string for NMS & OBC class paths
+     * Gets the version string for NMS and OBC class paths
      *
      * @return The version string of OBC and NMS packages
      */

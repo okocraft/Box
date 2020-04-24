@@ -40,6 +40,9 @@ public class BoxStick implements Listener {
     private final ItemData itemData = plugin.getAPI().getItemData();
     private final NamespacedKey stickKey = new NamespacedKey(plugin, "boxstick");
 
+    /**
+     * このリスナーをBukkitに登録し、稼働させる。
+     */
     public void start() {
         HandlerList.unregisterAll(this);
         Bukkit.getPluginManager().registerEvents(this, plugin);

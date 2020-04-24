@@ -18,6 +18,10 @@ import org.bukkit.inventory.ItemStack;
 import net.okocraft.box.Box;
 import net.okocraft.box.config.Config;
 
+/**
+ * このクラスはキャッシュを扱う。キャッシュへ変更が加えられたらデータベースに非同期でSQLを発行し、保存する。
+ * キャッシュが削除された瞬間も一応データベースにキャッシュの内容を保存する。
+ */
 public class PlayerData {
 
     private final Database database;
@@ -30,6 +34,14 @@ public class PlayerData {
 
     private final ExecutorService threadPool = Executors.newSingleThreadExecutor();
 
+    /**
+     * コンストラクタ。
+     * 
+     * @param config 設定ファイル。データベース設定を取得するために必要とされる
+     * 
+     * @deprecated 内部利用限定。このコンストラクタを使わず、{@code Box.getInstance().getAPI().getPlayerData()}を使用すること。
+     */
+    @Deprecated
     public PlayerData(Config config) {
         Box plugin = Box.getInstance();
 
@@ -71,12 +83,17 @@ public class PlayerData {
         return playerTable;
     }
 
+    /**
+     * データベースに登録されている全てのプレイヤーの名前を返す。
+     * 
+     * @return 名前のリスト
+     */
     public List<String> getPlayers() {
         return getPlayerTable().getAllName();
     }
 
     /**
-     * @see Database#dispose()
+     * データベースの接続を切断する。
      */
     public void dispose() {
         Bukkit.getOnlinePlayers().forEach(this::removeCache);
@@ -88,18 +105,35 @@ public class PlayerData {
         }
     }
 
+    /**
+     * プレイヤーのストックやautostoreなどのデータをキャッシュに入れておく。
+     * 
+     * @param player キャッシュを取るプレイヤー
+     */
     public void loadCache(Player player) {
         stock.put(player, getStockAll(player));
         autostore.put(player, getAutoStoreAll(player));
         playerTable.loadCache(player);
     }
 
+    /**
+     * キャッシュを削除し、そのデータをデータベースに保存する。
+     * キャッシュが取られていないプレイヤーだった場合の動きは定義されていないが、エラーが起こることはない。
+     *
+     * @param player キャッシュを削除するプレイヤー。
+     */
     public void removeCache(Player player) {
         masterTable.setAutoStoreAll(player, autostore.remove(player));
         masterTable.setStockAll(player, stock.remove(player));
         playerTable.removeCache(player);
     }
 
+    /**
+     * プレイヤーのautostoreの全てを{@code enabled}に設定する。
+     * 
+     * @param player autostoreを設定するプレイヤー
+     * @param enabled autostoreの値
+     */
     public void setAutoStoreAll(OfflinePlayer player, boolean enabled) {
         if (player.isOnline()) {
             getAutoStoreAll(player).replaceAll((item, value) -> enabled);
@@ -108,6 +142,12 @@ public class PlayerData {
         threadPool.submit(() -> masterTable.setAutoStoreAll(player, enabled));
     }
 
+    /**
+     * プレイヤーのautostoreを指定したマップの通りに設定する。マップにあるアイテムがデータベースに存在しない場合は無視される。
+     * 
+     * @param player autostoreを設定するプレイヤー
+     * @param enabled 各アイテムについてのautostoreの値
+     */
     public void setAutoStoreAll(OfflinePlayer player, Map<ItemStack, Boolean> enabled) {
         Map<ItemStack, Boolean> replaced = new HashMap<>();
         enabled.forEach((item, value) -> {
@@ -124,6 +164,13 @@ public class PlayerData {
         threadPool.submit(() -> masterTable.setAutoStoreAll(player, replaced));
     }
 
+    /**
+     * プレイヤーのautostoreを指定した通りに設定する。アイテムがデータベースに存在しない場合は無視される。
+     * 
+     * @param player autostoreを設定するプレイヤー
+     * @param item autostoreを設定するアイテム
+     * @param enabled autostoreの値
+     */
     public void setAutoStore(OfflinePlayer player, ItemStack item, boolean enabled) {
         if (item == null || itemTable.getId(item) == -1) {
             return;
@@ -137,6 +184,13 @@ public class PlayerData {
         threadPool.submit(() -> masterTable.setAutoStore(player, clone, enabled));
     }
 
+    /**
+     * autostore値を取得する。
+     * 
+     * @param player 値を取得するプレイヤー
+     * @param item 値を取得するアイテム
+     * @return 値
+     */
     public boolean getAutoStore(OfflinePlayer player, ItemStack item) {
         if (item == null) {
             return false;
@@ -148,6 +202,12 @@ public class PlayerData {
                 : masterTable.getAutoStore(player, clone); 
     }
 
+    /**
+     * すべてのアイテムについて、autostore値を取得する。
+     * 
+     * @param player 値を取得するプレイヤー
+     * @return アイテムとautostore値のマップ
+     */
     public Map<ItemStack, Boolean> getAutoStoreAll(OfflinePlayer player) {
         if (player.isOnline()) {
             Map<ItemStack, Boolean> result;
@@ -165,6 +225,13 @@ public class PlayerData {
         return masterTable.getAutoStoreAll(player);
     }
 
+    /**
+     * プレイヤーの、アイテムのストックを設定する。
+     * 
+     * @param player アイテムのストックを設定するプレイヤー
+     * @param item アイテム
+     * @param stock ストック
+     */
     public void setStock(OfflinePlayer player, ItemStack item, int stock) {
         if (item == null || itemTable.getId(item) == -1) {
             return;
@@ -178,6 +245,12 @@ public class PlayerData {
         threadPool.submit(() -> masterTable.setStock(player, clone, stock));
     }
 
+    /**
+     * プレイヤーのアイテムのストックをマップの通りに設定する。
+     * 
+     * @param player プレイヤー
+     * @param stock アイテムとストックのマップ
+     */
     public void setStockAll(OfflinePlayer player, Map<ItemStack, Integer> stock) {
         Map<ItemStack, Integer> clone = new HashMap<>();
         stock.forEach((item, value) -> {
@@ -194,6 +267,13 @@ public class PlayerData {
         threadPool.submit(() -> masterTable.setStockAll(player, clone));
     }
 
+    /**
+     * アイテムのストックを指定した数だけ合算する。
+     * 
+     * @param player ストックを合算するプレイヤー
+     * @param item ストックを合算するアイテム
+     * @param amount 合算される値
+     */
     public void addStock(OfflinePlayer player, ItemStack item, int amount) {
         if (item == null) {
             return;
@@ -207,6 +287,13 @@ public class PlayerData {
         threadPool.submit(() -> masterTable.addStock(player, clone, amount));
     }
 
+    /**
+     * アイテムのストックを取得する。
+     * 
+     * @param player ストックを取得するプレイヤー
+     * @param item ストックを取得するアイテム
+     * @return ストック値
+     */
     public int getStock(OfflinePlayer player, ItemStack item) {
         if (item == null) {
             return 0;
@@ -218,6 +305,12 @@ public class PlayerData {
                 : masterTable.getStock(player, clone); 
     }
 
+    /**
+     * すべてのアイテムのストックを取得する。
+     * 
+     * @param player ストックを取得するプレイヤー
+     * @return アイテムとストックのマップ
+     */
     public Map<ItemStack, Integer> getStockAll(OfflinePlayer player) {
         if (player.isOnline()) {
             Map<ItemStack, Integer> result;
@@ -235,6 +328,12 @@ public class PlayerData {
         return masterTable.getStockAll(player);
     }
 
+    /**
+     * プレイヤーのインベントリのアイテムをすべて預ける。
+     * 
+     * @param player プレイヤー
+     * @return 預けた結果、プレイヤーのインベントリが変更されたらtrue、さもなくばfalse
+     */
     public boolean storeAll(Player player) {
         boolean isModified = false;
         ItemStack[] contents = player.getInventory().getContents();

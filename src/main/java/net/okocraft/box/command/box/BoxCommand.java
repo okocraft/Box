@@ -29,6 +29,9 @@ public class BoxCommand extends Commands {
 
     private static BoxCommand instance;
 
+    /**
+     * コンストラクタ
+     */
     public BoxCommand() {
         super("box");
         if (instance != null) {

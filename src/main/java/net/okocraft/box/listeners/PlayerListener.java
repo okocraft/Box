@@ -37,6 +37,9 @@ public class PlayerListener implements Listener {
     private final PlayerData playerData = plugin.getAPI().getPlayerData();
     private final ItemData itemData = plugin.getAPI().getItemData();
 
+    /**
+     * このリスナーをBukkitに登録し、稼働させる。
+     */
     public void start() {
         HandlerList.unregisterAll(this);
         Bukkit.getPluginManager().registerEvents(this, plugin);

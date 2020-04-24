@@ -18,7 +18,7 @@ import net.okocraft.box.Box;
  *
  * @author LazyGon
  */
-public abstract class CustomConfig {
+abstract class CustomConfig {
 
     private final Box plugin = Box.getInstance();
     private final File file;
@@ -44,7 +44,7 @@ public abstract class CustomConfig {
     }
 
     /**
-     * Gets FileConfiguration of {@code file}.
+     * このインスタンスが保持する{@link FileConfiguration}を取得する。
      *
      * @return FileConfiguration
      * @author LazyGon
@@ -58,9 +58,7 @@ public abstract class CustomConfig {
     }
 
     /**
-     * Loads FileConfiguration from {@code file}.
-     *
-     * @author LazyGon
+     * {@code file}から{@link FileConfiguration}を読み込み、{@code config}に代入する。
      */
     public void reload() {
         saveDefault();
@@ -72,9 +70,7 @@ public abstract class CustomConfig {
     }
 
     /**
-     * Saves default file which is included in jar.
-     *
-     * @author LazyGon
+     * JARの中のデフォルトのymlファイルをプラグインフォルダーに保存する。
      */
     protected void saveDefault() {
         if (!file.exists()) {

@@ -14,6 +14,7 @@ import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
+import org.jetbrains.annotations.Nullable;
 
 import net.okocraft.box.Box;
 import net.okocraft.box.config.Config;
@@ -26,6 +27,11 @@ public abstract class Commands implements CommandExecutor, TabCompleter {
     protected final Messages messages = plugin.getAPI().getMessages();
     protected final Map<String, BaseCommand> registeredSubCommands = new LinkedHashMap<>();
 
+    /**
+     * サブコマンドを登録する。サブコマンドは {@link BaseCommand} を実装したクラスでなければならない。
+     * 
+     * @param subCommand サブコマンド
+     */
     protected void register(BaseCommand subCommand) {
         String commandName = subCommand.getName().toLowerCase(Locale.ROOT);
         if (registeredSubCommands.containsKey(commandName)) {
@@ -36,10 +42,22 @@ public abstract class Commands implements CommandExecutor, TabCompleter {
         registeredSubCommands.put(commandName, subCommand);
     }
 
+    /**
+     * 登録されたサブコマンドを全て取得する。
+     * 
+     * @return サブコマンドのリスト
+     */
     public List<BaseCommand> getRegisteredCommands() {
         return new ArrayList<>(registeredSubCommands.values());
     }
 
+    /**
+     * 名前からサブコマンドを取得する。
+     * 
+     * @param name サブコマンドを検索する名前
+     * @return サブコマンド。見つからなかったらnullを返す。
+     */
+    @Nullable
     public BaseCommand getSubCommand(String name) {
         for (BaseCommand subCommand : registeredSubCommands.values()) {
             if (subCommand.getName().equalsIgnoreCase(name)) {
@@ -53,7 +71,15 @@ public abstract class Commands implements CommandExecutor, TabCompleter {
         return null;
     }
 
+    /**
+     * コンストラクタ。指定された名前のコマンドをplugins.ymlから検索し、このクラスをexecutorとしてセットする。
+     * 
+     * @param parent plugin.ymlに書かれたコマンドの名前。plugin.ymlに書かれていなかったら
+     */
     public Commands(String parent) {
+        plugin.getDescription().getCommands().put(parent, null);
+
+
         parent = parent.toLowerCase(Locale.ROOT);
         PluginCommand pluginCommand = Objects.requireNonNull(plugin.getCommand(parent), "The command " + parent + " is not written in plugin.yml");
         pluginCommand.setExecutor(this);

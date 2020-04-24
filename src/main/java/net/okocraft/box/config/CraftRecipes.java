@@ -13,10 +13,22 @@ public class CraftRecipes extends CustomConfig {
 
     private final Box plugin = Box.getInstance();
 
+    /**
+     * コンストラクタ。
+     * @deprecated 内部利用限定。このコンストラクタを使わず、{@code Box.getInstance().getAPI().getCraftRecipes()}を使用すること。
+     */
+    @Deprecated
     public CraftRecipes() {
         super("craftrecipes.yml");
     }
 
+    /**
+     * {@code item}のクラフト時の材料を取得する。
+     * {@code craftrecipes.yml}に指定されていなかったときは空の不変マップを返す。
+     * 
+     * @param item 作り方を取得するアイテム
+     * @return アイテムの材料。取得できなければ空の不変マップ。
+     */
     public Map<String, Integer> getIngredients(ItemStack item) {
         String itemName = getItemName(item);
         if (itemName == null) {
@@ -45,6 +57,13 @@ public class CraftRecipes extends CustomConfig {
         return ingredients;
     }
 
+    /**
+     * {@code item}をクラフトした結果、いくつクラフトされるかを取得する。
+     * データベースにアイテムが登録されていなかったり、{@code craftrecipes.yml}に指定されていなかった場合は0を返す。
+     * 
+     * @param item 一度の作成数を調べるアイテム
+     * @return 一度の作成数、取得できなければ0。
+     */
     public int getResultAmount(ItemStack item) {
         String itemName = getItemName(item);
         if (itemName == null) {

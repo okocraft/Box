@@ -19,6 +19,13 @@ public final class GUICache {
         this.owner = player;
     }
 
+    /**
+     * プレイヤーのGUIキャッシュを取得する。
+     * キャッシュにはプレイヤーが開いたGUIのインスタンスが保存されている。
+     * 
+     * @param player プレイヤー
+     * @return キャッシュ
+     */
     public static GUICache getCache(Player player) {
         GUICache result = cache.get(player);
         if (result != null) {
@@ -29,10 +36,23 @@ public final class GUICache {
         return newCache;
     }
 
+    /**
+     * プレイヤーのキャッシュを削除する。
+     * 
+     * @param player プレイヤー
+     */
     public static void removeCache(Player player) {
         cache.remove(player);
     }
 
+    /**
+     * ストレージGUIのキャッシュを取得する。
+     * 
+     * @param categoryName キャッシュを取得するGUIのカテゴリ
+     * @param quantity 取得したGUIに適応するquantity
+     * @param page 取得したGUIが開いているべきページ
+     * @return GUIのインスタンス
+     */
     public StrageGUI getStrageGUICache(String categoryName, int quantity, int page) {
         StrageGUI result = categoryStrageGUIMap.get(categoryName);
         if (result == null) {
@@ -44,6 +64,14 @@ public final class GUICache {
         return result;
     }
 
+    /**
+     * ショップGUIのキャッシュを取得する。
+     * 
+     * @param categoryName キャッシュを取得するGUIのカテゴリ
+     * @param quantity 取得したGUIに適応するquantity
+     * @param page 取得したGUIが開いているべきページ
+     * @return GUIのインスタンス
+     */
     public ShopGUI getShopGUICache(String categoryName, int quantity, int page) {
         ShopGUI result = categoryShopGUIMap.get(categoryName);
         if (result == null) {
@@ -55,6 +83,14 @@ public final class GUICache {
         return result;
     }
 
+    /**
+     * クラフトGUIのキャッシュを取得する。
+     * 
+     * @param categoryName キャッシュを取得するGUIのカテゴリ
+     * @param quantity 取得したGUIに適応するquantity
+     * @param page 取得したGUIが開いているべきページ
+     * @return GUIのインスタンス
+     */
     public CraftGUI getCraftGUICache(String categoryName, int quantity, int page) {
         CraftGUI result = categoryCraftGUIMap.get(categoryName);
         if (result == null) {

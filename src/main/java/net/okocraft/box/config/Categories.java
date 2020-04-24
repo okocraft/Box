@@ -22,10 +22,20 @@ public class Categories extends CustomConfig {
 
     private Set<String> allItems;
 
+    /**
+     * コンストラクタ。
+     * @deprecated 内部利用限定。このコンストラクタを使わず、{@code Box.getInstance().getAPI().getConfig()}を使用すること。
+     */
+    @Deprecated
     public Categories() {
         super("categories.yml");
     }
 
+    /**
+     * configに設定されている全てのカテゴリを取得する。
+     * 
+     * @return カテゴリ名のリスト
+     */
     public List<String> getCategories() {
         return get().getKeys(false).stream()
                 .filter(category -> Objects.nonNull(getDisplayName(category)))
@@ -34,10 +44,22 @@ public class Categories extends CustomConfig {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * categoryの表示名を取得する。
+     * 
+     * @param category 表示名を取得するカテゴリ
+     * @return categoryの表示名
+     */
     public String getDisplayName(String category) {
         return get().getString(category + ".display-name");
     }
 
+    /**
+     * categoryのアイコンを取得する。
+     * 
+     * @param category アイコンを取得するカテゴリ
+     * @return categoryのアイコン
+     */
     public ItemStack getIcon(String category) {
         ItemStack item = plugin.getAPI().getItemData().getItemStack(get().getString(category + ".icon", ""));
         if (item == null) {
@@ -50,6 +72,12 @@ public class Categories extends CustomConfig {
         return item;
     }
 
+    /**
+     * カテゴリに設定されているすべてのアイテムを取得する。
+     * 
+     * @param category すべてのアイテムを取得するカテゴリ
+     * @return categoryに設定されているアイテム
+     */
     public List<ItemStack> getItems(String category) {
         return get().getStringList(category + ".item").stream()
                 .map(plugin.getAPI().getItemData()::getItemStack)
@@ -57,6 +85,11 @@ public class Categories extends CustomConfig {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * カテゴリ関係なくすべてのアイテムを取得する。
+     * 
+     * @return すべてのアイテムのセット
+     */
     public Set<String> getAllItems() {
         if (allItems != null) {
             new BukkitRunnable(){
@@ -77,13 +110,28 @@ public class Categories extends CustomConfig {
         return allItems;
     }
     
-    public void addCategory(String id, String displayName, List<String> items, String iconItem) throws IllegalArgumentException {
+    /**
+     * カテゴリを追加する。
+     * 
+     * @param id カテゴリ名。configのキーとなる。
+     * @param displayName カテゴリの表示名
+     * @param items カテゴリのアイテムのリスト
+     * @param iconItem カテゴリのアイコン
+     */
+    public void addCategory(String id, String displayName, List<String> items, String iconItem) {
         get().set(id + ".display-name", ChatColor.translateAlternateColorCodes('&', displayName));
         get().set(id + ".icon", iconItem);
         get().set(id + ".item", items);
         save();
     }
     
+    /**
+     * customnameコマンドによってアイテム名が変化したとき、追従するためのメソッド。
+     * すべてのアイテムから{@code oldName}の名前を持つアイテムを検索し、そのアイテムを{@code newName}に変更する。
+     * 
+     * @param oldName 古いアイテム名
+     * @param newName 新たなアイテム名
+     */
     public void replaceItem(String oldName, String newName) {
         getCategories().forEach(category -> {
             List<String> items = get().getStringList(category + ".item");

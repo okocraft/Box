@@ -88,6 +88,11 @@ public class Box extends JavaPlugin {
         return instance;
     }
 
+    /**
+     * Boxプラグインのバージョンを取得する。
+     * 
+     * @return バージョン文字列
+     */
     public String getVersion() {
         return getDescription().getVersion();
     }
