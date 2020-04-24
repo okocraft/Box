@@ -32,6 +32,9 @@ import net.okocraft.box.database.ItemData;
 import net.okocraft.box.database.PlayerData;
 import net.okocraft.box.gui.CategorySelectorGUI;
 
+/**
+ * Box stickに関するイベントを処理するリスナー。start()を実行すると、以前にリスナーが登録されていたら解除される。
+ */
 public class BoxStick implements Listener {
 
     private final Box plugin = Box.getInstance();

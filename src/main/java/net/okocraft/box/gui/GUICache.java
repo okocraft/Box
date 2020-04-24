@@ -5,6 +5,9 @@ import java.util.Map;
 
 import org.bukkit.entity.Player;
 
+/**
+ * いちいち初期化する処理が重いGUIをキャッシュするクラス。リロードのたびにキャッシュは削除される。
+ */
 public final class GUICache {
 
     private final static Map<Player, GUICache> cache = new HashMap<>();

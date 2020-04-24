@@ -12,6 +12,9 @@ import net.okocraft.box.config.Messages;
 import net.okocraft.box.database.ItemData;
 import net.okocraft.box.database.PlayerData;
 
+/**
+ * サブコマンドに必要な各種情報を保持するクラス。使用するには具体的な実装が必要。
+ */
 public abstract class BaseCommand {
 
     protected final Box plugin = Box.getInstance();

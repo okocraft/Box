@@ -28,6 +28,10 @@ import net.okocraft.box.gui.BaseGUI;
 import net.okocraft.box.gui.Clickable;
 import net.okocraft.box.gui.GUICache;
 
+/**
+ * イベント処理によって、autostore機能・GUIのクリック処理・入退場によるキャッシュの管理を行う。
+ * start()を実行すると、以前にリスナーが登録されていたら解除される。
+ */
 public class PlayerListener implements Listener {
 
     private final Box plugin = Box.getInstance();

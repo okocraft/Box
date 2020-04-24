@@ -11,7 +11,10 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ReflectionUtil {
+/**
+ * Reflection utilities for nms operations.
+ */
+public final class ReflectionUtil {
 
     /*
      * The server version string to location NMS & OBC classes

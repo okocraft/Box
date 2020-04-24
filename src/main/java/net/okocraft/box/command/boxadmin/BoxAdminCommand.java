@@ -20,6 +20,9 @@ package net.okocraft.box.command.boxadmin;
 
 import net.okocraft.box.command.Commands;
 
+/**
+ * /boxadminコマンドの実装クラス。シングルトンであり、外部でnewするとIllegalArgumentExceptionをスローする。
+ */
 public class BoxAdminCommand extends Commands {
 
     private static BoxAdminCommand instance;

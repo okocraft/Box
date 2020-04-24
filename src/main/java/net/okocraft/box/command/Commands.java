@@ -20,6 +20,9 @@ import net.okocraft.box.Box;
 import net.okocraft.box.config.Config;
 import net.okocraft.box.config.Messages;
 
+/**
+ * メインコマンドの基本的な処理を記述したクラス。これを継承してそれぞれの具象的なコマンドクラスを作成する。
+ */
 public abstract class Commands implements CommandExecutor, TabCompleter {
 
     protected final Box plugin = Box.getInstance();

@@ -2,6 +2,9 @@ package net.okocraft.box.gui;
 
 import org.bukkit.event.inventory.InventoryClickEvent;
 
+/**
+ * クリック可能なGUIが実装すべきインタフェース。
+ */
 public interface Clickable {
 
     /**

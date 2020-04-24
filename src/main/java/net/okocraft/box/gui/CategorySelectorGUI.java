@@ -31,6 +31,9 @@ import org.bukkit.persistence.PersistentDataType;
 
 import net.okocraft.box.Box;
 
+/**
+ * カテゴリ選択GUI。{categories.yml}に記述した各種設定を参照し、それぞれのカテゴリGUIへのアクセスを提供する。
+ */
 public final class CategorySelectorGUI extends BaseGUI implements Clickable {
 
     private final NamespacedKey categoryNameKey = new NamespacedKey(plugin, "categoryname");

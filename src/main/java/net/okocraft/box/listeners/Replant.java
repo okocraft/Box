@@ -45,6 +45,10 @@ import net.okocraft.box.Box;
 import net.okocraft.box.config.Config;
 import net.okocraft.box.database.PlayerData;
 
+/**
+ * イベント処理によって、Boxに入っている種を利用した苗の自動植え替えを実現する。
+ * start()を実行すると、以前にリスナーが登録されていたら解除される。
+ */
 public class Replant implements Listener {
 
     private final Box plugin = Box.getInstance();

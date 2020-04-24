@@ -25,6 +25,9 @@ import org.bukkit.entity.Player;
 import net.okocraft.box.command.Commands;
 import net.okocraft.box.gui.CategorySelectorGUI;
 
+/**
+ * /boxコマンドの実装クラス。シングルトンであり、外部でnewするとIllegalArgumentExceptionをスローする。
+ */
 public class BoxCommand extends Commands {
 
     private static BoxCommand instance;
