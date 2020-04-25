@@ -80,9 +80,6 @@ public abstract class Commands implements CommandExecutor, TabCompleter {
      * @param parent plugin.ymlに書かれたコマンドの名前。plugin.ymlに書かれていなかったら
      */
     public Commands(String parent) {
-        plugin.getDescription().getCommands().put(parent, null);
-
-
         parent = parent.toLowerCase(Locale.ROOT);
         PluginCommand pluginCommand = Objects.requireNonNull(plugin.getCommand(parent), "The command " + parent + " is not written in plugin.yml");
         pluginCommand.setExecutor(this);
