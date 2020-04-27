@@ -15,9 +15,7 @@ class Database {
     /** データベースのコネクションプール。 */
     private final HikariDataSource hikari;
 
-    /** データベースへの接続。 */
-    private final Connection connection;
-
+    /** SQLiteかどうか。 */
     private final boolean isSQLite;
 
     /**
@@ -32,7 +30,6 @@ class Database {
         config.setDriverClassName("org.sqlite.JDBC");
         config.setJdbcUrl("jdbc:sqlite:" + dbPath.toFile().getPath());
         hikari = new HikariDataSource(config);
-        connection = hikari.getConnection();
         isSQLite = true;
     }
 
@@ -68,7 +65,6 @@ class Database {
         config.addDataSourceProperty("elideSetAutoCommits", true);
         config.addDataSourceProperty("maintainTimeStats", false);
         hikari = new HikariDataSource(config);
-        connection = hikari.getConnection();
         isSQLite = false;
     }
 
@@ -83,7 +79,7 @@ class Database {
      * @return SQL文の実行に成功したかどうか
      */
     boolean execute(String SQL) {
-        try (PreparedStatement preparedStatement = connection.prepareStatement(SQL)) {
+        try (PreparedStatement preparedStatement = hikari.getConnection().prepareStatement(SQL)) {
             preparedStatement.execute();
             return true;
         } catch (SQLException e) {
@@ -101,7 +97,7 @@ class Database {
      * @return fuctionの処理結果
      */
     <T> T query(String SQL, Function<ResultSet, T> function) {
-        try (PreparedStatement preparedStatement = connection.prepareStatement(SQL)) {
+        try (PreparedStatement preparedStatement = hikari.getConnection().prepareStatement(SQL)) {
             return function.apply(preparedStatement.executeQuery());
         } catch (SQLException e) {
             System.err.println("Error occurred on executing SQL: " + SQL);
@@ -111,20 +107,19 @@ class Database {
     }
 
     Connection getConnection() {
-        return connection;
+        try {
+            return hikari.getConnection();
+        } catch (SQLException e) {
+            return null;
+        }
     }
 
     /**
      * データベースのコネクションプールやコネクションを閉じる。
      */
     void dispose() {
-        try {
-            connection.close();
-            if (hikari != null) {
-                hikari.close();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        if (hikari != null) {
+            hikari.close();
         }
     }
 }
