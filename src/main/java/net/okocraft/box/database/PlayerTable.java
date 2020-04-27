@@ -1,5 +1,6 @@
 package net.okocraft.box.database;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -38,7 +39,8 @@ final class PlayerTable {
 
         database.execute("UPDATE " + TABLE + " SET name = '' WHERE name = '" + player.getName() + "'");
         String sql = "INSERT INTO " + TABLE + " (uuid, name) VALUES ('" + player.getUniqueId() + "', '" + player.getName() + "')";
-        try (PreparedStatement preparedStatement = database.getConnection().prepareStatement(sql,
+        try (Connection con = database.getConnection();
+            PreparedStatement preparedStatement = con.prepareStatement(sql,
                 java.sql.Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.executeUpdate();
             ResultSet rs = preparedStatement.getGeneratedKeys();

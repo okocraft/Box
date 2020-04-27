@@ -79,8 +79,12 @@ class Database {
      * @return SQL文の実行に成功したかどうか
      */
     boolean execute(String SQL) {
-        try (PreparedStatement preparedStatement = hikari.getConnection().prepareStatement(SQL)) {
+        try (
+            Connection con = hikari.getConnection();
+            PreparedStatement preparedStatement = con.prepareStatement(SQL);
+        ) {
             preparedStatement.execute();
+            
             return true;
         } catch (SQLException e) {
             System.err.println("Error occurred on executing SQL: " + SQL);
@@ -97,8 +101,10 @@ class Database {
      * @return fuctionの処理結果
      */
     <T> T query(String SQL, Function<ResultSet, T> function) {
-        try (PreparedStatement preparedStatement = hikari.getConnection().prepareStatement(SQL)) {
-            return function.apply(preparedStatement.executeQuery());
+        try (
+            Connection con = hikari.getConnection();
+            PreparedStatement preparedStatement = con.prepareStatement(SQL);
+        ) {            return function.apply(preparedStatement.executeQuery());
         } catch (SQLException e) {
             System.err.println("Error occurred on executing SQL: " + SQL);
             e.printStackTrace();
@@ -106,12 +112,8 @@ class Database {
         }
     }
 
-    Connection getConnection() {
-        try {
-            return hikari.getConnection();
-        } catch (SQLException e) {
-            return null;
-        }
+    Connection getConnection() throws SQLException {
+        return hikari.getConnection();
     }
 
     /**
