@@ -48,8 +48,8 @@ public class PlayerData {
         Box plugin = Box.getInstance();
 
         Database usingDatabase = null;
-        if (config.usingMySQL()) {
-            try {
+        try {
+            if (config.usingMySQL()) {
                 usingDatabase = new Database(
                     config.getMySQLHost(),
                     config.getMySQLPort(),
@@ -57,19 +57,15 @@ public class PlayerData {
                     config.getMySQLPass(),
                     config.getMySQLDatabaseName()
                 );
-            } catch (SQLException e) {
-                plugin.getLogger().log(Level.WARNING, "Cannot connect to MySQL server", e);
-                plugin.getLogger().warning("Switching to SQLite");
+            } else {
+                usingDatabase = new Database(plugin.getDataFolder().toPath().resolve("database.db"));
             }
+        } catch (SQLException e) {
+            plugin.getLogger().log(Level.WARNING, "Cannot connect to database", e);
+            throw new ExceptionInInitializerError(e);
         }
 
-        if (usingDatabase == null) { 
-            try {
-                usingDatabase = new Database(plugin.getDataFolder().toPath().resolve("database.db"));
-            } catch (SQLException e) {
-                throw new ExceptionInInitializerError(e);
-            }
-        }
+        plugin.getLogger().info("Using " + (usingDatabase.isSQLite() ? "SQLite" : "MySQL") + ".");
 
         this.database = usingDatabase;
         this.itemTable = new ItemTable(database);
