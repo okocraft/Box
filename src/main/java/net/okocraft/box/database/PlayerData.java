@@ -16,6 +16,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import net.okocraft.box.Box;
+import net.okocraft.box.BoxAPI;
 import net.okocraft.box.config.Config;
 
 /**
@@ -66,6 +67,44 @@ public class PlayerData {
         }
 
         plugin.getLogger().info("Using " + (usingDatabase.isSQLite() ? "SQLite" : "MySQL") + ".");
+
+        this.database = usingDatabase;
+        this.itemTable = new ItemTable(database);
+        this.playerTable = new PlayerTable(database);
+        this.masterTable = new MasterTable(database, itemTable, playerTable);
+    }
+
+    /**
+     * コンストラクタ。
+     * @deprecated データベース移行時専用。
+     */
+    @Deprecated
+    public PlayerData() {
+        Box plugin = Box.getInstance();
+        BoxAPI api = plugin.getAPI();
+        if (api == null) {
+            throw new IllegalStateException("This constructor cannot be used before plugin is loaded.");
+        }
+
+        Config config = api.getConfig();
+
+        Database usingDatabase = null;
+        try {
+            if (!config.usingMySQL()) {
+                usingDatabase = new Database(
+                    config.getMySQLHost(),
+                    config.getMySQLPort(),
+                    config.getMySQLUser(),
+                    config.getMySQLPass(),
+                    config.getMySQLDatabaseName()
+                );
+            } else {
+                usingDatabase = new Database(plugin.getDataFolder().toPath().resolve("database.db"));
+            }
+        } catch (SQLException e) {
+            plugin.getLogger().log(Level.WARNING, "Cannot connect to database", e);
+            throw new ExceptionInInitializerError(e);
+        }
 
         this.database = usingDatabase;
         this.itemTable = new ItemTable(database);
