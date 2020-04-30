@@ -105,26 +105,26 @@ Box の GUI によるクラフトレシピは `craftrecipes.yml` に定義され
 
 ### コマンド
 
-`/box autostore <ITEM | ALL> [true | false]`: 自動収納の設定を変更します。
-`/box autostorelist <page>`: 自動収納の設定を表示します。
-`/box give <player> <ITEM> [amount]`: 誰かにアイテムを与えます。
-`/box stick`: オフハンドに持つとアイテム消費先が Box になる杖を手に入れます。
-`/box help [page]`: ヘルプを表示します。
-`/box version`: バージョンを表示します。
-`/box <iteminfo | iinfo>`: アイテム情報が見れるホバーを表示します。
-`/box <deposit | d> [<amount> | <ITEM> [amount] | ALL]`: 引数無しで手持ちのアイテムを預けます。ALL を指定すると手持ちのアイテムで預けられるものをすべて預けられます。アイテム名を指定すると、インベントリからそのアイテムを預けます。
-`/box <withdraw | w> <ITEM> [amount]`: アイテムを引き出します。
+* `/box autostore <ITEM | ALL> [true | false]`: 自動収納の設定を変更します。
+* `/box autostorelist <page>`: 自動収納の設定を表示します。
+* `/box give <player> <ITEM> [amount]`: 誰かにアイテムを与えます。
+* `/box stick`: オフハンドに持つとアイテム消費先が Box になる杖を手に入れます。
+* `/box help [page]`: ヘルプを表示します。
+* `/box version`: バージョンを表示します。
+* `/box <iteminfo | iinfo>`: アイテム情報が見れるホバーを表示します。
+* `/box <deposit | d> [<amount> | <ITEM> [amount] | ALL]`: 引数無しで手持ちのアイテムを預けます。ALL を指定すると手持ちのアイテムで* 預けられるものをすべて預けられます。アイテム名を指定すると、インベントリからそのアイテムを預けます。
+* `/box <withdraw | w> <ITEM> [amount]`: アイテムを引き出します。
 
-`/boxadmin autostore <player> < <ITEM> [true|false] | ALL <true|false> >`: 自動収納の設定を変更します。
-`/boxadmin autostorelist <player> <page>`: 自動収納の設定を表示します。
-`/boxadmin reload`: 設定を再読込します。
-`/boxadmin customname <ITEM> <after>`: アイテムの内部名前を設定します。この名前は GUI 上でも使われます。
-`/boxadmin addcategory <カテゴリ名> <GUI上の表示名> <ICONになるアイテム>`: チェストをクリックして、中にはいっているアイテムをもとにカテゴリを追加します。
-`/boxadmin give <player> <ITEM> [amount]`: 誰かにアイテムを与えます。
-`/boxadmin take <player> <ITEM> [amount]`: 誰かのアイテムを減らします。
-`/boxadmin set <player> <ITEM> <amount>`: 誰かのアイテム量をセットします。
-`/boxadmin help <page>`: ヘルプを表示します。
-`/boxadmin register`: 手に持っているアイテムをデータベースに登録します。
+* `/boxadmin autostore <player> < <ITEM> [true|false] | ALL <true|false> >`: 自動収納の設定を変更します。
+* `/boxadmin autostorelist <player> <page>`: 自動収納の設定を表示します。
+* `/boxadmin reload`: 設定を再読込します。
+* `/boxadmin customname <ITEM> <after>`: アイテムの内部名前を設定します。この名前は GUI 上でも使われます。
+* `/boxadmin addcategory <カテゴリ名> <GUI上の表示名> <ICONになるアイテム>`: チェストをクリックして、中にはいっているアイテムをもとにカ* テゴリを追加します。
+* `/boxadmin give <player> <ITEM> [amount]`: 誰かにアイテムを与えます。
+* `/boxadmin take <player> <ITEM> [amount]`: 誰かのアイテムを減らします。
+* `/boxadmin set <player> <ITEM> <amount>`: 誰かのアイテム量をセットします。
+* `/boxadmin help <page>`: ヘルプを表示します。
+* `/boxadmin register`: 手に持っているアイテムをデータベースに登録します。
 
 ## 権限
 
