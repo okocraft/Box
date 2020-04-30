@@ -103,7 +103,7 @@ Box の GUI によるクラフトレシピは `craftrecipes.yml` に定義され
 * メッセージ設定： `messages.yml`を変更します。
 * GUI の表示設定： `layout.yml`を変更します。
 
-### コマンド
+## コマンド
 
 * `/box autostore <ITEM | ALL> [true | false]`: 自動収納の設定を変更します。
 * `/box autostorelist <page>`: 自動収納の設定を表示します。
