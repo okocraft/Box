@@ -64,6 +64,7 @@ class Database {
         config.addDataSourceProperty("cacheServerConfiguration", true);
         config.addDataSourceProperty("elideSetAutoCommits", true);
         config.addDataSourceProperty("maintainTimeStats", false);
+        config.addDataSourceProperty("maxLifetime", 600000);
         hikari = new HikariDataSource(config);
         isSQLite = false;
     }
