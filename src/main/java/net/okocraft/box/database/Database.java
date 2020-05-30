@@ -54,6 +54,7 @@ class Database {
         config.setPassword(password);
 
         // general mysql settings
+        config.setMaxLifetime(600000L);
         config.addDataSourceProperty("cachePrepStmts", true);
         config.addDataSourceProperty("prepStmtsCacheSize", 250);
         config.addDataSourceProperty("prepStmtCacheSqlLimit", 2048);
@@ -64,7 +65,6 @@ class Database {
         config.addDataSourceProperty("cacheServerConfiguration", true);
         config.addDataSourceProperty("elideSetAutoCommits", true);
         config.addDataSourceProperty("maintainTimeStats", false);
-        config.addDataSourceProperty("maxLifetime", 600000);
         hikari = new HikariDataSource(config);
         isSQLite = false;
     }
