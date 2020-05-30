@@ -25,6 +25,9 @@ public final class Prices extends CustomConfig {
      * @return 買取価格。または0
      */
     public double getSellPrice(ItemStack item) {
+        if (item == null) {
+            return 0;
+        }
         String name = Box.getInstance().getAPI().getItemData().getName(item);
         return get().getDouble(name + ".sell");
     }
@@ -36,6 +39,9 @@ public final class Prices extends CustomConfig {
      * @return 販売価格。または0
      */
     public double getBuyPrice(ItemStack item) {
+        if (item == null) {
+            return 0;
+        }
         String name = Box.getInstance().getAPI().getItemData().getName(item);
         return get().getDouble(name + ".buy");
     }
