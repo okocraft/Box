@@ -1,7 +1,11 @@
 package net.okocraft.box.api.item;
 
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.Recipe;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Unmodifiable;
+
+import java.util.List;
 
 /**
  * Box 内でのアイテム管理に使用するインターフェース
@@ -35,6 +39,16 @@ public interface BoxItem {
      * @return {@link ItemStack}
      */
     @NotNull ItemStack toItemStack();
+
+    /**
+     * このアイテムのすべての {@link Recipe} を取得する。
+     * <p>
+     * 返されるリストには、Box 独自のレシピが含まれる場合があり、
+     * それが {@link org.bukkit.Bukkit#addRecipe(Recipe)} などで登録されているとは限らない。
+     *
+     * @return このアイテムのすべての {@link Recipe}
+     */
+    @NotNull @Unmodifiable List<Recipe> getRecipes();
 
     /**
      * このアイテムの売却価格を取得する。
