@@ -10,6 +10,7 @@ package net.okocraft.box.database;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -111,13 +112,16 @@ final class ItemTable {
      */
     @SuppressWarnings("deprecation")
     private void addDefaultItems() {
+        List<ItemStack> defaultItems = new ArrayList<>();
         for (Material material : Material.values()) {
             if (material.isLegacy() || material == Material.AIR) {
                 continue;
             }
 
             ItemStack add = new ItemStack(material);
-            register(add);
+            if (!items.containsValue(add)) {
+                defaultItems.add(add);
+            }
 
             if (add.getItemMeta() instanceof PotionMeta) {
                 PotionMeta meta = (PotionMeta) add.getItemMeta();
@@ -126,18 +130,27 @@ final class ItemTable {
                     clonedMeta.setBasePotionData(new PotionData(type, false, false));
                     ItemStack clone = add.clone();
                     clone.setItemMeta(clonedMeta);
-                    register(clone);
+                    if (!items.containsValue(clone)) {
+                        defaultItems.add(clone);
+                    }
+
                     if (type.isExtendable()) {
                         clonedMeta.setBasePotionData(new PotionData(type, true, false));
                         clone = add.clone();
                         clone.setItemMeta(clonedMeta);
-                        register(clone);
+                        
+                        if (!items.containsValue(clone)) {
+                            defaultItems.add(clone);
+                        }
                     }
+
                     if (type.isUpgradeable()) {
                         clonedMeta.setBasePotionData(new PotionData(type, false, true));
                         clone = add.clone();
                         clone.setItemMeta(clonedMeta);
-                        register(clone);
+                        if (!items.containsValue(clone)) {
+                            defaultItems.add(clone);
+                        }
                     }
                 }
             }
@@ -148,10 +161,14 @@ final class ItemTable {
                     EnchantmentStorageMeta meta = (EnchantmentStorageMeta) enchantedBook.getItemMeta();
                     meta.addStoredEnchant(enchant, enchant.getMaxLevel(), false);
                     enchantedBook.setItemMeta(meta);
-                    register(enchantedBook);
+                    if (!items.containsValue(enchantedBook)) {
+                        defaultItems.add(enchantedBook);
+                    }
                 }
             }
         }
+
+        unSafeRegister(defaultItems);
     }
 
     /**
