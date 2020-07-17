@@ -9,7 +9,17 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface Box {
 
+    /**
+     * ユーザー管理用のインスタンスを取得する。
+     *
+     * @return {@link UserManager}
+     */
     @NotNull UserManager getUserManager();
 
+    /**
+     * アイテム管理用のインスタンスを取得する。
+     *
+     * @return {@link ItemManager}
+     */
     @NotNull ItemManager getItemManager();
 }
