@@ -1,8 +1,8 @@
-package net.okocraft.box.api.impl;
+package net.okocraft.box.plugin.api;
 
 import net.okocraft.box.api.Box;
-import net.okocraft.box.api.impl.item.ApiItemManager;
-import net.okocraft.box.api.impl.user.ApiUserManager;
+import net.okocraft.box.plugin.api.item.ApiItemManager;
+import net.okocraft.box.plugin.api.user.ApiUserManager;
 import net.okocraft.box.api.item.ItemManager;
 import net.okocraft.box.api.user.UserManager;
 import org.jetbrains.annotations.NotNull;

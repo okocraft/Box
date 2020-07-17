@@ -1,4 +1,4 @@
-package net.okocraft.box.api.impl.user;
+package net.okocraft.box.plugin.api.user;
 
 import net.okocraft.box.Box;
 import net.okocraft.box.api.item.BoxItem;

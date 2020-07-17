@@ -1,4 +1,4 @@
-package net.okocraft.box.api.impl.item;
+package net.okocraft.box.plugin.api.item;
 
 import net.okocraft.box.api.item.CustomRecipe;
 import org.bukkit.inventory.ItemStack;
