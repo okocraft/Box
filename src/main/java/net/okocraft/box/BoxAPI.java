@@ -1,7 +1,6 @@
 package net.okocraft.box;
 
-import org.bukkit.Bukkit;
-
+import net.okocraft.box.api.Box;
 import net.okocraft.box.config.Categories;
 import net.okocraft.box.config.Config;
 import net.okocraft.box.config.CraftRecipes;
@@ -11,12 +10,13 @@ import net.okocraft.box.config.Prices;
 import net.okocraft.box.database.ItemData;
 import net.okocraft.box.database.PlayerData;
 import net.okocraft.box.gui.GUICache;
+import org.bukkit.Bukkit;
 
 /**
  * BoxプラグインのAPIクラス。{@code Box.getInstance().getAPI()}からアクセスできる。
  */
 @SuppressWarnings("deprecation")
-public final class BoxAPI {
+public final class BoxAPI implements Box {
 
     private final Config config = new Config();
     private final Messages messages = new Messages();
