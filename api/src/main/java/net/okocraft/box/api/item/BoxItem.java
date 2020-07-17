@@ -13,13 +13,6 @@ import java.util.List;
 public interface BoxItem {
 
     /**
-     * 内部の一意な ID を取得する。
-     *
-     * @return 内部の一意な ID
-     */
-    int getInternalID();
-
-    /**
      * アイテムの名前を取得する。
      *
      * @return アイテムの名前

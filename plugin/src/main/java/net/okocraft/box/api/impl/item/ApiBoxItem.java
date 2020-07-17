@@ -21,12 +21,6 @@ public class ApiBoxItem implements BoxItem {
     }
 
     @Override
-    @Deprecated
-    public int getInternalID() {
-        return 0;
-    }
-
-    @Override
     public @NotNull String getItemName() { // TODO: 一時的なコード。
         return Objects.requireNonNullElseGet(Box.getInstance().getAPI().getItemData().getName(item), () -> {
             ItemMeta meta = item.getItemMeta();
