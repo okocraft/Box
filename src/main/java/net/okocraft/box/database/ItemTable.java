@@ -13,6 +13,7 @@ import java.sql.SQLException;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -151,6 +152,43 @@ final class ItemTable {
                 }
             }
         }
+    }
+
+    /**
+     * データベースに既存のデータが有るかの確認なしに引数のアイテムをすべて登録する。初めて初期化する時限定で使用する。
+     * 
+     * @param items 登録するアイテムのリスト
+     */
+    private void unSafeRegister(List<ItemStack> registeredItems) {
+        if (registeredItems.isEmpty()) {
+            return;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for (ItemStack item : registeredItems) {
+            if (item == null || item.getType() == Material.AIR) {
+                continue;
+            }
+            
+            item = item.clone();
+            item.setAmount(1);
+            
+            String itemCode = toString(item);
+            if (itemCode.length() > 4096) {
+                try {
+                    throw new IllegalArgumentException("Too long item length (more than 4096): " + itemCode);
+                } catch (IllegalArgumentException e) {
+                    e.printStackTrace();
+                }
+                continue;
+            }
+
+            sb.append("('").append(itemCode).append("'), ");
+        }
+        sb.setLength(sb.length() - 2);
+
+        database.execute("REPLACE INTO " + TABLE + " (item) VALUES " + sb.toString());
+        loadItems();
     }
 
     boolean setCustomName(ItemStack item, String customName) {
