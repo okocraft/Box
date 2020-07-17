@@ -36,7 +36,7 @@ import org.bukkit.potion.PotionType;
 import org.jetbrains.annotations.NotNull;
 
 import net.okocraft.box.Box;
-import net.okocraft.box.BoxAPI;
+import net.okocraft.box.BoxInternalAPI;
 
 /**
  * このクラスで扱うアイテムのIDは、プレイヤーのデータを保存しているテーブルのcolumnとなる。このクラスはメタを持たない単純なアイテムは常に全てのテーブルにあることを保証する。
@@ -266,7 +266,7 @@ final class ItemTable {
 
         if (id != -1) {
             items.forcePut(id, item);
-            BoxAPI api = Box.getInstance().getAPI();
+            BoxInternalAPI api = Box.getInstance().getAPI();
             // on instantiate this plugin, api is null.
             if (api != null) {
                 api.getItemData().loadName(item);
