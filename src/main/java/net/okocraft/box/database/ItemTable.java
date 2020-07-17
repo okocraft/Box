@@ -106,7 +106,7 @@ final class ItemTable {
 
     /**
      * メタを持たない単純なアイテムを全てデータベースに登録しておく。
-     * ただし、ポーションに関してはクリエイティブのインベントリにあるだけ追加する。
+     * ただし、ポーション・エンチャントに関してはクリエイティブのインベントリにあるだけ追加する。
      */
     @SuppressWarnings("deprecation")
     private void addDefaultItems() {
