@@ -12,6 +12,29 @@ import java.util.Collection;
 public interface ItemManager {
 
     /**
+     * 登録済みのアイテムを名前から取得する。
+     *
+     * @param name アイテム名
+     * @return その名前のアイテムが登録されていたらその {@link BoxItem}, そうでなければ {@code null}
+     */
+    @Nullable BoxItem searchItem(@NotNull String name);
+
+    /**
+     * Box のアイテムデータベースに登録されているアイテムをすべて返す。
+     *
+     * @return すべての登録済みのアイテム
+     */
+    @NotNull Collection<BoxItem> getAllItems();
+
+    /**
+     * アイテムを Box のアイテムデータベースに登録する。
+     *
+     * @param item 登録するアイテム
+     * @return 登録に成功したら {@link BoxItem}, すでに登録済みなどなんらかの理由で失敗した場合は {@code null}
+     */
+    @Nullable BoxItem register(@NotNull ItemStack item);
+
+    /**
      * 渡したアイテムがすでに登録されているかどうか。
      *
      * @param item 判定するアイテム
@@ -26,29 +49,4 @@ public interface ItemManager {
      * @return 登録されていたら {@code true}, そうでなければ {@code false}
      */
     boolean isRegistered(@NotNull String name);
-
-    /**
-     * 登録済みのアイテムを名前から取得する。
-     *
-     * @param name アイテム名
-     * @return その名前のアイテムが登録されていたらその {@link BoxItem}, そうでなければ {@code null}
-     */
-    @Nullable
-    BoxItem searchItem(@NotNull String name);
-
-    /**
-     * アイテムを Box のアイテムデータベースに登録する。
-     *
-     * @param item 登録するアイテム
-     * @return 登録に成功したら {@link BoxItem}, すでに登録済みなどなんらかの理由で失敗した場合は {@code null}
-     */
-    @Nullable
-    BoxItem register(@NotNull ItemStack item);
-
-    /**
-     * Box のアイテムデータベースに登録されているアイテムをすべて返す。
-     *
-     * @return すべての登録済みのアイテム
-     */
-    @NotNull Collection<BoxItem> getAllItems();
 }
