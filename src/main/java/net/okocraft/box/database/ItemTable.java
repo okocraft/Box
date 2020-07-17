@@ -10,9 +10,11 @@ package net.okocraft.box.database;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -106,17 +108,20 @@ final class ItemTable {
 
     /**
      * メタを持たない単純なアイテムを全てデータベースに登録しておく。
-     * ただし、ポーションに関してはクリエイティブのインベントリにあるだけ追加する。
+     * ただし、ポーション・エンチャントに関してはクリエイティブのインベントリにあるだけ追加する。
      */
     @SuppressWarnings("deprecation")
     private void addDefaultItems() {
+        List<ItemStack> defaultItems = new ArrayList<>();
         for (Material material : Material.values()) {
             if (material.isLegacy() || material == Material.AIR) {
                 continue;
             }
 
             ItemStack add = new ItemStack(material);
-            register(add);
+            if (!items.containsValue(add)) {
+                defaultItems.add(add);
+            }
 
             if (add.getItemMeta() instanceof PotionMeta) {
                 PotionMeta meta = (PotionMeta) add.getItemMeta();
@@ -125,18 +130,27 @@ final class ItemTable {
                     clonedMeta.setBasePotionData(new PotionData(type, false, false));
                     ItemStack clone = add.clone();
                     clone.setItemMeta(clonedMeta);
-                    register(clone);
+                    if (!items.containsValue(clone)) {
+                        defaultItems.add(clone);
+                    }
+
                     if (type.isExtendable()) {
                         clonedMeta.setBasePotionData(new PotionData(type, true, false));
                         clone = add.clone();
                         clone.setItemMeta(clonedMeta);
-                        register(clone);
+                        
+                        if (!items.containsValue(clone)) {
+                            defaultItems.add(clone);
+                        }
                     }
+
                     if (type.isUpgradeable()) {
                         clonedMeta.setBasePotionData(new PotionData(type, false, true));
                         clone = add.clone();
                         clone.setItemMeta(clonedMeta);
-                        register(clone);
+                        if (!items.containsValue(clone)) {
+                            defaultItems.add(clone);
+                        }
                     }
                 }
             }
@@ -147,10 +161,51 @@ final class ItemTable {
                     EnchantmentStorageMeta meta = (EnchantmentStorageMeta) enchantedBook.getItemMeta();
                     meta.addStoredEnchant(enchant, enchant.getMaxLevel(), false);
                     enchantedBook.setItemMeta(meta);
-                    register(enchantedBook);
+                    if (!items.containsValue(enchantedBook)) {
+                        defaultItems.add(enchantedBook);
+                    }
                 }
             }
         }
+
+        unSafeRegister(defaultItems);
+    }
+
+    /**
+     * データベースに既存のデータが有るかの確認なしに引数のアイテムをすべて登録する。初めて初期化する時限定で使用する。
+     * 
+     * @param items 登録するアイテムのリスト
+     */
+    private void unSafeRegister(List<ItemStack> registeredItems) {
+        if (registeredItems.isEmpty()) {
+            return;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for (ItemStack item : registeredItems) {
+            if (item == null || item.getType() == Material.AIR) {
+                continue;
+            }
+            
+            item = item.clone();
+            item.setAmount(1);
+            
+            String itemCode = toString(item);
+            if (itemCode.length() > 4096) {
+                try {
+                    throw new IllegalArgumentException("Too long item length (more than 4096): " + itemCode);
+                } catch (IllegalArgumentException e) {
+                    e.printStackTrace();
+                }
+                continue;
+            }
+
+            sb.append("('").append(itemCode).append("'), ");
+        }
+        sb.setLength(sb.length() - 2);
+
+        database.execute("REPLACE INTO " + TABLE + " (item) VALUES " + sb.toString());
+        loadItems();
     }
 
     boolean setCustomName(ItemStack item, String customName) {
