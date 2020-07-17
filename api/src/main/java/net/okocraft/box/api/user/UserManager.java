@@ -9,7 +9,7 @@ import java.util.concurrent.CompletableFuture;
 
 /**
  * ユーザー管理インターフェース。
- *
+ * <p>
  * このインターフェースのいくつかのメソッド(特に IO を経るもの)の返り値は {@link CompletableFuture} であるとし、要求は非同期で処理される。
  */
 public interface UserManager {

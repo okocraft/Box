@@ -2,7 +2,7 @@ package net.okocraft.box.api.util;
 
 /**
  * 何らかの実行結果を示すインターフェース。
- *
+ * <p>
  * これは、{@link Result#isSuccess()} を関数メソッドに持つ関数型インターフェースである。
  */
 @FunctionalInterface
