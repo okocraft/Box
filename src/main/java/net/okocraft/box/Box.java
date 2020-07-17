@@ -24,7 +24,6 @@ import net.okocraft.box.command.boxadmin.BoxAdminCommand;
 import net.okocraft.box.listeners.BoxStick;
 import net.okocraft.box.listeners.PlayerListener;
 import net.okocraft.box.listeners.Replant;
-import net.okocraft.box.util.APIRegisterer;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -49,19 +48,11 @@ public class Box extends JavaPlugin {
     private BoxAPI api;
 
     @Override
-    public void onDisable() {
-        api.getPlayerData().dispose();
-        APIRegisterer.unregister();
-        getLogger().info(String.format("Box v%s has been disabled!", getVersion()));
-    }
-
-    @Override
     public void onEnable() {
         instance = this;
         economy = provideEconomy();
 
         this.api = new BoxAPI();
-        APIRegisterer.register(api);
 
         registerEvents();
 
@@ -72,13 +63,18 @@ public class Box extends JavaPlugin {
         getLogger().info(String.format("Box v%s has been enabled!", getVersion()));
     }
 
+    @Override
+    public void onDisable() {
+        api.getPlayerData().dispose();
+        getLogger().info(String.format("Box v%s has been disabled!", getVersion()));
+    }
+
     /**
      * このクラスのインスタンスを返す。
      *
      * @return インスタンス
-     * 
      * @throws IllegalStateException プラグインがまだロードされていないのに呼び出されたらスローされる。
-     * @throws ClassCastException 同名の別プラグインがロードされている状態で呼び出されたらスローされる。
+     * @throws ClassCastException    同名の別プラグインがロードされている状態で呼び出されたらスローされる。
      */
     public static Box getInstance() throws IllegalStateException, ClassCastException {
         if (instance == null) {
