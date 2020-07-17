@@ -35,4 +35,18 @@ public interface BoxItem {
      * @return {@link ItemStack}
      */
     @NotNull ItemStack toItemStack();
+
+    /**
+     * このアイテムの売却価格を取得する。
+     *
+     * @return 売却価格, 未設定であれば {@code 0}
+     */
+    double getSellingPrice();
+
+    /**
+     * このアイテムの購入価格を取得する。
+     *
+     * @return 購入価格, 未設定であれば {@code 0}
+     */
+    double getBuyingPrice();
 }
