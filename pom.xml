@@ -1,9 +1,47 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <groupId>net.okocraft.box</groupId>
     <artifactId>Box</artifactId>
     <version>3.1.5-SNAPSHOT</version>
+
+    <name>Box</name>
+    <url>https://github.com/okocraft/Box</url>
+    <description>A Spigot plugin that provide virtual chests.</description>
+
+    <licenses>
+        <license>
+            <name>GNU General Public License, Version 3.0</name>
+            <url>https://www.gnu.org/licenses/gpl-3.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <scm>
+        <connection>scm:git:https://github.com/okocraft/Box.git</connection>
+        <developerConnection>scm:git:git@github.com:okocraft/Box.git</developerConnection>
+        <url>https://github.com/okocraft/Box</url>
+    </scm>
+
+    <issueManagement>
+        <system>GitHub Issues</system>
+        <url>https://github.com/okocraft/Box/issues</url>
+    </issueManagement>
+
+    <ciManagement>
+        <system>GitHub Actions</system>
+        <url>https://github.com/okocraft/Box/runs</url>
+    </ciManagement>
+
+    <properties>
+        <java.version>11</java.version>
+        <project.charset>UTF-8</project.charset>
+        <project.build.sourceEncoding>${project.charset}</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>${project.charset}</project.reporting.outputEncoding>
+    </properties>
+
     <repositories>
         <repository>
             <id>spigot-repo</id>
@@ -14,17 +52,12 @@
             <url>https://jitpack.io</url>
         </repository>
     </repositories>
+
     <dependencies>
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.14.4-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>1.18.8</version>
+            <version>1.16.1-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -34,23 +67,19 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.xerial</groupId>
-            <artifactId>sqlite-jdbc</artifactId>
-            <version>3.28.0</version>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>19.0.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
-            <version>3.4.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jetbrains</groupId>
-            <artifactId>annotations</artifactId>
-            <version>18.0.0</version>
-            <scope>provided</scope>
+            <version>3.4.5</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
+
     <build>
         <resources>
             <resource>
@@ -59,21 +88,8 @@
                 <directory>src/main/resources/</directory>
             </resource>
         </resources>
+
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.1.2</version>
-                <configuration>
-                    <finalName>${project.name}</finalName>
-                    <archive>
-                        <manifest>
-                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
-                        </manifest>
-                    </archive>
-                </configuration>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -81,14 +97,49 @@
                 <configuration>
                     <target>${java.version}</target>
                     <source>${java.version}</source>
-                    <encoding>UTF-8</encoding>
-                    <useIncrementalCompilation>false</useIncrementalCompilation>
+                    <encoding>${project.charset}</encoding>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.2.0</version>
+                <configuration>
+                    <finalName>${project.name}-${project.version}-original</finalName>
+                    <archive combine.children="append">
+                        <manifest>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                        </manifest>
+                        <manifestEntries>
+                            <Automatic-Module-Name>${project.groupId}</Automatic-Module-Name>
+                        </manifestEntries>
+                    </archive>
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.2.1</version>
+                <version>3.2.4</version>
+                <configuration>
+                    <finalName>${project.name}-${project.version}</finalName>
+                    <filters>
+                        <filter>
+                            <artifact>*:*</artifact>
+                            <excludes>
+                                <exclude>META-INF/MANIFEST.MF</exclude>
+                            </excludes>
+                        </filter>
+                    </filters>
+                    <minimizeJar>true</minimizeJar>
+                    <shadedArtifactAttached>true</shadedArtifactAttached>
+                    <relocations>
+                        <relocation>
+                            <pattern>com.zaxxer.hikari</pattern>
+                            <pattern>${project.groupId}.lib.hikari</pattern>
+                        </relocation>
+                    </relocations>
+                </configuration>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -108,33 +159,30 @@
                         <goals>
                             <goal>jar</goal>
                         </goals>
-                        <phase>package</phase>
+                        <phase>prepare-package</phase>
                     </execution>
                 </executions>
                 <configuration>
                     <author>true</author>
-                    <show>protected</show>
-                    <encoding>${project.charset}</encoding>
+                    <source>${java.version}</source>
                     <charset>${project.charset}</charset>
+                    <encoding>${project.charset}</encoding>
                     <docencoding>${project.charset}</docencoding>
-                    <destDir>docs</destDir>
+                    <linksource>true</linksource>
+                    <locale>en_US</locale>
                     <notimestamp>true</notimestamp>
+                    <show>protected</show>
                     <bottom>
-                        <![CDATA[<p class="legalCopy">Copyright &#169; 2019-2020 <a href="https://github.com/okocraft">OKOCRAFT</a>. All rights reserved.</p>]]></bottom>
+                        <![CDATA[<p class="legalCopy">Copyright &#169; 2019-2020 <a href="https://github.com/okocraft">OKOCRAFT</a>. All rights reserved.</p>]]>
+                    </bottom>
                     <links>
                         <link>https://hub.spigotmc.org/javadocs/spigot/</link>
-                        <link>https://javadoc.io/doc/org.jetbrains/annotations/18.0.0/</link>
-                        <link>http://milkbowl.github.io/VaultAPI/</link>
+                        <link>https://javadoc.io/doc/org.jetbrains/annotations/19.0.0/</link>
+                        <link>https://javadoc.io/doc/com.zaxxer/HikariCP/latest</link>
+                        <link>https://milkbowl.github.io/VaultAPI/</link>
                     </links>
-                    <source>${java.version}</source>
                 </configuration>
             </plugin>
         </plugins>
     </build>
-    <properties>
-        <project.charset>UTF-8</project.charset>
-        <project.build.sourceEncoding>${project.charset}</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>${project.charset}</project.reporting.outputEncoding>
-        <java.version>10</java.version>
-    </properties>
 </project>
