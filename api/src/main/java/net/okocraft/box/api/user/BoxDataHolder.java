@@ -3,8 +3,6 @@ package net.okocraft.box.api.user;
 import net.okocraft.box.api.item.BoxItem;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Map;
-
 /**
  * アイテムデータを保持するインターフェース
  */
@@ -16,7 +14,7 @@ public interface BoxDataHolder {
      * @param item 取得するアイテム
      * @return アイテムの所持数
      */
-    long getAmount(@NotNull BoxItem item);
+    int getAmount(@NotNull BoxItem item);
 
     /**
      * 指定したアイテムの所持数をセットする。
@@ -24,7 +22,7 @@ public interface BoxDataHolder {
      * @param item   設定するアイテム
      * @param amount 設定する所持数
      */
-    void setAmount(@NotNull BoxItem item, long amount);
+    void setAmount(@NotNull BoxItem item, int amount);
 
     /**
      * 指定したアイテムの所持数を 1 増やす.
@@ -32,7 +30,7 @@ public interface BoxDataHolder {
      * @param item 増やすアイテム
      * @return 増加後の所持数
      */
-    default long increase(@NotNull BoxItem item) {
+    default int increase(@NotNull BoxItem item) {
         return increase(item, 1);
     }
 
@@ -43,7 +41,7 @@ public interface BoxDataHolder {
      * @param amount 増加量
      * @return 増加後の所持数
      */
-    long increase(@NotNull BoxItem item, long amount);
+    int increase(@NotNull BoxItem item, int amount);
 
 
     /**
@@ -52,7 +50,7 @@ public interface BoxDataHolder {
      * @param item 減らすアイテム
      * @return 減少後の所持数
      */
-    default long decrease(@NotNull BoxItem item) {
+    default int decrease(@NotNull BoxItem item) {
         return decrease(item, 1);
     }
 
@@ -63,7 +61,7 @@ public interface BoxDataHolder {
      * @param amount 減少量
      * @return 減少後の所持数
      */
-    long decrease(@NotNull BoxItem item, long amount);
+    int decrease(@NotNull BoxItem item, int amount);
 
     /**
      * 指定したアイテムを1つ以上持っているか。
@@ -82,7 +80,7 @@ public interface BoxDataHolder {
      * @param require 要求量
      * @return 持っていれば {@code true}, そうでなければ {@code false}
      */
-    default boolean hasItem(@NotNull BoxItem item, long require) {
+    default boolean hasItem(@NotNull BoxItem item, int require) {
         return require <= getAmount(item);
     }
 
