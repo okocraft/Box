@@ -18,17 +18,17 @@
 
 package net.okocraft.box;
 
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.RegisteredServiceProvider;
-import org.bukkit.plugin.java.JavaPlugin;
-
 import net.milkbowl.vault.economy.Economy;
 import net.okocraft.box.command.box.BoxCommand;
 import net.okocraft.box.command.boxadmin.BoxAdminCommand;
 import net.okocraft.box.listeners.BoxStick;
 import net.okocraft.box.listeners.PlayerListener;
 import net.okocraft.box.listeners.Replant;
+import net.okocraft.box.util.APIRegisterer;
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.RegisteredServiceProvider;
+import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * Boxプラグインのメインクラス。
@@ -49,11 +49,19 @@ public class Box extends JavaPlugin {
     private BoxAPI api;
 
     @Override
+    public void onDisable() {
+        api.getPlayerData().dispose();
+        APIRegisterer.unregister();
+        getLogger().info(String.format("Box v%s has been disabled!", getVersion()));
+    }
+
+    @Override
     public void onEnable() {
         instance = this;
         economy = provideEconomy();
 
         this.api = new BoxAPI();
+        APIRegisterer.register(api);
 
         registerEvents();
 
@@ -62,12 +70,6 @@ public class Box extends JavaPlugin {
 
         // GO GO GO
         getLogger().info(String.format("Box v%s has been enabled!", getVersion()));
-    }
-
-    @Override
-    public void onDisable() {
-        api.getPlayerData().dispose();
-        getLogger().info(String.format("Box v%s has been disabled!", getVersion()));
     }
 
     /**
