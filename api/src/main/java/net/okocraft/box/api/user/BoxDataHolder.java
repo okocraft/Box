@@ -91,4 +91,12 @@ public interface BoxDataHolder {
      * @return 自動収納されるなら {@code true}, そうでなければ {@code false}
      */
     boolean isAutoStore(@NotNull BoxItem item);
+
+    /**
+     * 指定したアイテムの自動収納を設定する。
+     *
+     * @param item 設定するアイテム
+     * @param bool 自動収納するなら {@code true}, しないなら {@code false}
+     */
+    void setAutoStore(@NotNull BoxItem item, boolean bool);
 }
