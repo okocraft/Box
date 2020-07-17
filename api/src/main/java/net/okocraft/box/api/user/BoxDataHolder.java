@@ -3,6 +3,8 @@ package net.okocraft.box.api.user;
 import net.okocraft.box.api.item.BoxItem;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Map;
+
 /**
  * アイテムデータを保持するインターフェース
  */
@@ -83,4 +85,12 @@ public interface BoxDataHolder {
     default boolean hasItem(@NotNull BoxItem item, long require) {
         return require <= getAmount(item);
     }
+
+    /**
+     * 指定したアイテムが自動収納されるか。
+     *
+     * @param item 判定するアイテム
+     * @return 自動収納されるなら {@code true}, そうでなければ {@code false}
+     */
+    boolean isAutoStore(@NotNull BoxItem item);
 }
