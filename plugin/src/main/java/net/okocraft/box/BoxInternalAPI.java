@@ -1,6 +1,5 @@
 package net.okocraft.box;
 
-import net.okocraft.box.api.Box;
 import net.okocraft.box.config.Categories;
 import net.okocraft.box.config.Config;
 import net.okocraft.box.config.CraftRecipes;
@@ -16,7 +15,7 @@ import org.bukkit.Bukkit;
  * BoxプラグインのAPIクラス。{@code Box.getInstance().getAPI()}からアクセスできる。
  */
 @SuppressWarnings("deprecation")
-public final class BoxAPI implements Box {
+public final class BoxInternalAPI {
 
     private final Config config = new Config();
     private final Messages messages = new Messages();
@@ -29,7 +28,7 @@ public final class BoxAPI implements Box {
     private final ItemData itemData;
 
 
-    BoxAPI() {
+    BoxInternalAPI() {
         reloadAllConfigs();
         playerData = new PlayerData(config);
         itemData = new ItemData(playerData);
@@ -37,7 +36,7 @@ public final class BoxAPI implements Box {
 
     /**
      * {@code config.yml}の設定内容を取得するクラスを返す。
-     * 
+     *
      * @return config
      */
     public Config getConfig() {
@@ -46,7 +45,7 @@ public final class BoxAPI implements Box {
 
     /**
      * {@code messages.yml}の設定内容を取得・使用できるクラスを返す。
-     * 
+     *
      * @return messages
      */
     public Messages getMessages() {
@@ -55,7 +54,7 @@ public final class BoxAPI implements Box {
 
     /**
      * {@code layout.yml}の設定内容を取得するクラスを返す。
-     * 
+     *
      * @return layout
      */
     public Layouts getLayouts() {
@@ -64,7 +63,7 @@ public final class BoxAPI implements Box {
 
     /**
      * {@code prices.yml}の設定内容を取得するクラスを返す。
-     * 
+     *
      * @return prices
      */
     public Prices getPrices() {
@@ -73,7 +72,7 @@ public final class BoxAPI implements Box {
 
     /**
      * {@code categories.yml}の設定内容を取得するクラスを返す。
-     * 
+     *
      * @return categories
      */
     public Categories getCategories() {
@@ -82,7 +81,7 @@ public final class BoxAPI implements Box {
 
     /**
      * {@code crafrrecipes.yml}の設定内容を取得するクラスを返す。
-     * 
+     *
      * @return crafrRecipes
      */
     public CraftRecipes getCraftRecipes() {
@@ -91,7 +90,7 @@ public final class BoxAPI implements Box {
 
     /**
      * プレイヤーのデータを設定・取得できるクラスを返す。
-     * 
+     *
      * @return playerData
      */
     public PlayerData getPlayerData() {
@@ -100,7 +99,7 @@ public final class BoxAPI implements Box {
 
     /**
      * アイテムの内部名、その内部名から実際のアイテムスタックを取得できるクラスを返す。
-     * 
+     *
      * @return itemData
      */
     public ItemData getItemData() {
@@ -113,7 +112,7 @@ public final class BoxAPI implements Box {
      */
     public void reloadAllConfigs() {
         Bukkit.getOnlinePlayers().forEach(player -> {
-            player.closeInventory();            
+            player.closeInventory();
             GUICache.removeCache(player);
         });
 

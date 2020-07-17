@@ -46,14 +46,14 @@ public class Box extends JavaPlugin {
      */
     private Economy economy;
 
-    private BoxAPI api;
+    private BoxInternalAPI api;
 
     @Override
     public void onEnable() {
         instance = this;
         economy = provideEconomy();
 
-        this.api = new BoxAPI();
+        this.api = new BoxInternalAPI();
         APIRegisterer.register(api);
 
         registerEvents();
@@ -115,7 +115,7 @@ public class Box extends JavaPlugin {
      * 
      * @return api
      */
-    public BoxAPI getAPI() {
+    public BoxInternalAPI getAPI() {
         return api;
     }
 
