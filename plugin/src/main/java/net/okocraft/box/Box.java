@@ -19,6 +19,7 @@
 package net.okocraft.box;
 
 import net.milkbowl.vault.economy.Economy;
+import net.okocraft.box.api.impl.BoxAPI;
 import net.okocraft.box.command.box.BoxCommand;
 import net.okocraft.box.command.boxadmin.BoxAdminCommand;
 import net.okocraft.box.listeners.BoxStick;
@@ -54,7 +55,8 @@ public class Box extends JavaPlugin {
         economy = provideEconomy();
 
         this.api = new BoxInternalAPI();
-        APIRegisterer.register(api);
+
+        APIRegisterer.register(new BoxAPI());
 
         registerEvents();
 
