@@ -3,6 +3,7 @@ package net.okocraft.box.api.item;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.Collection;
 
@@ -24,7 +25,7 @@ public interface ItemManager {
      *
      * @return すべての登録済みのアイテム
      */
-    @NotNull Collection<BoxItem> getAllItems();
+    @NotNull @Unmodifiable Collection<BoxItem> getAllItems();
 
     /**
      * アイテムを Box のアイテムデータベースに登録する。
