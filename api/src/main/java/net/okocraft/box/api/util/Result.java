@@ -14,7 +14,7 @@ public interface Result {
     /**
      * 処理の結果として返された {@link Result} が成功であることを示しているか。
      *
-     * @return 成功であれば {@link true}, そうでなければ {@link false}
+     * @return 成功であれば {@code true}, そうでなければ {@code false}
      */
     boolean isSuccess();
 }
