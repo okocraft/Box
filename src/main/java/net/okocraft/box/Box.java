@@ -18,18 +18,17 @@
 
 package net.okocraft.box;
 
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.RegisteredServiceProvider;
+import org.bukkit.plugin.java.JavaPlugin;
+
 import net.milkbowl.vault.economy.Economy;
 import net.okocraft.box.command.box.BoxCommand;
 import net.okocraft.box.command.boxadmin.BoxAdminCommand;
 import net.okocraft.box.listeners.BoxStick;
 import net.okocraft.box.listeners.PlayerListener;
 import net.okocraft.box.listeners.Replant;
-import net.okocraft.box.plugin.api.BoxAPI;
-import net.okocraft.box.util.APIRegisterer;
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.RegisteredServiceProvider;
-import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * Boxプラグインのメインクラス。
@@ -47,16 +46,14 @@ public class Box extends JavaPlugin {
      */
     private Economy economy;
 
-    private BoxInternalAPI api;
+    private BoxAPI api;
 
     @Override
     public void onEnable() {
         instance = this;
         economy = provideEconomy();
 
-        this.api = new BoxInternalAPI();
-
-        APIRegisterer.register(new BoxAPI());
+        this.api = new BoxAPI();
 
         registerEvents();
 
@@ -70,8 +67,6 @@ public class Box extends JavaPlugin {
     @Override
     public void onDisable() {
         api.getPlayerData().dispose();
-        APIRegisterer.unregister();
-
         getLogger().info(String.format("Box v%s has been disabled!", getVersion()));
     }
 
@@ -79,8 +74,9 @@ public class Box extends JavaPlugin {
      * このクラスのインスタンスを返す。
      *
      * @return インスタンス
+     * 
      * @throws IllegalStateException プラグインがまだロードされていないのに呼び出されたらスローされる。
-     * @throws ClassCastException    同名の別プラグインがロードされている状態で呼び出されたらスローされる。
+     * @throws ClassCastException 同名の別プラグインがロードされている状態で呼び出されたらスローされる。
      */
     public static Box getInstance() throws IllegalStateException, ClassCastException {
         if (instance == null) {
@@ -117,7 +113,7 @@ public class Box extends JavaPlugin {
      * 
      * @return api
      */
-    public BoxInternalAPI getAPI() {
+    public BoxAPI getAPI() {
         return api;
     }
 

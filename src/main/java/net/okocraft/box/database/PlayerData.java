@@ -16,7 +16,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import net.okocraft.box.Box;
-import net.okocraft.box.BoxInternalAPI;
+import net.okocraft.box.BoxAPI;
 import net.okocraft.box.config.Config;
 
 /**
@@ -81,7 +81,7 @@ public class PlayerData {
     @Deprecated
     public PlayerData() {
         Box plugin = Box.getInstance();
-        BoxInternalAPI api = plugin.getAPI();
+        BoxAPI api = plugin.getAPI();
         if (api == null) {
             throw new IllegalStateException("This constructor cannot be used before plugin is loaded.");
         }
