@@ -40,10 +40,12 @@ public class Stock {
         this.amount = amount;
     }
 
+    // ここにあるべきなのだろうか?
     public boolean isAutoStore() {
         return autoStore;
     }
 
+    // ここにあるべきなのだろうか?
     public void setAutoStore(boolean autoStore) {
         this.autoStore = autoStore;
     }
