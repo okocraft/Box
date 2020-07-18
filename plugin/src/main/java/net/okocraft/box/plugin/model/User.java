@@ -6,12 +6,18 @@ import java.util.UUID;
 
 public class User extends BoxDataHolder {
 
+    private final int internalID;
     private final UUID uuid;
     private final String name;
 
-    public User(@NotNull UUID uuid, @NotNull String name) {
+    public User(int internalID, @NotNull UUID uuid, @NotNull String name) {
+        this.internalID = internalID;
         this.uuid = uuid;
         this.name = name;
+    }
+
+    public int getInternalID() {
+        return internalID;
     }
 
     @NotNull
