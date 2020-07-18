@@ -11,7 +11,7 @@ import java.sql.Statement;
 /**
  * A class that implements the connection with SQLite.
  * <p>
- * This class is copied from <a href=https://github.com/SiroPlugins/DatabaseLibs">DatabaseLibs</a>
+ * This class is copied from <a href="https://github.com/SiroPlugins/DatabaseLibs">DatabaseLibs</a>
  */
 public class SQLite extends AbstractDatabase {
 

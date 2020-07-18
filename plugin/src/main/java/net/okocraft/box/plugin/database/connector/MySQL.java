@@ -8,7 +8,7 @@ import java.util.Objects;
 /**
  * A class that implements the connection with MySQL.
  * <p>
- * This class is copied from <a href=https://github.com/SiroPlugins/DatabaseLibs">DatabaseLibs</a>
+ * This class is copied from <a href="https://github.com/SiroPlugins/DatabaseLibs">DatabaseLibs</a>
  */
 public class MySQL extends AbstractDatabase {
 

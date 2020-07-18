@@ -11,7 +11,7 @@ import java.util.Objects;
 /**
  * This is an abstract class that partially implements {@link Database}.
  * <p>
- * This class is copied from <a href=https://github.com/SiroPlugins/DatabaseLibs">DatabaseLibs</a>
+ * This class is copied from <a href="https://github.com/SiroPlugins/DatabaseLibs">DatabaseLibs</a>
  */
 public abstract class AbstractDatabase implements Database {
 

@@ -11,7 +11,7 @@ import java.sql.SQLException;
 /**
  * An interface that manages the connection with the database.
  * <p>
- * This interface is copied from <a href=https://github.com/SiroPlugins/DatabaseLibs">DatabaseLibs</a>
+ * This interface is copied from <a href="https://github.com/SiroPlugins/DatabaseLibs">DatabaseLibs</a>
  */
 public interface Database {
 
