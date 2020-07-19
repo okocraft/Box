@@ -184,6 +184,7 @@ public class PlayerTable extends AbstractTable {
         }
     }
 
+    @Override
     protected void createTable() throws SQLException {
         try (Connection c = database.getConnection(); Statement statement = c.createStatement()) {
 
