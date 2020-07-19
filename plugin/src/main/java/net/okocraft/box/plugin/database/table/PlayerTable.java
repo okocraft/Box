@@ -13,7 +13,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
-public class PlayerTable {
+public class PlayerTable extends AbstractTable {
 
     private final static String UNKNOWN_NAME = "unknown";
     private final static String USER_SELECT_BY_UUID = "select id, name from %table% where uuid=? limit 1";
@@ -24,18 +24,8 @@ public class PlayerTable {
     private final static String USER_RENAME = "update %table% set name=? where uuid=? limit 1";
     private final static String INSERT_USER = "insert into %table% (uuid, name) values(?,?)";
 
-    private final Database database;
-    private final String tableName;
-
     public PlayerTable(@NotNull Database database, @NotNull String prefix) {
-        this.database = database;
-        tableName = prefix + "players";
-
-        try {
-            createTable();
-        } catch (SQLException e) {
-            throw new ExceptionInInitializerError(e);
-        }
+        super(database, prefix + "players");
     }
 
     @NotNull
@@ -194,24 +184,18 @@ public class PlayerTable {
         }
     }
 
-    private void createTable() throws SQLException {
+    protected void createTable() throws SQLException {
         try (Connection c = database.getConnection(); Statement statement = c.createStatement()) {
-            String autoIncrement = database.getType() == Database.Type.SQLITE ? "AUTOINCREMENT" : "AUTO_INCREMENT";
 
             statement.addBatch(
                     "CREATE TABLE IF NOT EXISTS " + tableName + " (" +
-                            "id INTEGER PRIMARY KEY " + autoIncrement + ", " +
+                            "id INTEGER PRIMARY KEY " + getAutoIncrementSQL() + ", " +
                             "uuid CHAR(36) UNIQUE NOT NULL, " +
                             "name VARCHAR(16) UNIQUE NOT NULL)"
             );
 
             statement.executeBatch();
         }
-    }
-
-    @NotNull
-    private String replaceTableName(@NotNull String sql) {
-        return sql.replace("%table%", tableName);
     }
 
     @NotNull
