@@ -20,7 +20,7 @@ public class PlayerTable {
     private final static String USER_SELECT_BY_NAME = "select id, uuid from %table% where name=? limit=1";
     private final static String USER_SELECT_BY_ID = "select uuid, name from %table% where id=? limit=1";
     private final static String USER_SELECT_ID_BY_UUID = "select id from %table% where uuid=? limit=1";
-    private final static String USER_REPLACE_NAME_TO = "select name, replace(name, ?, ?) from %table%";
+    private final static String USER_REPLACE_NAME_TO = "update %table% set name=replace(name, ?, ?)";
     private final static String USER_RENAME = "update %table% set name=? where uuid=? limit 1";
     private final static String INSERT_USER = "insert into %table% (uuid, name) values(?,?)";
 
