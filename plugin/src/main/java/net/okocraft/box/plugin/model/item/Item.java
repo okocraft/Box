@@ -34,6 +34,11 @@ public class Item {
         return internalID;
     }
 
+    @NotNull
+    public ItemStack getOriginal() {
+        return original;
+    }
+
     /**
      * 元の {@link ItemStack} をコピーして返す。
      *
