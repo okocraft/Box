@@ -12,7 +12,11 @@ public interface UnsafeRunnable {
             try {
                 run();
             } catch (Exception e) {
-                throw new CompletionException(e);
+                if (e instanceof RuntimeException) {
+                    throw (RuntimeException) e;
+                } else {
+                    throw new CompletionException(e);
+                }
             }
         };
     }
