@@ -30,15 +30,13 @@ public abstract class AbstractDatabase implements Database {
         Objects.requireNonNull(jdbcUrl, "jdbcUrl");
         Objects.requireNonNull(driverClassName, "driverClassName");
 
-        HikariConfig config = new HikariConfig();
+        config = new HikariConfig();
 
         config.setPoolName(name);
         config.setJdbcUrl(jdbcUrl);
         config.setDriverClassName(driverClassName);
 
         addProperties(config);
-
-        this.config = config;
     }
 
     /**
