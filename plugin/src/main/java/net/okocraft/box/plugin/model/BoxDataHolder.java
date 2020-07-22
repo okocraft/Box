@@ -47,6 +47,10 @@ public class BoxDataHolder {
         return getStock(item).map(Stock::isAutoStore).orElse(false);
     }
 
+    public void setAutoStore(@NotNull Item item, boolean autoStore) {
+        getStockOrCreate(item).setAutoStore(autoStore);
+    }
+
     public void setStock(@NotNull Stock stock) {
         itemStock.stream()
                 .filter(s -> s.getItem().equals(stock.getItem()))
@@ -54,10 +58,6 @@ public class BoxDataHolder {
                 .forEach(itemStock::remove);
 
         itemStock.add(stock);
-    }
-
-    public void setAutoStore(@NotNull Item item, boolean autoStore) {
-        getStockOrCreate(item).setAutoStore(autoStore);
     }
 
     @NotNull
