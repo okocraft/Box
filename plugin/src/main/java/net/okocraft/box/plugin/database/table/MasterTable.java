@@ -1,6 +1,6 @@
 package net.okocraft.box.plugin.database.table;
 
-import net.okocraft.box.plugin.database.ItemManager;
+import net.okocraft.box.plugin.database.Storage;
 import net.okocraft.box.plugin.database.connector.Database;
 import net.okocraft.box.plugin.model.User;
 import net.okocraft.box.plugin.model.item.Item;
@@ -25,12 +25,12 @@ public class MasterTable extends AbstractTable {
             Database.Type.SQLITE, "insert or ignore into %table% (playerid, itemid, stock, autostore) values(?,?,0,0)",
             Database.Type.MYSQL, "insert ignore into %table% (playerid, itemid, stock, autostore) values(?,?,0,0)");
 
-    private final ItemManager itemManager;
+    private final Storage storage;
 
-    public MasterTable(@NotNull Database database, @NotNull ItemManager itemManager, @NotNull String prefix) {
+    public MasterTable(@NotNull Database database, @NotNull Storage storage, @NotNull String prefix) {
         super(database, prefix + "master");
 
-        this.itemManager = itemManager;
+        this.storage = storage;
     }
 
     @NotNull
@@ -41,7 +41,7 @@ public class MasterTable extends AbstractTable {
 
             try (ResultSet result = st.executeQuery()) {
                 while (result.next()) {
-                    Optional<Item> item = itemManager.getItemById(result.getInt("itemid"));
+                    Optional<Item> item = storage.getItemById(result.getInt("itemid"));
                     if (item.isPresent()) {
                         boolean autoStore = result.getInt("autostore") == 1;
                         user.setStock(new Stock(item.get(), result.getInt("stock"), autoStore));
@@ -86,7 +86,7 @@ public class MasterTable extends AbstractTable {
 
         try (Connection c = database.getConnection();
              PreparedStatement st = c.prepareStatement(replaceTableName(sql))) {
-            for (Item item : itemManager.getItems()) {
+            for (Item item : storage.getItems()) {
                 st.setInt(1, user.getInternalID());
                 st.setInt(2, item.getInternalID());
 
