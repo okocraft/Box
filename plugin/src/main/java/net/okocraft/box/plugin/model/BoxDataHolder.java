@@ -4,6 +4,7 @@ import net.okocraft.box.plugin.model.item.Item;
 import net.okocraft.box.plugin.model.item.Stock;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.HashSet;
 import java.util.Optional;
@@ -63,6 +64,12 @@ public class BoxDataHolder {
                 .forEach(itemStock::remove);
 
         itemStock.add(stock);
+    }
+
+    @NotNull
+    @Unmodifiable
+    public Set<Stock> getStocks() {
+        return Set.copyOf(itemStock);
     }
 
     @NotNull
