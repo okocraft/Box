@@ -7,24 +7,18 @@ import org.jetbrains.annotations.NotNull;
  */
 public class Stock {
 
-    private final int internalID;
     private final Item item;
     private int amount;
     private boolean autoStore;
 
-    public Stock(int internalID, @NotNull Item item) {
-        this(internalID, item, 0, false);
+    public Stock(@NotNull Item item) {
+        this(item, 0, false);
     }
 
-    public Stock(int internalID, @NotNull Item item, int amount, boolean autoStore) {
-        this.internalID = internalID;
+    public Stock(@NotNull Item item, int amount, boolean autoStore) {
         this.item = item;
         this.amount = amount;
         this.autoStore = autoStore;
-    }
-
-    public int getInternalID() {
-        return internalID;
     }
 
     @NotNull

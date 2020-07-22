@@ -79,6 +79,6 @@ public class BoxDataHolder {
 
     @Contract(value = "_ -> new", pure = true)
     private @NotNull Stock createStock(@NotNull Item item) {
-        return new Stock(0, item); // TODO: Item Table に実装する
+        return new Stock(item); // TODO: Item Table に実装する
     }
 }
