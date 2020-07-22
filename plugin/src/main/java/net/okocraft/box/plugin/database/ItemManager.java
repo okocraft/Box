@@ -11,7 +11,7 @@ import java.util.Set;
 
 public class ItemManager {
 
-    private  final ItemTable table;
+    private final ItemTable table;
     private final Set<Item> items;
 
     public ItemManager(ItemTable table) {
@@ -25,7 +25,7 @@ public class ItemManager {
     }
 
     public Optional<Item> getItemById(int id) {
-       return items.stream().filter(i -> i.getInternalID() == id).findFirst();
+        return items.stream().filter(i -> i.getInternalID() == id).findFirst();
     }
 
     @NotNull
