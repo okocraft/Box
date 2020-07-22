@@ -78,7 +78,7 @@ public class MasterTable extends AbstractTable {
         return new Stock(item, 0, false);
     }
 
-    public void createDefaultUserData(@NotNull User user) throws SQLException {
+    public void saveDefaultUserData(@NotNull User user) throws SQLException {
         String sql = PLAYER_DEFAULT_STOCK_INSERT_OR_IGNORE.get(database.getType());
         if (sql == null) {
             throw new IllegalStateException("Could not get SQL.");
