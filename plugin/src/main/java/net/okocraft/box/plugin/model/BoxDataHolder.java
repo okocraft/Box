@@ -51,6 +51,11 @@ public class BoxDataHolder {
         getStockOrCreate(item).setAutoStore(autoStore);
     }
 
+    @NotNull
+    public Optional<Stock> getStock(@NotNull Item item) {
+        return itemStock.stream().filter(s -> s.getItem().equals(item)).findFirst();
+    }
+
     public void setStock(@NotNull Stock stock) {
         itemStock.stream()
                 .filter(s -> s.getItem().equals(stock.getItem()))
@@ -58,11 +63,6 @@ public class BoxDataHolder {
                 .forEach(itemStock::remove);
 
         itemStock.add(stock);
-    }
-
-    @NotNull
-    private Optional<Stock> getStock(@NotNull Item item) {
-        return itemStock.stream().filter(s -> s.getItem().equals(item)).findFirst();
     }
 
     @NotNull
