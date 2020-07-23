@@ -7,10 +7,10 @@ import net.okocraft.box.plugin.database.table.PlayerTable;
 import net.okocraft.box.plugin.model.User;
 import net.okocraft.box.plugin.model.item.Item;
 import net.okocraft.box.plugin.model.item.Stock;
+import net.okocraft.box.result.UserCheckResult;
 import net.okocraft.box.util.UnsafeRunnable;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Unmodifiable;
 
 import java.nio.file.Path;
 import java.sql.SQLException;
@@ -78,9 +78,14 @@ public class Storage {
     }
 
     @NotNull
-    public CompletableFuture<User> loadUser(@NotNull UUID uuid, @NotNull String name) {
+    public CompletableFuture<UserCheckResult> checkUser(@NotNull UUID uuid, @NotNull String name) {
+        return makeFuture(() -> playerTable.checkUser(uuid, name));
+    }
+
+    @NotNull
+    public CompletableFuture<User> loadUser(@NotNull UUID uuid) {
         return makeFuture(() -> {
-            User user = playerTable.updateUser(uuid, name);
+            User user = playerTable.loadUser(uuid);
             return masterTable.loadUserData(user);
         });
     }
