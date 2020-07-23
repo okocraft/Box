@@ -1,4 +1,4 @@
-package net.okocraft.box.util;
+package net.okocraft.box.plugin.util;
 
 import net.okocraft.box.api.Box;
 import net.okocraft.box.api.BoxProvider;

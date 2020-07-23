@@ -25,7 +25,7 @@ import net.okocraft.box.listeners.BoxStick;
 import net.okocraft.box.listeners.PlayerListener;
 import net.okocraft.box.listeners.Replant;
 import net.okocraft.box.plugin.api.BoxAPI;
-import net.okocraft.box.util.APIRegisterer;
+import net.okocraft.box.plugin.util.APIRegisterer;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;

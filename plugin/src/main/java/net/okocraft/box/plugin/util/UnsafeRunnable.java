@@ -1,4 +1,4 @@
-package net.okocraft.box.util;
+package net.okocraft.box.plugin.util;
 
 import java.util.concurrent.CompletionException;
 
