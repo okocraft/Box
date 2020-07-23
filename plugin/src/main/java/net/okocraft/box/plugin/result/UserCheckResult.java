@@ -1,4 +1,4 @@
-package net.okocraft.box.result;
+package net.okocraft.box.plugin.result;
 
 import net.okocraft.box.api.util.Result;
 

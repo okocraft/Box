@@ -2,7 +2,7 @@ package net.okocraft.box.plugin.model.manager;
 
 import net.okocraft.box.plugin.Box;
 import net.okocraft.box.plugin.model.item.Item;
-import net.okocraft.box.result.RegistrationResult;
+import net.okocraft.box.plugin.result.RegistrationResult;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 

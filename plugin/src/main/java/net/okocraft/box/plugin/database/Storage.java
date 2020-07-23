@@ -8,7 +8,7 @@ import net.okocraft.box.plugin.database.table.PlayerTable;
 import net.okocraft.box.plugin.model.User;
 import net.okocraft.box.plugin.model.item.Item;
 import net.okocraft.box.plugin.model.item.Stock;
-import net.okocraft.box.result.UserCheckResult;
+import net.okocraft.box.plugin.result.UserCheckResult;
 import net.okocraft.box.util.UnsafeRunnable;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;

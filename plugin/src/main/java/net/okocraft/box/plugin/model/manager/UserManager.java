@@ -2,7 +2,7 @@ package net.okocraft.box.plugin.model.manager;
 
 import net.okocraft.box.plugin.Box;
 import net.okocraft.box.plugin.model.User;
-import net.okocraft.box.result.UserCheckResult;
+import net.okocraft.box.plugin.result.UserCheckResult;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
