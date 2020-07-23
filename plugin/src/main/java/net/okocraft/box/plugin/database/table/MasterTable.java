@@ -54,10 +54,10 @@ public class MasterTable extends AbstractTable {
     }
 
     @NotNull
-    public Stock createOrLoadStock(@NotNull User user, @NotNull Item item) throws SQLException {
+    public Stock createOrLoadStock(int playerId, @NotNull Item item) throws SQLException {
         try (Connection c = database.getConnection();
              PreparedStatement st = c.prepareStatement(replaceTableName(PLAYER_STOCK_SELECT))) {
-            st.setInt(1, user.getInternalID());
+            st.setInt(1, playerId);
             st.setInt(2, item.getInternalID());
 
             try (ResultSet result = st.executeQuery()) {
@@ -69,7 +69,7 @@ public class MasterTable extends AbstractTable {
 
         try (Connection c = database.getConnection();
              PreparedStatement st = c.prepareStatement(replaceTableName(PLAYER_STOCK_INSERT))) {
-            st.setInt(1, user.getInternalID());
+            st.setInt(1, playerId);
             st.setInt(2, item.getInternalID());
 
             st.execute();

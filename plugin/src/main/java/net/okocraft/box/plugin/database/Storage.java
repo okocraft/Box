@@ -108,8 +108,8 @@ public class Storage {
     }
 
     @NotNull
-    public CompletableFuture<Stock> createStock(@NotNull User user, @NotNull Item item) {
-        return makeFuture(() -> masterTable.createOrLoadStock(user, item));
+    public CompletableFuture<Stock> createStock(int playerId, @NotNull Item item) {
+        return makeFuture(() -> masterTable.createOrLoadStock(playerId, item));
     }
 
     @NotNull
