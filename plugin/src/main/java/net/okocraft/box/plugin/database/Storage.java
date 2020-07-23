@@ -113,8 +113,11 @@ public class Storage {
     }
 
     @NotNull
-    public CompletableFuture<Void> saveDefaultUserData(@NotNull User user) {
-        return makeFuture(() -> masterTable.saveDefaultUserData(user));
+    public CompletableFuture<Void> saveDefaultUserData(@NotNull UUID uuid) {
+        return makeFuture(() -> {
+            User user = playerTable.loadUser(uuid);
+            masterTable.saveDefaultUserData(user);
+        });
     }
 
     @NotNull
