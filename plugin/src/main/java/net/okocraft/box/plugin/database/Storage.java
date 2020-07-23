@@ -114,7 +114,11 @@ public class Storage {
 
     @NotNull
     public CompletableFuture<Item> registerItem(@NotNull ItemStack item) {
-        return makeFuture(() -> itemTable.registerItem(item));
+        return makeFuture(() -> {
+            Item boxItem = itemTable.registerItem(item);
+            items.add(boxItem);
+            return boxItem;
+        });
     }
 
     @NotNull
