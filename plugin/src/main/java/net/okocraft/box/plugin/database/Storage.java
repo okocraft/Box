@@ -73,7 +73,6 @@ public class Storage {
     }
 
     @NotNull
-    @Unmodifiable
     public Set<Item> getItems() {
         return items;
     }
