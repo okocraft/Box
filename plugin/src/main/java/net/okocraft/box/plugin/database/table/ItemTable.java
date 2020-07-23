@@ -117,10 +117,6 @@ public class ItemTable extends AbstractTable {
     }
 
     public void saveCustomName(@NotNull Item item) throws SQLException {
-        if (!item.isCustomizedName()) {
-            return;
-        }
-
         try (Connection c = database.getConnection();
              PreparedStatement st = c.prepareStatement(replaceTableName(ITEM_UPDATE_CUSTOM_NAME_BY_ID))) {
             st.setString(1, item.getName());
