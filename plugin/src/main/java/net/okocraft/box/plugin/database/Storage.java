@@ -1,5 +1,6 @@
 package net.okocraft.box.plugin.database;
 
+import net.okocraft.box.plugin.Box;
 import net.okocraft.box.plugin.database.connector.Database;
 import net.okocraft.box.plugin.database.table.ItemTable;
 import net.okocraft.box.plugin.database.table.MasterTable;
@@ -26,6 +27,7 @@ import java.util.concurrent.TimeUnit;
 
 public class Storage {
 
+    private final Box plugin;
     private final Database database;
     private final PlayerTable playerTable;
     private final ItemTable itemTable;
@@ -35,11 +37,13 @@ public class Storage {
 
     private final Set<Item> items;
 
-    public Storage(@NotNull Database.Type type) { // TODO
+    public Storage(@NotNull Box plugin, @NotNull Database.Type type) { // TODO
+        this.plugin = plugin;
+
         database = Database.connectSQLite(Path.of("./plugins/Box/data.db"));
         database.start();
 
-        playerTable = new PlayerTable(database, "box_");
+        playerTable = new PlayerTable(plugin, database, "box_");
         itemTable = new ItemTable(database, "box_");
 
         try {

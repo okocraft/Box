@@ -1,5 +1,6 @@
 package net.okocraft.box.plugin.database.table;
 
+import net.okocraft.box.plugin.Box;
 import net.okocraft.box.plugin.database.connector.Database;
 import net.okocraft.box.plugin.model.User;
 import net.okocraft.box.result.UserCheckResult;
@@ -25,8 +26,12 @@ public class PlayerTable extends AbstractTable {
     private final static String USER_RENAME = "update %table% set name=? where uuid=? limit 1";
     private final static String INSERT_USER = "insert into %table% (uuid, name) values(?,?)";
 
-    public PlayerTable(@NotNull Database database, @NotNull String prefix) {
+    private final Box plugin;
+
+    public PlayerTable(@NotNull Box plugin, @NotNull Database database, @NotNull String prefix) {
         super(database, prefix + "players");
+
+        this.plugin = plugin;
     }
 
     @NotNull
@@ -43,7 +48,7 @@ public class PlayerTable extends AbstractTable {
                 if (result.next()) {
                     id = result.getInt("id");
                     name = Objects.requireNonNullElse(result.getString("name"), UNKNOWN_NAME);
-                    return new User(id, uuid, name);
+                    return new User(plugin, id, uuid, name);
                 }
             }
         }
@@ -94,7 +99,7 @@ public class PlayerTable extends AbstractTable {
                 if (uuid.isPresent()) {
                     int id = result.getInt("id");
                     result.close();
-                    return Optional.of(new User(id, uuid.get(), username));
+                    return Optional.of(new User(plugin, id, uuid.get(), username));
                 }
             }
 
@@ -118,7 +123,7 @@ public class PlayerTable extends AbstractTable {
                 if (uuid.isPresent()) {
                     String name = Objects.requireNonNullElse(result.getString("name"), UNKNOWN_NAME);
                     result.close();
-                    return Optional.of(new User(internalID, uuid.get(), name));
+                    return Optional.of(new User(plugin, internalID, uuid.get(), name));
                 }
             }
 
