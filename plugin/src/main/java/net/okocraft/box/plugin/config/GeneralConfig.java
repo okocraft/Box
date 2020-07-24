@@ -42,6 +42,10 @@ public class GeneralConfig extends BukkitConfig {
         return getString("database.name", "box_database");
     }
 
+    public boolean isUsingSSL() {
+        return getBoolean("database.use-ssl", false);
+    }
+
     @NotNull
     public String getDatabaseUserName() {
         return getString("database.username", "root");
