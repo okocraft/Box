@@ -20,11 +20,6 @@ public class SoundConfig extends BukkitYaml {
 
     public SoundConfig(@NotNull Box plugin) {
         super(getFilePath(plugin));
-
-        if (!isLoaded()) {
-            plugin.getLogger().warning("Failed to load sound.yml");
-        }
-
         this.plugin = plugin;
     }
 
