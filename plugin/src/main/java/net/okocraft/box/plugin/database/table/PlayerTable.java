@@ -1,7 +1,9 @@
 package net.okocraft.box.plugin.database.table;
 
+import net.okocraft.box.plugin.Box;
 import net.okocraft.box.plugin.database.connector.Database;
 import net.okocraft.box.plugin.model.User;
+import net.okocraft.box.plugin.result.UserCheckResult;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.Connection;
@@ -24,8 +26,12 @@ public class PlayerTable extends AbstractTable {
     private final static String USER_RENAME = "update %table% set name=? where uuid=? limit 1";
     private final static String INSERT_USER = "insert into %table% (uuid, name) values(?,?)";
 
-    public PlayerTable(@NotNull Database database, @NotNull String prefix) {
+    private final Box plugin;
+
+    public PlayerTable(@NotNull Box plugin, @NotNull Database database, @NotNull String prefix) {
         super(database, prefix + "players");
+
+        this.plugin = plugin;
     }
 
     @NotNull
@@ -35,51 +41,47 @@ public class PlayerTable extends AbstractTable {
 
             st.setString(1, uuid.toString());
 
-            ResultSet result = st.executeQuery();
+            try (ResultSet result = st.executeQuery()) {
+                int id;
+                String name;
 
-            int id;
-            String name;
-
-            if (result.next()) {
-                id = result.getInt("id");
-                name = Objects.requireNonNullElse(result.getString("name"), UNKNOWN_NAME);
-                result.close();
-                return new User(id, uuid, name);
+                if (result.next()) {
+                    id = result.getInt("id");
+                    name = Objects.requireNonNullElse(result.getString("name"), UNKNOWN_NAME);
+                    return new User(plugin, id, uuid, name);
+                }
             }
         }
 
-        return createUser(uuid, UNKNOWN_NAME);
+        throw new IllegalStateException(uuid.toString() + " is not recorded.");
     }
 
-    public User updateUser(@NotNull UUID uuid, @NotNull String name) throws SQLException {
-        boolean newPlayer = false;
+    @NotNull
+    public UserCheckResult checkUser(@NotNull UUID uuid, @NotNull String name) throws SQLException {
         boolean renamed = false;
-
         try (Connection c = database.getConnection();
              PreparedStatement st = c.prepareStatement(replaceTableName(USER_SELECT_BY_UUID))) {
 
             st.setString(1, uuid.toString());
 
-            ResultSet result = st.executeQuery();
-
-            if (result.next()) {
-                renamed = Optional.ofNullable(result.getString("name")).map(s -> !s.equals(name)).orElse(true);
-            } else {
-                newPlayer = true;
+            try (ResultSet result = st.executeQuery()) {
+                if (result.next()) {
+                    if (Optional.ofNullable(result.getString("name")).map(s -> !s.equals(name)).orElse(true)) {
+                        renamed = true;
+                    } else {
+                        return UserCheckResult.NONE;
+                    }
+                }
             }
-
-            result.close();
-        }
-
-        if (newPlayer) {
-            return createUser(uuid, name);
         }
 
         if (renamed) {
             rename(uuid, name);
+            return UserCheckResult.RENAMED;
         }
 
-        return loadUser(uuid);
+        insertUser(uuid, name);
+        return UserCheckResult.NEW_PLAYER;
     }
 
     @NotNull
@@ -97,7 +99,7 @@ public class PlayerTable extends AbstractTable {
                 if (uuid.isPresent()) {
                     int id = result.getInt("id");
                     result.close();
-                    return Optional.of(new User(id, uuid.get(), username));
+                    return Optional.of(new User(plugin, id, uuid.get(), username));
                 }
             }
 
@@ -121,7 +123,7 @@ public class PlayerTable extends AbstractTable {
                 if (uuid.isPresent()) {
                     String name = Objects.requireNonNullElse(result.getString("name"), UNKNOWN_NAME);
                     result.close();
-                    return Optional.of(new User(internalID, uuid.get(), name));
+                    return Optional.of(new User(plugin, internalID, uuid.get(), name));
                 }
             }
 
@@ -130,8 +132,7 @@ public class PlayerTable extends AbstractTable {
         }
     }
 
-    @NotNull
-    private User createUser(@NotNull UUID uuid, @NotNull String name) throws SQLException {
+    private void insertUser(@NotNull UUID uuid, @NotNull String name) throws SQLException {
         try (Connection c = database.getConnection();
              PreparedStatement st = c.prepareStatement(replaceTableName(INSERT_USER))) {
 
@@ -139,24 +140,6 @@ public class PlayerTable extends AbstractTable {
             st.setString(2, name);
 
             st.execute();
-        }
-
-        try (Connection c = database.getConnection();
-             PreparedStatement st = c.prepareStatement(replaceTableName(USER_SELECT_ID_BY_UUID))) {
-
-            st.setString(1, uuid.toString());
-
-            ResultSet result = st.executeQuery();
-            int id;
-
-            if (result.next()) {
-                id = result.getInt("id");
-            } else {
-                id = -1;
-            }
-
-            result.close();
-            return new User(id, uuid, name);
         }
     }
 

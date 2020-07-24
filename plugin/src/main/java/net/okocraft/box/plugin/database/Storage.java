@@ -1,5 +1,6 @@
 package net.okocraft.box.plugin.database;
 
+import net.okocraft.box.plugin.Box;
 import net.okocraft.box.plugin.database.connector.Database;
 import net.okocraft.box.plugin.database.table.ItemTable;
 import net.okocraft.box.plugin.database.table.MasterTable;
@@ -7,10 +8,10 @@ import net.okocraft.box.plugin.database.table.PlayerTable;
 import net.okocraft.box.plugin.model.User;
 import net.okocraft.box.plugin.model.item.Item;
 import net.okocraft.box.plugin.model.item.Stock;
-import net.okocraft.box.util.UnsafeRunnable;
+import net.okocraft.box.plugin.result.UserCheckResult;
+import net.okocraft.box.plugin.util.UnsafeRunnable;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Unmodifiable;
 
 import java.nio.file.Path;
 import java.sql.SQLException;
@@ -26,6 +27,7 @@ import java.util.concurrent.TimeUnit;
 
 public class Storage {
 
+    private final Box plugin;
     private final Database database;
     private final PlayerTable playerTable;
     private final ItemTable itemTable;
@@ -35,11 +37,13 @@ public class Storage {
 
     private final Set<Item> items;
 
-    public Storage(@NotNull Database.Type type) { // TODO
+    public Storage(@NotNull Box plugin, @NotNull Database.Type type) { // TODO
+        this.plugin = plugin;
+
         database = Database.connectSQLite(Path.of("./plugins/Box/data.db"));
         database.start();
 
-        playerTable = new PlayerTable(database, "box_");
+        playerTable = new PlayerTable(plugin, database, "box_");
         itemTable = new ItemTable(database, "box_");
 
         try {
@@ -73,15 +77,19 @@ public class Storage {
     }
 
     @NotNull
-    @Unmodifiable
     public Set<Item> getItems() {
         return items;
     }
 
     @NotNull
-    public CompletableFuture<User> loadUser(@NotNull UUID uuid, @NotNull String name) {
+    public CompletableFuture<UserCheckResult> checkUser(@NotNull UUID uuid, @NotNull String name) {
+        return makeFuture(() -> playerTable.checkUser(uuid, name));
+    }
+
+    @NotNull
+    public CompletableFuture<User> loadUser(@NotNull UUID uuid) {
         return makeFuture(() -> {
-            User user = playerTable.updateUser(uuid, name);
+            User user = playerTable.loadUser(uuid);
             return masterTable.loadUserData(user);
         });
     }
@@ -104,18 +112,25 @@ public class Storage {
     }
 
     @NotNull
-    public CompletableFuture<Stock> createStock(@NotNull User user, @NotNull Item item) {
-        return makeFuture(() -> masterTable.createOrLoadStock(user, item));
+    public CompletableFuture<Stock> createStock(int playerId, @NotNull Item item) {
+        return makeFuture(() -> masterTable.createOrLoadStock(playerId, item));
     }
 
     @NotNull
-    public CompletableFuture<Void> saveDefaultUserData(@NotNull User user) {
-        return makeFuture(() -> masterTable.saveDefaultUserData(user));
+    public CompletableFuture<Void> saveDefaultUserData(@NotNull UUID uuid) {
+        return makeFuture(() -> {
+            User user = playerTable.loadUser(uuid);
+            masterTable.saveDefaultUserData(user);
+        });
     }
 
     @NotNull
     public CompletableFuture<Item> registerItem(@NotNull ItemStack item) {
-        return makeFuture(() -> itemTable.registerItem(item));
+        return makeFuture(() -> {
+            Item boxItem = itemTable.registerItem(item);
+            items.add(boxItem);
+            return boxItem;
+        });
     }
 
     @NotNull

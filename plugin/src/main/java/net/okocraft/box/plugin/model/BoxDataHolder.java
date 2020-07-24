@@ -1,8 +1,8 @@
 package net.okocraft.box.plugin.model;
 
+import net.okocraft.box.plugin.Box;
 import net.okocraft.box.plugin.model.item.Item;
 import net.okocraft.box.plugin.model.item.Stock;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
@@ -14,7 +14,14 @@ import java.util.stream.Collectors;
 
 public class BoxDataHolder {
 
+    private final Box plugin;
+    private final int internalID;
     private final Set<Stock> itemStock = new HashSet<>();
+
+    public BoxDataHolder(@NotNull Box plugin, int internalID) {
+        this.plugin = plugin;
+        this.internalID = internalID;
+    }
 
     public int getAmount(@NotNull Item item) {
         return getStock(item).map(Stock::getAmount).orElse(0);
@@ -78,14 +85,13 @@ public class BoxDataHolder {
         if (stock.isPresent()) {
             return stock.get();
         } else {
-            Stock created = createStock(item);
-            setStock(created);
-            return created;
+            try {
+                Stock created = plugin.getStorage().createStock(internalID, item).join();
+                setStock(created);
+                return created;
+            } catch (Throwable e) {
+                throw new IllegalStateException("Could not create a stock", e);
+            }
         }
-    }
-
-    @Contract(value = "_ -> new", pure = true)
-    private @NotNull Stock createStock(@NotNull Item item) {
-        return new Stock(item); // TODO: Item Table に実装する
     }
 }
