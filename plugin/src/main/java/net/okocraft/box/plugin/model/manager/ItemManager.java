@@ -23,6 +23,11 @@ public class ItemManager {
     }
 
     @NotNull
+    public Optional<Item> getItemByName(@NotNull String name) {
+        return plugin.getStorage().getItems().stream().filter(i -> i.getName().equals(name)).findFirst();
+    }
+
+    @NotNull
     public Optional<Item> getItemById(int id) {
         return plugin.getStorage().getItems().stream().filter(i -> i.getInternalID() == id).findFirst();
     }
