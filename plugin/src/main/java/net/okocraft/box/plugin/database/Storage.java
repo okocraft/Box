@@ -1,6 +1,7 @@
 package net.okocraft.box.plugin.database;
 
 import net.okocraft.box.plugin.Box;
+import net.okocraft.box.plugin.config.GeneralConfig;
 import net.okocraft.box.plugin.database.connector.Database;
 import net.okocraft.box.plugin.database.table.ItemTable;
 import net.okocraft.box.plugin.database.table.MasterTable;
@@ -13,7 +14,6 @@ import net.okocraft.box.plugin.util.UnsafeRunnable;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.nio.file.Path;
 import java.sql.SQLException;
 import java.util.Optional;
 import java.util.Set;
@@ -27,7 +27,6 @@ import java.util.concurrent.TimeUnit;
 
 public class Storage {
 
-    private final Box plugin;
     private final Database database;
     private final PlayerTable playerTable;
     private final ItemTable itemTable;
@@ -37,10 +36,25 @@ public class Storage {
 
     private final Set<Item> items;
 
-    public Storage(@NotNull Box plugin, @NotNull Database.Type type) { // TODO
-        this.plugin = plugin;
+    public Storage(@NotNull Box plugin) {
+        this(plugin, plugin.getGeneralConfig().getDatabaseType());
+    }
 
-        database = Database.connectSQLite(Path.of("./plugins/Box/data.db"));
+    public Storage(@NotNull Box plugin, @NotNull Database.Type type) {
+        if (type == Database.Type.MYSQL) {
+            GeneralConfig config = plugin.getGeneralConfig();
+
+            database = Database.connectMySQL(
+                    config.getDatabaseAddress() + ":" + config.getDatabasePort(),
+                    config.getDatabaseName(),
+                    config.getDatabaseUserName(),
+                    config.getDatabasePassword(),
+                    config.isUsingSSL()
+            );
+        } else {
+            database = Database.connectSQLite(plugin.getDataFolder().toPath().resolve("data.db"));
+        }
+
         database.start();
 
         playerTable = new PlayerTable(plugin, database, "box_");
