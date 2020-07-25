@@ -1,7 +1,6 @@
-package net.okocraft.box.plugin.util.nms.itemtag;
+package net.okocraft.box.nms.adapter;
 
 import net.md_5.bungee.api.chat.ItemTag;
-import net.okocraft.box.plugin.util.reflect.ServerVersion;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

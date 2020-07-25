@@ -1,4 +1,4 @@
-package net.okocraft.box.plugin.util.reflect;
+package net.okocraft.box.nms.adapter;
 
 import org.bukkit.Bukkit;
 
