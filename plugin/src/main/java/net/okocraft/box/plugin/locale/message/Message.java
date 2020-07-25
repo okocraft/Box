@@ -1,12 +1,20 @@
 package net.okocraft.box.plugin.locale.message;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 public enum Message {
 
     PREFIX("prefix", "&8[&6Box&8]&r "),
     TEST("test", "Test message {} {}"),
     ;
+
+    private final static Cache<Message, String> DEFAULT_MESSAGE =
+            CacheBuilder.newBuilder().expireAfterAccess(10, TimeUnit.MINUTES).build();
 
     private final String path;
     private final String def;
@@ -23,7 +31,12 @@ public enum Message {
 
     @NotNull
     public String getDefault() {
-        return setPlaceholderNumber();
+        try {
+            return DEFAULT_MESSAGE.get(this, this::setPlaceholderNumber);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+            return setPlaceholderNumber();
+        }
     }
 
     @NotNull
@@ -43,5 +56,9 @@ public enum Message {
         }
 
         return builder.toString();
+    }
+
+    public static void clearCache() {
+        DEFAULT_MESSAGE.invalidateAll();
     }
 }
