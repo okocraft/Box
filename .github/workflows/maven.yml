@@ -23,7 +23,18 @@ jobs:
       - name: Move the artifact
         run: |
           mkdir staging
-          cp -r target/ staging
+          mkdir staging/api
+          cp -r api/target staging/api/target
+          mkdir staging/nms
+          cp -r nms/target staging/nms
+          mkdir staging/nms/v1_15_R1
+          cp -r nms/v1_15_R1/target staging/nms/v1_15_R1
+          mkdir staging/nms/v1_16_R1
+          cp -r nms/v1_16_R1/target staging/nms/v1_16_R1
+          mkdir staging/nms/adapter
+          cp -r nms/adapter/target staging/nms/adapter
+          mkdir staging/plugin
+          cp -r plugin/target staging/plugin
       - uses: actions/upload-artifact@v1
         with:
           name: Package
