@@ -52,6 +52,12 @@ public class LocaleLoader {
 
     @NotNull
     public String get(@NotNull Message message) {
-        return config.getString(message.getPath(), message.getDefault());
+        String msg = config.getString(message.getPath());
+
+        if (msg.isEmpty()) {
+            return message.getDefault();
+        } else {
+            return msg;
+        }
     }
 }
