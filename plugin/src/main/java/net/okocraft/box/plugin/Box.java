@@ -4,6 +4,9 @@ import net.okocraft.box.plugin.config.GeneralConfig;
 import net.okocraft.box.plugin.config.RecipeConfig;
 import net.okocraft.box.plugin.config.SoundConfig;
 import net.okocraft.box.plugin.database.Storage;
+import net.okocraft.box.plugin.listener.AbstractListener;
+import net.okocraft.box.plugin.listener.ItemPickupListener;
+import net.okocraft.box.plugin.listener.PlayerConnectionListener;
 import net.okocraft.box.plugin.model.manager.ItemManager;
 import net.okocraft.box.plugin.model.manager.UserManager;
 import net.okocraft.box.plugin.sound.SoundPlayer;
@@ -12,6 +15,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
 import java.util.logging.Level;
 
 public final class Box extends JavaPlugin {
@@ -25,6 +31,8 @@ public final class Box extends JavaPlugin {
     private ItemManager itemManager;
     private UserManager userManager;
     private SoundPlayer soundPlayer;
+
+    private List<AbstractListener> listeners;
 
     @Override
     public void onLoad() {
@@ -53,6 +61,18 @@ public final class Box extends JavaPlugin {
     public void onEnable() {
         Instant start = Instant.now();
 
+        getLogger().info("Registering event listeners...");
+
+        listeners = new LinkedList<>();
+
+        listeners.add(new PlayerConnectionListener(this));
+
+        if (generalConfig.isAutoStoreEnabled()) {
+            listeners.add(new ItemPickupListener(this));
+        }
+
+        listeners.forEach(AbstractListener::start);
+
         getLogger().info("Initializing sound player...");
         soundPlayer = new SoundPlayer(this);
 
@@ -63,6 +83,11 @@ public final class Box extends JavaPlugin {
     @Override
     public void onDisable() {
         Instant start = Instant.now();
+
+        getLogger().info("Unregistering event listeners...");
+        listeners.forEach(AbstractListener::shutdown);
+        listeners.clear();
+        listeners = null;
 
         getLogger().info("Shutting down storage...");
         storage.shutdown();
@@ -110,6 +135,16 @@ public final class Box extends JavaPlugin {
 
     public SoundPlayer getSoundPlayer() {
         return soundPlayer;
+    }
+
+    public void debug(@NotNull String log) {
+        // TODO
+    }
+
+    @NotNull
+    public ExecutorService getExecutor() {
+        // TODO
+        return null;
     }
 
     private void loadConfig() {
