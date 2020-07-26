@@ -69,6 +69,10 @@ public class GeneralConfig extends BukkitConfig {
         return getBoolean("auto-store", true);
     }
 
+    public boolean isDebugMode() {
+        return getBoolean("debug");
+    }
+
     @NotNull
     public String getStickName() {
         return getString("stick.name", "&9Box Stick");

@@ -1,5 +1,6 @@
 package net.okocraft.box.plugin;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import net.okocraft.box.plugin.config.GeneralConfig;
 import net.okocraft.box.plugin.config.RecipeConfig;
 import net.okocraft.box.plugin.config.SoundConfig;
@@ -18,6 +19,8 @@ import java.time.Instant;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.logging.Level;
 
 public final class Box extends JavaPlugin {
@@ -33,6 +36,10 @@ public final class Box extends JavaPlugin {
     private SoundPlayer soundPlayer;
 
     private List<AbstractListener> listeners;
+
+    private ExecutorService executor;
+    private ExecutorService threadPool;
+    private ScheduledExecutorService scheduler;
 
     @Override
     public void onLoad() {
@@ -60,6 +67,13 @@ public final class Box extends JavaPlugin {
     @Override
     public void onEnable() {
         Instant start = Instant.now();
+
+        getLogger().info("Initializing executors...");
+        executor = Executors.newSingleThreadExecutor(r -> new Thread(r, "Box-Executor"));
+        threadPool = Executors.newCachedThreadPool(
+                new ThreadFactoryBuilder().setDaemon(true).setNameFormat("Box-Worker-%d").build()
+        );
+        scheduler = Executors.newSingleThreadScheduledExecutor(r -> new Thread(r, "Box-Executor"));
 
         getLogger().info("Registering event listeners...");
 
@@ -98,6 +112,11 @@ public final class Box extends JavaPlugin {
 
         getLogger().info("Shutting down sound player...");
         soundPlayer = null;
+
+        getLogger().info("Shutting down executors...");
+        executor.shutdownNow();
+        threadPool.shutdownNow();
+        scheduler.shutdownNow();
 
         Instant finish = Instant.now();
         getLogger().info("Box disabled! (" + Duration.between(start, finish).toMillis() + "ms)");
@@ -138,13 +157,24 @@ public final class Box extends JavaPlugin {
     }
 
     public void debug(@NotNull String log) {
-        // TODO
+        if (generalConfig.isDebugMode()) {
+            getLogger().info(log);
+        }
     }
 
     @NotNull
     public ExecutorService getExecutor() {
-        // TODO
-        return null;
+        return executor;
+    }
+
+    @NotNull
+    public ExecutorService getThreadPool() {
+        return threadPool;
+    }
+
+    @NotNull
+    public ScheduledExecutorService getScheduler() {
+        return scheduler;
     }
 
     private void loadConfig() {
