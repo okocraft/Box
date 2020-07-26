@@ -43,9 +43,13 @@ public class UserManager {
             throw new IllegalStateException("Could not save user:" + user.getName(), e);
         }
     }
-    
+
     public void unloadUser(@NotNull User user) {
         loadedUser.remove(user);
+    }
+
+    public boolean isLoaded(@NotNull UUID uuid) {
+        return loadedUser.stream().anyMatch(u -> u.getUuid().equals(uuid));
     }
 
     @NotNull
