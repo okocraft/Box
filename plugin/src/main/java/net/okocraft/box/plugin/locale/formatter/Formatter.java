@@ -41,4 +41,9 @@ public final class Formatter {
 
         return msg;
     }
+
+    @NotNull
+    public static String replace(@NotNull String str, int index, @NotNull String to) {
+        return str.replace("{" + index + "}", to);
+    }
 }
