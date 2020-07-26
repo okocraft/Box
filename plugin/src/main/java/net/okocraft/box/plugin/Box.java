@@ -112,6 +112,10 @@ public final class Box extends JavaPlugin {
         return soundPlayer;
     }
 
+    public void debug(@NotNull String log) {
+        // TODO
+    }
+
     private void loadConfig() {
         generalConfig = new GeneralConfig(this);
 
