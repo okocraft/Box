@@ -11,7 +11,6 @@ public enum Message {
 
     // プレースホルダーは {} で設定する。デフォルトのメッセージは、左から 0, 1, ... とナンバリングされる。
     PREFIX("prefix", "&8[&6Box&8]&r "),
-    TEST("test", "Test message {} {}"),
     ;
 
     private final static Cache<Message, String> DEFAULT_MESSAGE =
