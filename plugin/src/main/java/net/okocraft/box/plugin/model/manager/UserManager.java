@@ -43,6 +43,10 @@ public class UserManager {
             throw new IllegalStateException("Could not save user:" + user.getName(), e);
         }
     }
+    
+    public void unloadUser(@NotNull User user) {
+        loadedUser.remove(user);
+    }
 
     @NotNull
     public UserCheckResult checkUser(@NotNull UUID uuid, @NotNull String name) {
