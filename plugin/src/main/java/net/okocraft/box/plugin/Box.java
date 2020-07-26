@@ -101,17 +101,12 @@ public final class Box extends JavaPlugin {
         getLogger().info("Unregistering event listeners...");
         listeners.forEach(AbstractListener::shutdown);
         listeners.clear();
-        listeners = null;
 
         getLogger().info("Shutting down storage...");
         storage.shutdown();
-        storage = null;
 
         getLogger().info("Unloading config files...");
         unloadConfig();
-
-        getLogger().info("Shutting down sound player...");
-        soundPlayer = null;
 
         getLogger().info("Shutting down executors...");
         executor.shutdownNow();
