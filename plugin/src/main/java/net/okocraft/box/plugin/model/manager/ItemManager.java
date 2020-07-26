@@ -2,6 +2,7 @@ package net.okocraft.box.plugin.model.manager;
 
 import net.okocraft.box.plugin.Box;
 import net.okocraft.box.plugin.model.item.Item;
+import net.okocraft.box.plugin.model.stick.BoxStick;
 import net.okocraft.box.plugin.result.RegistrationResult;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -12,9 +13,11 @@ import java.util.logging.Level;
 public class ItemManager {
 
     private final Box plugin;
+    private final BoxStick stick;
 
     public ItemManager(@NotNull Box plugin) {
         this.plugin = plugin;
+        this.stick = BoxStick.create(plugin);
     }
 
     @NotNull
@@ -53,5 +56,10 @@ public class ItemManager {
     public void setCustomName(@NotNull Item item, @NotNull String newName) {
         item.setCustomName(newName);
         plugin.getStorage().saveCustomName(item);
+    }
+
+    @NotNull
+    public BoxStick getStick() {
+        return stick;
     }
 }
