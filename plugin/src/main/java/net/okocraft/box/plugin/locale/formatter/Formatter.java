@@ -9,20 +9,24 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class Formatter {
 
+    private final static String REPLACE_1 = "{0}";
+    private final static String REPLACE_2 = "{1}";
+    private final static String REPLACE_3 = "{2}";
+
     @NotNull
     public static String format(@NotNull String message, @NotNull String holder1) {
-        return message.replace("{0}", holder1);
+        return message.replace(REPLACE_1, holder1);
     }
 
     @NotNull
     public static String format(@NotNull String message, @NotNull String holder1, @NotNull String holder2) {
-        return message.replace("{0}", holder1).replace("{1}", holder2);
+        return message.replace(REPLACE_1, holder1).replace(REPLACE_2, holder2);
     }
 
     @NotNull
     public static String format(@NotNull String message,
                                 @NotNull String holder1, @NotNull String holder2, @NotNull String holder3) {
-        return message.replace("{0}", holder1).replace("{1}", holder2).replace("{2}", holder3);
+        return message.replace(REPLACE_1, holder1).replace(REPLACE_2, holder2).replace(REPLACE_3, holder3);
     }
 
     @NotNull
