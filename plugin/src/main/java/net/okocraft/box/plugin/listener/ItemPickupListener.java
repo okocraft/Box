@@ -6,6 +6,7 @@ import net.okocraft.box.plugin.model.item.Item;
 import net.okocraft.box.plugin.sound.BoxSound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,7 +18,7 @@ public class ItemPickupListener extends AbstractListener {
         super(plugin);
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onItemPickup(@NotNull EntityPickupItemEvent e) {
         if (!(e.getEntity() instanceof Player)) {
             return;
