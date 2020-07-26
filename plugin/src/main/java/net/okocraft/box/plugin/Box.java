@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.concurrent.ExecutorService;
 import java.util.logging.Level;
 
 public final class Box extends JavaPlugin {
@@ -114,6 +115,12 @@ public final class Box extends JavaPlugin {
 
     public void debug(@NotNull String log) {
         // TODO
+    }
+
+    @NotNull
+    public ExecutorService getExecutor() {
+        // TODO
+        return null;
     }
 
     private void loadConfig() {
