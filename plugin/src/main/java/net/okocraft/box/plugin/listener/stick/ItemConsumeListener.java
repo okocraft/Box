@@ -16,7 +16,7 @@ public class ItemConsumeListener extends AbstractStickListener {
         super(plugin);
     }
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onItemConsume(@NotNull PlayerItemConsumeEvent e) {
         if (isInDisabledWorld(e.getPlayer())
                 || !hasStick(e.getPlayer(), false)
