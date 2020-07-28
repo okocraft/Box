@@ -29,7 +29,7 @@ public class ProjectileLaunchListener extends AbstractStickListener {
         super(plugin);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onProjectileLaunch(@NotNull ProjectileLaunchEvent e) {
         if (!(e.getEntity().getShooter() instanceof Player)) {
             return;
