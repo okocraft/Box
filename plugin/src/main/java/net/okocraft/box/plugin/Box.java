@@ -8,6 +8,11 @@ import net.okocraft.box.plugin.database.Storage;
 import net.okocraft.box.plugin.listener.AbstractListener;
 import net.okocraft.box.plugin.listener.ItemPickupListener;
 import net.okocraft.box.plugin.listener.PlayerConnectionListener;
+import net.okocraft.box.plugin.listener.stick.BlockPlaceListener;
+import net.okocraft.box.plugin.listener.stick.InteractListener;
+import net.okocraft.box.plugin.listener.stick.ItemBreakListener;
+import net.okocraft.box.plugin.listener.stick.ItemConsumeListener;
+import net.okocraft.box.plugin.listener.stick.ProjectileLaunchListener;
 import net.okocraft.box.plugin.model.manager.ItemManager;
 import net.okocraft.box.plugin.model.manager.UserManager;
 import net.okocraft.box.plugin.sound.SoundPlayer;
@@ -83,6 +88,16 @@ public final class Box extends JavaPlugin {
 
         if (generalConfig.isAutoStoreEnabled()) {
             listeners.add(new ItemPickupListener(this));
+        }
+
+        if (generalConfig.isStickEnabled()) {
+            listeners.addAll(List.of(
+                    new BlockPlaceListener(this),
+                    new InteractListener(this),
+                    new ItemBreakListener(this),
+                    new ItemConsumeListener(this),
+                    new ProjectileLaunchListener(this)
+            ));
         }
 
         listeners.forEach(AbstractListener::start);
