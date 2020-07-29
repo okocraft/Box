@@ -4,6 +4,13 @@ import org.jetbrains.annotations.NotNull;
 
 public enum BoxPermission {
 
+    BOX_AUTO_STORE("box.autostore", true),
+
+    BOX_STICK_BREAK("box.stick.break", true),
+    BOX_STICK_CONSUME("box.stick.consume", true),
+    BOX_STICK_OPEN("box.stick.open", true),
+    BOX_STICK_PLACE("box.stick.place", true),
+    BOX_STICK_THROW("box.stick.throw", true)
     ;
 
     private final String node;
