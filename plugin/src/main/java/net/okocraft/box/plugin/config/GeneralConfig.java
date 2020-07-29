@@ -73,6 +73,10 @@ public class GeneralConfig extends BukkitConfig {
         return getBoolean("debug");
     }
 
+    public boolean isStickEnabled() {
+        return getBoolean("stick.enable", true);
+    }
+
     @NotNull
     public String getStickName() {
         return getString("stick.name", "&9Box Stick");

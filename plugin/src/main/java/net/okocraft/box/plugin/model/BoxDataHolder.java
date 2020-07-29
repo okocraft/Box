@@ -31,6 +31,10 @@ public class BoxDataHolder {
         getStockOrCreate(item).setAmount(amount);
     }
 
+    public boolean hasStock(@NotNull Item item) {
+        return getStock(item).map(s -> 0 < s.getAmount()).orElse(false);
+    }
+
     public Supplier<Integer> increase(@NotNull Item item) {
         return increase(item, 1);
     }
