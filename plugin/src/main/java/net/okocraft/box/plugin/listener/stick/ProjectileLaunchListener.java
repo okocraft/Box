@@ -1,6 +1,7 @@
 package net.okocraft.box.plugin.listener.stick;
 
 import net.okocraft.box.plugin.Box;
+import net.okocraft.box.plugin.BoxPermission;
 import net.okocraft.box.plugin.model.User;
 import net.okocraft.box.plugin.model.item.Item;
 import net.okocraft.box.plugin.util.PaperChecker;
@@ -38,8 +39,10 @@ public class ProjectileLaunchListener extends AbstractStickListener {
         Player player = (Player) e.getEntity().getShooter();
 
         if (isInDisabledWorld(player)
+                || isCreative(player)
                 || !hasStick(player, false)
-                || isCreative(player)) {
+                || !player.hasPermission(BoxPermission.BOX_STICK_THROW.getNode())
+        ) {
             return;
         }
 
@@ -85,8 +88,6 @@ public class ProjectileLaunchListener extends AbstractStickListener {
     }
 
     private void useFromStock(@NotNull Player player, @NotNull Material material) {
-        // TODO: 権限チェック
-
         ItemStack hand = player.getInventory().getItemInMainHand();
 
         if (hand.getType() != material) {
@@ -110,8 +111,6 @@ public class ProjectileLaunchListener extends AbstractStickListener {
     }
 
     private void useFromStock(@NotNull Player player, @NotNull ItemStack item) {
-        // TODO: 権限チェック
-
         Optional<Item> boxItem = plugin.getItemManager().getItem(item);
 
         if (boxItem.isEmpty()) {
@@ -130,8 +129,6 @@ public class ProjectileLaunchListener extends AbstractStickListener {
     }
 
     private void useArrowFromStock(@NotNull Player player, @NotNull ItemStack arrow) {
-        // TODO: 権限チェック
-
         if (player.getInventory().getItemInMainHand().containsEnchantment(Enchantment.ARROW_INFINITE)) {
             return;
         }

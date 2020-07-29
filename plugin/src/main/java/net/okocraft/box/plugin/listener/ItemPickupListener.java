@@ -1,6 +1,7 @@
 package net.okocraft.box.plugin.listener;
 
 import net.okocraft.box.plugin.Box;
+import net.okocraft.box.plugin.BoxPermission;
 import net.okocraft.box.plugin.model.User;
 import net.okocraft.box.plugin.model.item.Item;
 import net.okocraft.box.plugin.sound.BoxSound;
@@ -25,6 +26,10 @@ public class ItemPickupListener extends AbstractListener {
         }
 
         Player player = (Player) e.getEntity();
+
+        if (!player.hasPermission(BoxPermission.BOX_AUTO_STORE.getNode())) {
+            return;
+        }
 
         if (plugin.getGeneralConfig().getDisabledWorlds().contains(player.getWorld().getName())) {
             return;

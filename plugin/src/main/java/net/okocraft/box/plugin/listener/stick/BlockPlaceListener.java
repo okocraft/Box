@@ -1,6 +1,7 @@
 package net.okocraft.box.plugin.listener.stick;
 
 import net.okocraft.box.plugin.Box;
+import net.okocraft.box.plugin.BoxPermission;
 import net.okocraft.box.plugin.model.User;
 import net.okocraft.box.plugin.model.item.Item;
 import org.bukkit.event.EventHandler;
@@ -19,12 +20,12 @@ public class BlockPlaceListener extends AbstractStickListener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBlockPlace(@NotNull BlockPlaceEvent e) {
         if (isInDisabledWorld(e.getPlayer())
+                || isCreative(e.getPlayer())
                 || !hasStick(e.getPlayer(), false)
-                || isCreative(e.getPlayer())) {
+                || !e.getPlayer().hasPermission(BoxPermission.BOX_STICK_PLACE.getNode())
+        ) {
             return;
         }
-
-        // TODO: 権限チェック
 
         Optional<Item> item = plugin.getItemManager().getItem(e.getItemInHand());
 

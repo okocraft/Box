@@ -1,6 +1,7 @@
 package net.okocraft.box.plugin.listener.stick;
 
 import net.okocraft.box.plugin.Box;
+import net.okocraft.box.plugin.BoxPermission;
 import net.okocraft.box.plugin.model.User;
 import net.okocraft.box.plugin.model.item.Item;
 import org.bukkit.event.EventHandler;
@@ -22,8 +23,10 @@ public class ItemBreakListener extends AbstractStickListener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onItemBreak(@NotNull PlayerItemBreakEvent e) {
         if (isInDisabledWorld(e.getPlayer())
+                || isCreative(e.getPlayer())
                 || !hasStick(e.getPlayer(), false)
-                || isCreative(e.getPlayer())) {
+                || !e.getPlayer().hasPermission(BoxPermission.BOX_STICK_BREAK.getNode())
+        ) {
             return;
         }
 
