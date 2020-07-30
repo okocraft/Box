@@ -22,7 +22,7 @@ public class BlockPlaceListener extends AbstractStickListener {
         if (isInDisabledWorld(e.getPlayer())
                 || isCreative(e.getPlayer())
                 || !hasStick(e.getPlayer(), false)
-                || !e.getPlayer().hasPermission(BoxPermission.BOX_STICK_PLACE.getNode())
+                || !BoxPermission.BOX_STICK_PLACE.has(e.getPlayer())
         ) {
             return;
         }

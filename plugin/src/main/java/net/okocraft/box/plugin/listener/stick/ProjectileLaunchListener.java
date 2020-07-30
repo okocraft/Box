@@ -41,7 +41,7 @@ public class ProjectileLaunchListener extends AbstractStickListener {
         if (isInDisabledWorld(player)
                 || isCreative(player)
                 || !hasStick(player, false)
-                || !player.hasPermission(BoxPermission.BOX_STICK_THROW.getNode())
+                || !BoxPermission.BOX_STICK_THROW.has(player)
         ) {
             return;
         }

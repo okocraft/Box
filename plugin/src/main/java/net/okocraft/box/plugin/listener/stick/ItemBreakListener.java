@@ -25,7 +25,7 @@ public class ItemBreakListener extends AbstractStickListener {
         if (isInDisabledWorld(e.getPlayer())
                 || isCreative(e.getPlayer())
                 || !hasStick(e.getPlayer(), false)
-                || !e.getPlayer().hasPermission(BoxPermission.BOX_STICK_BREAK.getNode())
+                || !BoxPermission.BOX_STICK_BREAK.has(e.getPlayer())
         ) {
             return;
         }

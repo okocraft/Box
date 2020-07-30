@@ -21,15 +21,11 @@ public class ItemPickupListener extends AbstractListener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onItemPickup(@NotNull EntityPickupItemEvent e) {
-        if (!(e.getEntity() instanceof Player)) {
+        if (!(e.getEntity() instanceof Player) || !BoxPermission.BOX_AUTO_STORE.has(e.getEntity())) {
             return;
         }
 
         Player player = (Player) e.getEntity();
-
-        if (!player.hasPermission(BoxPermission.BOX_AUTO_STORE.getNode())) {
-            return;
-        }
 
         if (plugin.getGeneralConfig().getDisabledWorlds().contains(player.getWorld().getName())) {
             return;

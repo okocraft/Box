@@ -22,7 +22,7 @@ public class ItemConsumeListener extends AbstractStickListener {
         if (isInDisabledWorld(e.getPlayer())
                 || isCreative(e.getPlayer())
                 || !hasStick(e.getPlayer(), false)
-                || !e.getPlayer().hasPermission(BoxPermission.BOX_STICK_CONSUME.getNode())
+                || !BoxPermission.BOX_STICK_CONSUME.has(e.getPlayer())
         ) {
             return;
         }
