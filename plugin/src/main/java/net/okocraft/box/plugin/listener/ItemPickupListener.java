@@ -1,6 +1,7 @@
 package net.okocraft.box.plugin.listener;
 
 import net.okocraft.box.plugin.Box;
+import net.okocraft.box.plugin.BoxPermission;
 import net.okocraft.box.plugin.model.User;
 import net.okocraft.box.plugin.model.item.Item;
 import net.okocraft.box.plugin.sound.BoxSound;
@@ -20,7 +21,7 @@ public class ItemPickupListener extends AbstractListener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onItemPickup(@NotNull EntityPickupItemEvent e) {
-        if (!(e.getEntity() instanceof Player)) {
+        if (!(e.getEntity() instanceof Player) || !BoxPermission.BOX_AUTO_STORE.has(e.getEntity())) {
             return;
         }
 

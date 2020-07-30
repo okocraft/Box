@@ -1,6 +1,7 @@
 package net.okocraft.box.plugin.listener.stick;
 
 import net.okocraft.box.plugin.Box;
+import net.okocraft.box.plugin.BoxPermission;
 import net.okocraft.box.plugin.model.User;
 import net.okocraft.box.plugin.model.item.Item;
 import org.bukkit.event.EventHandler;
@@ -19,8 +20,10 @@ public class ItemConsumeListener extends AbstractStickListener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onItemConsume(@NotNull PlayerItemConsumeEvent e) {
         if (isInDisabledWorld(e.getPlayer())
+                || isCreative(e.getPlayer())
                 || !hasStick(e.getPlayer(), false)
-                || isCreative(e.getPlayer())) {
+                || !BoxPermission.BOX_STICK_CONSUME.has(e.getPlayer())
+        ) {
             return;
         }
 
