@@ -36,7 +36,7 @@ public class BlockPlaceListener extends AbstractStickListener {
         User user = plugin.getUserManager().getUser(e.getPlayer().getUniqueId());
 
         if (user.hasStock(item.get())) {
-            user.decrease(item.get());
+            plugin.getDataHandler().decrease(user, item.get());
             e.getPlayer().getInventory().setItemInMainHand(e.getItemInHand());
         }
 

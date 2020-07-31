@@ -114,6 +114,11 @@ public class Storage {
     }
 
     @NotNull
+    public CompletableFuture<Void> saveStock(@NotNull User user,@NotNull Stock stock) {
+        return makeFuture(() -> masterTable.saveStock(user, stock));
+    }
+
+    @NotNull
     public CompletableFuture<Optional<User>> searchUser(@NotNull String name) {
         return makeFuture(() -> {
             Optional<User> user = playerTable.searchUser(name);

@@ -9,7 +9,6 @@ import org.jetbrains.annotations.Unmodifiable;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class BoxDataHolder {
@@ -35,24 +34,16 @@ public class BoxDataHolder {
         return getStock(item).map(s -> 0 < s.getAmount()).orElse(false);
     }
 
-    public Supplier<Integer> increase(@NotNull Item item) {
-        return increase(item, 1);
-    }
-
-    public Supplier<Integer> increase(@NotNull Item item, int increment) {
+    public int increase(@NotNull Item item, int increment) {
         int amount = getAmount(item) + increment;
         setAmount(item, amount);
-        return () -> getAmount(item);
+        return amount;
     }
 
-    public Supplier<Integer> decrease(@NotNull Item item) {
-        return decrease(item, 1);
-    }
-
-    public Supplier<Integer> decrease(@NotNull Item item, int decrement) {
+    public int decrease(@NotNull Item item, int decrement) {
         int amount = getAmount(item) + decrement;
         setAmount(item, amount);
-        return () -> getAmount(item);
+        return amount;
     }
 
     public boolean isAutoStore(@NotNull Item item) {

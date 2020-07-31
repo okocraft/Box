@@ -13,6 +13,7 @@ import net.okocraft.box.plugin.listener.stick.InteractListener;
 import net.okocraft.box.plugin.listener.stick.ItemBreakListener;
 import net.okocraft.box.plugin.listener.stick.ItemConsumeListener;
 import net.okocraft.box.plugin.listener.stick.ProjectileLaunchListener;
+import net.okocraft.box.plugin.model.DataHandler;
 import net.okocraft.box.plugin.model.manager.ItemManager;
 import net.okocraft.box.plugin.model.manager.UserManager;
 import net.okocraft.box.plugin.sound.SoundPlayer;
@@ -36,6 +37,7 @@ public final class Box extends JavaPlugin {
 
     private Storage storage;
 
+    private DataHandler dataHandler;
     private ItemManager itemManager;
     private UserManager userManager;
     private SoundPlayer soundPlayer;
@@ -105,6 +107,8 @@ public final class Box extends JavaPlugin {
         getLogger().info("Initializing sound player...");
         soundPlayer = new SoundPlayer(this);
 
+        dataHandler = new DataHandler(this);
+
         Instant finish = Instant.now();
         getLogger().info("Box enabled! (" + Duration.between(start, finish).toMillis() + "ms)");
     }
@@ -150,6 +154,11 @@ public final class Box extends JavaPlugin {
     @NotNull
     public Storage getStorage() {
         return storage;
+    }
+
+    @NotNull
+    public DataHandler getDataHandler() {
+        return dataHandler;
     }
 
     @NotNull

@@ -40,8 +40,11 @@ public class ItemPickupListener extends AbstractListener {
         User user = plugin.getUserManager().getUser(player.getUniqueId());
 
         if (user.isAutoStore(item.get())) {
-            user.increase(item.get());
+            plugin.getDataHandler().increase(user, item.get(), e.getItem().getItemStack().getAmount());
+
+            e.getItem().remove();
             e.setCancelled(true);
+
             plugin.getSoundPlayer().play(player, BoxSound.ITEM_DEPOSIT);
 
             // TODO アクションバーにアイテム所持数表示 (要検討)

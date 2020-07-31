@@ -103,7 +103,7 @@ public class ProjectileLaunchListener extends AbstractStickListener {
         User user = plugin.getUserManager().getUser(player.getUniqueId());
 
         if (user.hasStock(item.get())) {
-            user.decrease(item.get());
+            plugin.getDataHandler().decrease(user, item.get());
             hand.setAmount(hand.getAmount() + 1);
         }
 
@@ -121,7 +121,7 @@ public class ProjectileLaunchListener extends AbstractStickListener {
 
         if (user.hasStock(boxItem.get())) {
             ItemStack hand = player.getInventory().getItemInMainHand();
-            user.decrease(boxItem.get());
+            plugin.getDataHandler().decrease(user, boxItem.get());
             hand.setAmount(hand.getAmount() + 1);
         }
 
@@ -145,7 +145,7 @@ public class ProjectileLaunchListener extends AbstractStickListener {
             ItemStack clonedArrow = arrow.clone();
             clonedArrow.setAmount(1);
             if (player.getInventory().addItem(clonedArrow).isEmpty()) {
-                user.decrease(item.get());
+                plugin.getDataHandler().decrease(user, item.get());
             } else {
                 // TODO: インベ満杯通知
             }
