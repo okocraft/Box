@@ -7,6 +7,7 @@ import net.okocraft.box.plugin.util.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -45,6 +46,12 @@ public class CategoryManager {
 
             categories.add(new Category(category, displayName, icon, items));
         }
+    }
+
+    @NotNull
+    @Unmodifiable
+    public List<Category> getCategories() {
+        return List.copyOf(categories);
     }
 
     @NotNull
