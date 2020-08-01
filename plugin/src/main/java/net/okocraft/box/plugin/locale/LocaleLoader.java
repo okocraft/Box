@@ -3,6 +3,7 @@ package net.okocraft.box.plugin.locale;
 import com.github.siroshun09.configapi.bukkit.BukkitYaml;
 import com.github.siroshun09.configapi.common.Configuration;
 import net.okocraft.box.plugin.Box;
+import net.okocraft.box.plugin.locale.formatter.Formatter;
 import net.okocraft.box.plugin.locale.message.Message;
 import org.jetbrains.annotations.NotNull;
 
@@ -59,5 +60,30 @@ public class LocaleLoader {
         } else {
             return msg;
         }
+    }
+
+    @NotNull
+    public String format(@NotNull Message message, @NotNull String holder1) {
+        return Formatter.format(get(message), holder1);
+    }
+
+    @NotNull
+    public String format(@NotNull Message message, @NotNull String holder1, @NotNull String holder2) {
+        return Formatter.format(get(message), holder1, holder2);
+    }
+
+    @NotNull
+    public String format(@NotNull Message message, @NotNull String holder1, @NotNull String holder2, @NotNull String holder3) {
+        return Formatter.format(get(message), holder1, holder2, holder3);
+    }
+
+    @NotNull
+    public String format(@NotNull Message message, @NotNull String... holders) {
+        return Formatter.format(get(message), holders);
+    }
+
+    @NotNull
+    public String replace(@NotNull Message message, int index, @NotNull String replacement) {
+        return Formatter.replace(get(message), index, replacement);
     }
 }
