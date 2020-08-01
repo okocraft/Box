@@ -126,7 +126,11 @@
                     <relocations>
                         <relocation>
                             <pattern>com.zaxxer.hikari</pattern>
-                            <pattern>${project.groupId}.lib.hikari</pattern>
+                            <shadedPattern>${project.groupId}.lib.hikari</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>com.github.siroshun09.configapi</pattern>
+                            <shadedPattern>${project.groupId}.lib.configapi</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>
