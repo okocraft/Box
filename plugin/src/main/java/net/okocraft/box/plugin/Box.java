@@ -1,6 +1,7 @@
 package net.okocraft.box.plugin;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import net.okocraft.box.plugin.category.CategoryManager;
 import net.okocraft.box.plugin.config.GeneralConfig;
 import net.okocraft.box.plugin.config.RecipeConfig;
 import net.okocraft.box.plugin.config.SoundConfig;
@@ -40,6 +41,8 @@ public final class Box extends JavaPlugin {
     private DataHandler dataHandler;
     private ItemManager itemManager;
     private UserManager userManager;
+
+    private CategoryManager categoryManager;
     private SoundPlayer soundPlayer;
 
     private List<AbstractListener> listeners;
@@ -66,6 +69,10 @@ public final class Box extends JavaPlugin {
 
         itemManager = new ItemManager(this);
         userManager = new UserManager(this);
+
+        getLogger().info("Loading categories...");
+        categoryManager = new CategoryManager(this);
+        categoryManager.load();
 
         Instant finish = Instant.now();
         getLogger().info("Loading completed! (" + Duration.between(start, finish).toMillis() + "ms)");
@@ -169,6 +176,11 @@ public final class Box extends JavaPlugin {
     @NotNull
     public UserManager getUserManager() {
         return userManager;
+    }
+
+    @NotNull
+    public CategoryManager getCategoryManager() {
+        return categoryManager;
     }
 
     public SoundPlayer getSoundPlayer() {
