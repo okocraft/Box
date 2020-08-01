@@ -3,6 +3,7 @@ package net.okocraft.box.plugin;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import net.okocraft.box.plugin.category.CategoryManager;
 import net.okocraft.box.plugin.config.GeneralConfig;
+import net.okocraft.box.plugin.config.PriceConfig;
 import net.okocraft.box.plugin.config.RecipeConfig;
 import net.okocraft.box.plugin.config.SoundConfig;
 import net.okocraft.box.plugin.database.Storage;
@@ -33,6 +34,7 @@ import java.util.logging.Level;
 public final class Box extends JavaPlugin {
 
     private GeneralConfig generalConfig;
+    private PriceConfig priceConfig;
     private RecipeConfig recipeConfig;
     private SoundConfig soundConfig;
 
@@ -149,6 +151,11 @@ public final class Box extends JavaPlugin {
     }
 
     @NotNull
+    public PriceConfig getPriceConfig() {
+        return priceConfig;
+    }
+
+    @NotNull
     public RecipeConfig getRecipeConfig() {
         return recipeConfig;
     }
@@ -213,6 +220,12 @@ public final class Box extends JavaPlugin {
 
         if (!generalConfig.isLoaded()) {
             printConfigLoadError("config.yml");
+        }
+
+        priceConfig = new PriceConfig(this);
+
+        if (!priceConfig.isLoaded()) {
+            printConfigLoadError("price.yml");
         }
 
         recipeConfig = new RecipeConfig(this);
