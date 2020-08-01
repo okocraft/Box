@@ -5,7 +5,6 @@ import net.okocraft.box.plugin.category.CategoryManager;
 import net.okocraft.box.plugin.config.GeneralConfig;
 import net.okocraft.box.plugin.config.PriceConfig;
 import net.okocraft.box.plugin.config.RecipeConfig;
-import net.okocraft.box.plugin.config.SoundConfig;
 import net.okocraft.box.plugin.database.Storage;
 import net.okocraft.box.plugin.listener.AbstractListener;
 import net.okocraft.box.plugin.listener.ItemPickupListener;
@@ -36,7 +35,6 @@ public final class Box extends JavaPlugin {
     private GeneralConfig generalConfig;
     private PriceConfig priceConfig;
     private RecipeConfig recipeConfig;
-    private SoundConfig soundConfig;
 
     private Storage storage;
 
@@ -57,8 +55,12 @@ public final class Box extends JavaPlugin {
     public void onLoad() {
         Instant start = Instant.now();
 
-        getLogger().info("Loading config files...");
-        loadConfig();
+        getLogger().info("Loading config.yml...");
+        generalConfig = new GeneralConfig(this);
+
+        if (!generalConfig.isLoaded()) {
+            printConfigLoadError("config.yml");
+        }
 
         try {
             getLogger().info("Starting storage...");
@@ -75,6 +77,20 @@ public final class Box extends JavaPlugin {
         getLogger().info("Loading categories...");
         categoryManager = new CategoryManager(this);
         categoryManager.load();
+
+        getLogger().info("Loading custom recipe setting...");
+        recipeConfig = new RecipeConfig(this);
+
+        if (!recipeConfig.isLoaded()) {
+            printConfigLoadError("recipe.yml");
+        }
+
+        getLogger().info("Loading item price setting...");
+        priceConfig = new PriceConfig(this);
+
+        if (!priceConfig.isLoaded()) {
+            printConfigLoadError("price.yml");
+        }
 
         Instant finish = Instant.now();
         getLogger().info("Loading completed! (" + Duration.between(start, finish).toMillis() + "ms)");
@@ -133,9 +149,6 @@ public final class Box extends JavaPlugin {
         getLogger().info("Shutting down storage...");
         storage.shutdown();
 
-        getLogger().info("Unloading config files...");
-        unloadConfig();
-
         getLogger().info("Shutting down executors...");
         executor.shutdownNow();
         threadPool.shutdownNow();
@@ -158,11 +171,6 @@ public final class Box extends JavaPlugin {
     @NotNull
     public RecipeConfig getRecipeConfig() {
         return recipeConfig;
-    }
-
-    @NotNull
-    public SoundConfig getSoundConfig() {
-        return soundConfig;
     }
 
     @NotNull
@@ -213,38 +221,6 @@ public final class Box extends JavaPlugin {
     @NotNull
     public ScheduledExecutorService getScheduler() {
         return scheduler;
-    }
-
-    private void loadConfig() {
-        generalConfig = new GeneralConfig(this);
-
-        if (!generalConfig.isLoaded()) {
-            printConfigLoadError("config.yml");
-        }
-
-        priceConfig = new PriceConfig(this);
-
-        if (!priceConfig.isLoaded()) {
-            printConfigLoadError("price.yml");
-        }
-
-        recipeConfig = new RecipeConfig(this);
-
-        if (!recipeConfig.isLoaded()) {
-            printConfigLoadError("recipe.yml");
-        }
-
-        soundConfig = new SoundConfig(this);
-
-        if (!soundConfig.isLoaded()) {
-            printConfigLoadError("sound.yml");
-        }
-    }
-
-    private void unloadConfig() {
-        generalConfig = null;
-        recipeConfig = null;
-        soundConfig = null;
     }
 
     private void printConfigLoadError(@NotNull String fileName) {
