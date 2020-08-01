@@ -20,12 +20,24 @@ public class LocaleLoader {
 
     @NotNull
     public static LocaleLoader tryLoad(@NotNull Box plugin, @NotNull String fileName) {
-        BukkitYaml yaml = new BukkitYaml(plugin.getDataFolder().toPath().resolve(fileName));
+        Path filePath = plugin.getDataFolder().toPath().resolve(fileName);
 
-        if (!yaml.isLoaded()) {
-            plugin.getLogger().warning("Failed to load " + fileName + ", so we use default message....");
-            return getDefault(plugin);
+        if (Files.exists(filePath)) {
+            BukkitYaml yaml = new BukkitYaml(filePath);
+
+            if (!yaml.isLoaded()) {
+                plugin.getLogger().warning("Failed to load " + fileName + ", so we use default message....");
+                return getDefault(plugin);
+            } else {
+                return new LocaleLoader(yaml);
+            }
         } else {
+            plugin.getLogger().warning("Could not find " + fileName + ", so we create a default language file...");
+
+            BukkitYaml yaml = new BukkitYaml(filePath);
+
+            saveDefault(yaml);
+
             return new LocaleLoader(yaml);
         }
     }
@@ -40,15 +52,18 @@ public class LocaleLoader {
             yaml = new BukkitYaml(filePath);
         } else {
             yaml = new BukkitYaml(filePath);
-
-            for (Message message : Message.values()) {
-                yaml.set(message.getPath(), message.getDefault());
-            }
-
-            yaml.save();
+            saveDefault(yaml);
         }
 
         return new LocaleLoader(yaml);
+    }
+
+    private static void saveDefault(@NotNull BukkitYaml yaml) {
+        for (Message message : Message.values()) {
+            yaml.set(message.getPath(), message.getDefault());
+        }
+
+        yaml.save();
     }
 
     @NotNull

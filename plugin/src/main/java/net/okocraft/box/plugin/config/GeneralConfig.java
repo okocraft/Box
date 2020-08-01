@@ -56,6 +56,11 @@ public class GeneralConfig extends BukkitConfig {
         return getString("database.password");
     }
 
+    @NotNull
+    public String getLanguageFileName() {
+        return getString("language", "lang.yml");
+    }
+
     public int getMaxQuantity() {
         return getInt("max-quantity", 640);
     }

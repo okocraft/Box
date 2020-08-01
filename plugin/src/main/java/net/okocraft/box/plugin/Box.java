@@ -14,6 +14,7 @@ import net.okocraft.box.plugin.listener.stick.InteractListener;
 import net.okocraft.box.plugin.listener.stick.ItemBreakListener;
 import net.okocraft.box.plugin.listener.stick.ItemConsumeListener;
 import net.okocraft.box.plugin.listener.stick.ProjectileLaunchListener;
+import net.okocraft.box.plugin.locale.LocaleLoader;
 import net.okocraft.box.plugin.model.DataHandler;
 import net.okocraft.box.plugin.model.manager.ItemManager;
 import net.okocraft.box.plugin.model.manager.UserManager;
@@ -39,6 +40,7 @@ public final class Box extends JavaPlugin {
     private Storage storage;
 
     private DataHandler dataHandler;
+    private LocaleLoader localeLoader;
     private ItemManager itemManager;
     private UserManager userManager;
 
@@ -70,6 +72,9 @@ public final class Box extends JavaPlugin {
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
+
+        getLogger().info("Loading " + generalConfig.getLanguageFileName());
+        localeLoader = LocaleLoader.tryLoad(this, generalConfig.getLanguageFileName());
 
         itemManager = new ItemManager(this);
         userManager = new UserManager(this);
@@ -181,6 +186,11 @@ public final class Box extends JavaPlugin {
     @NotNull
     public DataHandler getDataHandler() {
         return dataHandler;
+    }
+
+    @NotNull
+    public LocaleLoader getLocaleLoader() {
+        return localeLoader;
     }
 
     @NotNull
