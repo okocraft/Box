@@ -2,7 +2,9 @@ package net.okocraft.box.plugin.config;
 
 import com.github.siroshun09.configapi.bukkit.BukkitConfig;
 import net.okocraft.box.plugin.Box;
+import net.okocraft.box.plugin.util.ItemBuilder;
 import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,6 +18,20 @@ public class MenuConfig extends BukkitConfig {
         super(plugin, "menu.yml", true);
 
         this.plugin = plugin;
+    }
+
+    @NotNull
+    public ItemStack getFlame() {
+        return getItemBuilder("flame", "&7", Material.GRAY_STAINED_GLASS_PANE).build();
+    }
+
+    @NotNull
+    private ItemBuilder getItemBuilder(@NotNull String root, @NotNull String defName, @NotNull Material defMaterial) {
+        return new ItemBuilder()
+                .setDisplayName(getDisplayName(root, defName))
+                .setLore(getLore(root))
+                .setGlowing(isGlowing(root))
+                .setMaterial(getMaterial(root, defMaterial));
     }
 
     @NotNull
