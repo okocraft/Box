@@ -8,6 +8,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public final class ItemBuilder {
 
@@ -52,8 +53,17 @@ public final class ItemBuilder {
         ItemMeta meta = item.getItemMeta();
 
         if (meta != null) {
-            meta.setDisplayName(displayName);
-            meta.setLore(lore);
+            if (displayName != null) {
+                meta.setDisplayName(Colorizer.colorize(displayName));
+            } else {
+                meta.setDisplayName(null);
+            }
+
+            if (lore != null) {
+                meta.setLore(lore.stream().map(Colorizer::colorize).collect(Collectors.toList()));
+            } else {
+                meta.setLore(null);
+            }
 
             if (isGlowing) {
                 meta.addEnchant(Enchantment.LURE, 1, true);
