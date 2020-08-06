@@ -3,6 +3,9 @@ package net.okocraft.box.plugin.sound;
 import org.bukkit.Sound;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Box の各機能で鳴らすサウンドを列挙するクラス。
+ */
 public enum BoxSound {
 
     MENU_OPEN("menu-open", Sound.BLOCK_CHEST_OPEN),
@@ -30,11 +33,21 @@ public enum BoxSound {
         // this.random = random;
     }
 
+    /**
+     * サウンド設定のパスを返す。
+     *
+     * @return サウンド設定のパス
+     */
     @NotNull
     public String getPath() {
         return path;
     }
 
+    /**
+     * サウンド設定を取得できなかった場合に使用する {@link Sound}
+     *
+     * @return デフォルトの {@link Sound}
+     */
     @NotNull
     public Sound getDef() {
         return def;
