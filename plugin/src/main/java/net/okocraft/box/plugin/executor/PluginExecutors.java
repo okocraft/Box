@@ -11,7 +11,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class PluginsExecutors {
+public class PluginExecutors {
 
     private final Box plugin;
     private final Set<ExecutorService> executors;
@@ -20,7 +20,7 @@ public class PluginsExecutors {
     private final ExecutorService storageThread;
     private final ScheduledExecutorService scheduler;
 
-    public PluginsExecutors(@NotNull Box plugin) {
+    public PluginExecutors(@NotNull Box plugin) {
         this.plugin = plugin;
 
         storageThread = ExecutorFactory.createSingleThreadExecutor();

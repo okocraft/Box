@@ -5,7 +5,7 @@ import net.okocraft.box.plugin.config.GeneralConfig;
 import net.okocraft.box.plugin.config.PriceConfig;
 import net.okocraft.box.plugin.config.RecipeConfig;
 import net.okocraft.box.plugin.database.Storage;
-import net.okocraft.box.plugin.executor.PluginsExecutors;
+import net.okocraft.box.plugin.executor.PluginExecutors;
 import net.okocraft.box.plugin.listener.PluginListeners;
 import net.okocraft.box.plugin.locale.LocaleLoader;
 import net.okocraft.box.plugin.model.DataHandler;
@@ -25,7 +25,7 @@ public final class Box extends JavaPlugin {
     private PriceConfig priceConfig;
     private RecipeConfig recipeConfig;
 
-    private PluginsExecutors pluginsExecutors;
+    private PluginExecutors pluginExecutors;
     private PluginListeners pluginListeners;
 
     private Storage storage;
@@ -43,7 +43,7 @@ public final class Box extends JavaPlugin {
         Instant start = Instant.now();
 
         getLogger().info("Initializing plugin executors");
-        pluginsExecutors = new PluginsExecutors(this);
+        pluginExecutors = new PluginExecutors(this);
 
         getLogger().info("Loading config.yml...");
         generalConfig = new GeneralConfig(this);
@@ -116,7 +116,7 @@ public final class Box extends JavaPlugin {
         storage.shutdown();
 
         getLogger().info("Shutting down plugin executors...");
-        pluginsExecutors.shutdown();
+        pluginExecutors.shutdown();
 
         Instant finish = Instant.now();
         getLogger().info("Box disabled! (" + Duration.between(start, finish).toMillis() + "ms)");
@@ -178,8 +178,8 @@ public final class Box extends JavaPlugin {
     }
 
     @NotNull
-    public PluginsExecutors getPluginExecutors() {
-        return pluginsExecutors;
+    public PluginExecutors getPluginExecutors() {
+        return pluginExecutors;
     }
 
     private void printConfigLoadError(@NotNull String fileName) {
