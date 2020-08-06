@@ -1,5 +1,8 @@
 package net.okocraft.box.plugin.util;
 
+/**
+ * 実行しているサーバーソフトウェアが Paper もしくはそのフォークであることを確かめるクラス。
+ */
 public final class PaperChecker {
 
     private final static boolean PAPER = checkPaper();
@@ -13,6 +16,11 @@ public final class PaperChecker {
         }
     }
 
+    /**
+     * 実行しているサーバーソフトウェアが Paper もしくはそのフォークであるか。
+     *
+     * @return サーバーソフトウェアが Paper なら {@code true}, そうでなければ {@code false}
+     */
     public static boolean isPaper() {
         return PAPER;
     }
