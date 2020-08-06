@@ -5,6 +5,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Objects;
@@ -94,8 +95,10 @@ public final class ItemBuilder {
      * @param amount アイテムの個数
      * @return このオブジェクトへの参照
      */
-    public void setAmount(int amount) {
+    public ItemBuilder setAmount(int amount) {
         this.amount = amount;
+
+        return this;
     }
 
     /**
@@ -104,6 +107,7 @@ public final class ItemBuilder {
      * @return 構築したアイテム
      * @throws NullPointerException {@link ItemBuilder#setMaterial(Material)} が実行されていないか、 {@code null} が渡された状態である場合。
      */
+    @NotNull
     public ItemStack build() {
         Objects.requireNonNull(material);
 
