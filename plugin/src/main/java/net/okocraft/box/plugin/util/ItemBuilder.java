@@ -5,6 +5,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Objects;
@@ -45,6 +46,7 @@ public final class ItemBuilder {
         this.amount = amount;
     }
 
+    @NotNull
     public ItemStack build() {
         Objects.requireNonNull(material);
 
