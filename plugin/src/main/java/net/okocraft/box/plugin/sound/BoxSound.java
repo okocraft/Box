@@ -44,7 +44,7 @@ public enum BoxSound {
     }
 
     /**
-     * サウンド設定を取得できなかった場合に使用する {@link Sound}
+     * サウンド設定を取得できなかった場合に使用する {@link Sound} を返す。
      *
      * @return デフォルトの {@link Sound}
      */
