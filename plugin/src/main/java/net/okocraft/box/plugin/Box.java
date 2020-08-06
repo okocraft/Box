@@ -1,11 +1,11 @@
 package net.okocraft.box.plugin;
 
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import net.okocraft.box.plugin.category.CategoryManager;
 import net.okocraft.box.plugin.config.GeneralConfig;
 import net.okocraft.box.plugin.config.PriceConfig;
 import net.okocraft.box.plugin.config.RecipeConfig;
 import net.okocraft.box.plugin.database.Storage;
+import net.okocraft.box.plugin.executor.PluginsExecutors;
 import net.okocraft.box.plugin.listener.AbstractListener;
 import net.okocraft.box.plugin.listener.ItemPickupListener;
 import net.okocraft.box.plugin.listener.PlayerConnectionListener;
@@ -26,9 +26,6 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.logging.Level;
 
 public final class Box extends JavaPlugin {
@@ -36,6 +33,8 @@ public final class Box extends JavaPlugin {
     private GeneralConfig generalConfig;
     private PriceConfig priceConfig;
     private RecipeConfig recipeConfig;
+
+    private PluginsExecutors pluginsExecutors;
 
     private Storage storage;
 
@@ -49,13 +48,12 @@ public final class Box extends JavaPlugin {
 
     private List<AbstractListener> listeners;
 
-    private ExecutorService executor;
-    private ExecutorService threadPool;
-    private ScheduledExecutorService scheduler;
-
     @Override
     public void onLoad() {
         Instant start = Instant.now();
+
+        getLogger().info("Initializing plugin executors");
+        pluginsExecutors = new PluginsExecutors(this);
 
         getLogger().info("Loading config.yml...");
         generalConfig = new GeneralConfig(this);
@@ -104,14 +102,6 @@ public final class Box extends JavaPlugin {
     @Override
     public void onEnable() {
         Instant start = Instant.now();
-
-        getLogger().info("Initializing executors...");
-        executor = Executors.newSingleThreadExecutor(r -> new Thread(r, "Box-Executor"));
-        threadPool = Executors.newCachedThreadPool(
-                new ThreadFactoryBuilder().setDaemon(true).setNameFormat("Box-Worker-%d").build()
-        );
-        scheduler = Executors.newSingleThreadScheduledExecutor(r -> new Thread(r, "Box-Executor"));
-
         getLogger().info("Registering event listeners...");
 
         listeners = new LinkedList<>();
@@ -154,10 +144,8 @@ public final class Box extends JavaPlugin {
         getLogger().info("Shutting down storage...");
         storage.shutdown();
 
-        getLogger().info("Shutting down executors...");
-        executor.shutdownNow();
-        threadPool.shutdownNow();
-        scheduler.shutdownNow();
+        getLogger().info("Shutting down plugin executors...");
+        pluginsExecutors.shutdown();
 
         Instant finish = Instant.now();
         getLogger().info("Box disabled! (" + Duration.between(start, finish).toMillis() + "ms)");
@@ -219,18 +207,8 @@ public final class Box extends JavaPlugin {
     }
 
     @NotNull
-    public ExecutorService getExecutor() {
-        return executor;
-    }
-
-    @NotNull
-    public ExecutorService getThreadPool() {
-        return threadPool;
-    }
-
-    @NotNull
-    public ScheduledExecutorService getScheduler() {
-        return scheduler;
+    public PluginsExecutors getPluginExecutors() {
+        return pluginsExecutors;
     }
 
     private void printConfigLoadError(@NotNull String fileName) {

@@ -21,18 +21,15 @@ import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 public class Storage {
+
+    private final Box plugin;
 
     private final Database database;
     private final PlayerTable playerTable;
     private final ItemTable itemTable;
     private final MasterTable masterTable;
-
-    private final ExecutorService executor;
 
     private final Set<Item> items;
 
@@ -41,6 +38,8 @@ public class Storage {
     }
 
     public Storage(@NotNull Box plugin, @NotNull Database.Type type) {
+        this.plugin = plugin;
+
         if (type == Database.Type.MYSQL) {
             GeneralConfig config = plugin.getGeneralConfig();
 
@@ -68,21 +67,11 @@ public class Storage {
 
         masterTable = new MasterTable(database, this, "box_");
 
-        executor = Executors.newSingleThreadExecutor();
-
         UnsafeRunnable task = () -> itemTable.updateItems(items);
-        executor.submit(task.toRunnable());
+        plugin.getPluginExecutors().getStorageThread().submit(task.toRunnable());
     }
 
     public void shutdown() {
-        executor.shutdown();
-
-        try {
-            executor.awaitTermination(1, TimeUnit.MINUTES);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
         database.shutdown();
     }
 
@@ -114,7 +103,7 @@ public class Storage {
     }
 
     @NotNull
-    public CompletableFuture<Void> saveStock(@NotNull User user,@NotNull Stock stock) {
+    public CompletableFuture<Void> saveStock(@NotNull User user, @NotNull Stock stock) {
         return makeFuture(() -> masterTable.saveStock(user, stock));
     }
 
@@ -159,7 +148,7 @@ public class Storage {
 
     @NotNull
     private CompletableFuture<Void> makeFuture(@NotNull UnsafeRunnable task) {
-        return CompletableFuture.runAsync(task.toRunnable(), executor);
+        return CompletableFuture.runAsync(task.toRunnable(), plugin.getPluginExecutors().getStorageThread());
     }
 
     @NotNull
@@ -174,6 +163,6 @@ public class Storage {
                     throw new CompletionException(e);
                 }
             }
-        }, executor);
+        }, plugin.getPluginExecutors().getStorageThread());
     }
 }

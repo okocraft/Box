@@ -29,15 +29,16 @@ public class PlayerConnectionListener extends AbstractListener {
         plugin.debug("User " + e.getName() + " (" + e.getUniqueId().toString() + ") check result: " + checkResult);
     }
 
-
     @EventHandler
     public void onJoin(@NotNull PlayerJoinEvent e) {
-        plugin.getExecutor().submit(() -> plugin.getUserManager().loadUser(e.getPlayer().getUniqueId()));
+        plugin.getPluginExecutors().getWorker().submit(
+                () -> plugin.getUserManager().loadUser(e.getPlayer().getUniqueId())
+        );
     }
 
     @EventHandler
     public void onQuit(@NotNull PlayerQuitEvent e) {
-        plugin.getExecutor().submit(() -> {
+        plugin.getPluginExecutors().getWorker().submit(() -> {
             UserManager userManager = plugin.getUserManager();
             UUID uuid = e.getPlayer().getUniqueId();
 
