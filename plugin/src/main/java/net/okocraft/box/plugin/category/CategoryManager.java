@@ -122,10 +122,6 @@ public class CategoryManager {
     public void save() {
         CategoryConfig config = new CategoryConfig(plugin);
 
-        if (!config.isLoaded()) {
-            throw new IllegalStateException("Could not load category.yml");
-        }
-
         List.copyOf(categories).forEach(config::setCategory);
 
         if (!config.save()) {
