@@ -6,14 +6,7 @@ import net.okocraft.box.plugin.config.PriceConfig;
 import net.okocraft.box.plugin.config.RecipeConfig;
 import net.okocraft.box.plugin.database.Storage;
 import net.okocraft.box.plugin.executor.PluginsExecutors;
-import net.okocraft.box.plugin.listener.AbstractListener;
-import net.okocraft.box.plugin.listener.ItemPickupListener;
-import net.okocraft.box.plugin.listener.PlayerConnectionListener;
-import net.okocraft.box.plugin.listener.stick.BlockPlaceListener;
-import net.okocraft.box.plugin.listener.stick.InteractListener;
-import net.okocraft.box.plugin.listener.stick.ItemBreakListener;
-import net.okocraft.box.plugin.listener.stick.ItemConsumeListener;
-import net.okocraft.box.plugin.listener.stick.ProjectileLaunchListener;
+import net.okocraft.box.plugin.listener.PluginListeners;
 import net.okocraft.box.plugin.locale.LocaleLoader;
 import net.okocraft.box.plugin.model.DataHandler;
 import net.okocraft.box.plugin.model.manager.ItemManager;
@@ -24,8 +17,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.logging.Level;
 
 public final class Box extends JavaPlugin {
@@ -35,6 +26,7 @@ public final class Box extends JavaPlugin {
     private RecipeConfig recipeConfig;
 
     private PluginsExecutors pluginsExecutors;
+    private PluginListeners pluginListeners;
 
     private Storage storage;
 
@@ -45,8 +37,6 @@ public final class Box extends JavaPlugin {
 
     private CategoryManager categoryManager;
     private SoundPlayer soundPlayer;
-
-    private List<AbstractListener> listeners;
 
     @Override
     public void onLoad() {
@@ -103,26 +93,8 @@ public final class Box extends JavaPlugin {
     public void onEnable() {
         Instant start = Instant.now();
         getLogger().info("Registering event listeners...");
-
-        listeners = new LinkedList<>();
-
-        listeners.add(new PlayerConnectionListener(this));
-
-        if (generalConfig.isAutoStoreEnabled()) {
-            listeners.add(new ItemPickupListener(this));
-        }
-
-        if (generalConfig.isStickEnabled()) {
-            listeners.addAll(List.of(
-                    new BlockPlaceListener(this),
-                    new InteractListener(this),
-                    new ItemBreakListener(this),
-                    new ItemConsumeListener(this),
-                    new ProjectileLaunchListener(this)
-            ));
-        }
-
-        listeners.forEach(AbstractListener::start);
+        pluginListeners = new PluginListeners(this);
+        pluginListeners.register();
 
         getLogger().info("Initializing sound player...");
         soundPlayer = new SoundPlayer(this);
@@ -138,8 +110,7 @@ public final class Box extends JavaPlugin {
         Instant start = Instant.now();
 
         getLogger().info("Unregistering event listeners...");
-        listeners.forEach(AbstractListener::shutdown);
-        listeners.clear();
+        pluginListeners.unregister();
 
         getLogger().info("Shutting down storage...");
         storage.shutdown();
