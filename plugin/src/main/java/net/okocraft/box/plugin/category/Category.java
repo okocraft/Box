@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * 一つのカテゴリを管理するクラス。
+ * 一つのカテゴリーを管理するクラス。
  */
 public class Category {
 
@@ -26,11 +26,11 @@ public class Category {
     }
 
     /**
-     * カテゴリの名前を返す。
+     * カテゴリーの名前を返す。
      * <p>
      * このメソッドで返される文字列は、{@link net.okocraft.box.plugin.config.CategoryConfig} でルートパスとして使用される。
      *
-     * @return カテゴリの名前
+     * @return カテゴリーの名前
      */
     @NotNull
     public String getName() {
@@ -38,9 +38,9 @@ public class Category {
     }
 
     /**
-     * カテゴリの表示名を返す。
+     * カテゴリーの表示名を返す。
      *
-     * @return カテゴリの表示名
+     * @return カテゴリーの表示名
      */
     @NotNull
     public String getDisplayName() {
@@ -48,9 +48,9 @@ public class Category {
     }
 
     /**
-     * カテゴリのアイコンを返す。
+     * カテゴリーのアイコンを返す。
      *
-     * @return カテゴリのアイコン
+     * @return カテゴリーのアイコン
      */
     @NotNull
     public ItemStack getIcon() {
@@ -58,12 +58,12 @@ public class Category {
     }
 
     /**
-     * カテゴリに含まれる {@link Item} を返す。
+     * カテゴリーに含まれる {@link Item} を返す。
      * <p>
      * このメソッドで返されるリストは変更可能であるが、そのリストで要素を追加 / 削除 しても
      * {@link net.okocraft.box.plugin.config.CategoryConfig} には保存されない。
      *
-     * @return カテゴリに含まれる {@link Item}
+     * @return カテゴリーに含まれる {@link Item}
      */
     @NotNull
     public List<Item> getItems() {
