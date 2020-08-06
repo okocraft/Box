@@ -42,8 +42,10 @@ public final class ItemBuilder {
         return this;
     }
 
-    public void setAmount(int amount) {
+    public ItemBuilder setAmount(int amount) {
         this.amount = amount;
+
+        return this;
     }
 
     @NotNull
