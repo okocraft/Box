@@ -8,6 +8,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
 
+/**
+ * プレイヤーにサウンドを再生するメソッドを提供するクラス。
+ *
+ * サウンドのピッチやボリュームの計算もここで行われる。
+ */
 public class SoundPlayer {
 
     private final SoundConfig config;
@@ -18,6 +23,14 @@ public class SoundPlayer {
         this.random = new Random();
     }
 
+    /**
+     * 対象に音を鳴らす。
+     *
+     * この音は対象にしか聞こえない。
+     *
+     * @param target 音を鳴らすプレイヤー
+     * @param sound サウンドの種類
+     */
     public void play(@NotNull Player target, @NotNull BoxSound sound) {
         target.playSound(
                 target.getLocation(),
