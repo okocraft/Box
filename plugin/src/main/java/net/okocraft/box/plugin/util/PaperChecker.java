@@ -4,6 +4,9 @@ public final class PaperChecker {
 
     private final static boolean PAPER = checkPaper();
 
+    private PaperChecker() {
+    }
+
     private static boolean checkPaper() {
         try {
             Class.forName("co.aikar.timings.Timing");

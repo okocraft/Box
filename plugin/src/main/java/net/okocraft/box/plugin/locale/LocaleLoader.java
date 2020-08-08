@@ -3,6 +3,7 @@ package net.okocraft.box.plugin.locale;
 import com.github.siroshun09.configapi.bukkit.BukkitYaml;
 import com.github.siroshun09.configapi.common.Configuration;
 import net.okocraft.box.plugin.Box;
+import net.okocraft.box.plugin.locale.formatter.FormattedMessage;
 import net.okocraft.box.plugin.locale.formatter.Formatter;
 import net.okocraft.box.plugin.locale.message.Message;
 import org.jetbrains.annotations.NotNull;
@@ -78,27 +79,41 @@ public class LocaleLoader {
     }
 
     @NotNull
-    public String format(@NotNull Message message, @NotNull String holder1) {
-        return Formatter.format(get(message), holder1);
+    public FormattedMessage format(@NotNull Message message, boolean prefix) {
+        return addPrefix(prefix, new FormattedMessage(get(message)));
     }
 
     @NotNull
-    public String format(@NotNull Message message, @NotNull String holder1, @NotNull String holder2) {
-        return Formatter.format(get(message), holder1, holder2);
+    public FormattedMessage format(@NotNull Message message, boolean prefix, @NotNull String holder1) {
+        return addPrefix(prefix, Formatter.format(get(message), holder1));
     }
 
     @NotNull
-    public String format(@NotNull Message message, @NotNull String holder1, @NotNull String holder2, @NotNull String holder3) {
-        return Formatter.format(get(message), holder1, holder2, holder3);
+    public FormattedMessage format(@NotNull Message message, boolean prefix, @NotNull String holder1, @NotNull String holder2) {
+        return addPrefix(prefix, Formatter.format(get(message), holder1, holder2));
     }
 
     @NotNull
-    public String format(@NotNull Message message, @NotNull String... holders) {
-        return Formatter.format(get(message), holders);
+    public FormattedMessage format(@NotNull Message message, boolean prefix, @NotNull String holder1, @NotNull String holder2, @NotNull String holder3) {
+        return addPrefix(prefix, Formatter.format(get(message), holder1, holder2, holder3));
     }
 
     @NotNull
-    public String replace(@NotNull Message message, int index, @NotNull String replacement) {
-        return Formatter.replace(get(message), index, replacement);
+    public FormattedMessage format(@NotNull Message message, boolean prefix, @NotNull String... holders) {
+        return addPrefix(prefix, Formatter.format(get(message), holders));
+    }
+
+    @NotNull
+    public FormattedMessage replace(@NotNull Message message, boolean prefix, int index, @NotNull String replacement) {
+        return addPrefix(prefix, Formatter.replace(get(message), index, replacement));
+    }
+
+    @NotNull
+    private FormattedMessage addPrefix(boolean bool, FormattedMessage message) {
+        if (bool) {
+            message.addPrefix(get(Message.PREFIX));
+        }
+
+        return message;
     }
 }

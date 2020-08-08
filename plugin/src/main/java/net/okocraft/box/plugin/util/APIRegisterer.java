@@ -25,6 +25,9 @@ public final class APIRegisterer {
         }
     }
 
+    private APIRegisterer() {
+    }
+
     /**
      * Box を API として登録する。
      *

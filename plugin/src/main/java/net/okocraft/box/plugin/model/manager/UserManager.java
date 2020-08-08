@@ -36,6 +36,14 @@ public class UserManager {
         return user.orElseGet(() -> loadUser(uuid));
     }
 
+    @NotNull
+    public Optional<User> searchUserByName(@NotNull String name) {
+        return loadedUser.stream()
+                .filter(u -> u.getName().equalsIgnoreCase(name))
+                .findFirst()
+                .or(() -> plugin.getStorage().searchUser(name).join());
+    }
+
     public void saveUser(@NotNull User user) {
         try {
             plugin.getStorage().saveUser(user).join();

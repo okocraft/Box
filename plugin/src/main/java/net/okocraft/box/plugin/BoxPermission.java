@@ -17,7 +17,11 @@ public enum BoxPermission {
     BOX_STICK_CONSUME("box.stick.consume", true),
     BOX_STICK_OPEN("box.stick.open", true),
     BOX_STICK_PLACE("box.stick.place", true),
-    BOX_STICK_THROW("box.stick.throw", true);
+    BOX_STICK_THROW("box.stick.throw", true),
+
+    BOX_COMMAND("box.command", true),
+    BOX_ADMIN("box.admin", false)
+    ;
 
     private final static Map<BoxPermission, Permission> PERMISSIONS;
 

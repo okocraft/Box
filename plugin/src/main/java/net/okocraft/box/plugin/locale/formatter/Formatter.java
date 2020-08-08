@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * プレースホルダーを置換するクラス。
- *
+ * <p>
  * 可変長変数での配列生成コストを抑えるため、3つまでは単体メソッドで対応する。
  */
 public final class Formatter {
@@ -14,23 +14,24 @@ public final class Formatter {
     private final static String REPLACE_3 = "{2}";
 
     @NotNull
-    public static String format(@NotNull String message, @NotNull String holder1) {
-        return message.replace(REPLACE_1, holder1);
+    public static FormattedMessage format(@NotNull String message, @NotNull String holder1) {
+        return new FormattedMessage(message.replace(REPLACE_1, holder1));
     }
 
     @NotNull
-    public static String format(@NotNull String message, @NotNull String holder1, @NotNull String holder2) {
-        return message.replace(REPLACE_1, holder1).replace(REPLACE_2, holder2);
+    public static FormattedMessage format(@NotNull String message, @NotNull String holder1, @NotNull String holder2) {
+        return new FormattedMessage(message.replace(REPLACE_1, holder1).replace(REPLACE_2, holder2));
     }
 
     @NotNull
-    public static String format(@NotNull String message,
-                                @NotNull String holder1, @NotNull String holder2, @NotNull String holder3) {
-        return message.replace(REPLACE_1, holder1).replace(REPLACE_2, holder2).replace(REPLACE_3, holder3);
+    public static FormattedMessage format(@NotNull String message,
+                                          @NotNull String holder1, @NotNull String holder2, @NotNull String holder3) {
+        return new FormattedMessage(message
+                .replace(REPLACE_1, holder1).replace(REPLACE_2, holder2).replace(REPLACE_3, holder3));
     }
 
     @NotNull
-    public static String format(@NotNull String message, @NotNull String... holders) {
+    public static FormattedMessage format(@NotNull String message, @NotNull String... holders) {
         String msg = message;
         int count = 0;
 
@@ -39,11 +40,11 @@ public final class Formatter {
             count++;
         }
 
-        return msg;
+        return new FormattedMessage(msg);
     }
 
     @NotNull
-    public static String replace(@NotNull String str, int index, @NotNull String to) {
-        return str.replace("{" + index + "}", to);
+    public static FormattedMessage replace(@NotNull String str, int index, @NotNull String to) {
+        return new FormattedMessage(str.replace("{" + index + "}", to));
     }
 }

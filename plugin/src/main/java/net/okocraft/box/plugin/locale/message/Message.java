@@ -11,6 +11,7 @@ public enum Message {
 
     // プレースホルダーは {} で設定する。デフォルトのメッセージは、左から 0, 1, ... とナンバリングされる。
     PREFIX("prefix", "&8[&6Box&8]&r "),
+    VERSION("version", "&eVersion {}"),
 
     ERROR_DISABLED_WORLD("error.disabled-world", "&cこのワールドで Box は使用できません。"),
     ERROR_INVENTORY_FULL("error.inventory-full", "&cインベントリに空きがありません。"),
@@ -20,10 +21,15 @@ public enum Message {
     ERROR_PLAYER_NOT_FOUND("error.player-not-found", "&cプレイヤー &b{}&c は見つかりませんでした。"),
     ERROR_ITEM_NOT_FOUND("error.item-not-found", "&cアイテム &b{}&c は存在しません。"),
     ERROR_CATEGORY_NOT_FOUND("error.category-not-found", "&cカテゴリー &b{}&c は存在しません。"),
+    ERROR_COMMAND_NOT_FOUND("error.command-not-found", "&cそのコマンドは存在しません。"),
     ERROR_INVALID_ARGS("error.invalid-args", "&c引数 &b{}&c は存在しません。"),
     ERROR_INVALID_NUMBER("error.invalid-num", "&c正の整数を指定してください。"),
     ERROR_ONLY_PLAYER("error.only-player", "&cこのコマンドはゲーム内のプレイヤーのみ使用できます。"),
     ERROR_NO_PERMISSION("error.no-permission", "&c権限 &b{}&c がありません。"),
+
+    AVAILABLE_COMMANDS_VIEW("command.available", "&7利用可能なコマンドは &b/{} help&7 で確認できます。"),
+
+    USAGE_COMMAND("usage.command.usage", "&b/{} <args> &7(略: {})"),
     ;
 
     private final static Cache<Message, String> DEFAULT_MESSAGE =

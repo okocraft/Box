@@ -6,13 +6,16 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
-public class Colorizer {
+public final class Colorizer {
     private final static char COLOR_MARK = '&';
     private final static char COLOR_CHAR = '§';
     private final static char HEX_MARK = '#';
     private final static char X = 'x';
     private final static String COLOR_CODES = "0123456789AaBbCcDdEeFfKkLlMmNnOoRr";
     private final static Pattern COLOR_PATTERN = Pattern.compile("(?i)" + COLOR_CHAR + "[0-9A-FK-ORX]");
+
+    private Colorizer() {
+    }
 
     /**
      * Colorize given string. (convert to minecraft 1.16+ color format)
