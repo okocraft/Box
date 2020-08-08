@@ -72,8 +72,8 @@ public abstract class AbstractCommand implements Command {
 
     @Override
     public @NotNull CommandResult execute(@NotNull CommandSender sender, @NotNull ArgumentList args) {
-        if (!getPermission().has(sender)) {
-            plugin.getLocaleLoader().format(Message.ERROR_NO_PERMISSION, true, getPermission().getNode()).send(sender);
+        if (!permission.has(sender)) {
+            plugin.getLocaleLoader().format(Message.ERROR_NO_PERMISSION, true, permission.getNode()).send(sender);
             return CommandResult.NO_PERMISSION;
         }
 
@@ -98,7 +98,7 @@ public abstract class AbstractCommand implements Command {
     @Override
     @NotNull
     public List<String> tabComplete(@NotNull CommandSender sender, @NotNull ArgumentList args) {
-        if (getPermission().has(sender)) {
+        if (permission.has(sender)) {
 
             if (args.hasElement(0)) {
                 return getSubCommand(args.get(0))
@@ -111,5 +111,11 @@ public abstract class AbstractCommand implements Command {
         } else {
             return Collections.emptyList();
         }
+    }
+
+    @NotNull
+    @Override
+    public Box getPlugin() {
+        return plugin;
     }
 }

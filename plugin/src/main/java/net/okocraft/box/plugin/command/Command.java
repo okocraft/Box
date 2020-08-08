@@ -1,8 +1,8 @@
 package net.okocraft.box.plugin.command;
 
+import net.okocraft.box.plugin.Box;
 import net.okocraft.box.plugin.BoxPermission;
 import net.okocraft.box.plugin.locale.formatter.FormattedMessage;
-import net.okocraft.box.plugin.locale.message.Message;
 import net.okocraft.box.plugin.result.CommandResult;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
@@ -35,4 +35,6 @@ public interface Command {
     @NotNull CommandResult execute(@NotNull CommandSender sender, @NotNull ArgumentList args);
 
     @NotNull List<String> tabComplete(@NotNull CommandSender sender, @NotNull ArgumentList args);
+
+    @NotNull Box getPlugin();
 }
