@@ -81,7 +81,15 @@ public abstract class AbstractCommand implements Command {
             Optional<Command> sub = getSubCommand(args.get(0));
 
             if (sub.isPresent()) {
-                return sub.get().execute(sender, args);
+                Command subCmd = sub.get();
+
+                if (subCmd.getPermission().has(sender)) {
+                    return subCmd.execute(sender, args);
+                } else {
+                    plugin.getLocaleLoader().format(Message.ERROR_NO_PERMISSION, true, subCmd.getPermission().getNode()).send(sender);
+                    return CommandResult.NO_PERMISSION;
+                }
+
             } else {
                 plugin.getLocaleLoader().format(Message.ERROR_COMMAND_NOT_FOUND, true).send(sender);
                 plugin.getLocaleLoader().format(Message.AVAILABLE_COMMANDS_VIEW, true, getCommand()).send(sender);
