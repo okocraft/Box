@@ -37,4 +37,9 @@ public class FormattedMessage {
     public void addPrefix(@NotNull String prefix) {
         message = prefix + message;
     }
+
+    @NotNull
+    public String asString() {
+        return message;
+    }
 }
