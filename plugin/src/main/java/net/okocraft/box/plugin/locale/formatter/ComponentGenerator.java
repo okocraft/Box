@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 public final class ComponentGenerator {
 
     @NotNull
-    public TextComponent generate(@NotNull String str, int index, @NotNull BaseComponent holder) {
+    public static TextComponent generate(@NotNull String str, int index, @NotNull BaseComponent holder) {
         int pos = str.indexOf("{" + index + "}");
 
         TextComponent text = new TextComponent();
@@ -30,7 +30,7 @@ public final class ComponentGenerator {
     }
 
     @NotNull
-    public TextComponent getHoverText(@NotNull String str, @NotNull String text) {
+    public static TextComponent getHoverText(@NotNull String str, @NotNull String text) {
         TextComponent hoverText = new TextComponent(str);
 
         hoverText.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(text)));
@@ -39,7 +39,7 @@ public final class ComponentGenerator {
     }
 
     @NotNull
-    public TextComponent getHoverItem(@NotNull String str, @NotNull ItemStack show) {
+    public static TextComponent getHoverItem(@NotNull String str, @NotNull ItemStack show) {
         TextComponent hoverText = new TextComponent(str);
 
         hoverText.setHoverEvent(new HoverEvent(
@@ -55,7 +55,7 @@ public final class ComponentGenerator {
     }
 
     @NotNull
-    public TextComponent getHoverEntity(@NotNull String str, @NotNull org.bukkit.entity.Entity entity) {
+    public static TextComponent getHoverEntity(@NotNull String str, @NotNull org.bukkit.entity.Entity entity) {
         TextComponent hoverText = new TextComponent(str);
 
         hoverText.setHoverEvent(new HoverEvent(
