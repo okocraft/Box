@@ -20,7 +20,8 @@ public enum BoxPermission {
     BOX_STICK_THROW("box.stick.throw", true),
 
     BOX_COMMAND("box.command", true),
-    BOX_ADMIN("box.admin", false)
+    BOX_COMMAND_DEPOSIT("box.command.deposit", true),
+    BOX_ADMIN("box.admin", false),
     ;
 
     private final static Map<BoxPermission, Permission> PERMISSIONS;

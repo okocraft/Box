@@ -29,7 +29,17 @@ public enum Message {
 
     AVAILABLE_COMMANDS_VIEW("command.available", "&7利用可能なコマンドは &b/{} help&7 で確認できます。"),
 
+    DEPOSIT_NO_ITEM_IN_MAIN("deposit.no-item-in-main-hand", "&c手に何も持っていません。何か持つか、アイテムを指定してください。"),
+    DEPOSIT_ITEM("deposit.item", "&b{}&7 を &b{}個&7 預けました (現在: &b{}&7個)"),
+    DEPOSIT_ALL("deposit.all-items", "&7インベントリ内のすべてのアイテムを預けました: {}"),
+
+    TRANSACTION_DETAIL_HOVER_TEXT("transaction.detail.hover-text", "&8[&b詳細&8]"),
+    TRANSACTION_DETAIL_INCREASED("transaction.detail.increased", "&a+ &f{}x{}"),
+    TRANSACTION_DETAIL_DECREASED("transaction.detail.decreased", "&c- &f{}x{}"),
+
     USAGE_COMMAND("usage.command.usage", "&b/{} <args> &7(略: {})"),
+
+    USAGE_COMMAND_BOX_DEPOSIT("usage.command.box.deposit", "&8> &b/{} {} [<amount> | <ITEM> [amount] | all]")
     ;
 
     private final static Cache<Message, String> DEFAULT_MESSAGE =
