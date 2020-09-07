@@ -27,7 +27,7 @@ public final class BoxProvider {
      * @throws IllegalStateException Box が読み込まれていない場合
      */
     @NotNull
-    public Box get() throws IllegalStateException {
+    public static Box get() throws IllegalStateException {
         if (INSTANCE == null) {
             throw new IllegalStateException("The Box API is not loaded.");
         }
