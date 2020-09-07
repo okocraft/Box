@@ -3,6 +3,7 @@ package net.okocraft.box.plugin;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import net.okocraft.box.plugin.category.CategoryManager;
 import net.okocraft.box.plugin.config.GeneralConfig;
+import net.okocraft.box.plugin.config.MenuConfig;
 import net.okocraft.box.plugin.config.PriceConfig;
 import net.okocraft.box.plugin.config.RecipeConfig;
 import net.okocraft.box.plugin.database.Storage;
@@ -34,6 +35,7 @@ import java.util.logging.Level;
 public final class Box extends JavaPlugin {
 
     private GeneralConfig generalConfig;
+    private MenuConfig menuConfig;
     private PriceConfig priceConfig;
     private RecipeConfig recipeConfig;
 
@@ -95,6 +97,13 @@ public final class Box extends JavaPlugin {
 
         if (!priceConfig.isLoaded()) {
             printConfigLoadError("price.yml");
+        }
+
+        getLogger().info("Loading item menu setting...");
+        menuConfig = new MenuConfig(this);
+
+        if (!menuConfig.isLoaded()) {
+            printConfigLoadError("menu.yml");
         }
 
         Instant finish = Instant.now();
@@ -176,6 +185,11 @@ public final class Box extends JavaPlugin {
     @NotNull
     public RecipeConfig getRecipeConfig() {
         return recipeConfig;
+    }
+
+    @NotNull
+    public MenuConfig getMenuConfig() {
+        return menuConfig;
     }
 
     @NotNull

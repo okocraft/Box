@@ -1,7 +1,11 @@
 package net.okocraft.box.plugin.gui;
 
-import net.okocraft.box.plugin.Box;
-import org.bukkit.entity.HumanEntity;
+import net.okocraft.box.plugin.gui.button.Button;
+
+import java.util.Map;
+import java.util.Objects;
+
+import org.bukkit.Bukkit;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
@@ -9,16 +13,14 @@ import org.jetbrains.annotations.NotNull;
 
 public abstract class BoxInventoryHolder implements InventoryHolder {
 
-    protected final Box plugin;
     protected final Inventory inv;
-    protected final MenuType type;
-    protected final ItemList itemList;
+    protected final MenuType menuType;
+    protected final PaginatedButtonList buttonList = new PaginatedButtonList();
+    protected int page = 1;
 
-    public BoxInventoryHolder(@NotNull Box plugin, @NotNull MenuType type, @NotNull String title) {
-        this.plugin = plugin;
-        this.type = type;
-        this.inv = plugin.getServer().createInventory(this, type.getSize(), title);
-        this.itemList = new ItemList();
+    public BoxInventoryHolder(MenuType type, @NotNull String title) {
+        this.menuType = type;
+        this.inv = Bukkit.createInventory(this, type.getSize(), title);
     }
 
     @Override
@@ -26,22 +28,58 @@ public abstract class BoxInventoryHolder implements InventoryHolder {
         return inv;
     }
 
-    @NotNull
-    public MenuType getType() {
-        return type;
+    public void setPage(int page) {
+        int newPage = Math.max(page, 1);
+        if (page != newPage) {
+            this.page = newPage;
+            setItems();
+        }
     }
 
-    public void openInventory(@NotNull HumanEntity player) {
-        player.openInventory(inv);
+    public int getPage() {
+        return page;
     }
 
-    public void updateInventory() {
-        itemList.apply(inv);
+    public void setItem(int slot) {
+        if (0 <= slot && slot <= inv.getSize()) {
+            Button button = buttonList.getButton(page, slot);
+            inv.setItem(slot, button != null ? button.getIcon().getItemStack() : null);
+        }
+    }
+
+    public void setItems() {
+        Map<Integer, Button> pageButtons = buttonList.getPageButtons(page);
+        for (int slot = 0; slot < inv.getSize(); slot++) {
+            Button button = pageButtons.get(slot);
+            inv.setItem(slot, button != null ? button.getIcon().getItemStack() : null);
+        }
     }
 
     public void onClick(@NotNull InventoryClickEvent e) {
-        itemList.click(e);
+        Button button = buttonList.getPageButtons(page).get(e.getSlot());
+        if (button != null) {
+            button.onClick(e);
+        }
     }
 
-    public abstract void update();
+    public void update() {
+        buttonList.getAllButtons().forEach(Button::update);
+        setItems();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this)
+            return true;
+        if (!(o instanceof BoxInventoryHolder)) {
+            return false;
+        }
+        BoxInventoryHolder boxInventoryHolder = (BoxInventoryHolder) o;
+        return Objects.equals(menuType, boxInventoryHolder.menuType) && Objects.equals(buttonList, boxInventoryHolder.buttonList);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(menuType, buttonList);
+    }
 }

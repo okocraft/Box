@@ -81,7 +81,7 @@ public class RecipeConfig extends BukkitConfig {
         Map<Item, Integer> ingredients = new HashMap<>();
 
         for (String ingredient : section.getKeys(false)) {
-            Optional<Item> ingredientItem =plugin.getItemManager().getItemByName(ingredient);
+            Optional<Item> ingredientItem = plugin.getItemManager().getItemByName(ingredient);
 
             if (ingredientItem.isEmpty()) {
                 plugin.getLogger().warning("Unknown item name: " + ingredient);
@@ -92,12 +92,12 @@ public class RecipeConfig extends BukkitConfig {
 
             if (amount < 1) {
                 plugin.getLogger().warning("Ignore "+  name + " because the requirement is less than 1");
-                continue;
+                return null;
             }
 
             ingredients.put(ingredientItem.get(), amount);
         }
 
-        return new BoxRecipe(item.get(), ingredients);
+        return new BoxRecipe(item.get(), getInt(item.get().getName() + ".result-amount", 1) ,ingredients);
     }
 }
