@@ -1,7 +1,10 @@
 package net.okocraft.box.plugin.gui;
 
 import net.okocraft.box.plugin.gui.button.Button;
+import net.okocraft.box.plugin.gui.button.NextPageButton;
+import net.okocraft.box.plugin.gui.button.PreviousPageButton;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -81,5 +84,41 @@ public abstract class BoxInventoryHolder implements InventoryHolder {
     @Override
     public int hashCode() {
         return Objects.hash(menuType, buttonList);
+    }
+
+    protected void putElementAndPageArrow(List<Button> elements) {
+        int page = 1;
+        int slot = 0;
+        if (inv.getSize() > 9) {
+            for (Button button : elements) {
+                if (slot >= inv.getSize() - 9) {
+                    slot = 0;
+                    page++;
+                }
+                
+                buttonList.putButton(page, slot, button);
+                
+                slot++;
+            }
+        } else {
+            slot++;
+            for (Button button : elements) {
+                if (slot == 8) {
+                    slot = 1;
+                    page++;
+                }
+                
+                buttonList.putButton(page, slot, button);
+                
+                slot++;
+            }
+        }
+
+        Button prevPageIcon = new PreviousPageButton();
+        Button nextPageIcon = new NextPageButton();
+        for (int currentPage = 1; currentPage <= page; currentPage++) {
+            buttonList.putButton(currentPage, inv.getSize() - 9, prevPageIcon);
+            buttonList.putButton(currentPage, inv.getSize() - 1, nextPageIcon);
+        }
     }
 }
