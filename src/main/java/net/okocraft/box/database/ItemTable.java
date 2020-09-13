@@ -69,13 +69,17 @@ final class ItemTable {
         database.query("SELECT id, item, customname FROM " + TABLE, rs -> {
             try {
                 while (rs.next()) {
-                    ItemStack item = fromString(rs.getString("item"));
+                    String itemStr = rs.getString("item");
+                    ItemStack item;
+                    if (itemStr == null || itemStr.isEmpty() || (item = fromString(itemStr)) == null) {
+                        continue;
+                    }
                     item.setAmount(1);
                     int id = rs.getInt("id");
                     items.forcePut(id, item);
                     String customName = rs.getString("customname");
                     if (customName != null) {
-                        customNames.put(id, customName);
+                        customNames.forcePut(id, customName);
                     }
                 }
             } catch (SQLException ignored) {
@@ -220,7 +224,7 @@ final class ItemTable {
         if (customNames.containsValue(customName)) {
             return false;
         }
-        customNames.put(id, customName);
+        customNames.forcePut(id, customName);
         database.execute("UPDATE " + TABLE + " SET customname = '" + customName + "' WHERE id = " + id);
         return true;
     }
