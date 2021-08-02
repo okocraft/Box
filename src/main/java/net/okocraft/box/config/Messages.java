@@ -552,6 +552,11 @@ public final class Messages extends CustomConfig {
         sendMessage(sender, "command.box.deposit.info.all-success");
     }
 
+    private Class<?> craftItemStackClazz = null;
+    private Method asNMSCopy = null;
+    private Class<?> nmsItemStackClazz = null;
+    private Method getTag = null;
+
     /**
      * Converts an {@link org.bukkit.inventory.ItemStack} to a Json string for
      * sending with {@link net.md_5.bungee.api.chat.BaseComponent}'s.
@@ -561,45 +566,34 @@ public final class Messages extends CustomConfig {
      */
     @Nullable
     private TextComponent toTextComponent(ItemStack itemStack) {
-        // ItemStack methods to get a net.minecraft.server.ItemStack object for
-        // serialization
-        Class<?> craftItemStackClazz = ReflectionUtil.getOBCClass("inventory.CraftItemStack");
-        Method asNMSCopyMethod = ReflectionUtil.getMethod(craftItemStackClazz, "asNMSCopy", ItemStack.class);
-
-        // NMS Method to serialize a net.minecraft.server.ItemStack to a valid Json
-        // string
-        Class<?> nmsItemStackClazz = ReflectionUtil.getNMSClass("ItemStack");
-        Class<?> nbtTagCompoundClazz = ReflectionUtil.getNMSClass("NBTTagCompound");
-        Method saveNmsItemStackMethod = ReflectionUtil.getMethod(nmsItemStackClazz, "save", nbtTagCompoundClazz);
-
-        // This will just be an empty NBTTagCompound instance to invoke the saveNms
-        // method
-        Object nmsNbtTagCompoundObj;
-
-        // This is the net.minecraft.server.ItemStack object received from the asNMSCopy
-        // method
-        Object nmsItemStackObj;
-
-        // This is the net.minecraft.server.ItemStack after being put through
-        // saveNmsItem method
-        Object itemAsJsonObject;
 
         try {
-            nmsNbtTagCompoundObj = nbtTagCompoundClazz.getDeclaredConstructor().newInstance();
-            nmsItemStackObj = asNMSCopyMethod.invoke(null, itemStack);
-            itemAsJsonObject = saveNmsItemStackMethod.invoke(nmsItemStackObj, nmsNbtTagCompoundObj);
-        } catch (Throwable t) {
-            Box.getInstance().getLogger().log(Level.SEVERE, "failed to serialize itemstack to nms item", t);
-            return null;
-        }
-        
-        BaseComponent[] hoverEventComponents = new BaseComponent[]{
-            new TextComponent(itemAsJsonObject.toString())
-        };
+            // ItemStack methods to get a net.minecraft.server.ItemStack object for
+            // serialization
+            if (craftItemStackClazz == null) {
+                craftItemStackClazz = ReflectionUtil.getOBCClass("inventory.CraftItemStack");
+            }
+            if (asNMSCopy == null) {
+                asNMSCopy = ReflectionUtil.getMethod(craftItemStackClazz, "asNMSCopy", ItemStack.class);
+            }
 
-        HoverEvent hover = new HoverEvent(HoverEvent.Action.SHOW_ITEM, hoverEventComponents);
-        TextComponent text = new TextComponent(Box.getInstance().getAPI().getItemData().getName(itemStack));
-        text.setHoverEvent(hover);
-        return text;
+            Object nmsItemStack = asNMSCopy.invoke(null, itemStack);
+            if (nmsItemStackClazz == null) {
+                nmsItemStackClazz = nmsItemStack.getClass();
+            }
+            if (getTag == null) {
+                getTag = ReflectionUtil.getMethod(nmsItemStackClazz, "getTag");
+            }
+
+            BaseComponent[] hoverEventComponents = new BaseComponent[] {
+                    new TextComponent(getTag.invoke(nmsItemStack).toString()) };
+
+            HoverEvent hover = new HoverEvent(HoverEvent.Action.SHOW_ITEM, hoverEventComponents);
+            TextComponent text = new TextComponent(Box.getInstance().getAPI().getItemData().getName(itemStack));
+            text.setHoverEvent(hover);
+            return text;
+        } catch (Throwable t) {
+            return new TextComponent(Box.getInstance().getAPI().getItemData().getName(itemStack));
+        }
     }
 }
