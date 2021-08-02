@@ -54,7 +54,7 @@ class ItemInfoCommand extends BaseCommand {
             return false;
         }
 
-        if (item == null || categories.getAllItems().contains(itemData.getName(item))) {
+        if (item == null || !categories.getAllItems().contains(itemData.getName(item))) {
             messages.sendItemNotFound(sender);
             return false;
         }
