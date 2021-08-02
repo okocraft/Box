@@ -3,7 +3,6 @@ package net.okocraft.box.config;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Objects;
-import java.util.logging.Level;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
