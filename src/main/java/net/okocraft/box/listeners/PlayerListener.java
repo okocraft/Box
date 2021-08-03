@@ -65,6 +65,11 @@ public class PlayerListener implements Listener {
         return Objects.hash(plugin, config, messages, categories, playerData, itemData);
     }
 
+    /**
+     * 無効化されたワールドでGUIが開けなくするリスナー
+     * 
+     * @param event InventoryOpenEvent
+     */
     @EventHandler
     public void onInventoryOpen(InventoryOpenEvent event) {
         if (event.getView().getTopInventory().getHolder() instanceof BaseGUI
@@ -74,6 +79,11 @@ public class PlayerListener implements Listener {
         }
     }
 
+    /**
+     * インベントリがクリックされた時にそのインベントリがGUIかどうか判定して、イベントインスタンスをそのGUIのイベントホルダーに分配するリスナー
+     * 
+     * @param event InventoryClickEvent
+     */
     @EventHandler(ignoreCancelled = true)
     public void onInventoryClick(InventoryClickEvent event) {
         Inventory inv = event.getView().getTopInventory();
@@ -97,18 +107,32 @@ public class PlayerListener implements Listener {
         }
     }
 
+    /**
+     * プレイヤーがログアウトした時にプレイヤーデータやGUIのキャッシュを削除するリスナー
+     * 
+     * @param event PlayerQuitEvent
+     */
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
         plugin.getAPI().getPlayerData().removeCache(event.getPlayer());
         GUICache.removeCache(event.getPlayer());
     }
     
+    /**
+     * プレイヤーがログインした時にプレイヤーデータのキャッシュを作成するリスナー
+     * 
+     * @param event PlayerJoinEvent
+     */
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         plugin.getAPI().getPlayerData().loadCache(event.getPlayer());
     }
 
-
+    /**
+     * アイテムを拾うイベントの時にboxに自動で収納させるリスナー
+     * 
+     * @param event EntityPickupItemEvent
+     */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void autoStoreDroppedItem(EntityPickupItemEvent event) {
         if (!config.isAutoStoreEnabled()) {

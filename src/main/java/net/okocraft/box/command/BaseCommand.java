@@ -17,11 +17,34 @@ import net.okocraft.box.database.PlayerData;
  */
 public abstract class BaseCommand {
 
+    /**
+     * プラグインのインスタンス
+     */
     protected final Box plugin = Box.getInstance();
+    
+    /**
+     * config.ymlの設定
+     */
     protected final Config config = plugin.getAPI().getConfig();
+
+    /**
+     * messages.ymlの設定
+     */
     protected final Messages messages = plugin.getAPI().getMessages();
+
+    /**
+     * categories.ymlの設定
+     */
     protected final Categories categories = plugin.getAPI().getCategories();
+
+    /**
+     * playerデータのアクセサ
+     */
     protected final PlayerData playerData = plugin.getAPI().getPlayerData();
+
+    /**
+     * アイテムデータのアクセサ
+     */
     protected final ItemData itemData = plugin.getAPI().getItemData();
 
     private final String name;
