@@ -122,5 +122,6 @@ public final class BoxAPI {
         layout.reload();
         prices.reload();
         categories.reload();
+        craftRecipes.reload();
     }
 }
