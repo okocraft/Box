@@ -67,6 +67,11 @@ public class BoxStick implements Listener {
         return Objects.hash(plugin, config, playerData, itemData, stickKey);
     }
 
+    /**
+     * プレイヤーがboxstickを持ってクリックした時にboxを開かせるリスナー
+     * 
+     * @param event PlayerInteractEvent
+     */
     @EventHandler
     public void onInteractWithStick(PlayerInteractEvent event) {
         if (event.getHand() == EquipmentSlot.OFF_HAND) {
@@ -84,6 +89,11 @@ public class BoxStick implements Listener {
         event.getPlayer().openInventory(new CategorySelectorGUI().getInventory());
     }
 
+    /**
+     * ブロック破壊イベント時にアイテムをboxから消費させるリスナー
+     * 
+     * @param event BlockBreakEvent
+     */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void blockPlace(BlockPlaceEvent event) {
         if (!event.getPlayer().hasPermission("box.stick.block")) {
@@ -100,6 +110,11 @@ public class BoxStick implements Listener {
         }
     }
 
+    /**
+     * アイテム消費イベント時にアイテムをboxから消費させるリスナー
+     * 
+     * @param event PlayerItemConsumeEvent
+     */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void itemConsume(PlayerItemConsumeEvent event) {
         if (!event.getPlayer().hasPermission("box.stick.food")) {
@@ -111,6 +126,11 @@ public class BoxStick implements Listener {
 
     }
 
+    /**
+     * アイテム破壊イベント時にboxからアイテムを引き出すリスナー
+     * 
+     * @param event PlayerItemBreakEvent
+     */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void itemBreak(PlayerItemBreakEvent event) {
         if (!event.getPlayer().hasPermission("box.stick.tool")) {
@@ -131,6 +151,11 @@ public class BoxStick implements Listener {
         }
     }
 
+    /**
+     * ポーションの投擲などのイベント時にboxからアイテムを消費するイベント
+     * 
+     * @param event ProjectileLaunchEvent
+     */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void potionThrow(ProjectileLaunchEvent event) {
 

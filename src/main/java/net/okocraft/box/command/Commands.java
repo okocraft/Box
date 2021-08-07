@@ -25,9 +25,24 @@ import net.okocraft.box.config.Messages;
  */
 public abstract class Commands implements CommandExecutor, TabCompleter {
 
+    /**
+     * プラグインのインスタンス
+     */
     protected final Box plugin = Box.getInstance();
+    
+    /**
+     * config.ymlの設定
+     */
     protected final Config config = plugin.getAPI().getConfig();
+
+    /**
+     * messages.ymlの設定
+     */
     protected final Messages messages = plugin.getAPI().getMessages();
+
+    /**
+     * 登録されたサブコマンドとその名前のマップ
+     */
     protected final Map<String, BaseCommand> registeredSubCommands = new LinkedHashMap<>();
 
     /**

@@ -123,6 +123,11 @@ public class Replant implements Listener {
         return Objects.hash(plugin, config, playerData);
     }
 
+    /**
+     * ブロックを破壊した時に作物か判定して、そうだったら植え直すリスナー
+     * 
+     * @param event BlockBreakEvent
+     */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent event) {
         Block block = event.getBlock();
@@ -246,6 +251,13 @@ public class Replant implements Listener {
         return false;
     }
 
+    /**
+     * 骨粉の使用をキャンセルするリスナー
+     * おそらくWorldGuardExtraFlagsのallow-block-breakのような特定のブロック以外の破壊を禁止するフラグを使用したときに
+     * 骨粉を使うと作物が成長しないという問題に対応するための処理
+     * 
+     * @param event PlayerInteractEvent
+     */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void cancelBoneMeal(PlayerInteractEvent event) {
         if (!config.getAutoReplantWorlds().contains(event.getPlayer().getWorld().getName())) {

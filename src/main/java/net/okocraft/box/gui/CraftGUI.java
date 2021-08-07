@@ -241,15 +241,14 @@ class CraftGUI extends CategoryGUI {
 
     private Recipe getRecipeFor(ItemStack realItem) {
         List<Recipe> recipes = Bukkit.getRecipesFor(realItem);
-        recipes.removeIf(recipe -> !(recipe instanceof ShapelessRecipe || recipe instanceof ShapedRecipe));
-        if (recipes.isEmpty()) {
-            return null;
-        }
-        return recipes.get(0);
+        recipes.removeIf(recipe -> !(recipe instanceof ShapelessRecipe || recipe instanceof ShapedRecipe)
+                || !realItem.isSimilar(recipe.getResult()));
+        return recipes.isEmpty() ? null : recipes.get(0);
     }
 
     private int getCraftResultAmount(ItemStack realItem) {
-        return getRecipeFor(realItem).getResult().getAmount();
+        Recipe recipe = getRecipeFor(realItem);
+        return recipe == null ? 0 : recipe.getResult().getAmount();
     }
 
     private Map<String, Integer> getIngredients(ItemStack realItem) {

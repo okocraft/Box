@@ -376,6 +376,11 @@ public final class Messages extends CustomConfig {
         sendMessage(sender, "command.box.version.info.format", Map.of("%version%", version));
     }
 
+    /**
+     * リロード成功メッセージを送信する。
+     * 
+     * @param sender メッセージを送る対象
+     */
     public void sendReloadSuccess(CommandSender sender) {
         sendMessage(sender, "command.boxadmin.reload.info.success");
     }
