@@ -44,10 +44,10 @@ public final class CraftRecipes extends CustomConfig {
         }
 
         Map<String, Integer> ingredients = new HashMap<>();
+        int ingredientAmount;
         for (String ingredient : section.getKeys(false)) {
-            int ingredientAmount = section.getInt(ingredient);
-            if (ingredientAmount == 0) {
-                return Map.of();
+            if (!section.isInt(ingredient) || (ingredientAmount = section.getInt(ingredient)) == 0) {
+                continue;
             }
 
             if (getItemStack(ingredient) == null) {
