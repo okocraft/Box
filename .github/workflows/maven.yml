@@ -19,7 +19,7 @@ jobs:
       - name: Move the artifact
         run: |
           mkdir staging
-          cp -r target/ staging
+          mv target staging/parent
       - uses: actions/upload-artifact@v2.2.4
         with:
           name: Package
