@@ -1,12 +1,16 @@
 
-# Box v3.1.x
+# Box v4.0.0
 <!--img src="https://i.gyazo.com/b1beaf67431058f3c72b4d8907cae57d.png" width="200"><br/-->
 [![GitHub](https://img.shields.io/github/license/okocraft/Box)](https://github.com/okocraft/Box/blob/master/LICENSE)
 [![javadoc](https://img.shields.io/badge/javadoc-here-green.svg)](https://okocraft.github.io/Box/)
 
 Box はあらゆるアイテムを仮想的なインベントリへ収納できるようにするプラグインです。
 
-**Vaultに依存しています**
+## ⚠ 注意 ⚠
+
+**このブランチはコードを書き直すためのものです。**
+
+以下にある機能には実装されていないものが多くあり、また多くのバグが含まれる可能性があります。
 
 ## 特徴
 
