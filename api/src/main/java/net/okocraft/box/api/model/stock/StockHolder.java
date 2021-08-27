@@ -9,6 +9,8 @@ import java.util.Collection;
 
 /**
  * An interface that holds stocks.
+ * <p>
+ * The implementation of this interface must be thread-safe.
  */
 public interface StockHolder {
 
