@@ -5,6 +5,8 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * An interface that holds the user's personal stock.
+ * <p>
+ * The implementation of this interface must be thread-safe.
  */
 public interface UserStockHolder extends StockHolder {
 
