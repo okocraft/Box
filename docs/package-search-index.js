@@ -1,1 +1,0 @@
-packageSearchIndex = [{"l":"net.okocraft.box"},{"l":"net.okocraft.box.command"},{"l":"net.okocraft.box.command.box"},{"l":"net.okocraft.box.command.boxadmin"},{"l":"net.okocraft.box.config"},{"l":"net.okocraft.box.database"},{"l":"net.okocraft.box.gui"},{"l":"net.okocraft.box.listeners"},{"l":"net.okocraft.box.util"},{"l":"すべてのパッケージ","url":"allpackages-index.html"}]
