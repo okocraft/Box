@@ -20,7 +20,7 @@ jobs:
         run: |
           mkdir staging
           cp -r target/ staging
-      - uses: actions/upload-artifact@v1
+      - uses: actions/upload-artifact@v2.2.4
         with:
           name: Package
           path: staging
