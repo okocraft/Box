@@ -20,6 +20,9 @@ jobs:
         run: |
           mkdir staging
           mv target staging/parent
+          mv api/target staging/api
+          mv bundle/target staging/bundle
+          mv core/target staging/core
       - uses: actions/upload-artifact@v2.2.4
         with:
           name: Package
