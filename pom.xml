@@ -139,40 +139,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.2.0</version>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                        <phase>prepare-package</phase>
-                    </execution>
-                </executions>
-                <configuration>
-                    <author>true</author>
-                    <source>${java.version}</source>
-                    <charset>${project.charset}</charset>
-                    <encoding>${project.charset}</encoding>
-                    <docencoding>${project.charset}</docencoding>
-                    <linksource>true</linksource>
-                    <locale>en_US</locale>
-                    <notimestamp>true</notimestamp>
-                    <show>protected</show>
-                    <bottom>
-                        <![CDATA[<p class="legalCopy">Copyright &#169; 2019-2020 <a href="https://github.com/okocraft">OKOCRAFT</a>. All rights reserved.</p>]]>
-                    </bottom>
-                    <links>
-                        <link>https://hub.spigotmc.org/javadocs/spigot/</link>
-                        <link>https://javadoc.io/doc/org.jetbrains/annotations/19.0.0/</link>
-                        <link>https://javadoc.io/doc/com.zaxxer/HikariCP/latest</link>
-                        <link>https://milkbowl.github.io/VaultAPI/</link>
-                    </links>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
 </project>
