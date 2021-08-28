@@ -10,13 +10,28 @@ import net.okocraft.box.api.player.BoxPlayerMap;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.logging.Logger;
+
 /**
  * An API of Box.
- * <p>
- * This interface extends the {@link Plugin},
- * but it is intended for operations that require a plugin instance.
  */
-public interface BoxAPI extends Plugin {
+public interface BoxAPI {
+
+    /**
+     * Gets the instance of Box.
+     * <p>
+     * This is intended for operations that require a plugin instance.
+     *
+     * @return the plugin instance
+     */
+    @NotNull Plugin getPluginInstance();
+
+    /**
+     * Gets the {@link Logger}.
+     *
+     * @return the {@link Logger}
+     */
+    @NotNull Logger getLogger();
 
     /**
      * Gets the {@link YamlConfiguration} that loaded from config.yml.
