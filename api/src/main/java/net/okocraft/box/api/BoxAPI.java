@@ -10,6 +10,7 @@ import net.okocraft.box.api.player.BoxPlayerMap;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
+import java.nio.file.Path;
 import java.util.logging.Logger;
 
 /**
@@ -25,6 +26,20 @@ public interface BoxAPI {
      * @return the plugin instance
      */
     @NotNull Plugin getPluginInstance();
+
+    /**
+     * Gets the path of the plugin directory.
+     *
+     * @return the path of the plugin directory
+     */
+    @NotNull Path getPluginDirectory();
+
+    /**
+     * Gets the path of the plugin jar.
+     *
+     * @return tha path of the plugin jar
+     */
+    @NotNull Path getJar();
 
     /**
      * Gets the {@link Logger}.
