@@ -3,6 +3,7 @@ package net.okocraft.box.api;
 import com.github.siroshun09.configapi.yaml.YamlConfiguration;
 import net.okocraft.box.api.command.base.BoxAdminCommand;
 import net.okocraft.box.api.command.base.BoxCommand;
+import net.okocraft.box.api.feature.BoxFeature;
 import net.okocraft.box.api.model.manager.ItemManager;
 import net.okocraft.box.api.model.manager.StockManager;
 import net.okocraft.box.api.model.manager.UserLoader;
@@ -96,4 +97,18 @@ public interface BoxAPI {
      * @return the {@link BoxAdminCommand}
      */
     @NotNull BoxAdminCommand getBoxAdminCommand();
+
+    /**
+     * Registers the {@link BoxFeature}.
+     *
+     * @param boxFeature the {@link BoxFeature} to register
+     */
+    void register(@NotNull BoxFeature boxFeature);
+
+    /**
+     * Unregisters the {@link BoxFeature}.
+     *
+     * @param boxFeature the {@link BoxFeature} to unregister
+     */
+    void unregister(@NotNull BoxFeature boxFeature);
 }
