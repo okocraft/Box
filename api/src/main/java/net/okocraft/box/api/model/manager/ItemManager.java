@@ -40,6 +40,14 @@ public interface ItemManager {
     boolean isRegistered(@NotNull ItemStack itemStack);
 
     /**
+     * Checks if the specified name has already been used.
+     *
+     * @param name the name to check
+     * @return {@code true} if used, {@code false} otherwise
+     */
+    boolean isUsed(@NotNull String name);
+
+    /**
      * Registers item.
      * <p>
      * Only uppercase letters and {@code _} are allowed in the plain name.
