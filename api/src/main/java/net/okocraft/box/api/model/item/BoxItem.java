@@ -40,4 +40,11 @@ public interface BoxItem {
      * @return the display name of this item as a {@link Component}
      */
     @NotNull Component getDisplayName();
+
+    /**
+     * Gets the internal id of this item.
+     *
+     * @return the internal id of this id
+     */
+    int getInternalId();
 }
