@@ -9,7 +9,7 @@ import java.util.concurrent.CompletableFuture;
 /**
  * An interface to load a {@link BoxUser}.
  */
-public interface UserLoader {
+public interface UserManager {
 
     /**
      * Loads the {@link BoxUser} of specified {@link UUID}.
