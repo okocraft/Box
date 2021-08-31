@@ -6,7 +6,7 @@ import net.okocraft.box.api.command.base.BoxCommand;
 import net.okocraft.box.api.feature.BoxFeature;
 import net.okocraft.box.api.model.manager.ItemManager;
 import net.okocraft.box.api.model.manager.StockManager;
-import net.okocraft.box.api.model.manager.UserLoader;
+import net.okocraft.box.api.model.manager.UserManager;
 import net.okocraft.box.api.player.BoxPlayerMap;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
@@ -57,11 +57,11 @@ public interface BoxAPI {
     @NotNull YamlConfiguration getConfiguration();
 
     /**
-     * Gets the {@link UserLoader}.
+     * Gets the {@link UserManager}.
      *
-     * @return the {@link UserLoader}
+     * @return the {@link UserManager}
      */
-    @NotNull UserLoader getUserLoader();
+    @NotNull UserManager getUserLoader();
 
     /**
      * Gets the {@link ItemManager}.
