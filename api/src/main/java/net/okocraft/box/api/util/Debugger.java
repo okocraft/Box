@@ -5,13 +5,24 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Supplier;
 
+/**
+ * A class to log debug information.
+ */
 public final class Debugger {
 
+    /**
+     * Whether it is debug mode or not.
+     */
     public static boolean ENABLED;
 
-    public static void log(@NotNull Supplier<@NotNull String> log) {
+    /**
+     * Logs a debug if {@link #ENABLED} is true.
+     *
+     * @param logSupplier the supplier of log
+     */
+    public static void log(@NotNull Supplier<@NotNull String> logSupplier) {
         if (ENABLED) {
-            BoxProvider.get().getLogger().info("DEBUG: " + log.get());
+            BoxProvider.get().getLogger().info("DEBUG: " + logSupplier.get());
         }
     }
 }
