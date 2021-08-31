@@ -32,6 +32,14 @@ public interface ItemManager {
     @NotNull Optional<BoxItem> getBoxItem(@NotNull String name);
 
     /**
+     * Gets the {@link BoxItem} of the specified id if it exists.
+     *
+     * @param id the id to get
+     * @return the optional {@link BoxItem}
+     */
+    @NotNull Optional<BoxItem> getBoxItem(int id);
+
+    /**
      * Checks if the specified item has already been registered.
      *
      * @param itemStack the item to check
