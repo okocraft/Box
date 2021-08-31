@@ -1,6 +1,5 @@
 package net.okocraft.box.api.model.stock;
 
-import net.okocraft.box.api.model.data.BoxStockData;
 import net.okocraft.box.api.model.item.BoxItem;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
@@ -72,10 +71,10 @@ public interface StockHolder {
     int decrease(@NotNull BoxItem item, int decrement);
 
     /**
-     * Gets the current stocks as a {@link BoxStockData} collection.
+     * Gets the current stocks as a {@link StockData} collection.
      *
-     * @return the collection of {@link BoxStockData}
+     * @return the collection of {@link StockData}
      */
-    @NotNull @Unmodifiable Collection<BoxStockData> toStockDataCollection();
+    @NotNull @Unmodifiable Collection<StockData> toStockDataCollection();
 
 }

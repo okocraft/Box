@@ -1,4 +1,4 @@
-package net.okocraft.box.api.model.data;
+package net.okocraft.box.api.model.stock;
 
 import net.okocraft.box.api.model.item.BoxItem;
 import org.jetbrains.annotations.NotNull;
@@ -6,5 +6,5 @@ import org.jetbrains.annotations.NotNull;
 /**
  * A record of the stock.
  */
-public record BoxStockData(@NotNull BoxItem item, int amount) {
+public record StockData(@NotNull BoxItem item, int amount) {
 }
