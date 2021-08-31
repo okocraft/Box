@@ -10,6 +10,13 @@ import java.util.Objects;
  */
 public record StockData(@NotNull BoxItem item, int amount) {
 
+    /**
+     * The constructor to check arguments.
+     *
+     * @param item the {@link BoxItem}
+     * @param amount the amount of the item
+     * @throws NullPointerException if {@code item} is null
+     */
     public StockData(@NotNull BoxItem item, int amount) {
         this.item = Objects.requireNonNull(item);
         this.amount = amount;
