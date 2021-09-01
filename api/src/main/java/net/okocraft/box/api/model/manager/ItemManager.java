@@ -6,6 +6,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
+import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -88,5 +89,5 @@ public interface ItemManager {
      *
      * @return the set of all {@link BoxItem}s
      */
-    @NotNull @Unmodifiable Set<BoxItem> getBoxItemSet();
+    @NotNull @Unmodifiable Collection<BoxItem> getBoxItemSet();
 }
