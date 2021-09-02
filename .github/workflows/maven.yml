@@ -19,7 +19,6 @@ jobs:
       - name: Move the artifact
         run: |
           mkdir staging
-          mv target staging/parent
           mv api/target staging/api
           mv bundle/target staging/bundle
           mv core/target staging/core
