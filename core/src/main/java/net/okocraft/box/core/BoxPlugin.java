@@ -2,6 +2,7 @@ package net.okocraft.box.core;
 
 import com.github.siroshun09.configapi.api.util.ResourceUtils;
 import com.github.siroshun09.configapi.yaml.YamlConfiguration;
+import com.github.siroshun09.event4j.bus.EventBus;
 import com.github.siroshun09.translationloader.directory.TranslationDirectory;
 import net.kyori.adventure.key.Key;
 import net.okocraft.box.api.BoxAPI;
@@ -49,6 +50,7 @@ public class BoxPlugin implements BoxAPI {
     private final YamlConfiguration configuration;
     private final TranslationDirectory translationDirectory;
 
+    private final EventBus eventBus = EventBus.newEventBus();
     private final BoxCommandImpl boxCommand = new BoxCommandImpl();
     private final BoxAdminCommandImpl boxAdminCommand = new BoxAdminCommandImpl();
 
@@ -233,6 +235,11 @@ public class BoxPlugin implements BoxAPI {
     @Override
     public @NotNull BoxPlayerMap getBoxPlayerMap() {
         return playerMap;
+    }
+
+    @Override
+    public @NotNull EventBus getEventBus() {
+        return eventBus;
     }
 
     @Override

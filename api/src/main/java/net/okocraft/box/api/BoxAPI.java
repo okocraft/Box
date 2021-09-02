@@ -1,6 +1,7 @@
 package net.okocraft.box.api;
 
 import com.github.siroshun09.configapi.yaml.YamlConfiguration;
+import com.github.siroshun09.event4j.bus.EventBus;
 import net.okocraft.box.api.command.base.BoxAdminCommand;
 import net.okocraft.box.api.command.base.BoxCommand;
 import net.okocraft.box.api.feature.BoxFeature;
@@ -83,6 +84,13 @@ public interface BoxAPI {
      * @return the {@link BoxPlayerMap}
      */
     @NotNull BoxPlayerMap getBoxPlayerMap();
+
+    /**
+     * Gets the {@link EventBus}.
+     *
+     * @return the {@link EventBus}
+     */
+    @NotNull EventBus getEventBus();
 
     /**
      * Gets the {@link BoxCommand}.
