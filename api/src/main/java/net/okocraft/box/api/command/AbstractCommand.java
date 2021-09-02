@@ -16,7 +16,7 @@ import java.util.Set;
  * The permission node is for executing that command,
  * and it will check the executor before {@link #onCommand(CommandSender, String[])} is called.
  */
-public abstract class AbstractCommand {
+public abstract class AbstractCommand implements Command {
 
     private final String name;
     private final String permissionNode;
@@ -45,54 +45,18 @@ public abstract class AbstractCommand {
         this.aliases = aliases;
     }
 
-    /**
-     * Gets the command name.
-     *
-     * @return the command name
-     */
     public @NotNull String getName() {
         return name;
     }
 
-    /**
-     * Gets the permission node.
-     *
-     * @return the permission node
-     */
     public @NotNull String getPermissionNode() {
         return permissionNode;
     }
 
-    /**
-     * Gets the set of aliases.
-     *
-     * @return the set of aliases
-     */
     public @NotNull @Unmodifiable Set<String> getAliases() {
         return aliases;
     }
 
-    /**
-     * Executes the command.
-     * <p>
-     * When this method is called, the executor has the permission
-     * and the length of the argument array is greater than or equal to 1.
-     *
-     * @param sender the executor
-     * @param args   the array of arguments
-     */
-    public abstract void onCommand(@NotNull CommandSender sender, @NotNull String[] args);
-
-    /**
-     * Gets the tab-completion.
-     * <p>
-     * When this method is called, the executor has the permission
-     * and the length of the argument array is greater than or equal to 1.
-     *
-     * @param sender the executor
-     * @param args   the array of arguments
-     * @return the result of the tab-completion or an empty list
-     */
     public @NotNull List<String> onTabComplete(@NotNull CommandSender sender, @NotNull String[] args) {
         return Collections.emptyList();
     }
