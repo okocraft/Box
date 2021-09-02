@@ -1,0 +1,22 @@
+package net.okocraft.box.core.config;
+
+import com.github.siroshun09.configapi.api.value.ConfigValue;
+
+public final class Settings {
+
+    public static final ConfigValue<Boolean> DEBUG =
+            config -> config.getBoolean("debug", false);
+
+    public static final ConfigValue<Boolean> ITEM_ENABLE_DEFAULTS =
+            config -> config.getBoolean("item.enable-defaults", true);
+
+    public static final ConfigValue<Boolean> ITEM_ENABLE_POTIONS =
+            config -> config.getBoolean("item.enable-potions", false);
+
+    public static final ConfigValue<Boolean> ITEM_ENABLE_ENCHANTED_BOOKS =
+            config -> config.getBoolean("item.enable-enchanted-books", false);
+
+    private Settings() {
+        throw new UnsupportedOperationException();
+    }
+}
