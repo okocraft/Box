@@ -1,5 +1,6 @@
 package net.okocraft.box.api.message;
 
+import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.message.argument.SingleArgument;
 
 import static net.kyori.adventure.text.Component.text;
@@ -18,4 +19,9 @@ public final class GeneralMessage {
     public static final SingleArgument<String> ERROR_NO_PERMISSION =
             node -> translatable("box.error.no-permission", RED).args(text(node, AQUA));
 
+    /**
+     * A message sent when the subcommand not found.
+     */
+    public static final Component ERROR_COMMAND_SUBCOMMAND_NOT_FOUND =
+            translatable("box.error.command.subcommand-not-found", RED);
 }
