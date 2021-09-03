@@ -1,5 +1,9 @@
 package net.okocraft.box.core.model.stock;
 
+import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.api.event.stock.StockDecreaseEvent;
+import net.okocraft.box.api.event.stock.StockIncreaseEvent;
+import net.okocraft.box.api.event.stock.StockSetEvent;
 import net.okocraft.box.api.model.stock.StockData;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.model.stock.StockHolder;
@@ -36,8 +40,10 @@ public abstract class AbstractStockHolder implements StockHolder {
 
     @Override
     public void setAmount(@NotNull BoxItem item, int amount) {
-        Debugger.log(() -> "SET: " + item.getPlainName() + ": " + amount + " (" + getName() + ")");
         getStock(item).set(amount);
+
+        BoxProvider.get().getEventBus().callEvent(new StockSetEvent(this, item, amount));
+        Debugger.log(() -> "SET: " + item.getPlainName() + ": " + amount + " (" + getName() + ")");
     }
 
     @Override
@@ -48,6 +54,8 @@ public abstract class AbstractStockHolder implements StockHolder {
     @Override
     public int increase(@NotNull BoxItem item, int increment) {
         var amount = getStock(item).addAndGet(increment);
+
+        BoxProvider.get().getEventBus().callEvent(new StockIncreaseEvent(this, item, increment, amount));
 
         Debugger.log(() ->
                 "INCREASE (" + increment + ")" + ": " +
@@ -64,6 +72,8 @@ public abstract class AbstractStockHolder implements StockHolder {
     @Override
     public int decrease(@NotNull BoxItem item, int decrement) {
         var amount = getStock(item).addAndGet(-decrement);
+
+        BoxProvider.get().getEventBus().callEvent(new StockDecreaseEvent(this, item, decrement, amount));
 
         Debugger.log(() ->
                 "DECREASE (" + decrement + ")" + ": " +
