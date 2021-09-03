@@ -4,29 +4,26 @@ import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.event.stock.StockDecreaseEvent;
 import net.okocraft.box.api.event.stock.StockIncreaseEvent;
 import net.okocraft.box.api.event.stock.StockSetEvent;
-import net.okocraft.box.api.model.stock.StockData;
 import net.okocraft.box.api.model.item.BoxItem;
+import net.okocraft.box.api.model.stock.StockData;
 import net.okocraft.box.api.model.stock.StockHolder;
 import net.okocraft.box.api.util.Debugger;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 public abstract class AbstractStockHolder implements StockHolder {
 
-    private static final Collector<StockData, ?, Map<BoxItem, AtomicInteger>> TO_MAP;
+    private static final Collector<StockData, ?, ConcurrentMap<BoxItem, AtomicInteger>> TO_MAP =
+            Collectors.toConcurrentMap(StockData::item, data -> new AtomicInteger(data.amount()));
 
-    static {
-        TO_MAP = Collectors.toMap(StockData::item, data -> new AtomicInteger(data.amount()));
-    }
-
-    private final Map<BoxItem, AtomicInteger> stockData;
+    private final ConcurrentMap<BoxItem, AtomicInteger> stockData;
 
     protected AbstractStockHolder(@NotNull Collection<StockData> stockData) {
         Objects.requireNonNull(stockData);
