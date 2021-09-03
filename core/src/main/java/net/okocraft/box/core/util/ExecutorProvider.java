@@ -27,9 +27,13 @@ public final class ExecutorProvider {
 
         for (var executor : CREATED_EXECUTORS) {
             if (!executor.isShutdown()) {
-                executor.shutdown();
-                //noinspection ResultOfMethodCallIgnored
-                executor.awaitTermination(30, TimeUnit.SECONDS);
+                if (executor instanceof ScheduledExecutorService) {
+                    executor.shutdownNow();
+                } else {
+                    executor.shutdown();
+                    //noinspection ResultOfMethodCallIgnored
+                    executor.awaitTermination(30, TimeUnit.SECONDS);
+                }
             }
         }
 
