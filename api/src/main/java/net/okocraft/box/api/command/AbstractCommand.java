@@ -1,5 +1,6 @@
 package net.okocraft.box.api.command;
 
+import net.okocraft.box.api.message.GeneralMessage;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
@@ -59,5 +60,14 @@ public abstract class AbstractCommand implements Command {
 
     public @NotNull List<String> onTabComplete(@NotNull CommandSender sender, @NotNull String[] args) {
         return Collections.emptyList();
+    }
+
+    protected boolean checkPermission(@NotNull CommandSender sender) {
+        if (sender.hasPermission(getPermissionNode())) {
+            return true;
+        } else {
+            sender.sendMessage(GeneralMessage.ERROR_NO_PERMISSION.apply(getPermissionNode()));
+            return false;
+        }
     }
 }
