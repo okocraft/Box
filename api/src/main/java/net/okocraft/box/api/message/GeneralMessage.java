@@ -29,4 +29,10 @@ public final class GeneralMessage {
      */
     public static final Component ERROR_COMMAND_SUBCOMMAND_NOT_FOUND =
             translatable("box.error.command.subcommand-not-found", RED);
+
+    /**
+     * A message sent when arguments are not enough.
+     */
+    public static final Component ERROR_COMMAND_NOT_ENOUGH_ARGUMENT =
+            translatable("box.error.command.not-enough-argument", RED);
 }
