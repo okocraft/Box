@@ -10,7 +10,7 @@ import static net.kyori.adventure.text.format.NamedTextColor.AQUA;
 import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
 
-public final class CommandMessage {
+public final class BoxAdminMessage {
 
     public static final SingleArgument<String> VERSION_INFO =
             version ->
@@ -66,7 +66,7 @@ public final class CommandMessage {
                             .color(GRAY)
                             .build();
 
-    private CommandMessage() {
+    private BoxAdminMessage() {
         throw new UnsupportedOperationException();
     }
 }

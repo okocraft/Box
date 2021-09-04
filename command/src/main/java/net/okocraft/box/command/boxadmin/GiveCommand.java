@@ -5,7 +5,7 @@ import net.okocraft.box.api.command.AbstractCommand;
 import net.okocraft.box.api.message.GeneralMessage;
 import net.okocraft.box.api.model.stock.UserStockHolder;
 import net.okocraft.box.api.model.user.BoxUser;
-import net.okocraft.box.command.message.CommandMessage;
+import net.okocraft.box.command.message.BoxAdminMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -68,7 +68,7 @@ public class GiveCommand extends AbstractCommand {
         if (boxUser.isPresent()) {
             processBoxUser(sender, boxUser.get(), args);
         } else {
-            sender.sendMessage(CommandMessage.GIVE_PLAYER_NOT_FOUND.apply(args[1]));
+            sender.sendMessage(BoxAdminMessage.GIVE_PLAYER_NOT_FOUND.apply(args[1]));
         }
     }
 
@@ -89,7 +89,7 @@ public class GiveCommand extends AbstractCommand {
         var item = BoxProvider.get().getItemManager().getBoxItem(args[2]);
 
         if (item.isEmpty()) {
-            sender.sendMessage(CommandMessage.GIVE_ITEM_NOT_FOUND.apply(args[2]));
+            sender.sendMessage(BoxAdminMessage.GIVE_ITEM_NOT_FOUND.apply(args[2]));
             return;
         }
 
@@ -98,16 +98,16 @@ public class GiveCommand extends AbstractCommand {
         try {
             amount = Integer.parseInt(args[3]);
         } catch (NumberFormatException e) {
-            sender.sendMessage(CommandMessage.GIVE_INVALID_NUMBER.apply(args[3]));
+            sender.sendMessage(BoxAdminMessage.GIVE_INVALID_NUMBER.apply(args[3]));
             return;
         }
 
         int current = target.increase(item.get(), amount);
 
-        sender.sendMessage(CommandMessage.GIVE_SUCCESS_SENDER.apply(target.getName(), item.get(), amount, current));
+        sender.sendMessage(BoxAdminMessage.GIVE_SUCCESS_SENDER.apply(target.getName(), item.get(), amount, current));
 
         if (targetPlayer != null) {
-            targetPlayer.sendMessage(CommandMessage.GIVE_SUCCESS_TARGET.apply(sender.getName(), item.get(), amount, current));
+            targetPlayer.sendMessage(BoxAdminMessage.GIVE_SUCCESS_TARGET.apply(sender.getName(), item.get(), amount, current));
         }
     }
 }
