@@ -2,7 +2,7 @@ package net.okocraft.box.command.boxadmin;
 
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.command.AbstractCommand;
-import net.okocraft.box.command.message.CommandMessage;
+import net.okocraft.box.command.message.BoxAdminMessage;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,7 +18,7 @@ public class VersionCommand extends AbstractCommand {
     public void onCommand(@NotNull CommandSender sender, @NotNull String[] args) {
         if (checkPermission(sender)) {
             var version = BoxProvider.get().getPluginInstance().getDescription().getVersion();
-            sender.sendMessage(CommandMessage.VERSION_INFO.apply(version));
+            sender.sendMessage(BoxAdminMessage.VERSION_INFO.apply(version));
         }
     }
 }
