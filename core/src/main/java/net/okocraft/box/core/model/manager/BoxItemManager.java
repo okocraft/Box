@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -38,6 +39,8 @@ public class BoxItemManager implements ItemManager {
 
     @Override
     public @NotNull Optional<BoxItem> getBoxItem(@NotNull String name) {
+        name = name.toUpperCase(Locale.ROOT);
+
         for (var item : itemMap.values()) {
             if (item.getPlainName().equals(name)) {
                 return Optional.of(item);
