@@ -62,7 +62,7 @@ public interface BoxAPI {
      *
      * @return the {@link UserManager}
      */
-    @NotNull UserManager getUserLoader();
+    @NotNull UserManager getUserManager();
 
     /**
      * Gets the {@link ItemManager}.

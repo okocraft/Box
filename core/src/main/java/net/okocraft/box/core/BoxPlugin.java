@@ -228,7 +228,7 @@ public class BoxPlugin implements BoxAPI {
     }
 
     @Override
-    public @NotNull UserManager getUserLoader() {
+    public @NotNull UserManager getUserManager() {
         return userManager;
     }
 
