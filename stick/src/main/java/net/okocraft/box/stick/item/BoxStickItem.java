@@ -21,7 +21,7 @@ import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
 
 public class BoxStickItem {
 
-    private static final Component DISPLAY_NAME = translatable("box.stick.display-name", DARK_BLUE);
+    private static final Component DISPLAY_NAME = translatable("box.stick.item.display-name", DARK_BLUE);
     private static final List<Component> LORE = List.of(
             empty(),
             translatable("box.stick.item.lore-1", GRAY),
