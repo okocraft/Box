@@ -20,6 +20,11 @@ public final class GeneralMessage {
             node -> translatable("box.error.no-permission", RED).args(text(node, AQUA));
 
     /**
+     * A message sent when an executor of the command is not a player.
+     */
+    public static final Component ERROR_COMMAND_ONLY_PLAYER = translatable("box.error.command.only-player", RED);
+
+    /**
      * A message sent when the subcommand not found.
      */
     public static final Component ERROR_COMMAND_SUBCOMMAND_NOT_FOUND =
