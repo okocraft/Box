@@ -16,4 +16,11 @@ public interface UserStockHolder extends StockHolder {
      * @return the owner of this holder
      */
     @NotNull BoxUser getUser();
+
+    /**
+     * Checks if the owner of this holder is online.
+     *
+     * @return whether the owner of this holder is online or not
+     */
+    boolean isOnline();
 }
