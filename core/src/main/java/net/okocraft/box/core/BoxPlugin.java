@@ -25,6 +25,7 @@ import net.okocraft.box.core.model.manager.BoxUserManager;
 import net.okocraft.box.core.player.BoxPlayerMapImpl;
 import net.okocraft.box.core.storage.Storage;
 import net.okocraft.box.core.storage.implementations.yaml.YamlStorage;
+import net.okocraft.box.core.task.ModifiedStockHolderSaveTask;
 import net.okocraft.box.core.util.ExecutorProvider;
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
@@ -61,6 +62,8 @@ public class BoxPlugin implements BoxAPI {
     private BoxStockManager stockManager;
     private BoxUserManager userManager;
     private BoxPlayerMapImpl playerMap;
+
+    private ModifiedStockHolderSaveTask autoSaveTask;
 
     public BoxPlugin(@NotNull JavaPlugin plugin, @NotNull Path jarFile) {
         this.plugin = plugin;
@@ -135,6 +138,9 @@ public class BoxPlugin implements BoxAPI {
 
         Bukkit.getPluginManager().registerEvents(new PlayerConnectionListener(playerMap), plugin);
 
+        autoSaveTask = new ModifiedStockHolderSaveTask(storage);
+        autoSaveTask.start();
+
         getLogger().info("Registering commands...");
 
         Optional.ofNullable(plugin.getCommand("box"))
@@ -164,6 +170,10 @@ public class BoxPlugin implements BoxAPI {
 
         getLogger().info("Disabling features...");
         List.copyOf(features).forEach(this::unregister);
+
+        if (autoSaveTask != null) {
+            autoSaveTask.stop();
+        }
 
         if (playerMap != null) {
             playerMap.unloadAll();
