@@ -101,7 +101,7 @@ public class StickListener implements Listener {
         var mainHand = player.getInventory().getItemInMainHand();
 
         if (mainHand.getType() != Material.SPLASH_POTION &&
-                mainHand.getType() == Material.LINGERING_POTION) {
+                mainHand.getType() != Material.LINGERING_POTION) {
             return;
         }
 
