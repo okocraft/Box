@@ -35,8 +35,7 @@ public class StickCommand extends AbstractCommand {
             return;
         }
 
-        if (!sender.hasPermission(getPermissionNode())) {
-            sender.sendMessage(GeneralMessage.ERROR_NO_PERMISSION.apply(getPermissionNode()));
+        if (!checkPermission(sender)) {
             return;
         }
 
