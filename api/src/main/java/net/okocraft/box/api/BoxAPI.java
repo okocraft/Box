@@ -9,6 +9,7 @@ import net.okocraft.box.api.model.manager.ItemManager;
 import net.okocraft.box.api.model.manager.StockManager;
 import net.okocraft.box.api.model.manager.UserManager;
 import net.okocraft.box.api.player.BoxPlayerMap;
+import org.bukkit.World;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -119,4 +120,12 @@ public interface BoxAPI {
      * @param boxFeature the {@link BoxFeature} to unregister
      */
     void unregister(@NotNull BoxFeature boxFeature);
+
+    /**
+     * Checks if Box is not available in the world.
+     *
+     * @param world the world to check
+     * @return if Box is disabled in that world, returns {@code true}, otherwise {@code false}
+     */
+    boolean isDisabledWorld(@NotNull World world);
 }
