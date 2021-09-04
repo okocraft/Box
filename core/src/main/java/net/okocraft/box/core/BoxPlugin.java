@@ -28,6 +28,7 @@ import net.okocraft.box.core.storage.implementations.yaml.YamlStorage;
 import net.okocraft.box.core.task.ModifiedStockHolderSaveTask;
 import net.okocraft.box.core.util.ExecutorProvider;
 import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.Plugin;
@@ -300,5 +301,10 @@ public class BoxPlugin implements BoxAPI {
     @Override
     public boolean isDisabledWorld(@NotNull World world) {
         return configuration.get(Settings.DISABLED_WORLDS).contains(world.getName());
+    }
+
+    @Override
+    public @NotNull NamespacedKey createNamespacedKey(@NotNull String value) {
+        return new NamespacedKey(plugin, value);
     }
 }
