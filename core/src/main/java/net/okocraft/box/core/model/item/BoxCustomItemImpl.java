@@ -8,8 +8,21 @@ import java.util.Objects;
 
 public class BoxCustomItemImpl extends BoxItemImpl implements BoxCustomItem {
 
+    private String plainName;
+
     public BoxCustomItemImpl(@NotNull ItemStack original, @NotNull String plainName, int internalId) {
         super(original, plainName, internalId);
+
+        this.plainName = plainName;
+    }
+
+    @Override
+    public @NotNull String getPlainName() {
+        return plainName;
+    }
+
+    public void setPlainName(@NotNull String plainName) {
+        this.plainName = Objects.requireNonNull(plainName);
     }
 
     @Override
@@ -19,7 +32,7 @@ public class BoxCustomItemImpl extends BoxItemImpl implements BoxCustomItem {
         var that = (BoxCustomItemImpl) o;
         return getInternalId() == that.getInternalId() &&
                 getOriginal().equals(that.getOriginal()) &&
-                getPlainName().equals(that.getPlainName());
+                plainName.equals(that.plainName);
     }
 
     @Override
@@ -32,7 +45,7 @@ public class BoxCustomItemImpl extends BoxItemImpl implements BoxCustomItem {
         return "BoxCustomItemImpl{" +
                 "original=" + getOriginal() +
                 ", plainName='" + getPlainName() + '\'' +
-                ", internalId=" + getPlainName() +
+                ", internalId=" + plainName +
                 '}';
     }
 }
