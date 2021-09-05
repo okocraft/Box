@@ -51,7 +51,7 @@ public final class BoxAdminMessage {
     public static final QuadArgument<String, BoxItem, Integer, Integer> GIVE_SUCCESS_SENDER =
             (targetName, item, increments, currentAmount) ->
                     translatable()
-                            .key("box.command.boxadmin.give.success-sender")
+                            .key("box.command.boxadmin.give.success.sender")
                             .args(
                                     text(targetName, AQUA), item.getDisplayName(),
                                     text(increments, AQUA), text(currentAmount, AQUA)
@@ -62,7 +62,7 @@ public final class BoxAdminMessage {
     public static final QuadArgument<String, BoxItem, Integer, Integer> GIVE_SUCCESS_TARGET =
             (senderName, item, increments, currentAmount) ->
                     translatable()
-                            .key("box.command.boxadmin.give.success-target")
+                            .key("box.command.boxadmin.give.success.target")
                             .args(
                                     text(senderName, AQUA), item.getDisplayName(),
                                     text(increments, AQUA), text(currentAmount, AQUA)
