@@ -68,7 +68,7 @@ public class GiveCommand extends AbstractCommand {
         if (boxUser.isPresent()) {
             processBoxUser(sender, boxUser.get(), args);
         } else {
-            sender.sendMessage(BoxAdminMessage.GIVE_PLAYER_NOT_FOUND.apply(args[1]));
+            sender.sendMessage(GeneralMessage.ERROR_COMMAND_PLAYER_NOT_FOUND.apply(args[1]));
         }
     }
 
@@ -89,7 +89,7 @@ public class GiveCommand extends AbstractCommand {
         var item = BoxProvider.get().getItemManager().getBoxItem(args[2]);
 
         if (item.isEmpty()) {
-            sender.sendMessage(BoxAdminMessage.GIVE_ITEM_NOT_FOUND.apply(args[2]));
+            sender.sendMessage(GeneralMessage.ERROR_COMMAND_ITEM_NOT_FOUND.apply(args[2]));
             return;
         }
 
@@ -98,7 +98,7 @@ public class GiveCommand extends AbstractCommand {
         try {
             amount = Integer.parseInt(args[3]);
         } catch (NumberFormatException e) {
-            sender.sendMessage(BoxAdminMessage.GIVE_INVALID_NUMBER.apply(args[3]));
+            sender.sendMessage(GeneralMessage.ERROR_COMMAND_INVALID_NUMBER.apply(args[3]));
             return;
         }
 

@@ -24,30 +24,6 @@ public final class BoxAdminMessage {
                             .color(GRAY)
                             .build();
 
-    public static final SingleArgument<String> GIVE_PLAYER_NOT_FOUND =
-            playerName ->
-                    translatable()
-                            .key("box.command.boxadmin.give.player-not-found")
-                            .args(text(playerName, AQUA))
-                            .color(RED)
-                            .build();
-
-    public static final SingleArgument<String> GIVE_ITEM_NOT_FOUND =
-            itemName ->
-                    translatable()
-                            .key("box.command.boxadmin.give.item-not-found")
-                            .args(text(itemName, AQUA))
-                            .color(RED)
-                            .build();
-
-    public static final SingleArgument<String> GIVE_INVALID_NUMBER =
-            invalid ->
-                    translatable()
-                            .key("box.command.boxadmin.give.invalid-number")
-                            .args(text(invalid, AQUA))
-                            .color(RED)
-                            .build();
-
     public static final QuadArgument<String, BoxItem, Integer, Integer> GIVE_SUCCESS_SENDER =
             (targetName, item, increments, currentAmount) ->
                     translatable()
