@@ -1,6 +1,7 @@
 package net.okocraft.box.command.message;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
 import net.okocraft.box.api.message.argument.QuadArgument;
 import net.okocraft.box.api.message.argument.SingleArgument;
 import net.okocraft.box.api.model.item.BoxCustomItem;
@@ -63,6 +64,7 @@ public final class BoxAdminMessage {
                             .args(
                                     item.getDisplayName().hoverEvent(item.getOriginal()),
                                     text(item.getPlainName(), AQUA)
+                                            .clickEvent(ClickEvent.copyToClipboard(item.getPlainName()))
                             )
                             .color(GRAY)
                             .build();
