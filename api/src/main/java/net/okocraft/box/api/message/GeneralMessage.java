@@ -35,4 +35,37 @@ public final class GeneralMessage {
      */
     public static final Component ERROR_COMMAND_NOT_ENOUGH_ARGUMENT =
             translatable("box.error.command.not-enough-argument", RED);
+
+    /**
+     * A message sent when the specified player was not found.
+     */
+    public static final SingleArgument<String> ERROR_COMMAND_PLAYER_NOT_FOUND =
+            playerName ->
+                    translatable()
+                            .key("box.error.command.player-not-found")
+                            .args(text(playerName, AQUA))
+                            .color(RED)
+                            .build();
+
+    /**
+     * A message sent when the specified item was not found.
+     */
+    public static final SingleArgument<String> ERROR_COMMAND_ITEM_NOT_FOUND =
+            itemName ->
+                    translatable()
+                            .key("box.error.command.item-not-found")
+                            .args(text(itemName, AQUA))
+                            .color(RED)
+                            .build();
+
+    /**
+     * A message sent when the specified number is invalid.
+     */
+    public static final SingleArgument<String> ERROR_COMMAND_INVALID_NUMBER =
+            invalid ->
+                    translatable()
+                            .key("box.error.command.invalid-number")
+                            .args(text(invalid, AQUA))
+                            .color(RED)
+                            .build();
 }
