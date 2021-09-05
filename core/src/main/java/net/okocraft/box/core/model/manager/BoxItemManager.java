@@ -77,6 +77,11 @@ public class BoxItemManager implements ItemManager {
     }
 
     @Override
+    public boolean isCustomItem(@NotNull BoxItem item) {
+        return item instanceof BoxCustomItemImpl;
+    }
+
+    @Override
     public @NotNull CompletableFuture<@NotNull BoxCustomItem> registerCustomItem(@NotNull ItemStack original) {
         return CompletableFuture.supplyAsync(() -> {
             var copied = original.clone();
