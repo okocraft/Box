@@ -73,22 +73,18 @@ public class BoxItemManager implements ItemManager {
     }
 
     @Override
-    public @NotNull CompletableFuture<@NotNull BoxCustomItem> registerCustomItem(@NotNull ItemStack original, @NotNull String plainName) {
+    public @NotNull CompletableFuture<@NotNull BoxCustomItem> registerCustomItem(@NotNull ItemStack original) {
         return CompletableFuture.supplyAsync(() -> {
             if (isRegistered(original)) {
                 throw new IllegalStateException("The item is already registered (item: " + original + ")");
             }
 
-            if (isUsed(plainName)) {
-                throw new IllegalStateException("The item name is already used (name: " + plainName + ")");
-            }
-
             BoxCustomItem customItem;
 
             try {
-                customItem = itemStorage.registerNewItem(original, plainName);
+                customItem = itemStorage.registerNewItem(original);
             } catch (Exception e) {
-                throw new RuntimeException("Could not register a new item (name: " + plainName + " item: " + original + ")", e);
+                throw new RuntimeException("Could not register a new item (item: " + original + ")", e);
             }
 
             itemMap.put(original, customItem);

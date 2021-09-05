@@ -59,21 +59,13 @@ public interface ItemManager {
     /**
      * Registers item.
      * <p>
-     * Only uppercase letters and {@code _} are allowed in the plain name.
-     * <p>
-     * If {@link #isRegistered(ItemStack)} is {@code false}
-     * and the plain name also satisfies the requirement, it can be registered successfully.
-     * <p>
      * It will throw an exception in {@link CompletableFuture}
-     * if the item is already registered, has an invalid plain name,
-     * or fails to save to a file or database.
+     * if the item is already registered or fails to save to a file or database.
      *
-     * @param original  the item to register
-     * @param plainName the item name
+     * @param original the item to register
      * @return the {@link CompletableFuture} to register item
      */
-    @NotNull CompletableFuture<@NotNull BoxCustomItem> registerCustomItem(@NotNull ItemStack original,
-                                                                          @NotNull String plainName);
+    @NotNull CompletableFuture<@NotNull BoxCustomItem> registerCustomItem(@NotNull ItemStack original);
 
     /**
      * Gets the item name set.

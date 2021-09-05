@@ -20,6 +20,5 @@ public interface ItemStorage {
 
     @NotNull @Unmodifiable Collection<BoxItem> loadAllItems() throws Exception;
 
-    @NotNull BoxCustomItem registerNewItem(@NotNull ItemStack original,
-                                           @NotNull String plainName) throws Exception;
+    @NotNull BoxCustomItem registerNewItem(@NotNull ItemStack original) throws Exception;
 }

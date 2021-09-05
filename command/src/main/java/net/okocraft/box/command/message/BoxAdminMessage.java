@@ -1,5 +1,6 @@
 package net.okocraft.box.command.message;
 
+import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.message.argument.QuadArgument;
 import net.okocraft.box.api.message.argument.SingleArgument;
 import net.okocraft.box.api.model.item.BoxItem;
@@ -65,6 +66,8 @@ public final class BoxAdminMessage {
                             )
                             .color(GRAY)
                             .build();
+
+    public static final Component REGISTER_IS_AIR = translatable("box.command.boxadmin.register.is-air", RED);
 
     private BoxAdminMessage() {
         throw new UnsupportedOperationException();

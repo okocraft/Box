@@ -24,16 +24,13 @@ public abstract class AbstractItemStorage implements ItemStorage {
     }
 
     @Override
-    public @NotNull BoxCustomItem registerNewItem(@NotNull ItemStack original, @NotNull String plainName) throws Exception {
+    public @NotNull BoxCustomItem registerNewItem(@NotNull ItemStack original) throws Exception {
         if (isRegisteredItem(original)) {
             throw new IllegalArgumentException("the same item is already registered.");
         }
 
-        if (isUsedName(plainName)) {
-            throw new IllegalArgumentException("the same item name is already registered.");
-        }
-
         int id = getNewItemId();
+        var plainName = original.getType().name() + "#" + id;
         var item = new BoxCustomItemImpl(original, plainName, id);
 
         saveNewCustomItem(item);
