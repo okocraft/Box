@@ -57,6 +57,14 @@ public interface ItemManager {
     boolean isUsed(@NotNull String name);
 
     /**
+     * Checks if the specified item is a custom item created by box itself.
+     *
+     * @param item  the item to check
+     * @return {@code true} if the item is a custom item, {@code false} otherwise
+     */
+    boolean isCustomItem(@NotNull BoxItem item);
+
+    /**
      * Registers item.
      * <p>
      * It will throw an exception in {@link CompletableFuture}
