@@ -19,7 +19,7 @@ public final class BoxAdminMessage {
     public static final SingleArgument<String> VERSION_INFO =
             version ->
                     translatable()
-                            .key("box.command.version.info")
+                            .key("box.command.boxadmin.version.info")
                             .args(text(version, AQUA))
                             .color(GRAY)
                             .build();
