@@ -76,6 +76,16 @@ public interface ItemManager {
     @NotNull CompletableFuture<@NotNull BoxCustomItem> registerCustomItem(@NotNull ItemStack original);
 
     /**
+     * Rename the custom item.
+     *
+     * @param item    the custom item to rename
+     * @param newName the new name
+     * @return the {@link CompletableFuture} to rename an item
+     */
+    @NotNull CompletableFuture<@NotNull BoxCustomItem> renameCustomItem(@NotNull BoxCustomItem item,
+                                                                        @NotNull String newName);
+
+    /**
      * Gets the item name set.
      * <p>
      * Returns set is a collection of {@link BoxItem#getPlainName()}.
