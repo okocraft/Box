@@ -79,6 +79,38 @@ public final class BoxAdminMessage {
                             .color(RED)
                             .build();
 
+    public static final SingleArgument<BoxItem> RENAME_IS_NOT_CUSTOM_ITEM =
+            item ->
+                    translatable()
+                            .key("box.command.boxadmin.rename.is-not-custom-item")
+                            .args(text(item.getPlainName(), AQUA).hoverEvent(item.getOriginal()))
+                            .color(RED)
+                            .build();
+
+    public static final SingleArgument<String> RENAME_ALREADY_USED_NAME =
+            name ->
+                    translatable()
+                            .key("box.command.boxadmin.rename.already-used-name")
+                            .args(text(name, AQUA))
+                            .color(RED)
+                            .build();
+
+    public static final SingleArgument<BoxItem> RENAME_SUCCESS =
+            item ->
+                    translatable()
+                            .key("box.command.boxadmin.rename.success")
+                            .args(text(item.getPlainName(), AQUA).hoverEvent(item.getOriginal()))
+                            .color(GRAY)
+                            .build();
+
+    public static final SingleArgument<Throwable> RENAME_FAILURE =
+            throwable ->
+                    translatable()
+                            .key("box.command.boxadmin.rename.failure")
+                            .args(text(throwable.getMessage(), WHITE))
+                            .color(RED)
+                            .build();
+
     private BoxAdminMessage() {
         throw new UnsupportedOperationException();
     }
