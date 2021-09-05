@@ -3,6 +3,7 @@ package net.okocraft.box.core.model.manager;
 import net.okocraft.box.api.model.item.BoxCustomItem;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.model.manager.ItemManager;
+import net.okocraft.box.core.model.item.BoxCustomItemImpl;
 import net.okocraft.box.core.storage.model.item.ItemStorage;
 import net.okocraft.box.core.util.ExecutorProvider;
 import org.bukkit.inventory.ItemStack;
@@ -104,6 +105,32 @@ public class BoxItemManager implements ItemManager {
             updateItemNameCache();
 
             return customItem;
+        }, executor);
+    }
+
+    @Override
+    public @NotNull CompletableFuture<@NotNull BoxCustomItem> renameCustomItem(@NotNull BoxCustomItem item, @NotNull String newName) {
+        return CompletableFuture.supplyAsync(() -> {
+            if (!isCustomItem(item)) {
+                throw new IllegalStateException("Could not rename item because the item is created by box.");
+            }
+
+            if (itemNameCache.contains(newName)) {
+                throw new IllegalStateException("The same name is already used (" + newName + ")");
+            }
+
+            var internal = (BoxCustomItemImpl) item;
+
+            internal.setPlainName(newName);
+            updateItemNameCache();
+
+            try {
+                itemStorage.saveCustomItem(internal);
+            } catch (Exception e) {
+                throw new RuntimeException("Could not save the custom item", e);
+            }
+
+            return internal;
         }, executor);
     }
 
