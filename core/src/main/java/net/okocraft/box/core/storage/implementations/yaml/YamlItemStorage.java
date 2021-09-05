@@ -83,6 +83,12 @@ class YamlItemStorage extends AbstractItemStorage {
     }
 
     @Override
+    public void saveCustomItem(@NotNull BoxCustomItemImpl customItem) throws Exception {
+        saveNewCustomItem(customItem);
+        saveVersionedItem(Bukkit.getMinecraftVersion(), customItem);
+    }
+
+    @Override
     protected int getNewItemId() {
         return lastUsedItemId.incrementAndGet();
     }
