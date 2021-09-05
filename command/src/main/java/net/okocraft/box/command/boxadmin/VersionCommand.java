@@ -11,7 +11,7 @@ import java.util.Set;
 public class VersionCommand extends AbstractCommand {
 
     public VersionCommand() {
-        super("version", "box.command.version", Set.of("v", "ver"));
+        super("version", "box.command.admin.version", Set.of("v", "ver"));
     }
 
     @Override
