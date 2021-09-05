@@ -63,7 +63,11 @@ public class BoxItemManager implements ItemManager {
 
     @Override
     public boolean isRegistered(@NotNull ItemStack itemStack) {
-        return itemMap.containsKey(itemStack);
+        var copied = itemStack.clone();
+
+        copied.setAmount(1);
+
+        return itemMap.containsKey(copied);
     }
 
     @Override
