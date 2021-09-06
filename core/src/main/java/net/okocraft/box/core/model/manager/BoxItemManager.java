@@ -35,7 +35,11 @@ public class BoxItemManager implements ItemManager {
 
     @Override
     public @NotNull Optional<BoxItem> getBoxItem(@NotNull ItemStack itemStack) {
-        return Optional.ofNullable(itemMap.get(itemStack));
+        var copied = itemStack.clone();
+
+        copied.setAmount(1);
+
+        return Optional.ofNullable(itemMap.get(copied));
     }
 
     @Override
