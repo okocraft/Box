@@ -26,14 +26,14 @@ public interface SubCommandHoldable {
      */
     class SubCommandHolder {
 
-        private final List<AbstractCommand> subCommands;
+        private final List<Command> subCommands;
 
         /**
          * The constructor of {@link SubCommandHolder}.
          *
          * @param subCommands the set of subcommands
          */
-        public SubCommandHolder(@NotNull AbstractCommand... subCommands) {
+        public SubCommandHolder(@NotNull Command... subCommands) {
             this.subCommands = new ArrayList<>(Arrays.asList(subCommands));
         }
 
@@ -45,7 +45,7 @@ public interface SubCommandHoldable {
          *
          * @return the set of subcommands
          */
-        public @NotNull @Unmodifiable List<AbstractCommand> getSubCommands() {
+        public @NotNull @Unmodifiable List<Command> getSubCommands() {
             return subCommands;
         }
 
@@ -54,7 +54,7 @@ public interface SubCommandHoldable {
          *
          * @param subCommand the new subcommand
          */
-        public void register(@NotNull AbstractCommand subCommand) {
+        public void register(@NotNull Command subCommand) {
             subCommands.add(subCommand);
         }
 
@@ -63,7 +63,7 @@ public interface SubCommandHoldable {
          *
          * @param subCommand the subcommand to unregister
          */
-        public void unregister(@NotNull AbstractCommand subCommand) {
+        public void unregister(@NotNull Command subCommand) {
             subCommands.remove(subCommand);
         }
 
@@ -73,7 +73,7 @@ public interface SubCommandHoldable {
          * @param name the name or the alias of the command
          * @return the search result
          */
-        public @NotNull Optional<AbstractCommand> search(@NotNull String name) {
+        public @NotNull Optional<Command> search(@NotNull String name) {
             name = name.toLowerCase(Locale.ROOT);
 
             for (var subCommand : subCommands) {
@@ -91,7 +91,7 @@ public interface SubCommandHoldable {
          * @param str the string to search
          * @return the search result
          */
-        public @NotNull List<AbstractCommand> matches(@NotNull String str) {
+        public @NotNull List<Command> matches(@NotNull String str) {
             var lower = str.toLowerCase(Locale.ROOT);
 
             return subCommands.stream()
