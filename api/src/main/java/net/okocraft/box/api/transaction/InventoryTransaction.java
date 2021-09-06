@@ -27,7 +27,7 @@ public final class InventoryTransaction {
      * @param player the target player
      * @return the {@link TransactionResult}
      */
-    public @NotNull TransactionResult depositItemInMainHand(@NotNull Player player) {
+    public static @NotNull TransactionResult depositItemInMainHand(@NotNull Player player) {
         return depositItemInMainHand(player, Integer.MAX_VALUE);
     }
 
@@ -38,7 +38,7 @@ public final class InventoryTransaction {
      * @param depositLimit the deposit limit
      * @return the {@link TransactionResult}
      */
-    public @NotNull TransactionResult depositItemInMainHand(@NotNull Player player, int depositLimit) {
+    public static @NotNull TransactionResult depositItemInMainHand(@NotNull Player player, int depositLimit) {
         if (depositLimit < 1) {
             return TransactionResult.create(NOT_DEPOSITED);
         }
@@ -73,7 +73,7 @@ public final class InventoryTransaction {
      * @param inventory the target inventory
      * @return the {@link TransactionResultList}
      */
-    public @NotNull TransactionResultList depositItemsInInventory(@NotNull Inventory inventory) {
+    public static @NotNull TransactionResultList depositItemsInInventory(@NotNull Inventory inventory) {
         var result = new ArrayList<TransactionResult>();
         var contents = inventory.getStorageContents();
 
@@ -107,7 +107,7 @@ public final class InventoryTransaction {
      * @param boxItem   the item to deposit
      * @return the {@link TransactionResultList}
      */
-    public @NotNull TransactionResultList depositItem(@NotNull Inventory inventory, @NotNull BoxItem boxItem) {
+    public static @NotNull TransactionResultList depositItem(@NotNull Inventory inventory, @NotNull BoxItem boxItem) {
         return depositItem(inventory, boxItem, Integer.MAX_VALUE);
     }
 
@@ -119,7 +119,7 @@ public final class InventoryTransaction {
      * @param depositLimit the deposit limit
      * @return the {@link TransactionResultList}
      */
-    public @NotNull TransactionResultList depositItem(@NotNull Inventory inventory,
+    public static @NotNull TransactionResultList depositItem(@NotNull Inventory inventory,
                                                       @NotNull BoxItem boxItem, int depositLimit) {
         if (depositLimit < 1) {
             return TransactionResultList.create(NOT_DEPOSITED);
@@ -177,7 +177,7 @@ public final class InventoryTransaction {
      * @param amount the amount of item
      * @return the {@link TransactionResult}
      */
-    public @NotNull TransactionResult withdraw(@NotNull Inventory inventory,
+    public static @NotNull TransactionResult withdraw(@NotNull Inventory inventory,
                                                @NotNull BoxItem boxItem, int amount) {
         var toStore = amount;
         var maxStackSize = boxItem.getOriginal().getMaxStackSize();
