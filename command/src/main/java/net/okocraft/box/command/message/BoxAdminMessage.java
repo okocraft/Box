@@ -79,6 +79,12 @@ public final class BoxAdminMessage {
                             .color(RED)
                             .build();
 
+    public static final Component RELOAD_START =
+            translatable("box.command.boxadmin.reload.start", GRAY);
+
+    public static final Component RELOAD_FINISH =
+            translatable("box.command.boxadmin.reload.finish", GRAY);
+
     public static final SingleArgument<BoxItem> RENAME_IS_NOT_CUSTOM_ITEM =
             item ->
                     translatable()
