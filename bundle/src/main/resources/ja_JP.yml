@@ -1,4 +1,33 @@
 box:
+  command:
+    boxadmin:
+      give:
+        success:
+          sender: "プレイヤー {0} にアイテム {1} を {2} 個付与しました (現在 {3} 個)。"
+          target: "{0} からアイテム {1} を {2} 個付与されました (現在 {3} 個)。"
+      register:
+        already-registered: "アイテム {0} はすでに登録されています。"
+        success: "アイテム {0} を名前 {1} として新しく登録しました。"
+        failure: "アイテムの登録に失敗しました。エラーメッセージ: {0}"
+        tip-rename: "登録したアイテムは /boxadmin rename <item-name> <new> で改名できます。"
+      reload:
+        start: "Box を再読み込みしています..."
+        finish: "Box の再読み込みが完了しました。"
+      rename:
+        is-not-custom-item: "アイテム {0} の名前を変更することはできません。"
+        already-used-name: "アイテム名 {0} はすでに使用されています。"
+        success: "アイテム名を {0} に変更しました。"
+        failure: "アイテム名の変更に失敗しました。エラーメッセージ: {0}"
+      set:
+        success:
+          sender: "プレイヤー {0} のアイテム {1} を {2} 個にセットしました。"
+          target: "{0} にアイテム {1} を {2} 個にセットされました。"
+      take:
+        success:
+          sender: "プレイヤー {0} にアイテム {1} を {2} 個減らしました (現在 {3} 個)。"
+          target: "{0} からアイテム {1} を {2} 個減らされました (現在 {3} 個)。"
+      version:
+        info: "Box {0}"
   error:
     no-permission: "権限がありません: {0}"
     player-data:
