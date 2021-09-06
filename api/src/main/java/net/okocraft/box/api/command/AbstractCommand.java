@@ -62,6 +62,14 @@ public abstract class AbstractCommand implements Command {
         return Collections.emptyList();
     }
 
+    /**
+     * Check if the executor has permissions.
+     * <p>
+     * If the executor has no permission, send a no-permission message.
+     *
+     * @param sender the executor to check
+     * @return {@code true} if the sender has permission, {@code false} otherwise
+     */
     protected boolean checkPermission(@NotNull CommandSender sender) {
         if (sender.hasPermission(getPermissionNode())) {
             return true;
