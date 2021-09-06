@@ -3,6 +3,7 @@ package net.okocraft.box.command.box;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.command.AbstractCommand;
 import net.okocraft.box.api.message.GeneralMessage;
+import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.command.message.BoxMessage;
 import net.okocraft.box.command.util.TabCompleter;
 import org.bukkit.Bukkit;
@@ -12,7 +13,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class GiveCommand extends AbstractCommand {
 
@@ -80,12 +83,22 @@ public class GiveCommand extends AbstractCommand {
 
     @Override
     public @NotNull List<String> onTabComplete(@NotNull CommandSender sender, @NotNull String[] args) {
+        if (!(sender instanceof Player player)) {
+            return Collections.emptyList();
+        }
+
         if (args.length == 2) {
             return TabCompleter.players(args[1], getPermissionNode());
         }
 
         if (args.length == 3) {
-            return TabCompleter.itemNames(args[2]);
+            var itemNameFilter = args[2].toUpperCase(Locale.ROOT);
+            var stockHolder = BoxProvider.get().getBoxPlayerMap().get(player).getCurrentStockHolder();
+
+            return stockHolder.getStockedItems().stream()
+                    .map(BoxItem::getPlainName)
+                    .filter(itemName -> itemName.startsWith(itemNameFilter))
+                    .collect(Collectors.toList());
         }
 
         return Collections.emptyList();
