@@ -72,7 +72,7 @@ class YamlStockStorage implements StockStorage {
         var file = YamlConfiguration.create(stockDirectory.resolve(stockHolder.getUser().getUUID() + ".yml"));
 
         for (var stock : stockHolder.toStockDataCollection()) {
-            var key = String.valueOf(stock.item().getOriginal());
+            var key = String.valueOf(stock.item().getInternalId());
             int amount = stock.amount();
 
             if (0 < amount) {
