@@ -5,9 +5,12 @@ import net.okocraft.box.api.command.AbstractCommand;
 import net.okocraft.box.api.message.GeneralMessage;
 import net.okocraft.box.api.model.item.BoxCustomItem;
 import net.okocraft.box.command.message.BoxAdminMessage;
+import net.okocraft.box.command.util.TabCompleter;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 
 public class RenameCommand extends AbstractCommand {
@@ -52,5 +55,14 @@ public class RenameCommand extends AbstractCommand {
                     sender.sendMessage(BoxAdminMessage.RENAME_FAILURE.apply(throwable));
                     return null;
                 });
+    }
+
+    @Override
+    public @NotNull List<String> onTabComplete(@NotNull CommandSender sender, @NotNull String[] args) {
+        if (args.length == 2) {
+            return TabCompleter.itemNames(args[1]);
+        } else {
+            return Collections.emptyList();
+        }
     }
 }

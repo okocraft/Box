@@ -6,10 +6,13 @@ import net.okocraft.box.api.message.GeneralMessage;
 import net.okocraft.box.api.transaction.InventoryTransaction;
 import net.okocraft.box.api.transaction.TransactionResultType;
 import net.okocraft.box.command.message.BoxMessage;
+import net.okocraft.box.command.util.TabCompleter;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 public class WithdrawCommand extends AbstractCommand {
@@ -74,6 +77,15 @@ public class WithdrawCommand extends AbstractCommand {
             }
         } else {
             player.sendMessage(BoxMessage.WITHDRAW_INVENTORY_IS_FULL);
+        }
+    }
+
+    @Override
+    public @NotNull List<String> onTabComplete(@NotNull CommandSender sender, @NotNull String[] args) {
+        if (args.length == 2) {
+            return TabCompleter.itemNames(args[1]);
+        } else {
+            return Collections.emptyList();
         }
     }
 }

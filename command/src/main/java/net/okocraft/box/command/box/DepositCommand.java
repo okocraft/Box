@@ -9,10 +9,14 @@ import net.okocraft.box.api.transaction.InventoryTransaction;
 import net.okocraft.box.api.transaction.TransactionResultList;
 import net.okocraft.box.api.transaction.TransactionResultType;
 import net.okocraft.box.command.message.BoxMessage;
+import net.okocraft.box.command.util.TabCompleter;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -147,5 +151,20 @@ public class DepositCommand extends AbstractCommand {
                 });
 
         return counter.get();
+    }
+
+    @Override
+    public @NotNull List<String> onTabComplete(@NotNull CommandSender sender, @NotNull String[] args) {
+        if (args.length == 2) {
+            var result = TabCompleter.itemNames(args[1]);
+
+            if ("all".startsWith(args[1].toLowerCase(Locale.ROOT))) {
+                result.add("all");
+            }
+
+            return result;
+        } else {
+            return Collections.emptyList();
+        }
     }
 }

@@ -9,12 +9,15 @@ import net.okocraft.box.api.model.stock.StockHolder;
 import net.okocraft.box.api.model.stock.UserStockHolder;
 import net.okocraft.box.api.model.user.BoxUser;
 import net.okocraft.box.command.message.BoxAdminMessage;
+import net.okocraft.box.command.util.TabCompleter;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -179,6 +182,19 @@ public class StockModifyCommands {
 
         abstract void sendMessage(@NotNull CommandSender sender, @Nullable Player targetPlayer,
                                   @NotNull String targetName, BoxItem item, int amount, int current);
+
+        @Override
+        public @NotNull List<String> onTabComplete(@NotNull CommandSender sender, @NotNull String[] args) {
+            if (args.length == 2) {
+                return TabCompleter.players(args[1]);
+            }
+
+            if (args.length == 3) {
+                return TabCompleter.itemNames(args[2]);
+            }
+
+            return Collections.emptyList();
+        }
     }
 
     private StockModifyCommands() {
