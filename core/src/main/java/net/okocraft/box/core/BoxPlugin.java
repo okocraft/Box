@@ -218,6 +218,7 @@ public class BoxPlugin implements BoxAPI {
         }
 
         try {
+            translationDirectory.createDirectoryIfNotExists(this::saveDefaultLanguages);
             translationDirectory.load();
             Debugger.log(() -> "languages reloaded");
         } catch (Throwable e) {
