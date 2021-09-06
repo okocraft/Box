@@ -100,7 +100,7 @@ public final class BoxAdminMessage {
             item ->
                     translatable()
                             .key("box.command.boxadmin.register.already-registered")
-                            .args(item.displayName().hoverEvent(item))
+                            .args(item.displayName().color(AQUA).hoverEvent(item))
                             .color(RED)
                             .build();
 
@@ -109,7 +109,7 @@ public final class BoxAdminMessage {
                     translatable()
                             .key("box.command.boxadmin.register.success")
                             .args(
-                                    item.getDisplayName().hoverEvent(item.getOriginal()),
+                                    item.getDisplayName().color(AQUA).hoverEvent(item.getOriginal()),
                                     text(item.getPlainName(), AQUA)
                                             .clickEvent(ClickEvent.copyToClipboard(item.getPlainName()))
                             )
