@@ -1,6 +1,7 @@
 package net.okocraft.box.command.message;
 
 import net.kyori.adventure.text.Component;
+import net.okocraft.box.api.message.argument.QuadArgument;
 import net.okocraft.box.api.message.argument.SingleArgument;
 import net.okocraft.box.api.message.argument.TripleArgument;
 import net.okocraft.box.api.model.item.BoxItem;
@@ -44,6 +45,40 @@ public final class BoxMessage {
 
     public static final Component DEPOSIT_NOT_FOUND =
             translatable("box.command.box.deposit.not-found", RED);
+
+    public static final QuadArgument<String, BoxItem, Integer, Integer> GIVE_SUCCESS_SENDER =
+            (targetName, item, amount, current) ->
+                    translatable()
+                            .key("box.command.box.give.success.sender")
+                            .args(
+                                    text(targetName, AQUA),
+                                    item.getDisplayName().color(AQUA).hoverEvent(item.getOriginal()),
+                                    text(amount, AQUA),
+                                    text(current, AQUA)
+                            )
+                            .color(GRAY)
+                            .build();
+
+    public static final QuadArgument<String, BoxItem, Integer, Integer> GIVE_SUCCESS_TARGET =
+            (senderName, item, amount, current) ->
+                    translatable()
+                            .key("box.command.box.give.success.target")
+                            .args(
+                                    text(senderName, AQUA),
+                                    item.getDisplayName().color(AQUA).hoverEvent(item.getOriginal()),
+                                    text(amount, AQUA),
+                                    text(current, AQUA)
+                            )
+                            .color(GRAY)
+                            .build();
+
+    public static final SingleArgument<BoxItem> GIVE_NO_STOCK =
+            item ->
+                    translatable()
+                            .key("box.command.box.give.no-stock")
+                            .args(item.getDisplayName().color(AQUA).hoverEvent(item.getOriginal()))
+                            .color(RED)
+                            .build();
 
     public static final TripleArgument<BoxItem, Integer, Integer> WITHDRAW_SUCCESS =
             (item, amount, current) ->
