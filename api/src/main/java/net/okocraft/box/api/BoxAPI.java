@@ -11,6 +11,7 @@ import net.okocraft.box.api.model.manager.UserManager;
 import net.okocraft.box.api.player.BoxPlayerMap;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
+import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -121,6 +122,16 @@ public interface BoxAPI {
      * @param boxFeature the {@link BoxFeature} to unregister
      */
     void unregister(@NotNull BoxFeature boxFeature);
+
+    /**
+     * Reloads box and registered {@link BoxFeature}s.
+     * <p>
+     * This method reloads some settings of Box (such as language and disabled world)
+     * and the {@link BoxFeature} in which {@link net.okocraft.box.api.feature.Reloadable} is implemented.
+     *
+     * @param sender the sender who executed reload
+     */
+    void reload(@NotNull CommandSender sender);
 
     /**
      * Checks if Box is not available in the world.
