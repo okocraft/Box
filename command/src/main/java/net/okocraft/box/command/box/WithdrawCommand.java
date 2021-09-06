@@ -3,17 +3,19 @@ package net.okocraft.box.command.box;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.command.AbstractCommand;
 import net.okocraft.box.api.message.GeneralMessage;
+import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.transaction.InventoryTransaction;
 import net.okocraft.box.api.transaction.TransactionResultType;
 import net.okocraft.box.command.message.BoxMessage;
-import net.okocraft.box.command.util.TabCompleter;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class WithdrawCommand extends AbstractCommand {
 
@@ -82,10 +84,16 @@ public class WithdrawCommand extends AbstractCommand {
 
     @Override
     public @NotNull List<String> onTabComplete(@NotNull CommandSender sender, @NotNull String[] args) {
-        if (args.length == 2) {
-            return TabCompleter.itemNames(args[1]);
-        } else {
+        if (args.length != 2 || !(sender instanceof Player player)) {
             return Collections.emptyList();
         }
+
+        var itemNameFilter = args[1].toUpperCase(Locale.ROOT);
+        var stockHolder = BoxProvider.get().getBoxPlayerMap().get(player).getCurrentStockHolder();
+
+        return stockHolder.getStockedItems().stream()
+                .map(BoxItem::getPlainName)
+                .filter(itemName -> itemName.startsWith(itemNameFilter))
+                .collect(Collectors.toList());
     }
 }
