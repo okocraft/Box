@@ -1,18 +1,10 @@
 package net.okocraft.box.bundle;
 
-import net.okocraft.box.api.feature.BoxFeature;
-import net.okocraft.box.command.CommandFeature;
 import net.okocraft.box.core.BoxPlugin;
-import net.okocraft.box.stick.StickFeature;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.List;
-
 public final class BoxBootstrap extends JavaPlugin {
-
-    private final List<BoxFeature> bundledFeatures =
-            List.of(new CommandFeature(), new StickFeature());
 
     private BoxPlugin boxPlugin;
     private boolean isPaper;
@@ -55,13 +47,13 @@ public final class BoxBootstrap extends JavaPlugin {
             getServer().getPluginManager().disablePlugin(this);
         }
 
-        bundledFeatures.forEach(boxPlugin::register);
+        Bundled.FEATURES.forEach(boxPlugin::register);
     }
 
     @Override
     public void onDisable() {
         if (isPaper && isLoaded) {
-            bundledFeatures.forEach(boxPlugin::unregister);
+            Bundled.FEATURES.forEach(boxPlugin::unregister);
             boxPlugin.disable();
         }
     }
