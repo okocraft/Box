@@ -18,14 +18,11 @@ public class RenameCommand extends AbstractCommand {
 
     @Override
     public void onCommand(@NotNull CommandSender sender, @NotNull String[] args) {
-        if (!checkPermission(sender)) {
-            return;
-        }
-
         if (args.length < 3) {
             sender.sendMessage(GeneralMessage.ERROR_COMMAND_NOT_ENOUGH_ARGUMENT);
             return;
         }
+
         var itemManager = BoxProvider.get().getItemManager();
 
         var item = itemManager.getBoxItem(args[1]);

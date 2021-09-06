@@ -35,10 +35,6 @@ public class StickCommand extends AbstractCommand {
             return;
         }
 
-        if (!checkPermission(sender)) {
-            return;
-        }
-
         var inventory = player.getInventory();
         var currentOffHand = inventory.getItemInOffHand();
 

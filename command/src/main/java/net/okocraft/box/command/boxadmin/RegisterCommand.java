@@ -16,10 +16,6 @@ public class RegisterCommand extends AbstractCommand {
 
     @Override
     public void onCommand(@NotNull CommandSender sender, @NotNull String[] args) {
-        if (!checkPermission(sender)) {
-            return;
-        }
-
         if (!(sender instanceof Player player)) {
             sender.sendMessage(GeneralMessage.ERROR_COMMAND_ONLY_PLAYER);
             return;

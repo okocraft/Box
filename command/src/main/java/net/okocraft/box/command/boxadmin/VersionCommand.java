@@ -16,9 +16,7 @@ public class VersionCommand extends AbstractCommand {
 
     @Override
     public void onCommand(@NotNull CommandSender sender, @NotNull String[] args) {
-        if (checkPermission(sender)) {
-            var version = BoxProvider.get().getPluginInstance().getDescription().getVersion();
-            sender.sendMessage(BoxAdminMessage.VERSION_INFO.apply(version));
-        }
+        var version = BoxProvider.get().getPluginInstance().getDescription().getVersion();
+        sender.sendMessage(BoxAdminMessage.VERSION_INFO.apply(version));
     }
 }

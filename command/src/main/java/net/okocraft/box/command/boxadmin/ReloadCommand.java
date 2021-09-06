@@ -14,10 +14,6 @@ public class ReloadCommand extends AbstractCommand {
 
     @Override
     public void onCommand(@NotNull CommandSender sender, @NotNull String[] args) {
-        if (!checkPermission(sender)) {
-            return;
-        }
-
         sender.sendMessage(BoxAdminMessage.RELOAD_START);
 
         BoxProvider.get().reload(sender);

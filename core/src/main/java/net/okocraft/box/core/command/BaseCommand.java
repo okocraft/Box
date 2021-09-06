@@ -35,12 +35,19 @@ public abstract class BaseCommand implements Command, SubCommandHoldable, Comman
             return;
         }
 
-        var subCommand = subCommandHolder.search(args[0]);
+        var optionalSubCommand = subCommandHolder.search(args[0]);
 
-        if (subCommand.isPresent()) {
-            subCommand.get().onCommand(sender, args);
-        } else {
+        if (optionalSubCommand.isEmpty()) {
             sender.sendMessage(GeneralMessage.ERROR_COMMAND_SUBCOMMAND_NOT_FOUND);
+            return;
+        }
+
+        var subCommand = optionalSubCommand.get();
+
+        if (sender.hasPermission(subCommand.getPermissionNode())) {
+            subCommand.onCommand(sender, args);
+        } else {
+            sender.sendMessage(GeneralMessage.ERROR_NO_PERMISSION.apply(subCommand.getPermissionNode()));
         }
     }
 
@@ -58,6 +65,7 @@ public abstract class BaseCommand implements Command, SubCommandHoldable, Comman
         }
 
         return subCommandHolder.search(args[0])
+                .filter(cmd -> sender.hasPermission(cmd.getPermissionNode()))
                 .map(cmd -> cmd.onTabComplete(sender, args))
                 .orElse(Collections.emptyList());
     }
