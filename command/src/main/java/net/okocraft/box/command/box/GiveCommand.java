@@ -63,9 +63,9 @@ public class GiveCommand extends AbstractCommand {
 
         if (3 < args.length) {
             try {
-                amount = Math.min(currentStock, Math.max(Integer.parseInt(args[2]), 1));
+                amount = Math.min(currentStock, Math.max(Integer.parseInt(args[3]), 1));
             } catch (NumberFormatException e) {
-                player.sendMessage(GeneralMessage.ERROR_COMMAND_INVALID_NUMBER.apply(args[2]));
+                player.sendMessage(GeneralMessage.ERROR_COMMAND_INVALID_NUMBER.apply(args[3]));
                 return;
             }
         } else {
