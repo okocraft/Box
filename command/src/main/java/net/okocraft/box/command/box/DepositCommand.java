@@ -141,7 +141,10 @@ public class DepositCommand extends AbstractCommand {
         resultList.getResultList()
                 .stream()
                 .filter(result -> result.getType().isModified())
-                .forEach(result -> counter.addAndGet(stockHolder.increase(result.getItem(), result.getAmount())));
+                .forEach(result -> {
+                    stockHolder.increase(result.getItem(), result.getAmount());
+                    counter.addAndGet(result.getAmount());
+                });
 
         return counter.get();
     }
