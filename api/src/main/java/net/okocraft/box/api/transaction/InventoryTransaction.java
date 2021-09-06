@@ -24,16 +24,6 @@ public final class InventoryTransaction {
     /**
      * Deposits items in player's main hand.
      *
-     * @param player the target player
-     * @return the {@link TransactionResult}
-     */
-    public static @NotNull TransactionResult depositItemInMainHand(@NotNull Player player) {
-        return depositItemInMainHand(player, Integer.MAX_VALUE);
-    }
-
-    /**
-     * Deposits items in player's main hand.
-     *
      * @param player       the target player
      * @param depositLimit the deposit limit
      * @return the {@link TransactionResult}
@@ -98,17 +88,6 @@ public final class InventoryTransaction {
             inventory.setStorageContents(contents);
             return TransactionResultList.create(DEPOSITED, result);
         }
-    }
-
-    /**
-     * Deposits specified items in an inventory.
-     *
-     * @param inventory the target inventory
-     * @param boxItem   the item to deposit
-     * @return the {@link TransactionResultList}
-     */
-    public static @NotNull TransactionResultList depositItem(@NotNull Inventory inventory, @NotNull BoxItem boxItem) {
-        return depositItem(inventory, boxItem, Integer.MAX_VALUE);
     }
 
     /**
