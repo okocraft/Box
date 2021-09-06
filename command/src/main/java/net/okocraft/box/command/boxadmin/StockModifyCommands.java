@@ -33,7 +33,7 @@ public class StockModifyCommands {
                              @NotNull String targetName, BoxItem item, int amount, int current) {
                 sender.sendMessage(BoxAdminMessage.GIVE_SUCCESS_SENDER.apply(targetName, item, amount, current));
 
-                if (targetPlayer != null) {
+                if (targetPlayer != null && !sender.getName().equals(targetName)) {
                     targetPlayer.sendMessage(
                             BoxAdminMessage.GIVE_SUCCESS_TARGET.apply(sender.getName(), item, amount, current)
                     );
@@ -56,7 +56,7 @@ public class StockModifyCommands {
                              @NotNull String targetName, BoxItem item, int amount, int current) {
                 sender.sendMessage(BoxAdminMessage.SET_SUCCESS_SENDER.apply(targetName, item, current));
 
-                if (targetPlayer != null) {
+                if (targetPlayer != null && !sender.getName().equals(targetName)) {
                     targetPlayer.sendMessage(
                             BoxAdminMessage.SET_SUCCESS_TARGET.apply(sender.getName(), item, current)
                     );
@@ -78,7 +78,7 @@ public class StockModifyCommands {
                              @NotNull String targetName, BoxItem item, int amount, int current) {
                 sender.sendMessage(BoxAdminMessage.TAKE_SUCCESS_SENDER.apply(targetName, item, amount, current));
 
-                if (targetPlayer != null) {
+                if (targetPlayer != null && !sender.getName().equals(targetName)) {
                     targetPlayer.sendMessage(
                             BoxAdminMessage.TAKE_SUCCESS_TARGET.apply(sender.getName(), item, amount, current)
                     );
