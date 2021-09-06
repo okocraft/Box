@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 public abstract class BaseCommand implements Command, SubCommandHoldable, CommandExecutor, TabCompleter {
 
@@ -61,7 +62,8 @@ public abstract class BaseCommand implements Command, SubCommandHoldable, Comman
             return subCommandHolder.getSubCommands().stream()
                     .filter(cmd -> sender.hasPermission(cmd.getPermissionNode()))
                     .map(Command::getName)
-                    .filter(cmdName -> cmdName.equalsIgnoreCase(args[0]))
+                    .filter(cmdName -> cmdName.startsWith(args[0].toLowerCase(Locale.ROOT)))
+                    .sorted()
                     .toList();
         }
 
