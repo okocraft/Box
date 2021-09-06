@@ -45,7 +45,8 @@ public final class InventoryTransaction {
             return TransactionResult.create(ITEM_NOT_REGISTERED);
         }
 
-        var afterAmount = mainHand.getAmount() - Math.min(depositLimit, mainHand.getAmount());
+        int depositAmount = Math.min(depositLimit, mainHand.getAmount());
+        int afterAmount = mainHand.getAmount() - depositAmount;
 
         if (0 < afterAmount) {
             mainHand.setAmount(afterAmount);
@@ -54,7 +55,7 @@ public final class InventoryTransaction {
             player.getInventory().setItemInMainHand(null);
         }
 
-        return TransactionResult.create(DEPOSITED, boxItem.get(), depositLimit);
+        return TransactionResult.create(DEPOSITED, boxItem.get(), depositAmount);
     }
 
     /**
