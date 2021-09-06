@@ -1,5 +1,6 @@
 package net.okocraft.box.core.storage;
 
+import net.okocraft.box.core.storage.model.data.CustomDataStorage;
 import net.okocraft.box.core.storage.model.item.ItemStorage;
 import net.okocraft.box.core.storage.model.stock.StockStorage;
 import net.okocraft.box.core.storage.model.user.UserStorage;
@@ -16,4 +17,6 @@ public interface Storage {
     @NotNull UserStorage getUserStorage();
 
     @NotNull StockStorage getStockStorage();
+
+    @NotNull CustomDataStorage getCustomDataStorage();
 }

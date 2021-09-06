@@ -11,6 +11,7 @@ import net.okocraft.box.api.command.base.BoxAdminCommand;
 import net.okocraft.box.api.command.base.BoxCommand;
 import net.okocraft.box.api.feature.BoxFeature;
 import net.okocraft.box.api.feature.Reloadable;
+import net.okocraft.box.api.model.data.CustomDataContainer;
 import net.okocraft.box.api.model.manager.ItemManager;
 import net.okocraft.box.api.model.manager.StockManager;
 import net.okocraft.box.api.model.manager.UserManager;
@@ -21,6 +22,7 @@ import net.okocraft.box.core.command.BoxCommandImpl;
 import net.okocraft.box.core.config.Settings;
 import net.okocraft.box.core.listener.PlayerConnectionListener;
 import net.okocraft.box.core.message.ErrorMessages;
+import net.okocraft.box.core.model.data.BoxCustomDataContainer;
 import net.okocraft.box.core.model.manager.BoxItemManager;
 import net.okocraft.box.core.model.manager.BoxStockManager;
 import net.okocraft.box.core.model.manager.BoxUserManager;
@@ -67,6 +69,7 @@ public class BoxPlugin implements BoxAPI {
     private BoxItemManager itemManager;
     private BoxStockManager stockManager;
     private BoxUserManager userManager;
+    private BoxCustomDataContainer customDataContainer;
     private BoxPlayerMapImpl playerMap;
 
     private ModifiedStockHolderSaveTask autoSaveTask;
@@ -138,6 +141,8 @@ public class BoxPlugin implements BoxAPI {
 
         stockManager = new BoxStockManager(storage.getStockStorage());
         userManager = new BoxUserManager(storage.getUserStorage());
+
+        customDataContainer = new BoxCustomDataContainer(storage.getCustomDataStorage());
 
         playerMap = new BoxPlayerMapImpl(userManager, stockManager);
         playerMap.loadAll();
@@ -286,6 +291,11 @@ public class BoxPlugin implements BoxAPI {
     @Override
     public @NotNull StockManager getStockManager() {
         return stockManager;
+    }
+
+    @Override
+    public @NotNull CustomDataContainer getCustomDataContainer() {
+        return customDataContainer;
     }
 
     @Override

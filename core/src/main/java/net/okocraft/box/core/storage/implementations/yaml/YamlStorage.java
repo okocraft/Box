@@ -16,12 +16,14 @@ public class YamlStorage implements Storage {
     private final YamlUserStorage userStorage;
     private final YamlItemStorage itemStorage;
     private final YamlStockStorage stockStorage;
+    private final YamlCustomDataStorage customDataStorage;
 
     public YamlStorage(@NotNull Path rootDirectory) {
         this.rootDirectory = rootDirectory;
         this.userStorage = new YamlUserStorage(rootDirectory);
         this.itemStorage = new YamlItemStorage(rootDirectory);
         this.stockStorage = new YamlStockStorage(rootDirectory);
+        this.customDataStorage = new YamlCustomDataStorage(rootDirectory);
     }
 
     @Override
@@ -36,6 +38,9 @@ public class YamlStorage implements Storage {
 
         Debugger.log(() -> "Initializing stock storage...");
         stockStorage.init();
+
+        Debugger.log(() -> "Initializing custom data storage...");
+        customDataStorage.init();
     }
 
     @Override
@@ -55,5 +60,10 @@ public class YamlStorage implements Storage {
     @Override
     public @NotNull StockStorage getStockStorage() {
         return stockStorage;
+    }
+
+    @Override
+    public @NotNull YamlCustomDataStorage getCustomDataStorage() {
+        return customDataStorage;
     }
 }
