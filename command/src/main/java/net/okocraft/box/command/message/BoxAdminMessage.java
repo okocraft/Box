@@ -31,7 +31,8 @@ public final class BoxAdminMessage {
                     translatable()
                             .key("box.command.boxadmin.give.success.sender")
                             .args(
-                                    text(targetName, AQUA), item.getDisplayName(),
+                                    text(targetName, AQUA),
+                                    item.getDisplayName().color(AQUA).hoverEvent(item.getOriginal()),
                                     text(increments, AQUA), text(currentAmount, AQUA)
                             )
                             .color(GRAY)
@@ -42,7 +43,8 @@ public final class BoxAdminMessage {
                     translatable()
                             .key("box.command.boxadmin.give.success.target")
                             .args(
-                                    text(senderName, AQUA), item.getDisplayName(),
+                                    text(senderName, AQUA),
+                                    item.getDisplayName().color(AQUA).hoverEvent(item.getOriginal()),
                                     text(increments, AQUA), text(currentAmount, AQUA)
                             )
                             .color(GRAY)
@@ -54,7 +56,7 @@ public final class BoxAdminMessage {
                             .key("box.command.boxadmin.set.success.sender")
                             .args(
                                     text(targetName, AQUA),
-                                    item.getDisplayName(),
+                                    item.getDisplayName().color(AQUA).hoverEvent(item.getOriginal()),
                                     text(currentAmount, AQUA)
                             )
                             .color(GRAY)
@@ -66,7 +68,7 @@ public final class BoxAdminMessage {
                             .key("box.command.boxadmin.set.success.target")
                             .args(
                                     text(senderName, AQUA),
-                                    item.getDisplayName(),
+                                    item.getDisplayName().color(AQUA).hoverEvent(item.getOriginal()),
                                     text(currentAmount, AQUA)
                             )
                             .color(GRAY)
@@ -77,7 +79,8 @@ public final class BoxAdminMessage {
                     translatable()
                             .key("box.command.boxadmin.take.success.sender")
                             .args(
-                                    text(targetName, AQUA), item.getDisplayName(),
+                                    text(targetName, AQUA),
+                                    item.getDisplayName().color(AQUA).hoverEvent(item.getOriginal()),
                                     text(increments, AQUA), text(currentAmount, AQUA)
                             )
                             .color(GRAY)
@@ -88,7 +91,8 @@ public final class BoxAdminMessage {
                     translatable()
                             .key("box.command.boxadmin.take.success.target")
                             .args(
-                                    text(senderName, AQUA), item.getDisplayName(),
+                                    text(senderName, AQUA),
+                                    item.getDisplayName().color(AQUA).hoverEvent(item.getOriginal()),
                                     text(increments, AQUA), text(currentAmount, AQUA)
                             )
                             .color(GRAY)
