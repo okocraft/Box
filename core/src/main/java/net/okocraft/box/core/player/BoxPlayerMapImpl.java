@@ -88,7 +88,7 @@ public class BoxPlayerMapImpl implements BoxPlayerMap {
     }
 
     private void updateUserName(@NotNull BoxUser user) {
-        Debugger.log(() -> "Updating player's uuid and name... (" + user.getName() + ")");
+        Debugger.log(() -> "Updating player's uuid and name... (" + user.getName().orElse("Unknown") + ")");
 
         userManager.saveUser(user)
                 .exceptionallyAsync(e -> {
