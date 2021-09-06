@@ -9,16 +9,19 @@ import net.okocraft.box.api.transaction.InventoryTransaction;
 import net.okocraft.box.api.transaction.TransactionResultList;
 import net.okocraft.box.api.transaction.TransactionResultType;
 import net.okocraft.box.command.message.BoxMessage;
-import net.okocraft.box.command.util.TabCompleter;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 public class DepositCommand extends AbstractCommand {
 
@@ -155,8 +158,23 @@ public class DepositCommand extends AbstractCommand {
 
     @Override
     public @NotNull List<String> onTabComplete(@NotNull CommandSender sender, @NotNull String[] args) {
+        if (!(sender instanceof Player player)) {
+            return Collections.emptyList();
+        }
+
         if (args.length == 2) {
-            var result = TabCompleter.itemNames(args[1]);
+            var itemNameFilter = args[1].toUpperCase(Locale.ROOT);
+
+            //noinspection ConstantConditions
+            var result =
+                    Arrays.stream(player.getInventory().getStorageContents())
+                            .filter(Objects::nonNull)
+                            .map(BoxProvider.get().getItemManager()::getBoxItem)
+                            .filter(Optional::isPresent)
+                            .map(Optional::get)
+                            .map(BoxItem::getPlainName)
+                            .filter(itemName -> itemName.startsWith(itemNameFilter))
+                            .collect(Collectors.toList());
 
             if ("all".startsWith(args[1].toLowerCase(Locale.ROOT))) {
                 result.add("all");
