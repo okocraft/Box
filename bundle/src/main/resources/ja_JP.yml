@@ -1,5 +1,23 @@
 box:
   command:
+    box:
+      deposit:
+        success: "アイテム {0} を {1} 個預けました (現在 {3} 個)。"
+        all-success: "インベントリ内の預けられるアイテム {0} 個をすべて預けました。"
+        is-air: "手に何も持っていません。"
+        item-not-registered: "手に持っているアイテムは Box に登録されていません。"
+        not-deposited: "指定したアイテムはインベントリ内にありませんでした。"
+        not-found: "インベントリ内に預けられるアイテムはありませんでした。"
+      give:
+        success:
+          sender: "プレイヤー {0} にアイテム {1} を {2} 個贈りました (現在 {3} 個)。"
+          target: "プレイヤー {0} からアイテム {1} を {2} 個贈られました (現在 {3} 個)"
+        no-stock: "アイテム {0} の在庫がありません。"
+      withdraw:
+        success: "アイテム {0} を {1} 個引き出しました (現在 {2} 個)。"
+        withdraw-stop: "インベントリに空きがなくなったため引き出しを途中で止めました。"
+        no-stock: "アイテム {0} の在庫がありません。"
+        inventory-is-full: "インベントリに空きがありません。"
     boxadmin:
       give:
         success:
