@@ -68,9 +68,9 @@ public class WithdrawCommand extends AbstractCommand {
             var current = stockHolder.decrease(result.getItem(), result.getAmount());
 
             if (resultType == TransactionResultType.WITHDREW) {
-                player.sendMessage(BoxMessage.WITHDRAW_SUCCESS.apply(boxItem, amount, current));
+                player.sendMessage(BoxMessage.WITHDRAW_SUCCESS.apply(boxItem, result.getAmount(), current));
             } else {
-                player.sendMessage(BoxMessage.WITHDRAW_PARTIAL_SUCCESS.apply(boxItem, amount, current));
+                player.sendMessage(BoxMessage.WITHDRAW_PARTIAL_SUCCESS.apply(boxItem, result.getAmount(), current));
             }
         } else {
             player.sendMessage(BoxMessage.WITHDRAW_INVENTORY_IS_FULL);
