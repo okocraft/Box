@@ -90,7 +90,7 @@ public interface ItemManager {
      * <p>
      * Returns set is a collection of {@link BoxItem#getPlainName()}.
      *
-     * @return the set of @link BoxItem#getPlainName()}
+     * @return the set of {@link BoxItem#getPlainName()}
      */
     @NotNull @Unmodifiable Set<String> getItemNameSet();
 
