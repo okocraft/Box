@@ -4,6 +4,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.okocraft.box.api.message.argument.QuadArgument;
 import net.okocraft.box.api.message.argument.SingleArgument;
+import net.okocraft.box.api.message.argument.TripleArgument;
 import net.okocraft.box.api.model.item.BoxCustomItem;
 import net.okocraft.box.api.model.item.BoxItem;
 import org.bukkit.inventory.ItemStack;
@@ -40,6 +41,52 @@ public final class BoxAdminMessage {
             (senderName, item, increments, currentAmount) ->
                     translatable()
                             .key("box.command.boxadmin.give.success.target")
+                            .args(
+                                    text(senderName, AQUA), item.getDisplayName(),
+                                    text(increments, AQUA), text(currentAmount, AQUA)
+                            )
+                            .color(GRAY)
+                            .build();
+
+    public static final TripleArgument<String, BoxItem, Integer> SET_SUCCESS_SENDER =
+            (targetName, item, currentAmount) ->
+                    translatable()
+                            .key("box.command.boxadmin.set.success.sender")
+                            .args(
+                                    text(targetName, AQUA),
+                                    item.getDisplayName(),
+                                    text(currentAmount, AQUA)
+                            )
+                            .color(GRAY)
+                            .build();
+
+    public static final TripleArgument<String, BoxItem, Integer> SET_SUCCESS_TARGET =
+            (senderName, item, currentAmount) ->
+                    translatable()
+                            .key("box.command.boxadmin.set.success.target")
+                            .args(
+                                    text(senderName, AQUA),
+                                    item.getDisplayName(),
+                                    text(currentAmount, AQUA)
+                            )
+                            .color(GRAY)
+                            .build();
+
+    public static final QuadArgument<String, BoxItem, Integer, Integer> TAKE_SUCCESS_SENDER =
+            (targetName, item, increments, currentAmount) ->
+                    translatable()
+                            .key("box.command.boxadmin.take.success.sender")
+                            .args(
+                                    text(targetName, AQUA), item.getDisplayName(),
+                                    text(increments, AQUA), text(currentAmount, AQUA)
+                            )
+                            .color(GRAY)
+                            .build();
+
+    public static final QuadArgument<String, BoxItem, Integer, Integer> TAKE_SUCCESS_TARGET =
+            (senderName, item, increments, currentAmount) ->
+                    translatable()
+                            .key("box.command.boxadmin.take.success.target")
                             .args(
                                     text(senderName, AQUA), item.getDisplayName(),
                                     text(increments, AQUA), text(currentAmount, AQUA)
