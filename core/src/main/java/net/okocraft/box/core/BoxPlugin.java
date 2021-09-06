@@ -10,6 +10,7 @@ import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.command.base.BoxAdminCommand;
 import net.okocraft.box.api.command.base.BoxCommand;
 import net.okocraft.box.api.feature.BoxFeature;
+import net.okocraft.box.api.feature.Reloadable;
 import net.okocraft.box.api.model.manager.ItemManager;
 import net.okocraft.box.api.model.manager.StockManager;
 import net.okocraft.box.api.model.manager.UserManager;
@@ -19,6 +20,7 @@ import net.okocraft.box.core.command.BoxAdminCommandImpl;
 import net.okocraft.box.core.command.BoxCommandImpl;
 import net.okocraft.box.core.config.Settings;
 import net.okocraft.box.core.listener.PlayerConnectionListener;
+import net.okocraft.box.core.message.ErrorMessages;
 import net.okocraft.box.core.model.manager.BoxItemManager;
 import net.okocraft.box.core.model.manager.BoxStockManager;
 import net.okocraft.box.core.model.manager.BoxUserManager;
@@ -30,6 +32,7 @@ import net.okocraft.box.core.util.ExecutorProvider;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
+import org.bukkit.command.CommandSender;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -197,6 +200,31 @@ public class BoxPlugin implements BoxAPI {
         }
 
         getLogger().info("Successfully disabled!");
+    }
+
+    @Override
+    public void reload(@NotNull CommandSender sender) {
+        try {
+            configuration.reload();
+        } catch (Throwable e) {
+            sender.sendMessage(ErrorMessages.ERROR_RELOAD_FAILURE.apply("config.yml", e));
+        }
+
+        try {
+            translationDirectory.load();
+        } catch (Throwable e) {
+            sender.sendMessage(ErrorMessages.ERROR_RELOAD_FAILURE.apply("languages", e));
+        }
+
+        for (var feature : features) {
+            if (feature instanceof Reloadable reloadable) {
+                try {
+                    reloadable.reload(sender);
+                } catch (Throwable e) {
+                    sender.sendMessage(ErrorMessages.ERROR_RELOAD_FAILURE.apply(feature.getName(), e));
+                }
+            }
+        }
     }
 
     private void saveDefaultLanguages(@NotNull Path directory) throws IOException {
