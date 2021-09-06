@@ -164,7 +164,7 @@ public class StockModifyCommands {
             int amount;
 
             try {
-                amount = Integer.parseInt(args[3]);
+                amount = Math.max(Integer.parseInt(args[3]), 1);
             } catch (NumberFormatException e) {
                 sender.sendMessage(GeneralMessage.ERROR_COMMAND_INVALID_NUMBER.apply(args[3]));
                 return;

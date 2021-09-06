@@ -43,7 +43,7 @@ public class DepositCommand extends AbstractCommand {
             }
 
             try {
-                depositItemInMainHand(player, Integer.parseInt(args[1]));
+                depositItemInMainHand(player, Math.max(Integer.parseInt(args[1]), 1));
                 return;
             } catch (NumberFormatException ignored) {
             }
@@ -67,7 +67,7 @@ public class DepositCommand extends AbstractCommand {
             int amount;
 
             try {
-                amount = Integer.parseInt(args[2]);
+                amount = Math.max(Integer.parseInt(args[2]), 1);
             } catch (NumberFormatException e) {
                 player.sendMessage(GeneralMessage.ERROR_COMMAND_INVALID_NUMBER.apply(args[2]));
                 return;
