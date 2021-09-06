@@ -71,6 +71,13 @@ public interface StockHolder {
     int decrease(@NotNull BoxItem item, int decrement);
 
     /**
+     * Gets a stocked item collection.
+     *
+     * @return a stocked item collection.
+     */
+    @NotNull @Unmodifiable Collection<BoxItem> getStockedItems();
+
+    /**
      * Gets the current stocks as a {@link StockData} collection.
      *
      * @return the collection of {@link StockData}

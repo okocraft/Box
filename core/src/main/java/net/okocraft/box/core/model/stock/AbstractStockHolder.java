@@ -9,8 +9,10 @@ import net.okocraft.box.api.model.stock.StockData;
 import net.okocraft.box.api.model.stock.StockHolder;
 import net.okocraft.box.api.util.Debugger;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentMap;
@@ -77,6 +79,15 @@ public abstract class AbstractStockHolder implements StockHolder {
                         item.getPlainName() + ": " + amount + " (" + getName() + ")");
 
         return amount;
+    }
+
+    @Override
+    public @NotNull @Unmodifiable Collection<BoxItem> getStockedItems() {
+        return stockData.entrySet()
+                .stream()
+                .filter(stockEntry -> 0 < stockEntry.getValue().get())
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toUnmodifiableSet());
     }
 
     @Override
