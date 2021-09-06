@@ -21,7 +21,9 @@ jobs:
           mkdir staging
           mv api/target staging/api
           mv bundle/target staging/bundle
+          mv command/target staging/target
           mv core/target staging/core
+          mv stick/target staging/target
       - uses: actions/upload-artifact@v2.2.4
         with:
           name: Package
