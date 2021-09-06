@@ -27,7 +27,7 @@ public abstract class BaseCommand implements Command, SubCommandHoldable, Comman
         }
 
         if (args.length == 0) {
-            if (commandOfNoArgument != null) {
+            if (commandOfNoArgument != null && sender.hasPermission(commandOfNoArgument.getPermissionNode())) {
                 commandOfNoArgument.onCommand(sender, args);
             } else {
                 sender.sendMessage(ErrorMessages.ERROR_COMMAND_NO_ARGUMENT);
@@ -59,6 +59,7 @@ public abstract class BaseCommand implements Command, SubCommandHoldable, Comman
 
         if (args.length == 1) {
             return subCommandHolder.getSubCommands().stream()
+                    .filter(cmd -> sender.hasPermission(cmd.getPermissionNode()))
                     .map(Command::getName)
                     .filter(cmdName -> cmdName.equalsIgnoreCase(args[0]))
                     .toList();
