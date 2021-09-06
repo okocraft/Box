@@ -33,6 +33,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -204,26 +205,40 @@ public class BoxPlugin implements BoxAPI {
 
     @Override
     public void reload(@NotNull CommandSender sender) {
+        if (!(sender instanceof ConsoleCommandSender)) {
+            getLogger().info("Reloading box...");
+        }
+
         try {
             configuration.reload();
+            Debugger.log(() -> "config.yml reloaded");
         } catch (Throwable e) {
             sender.sendMessage(ErrorMessages.ERROR_RELOAD_FAILURE.apply("config.yml", e));
+            getLogger().log(Level.SEVERE, "Could not reload config.yml", e);
         }
 
         try {
             translationDirectory.load();
+            Debugger.log(() -> "languages reloaded");
         } catch (Throwable e) {
             sender.sendMessage(ErrorMessages.ERROR_RELOAD_FAILURE.apply("languages", e));
+            getLogger().log(Level.SEVERE, "Could not reload languages", e);
         }
 
         for (var feature : features) {
             if (feature instanceof Reloadable reloadable) {
                 try {
                     reloadable.reload(sender);
+                    Debugger.log(() -> feature.getName() + " reloaded");
                 } catch (Throwable e) {
                     sender.sendMessage(ErrorMessages.ERROR_RELOAD_FAILURE.apply(feature.getName(), e));
+                    getLogger().log(Level.SEVERE, "Could not reload " + feature.getName(), e);
                 }
             }
+        }
+
+        if (!(sender instanceof ConsoleCommandSender)) {
+            getLogger().info("Successfully reloaded!");
         }
     }
 
