@@ -107,7 +107,7 @@ public final class BoxMessage {
                             .build();
 
     public static final Component WITHDRAW_INVENTORY_IS_FULL =
-            translatable("box.command.box.withdraw.inventory-full", RED);
+            translatable("box.command.box.withdraw.inventory-is-full", RED);
 
     private BoxMessage() {
         throw new UnsupportedOperationException();
