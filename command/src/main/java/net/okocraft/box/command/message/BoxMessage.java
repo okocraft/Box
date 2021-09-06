@@ -94,7 +94,7 @@ public final class BoxMessage {
 
     public static final TripleArgument<BoxItem, Integer, Integer> WITHDRAW_PARTIAL_SUCCESS =
             (item, amount, current) ->
-                    translatable("command.withdraw.error.withdraw-stop", RED)
+                    translatable("box.command.box.withdraw.stop", RED)
                             .append(newline())
                             .append(WITHDRAW_SUCCESS.apply(item, amount, current));
 
