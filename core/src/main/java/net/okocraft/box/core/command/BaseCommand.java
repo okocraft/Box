@@ -1,6 +1,5 @@
 package net.okocraft.box.core.command;
 
-import net.okocraft.box.api.command.AbstractCommand;
 import net.okocraft.box.api.command.Command;
 import net.okocraft.box.api.command.SubCommandHoldable;
 import net.okocraft.box.api.message.GeneralMessage;
@@ -53,7 +52,7 @@ public abstract class BaseCommand implements Command, SubCommandHoldable, Comman
 
         if (args.length == 1) {
             return subCommandHolder.getSubCommands().stream()
-                    .map(AbstractCommand::getName)
+                    .map(Command::getName)
                     .filter(cmdName -> cmdName.equalsIgnoreCase(args[0]))
                     .toList();
         }
