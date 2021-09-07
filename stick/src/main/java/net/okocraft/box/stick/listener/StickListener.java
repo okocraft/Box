@@ -9,6 +9,7 @@ import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.ThrownPotion;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
@@ -27,7 +28,7 @@ public class StickListener implements Listener {
         this.boxStickItem = boxStickItem;
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onBlockPlace(@NotNull BlockPlaceEvent event) {
         var player = event.getPlayer();
 
@@ -48,7 +49,7 @@ public class StickListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onItemConsume(@NotNull PlayerItemConsumeEvent event) {
         var player = event.getPlayer();
 
@@ -61,7 +62,7 @@ public class StickListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onItemBreak(@NotNull PlayerItemBreakEvent event) {
         var player = event.getPlayer();
 
@@ -84,7 +85,7 @@ public class StickListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPotionThrow(@NotNull ProjectileLaunchEvent event) {
         if (!(event.getEntity() instanceof ThrownPotion potion)) {
             return;
