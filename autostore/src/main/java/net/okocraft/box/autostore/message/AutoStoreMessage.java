@@ -10,6 +10,7 @@ import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.Component.translatable;
 import static net.kyori.adventure.text.format.NamedTextColor.AQUA;
 import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
+import static net.kyori.adventure.text.format.NamedTextColor.GREEN;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
 
 public final class AutoStoreMessage {
@@ -25,7 +26,9 @@ public final class AutoStoreMessage {
             mode -> translatable("box.autostore.mode." + mode.getModeName());
 
     public static final SingleArgument<Boolean> ENABLED_NAME =
-            bool -> translatable("box.autostore.enabled." + bool);
+            bool -> bool ?
+                    translatable("box.autostore.enabled", GREEN) :
+                    translatable("box.autostore.disabled", RED);
 
     public static final SingleArgument<AutoStoreMode> COMMAND_MODE_CHANGED =
             mode ->
@@ -49,7 +52,7 @@ public final class AutoStoreMessage {
             enabled ->
                     translatable()
                             .key("box.autostore.command.all-toggled")
-                            .args(ENABLED_NAME.apply(enabled).color(AQUA))
+                            .args(ENABLED_NAME.apply(enabled))
                             .color(GRAY)
                             .build();
 
@@ -57,7 +60,7 @@ public final class AutoStoreMessage {
             enabled ->
                     translatable()
                             .key("box.autostore.command.per-item.all-toggled")
-                            .args(ENABLED_NAME.apply(enabled).color(AQUA))
+                            .args(ENABLED_NAME.apply(enabled))
                             .color(GRAY)
                             .build();
 
@@ -67,7 +70,7 @@ public final class AutoStoreMessage {
                             .key("box.autostore.command.per-item.item-toggled")
                             .args(
                                     item.getDisplayName().color(AQUA).hoverEvent(item.getOriginal()),
-                                    ENABLED_NAME.apply(enabled).color(AQUA)
+                                    ENABLED_NAME.apply(enabled)
                             )
                             .color(GRAY)
                             .build();
