@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
@@ -145,7 +146,7 @@ public class BoxItemManager implements ItemManager {
 
     @Override
     public @NotNull @Unmodifiable Collection<BoxItem> getBoxItemSet() {
-        return itemMap.values();
+        return List.copyOf(itemMap.values());
     }
 
     public void importAllItems() throws Exception {
