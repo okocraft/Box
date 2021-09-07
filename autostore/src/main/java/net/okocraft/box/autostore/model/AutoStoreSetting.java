@@ -6,6 +6,8 @@ import net.okocraft.box.autostore.model.mode.PerItemModeSetting;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 public class AutoStoreSetting {
 
     private final AllModeSetting allModeSetting = new AllModeSetting();
@@ -36,6 +38,22 @@ public class AutoStoreSetting {
 
     public @NotNull PerItemModeSetting getPerItemModeSetting() {
         return perItemModeSetting;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AutoStoreSetting that = (AutoStoreSetting) o;
+        return allModeSetting.equals(that.allModeSetting) &&
+                perItemModeSetting.equals(that.perItemModeSetting) &&
+                player.equals(that.player) &&
+                currentMode.equals(that.currentMode);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(allModeSetting, perItemModeSetting, player, currentMode);
     }
 
     @Override
