@@ -15,4 +15,11 @@ public class AutoStoreSettingChangeEvent extends Event {
     public @NotNull AutoStoreSetting getSetting() {
         return setting;
     }
+
+    @Override
+    public String toString() {
+        return "AutoStoreSettingChangeEvent{" +
+                "setting=" + setting +
+                '}';
+    }
 }

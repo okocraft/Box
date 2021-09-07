@@ -45,4 +45,11 @@ public class PerItemModeSetting implements AutoStoreMode {
         enabledItems.clear();
         enabledItems.addAll(items);
     }
+
+    @Override
+    public String toString() {
+        return "PerItemModeSetting{" +
+                "enabledItems=" + enabledItems +
+                '}';
+    }
 }
