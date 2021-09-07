@@ -3,10 +3,10 @@ package net.okocraft.box.autostore.command;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.command.AbstractCommand;
 import net.okocraft.box.api.message.GeneralMessage;
+import net.okocraft.box.autostore.event.AutoStoreSettingChangeEvent;
 import net.okocraft.box.autostore.message.AutoStoreMessage;
+import net.okocraft.box.autostore.model.AutoStoreSetting;
 import net.okocraft.box.autostore.model.SettingManager;
-import net.okocraft.box.autostore.model.mode.AllModeSetting;
-import net.okocraft.box.autostore.model.mode.PerItemModeSetting;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -68,6 +68,7 @@ public class AutoStoreCommand extends AbstractCommand {
 
                 if (current == allModeSetting) {
                     player.sendMessage(AutoStoreMessage.COMMAND_ALL_MODE_TOGGLED.apply(allModeSetting.toggleEnabled()));
+                    callEvent(setting);
                     return;
                 }
 
@@ -84,17 +85,18 @@ public class AutoStoreCommand extends AbstractCommand {
                 player.sendMessage(AutoStoreMessage.COMMAND_TIP_HOW_TO_TOGGLE_ALL_MODE);
             }
 
+            callEvent(setting);
             return;
         }
 
         if (allMode) {
-            processAllMode(player, args, setting.getAllModeSetting());
+            processAllMode(player, args, setting);
         } else {
-            processPerItemMode(player, args, setting.getPerItemModeSetting());
+            processPerItemMode(player, args, setting);
         }
     }
 
-    private void processAllMode(@NotNull Player player, @NotNull String[] args, @NotNull AllModeSetting setting) {
+    private void processAllMode(@NotNull Player player, @NotNull String[] args, @NotNull AutoStoreSetting setting) {
         if (args[2].isEmpty()) {
             return;
         }
@@ -106,14 +108,18 @@ public class AutoStoreCommand extends AbstractCommand {
             return;
         }
 
-        setting.setEnabled(enabled);
+        setting.getAllModeSetting().setEnabled(enabled);
         player.sendMessage(AutoStoreMessage.COMMAND_ALL_MODE_TOGGLED.apply(enabled));
+
+        callEvent(setting);
     }
 
-    private void processPerItemMode(@NotNull Player player, @NotNull String[] args, @NotNull PerItemModeSetting setting) {
+    private void processPerItemMode(@NotNull Player player, @NotNull String[] args, @NotNull AutoStoreSetting setting) {
         if (args[2].isEmpty()) {
             return;
         }
+
+        var perItemModeSetting = setting.getPerItemModeSetting();
 
         var itemManager = BoxProvider.get().getItemManager();
 
@@ -129,8 +135,10 @@ public class AutoStoreCommand extends AbstractCommand {
                 Boolean bool = getBoolean(args[3]);
 
                 if (bool != null) {
-                    setting.setEnabledItems(bool ? itemManager.getBoxItemSet() : Collections.emptyList());
+                    perItemModeSetting.setEnabledItems(bool ? itemManager.getBoxItemSet() : Collections.emptyList());
                     player.sendMessage(AutoStoreMessage.COMMAND_PER_ITEM_ALL_TOGGLED.apply(bool));
+
+                    callEvent(setting);
                 } else {
                     player.sendMessage(AutoStoreMessage.COMMAND_NOT_BOOLEAN.apply(args[2]));
                 }
@@ -145,12 +153,13 @@ public class AutoStoreCommand extends AbstractCommand {
         Boolean bool = 3 < args.length ? getBoolean(args[3]) : null;
 
         if (bool != null) {
-            setting.setEnabled(boxItem, bool);
+            perItemModeSetting.setEnabled(boxItem, bool);
         } else {
-            bool = setting.toggleEnabled(boxItem);
+            bool = perItemModeSetting.toggleEnabled(boxItem);
         }
 
         player.sendMessage(AutoStoreMessage.COMMAND_PER_ITEM_ITEM_TOGGLED.apply(boxItem, bool));
+        callEvent(setting);
     }
 
     private @Nullable Boolean getBoolean(@NotNull String arg) {
@@ -218,5 +227,9 @@ public class AutoStoreCommand extends AbstractCommand {
 
     private boolean isPerItem(@NotNull String arg) {
         return !arg.isEmpty() && arg.length() < 8 && (arg.charAt(0) == 'p' || arg.charAt(0) == 'P');
+    }
+
+    private void callEvent(@NotNull AutoStoreSetting setting) {
+        BoxProvider.get().getEventBus().callEvent(new AutoStoreSettingChangeEvent(setting));
     }
 }
