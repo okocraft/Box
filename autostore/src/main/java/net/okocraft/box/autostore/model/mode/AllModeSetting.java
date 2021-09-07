@@ -32,4 +32,11 @@ public class AllModeSetting implements AutoStoreMode {
 
         return toggled;
     }
+
+    @Override
+    public String toString() {
+        return "AllModeSetting{" +
+                "enabled=" + enabled +
+                '}';
+    }
 }

@@ -37,4 +37,14 @@ public class AutoStoreSetting {
     public @NotNull PerItemModeSetting getPerItemModeSetting() {
         return perItemModeSetting;
     }
+
+    @Override
+    public String toString() {
+        return "AutoStoreSetting{" +
+                "allModeSetting=" + allModeSetting +
+                ", perItemModeSetting=" + perItemModeSetting +
+                ", player=" + player +
+                ", currentMode=" + currentMode +
+                '}';
+    }
 }
