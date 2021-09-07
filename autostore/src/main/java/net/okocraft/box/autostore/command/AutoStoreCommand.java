@@ -13,7 +13,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class AutoStoreCommand extends AbstractCommand {
 
@@ -46,10 +50,9 @@ public class AutoStoreCommand extends AbstractCommand {
 
         boolean allMode; // true is AllMode, false is PerItemMode
 
-        // for aliases: a = all, p = peritem
-        if (args[1].charAt(0) == 'a') {
+        if (isAll(args[1])) {
             allMode = true;
-        } else if (args[1].charAt(0) == 'p') {
+        } else if (isPerItem(args[1])) {
             allMode = false;
         } else {
             player.sendMessage(AutoStoreMessage.COMMAND_MODE_NOT_FOUND.apply(args[1]));
@@ -122,8 +125,7 @@ public class AutoStoreCommand extends AbstractCommand {
                 return;
             }
 
-            // for alias: a = all
-            if (args[2].charAt(0) == 'a') {
+            if (isAll(args[2])) {
                 Boolean bool = getBoolean(args[3]);
 
                 if (bool != null) {
@@ -160,5 +162,61 @@ public class AutoStoreCommand extends AbstractCommand {
         } else {
             return null;
         }
+    }
+
+    @Override
+    public @NotNull List<String> onTabComplete(@NotNull CommandSender sender, @NotNull String[] args) {
+        if (!(sender instanceof Player)) {
+            return Collections.emptyList();
+        }
+
+        if (args.length == 2) {
+            return Stream.of("all", "peritem")
+                    .filter(mode -> mode.startsWith(args[1].toLowerCase(Locale.ROOT)))
+                    .collect(Collectors.toList());
+        }
+
+        if (args.length == 3 && isAll(args[1])) {
+            return Stream.of("true", "false")
+                    .filter(bool -> bool.startsWith(args[2].toLowerCase(Locale.ROOT)))
+                    .collect(Collectors.toList());
+        }
+
+        if (isPerItem(args[1])) {
+            if (args.length == 3) {
+                var itemNameFilter = args[2].toUpperCase(Locale.ROOT);
+
+                var result =
+                        BoxProvider.get()
+                                .getItemManager()
+                                .getItemNameSet()
+                                .stream()
+                                .filter(itemName -> itemName.startsWith(itemNameFilter))
+                                .sorted()
+                                .collect(Collectors.toList());
+
+                if ("all".startsWith(args[2].toLowerCase(Locale.ROOT))) {
+                    result.add("all");
+                }
+
+                return result;
+            }
+
+            if (args.length == 4) {
+                return Stream.of("true", "false")
+                        .filter(bool -> bool.startsWith(args[3].toLowerCase(Locale.ROOT)))
+                        .collect(Collectors.toList());
+            }
+        }
+
+        return Collections.emptyList();
+    }
+
+    private boolean isAll(@NotNull String arg) {
+        return !arg.isEmpty() && arg.length() < 4 && (arg.charAt(0) == 'a' || arg.charAt(0) == 'A');
+    }
+
+    private boolean isPerItem(@NotNull String arg) {
+        return !arg.isEmpty() && arg.length() < 8 && (arg.charAt(0) == 'p' || arg.charAt(0) == 'P');
     }
 }
