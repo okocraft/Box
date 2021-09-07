@@ -1,4 +1,26 @@
 box:
+  autostore:
+    error:
+      failed-to-load-settings: "自動収納の設定の読み込みに失敗しました。管理者にお問い合わせください。"
+    reload-success: "自動収納機能を再読み込みしました。"
+    mode:
+      all: "一括収納"
+      per-item: "個別収納"
+    enabled:
+      true: "有効"
+      false: "無効"
+    command:
+      mode-changed: "自動収納モードを {0} にしました。"
+      all-toggled: "一括収納モードを {0} にしました。"
+      peritem:
+        all-toggled: "すべてのアイテムの自動収納設定を {0} にしました。"
+        item-toggled: "アイテム {0} の自動収納設定を {1} にしました。"
+      mode-not-speficifed: "自動収納モードが指定されていません。"
+      mode-not-found: "自動収納モードに {0} はありません。"
+      not-boolean: "{0} は有効な真偽値ではありません。"
+    tip:
+      all-mode-disabled: "一括収納モードが無効になっています。"
+      how-to-toggle-all-mode: "{0} で切り替えることができます。"
   command:
     box:
       deposit:
