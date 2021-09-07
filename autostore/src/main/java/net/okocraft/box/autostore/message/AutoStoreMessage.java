@@ -48,7 +48,7 @@ public final class AutoStoreMessage {
     public static final SingleArgument<Boolean> COMMAND_ALL_MODE_TOGGLED =
             enabled ->
                     translatable()
-                            .key("box.autostore.command.all-toggle")
+                            .key("box.autostore.command.all-toggled")
                             .args(ENABLED_NAME.apply(enabled).color(AQUA))
                             .color(GRAY)
                             .build();
