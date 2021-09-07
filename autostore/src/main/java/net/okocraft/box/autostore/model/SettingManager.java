@@ -29,16 +29,16 @@ public class SettingManager {
         return BoxProvider.get()
                 .getCustomDataContainer()
                 .get("autostore", player.getUniqueId().toString())
-                .thenApplyAsync(this::load)
+                .thenApplyAsync(data -> load(player, data))
                 .thenAcceptAsync(setting -> settingMap.put(player, setting));
     }
 
-    public @NotNull CompletableFuture<Void> save(@NotNull Player player, @NotNull AutoStoreSetting setting) {
-        return CompletableFuture.supplyAsync(() -> save(setting))
+    public @NotNull CompletableFuture<Void> save(@NotNull AutoStoreSetting setting) {
+        return CompletableFuture.supplyAsync(() -> toConfiguration(setting))
                 .thenAcceptAsync(data ->
                         BoxProvider.get()
                                 .getCustomDataContainer()
-                                .set("autostore", player.getUniqueId().toString(), data)
+                                .set("autostore", setting.getPlayer().getUniqueId().toString(), data)
                 );
     }
 
@@ -47,7 +47,7 @@ public class SettingManager {
             var setting = settingMap.remove(player);
 
             if (setting != null) {
-                save(player, setting).join();
+                save(setting).join();
             }
         });
     }
@@ -69,14 +69,11 @@ public class SettingManager {
     }
 
     public void unloadAll() {
-        for (var entry : settingMap.entrySet()) {
-            var player = entry.getKey();
-            var setting = entry.getValue();
-
-            save(player, setting).exceptionally(throwable -> {
+        for (var setting: settingMap.values()) {
+            save(setting).exceptionally(throwable -> {
                 BoxProvider.get().getLogger().log(
                         Level.SEVERE,
-                        "Could not unload autostore setting (" + player.getName() + ")",
+                        "Could not unload autostore setting (" + setting.getPlayer().getName() + ")",
                         throwable
                 );
 
@@ -85,8 +82,8 @@ public class SettingManager {
         }
     }
 
-    private @NotNull AutoStoreSetting load(@NotNull Configuration data) {
-        var setting = new AutoStoreSetting();
+    private @NotNull AutoStoreSetting load(@NotNull Player player, @NotNull Configuration data) {
+        var setting = new AutoStoreSetting(player);
 
         var mode = data.getString("mode");
 
@@ -111,7 +108,7 @@ public class SettingManager {
         return setting;
     }
 
-    private @NotNull Configuration save(@NotNull AutoStoreSetting setting) {
+    private @NotNull Configuration toConfiguration(@NotNull AutoStoreSetting setting) {
         var data = MappedConfiguration.create();
 
         data.set("mode", setting.getCurrentMode().getModeName());
