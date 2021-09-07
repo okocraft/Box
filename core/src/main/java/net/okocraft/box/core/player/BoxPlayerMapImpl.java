@@ -1,6 +1,8 @@
 package net.okocraft.box.core.player;
 
 import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.api.event.player.PlayerLoadEvent;
+import net.okocraft.box.api.event.player.PlayerUnloadEvent;
 import net.okocraft.box.api.model.manager.StockManager;
 import net.okocraft.box.api.model.manager.UserManager;
 import net.okocraft.box.api.model.user.BoxUser;
@@ -46,7 +48,11 @@ public class BoxPlayerMapImpl implements BoxPlayerMap {
 
             var userStock = stockManager.loadUserStock(boxUser).join();
 
-            playerMap.put(player, new BoxPlayerImpl(player, userStock));
+            var boxPlayer = new BoxPlayerImpl(player, userStock);
+
+            playerMap.put(player, boxPlayer);
+
+            BoxProvider.get().getEventBus().callEvent(new PlayerLoadEvent(boxPlayer));
         });
     }
 
@@ -54,6 +60,8 @@ public class BoxPlayerMapImpl implements BoxPlayerMap {
         var boxPlayer = playerMap.remove(player);
 
         if (boxPlayer != null) {
+            BoxProvider.get().getEventBus().callEvent(new PlayerUnloadEvent(boxPlayer));
+
             Debugger.log(() -> "Unloading player data... (" + player.getName() + ")");
             return stockManager.saveUserStock(boxPlayer.getUserStockHolder());
         } else {
@@ -66,7 +74,7 @@ public class BoxPlayerMapImpl implements BoxPlayerMap {
 
         for (var player : Bukkit.getOnlinePlayers()) {
             load(player).exceptionallyAsync(e -> {
-                BoxProvider.get().getLogger().log(Level.SEVERE, "Could not load a player (" + player.getName()+ ")", e);
+                BoxProvider.get().getLogger().log(Level.SEVERE, "Could not load a player (" + player.getName() + ")", e);
                 player.sendMessage(ErrorMessages.ERROR_LOAD_PLAYER_DATA_ON_JOIN);
                 return null;
             });
@@ -75,6 +83,8 @@ public class BoxPlayerMapImpl implements BoxPlayerMap {
 
     public void unloadAll() {
         for (var boxPlayer : playerMap.values()) {
+            BoxProvider.get().getEventBus().callEvent(new PlayerUnloadEvent(boxPlayer));
+
             Debugger.log(() -> "Unloading player data... (" + boxPlayer.getName().orElse("Unknown") + ")");
             stockManager.saveUserStock(boxPlayer.getUserStockHolder())
                     .exceptionallyAsync(e -> {
