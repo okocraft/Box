@@ -22,6 +22,11 @@ public class BoxPlayerImpl implements BoxPlayer {
     }
 
     @Override
+    public @NotNull Player getPlayer() {
+        return player;
+    }
+
+    @Override
     public @NotNull UserStockHolder getUserStockHolder() {
         return userStockHolder;
     }
