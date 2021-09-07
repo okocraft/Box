@@ -78,6 +78,7 @@ public class AutoStoreCommand extends AbstractCommand {
 
             if (sendTip) {
                 player.sendMessage(AutoStoreMessage.COMMAND_TIP_ALL_MODE_DISABLED);
+                player.sendMessage(AutoStoreMessage.COMMAND_TIP_HOW_TO_TOGGLE_ALL_MODE);
             }
 
             return;
