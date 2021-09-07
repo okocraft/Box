@@ -8,8 +8,13 @@ import net.okocraft.box.autostore.listener.BoxPlayerListener;
 import net.okocraft.box.autostore.listener.ItemListener;
 import net.okocraft.box.autostore.message.AutoStoreMessage;
 import net.okocraft.box.autostore.model.SettingManager;
+import net.okocraft.box.autostore.task.AutoStoreSettingSaveTask;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class AutoStoreFeature extends AbstractBoxFeature implements Reloadable {
 
@@ -17,6 +22,9 @@ public class AutoStoreFeature extends AbstractBoxFeature implements Reloadable {
     private final AutoStoreCommand autoStoreCommand = new AutoStoreCommand(settingManager);
     private final BoxPlayerListener boxPlayerListener = new BoxPlayerListener(settingManager);
     private final ItemListener itemListener = new ItemListener(settingManager);
+    private final AutoStoreSettingSaveTask autoSaveTask = new AutoStoreSettingSaveTask(settingManager);
+
+    private ScheduledExecutorService scheduler;
 
     public AutoStoreFeature() {
         super("autostore");
@@ -28,6 +36,10 @@ public class AutoStoreFeature extends AbstractBoxFeature implements Reloadable {
         BoxProvider.get().getBoxCommand().getSubCommandHolder().register(autoStoreCommand);
         boxPlayerListener.register(getListenerKey());
         itemListener.register();
+
+        scheduler = Executors.newSingleThreadScheduledExecutor();
+        scheduler.scheduleAtFixedRate(autoSaveTask, 10, 10, TimeUnit.MINUTES);
+        autoSaveTask.registerListener(getListenerKey());
     }
 
     @Override
@@ -35,6 +47,11 @@ public class AutoStoreFeature extends AbstractBoxFeature implements Reloadable {
         itemListener.unregister();
         boxPlayerListener.unregister();
         BoxProvider.get().getBoxCommand().getSubCommandHolder().unregister(autoStoreCommand);
+
+        if (scheduler != null) {
+            scheduler.shutdownNow();
+            autoSaveTask.unregisterListener(getListenerKey());
+        }
 
         settingManager.unloadAll();
     }
