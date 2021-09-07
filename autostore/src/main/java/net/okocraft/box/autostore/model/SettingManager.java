@@ -29,7 +29,7 @@ public class SettingManager {
         return BoxProvider.get()
                 .getCustomDataContainer()
                 .get("autostore", player.getUniqueId().toString())
-                .thenApplyAsync(data -> load(player, data))
+                .thenApplyAsync(data -> toAutoStoreSetting(player, data))
                 .thenAcceptAsync(setting -> settingMap.put(player, setting));
     }
 
@@ -82,7 +82,7 @@ public class SettingManager {
         }
     }
 
-    private @NotNull AutoStoreSetting load(@NotNull Player player, @NotNull Configuration data) {
+    private @NotNull AutoStoreSetting toAutoStoreSetting(@NotNull Player player, @NotNull Configuration data) {
         var setting = new AutoStoreSetting(player);
 
         var mode = data.getString("mode");
