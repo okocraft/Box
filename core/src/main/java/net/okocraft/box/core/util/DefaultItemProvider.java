@@ -22,6 +22,7 @@ public final class DefaultItemProvider {
     public static @NotNull List<DefaultItem> getDefaultItems() {
         return Arrays.stream(Material.values())
                 .filter(Predicate.not(Material::isAir))
+                .filter(Material::isItem)
                 .filter(Predicate.not(material -> material.name().startsWith("LEGACY_")))
                 .map(material -> new DefaultItem(material.name(), new ItemStack(material, 1)))
                 .collect(Collectors.toList());
