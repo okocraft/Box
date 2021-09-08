@@ -1,10 +1,12 @@
 package net.okocraft.box.command.message;
 
 import net.kyori.adventure.text.Component;
+import net.okocraft.box.api.message.argument.DoubleArgument;
 import net.okocraft.box.api.message.argument.QuadArgument;
 import net.okocraft.box.api.message.argument.SingleArgument;
 import net.okocraft.box.api.message.argument.TripleArgument;
 import net.okocraft.box.api.model.item.BoxItem;
+import org.bukkit.entity.Player;
 
 import static net.kyori.adventure.text.Component.newline;
 import static net.kyori.adventure.text.Component.text;
@@ -77,6 +79,14 @@ public final class BoxMessage {
                     translatable()
                             .key("box.command.box.give.no-stock")
                             .args(item.getDisplayName().color(AQUA).hoverEvent(item.getOriginal()))
+                            .color(RED)
+                            .build();
+
+    public static final DoubleArgument<Player, String> GIVE_TARGET_NO_PERMISSION =
+            (target, permission) ->
+                    translatable()
+                            .key("box.command.box.give.target-no-permission")
+                            .args(text(target.getName(), AQUA), text(permission, AQUA))
                             .color(RED)
                             .build();
 

@@ -42,6 +42,11 @@ public class GiveCommand extends AbstractCommand {
             return;
         }
 
+        if (!target.hasPermission(getPermissionNode())) {
+            sender.sendMessage(BoxMessage.GIVE_TARGET_NO_PERMISSION.apply(target, getPermissionNode()));
+            return;
+        }
+
         var optionalBoxItem = BoxProvider.get().getItemManager().getBoxItem(args[2]);
 
         if (optionalBoxItem.isEmpty()) {
