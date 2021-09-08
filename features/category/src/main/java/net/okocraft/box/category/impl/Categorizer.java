@@ -323,104 +323,104 @@ public final class Categorizer {
         var type = item.getType();
 
         if (SPAWN_EGGS.isTagged(type)) {
-            return "spawn-eggs";
+            return DefaultCategoryName.SPAWN_EGGS;
         }
 
         if (isTagged(item, SANDSTONES, STONE_BRICKS, RED_SANDSTONES)) {
-            return "stones";
+            return DefaultCategoryName.STONES;
         }
 
         if (isTagged(item, MaterialTags.ORES, RAW_ORES, RAW_ORE_BLOCKS)) {
-            return "ores";
+            return DefaultCategoryName.ORES;
         }
 
         if (DIRT.isTagged(type)) {
-            return "dirt";
+            return DefaultCategoryName.DIRT;
         }
 
         if (isTagged(item, TERRACOTTA, GLAZED_TERRACOTTA, STAINED_TERRACOTTA)) {
-            return "terracotta";
+            return DefaultCategoryName.TERRACOTTA;
         }
 
         if (isTagged(item, CONCRETE_POWDER, CONCRETES)) {
-            return "concrete";
+            return DefaultCategoryName.CONCRETES;
         }
 
         if (isTagged(item, GLASS, GLASS_PANES, STAINED_GLASS, STAINED_GLASS_PANES)) {
-            return "glass";
+            return DefaultCategoryName.GLASSES;
         }
 
         if (CANDLES.isTagged(type)) {
-            return "candles";
+            return DefaultCategoryName.CANDLES;
         }
 
         if (DYES.isTagged(type)) {
-            return "dyes";
+            return DefaultCategoryName.DYES;
         }
 
         if (SHULKER_BOXES.isTagged(type)) {
-            return "shulker-boxes";
+            return DefaultCategoryName.SHULKER_BOXES;
         }
 
         if (isTagged(item, COOKED_FISH, GOLDEN_APPLES, POTATOES, PUMPKINS, ITEMS_FISHES, RAW_FISH, CROPS)) {
-            return "farms";
+            return DefaultCategoryName.FARMS;
         }
 
         if (isTagged(
                 item, CORAL, CORAL_BLOCKS, CORAL_FANS, FISH_BUCKETS, PRISMARINE, PRISMARINE_SLABS,
                 PRISMARINE_STAIRS, SPONGES, ICE
         )) {
-            return "oceans";
+            return DefaultCategoryName.OCEANS;
         }
 
         if (isTagged(item, LOGS, LOGS_THAT_BURN, LEAVES, SAPLINGS, PLANKS, ITEMS_BOATS,
                 WOODEN_BUTTONS, WOODEN_PRESSURE_PLATES, WOODEN_SLABS, WOODEN_STAIRS, WOODEN_FENCES,
                 WOODEN_DOORS, WOODEN_GATES, SIGNS)) {
-            return "woods";
+            return DefaultCategoryName.WOODS;
         }
 
         if (isTagged(item, WOOL, CARPETS, BEDS, BANNERS)) {
-            return "wools";
+            return DefaultCategoryName.WOOLS;
         }
 
         if (FLOWERS.isTagged(type)) {
-            return "flowers";
+            return DefaultCategoryName.FLOWERS;
         }
 
         if (isTagged(item, BOOTS, CHEST_EQUIPPABLE, CHESTPLATES, HEAD_EQUIPPABLE, HELMETS, LEGGINGS)) {
-            return "armors";
+            return DefaultCategoryName.ARMORS;
         }
 
         if (isTagged(item, ARROWS, BOWS)) {
-            return "bows";
+            return DefaultCategoryName.BOWS;
         }
 
         if (isTagged(item, AXES, HOES, PICKAXES, SHOVELS, SWORDS)) {
-            return "tools";
+            return DefaultCategoryName.TOOLS;
         }
 
         if (isTagged(item, HORSE_ARMORS)) {
-            return "horse";
+            return DefaultCategoryName.HORSE;
         }
 
         if (isTagged(item, MUSHROOM_BLOCKS, MUSHROOMS)) {
-            return "mushrooms";
+            return DefaultCategoryName.MUSHROOMS;
         }
 
         if (isTagged(item, BUTTONS, DOORS, FENCE_GATES, PISTONS, PRESSURE_PLATES, TRAPDOORS, REDSTONE_TORCH)) {
-            return "redstones";
+            return DefaultCategoryName.REDSTONES;
         }
 
         if (RAILS.isTagged(item)) {
-            return "rails";
+            return DefaultCategoryName.RAILS;
         }
 
         if (QUARTZ_BLOCKS.isTagged(type)) {
-            return "nether";
+            return DefaultCategoryName.NETHER;
         }
 
         if (MUSIC_DISCS.isTagged(type)) {
-            return "music-discs";
+            return DefaultCategoryName.MUSIC_DISCS;
         }
 
         return null;
@@ -520,73 +520,73 @@ public final class Categorizer {
 
     private static @Nullable String checkMaterial(@NotNull Material type) {
         if (UNAVAILABLE.contains(type) || type.name().contains("INFESTED")) {
-            return "unavailable";
+            return DefaultCategoryName.UNAVAILABLE;
         }
 
         if (DECORATIONS.contains(type)) {
-            return "decorations";
+            return DefaultCategoryName.DECORATIONS;
         }
 
         if (FARMS.contains(type) || contains(type, "COOKED", "HONEY", "RABBIT")) {
-            return "farms";
+            return DefaultCategoryName.FARMS;
         }
 
         if (FLOWER_ITEMS.contains(type)) {
-            return "flowers";
+            return DefaultCategoryName.FLOWERS;
         }
 
         if (contains(type, "MINECART")) {
-            return "rails";
+            return DefaultCategoryName.RAILS;
         }
 
         if (MOB_DROPS.contains(type)) {
-            return "mob-drops";
+            return DefaultCategoryName.MOB_DROPS;
         }
 
         if (ORES.contains(type) || contains(type, "AMETHYST", "COPPER")) {
-            return "ores";
+            return DefaultCategoryName.ORES;
         }
 
         if (REDSTONES.contains(type)) {
-            return "redstones";
+            return DefaultCategoryName.REDSTONES;
         }
 
         if (TOOLS.contains(type)) {
-            return "tools";
+            return DefaultCategoryName.TOOLS;
         }
 
         if (STONES.contains(type) || contains(type, STONE_FILTERS)) {
-            return "stones";
+            return DefaultCategoryName.STONES;
         }
 
         if (type.name().contains("BANNER")) {
-            return "wools";
+            return DefaultCategoryName.WOOLS;
         }
 
         if (contains(type, "CHORUS", "END_STONE", "PURPUR")) {
-            return "end";
+            return DefaultCategoryName.END;
         }
 
         if (contains(type, "NETHER", "CRIMSON", "QUARTZ", "WARPED")) {
-            return "nether";
+            return DefaultCategoryName.NETHER;
         }
 
         if (contains(type, "PRISMARINE", "KELP", "SEA")) {
-            return "oceans";
+            return DefaultCategoryName.OCEANS;
         }
 
         return switch (type) {
-            case CLAY, CLAY_BALL, GRAVEL, RED_SAND, SAND -> "dirt";
-            case DRAGON_BREATH, DRAGON_EGG, END_CRYSTAL -> "end";
-            case ENCHANTED_BOOK -> "enchanted-books";
-            case SADDLE -> "horse";
-            case AXOLOTL_BUCKET, CONDUIT, SNOW, SNOWBALL, SNOW_BLOCK -> "oceans";
+            case CLAY, CLAY_BALL, GRAVEL, RED_SAND, SAND -> DefaultCategoryName.DIRT;
+            case DRAGON_BREATH, DRAGON_EGG, END_CRYSTAL -> DefaultCategoryName.END;
+            case ENCHANTED_BOOK -> DefaultCategoryName.ENCHANTED_BOOKS;
+            case SADDLE -> DefaultCategoryName.HORSE;
+            case AXOLOTL_BUCKET, CONDUIT, SNOW, SNOWBALL, SNOW_BLOCK -> DefaultCategoryName.OCEANS;
             case BOOK, FIREWORK_ROCKET, FIREWORK_STAR, FLINT,
-                    PAPER, STICK, WRITABLE_BOOK, WRITTEN_BOOK -> "misc";
-            case MUSHROOM_STEM -> "mushrooms";
+                    PAPER, STICK, WRITABLE_BOOK, WRITTEN_BOOK -> DefaultCategoryName.MISC;
+            case MUSHROOM_STEM -> DefaultCategoryName.MUSHROOMS;
             case GLOWSTONE, GLOWSTONE_DUST, MAGMA_BLOCK, SHROOMLIGHT,
-                    SOUL_SAND, SOUL_SOIL, TWISTING_VINES, WEEPING_VINES -> "nether";
-            case GLASS_BOTTLE, POTION, SPLASH_POTION, LINGERING_POTION -> "potions";
+                    SOUL_SAND, SOUL_SOIL, TWISTING_VINES, WEEPING_VINES -> DefaultCategoryName.NETHER;
+            case GLASS_BOTTLE, POTION, SPLASH_POTION, LINGERING_POTION -> DefaultCategoryName.POTIONS;
             default -> null;
         };
     }
