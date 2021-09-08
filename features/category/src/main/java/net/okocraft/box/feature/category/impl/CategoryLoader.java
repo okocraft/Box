@@ -51,7 +51,7 @@ public class CategoryLoader {
                     var categoryName =
                             itemManager.isCustomItem(item) ?
                                     DefaultCategoryName.CUSTOM_ITEMS :
-                                    DefaultCategoryName.OTHERS;
+                                    DefaultCategoryName.UNCATEGORIZED;
 
                     result.computeIfAbsent(categoryName, BoxCategory::new).add(item);
                 });

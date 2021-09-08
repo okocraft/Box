@@ -22,7 +22,6 @@ final class DefaultCategoryName {
     static final String NETHER = "nether";
     static final String OCEANS = "oceans";
     static final String ORES = "ores";
-    static final String OTHERS = "others";
     static final String POTIONS = "potions";
     static final String RAILS = "rails";
     static final String REDSTONES = "redstones";
@@ -32,6 +31,7 @@ final class DefaultCategoryName {
     static final String TERRACOTTA = "terracotta";
     static final String TOOLS = "tools";
     static final String UNAVAILABLE = "unavailable";
+    static final String UNCATEGORIZED = "uncategorized";
     static final String WOODS = "woods";
     static final String WOOLS = "wools";
 }
