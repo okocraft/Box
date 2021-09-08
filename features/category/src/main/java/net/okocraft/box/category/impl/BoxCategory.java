@@ -1,5 +1,7 @@
 package net.okocraft.box.category.impl;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TranslatableComponent;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.category.model.Category;
 import org.jetbrains.annotations.NotNull;
@@ -12,15 +14,22 @@ import java.util.Objects;
 class BoxCategory implements Category {
 
     private final String name;
+    private final TranslatableComponent displayName;
     private final List<BoxItem> items = new ArrayList<>();
 
     BoxCategory(@NotNull String name) {
         this.name = name;
+        this.displayName = Component.translatable("box.category.name." + name);
     }
 
     @Override
     public @NotNull String getName() {
         return name;
+    }
+
+    @Override
+    public @NotNull TranslatableComponent getDisplayName() {
+        return displayName;
     }
 
     @Override
