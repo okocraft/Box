@@ -37,7 +37,7 @@ class BoxCategory implements Category {
         return List.copyOf(items);
     }
 
-    public void add(@NotNull BoxItem item) {
+    void add(@NotNull BoxItem item) {
         items.add(item);
     }
 

@@ -304,9 +304,9 @@ import static org.bukkit.Tag.WOODEN_SLABS;
 import static org.bukkit.Tag.WOODEN_STAIRS;
 import static org.bukkit.Tag.WOOL;
 
-public final class Categorizer {
+final class Categorizer {
 
-    public static boolean byTag(@NotNull BoxItem item, @NotNull Function<String, BoxCategory> func) {
+    static boolean byTag(@NotNull BoxItem item, @NotNull Function<String, BoxCategory> func) {
         var categoryName = checkTags(item.getOriginal());
 
         if (categoryName != null) {
@@ -437,7 +437,7 @@ public final class Categorizer {
         return false;
     }
 
-    public static boolean byMaterial(@NotNull BoxItem item, @NotNull Function<String, BoxCategory> func) {
+    static boolean byMaterial(@NotNull BoxItem item, @NotNull Function<String, BoxCategory> func) {
         var categoryName = checkMaterial(item.getOriginal().getType());
 
         if (categoryName != null) {
