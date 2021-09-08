@@ -1,5 +1,7 @@
 package net.okocraft.box.core.model.manager;
 
+import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.api.event.item.CustomItemRegisterEvent;
 import net.okocraft.box.api.model.item.BoxCustomItem;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.model.manager.ItemManager;
@@ -108,6 +110,8 @@ public class BoxItemManager implements ItemManager {
 
             itemMap.put(copied, customItem);
             updateItemNameCache();
+
+            BoxProvider.get().getEventBus().callEvent(new CustomItemRegisterEvent(customItem));
 
             return customItem;
         }, executor);
