@@ -88,8 +88,13 @@ public class BoxPlayerMapImpl implements BoxPlayerMap {
             Debugger.log(() -> "Unloading player data... (" + boxPlayer.getName().orElse("Unknown") + ")");
             stockManager.saveUserStock(boxPlayer.getUserStockHolder())
                     .exceptionallyAsync(e -> {
+                        if (boxPlayer.getPlayer().isOnline()) {
+                            boxPlayer.getPlayer().sendMessage(ErrorMessages.ERROR_SAVE_PLAYER_DATA);
+                        }
+
                         BoxProvider.get().getLogger().log(Level.SEVERE,
                                 "Could not save player data (" + boxPlayer.getName() + ")", e);
+
                         return null;
                     });
         }

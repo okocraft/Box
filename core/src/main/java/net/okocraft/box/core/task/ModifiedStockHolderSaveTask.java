@@ -8,12 +8,15 @@ import net.okocraft.box.api.event.stock.StockIncreaseEvent;
 import net.okocraft.box.api.event.stock.StockSetEvent;
 import net.okocraft.box.api.model.stock.UserStockHolder;
 import net.okocraft.box.api.util.Debugger;
+import net.okocraft.box.core.message.ErrorMessages;
 import net.okocraft.box.core.storage.Storage;
 import net.okocraft.box.core.util.ExecutorProvider;
+import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -75,6 +78,8 @@ public class ModifiedStockHolderSaveTask {
             storage.getStockStorage().saveUserStockHolder(userStockHolder);
             Debugger.log(() -> "Saved the user's stockholder (" + userStockHolder.getUser().getUUID() + ")");
         } catch (Exception e) {
+            Optional.ofNullable(Bukkit.getPlayer(userStockHolder.getUser().getUUID()))
+                            .ifPresent(player -> player.sendMessage(ErrorMessages.ERROR_SAVE_PLAYER_DATA));
             BoxProvider.get().getLogger().log(
                     Level.SEVERE,
                     "Could not save the user's stockholder (" + userStockHolder.getUser().getUUID() + ")",
