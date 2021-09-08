@@ -7,12 +7,15 @@ import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.feature.AbstractBoxFeature;
 import net.okocraft.box.api.feature.Reloadable;
 import net.okocraft.box.feature.category.impl.CategoryLoader;
+import net.okocraft.box.feature.category.impl.CustomItemListener;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.logging.Level;
 
 public class CategoryFeature extends AbstractBoxFeature implements Reloadable {
+
+    private final CustomItemListener customItemListener = new CustomItemListener();
 
     public CategoryFeature() {
         super("category");
@@ -24,6 +27,7 @@ public class CategoryFeature extends AbstractBoxFeature implements Reloadable {
                      YamlConfiguration.create(BoxProvider.get().getPluginDirectory().resolve("categories.yml"))) {
             yaml.load();
             CategoryHolder.addAll(CategoryLoader.load(yaml).export(yaml).categoryList());
+            customItemListener.register(getListenerKey());
         } catch (Exception e) {
             BoxProvider.get().getLogger().log(Level.SEVERE, "Could not load categories.yml", e);
         }
@@ -31,6 +35,7 @@ public class CategoryFeature extends AbstractBoxFeature implements Reloadable {
 
     @Override
     public void disable() {
+        customItemListener.unregister(getListenerKey());
         CategoryHolder.get().clear();
     }
 
