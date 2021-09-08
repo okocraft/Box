@@ -5,6 +5,7 @@ final class DefaultCategoryName {
     static final String BOWS = "bows";
     static final String CANDLES = "candles";
     static final String CONCRETES = "concretes";
+    static final String CUSTOM_ITEMS = "custom-items";
     static final String DECORATIONS = "decorations";
     static final String DIRT = "dirt";
     static final String DYES = "dyes";
@@ -21,6 +22,7 @@ final class DefaultCategoryName {
     static final String NETHER = "nether";
     static final String OCEANS = "oceans";
     static final String ORES = "ores";
+    static final String OTHERS = "others";
     static final String POTIONS = "potions";
     static final String RAILS = "rails";
     static final String REDSTONES = "redstones";

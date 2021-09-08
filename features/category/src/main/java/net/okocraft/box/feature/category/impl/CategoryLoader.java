@@ -48,11 +48,15 @@ public class CategoryLoader {
                         item -> Categorizer.byMaterial(item, name -> result.computeIfAbsent(name, BoxCategory::new))
                 ))
                 .forEach(item -> {
-                    var categoryName = itemManager.isCustomItem(item) ? "custom-items" : "others";
+                    var categoryName =
+                            itemManager.isCustomItem(item) ?
+                                    DefaultCategoryName.CUSTOM_ITEMS :
+                                    DefaultCategoryName.OTHERS;
+
                     result.computeIfAbsent(categoryName, BoxCategory::new).add(item);
                 });
 
-        result.computeIfAbsent("custom-items", BoxCategory::new);
+        result.computeIfAbsent(DefaultCategoryName.CUSTOM_ITEMS, BoxCategory::new);
 
         return new CategoryLoadResult(List.copyOf(result.values()));
     }
