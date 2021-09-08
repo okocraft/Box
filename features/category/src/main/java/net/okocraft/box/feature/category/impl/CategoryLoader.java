@@ -52,6 +52,8 @@ public class CategoryLoader {
                     result.computeIfAbsent(categoryName, BoxCategory::new).add(item);
                 });
 
+        result.computeIfAbsent("custom-items", BoxCategory::new);
+
         return new CategoryLoadResult(List.copyOf(result.values()));
     }
 
