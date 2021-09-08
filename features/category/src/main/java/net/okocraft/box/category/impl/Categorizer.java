@@ -583,6 +583,7 @@ public final class Categorizer {
         return switch (type) {
             case CLAY, CLAY_BALL, GRAVEL, RED_SAND, SAND -> "dirt";
             case DRAGON_BREATH, DRAGON_EGG, END_CRYSTAL -> "end";
+            case ENCHANTED_BOOK -> "enchanted-books";
             case SADDLE -> "horse";
             case SNOW, SNOWBALL, SNOW_BLOCK -> "ice";
             case BOOK, FIREWORK_ROCKET, FIREWORK_STAR, FLINT,
@@ -591,7 +592,7 @@ public final class Categorizer {
             case GLOWSTONE, GLOWSTONE_DUST, MAGMA_BLOCK, SHROOMLIGHT,
                     SOUL_SAND, SOUL_SOIL, TWISTING_VINES, WEEPING_VINES -> "nether";
             case AXOLOTL_BUCKET, CONDUIT -> "oceans";
-            case GLASS_BOTTLE -> "potions";
+            case GLASS_BOTTLE, POTION, SPLASH_POTION, LINGERING_POTION -> "potions";
             default -> null;
         };
     }
