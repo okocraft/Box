@@ -369,7 +369,7 @@ public final class Categorizer {
 
         if (isTagged(
                 item, CORAL, CORAL_BLOCKS, CORAL_FANS, FISH_BUCKETS, PRISMARINE, PRISMARINE_SLABS,
-                PRISMARINE_STAIRS, SPONGES
+                PRISMARINE_STAIRS, SPONGES, ICE
         )) {
             return "oceans";
         }
@@ -414,10 +414,6 @@ public final class Categorizer {
 
         if (RAILS.isTagged(item)) {
             return "rails";
-        }
-
-        if (ICE.isTagged(type)) {
-            return "ice";
         }
 
         if (QUARTZ_BLOCKS.isTagged(type)) {
@@ -585,13 +581,12 @@ public final class Categorizer {
             case DRAGON_BREATH, DRAGON_EGG, END_CRYSTAL -> "end";
             case ENCHANTED_BOOK -> "enchanted-books";
             case SADDLE -> "horse";
-            case SNOW, SNOWBALL, SNOW_BLOCK -> "ice";
+            case AXOLOTL_BUCKET, CONDUIT, SNOW, SNOWBALL, SNOW_BLOCK -> "oceans";
             case BOOK, FIREWORK_ROCKET, FIREWORK_STAR, FLINT,
                     PAPER, STICK, WRITABLE_BOOK, WRITTEN_BOOK -> "misc";
             case MUSHROOM_STEM -> "mushrooms";
             case GLOWSTONE, GLOWSTONE_DUST, MAGMA_BLOCK, SHROOMLIGHT,
                     SOUL_SAND, SOUL_SOIL, TWISTING_VINES, WEEPING_VINES -> "nether";
-            case AXOLOTL_BUCKET, CONDUIT -> "oceans";
             case GLASS_BOTTLE, POTION, SPLASH_POTION, LINGERING_POTION -> "potions";
             default -> null;
         };
