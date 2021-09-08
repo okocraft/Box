@@ -68,7 +68,6 @@ import static com.destroystokyo.paper.MaterialTags.TRAPDOORS;
 import static com.destroystokyo.paper.MaterialTags.WOODEN_DOORS;
 import static com.destroystokyo.paper.MaterialTags.WOODEN_FENCES;
 import static com.destroystokyo.paper.MaterialTags.WOODEN_GATES;
-import static com.destroystokyo.paper.MaterialTags.WOODEN_TRAPDOORS;
 import static org.bukkit.Material.ANCIENT_DEBRIS;
 import static org.bukkit.Material.ANVIL;
 import static org.bukkit.Material.APPLE;
@@ -376,7 +375,7 @@ public final class Categorizer {
 
         if (isTagged(item, LOGS, LOGS_THAT_BURN, LEAVES, SAPLINGS, PLANKS, ITEMS_BOATS,
                 WOODEN_BUTTONS, WOODEN_PRESSURE_PLATES, WOODEN_SLABS, WOODEN_STAIRS, WOODEN_FENCES,
-                WOODEN_DOORS, WOODEN_FENCES, WOODEN_GATES, WOODEN_TRAPDOORS, SIGNS)) {
+                WOODEN_DOORS, WOODEN_GATES, SIGNS)) {
             return "woods";
         }
 
