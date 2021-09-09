@@ -10,7 +10,7 @@ import net.okocraft.box.api.model.stock.UserStockHolder;
 import net.okocraft.box.api.util.Debugger;
 import net.okocraft.box.core.message.ErrorMessages;
 import net.okocraft.box.core.storage.Storage;
-import net.okocraft.box.core.util.InternalExecutors;
+import net.okocraft.box.core.util.executor.InternalExecutors;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 

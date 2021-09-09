@@ -1,4 +1,4 @@
-package net.okocraft.box.core.util;
+package net.okocraft.box.core.util.executor;
 
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.util.ExecutorProvider;
