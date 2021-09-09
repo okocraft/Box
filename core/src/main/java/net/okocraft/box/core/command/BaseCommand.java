@@ -5,7 +5,6 @@ import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.command.Command;
 import net.okocraft.box.api.command.SubCommandHoldable;
 import net.okocraft.box.api.message.GeneralMessage;
-import net.okocraft.box.api.util.Debugger;
 import net.okocraft.box.core.message.ErrorMessages;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -16,9 +15,12 @@ import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.CompletableFuture;
+import java.util.logging.Level;
 
 public abstract class BaseCommand implements Command, SubCommandHoldable, CommandExecutor, TabCompleter, Listener {
 
@@ -51,7 +53,10 @@ public abstract class BaseCommand implements Command, SubCommandHoldable, Comman
         var subCommand = optionalSubCommand.get();
 
         if (sender.hasPermission(subCommand.getPermissionNode())) {
-            subCommand.onCommand(sender, args);
+            CompletableFuture.runAsync(
+                    () -> subCommand.onCommand(sender, args),
+                    BoxProvider.get().getExecutorProvider().getExecutor()
+            ).exceptionallyAsync(e -> reportError(sender, args, e));
         } else {
             sender.sendMessage(GeneralMessage.ERROR_NO_PERMISSION.apply(subCommand.getPermissionNode()));
         }
@@ -136,5 +141,17 @@ public abstract class BaseCommand implements Command, SubCommandHoldable, Comman
 
         event.setCompletions(onTabComplete(event.getSender(), args));
         event.setHandled(true);
+    }
+
+    private Void reportError(@NotNull CommandSender sender, @NotNull String[] args, @NotNull Throwable throwable) {
+        sender.sendMessage(ErrorMessages.ERROR_WHILE_EXECUTING_COMMAND.apply(throwable));
+
+        BoxProvider.get().getLogger().log(
+                Level.SEVERE,
+                "Failed to execute command (/" + getName() + " " + Arrays.toString(args) + ")",
+                throwable
+        );
+
+        return null;
     }
 }

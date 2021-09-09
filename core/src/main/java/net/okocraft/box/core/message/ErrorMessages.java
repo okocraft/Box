@@ -3,6 +3,7 @@ package net.okocraft.box.core.message;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.okocraft.box.api.message.argument.DoubleArgument;
+import net.okocraft.box.api.message.argument.SingleArgument;
 
 public final class ErrorMessages {
 
@@ -16,12 +17,21 @@ public final class ErrorMessages {
             Component.translatable("box.error.command.no-argument", NamedTextColor.RED);
 
     public static final DoubleArgument<String, Throwable> ERROR_RELOAD_FAILURE =
-            (name, throwable) -> Component.translatable()
-                    .key("box.error.reload.failure")
-                    .args(
-                            Component.text(name, NamedTextColor.AQUA),
-                            Component.text(throwable.getMessage(), NamedTextColor.WHITE)
-                    )
-                    .color(NamedTextColor.RED)
-                    .build();
+            (name, throwable) ->
+                    Component.translatable()
+                            .key("box.error.reload.failure")
+                            .args(
+                                    Component.text(name, NamedTextColor.AQUA),
+                                    Component.text(throwable.getMessage(), NamedTextColor.WHITE)
+                            )
+                            .color(NamedTextColor.RED)
+                            .build();
+
+    public static final SingleArgument<Throwable> ERROR_WHILE_EXECUTING_COMMAND =
+            throwable ->
+                    Component.translatable()
+                            .key("box.error.failed-to-execute-command")
+                            .args(Component.text(throwable.getMessage(), NamedTextColor.WHITE))
+                            .color(NamedTextColor.RED)
+                            .build();
 }
