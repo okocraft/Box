@@ -58,7 +58,13 @@ public class DepositCommand extends AbstractCommand {
 
             itemManager.getBoxItem(args[1]).ifPresentOrElse(
                     boxItem -> depositItem(player, boxItem, Integer.MAX_VALUE),
-                    () -> player.sendMessage(GeneralMessage.ERROR_COMMAND_ITEM_NOT_FOUND.apply(args[1]))
+                    () -> {
+                        if (isAll(args[1])) {
+                            depositAll(player);
+                        } else {
+                            player.sendMessage(GeneralMessage.ERROR_COMMAND_ITEM_NOT_FOUND.apply(args[1]));
+                        }
+                    }
             );
 
             return;
@@ -167,6 +173,10 @@ public class DepositCommand extends AbstractCommand {
                 });
 
         return counter.get();
+    }
+
+    private boolean isAll(@NotNull String arg) {
+        return !arg.isEmpty() && arg.length() < 4 && (arg.charAt(0) == 'a' || arg.charAt(0) == 'A');
     }
 
     @Override
