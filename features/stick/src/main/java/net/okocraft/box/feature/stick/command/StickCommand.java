@@ -1,6 +1,7 @@
 package net.okocraft.box.feature.stick.command;
 
 import net.kyori.adventure.text.Component;
+import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.command.AbstractCommand;
 import net.okocraft.box.api.message.GeneralMessage;
 import net.okocraft.box.feature.stick.item.BoxStickItem;
@@ -9,6 +10,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 
 import static net.kyori.adventure.text.Component.translatable;
 import static net.kyori.adventure.text.format.NamedTextColor.AQUA;
@@ -35,6 +37,13 @@ public class StickCommand extends AbstractCommand {
             return;
         }
 
+        CompletableFuture.runAsync(
+                () -> runCommand(player),
+                BoxProvider.get().getExecutorProvider().getMainThread()
+        ).join();
+    }
+
+    private void runCommand(@NotNull Player player) {
         var inventory = player.getInventory();
         var currentOffHand = inventory.getItemInOffHand();
 
