@@ -87,7 +87,7 @@ public abstract class AbstractStockHolder implements StockHolder {
                 .stream()
                 .filter(stockEntry -> 0 < stockEntry.getValue().get())
                 .map(Map.Entry::getKey)
-                .collect(Collectors.toUnmodifiableSet());
+                .toList();
     }
 
     @Override
