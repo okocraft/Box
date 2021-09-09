@@ -1,13 +1,18 @@
 package net.okocraft.box.core.command;
 
+import com.destroystokyo.paper.event.server.AsyncTabCompleteEvent;
+import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.command.Command;
 import net.okocraft.box.api.command.SubCommandHoldable;
 import net.okocraft.box.api.message.GeneralMessage;
+import net.okocraft.box.api.util.Debugger;
 import net.okocraft.box.core.message.ErrorMessages;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,7 +20,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
-public abstract class BaseCommand implements Command, SubCommandHoldable, CommandExecutor, TabCompleter {
+public abstract class BaseCommand implements Command, SubCommandHoldable, CommandExecutor, TabCompleter, Listener {
 
     private final SubCommandHolder subCommandHolder = new SubCommandHolder();
     private Command commandOfNoArgument;
@@ -98,5 +103,38 @@ public abstract class BaseCommand implements Command, SubCommandHoldable, Comman
     public void register(@NotNull PluginCommand pluginCommand) {
         pluginCommand.setExecutor(this);
         pluginCommand.setTabCompleter(this);
+    }
+
+    @EventHandler
+    public void onAsyncTabComplete(@NotNull AsyncTabCompleteEvent event) {
+        if (!event.isCommand()) {
+            return;
+        }
+
+        var buffer = event.getBuffer();
+
+        if (buffer.isEmpty()) {
+            return;
+        }
+
+        if (buffer.charAt(0) == '/') {
+            buffer = buffer.substring(1);
+        }
+
+        int firstSpace = buffer.indexOf(' ');
+        if (firstSpace < 0) {
+            return;
+        }
+
+        var label = buffer.substring(0, firstSpace).toLowerCase(Locale.ROOT);
+
+        if (!getName().equals(label) && !getAliases().contains(label)) {
+            return;
+        }
+
+        String[] args = buffer.substring(firstSpace + 1).split(" ", -1);
+
+        event.setCompletions(onTabComplete(event.getSender(), args));
+        event.setHandled(true);
     }
 }

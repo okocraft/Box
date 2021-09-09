@@ -21,7 +21,6 @@ import net.okocraft.box.api.util.ExecutorProvider;
 import net.okocraft.box.core.command.BoxAdminCommandImpl;
 import net.okocraft.box.core.command.BoxCommandImpl;
 import net.okocraft.box.core.config.Settings;
-import net.okocraft.box.core.util.executor.BoxExecutorProvider;
 import net.okocraft.box.core.listener.PlayerConnectionListener;
 import net.okocraft.box.core.message.ErrorMessages;
 import net.okocraft.box.core.model.data.BoxCustomDataContainer;
@@ -32,6 +31,7 @@ import net.okocraft.box.core.player.BoxPlayerMapImpl;
 import net.okocraft.box.core.storage.Storage;
 import net.okocraft.box.core.storage.implementations.yaml.YamlStorage;
 import net.okocraft.box.core.task.ModifiedStockHolderSaveTask;
+import net.okocraft.box.core.util.executor.BoxExecutorProvider;
 import net.okocraft.box.core.util.executor.InternalExecutors;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
@@ -173,6 +173,11 @@ public class BoxPlugin implements BoxAPI {
                             throw new IllegalStateException("Could not get command /boxadmin");
                         }
                 );
+
+        getLogger().info("Registering async-tab-completion listener...");
+
+        Bukkit.getPluginManager().registerEvents(boxCommand, plugin);
+        Bukkit.getPluginManager().registerEvents(boxAdminCommand, plugin);
 
         getLogger().info("Successfully enabled!");
 
