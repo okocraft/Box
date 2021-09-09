@@ -27,13 +27,9 @@ public final class InternalExecutors {
 
         for (var executor : CREATED_EXECUTORS) {
             if (!executor.isShutdown()) {
-                if (executor instanceof ScheduledExecutorService) {
-                    executor.shutdownNow();
-                } else {
-                    executor.shutdown();
-                    //noinspection ResultOfMethodCallIgnored
-                    executor.awaitTermination(30, TimeUnit.SECONDS);
-                }
+                executor.shutdown();
+                //noinspection ResultOfMethodCallIgnored
+                executor.awaitTermination(30, TimeUnit.SECONDS);
             }
         }
 

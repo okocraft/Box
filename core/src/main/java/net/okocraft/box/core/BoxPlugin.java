@@ -17,9 +17,11 @@ import net.okocraft.box.api.model.manager.StockManager;
 import net.okocraft.box.api.model.manager.UserManager;
 import net.okocraft.box.api.player.BoxPlayerMap;
 import net.okocraft.box.api.util.Debugger;
+import net.okocraft.box.api.util.ExecutorProvider;
 import net.okocraft.box.core.command.BoxAdminCommandImpl;
 import net.okocraft.box.core.command.BoxCommandImpl;
 import net.okocraft.box.core.config.Settings;
+import net.okocraft.box.core.util.BoxExecutorProvider;
 import net.okocraft.box.core.listener.PlayerConnectionListener;
 import net.okocraft.box.core.message.ErrorMessages;
 import net.okocraft.box.core.model.data.BoxCustomDataContainer;
@@ -60,6 +62,7 @@ public class BoxPlugin implements BoxAPI {
     private final TranslationDirectory translationDirectory;
 
     private final EventBus eventBus = EventBus.newEventBus();
+    private final BoxExecutorProvider executorProvider = new BoxExecutorProvider();
 
     private final BoxCommandImpl boxCommand = new BoxCommandImpl();
     private final BoxAdminCommandImpl boxAdminCommand = new BoxAdminCommandImpl();
@@ -201,6 +204,7 @@ public class BoxPlugin implements BoxAPI {
         getLogger().info("Shutting down executors...");
 
         try {
+            executorProvider.shutdown();
             InternalExecutors.shutdownAll();
         } catch (InterruptedException e) {
             getLogger().log(Level.SEVERE, "Could not shutdown executors", e);
@@ -297,6 +301,11 @@ public class BoxPlugin implements BoxAPI {
     @Override
     public @NotNull CustomDataContainer getCustomDataContainer() {
         return customDataContainer;
+    }
+
+    @Override
+    public @NotNull ExecutorProvider getExecutorProvider() {
+        return executorProvider;
     }
 
     @Override
