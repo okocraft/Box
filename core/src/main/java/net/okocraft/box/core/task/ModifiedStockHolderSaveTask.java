@@ -10,7 +10,7 @@ import net.okocraft.box.api.model.stock.UserStockHolder;
 import net.okocraft.box.api.util.Debugger;
 import net.okocraft.box.core.message.ErrorMessages;
 import net.okocraft.box.core.storage.Storage;
-import net.okocraft.box.core.util.ExecutorProvider;
+import net.okocraft.box.core.util.InternalExecutors;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
@@ -41,7 +41,7 @@ public class ModifiedStockHolderSaveTask {
         eventBus.getHandlerList(StockIncreaseEvent.class).subscribe(listenerKey, this::processEvent);
         eventBus.getHandlerList(StockDecreaseEvent.class).subscribe(listenerKey, this::processEvent);
 
-        var scheduler = ExecutorProvider.newSingleThreadScheduler("Auto-Save-Scheduler");
+        var scheduler = InternalExecutors.newSingleThreadScheduler("Auto-Save-Scheduler");
         task = scheduler.scheduleAtFixedRate(this::runTask, 10, 10, TimeUnit.MINUTES);
     }
 

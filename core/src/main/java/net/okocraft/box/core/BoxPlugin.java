@@ -30,7 +30,7 @@ import net.okocraft.box.core.player.BoxPlayerMapImpl;
 import net.okocraft.box.core.storage.Storage;
 import net.okocraft.box.core.storage.implementations.yaml.YamlStorage;
 import net.okocraft.box.core.task.ModifiedStockHolderSaveTask;
-import net.okocraft.box.core.util.ExecutorProvider;
+import net.okocraft.box.core.util.InternalExecutors;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
@@ -60,6 +60,7 @@ public class BoxPlugin implements BoxAPI {
     private final TranslationDirectory translationDirectory;
 
     private final EventBus eventBus = EventBus.newEventBus();
+
     private final BoxCommandImpl boxCommand = new BoxCommandImpl();
     private final BoxAdminCommandImpl boxAdminCommand = new BoxAdminCommandImpl();
 
@@ -200,7 +201,7 @@ public class BoxPlugin implements BoxAPI {
         getLogger().info("Shutting down executors...");
 
         try {
-            ExecutorProvider.shutdownAll();
+            InternalExecutors.shutdownAll();
         } catch (InterruptedException e) {
             getLogger().log(Level.SEVERE, "Could not shutdown executors", e);
         }

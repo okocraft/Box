@@ -3,7 +3,7 @@ package net.okocraft.box.core.model.manager;
 import net.okocraft.box.api.model.manager.UserManager;
 import net.okocraft.box.api.model.user.BoxUser;
 import net.okocraft.box.core.storage.model.user.UserStorage;
-import net.okocraft.box.core.util.ExecutorProvider;
+import net.okocraft.box.core.util.InternalExecutors;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -18,7 +18,7 @@ public class BoxUserManager implements UserManager {
 
     public BoxUserManager(@NotNull UserStorage userStorage) {
         this.userStorage = userStorage;
-        this.executor = ExecutorProvider.newSingleThreadExecutor("User-Manager");
+        this.executor = InternalExecutors.newSingleThreadExecutor("User-Manager");
     }
 
     @Override
