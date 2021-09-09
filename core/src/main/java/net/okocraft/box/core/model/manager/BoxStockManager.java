@@ -4,7 +4,7 @@ import net.okocraft.box.api.model.manager.StockManager;
 import net.okocraft.box.api.model.stock.UserStockHolder;
 import net.okocraft.box.api.model.user.BoxUser;
 import net.okocraft.box.core.storage.model.stock.StockStorage;
-import net.okocraft.box.core.util.InternalExecutors;
+import net.okocraft.box.core.util.executor.InternalExecutors;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CompletableFuture;
