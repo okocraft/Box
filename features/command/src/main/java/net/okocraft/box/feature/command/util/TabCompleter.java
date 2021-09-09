@@ -18,7 +18,6 @@ public final class TabCompleter {
                 .getItemNameSet()
                 .stream()
                 .filter(itemName -> itemName.startsWith(itemNameFilter))
-                .sorted()
                 .collect(Collectors.toList());
     }
 
@@ -30,7 +29,6 @@ public final class TabCompleter {
                 .map(HumanEntity::getName)
                 .map(name -> name.toLowerCase(Locale.ROOT))
                 .filter(playerName -> playerName.startsWith(playerNameFilter))
-                .sorted()
                 .collect(Collectors.toList());
     }
 
@@ -43,7 +41,6 @@ public final class TabCompleter {
                 .map(HumanEntity::getName)
                 .map(name -> name.toLowerCase(Locale.ROOT))
                 .filter(playerName -> playerName.startsWith(playerNameFilter))
-                .sorted()
                 .collect(Collectors.toList());
     }
 }
