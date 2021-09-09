@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 public class WithdrawCommand extends AbstractCommand {
@@ -66,7 +67,12 @@ public class WithdrawCommand extends AbstractCommand {
             amount = 1;
         }
 
-        var result = InventoryTransaction.withdraw(player.getInventory(), boxItem, amount);
+        var result =
+                CompletableFuture.supplyAsync(
+                        () -> InventoryTransaction.withdraw(player.getInventory(), boxItem, amount),
+                        BoxProvider.get().getExecutorProvider().getMainThread()
+                ).join();
+
         var resultType = result.getType();
 
         if (resultType.isModified()) {
