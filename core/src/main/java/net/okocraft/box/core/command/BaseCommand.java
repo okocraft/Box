@@ -73,7 +73,6 @@ public abstract class BaseCommand implements Command, SubCommandHoldable, Comman
                     .filter(cmd -> sender.hasPermission(cmd.getPermissionNode()))
                     .map(Command::getName)
                     .filter(cmdName -> cmdName.startsWith(args[0].toLowerCase(Locale.ROOT)))
-                    .sorted()
                     .toList();
         }
 
