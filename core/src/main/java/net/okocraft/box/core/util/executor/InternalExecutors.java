@@ -13,14 +13,8 @@ public final class InternalExecutors {
 
     private static final String EXECUTOR_PREFIX = "box-";
     private static final Collection<ExecutorService> CREATED_EXECUTORS = new HashSet<>();
-    private static final ScheduledExecutorService SCHEDULER = newSingleThreadScheduler("Scheduler");
 
     private static boolean IS_SHUTDOWN = false;
-
-    public static @NotNull ScheduledExecutorService getScheduler() {
-        checkShutdown();
-        return SCHEDULER;
-    }
 
     public static void shutdownAll() throws InterruptedException {
         IS_SHUTDOWN = true;
