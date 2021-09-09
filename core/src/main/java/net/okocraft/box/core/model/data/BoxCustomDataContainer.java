@@ -3,7 +3,7 @@ package net.okocraft.box.core.model.data;
 import com.github.siroshun09.configapi.api.Configuration;
 import net.okocraft.box.api.model.data.CustomDataContainer;
 import net.okocraft.box.core.storage.model.data.CustomDataStorage;
-import net.okocraft.box.core.util.ExecutorProvider;
+import net.okocraft.box.core.util.InternalExecutors;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CompletableFuture;
@@ -16,7 +16,7 @@ public class BoxCustomDataContainer implements CustomDataContainer {
 
     public BoxCustomDataContainer(@NotNull CustomDataStorage customDataStorage) {
         this.customDataStorage = customDataStorage;
-        this.executor = ExecutorProvider.newSingleThreadExecutor("Custom-Data");
+        this.executor = InternalExecutors.newSingleThreadExecutor("Custom-Data");
     }
 
     @Override

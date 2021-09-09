@@ -7,7 +7,7 @@ import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.model.manager.ItemManager;
 import net.okocraft.box.core.model.item.BoxCustomItemImpl;
 import net.okocraft.box.core.storage.model.item.ItemStorage;
-import net.okocraft.box.core.util.ExecutorProvider;
+import net.okocraft.box.core.util.InternalExecutors;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
@@ -33,7 +33,7 @@ public class BoxItemManager implements ItemManager {
 
     public BoxItemManager(@NotNull ItemStorage itemStorage) {
         this.itemStorage = itemStorage;
-        this.executor = ExecutorProvider.newSingleThreadExecutor("Item-Manager");
+        this.executor = InternalExecutors.newSingleThreadExecutor("Item-Manager");
     }
 
     @Override

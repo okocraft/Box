@@ -9,7 +9,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public final class ExecutorProvider {
+public final class InternalExecutors {
 
     private static final String EXECUTOR_PREFIX = "box-";
     private static final Collection<ExecutorService> CREATED_EXECUTORS = new HashSet<>();
