@@ -45,24 +45,27 @@ public class DepositCommand extends AbstractCommand {
         var itemManager = BoxProvider.get().getItemManager();
 
         if (args.length == 2) {
-            if (args[1].equalsIgnoreCase("all")) {
+            var arg = args[1];
+
+            if (arg.equalsIgnoreCase("all")) {
                 depositAll(player);
                 return;
             }
 
             try {
-                depositItemInMainHand(player, Math.max(Integer.parseInt(args[1]), 1));
+                depositItemInMainHand(player, Math.max(Integer.parseInt(arg), 1));
                 return;
             } catch (NumberFormatException ignored) {
             }
 
-            itemManager.getBoxItem(args[1]).ifPresentOrElse(
+            itemManager.getBoxItem(arg).ifPresentOrElse(
                     boxItem -> depositItem(player, boxItem, Integer.MAX_VALUE),
                     () -> {
-                        if (isAll(args[1])) {
+                        if (!arg.isEmpty() && arg.length() < 4 &&
+                                (arg.charAt(0) == 'a' || arg.charAt(0) == 'A')) {
                             depositAll(player);
                         } else {
-                            player.sendMessage(GeneralMessage.ERROR_COMMAND_ITEM_NOT_FOUND.apply(args[1]));
+                            player.sendMessage(GeneralMessage.ERROR_COMMAND_ITEM_NOT_FOUND.apply(arg));
                         }
                     }
             );
@@ -173,10 +176,6 @@ public class DepositCommand extends AbstractCommand {
                 });
 
         return counter.get();
-    }
-
-    private boolean isAll(@NotNull String arg) {
-        return !arg.isEmpty() && arg.length() < 4 && (arg.charAt(0) == 'a' || arg.charAt(0) == 'A');
     }
 
     @Override
