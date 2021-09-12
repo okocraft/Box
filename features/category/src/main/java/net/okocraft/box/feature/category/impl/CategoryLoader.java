@@ -4,6 +4,7 @@ import com.github.siroshun09.configapi.yaml.YamlConfiguration;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.feature.category.model.Category;
+import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.function.Predicate;
 
 public class CategoryLoader {
@@ -21,11 +23,24 @@ public class CategoryLoader {
         var result = new LinkedHashMap<String, BoxCategory>();
 
         for (var key : yaml.getKeyList()) {
-            if (key.equals("others")) {
+            if (key.equals(DefaultCategory.UNCATEGORIZED.getName())) {
                 continue;
             }
 
-            var category = result.computeIfAbsent(key, BoxCategory::new);
+            Material temp;
+
+            var iconMaterialName = yaml.getString("icons." + key).toUpperCase(Locale.ROOT);
+
+            try {
+                temp = Material.valueOf(iconMaterialName);
+            } catch (IllegalArgumentException e) {
+                BoxProvider.get().getLogger().warning("Unknown icon: " + iconMaterialName + " (icons." + key + ")");
+                temp = Material.STONE;
+            }
+
+            var iconMaterial = temp;
+
+            var category = result.computeIfAbsent(key, k -> new BoxCategory(k, iconMaterial));
 
             for (var itemName : yaml.getStringList(key)) {
                 var optionalBoxItem = itemManager.getBoxItem(itemName);
@@ -42,21 +57,27 @@ public class CategoryLoader {
         items.stream()
                 .sorted(Comparator.comparing(BoxItem::getPlainName))
                 .filter(Predicate.not(
-                        item -> Categorizer.byTag(item, name -> result.computeIfAbsent(name, BoxCategory::new))
-                ))
+                        item -> Categorizer.byTag(item, CategoryLoader::createCategory))
+                )
                 .filter(Predicate.not(
-                        item -> Categorizer.byMaterial(item, name -> result.computeIfAbsent(name, BoxCategory::new))
+                        item -> Categorizer.byMaterial(item, CategoryLoader::createCategory)
                 ))
                 .forEach(item -> {
-                    var categoryName =
+                    var category =
                             itemManager.isCustomItem(item) ?
-                                    DefaultCategoryName.CUSTOM_ITEMS :
-                                    DefaultCategoryName.UNCATEGORIZED;
+                                    DefaultCategory.CUSTOM_ITEMS :
+                                    DefaultCategory.UNCATEGORIZED;
 
-                    result.computeIfAbsent(categoryName, BoxCategory::new).add(item);
+                    result.computeIfAbsent(
+                            category.getName(),
+                            name -> new BoxCategory(name, category.getIconMaterial())
+                    ).add(item);
                 });
 
-        result.computeIfAbsent(DefaultCategoryName.CUSTOM_ITEMS, BoxCategory::new);
+        result.computeIfAbsent(
+                DefaultCategory.CUSTOM_ITEMS.getName(),
+                name -> new BoxCategory(name, DefaultCategory.CUSTOM_ITEMS.getIconMaterial())
+        );
 
         return new CategoryLoadResult(List.copyOf(result.values()));
     }
@@ -72,6 +93,10 @@ public class CategoryLoader {
 
             return this;
         }
+    }
+
+    private static @NotNull BoxCategory createCategory(@NotNull DefaultCategory defaultCategory) {
+        return new BoxCategory(defaultCategory.getName(), defaultCategory.getIconMaterial());
     }
 
     private CategoryLoader() {
