@@ -4,6 +4,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TranslatableComponent;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.feature.category.model.Category;
+import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
@@ -15,11 +16,14 @@ class BoxCategory implements Category {
 
     private final String name;
     private final TranslatableComponent displayName;
+    private final Material iconMaterial;
+
     private final List<BoxItem> items = new ArrayList<>();
 
-    BoxCategory(@NotNull String name) {
+    BoxCategory(@NotNull String name, @NotNull Material iconMaterial) {
         this.name = name;
         this.displayName = Component.translatable("box.category.name." + name);
+        this.iconMaterial = iconMaterial;
     }
 
     @Override
@@ -30,6 +34,11 @@ class BoxCategory implements Category {
     @Override
     public @NotNull TranslatableComponent getDisplayName() {
         return displayName;
+    }
+
+    @Override
+    public @NotNull Material getIconMaterial() {
+        return iconMaterial;
     }
 
     @Override
