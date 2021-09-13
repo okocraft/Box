@@ -86,6 +86,7 @@ public class CategoryLoader {
 
         public @NotNull CategoryLoadResult export(@NotNull YamlConfiguration yaml) throws Exception {
             for (var category : categoryList) {
+                yaml.set("icons." + category.getName(), category.getIconMaterial().name());
                 yaml.set(category.getName(), category.getItems().stream().map(BoxItem::getPlainName).toList());
             }
 
