@@ -23,7 +23,9 @@ public class CategoryLoader {
         var result = new LinkedHashMap<String, BoxCategory>();
 
         for (var key : yaml.getKeyList()) {
-            if (key.equals("icons") || key.equals(DefaultCategory.UNCATEGORIZED.getName())) {
+            if (key.equals("icons") ||
+                    key.equals(DefaultCategory.UNCATEGORIZED.getName()) ||
+                    key.equals(DefaultCategory.CUSTOM_ITEMS.getName())) {
                 continue;
             }
 
@@ -76,14 +78,13 @@ public class CategoryLoader {
 
                     result.computeIfAbsent(
                             category.getName(),
-                            name -> new BoxCategory(name, category.getIconMaterial())
+                            name -> createCategory(category)
                     ).add(item);
                 });
 
         result.computeIfAbsent(
                 DefaultCategory.CUSTOM_ITEMS.getName(),
-                name -> new BoxCategory(name, DefaultCategory.CUSTOM_ITEMS.getIconMaterial())
-        );
+                name -> createCategory(DefaultCategory.CUSTOM_ITEMS));
 
         return new CategoryLoadResult(List.copyOf(result.values()));
     }
@@ -103,7 +104,6 @@ public class CategoryLoader {
     }
 
     private static @NotNull BoxCategory createCategory(@NotNull DefaultCategory defaultCategory) {
-        var category = new BoxCategory(defaultCategory.getName(), defaultCategory.getIconMaterial());
         return new BoxCategory(defaultCategory.getName(), defaultCategory.getIconMaterial());
     }
 
