@@ -62,6 +62,11 @@ public abstract class AbstractItemStorage implements ItemStorage {
             processDefaultItems(DefaultItemProvider.getDefaultEnchantedBooks(), itemList);
         }
 
+        if (BoxProvider.get().getConfiguration().get(Settings.ITEM_ENABLE_FIREWORK_ROCKETS)) {
+            Debugger.log(() -> "Importing default firework rockets...");
+            processDefaultItems(DefaultItemProvider.getDefaultFireworks(), itemList);
+        }
+
         Debugger.log(() -> "Importing custom items...");
         var customItems = loadCustomItems();
 

@@ -5,6 +5,7 @@ import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
+import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionType;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public final class DefaultItemProvider {
 
@@ -101,8 +103,27 @@ public final class DefaultItemProvider {
         }
     }
 
+    public static @NotNull List<DefaultItem> getDefaultFireworks() {
+        return Stream.of(1, 2, 3)
+                .map(DefaultItemProvider::createFirework)
+                .collect(Collectors.toList());
+    }
+
+    private static @NotNull DefaultItem createFirework(int power) {
+        var meta = Bukkit.getItemFactory().getItemMeta(Material.FIREWORK_ROCKET);
+
+        if (!(meta instanceof FireworkMeta fireworkMeta)) {
+            throw new IllegalStateException("Where has FireworkMeta gone!?");
+        }
+
+        fireworkMeta.setPower(power);
+
+        var firework = new ItemStack(Material.FIREWORK_ROCKET);
+        firework.setItemMeta(fireworkMeta);
+
+        return new DefaultItem(Material.FIREWORK_ROCKET + "_" + power, firework);
+    }
 
     public static record DefaultItem(@NotNull String plainName, @NotNull ItemStack itemStack) {
     }
-
 }

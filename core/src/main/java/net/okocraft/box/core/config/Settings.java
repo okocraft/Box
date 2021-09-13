@@ -18,6 +18,9 @@ public final class Settings {
     public static final ConfigValue<Boolean> ITEM_ENABLE_ENCHANTED_BOOKS =
             config -> config.getBoolean("item.enable-enchanted-books", false);
 
+    public static final ConfigValue<Boolean> ITEM_ENABLE_FIREWORK_ROCKETS =
+            config -> config.getBoolean("item.enable-firework-rockets", false);
+
     public static final ConfigValue<List<String>> DISABLED_WORLDS =
             config -> config.getStringList("disabled-worlds");
 
