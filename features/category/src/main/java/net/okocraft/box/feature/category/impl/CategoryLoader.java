@@ -57,11 +57,17 @@ public class CategoryLoader {
         items.stream()
                 .sorted(Comparator.comparing(BoxItem::getPlainName))
                 .filter(Predicate.not(
-                        item -> Categorizer.byTag(item, CategoryLoader::createCategory))
+                        item -> Categorizer.byTag(
+                                item,
+                                def -> result.computeIfAbsent(def.getName(), key -> createCategory(def))
+                        ))
                 )
                 .filter(Predicate.not(
-                        item -> Categorizer.byMaterial(item, CategoryLoader::createCategory)
-                ))
+                        item -> Categorizer.byMaterial(
+                                item,
+                                def -> result.computeIfAbsent(def.getName(), key -> createCategory(def))
+                        ))
+                )
                 .forEach(item -> {
                     var category =
                             itemManager.isCustomItem(item) ?
@@ -97,6 +103,7 @@ public class CategoryLoader {
     }
 
     private static @NotNull BoxCategory createCategory(@NotNull DefaultCategory defaultCategory) {
+        var category = new BoxCategory(defaultCategory.getName(), defaultCategory.getIconMaterial());
         return new BoxCategory(defaultCategory.getName(), defaultCategory.getIconMaterial());
     }
 
