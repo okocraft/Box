@@ -87,7 +87,7 @@ public abstract class BaseCommand implements Command, SubCommandHoldable, Comman
         return subCommandHolder;
     }
 
-    public void changeNoArgumentCommand(@NotNull Command command) {
+    public void changeNoArgumentCommand(@Nullable  Command command) {
         commandOfNoArgument = command;
     }
 
