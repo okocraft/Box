@@ -23,7 +23,7 @@ public class CategoryLoader {
         var result = new LinkedHashMap<String, BoxCategory>();
 
         for (var key : yaml.getKeyList()) {
-            if (key.equals(DefaultCategory.UNCATEGORIZED.getName())) {
+            if (key.equals("icons") || key.equals(DefaultCategory.UNCATEGORIZED.getName())) {
                 continue;
             }
 
