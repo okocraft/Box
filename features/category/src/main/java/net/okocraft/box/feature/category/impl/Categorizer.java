@@ -302,6 +302,7 @@ import static org.bukkit.Tag.WOODEN_BUTTONS;
 import static org.bukkit.Tag.WOODEN_PRESSURE_PLATES;
 import static org.bukkit.Tag.WOODEN_SLABS;
 import static org.bukkit.Tag.WOODEN_STAIRS;
+import static org.bukkit.Tag.WOODEN_TRAPDOORS;
 import static org.bukkit.Tag.WOOL;
 
 final class Categorizer {
@@ -375,7 +376,7 @@ final class Categorizer {
 
         if (isTagged(item, LOGS, LOGS_THAT_BURN, LEAVES, SAPLINGS, PLANKS, ITEMS_BOATS,
                 WOODEN_BUTTONS, WOODEN_PRESSURE_PLATES, WOODEN_SLABS, WOODEN_STAIRS, WOODEN_FENCES,
-                WOODEN_DOORS, WOODEN_GATES, SIGNS)) {
+                WOODEN_DOORS, WOODEN_GATES, WOODEN_TRAPDOORS, SIGNS)) {
             return DefaultCategory.WOODS;
         }
 
