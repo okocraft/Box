@@ -1,5 +1,6 @@
 package net.okocraft.box.feature.category;
 
+import com.github.siroshun09.configapi.api.util.ResourceUtils;
 import com.github.siroshun09.configapi.yaml.YamlConfiguration;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -25,12 +26,14 @@ public class CategoryFeature extends AbstractBoxFeature implements Reloadable {
     public void enable() {
         try (var yaml =
                      YamlConfiguration.create(BoxProvider.get().getPluginDirectory().resolve("categories.yml"))) {
+            ResourceUtils.copyFromJar(BoxProvider.get().getJar(), "categories.yml", yaml.getPath());
             yaml.load();
             CategoryHolder.addAll(CategoryLoader.load(yaml).export(yaml).categoryList());
-            customItemListener.register(getListenerKey());
         } catch (Exception e) {
             BoxProvider.get().getLogger().log(Level.SEVERE, "Could not load categories.yml", e);
         }
+
+        customItemListener.register(getListenerKey());
     }
 
     @Override
