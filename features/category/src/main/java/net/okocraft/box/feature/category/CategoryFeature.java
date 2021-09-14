@@ -26,7 +26,7 @@ public class CategoryFeature extends AbstractBoxFeature implements Reloadable {
     public void enable() {
         try (var yaml =
                      YamlConfiguration.create(BoxProvider.get().getPluginDirectory().resolve("categories.yml"))) {
-            ResourceUtils.copyFromJar(BoxProvider.get().getJar(), "categories.yml", yaml.getPath());
+            ResourceUtils.copyFromJarIfNotExists(BoxProvider.get().getJar(), "categories.yml", yaml.getPath());
             yaml.load();
             CategoryHolder.addAll(CategoryLoader.load(yaml).export(yaml).categoryList());
         } catch (Exception e) {
