@@ -36,7 +36,10 @@ public abstract class BaseCommand implements Command, SubCommandHoldable, Comman
 
         if (args.length == 0) {
             if (commandOfNoArgument != null && sender.hasPermission(commandOfNoArgument.getPermissionNode())) {
-                commandOfNoArgument.onCommand(sender, args);
+                CompletableFuture.runAsync(
+                        () -> commandOfNoArgument.onCommand(sender, args),
+                        BoxProvider.get().getExecutorProvider().getExecutor()
+                ).exceptionallyAsync(e -> reportError(sender, args, e));
             } else {
                 sender.sendMessage(ErrorMessages.ERROR_COMMAND_NO_ARGUMENT);
             }
