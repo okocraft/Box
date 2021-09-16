@@ -28,9 +28,9 @@ public final class TransactionAmountHolder {
         getOrCreate(player).set(1);
     }
 
-    public static void increase(@NotNull Player player) {
+    public static void increase(@NotNull Player player, @NotNull Unit unit) {
         var integer = getOrCreate(player);
-        var current = integer.addAndGet(getUnit(player).getAmount());
+        var current = integer.addAndGet(unit.getAmount());
 
         if (current < 1) {
             current = 1;
@@ -38,9 +38,9 @@ public final class TransactionAmountHolder {
         }
     }
 
-    public static void decrease(@NotNull Player player) {
+    public static void decrease(@NotNull Player player, @NotNull Unit unit) {
         var integer = getOrCreate(player);
-        var current = integer.addAndGet(-getUnit(player).getAmount());
+        var current = integer.addAndGet(-unit.getAmount());
 
         if (current < 1) {
             current = 1;
