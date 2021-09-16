@@ -63,4 +63,8 @@ public class AutoStoreFeature extends AbstractBoxFeature implements Reloadable {
 
         sender.sendMessage(AutoStoreMessage.RELOAD_SUCCESS);
     }
+
+    public @NotNull SettingManager getSettingManager() {
+        return settingManager;
+    }
 }
