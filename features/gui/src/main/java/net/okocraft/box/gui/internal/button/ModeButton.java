@@ -9,6 +9,7 @@ import net.okocraft.box.gui.api.util.TranslationUtil;
 import net.okocraft.box.gui.internal.lang.Displays;
 import net.okocraft.box.gui.internal.lang.Styles;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -65,6 +66,8 @@ public class ModeButton implements RefreshableButton {
 
         currentIndex = temp;
         currentMode = modes.get(currentIndex);
+
+        clicker.playSound(clicker.getLocation(), Sound.BLOCK_COMPARATOR_CLICK, 100f, 1.5f);
     }
 
     public @NotNull BoxItemClickMode getCurrentMode() {

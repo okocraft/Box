@@ -4,7 +4,9 @@ import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.transaction.InventoryTransaction;
+import net.okocraft.box.gui.api.menu.Menu;
 import net.okocraft.box.gui.api.mode.BoxItemClickMode;
+import net.okocraft.box.gui.api.mode.SettingMenuButton;
 import net.okocraft.box.gui.api.util.TransactionAmountHolder;
 import net.okocraft.box.gui.api.util.TranslationUtil;
 import net.okocraft.box.gui.internal.lang.Displays;
@@ -56,6 +58,16 @@ public class StorageMode implements BoxItemClickMode {
         result.addAll(TranslationUtil.render(createLore(item, viewer), viewer));
 
         target.lore(result);
+    }
+
+    @Override
+    public boolean hasSettingMenu() {
+        return false;
+    }
+
+    @Override
+    public @NotNull SettingMenuButton createSettingMenuButton(@NotNull Player viewer, @NotNull Menu currentMenu) {
+        throw new UnsupportedOperationException();
     }
 
     private @NotNull @Unmodifiable List<Component> createLore(@NotNull BoxItem item, @NotNull Player player) {

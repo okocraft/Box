@@ -104,7 +104,7 @@ public abstract class AbstractPaginatedMenu<T> extends AbstractMenu implements P
             newButtons.add(new PageSwitchButton(false));
         }
 
-        addAdditionalButtons(newButtons);
+        addAdditionalButtons(viewer, newButtons);
 
         buttonMap.clear();
 
@@ -119,7 +119,7 @@ public abstract class AbstractPaginatedMenu<T> extends AbstractMenu implements P
 
     protected abstract @NotNull Button createButton(@NotNull T instance, int slot);
 
-    protected abstract void addAdditionalButtons(@NotNull List<Button> buttons);
+    protected abstract void addAdditionalButtons(@NotNull Player viewer, @NotNull List<Button> buttons);
 
     private class PageSwitchButton implements Button {
 
