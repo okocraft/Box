@@ -1,5 +1,6 @@
 package net.okocraft.box.gui.internal.holder;
 
+import net.kyori.adventure.text.Component;
 import net.okocraft.box.gui.api.menu.Menu;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -11,14 +12,21 @@ import org.jetbrains.annotations.NotNull;
 
 public class BoxInventoryHolder implements InventoryHolder {
 
-    private final Inventory inventory;
     private final Menu menu;
+    private final int size;
     private final ItemStack[] icons;
 
+    private Component title;
+    private Inventory inventory;
+    private boolean inventoryChanged = false;
+
     public BoxInventoryHolder(@NotNull Menu menu) {
-        this.inventory = Bukkit.createInventory(this, menu.getRows() * 9, menu.getTitle());
         this.menu = menu;
-        this.icons = new ItemStack[inventory.getSize()];
+        this.size = menu.getRows() * 9;
+        this.icons = new ItemStack[size];
+
+        this.title = menu.getTitle();
+        this.inventory = Bukkit.createInventory(this, size, title);
     }
 
     @Override
@@ -36,6 +44,18 @@ public class BoxInventoryHolder implements InventoryHolder {
     }
 
     public boolean updateMenu(@NotNull Player viewer) {
+        if (!title.equals(menu.getTitle())) {
+            title = menu.getTitle();
+            inventory = Bukkit.createInventory(this, size, title);
+            inventoryChanged = true;
+
+            menu.updateMenu(viewer);
+            menu.applyIcons(icons);
+            applyContents();
+
+            return true;
+        }
+
         if (menu.shouldUpdate()) {
             menu.updateMenu(viewer);
         }
@@ -53,8 +73,13 @@ public class BoxInventoryHolder implements InventoryHolder {
     }
 
     public void updateInventory(@NotNull Player viewer) {
-        applyContents();
-        viewer.updateInventory();
+        if (inventoryChanged) {
+            viewer.openInventory(inventory);
+            inventoryChanged = false;
+        } else {
+            applyContents();
+            viewer.updateInventory();
+        }
     }
 
     public void onOpen(@NotNull Player viewer) {
