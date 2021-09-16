@@ -14,7 +14,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
+import java.util.ArrayList;
 
 @SuppressWarnings("ClassCanBeRecord")
 public class ChangeTransactionAmountButton implements RefreshableButton {
@@ -49,16 +49,26 @@ public class ChangeTransactionAmountButton implements RefreshableButton {
 
         target.displayName(TranslationUtil.render(displayName, viewer));
 
+        var lore = new ArrayList<Component>();
+
         var unit = TransactionAmountHolder.getUnit(viewer).getAmount();
         var currentAmount = TransactionAmountHolder.getAmount(viewer);
 
-        var lore = List.of(
-                (increaseButton ?
-                        Displays.CHANGE_TRANSACTION_AMOUNT_BUTTON_INCREASE_LORE :
-                        Displays.CHANGE_TRANSACTION_AMOUNT_BUTTON_DECREASE_LORE).apply(unit),
-                Component.empty(),
-                Displays.CHANGE_TRANSACTION_AMOUNT_BUTTON_CURRENT.apply(currentAmount)
-        );
+        lore.add(Component.empty());
+
+        if (increaseButton) {
+            if (unit != 1 && currentAmount == 1) {
+                lore.add(Displays.CHANGE_TRANSACTION_AMOUNT_BUTTON_SET_TO_UNIT.apply(unit));
+            } else {
+                lore.add(Displays.CHANGE_TRANSACTION_AMOUNT_BUTTON_INCREASE_LORE.apply(unit));
+            }
+        } else {
+            lore.add(Displays.CHANGE_TRANSACTION_AMOUNT_BUTTON_DECREASE_LORE.apply(unit));
+        }
+
+        lore.add(Component.empty());
+
+        lore.add(Displays.CHANGE_TRANSACTION_AMOUNT_BUTTON_CURRENT.apply(currentAmount));
 
         target.lore(TranslationUtil.render(lore, viewer));
 
