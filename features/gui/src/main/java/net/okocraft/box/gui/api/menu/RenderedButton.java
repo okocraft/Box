@@ -30,6 +30,10 @@ public class RenderedButton {
     }
 
     public void updateIcon(@NotNull Player viewer) {
+        if (icon.getType() != source.getIconMaterial()) {
+            icon.setType(source.getIconMaterial());
+        }
+
         icon.setAmount(source.getIconAmount());
 
         var meta = icon.getItemMeta();
