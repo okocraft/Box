@@ -9,6 +9,7 @@ import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.command.base.BoxAdminCommand;
 import net.okocraft.box.api.command.base.BoxCommand;
+import net.okocraft.box.api.event.feature.FeatureEvent;
 import net.okocraft.box.api.feature.BoxFeature;
 import net.okocraft.box.api.feature.Reloadable;
 import net.okocraft.box.api.model.data.CustomDataContainer;
@@ -246,6 +247,7 @@ public class BoxPlugin implements BoxAPI {
             if (feature instanceof Reloadable reloadable) {
                 try {
                     reloadable.reload(sender);
+                    eventBus.callEvent(new FeatureEvent(feature, FeatureEvent.Type.RELOAD));
                     Debugger.log(() -> feature.getName() + " reloaded");
                 } catch (Throwable e) {
                     sender.sendMessage(ErrorMessages.ERROR_RELOAD_FAILURE.apply(feature.getName(), e));
@@ -354,6 +356,9 @@ public class BoxPlugin implements BoxAPI {
         }
 
         features.add(boxFeature);
+
+        eventBus.callEvent(new FeatureEvent(boxFeature, FeatureEvent.Type.REGISTER));
+
         getLogger().info("Feature " + boxFeature.getName() + " has been enabled.");
     }
 
@@ -371,6 +376,8 @@ public class BoxPlugin implements BoxAPI {
                     throwable
             );
         }
+
+        eventBus.callEvent(new FeatureEvent(boxFeature, FeatureEvent.Type.UNREGISTER));
     }
 
     @Override
