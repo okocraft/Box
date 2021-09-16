@@ -50,4 +50,8 @@ public abstract class AbstractMenu implements Menu {
         updated = false;
         return current;
     }
+
+    protected void addButton(@NotNull RenderedButton renderedButton) {
+        buttonMap.put(renderedButton.getSlot(), renderedButton);
+    }
 }

@@ -11,6 +11,7 @@ import net.okocraft.box.gui.internal.button.ChangeTransactionAmountButton;
 import net.okocraft.box.gui.internal.button.ChangeUnitButton;
 import net.okocraft.box.gui.internal.button.ModeButton;
 import net.okocraft.box.gui.internal.lang.Displays;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -18,7 +19,7 @@ import java.util.List;
 public class CategoryMenu extends AbstractPaginatedMenu<BoxItem> {
 
     private final Category category;
-    private final ModeButton modeButton = new ModeButton(51);
+    private final ModeButton modeButton = new ModeButton(50);
     private final BackButton backButton = new BackButton(new CategorySelectorMenu(), getRows() * 9 - 5);
 
     private final ChangeTransactionAmountButton decreaseTransactionAmountButton =
@@ -50,12 +51,20 @@ public class CategoryMenu extends AbstractPaginatedMenu<BoxItem> {
     }
 
     @Override
-    protected void addAdditionalButtons(@NotNull List<Button> buttons) {
+    protected void addAdditionalButtons(@NotNull Player viewer, @NotNull List<Button> buttons) {
         buttons.add(modeButton);
         buttons.add(backButton);
 
         buttons.add(decreaseTransactionAmountButton);
         buttons.add(changeUnitButton);
         buttons.add(increaseTransactionAmountButton);
+
+        var mode = modeButton.getCurrentMode();
+
+        if (mode.hasSettingMenu()) {
+            var settingButton = mode.createSettingMenuButton(viewer, this);
+            settingButton.setSlot(52);
+            buttons.add(settingButton);
+        }
     }
 }

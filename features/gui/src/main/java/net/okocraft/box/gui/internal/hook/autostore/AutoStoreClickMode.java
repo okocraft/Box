@@ -1,15 +1,22 @@
 package net.okocraft.box.gui.internal.hook.autostore;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.okocraft.box.api.model.item.BoxItem;
+import net.okocraft.box.feature.autostore.model.AutoStoreSetting;
 import net.okocraft.box.feature.autostore.model.SettingManager;
+import net.okocraft.box.gui.api.menu.Menu;
 import net.okocraft.box.gui.api.mode.BoxItemClickMode;
+import net.okocraft.box.gui.api.mode.SettingMenuButton;
 import net.okocraft.box.gui.api.util.TranslationUtil;
 import net.okocraft.box.gui.internal.lang.Displays;
+import net.okocraft.box.gui.internal.lang.Styles;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 
@@ -67,5 +74,44 @@ public class AutoStoreClickMode implements BoxItemClickMode {
         result.add(Component.empty());
 
         target.lore(result);
+    }
+
+    @Override
+    public boolean hasSettingMenu() {
+        return true;
+    }
+
+    @Override
+    public @NotNull SettingMenuButton createSettingMenuButton(@NotNull Player viewer, @NotNull Menu currentMenu) {
+        return new AutoStoreSettingMenuButton(settingManager.get(viewer), currentMenu);
+    }
+
+    private static class AutoStoreSettingMenuButton extends SettingMenuButton {
+
+        protected AutoStoreSettingMenuButton(@NotNull AutoStoreSetting setting, @NotNull Menu backTo) {
+            super(() -> new AutoStoreSettingMenu(setting, backTo));
+        }
+
+        @Override
+        public @NotNull Material getIconMaterial() {
+            return Material.SUNFLOWER;
+        }
+
+        @Override
+        public int getIconAmount() {
+            return 1;
+        }
+
+        @Override
+        public @Nullable ItemMeta applyIconMeta(@NotNull Player viewer, @NotNull ItemMeta target) {
+            var displayName = TranslationUtil.render(
+                    Displays.AUTOSTORE_MODE_SETTING_MENU_TITLE.style(Styles.NO_STYLE).color(NamedTextColor.GOLD),
+                    viewer
+            );
+
+            target.displayName(displayName);
+
+            return target;
+        }
     }
 }

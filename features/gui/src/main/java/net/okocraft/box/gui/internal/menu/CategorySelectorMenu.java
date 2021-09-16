@@ -28,7 +28,7 @@ public class CategorySelectorMenu extends AbstractPaginatedMenu<Category> {
     }
 
     @Override
-    protected void addAdditionalButtons(@NotNull List<Button> buttons) {
+    protected void addAdditionalButtons(@NotNull Player viewer, @NotNull List<Button> buttons) {
         buttons.add(new CloseButton());
 
         Stream.of(45, 46, 47, 48, 50, 51, 52, 53)
