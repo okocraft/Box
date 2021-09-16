@@ -104,6 +104,15 @@ public final class Displays {
                             .color(GRAY)
                             .build();
 
+    public static final SingleArgument<Integer> CHANGE_TRANSACTION_AMOUNT_BUTTON_SET_TO_UNIT=
+            unit ->
+                    translatable()
+                            .key("box.gui.buttons.change-transaction-amount.set-to-unit")
+                            .args(text(unit, AQUA))
+                            .style(NO_STYLE)
+                            .color(GRAY)
+                            .build();
+
     public static final Component CATEGORY_SELECTOR_MENU =
             translatable()
                     .key("box.gui.menus.category-selector")
