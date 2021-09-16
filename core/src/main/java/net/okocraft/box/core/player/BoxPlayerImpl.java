@@ -10,15 +10,17 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
-@SuppressWarnings("ClassCanBeRecord")
 public class BoxPlayerImpl implements BoxPlayer {
 
     private final Player player;
     private final UserStockHolder userStockHolder;
 
+    private StockHolder currentHolder;
+
     public BoxPlayerImpl(@NotNull Player player, @NotNull UserStockHolder userStockHolder) {
         this.player = player;
         this.userStockHolder = userStockHolder;
+        this.currentHolder = userStockHolder;
     }
 
     @Override
@@ -33,12 +35,12 @@ public class BoxPlayerImpl implements BoxPlayer {
 
     @Override
     public @NotNull StockHolder getCurrentStockHolder() {
-        return userStockHolder;
+        return currentHolder;
     }
 
     @Override
     public void setCurrentStockHolder(@NotNull StockHolder stockHolder) {
-        Objects.requireNonNull(stockHolder);
+        currentHolder = Objects.requireNonNull(stockHolder);
     }
 
     @Override
