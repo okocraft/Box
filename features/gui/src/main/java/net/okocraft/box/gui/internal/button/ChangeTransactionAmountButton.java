@@ -73,15 +73,20 @@ public class ChangeTransactionAmountButton implements RefreshableButton {
     @Override
     public void onClick(@NotNull Player clicker, @NotNull ClickType clickType) {
         var unit = TransactionAmountHolder.getUnit(clicker);
+        var current = TransactionAmountHolder.getAmount(clicker);
 
         if (increaseButton) {
-            if (TransactionAmountHolder.getAmount(clicker) == 1 && unit.getAmount() != 1) {
+            if (current == 1 && unit.getAmount() != 1) {
                 TransactionAmountHolder.set(clicker, unit.getAmount());
             } else {
                 TransactionAmountHolder.increase(clicker, unit);
             }
         } else {
-            TransactionAmountHolder.decrease(clicker, unit);
+            if (1 < current) {
+                TransactionAmountHolder.decrease(clicker, unit);
+            } else {
+                return;
+            }
         }
 
         var sound = increaseButton ? Sound.BLOCK_WOODEN_BUTTON_CLICK_ON : Sound.BLOCK_WOODEN_BUTTON_CLICK_OFF;
