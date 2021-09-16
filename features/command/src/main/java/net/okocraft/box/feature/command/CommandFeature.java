@@ -6,6 +6,7 @@ import net.okocraft.box.api.feature.AbstractBoxFeature;
 import net.okocraft.box.feature.command.box.DepositCommand;
 import net.okocraft.box.feature.command.box.GiveCommand;
 import net.okocraft.box.feature.command.box.WithdrawCommand;
+import net.okocraft.box.feature.command.boxadmin.InfinityCommand;
 import net.okocraft.box.feature.command.boxadmin.RegisterCommand;
 import net.okocraft.box.feature.command.boxadmin.ReloadCommand;
 import net.okocraft.box.feature.command.boxadmin.RenameCommand;
@@ -20,7 +21,7 @@ public class CommandFeature extends AbstractBoxFeature {
             List.of(new DepositCommand(), new GiveCommand(), new WithdrawCommand());
 
     public final List<Command> boxAdminSubCommands =
-            List.of(new RegisterCommand(), new ReloadCommand(), new RenameCommand(),
+            List.of(new RegisterCommand(), new InfinityCommand(), new ReloadCommand(), new RenameCommand(),
                     StockModifyCommands.give(), StockModifyCommands.set(), StockModifyCommands.take(),
                     new VersionCommand());
 
