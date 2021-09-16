@@ -1,6 +1,5 @@
 package net.okocraft.box.gui.api.util;
 
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -49,8 +48,8 @@ public final class TransactionAmountHolder {
         return UNIT_MAP.getOrDefault(player.getUniqueId(), Unit.UNIT_1);
     }
 
-    public static Unit changeUnit(@NotNull Player player) {
-        return UNIT_MAP.put(player.getUniqueId(), getUnit(player).next());
+    public static void changeUnit(@NotNull Player player) {
+        UNIT_MAP.put(player.getUniqueId(), getUnit(player).next());
     }
 
     private static @NotNull AtomicInteger getOrCreate(@NotNull Player player) {
