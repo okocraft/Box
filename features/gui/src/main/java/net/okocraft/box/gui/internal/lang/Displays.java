@@ -12,6 +12,8 @@ import static net.kyori.adventure.text.format.NamedTextColor.AQUA;
 import static net.kyori.adventure.text.format.NamedTextColor.BLACK;
 import static net.kyori.adventure.text.format.NamedTextColor.GOLD;
 import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
+import static net.kyori.adventure.text.format.NamedTextColor.GREEN;
+import static net.kyori.adventure.text.format.NamedTextColor.RED;
 import static net.okocraft.box.gui.internal.lang.Styles.NO_STYLE;
 
 public final class Displays {
@@ -146,6 +148,24 @@ public final class Displays {
                     translatable()
                             .key("box.gui.modes.storage-mode.current-stock")
                             .args(text(stock, AQUA))
+                            .style(NO_STYLE)
+                            .color(GRAY)
+                            .build();
+
+    public static final Component AUTOSTORE_MODE_DISPLAY_NAME =
+            translatable("box.gui.modes.autostore-mode.display-name");
+
+    public static final Component AUTOSTORE_MODE_ENABLED =
+            translatable("box.gui.modes.autostore-mode.enabled").color(GREEN);
+
+    public static final Component AUTOSTORE_MODE_DISABLED =
+            translatable("box.gui.modes.autostore-mode.disabled").color(RED);
+
+    public static final SingleArgument<Boolean> AUTOSTORE_MODE_LORE =
+            enabled ->
+                    translatable()
+                            .key("box.gui.modes.autostore-mode.lore")
+                            .args((enabled ? AUTOSTORE_MODE_ENABLED : AUTOSTORE_MODE_DISABLED))
                             .style(NO_STYLE)
                             .color(GRAY)
                             .build();

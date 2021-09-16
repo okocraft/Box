@@ -5,6 +5,7 @@ import net.okocraft.box.api.feature.AbstractBoxFeature;
 import net.okocraft.box.gui.api.mode.ClickModeRegistry;
 import net.okocraft.box.gui.internal.command.MenuOpenCommand;
 import net.okocraft.box.gui.internal.holder.BoxInventoryHolder;
+import net.okocraft.box.gui.internal.hook.autostore.AutoStoreHook;
 import net.okocraft.box.gui.internal.listener.InventoryListener;
 import net.okocraft.box.gui.internal.mode.StorageMode;
 import org.bukkit.Bukkit;
@@ -28,6 +29,9 @@ public class GuiFeature extends AbstractBoxFeature {
 
         ClickModeRegistry.register(storageMode);
 
+        AutoStoreHook.enableIfRegistered();
+        AutoStoreHook.registerListener();
+
         boxCommand.changeNoArgumentCommand(command);
         boxCommand.getSubCommandHolder().register(command);
 
@@ -39,6 +43,9 @@ public class GuiFeature extends AbstractBoxFeature {
         var boxCommand = BoxProvider.get().getBoxCommand();
 
         ClickModeRegistry.unregister(storageMode);
+
+        AutoStoreHook.disable();
+        AutoStoreHook.unregisterListener();
 
         boxCommand.changeNoArgumentCommand(null);
         boxCommand.getSubCommandHolder().unregister(command);
