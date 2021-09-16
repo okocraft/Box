@@ -13,6 +13,7 @@ import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.Component.translatable;
 import static net.kyori.adventure.text.format.NamedTextColor.AQUA;
 import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
+import static net.kyori.adventure.text.format.NamedTextColor.GREEN;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
 import static net.kyori.adventure.text.format.NamedTextColor.WHITE;
 
@@ -167,6 +168,20 @@ public final class BoxAdminMessage {
                             .args(text(throwable.getMessage(), WHITE))
                             .color(RED)
                             .build();
+
+    public static final Component INFINITY_MODE_ENABLE = translatable("box.command.boxadmin.infinity.enabled");
+
+    public static final Component INFINITY_MODE_DISABLED = translatable("box.command.boxadmin.infinity.disabled");
+
+    public static final SingleArgument<Boolean> INFINITY_MODE_TOGGLE =
+            enabled ->
+                    translatable()
+                            .key("box.command.boxadmin.infinity.toggle")
+                            .args(enabled ? INFINITY_MODE_ENABLE.color(GREEN) : INFINITY_MODE_DISABLED.color(RED))
+                            .color(GRAY)
+                            .build();
+
+    public static final Component INFINITY_MODE_TIP = translatable("box.command.boxadmin.infinity.tip", GRAY);
 
     private BoxAdminMessage() {
         throw new UnsupportedOperationException();
