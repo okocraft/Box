@@ -20,6 +20,10 @@ public final class TransactionAmountHolder {
                 .orElse(1);
     }
 
+    public static void set(@NotNull Player player, int amount) {
+        getOrCreate(player).set(amount);
+    }
+
     public static void reset(@NotNull Player player) {
         getOrCreate(player).set(1);
     }
