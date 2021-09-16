@@ -42,6 +42,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Unmodifiable;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -331,6 +332,11 @@ public class BoxPlugin implements BoxAPI {
     @Override
     public @NotNull BoxAdminCommand getBoxAdminCommand() {
         return boxAdminCommand;
+    }
+
+    @Override
+    public @NotNull @Unmodifiable List<BoxFeature> getFeatures() {
+        return List.copyOf(features);
     }
 
     @Override
