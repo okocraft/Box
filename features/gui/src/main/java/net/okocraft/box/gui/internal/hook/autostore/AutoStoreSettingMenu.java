@@ -19,10 +19,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 public class AutoStoreSettingMenu extends AbstractMenu {
 
@@ -31,8 +29,6 @@ public class AutoStoreSettingMenu extends AbstractMenu {
     private final AutoStoreModeButton modeButton;
     private final BulkEditingButton bulkEditingButton;
     private final BackButton backButton;
-
-    private int loreIndex = -1;
 
     private boolean modeChanged = false;
 
@@ -89,25 +85,10 @@ public class AutoStoreSettingMenu extends AbstractMenu {
         public @Nullable ItemMeta applyIconMeta(@NotNull Player viewer, @NotNull ItemMeta target) {
             target.displayName(TranslationUtil.render(Displays.AUTOSTORE_MODE_SETTING_MENU_CHANGE_MODE, viewer));
 
-            var result = new ArrayList<Component>();
-
-            Optional.ofNullable(target.lore()).ifPresent(result::addAll);
-
             var lore = isAllMode() ? Displays.AUTOSTORE_MODE_SETTING_MENU_CHANGE_TO_PER_ITEM : Displays.AUTOSTORE_MODE_SETTING_MENU_CHANGE_TO_ALL;
             lore = TranslationUtil.render(lore, viewer);
 
-            if (loreIndex == -1 || result.size() <= loreIndex) {
-                result.add(Component.empty());
-
-                loreIndex = result.size();
-                result.add(lore);
-
-                result.add(Component.empty());
-            } else {
-                result.set(loreIndex, lore);
-            }
-
-            target.lore(result);
+            target.lore(List.of(Component.empty(), lore, Component.empty()));
 
             return target;
         }
