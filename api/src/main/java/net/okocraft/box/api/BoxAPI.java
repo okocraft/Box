@@ -16,8 +16,10 @@ import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Unmodifiable;
 
 import java.nio.file.Path;
+import java.util.List;
 import java.util.logging.Logger;
 
 /**
@@ -124,6 +126,13 @@ public interface BoxAPI {
      * @return the {@link BoxAdminCommand}
      */
     @NotNull BoxAdminCommand getBoxAdminCommand();
+
+    /**
+     * Gets registered {@link BoxFeature}s.
+     *
+     * @return registered {@link BoxFeature}
+     */
+    @NotNull @Unmodifiable List<BoxFeature> getFeatures();
 
     /**
      * Registers the {@link BoxFeature}.
