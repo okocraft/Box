@@ -209,4 +209,13 @@ public final class Displays {
                     .style(NO_STYLE)
                     .color(GRAY)
                     .build();
+
+    public static final SingleArgument<Boolean> AUTOSTORE_MODE_SETTING_MENU_BULK_EDITING_RECENT =
+            enabled ->
+                    translatable()
+                            .key("box.gui.modes.autostore-mode.setting-menu.bulk-editing.recent")
+                            .args(enabled ? AUTOSTORE_MODE_ENABLED : AUTOSTORE_MODE_DISABLED)
+                            .style(NO_STYLE)
+                            .color(GRAY)
+                            .build();
 }
