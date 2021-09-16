@@ -5,7 +5,7 @@ import net.okocraft.box.feature.autostore.AutoStoreFeature;
 import net.okocraft.box.feature.category.CategoryFeature;
 import net.okocraft.box.feature.command.CommandFeature;
 import net.okocraft.box.feature.stick.StickFeature;
-import net.okocraft.box.gui.GuiFeature;
+import net.okocraft.box.feature.gui.GuiFeature;
 
 import java.util.List;
 
