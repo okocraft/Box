@@ -3,7 +3,6 @@ package net.okocraft.box.gui.internal.hook.autostore;
 import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.feature.autostore.model.AutoStoreSetting;
-import net.okocraft.box.gui.api.button.Button;
 import net.okocraft.box.gui.api.button.RefreshableButton;
 import net.okocraft.box.gui.api.menu.AbstractMenu;
 import net.okocraft.box.gui.api.menu.Menu;
@@ -19,6 +18,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -111,7 +111,9 @@ public class AutoStoreSettingMenu extends AbstractMenu {
         }
     }
 
-    private class BulkEditingButton implements Button {
+    private class BulkEditingButton implements RefreshableButton {
+
+        private Boolean recent = null;
 
         private BulkEditingButton() {
         }
@@ -130,12 +132,17 @@ public class AutoStoreSettingMenu extends AbstractMenu {
         public @Nullable ItemMeta applyIconMeta(@NotNull Player viewer, @NotNull ItemMeta target) {
             target.displayName(TranslationUtil.render(Displays.AUTOSTORE_MODE_SETTING_MENU_BULK_EDITING_TITLE, viewer));
 
-            var lore = List.of(
-                    Component.empty(),
-                    Displays.AUTOSTORE_MODE_SETTING_MENU_BULK_EDITING_LEFT_CLICK,
-                    Displays.AUTOSTORE_MODE_SETTING_MENU_BULK_EDITING_RIGHT_CLICK,
-                    Component.empty()
-            );
+            var lore = new ArrayList<Component>();
+
+            lore.add(Component.empty());
+            lore.add(Displays.AUTOSTORE_MODE_SETTING_MENU_BULK_EDITING_LEFT_CLICK);
+            lore.add(Displays.AUTOSTORE_MODE_SETTING_MENU_BULK_EDITING_RIGHT_CLICK);
+            lore.add(Component.empty());
+
+            if (recent != null) {
+                lore.add(Displays.AUTOSTORE_MODE_SETTING_MENU_BULK_EDITING_RECENT.apply(recent));
+                lore.add(Component.empty());
+            }
 
             target.lore(TranslationUtil.render(lore, viewer));
 
@@ -155,11 +162,13 @@ public class AutoStoreSettingMenu extends AbstractMenu {
             if (clickType.isLeftClick()) {
                 perItemSetting.setEnabledItems(BoxProvider.get().getItemManager().getBoxItemSet());
                 sound = Sound.BLOCK_WOODEN_DOOR_OPEN;
+                recent = true;
             }
 
             if (clickType.isRightClick()) {
                 perItemSetting.setEnabledItems(Collections.emptyList());
                 sound = Sound.BLOCK_WOODEN_DOOR_CLOSE;
+                recent = false;
             }
 
             if (setting.getCurrentMode() != perItemSetting) {
