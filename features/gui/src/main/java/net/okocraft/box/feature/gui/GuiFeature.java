@@ -75,7 +75,7 @@ public class GuiFeature extends AbstractBoxFeature implements Reloadable {
         enable();
 
         try {
-            sender.sendMessage(Component.translatable("box.gui.command.reloaded", NamedTextColor.GRAY));
+            sender.sendMessage(Component.translatable("box.gui.reloaded", NamedTextColor.GRAY));
         } catch (Exception ignored) {
             // I don't know why it loops infinitely and throws an exception when the message send to the console.
             // It's probably a bug of Paper or Adventure.

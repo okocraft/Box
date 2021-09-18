@@ -19,7 +19,7 @@ public final class AutoStoreMessage {
             translatable("box.autostore.error.failed-to-load-settings", RED);
 
     public static final Component RELOAD_SUCCESS =
-            translatable("box.autostore.reload-success", GRAY);
+            translatable("box.autostore.reloaded", GRAY);
 
 
     public static final SingleArgument<AutoStoreMode> AUTO_STORE_MODE_NAME =

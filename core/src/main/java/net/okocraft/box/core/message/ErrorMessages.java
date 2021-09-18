@@ -19,7 +19,7 @@ public final class ErrorMessages {
     public static final DoubleArgument<String, Throwable> ERROR_RELOAD_FAILURE =
             (name, throwable) ->
                     Component.translatable()
-                            .key("box.error.reload.failure")
+                            .key("box.error.failed-to-reload-feature")
                             .args(
                                     Component.text(name, NamedTextColor.AQUA),
                                     Component.text(throwable.getMessage(), NamedTextColor.WHITE)
