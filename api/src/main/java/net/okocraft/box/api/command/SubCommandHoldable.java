@@ -84,19 +84,5 @@ public interface SubCommandHoldable {
 
             return Optional.empty();
         }
-
-        /**
-         * Searches for commands that start with a name as an argument, and returns them.
-         *
-         * @param str the string to search
-         * @return the search result
-         */
-        public @NotNull List<Command> matches(@NotNull String str) {
-            var lower = str.toLowerCase(Locale.ROOT);
-
-            return subCommands.stream()
-                    .filter(cmd -> cmd.getName().startsWith(lower))
-                    .toList();
-        }
     }
 }
