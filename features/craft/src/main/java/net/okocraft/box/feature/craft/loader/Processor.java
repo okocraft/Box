@@ -6,6 +6,8 @@ import net.okocraft.box.api.model.manager.ItemManager;
 import net.okocraft.box.feature.craft.model.BoxItemRecipe;
 import net.okocraft.box.feature.craft.model.IngredientHolder;
 import net.okocraft.box.feature.craft.model.RecipeHolder;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.ShapedRecipe;
@@ -16,13 +18,24 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 final class Processor {
+
+    private static final Set<ItemStack> DISABLED_ITEM = Set.of(new ItemStack(Material.FIREWORK_ROCKET));
 
     private final ItemManager itemManager = BoxProvider.get().getItemManager();
     private final Map<BoxItem, RecipeHolder> recipeMap = new HashMap<>();
 
     void processRecipe(@NotNull Recipe recipe) {
+        var item = recipe.getResult().clone();
+
+        item.setAmount(1);
+
+        if (DISABLED_ITEM.contains(item)) {
+            return;
+        }
+
         var result = itemManager.getBoxItem(recipe.getResult());
 
         if (result.isEmpty()) {
