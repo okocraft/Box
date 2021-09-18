@@ -145,6 +145,33 @@ public final class BoxMessage {
                     .append(text(" - ", DARK_GRAY))
                     .append(translatable("box.command.box.withdraw.help.description", GRAY));
 
+    public static final Component ITEM_INFO_IS_AIR =
+            translatable("box.command.box.iteminfo.is-air", RED);
+
+    public static final Component ITEM_INFO_NOT_REGISTERED =
+            translatable("box.command.box.iteminfo.item-not-registered", RED);
+
+    public static final SingleArgument<BoxItem> ITEM_INFO_NAME =
+            item ->
+                    translatable()
+                            .key("box.command.box.iteminfo.name")
+                            .args(text(item.getPlainName()).color(AQUA).hoverEvent(item.getOriginal()))
+                            .color(GRAY)
+                            .build();
+
+    public static final SingleArgument<Integer> ITEM_INFO_STOCK =
+            stock ->
+                    translatable()
+                            .key("box.command.box.iteminfo.stock")
+                            .args(text(stock, AQUA))
+                            .color(GRAY)
+                            .build();
+
+    public static final Component ITEM_INFO_HELP =
+            translatable("box.command.box.iteminfo.help.command-line", AQUA)
+                    .append(text(" - ", DARK_GRAY))
+                    .append(translatable("box.command.box.iteminfo.help.description", GRAY));
+
     private BoxMessage() {
         throw new UnsupportedOperationException();
     }
