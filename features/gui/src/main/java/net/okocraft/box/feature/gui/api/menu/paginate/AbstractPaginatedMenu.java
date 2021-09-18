@@ -90,7 +90,7 @@ public abstract class AbstractPaginatedMenu<T> extends AbstractMenu implements P
         int start = (currentPage - 1) * iconsPerPage;
         int end = start + iconsPerPage;
 
-        var newButtons = new ArrayList<Button>();
+        var newButtons = new ArrayList<Button>(getRows() * 9);
 
         for (int i = start, limit = list.size(), slot = 0; i < limit && i < end; i++, slot++) {
             newButtons.add(createButton(list.get(i), slot));

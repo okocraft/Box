@@ -31,7 +31,7 @@ public final class DefaultItemProvider {
     }
 
     public static @NotNull List<DefaultItem> getDefaultPotions() {
-        var result = new ArrayList<DefaultItem>();
+        var result = new ArrayList<DefaultItem>(175); // current: 168 potions
 
         var potions =
                 List.of(Material.POTION, Material.SPLASH_POTION, Material.LINGERING_POTION, Material.TIPPED_ARROW);
@@ -84,7 +84,7 @@ public final class DefaultItemProvider {
 
     public static @NotNull List<DefaultItem> getDefaultEnchantedBooks() {
         if (Bukkit.getItemFactory().getItemMeta(Material.ENCHANTED_BOOK) instanceof EnchantmentStorageMeta meta) {
-            var result = new ArrayList<DefaultItem>();
+            var result = new ArrayList<DefaultItem>(40); // current: 37 enchanted books
 
             for (var enchant : Enchantment.values()) {
                 var cloned = meta.clone();

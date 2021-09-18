@@ -138,9 +138,10 @@ class YamlItemStorage extends AbstractItemStorage {
 
     @Override
     protected @NotNull List<BoxCustomItem> loadCustomItems() {
-        var result = new ArrayList<BoxCustomItem>();
+        var keys = customItemData.getKeyList();
+        var result = new ArrayList<BoxCustomItem>(keys.size());
 
-        for (var key : customItemData.getKeyList()) {
+        for (var key : keys) {
             int id;
 
             try {

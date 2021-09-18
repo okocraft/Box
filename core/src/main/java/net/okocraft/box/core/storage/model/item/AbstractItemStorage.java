@@ -43,7 +43,7 @@ public abstract class AbstractItemStorage implements ItemStorage {
 
     @Override
     public @NotNull @Unmodifiable Collection<BoxItem> loadAllItems() throws Exception {
-        var itemList = new ArrayList<BoxItem>();
+        var itemList = new ArrayList<BoxItem>(500); // current: 1308 items
 
         onLoadingAllItemsStarted();
 

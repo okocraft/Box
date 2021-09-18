@@ -15,7 +15,7 @@ public abstract class AbstractMenu implements Menu {
 
     private static final ItemStack AIR = new ItemStack(Material.AIR);
 
-    protected final Map<Integer, RenderedButton> buttonMap = new HashMap<>();
+    protected final Map<Integer, RenderedButton> buttonMap = new HashMap<>(getRows() * 9, 1.0f);
     protected boolean updated = false;
 
     @Override

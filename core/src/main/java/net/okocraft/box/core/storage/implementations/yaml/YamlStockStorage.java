@@ -42,9 +42,10 @@ class YamlStockStorage implements StockStorage {
 
         file.load();
 
-        var loadedData = new ArrayList<StockData>();
+        var keys = file.getKeyList();
+        var loadedData = new ArrayList<StockData>(keys.size());
 
-        for (var key : file.getKeyList()) {
+        for (var key : keys) {
             int id;
 
             try {

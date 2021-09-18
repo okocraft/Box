@@ -25,7 +25,7 @@ final class Processor {
     private static final Set<ItemStack> DISABLED_ITEM = Set.of(new ItemStack(Material.FIREWORK_ROCKET));
 
     private final ItemManager itemManager = BoxProvider.get().getItemManager();
-    private final Map<BoxItem, RecipeHolder> recipeMap = new HashMap<>();
+    private final Map<BoxItem, RecipeHolder> recipeMap = new HashMap<>(100, 0.8f);
 
     void processRecipe(@NotNull Recipe recipe) {
         var item = recipe.getResult().clone();

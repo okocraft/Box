@@ -64,7 +64,7 @@ public class CraftMenu extends AbstractMenu {
 
     @Override
     public void updateMenu(@NotNull Player viewer) {
-        var buttons = new ArrayList<Button>();
+        var buttons = new ArrayList<Button>(55);
 
         for (int slot = 0, limit = getRows() * 9; slot < limit; slot++) {
             if (!RECIPE_SLOTS.contains(slot) && slot != 24) {
