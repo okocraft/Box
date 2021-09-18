@@ -13,7 +13,7 @@ import java.util.logging.Level;
 public class BoxExecutorProvider implements ExecutorProvider {
 
     private final ForkJoinPool worker = new ForkJoinPool(
-            Runtime.getRuntime().availableProcessors(),
+            Math.min(Runtime.getRuntime().availableProcessors(), 4),
             ForkJoinPool.defaultForkJoinWorkerThreadFactory,
             this::reportUncaughtException,
             false
