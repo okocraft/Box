@@ -1,7 +1,9 @@
 package net.okocraft.box.feature.stick.listener;
 
+import com.github.siroshun09.configapi.api.value.ConfigValue;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.feature.stick.item.BoxStickItem;
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -11,10 +13,13 @@ import org.bukkit.entity.ThrownPotion;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemBreakEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.jetbrains.annotations.NotNull;
@@ -22,10 +27,35 @@ import org.jetbrains.annotations.NotNull;
 @SuppressWarnings("ClassCanBeRecord")
 public class StickListener implements Listener {
 
+    private static final ConfigValue<String> MENU_COMMAND_SETTING =
+            config -> config.getString("stick.menu-command", "box gui");
+
     private final BoxStickItem boxStickItem;
 
     public StickListener(@NotNull BoxStickItem boxStickItem) {
         this.boxStickItem = boxStickItem;
+    }
+
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onInteract(@NotNull PlayerInteractEvent event) {
+        var player = event.getPlayer();
+
+        if (event.getHand() == EquipmentSlot.OFF_HAND ||
+                event.getAction() == Action.PHYSICAL ||
+                !player.hasPermission("box.stick.menu")) {
+            return;
+        }
+
+        if (BoxProvider.get().isDisabledWorld(player.getWorld()) ||
+                !boxStickItem.check(player.getInventory().getItemInMainHand())) {
+            return;
+        }
+
+        var command = BoxProvider.get().getConfiguration().get(MENU_COMMAND_SETTING);
+
+        if (!command.isEmpty()) {
+            Bukkit.dispatchCommand(player, command);
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
