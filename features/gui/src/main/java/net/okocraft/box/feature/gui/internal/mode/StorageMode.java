@@ -5,15 +5,18 @@ import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.transaction.InventoryTransaction;
 import net.okocraft.box.feature.gui.api.menu.Menu;
-import net.okocraft.box.feature.gui.api.mode.BoxItemClickMode;
 import net.okocraft.box.feature.gui.api.mode.AdditionalButton;
+import net.okocraft.box.feature.gui.api.mode.BoxItemClickMode;
 import net.okocraft.box.feature.gui.api.util.TransactionAmountHolder;
 import net.okocraft.box.feature.gui.api.util.TranslationUtil;
 import net.okocraft.box.feature.gui.internal.lang.Displays;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.ArrayList;
@@ -57,12 +60,12 @@ public class StorageMode implements BoxItemClickMode {
 
     @Override
     public boolean hasAdditionalButton() {
-        return false;
+        return true;
     }
 
     @Override
     public @NotNull AdditionalButton createAdditionalButton(@NotNull Player viewer, @NotNull Menu currentMenu) {
-        throw new UnsupportedOperationException();
+        return new DepositAllButton();
     }
 
     private @NotNull @Unmodifiable List<Component> createLore(@NotNull BoxItem item, @NotNull Player player) {
@@ -77,6 +80,7 @@ public class StorageMode implements BoxItemClickMode {
         );
     }
 
+    @SuppressWarnings("DuplicatedCode")
     private void processDeposit(@NotNull Context context) {
         var player = context.clicker();
 
@@ -127,6 +131,55 @@ public class StorageMode implements BoxItemClickMode {
             player.playSound(player.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 100f, 1.0f);
         } else {
             player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 100f, 1.5f);
+        }
+    }
+
+    private static class DepositAllButton extends AdditionalButton {
+
+        @Override
+        public @NotNull Material getIconMaterial() {
+            return Material.CHEST;
+        }
+
+        @Override
+        public int getIconAmount() {
+            return 1;
+        }
+
+        @Override
+        public @Nullable ItemMeta applyIconMeta(@NotNull Player viewer, @NotNull ItemMeta target) {
+            target.displayName(TranslationUtil.render(Displays.STORAGE_MODE_DEPOSIT_ALL_BUTTON_DISPLAY_NAME, viewer));
+
+            target.lore(List.of(
+                    Component.empty(),
+                    TranslationUtil.render(Displays.STORAGE_MODE_DEPOSIT_ALL_BUTTON_LORE, viewer),
+                    Component.empty()
+            ));
+
+            return target;
+        }
+
+        @SuppressWarnings("DuplicatedCode")
+        @Override
+        public void onClick(@NotNull Player clicker, @NotNull ClickType clickType) {
+            var resultList = CompletableFuture.supplyAsync(
+                    () -> InventoryTransaction.depositItemsInInventory(clicker.getInventory()),
+                    BoxProvider.get().getExecutorProvider().getMainThread()
+            ).join();
+
+            if (!resultList.getType().isModified()) {
+                clicker.playSound(clicker.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 100f, 1.5f);
+                return;
+            }
+
+            var stockHolder = BoxProvider.get().getBoxPlayerMap().get(clicker).getCurrentStockHolder();
+
+            resultList.getResultList()
+                    .stream()
+                    .filter(result -> result.getType().isModified())
+                    .forEach(result -> stockHolder.increase(result.getItem(), result.getAmount()));
+
+            clicker.playSound(clicker.getLocation(), Sound.BLOCK_NOTE_BLOCK_HARP, 100f, 2.0f);
         }
     }
 }

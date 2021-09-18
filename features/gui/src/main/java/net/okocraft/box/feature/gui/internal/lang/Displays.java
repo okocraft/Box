@@ -138,4 +138,11 @@ public final class Displays {
                             .args(text(stock, AQUA))
                             .style(NO_DECORATION_GRAY)
                             .build();
+
+    public static final Component STORAGE_MODE_DEPOSIT_ALL_BUTTON_DISPLAY_NAME =
+            translatable("box.gui.modes.storage-mode.deposit-all.display-name", NO_DECORATION_GOLD);
+
+    public static final Component STORAGE_MODE_DEPOSIT_ALL_BUTTON_LORE =
+            translatable("box.gui.modes.storage-mode.deposit-all.lore", NO_DECORATION_GRAY);
+
 }
