@@ -42,6 +42,14 @@ public class CraftFeature extends AbstractBoxFeature implements Reloadable {
     public void reload(@NotNull CommandSender sender) {
         disable();
         enable();
-        sender.sendMessage(Component.translatable("box.craft.command.recipe-reloaded", NamedTextColor.GRAY));
+
+        try {
+            sender.sendMessage(Component.translatable("box.craft.command.recipe-reloaded", NamedTextColor.GRAY));
+        } catch (Exception ignored) {
+            // I don't know why it loops infinitely and throws an exception when the message send to the console.
+            // It's probably a bug of Paper or Adventure.
+            //
+            // IllegalStateException: Exceeded maximum depth of 512 while attempting to flatten components!
+        }
     }
 }
