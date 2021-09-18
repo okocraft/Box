@@ -13,7 +13,7 @@ import java.util.List;
 final class Bundled {
 
     static final List<BoxFeature> FEATURES =
-            List.of(new CategoryFeature(), new GuiFeature(), new CommandFeature(),
+            List.of(new CategoryFeature(), new CommandFeature(), new GuiFeature(),
                     new AutoStoreFeature(), new CraftFeature(), new StickFeature());
 
 }
