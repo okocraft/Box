@@ -61,7 +61,7 @@ public class AutoStoreSettingMenu extends AbstractMenu {
         var buttons = List.of(modeButton, bulkEditingButton, backButton);
 
         buttons.stream()
-                .map(RenderedButton::new)
+                .map(RenderedButton::create)
                 .peek(button -> button.updateIcon(viewer))
                 .forEach(this::addButton);
     }

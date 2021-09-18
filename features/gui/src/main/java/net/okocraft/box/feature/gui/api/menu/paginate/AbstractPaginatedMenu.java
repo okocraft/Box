@@ -109,7 +109,7 @@ public abstract class AbstractPaginatedMenu<T> extends AbstractMenu implements P
         buttonMap.clear();
 
         for (var button : newButtons) {
-            buttonMap.put(button.getSlot(), new RenderedButton(button));
+            buttonMap.put(button.getSlot(), RenderedButton.create(button));
         }
 
         buttonMap.values().forEach(button -> button.updateIcon(viewer));
