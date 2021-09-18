@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public interface BoxItemClickMode {
 
@@ -22,6 +23,7 @@ public interface BoxItemClickMode {
 
     @NotNull SettingMenuButton createSettingMenuButton(@NotNull Player viewer, @NotNull Menu currentMenu);
 
-    record Context(@NotNull Player clicker, @NotNull BoxItem item, @NotNull ClickType clickType) {
+    record Context(@NotNull Player clicker, @NotNull BoxItem item,
+                   @NotNull ClickType clickType, @Nullable Menu currentMenu) {
     }
 }

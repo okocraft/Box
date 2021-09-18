@@ -47,7 +47,7 @@ public class CategoryMenu extends AbstractPaginatedMenu<BoxItem> {
 
     @Override
     protected @NotNull Button createButton(@NotNull BoxItem instance, int slot) {
-        return new BoxItemButton(instance, slot, modeButton::getCurrentMode);
+        return new BoxItemButton(instance, slot, modeButton::getCurrentMode, this);
     }
 
     @Override
