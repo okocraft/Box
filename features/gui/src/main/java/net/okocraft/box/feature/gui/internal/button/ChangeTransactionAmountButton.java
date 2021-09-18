@@ -32,7 +32,7 @@ public class ChangeTransactionAmountButton implements RefreshableButton {
 
     @Override
     public @NotNull Material getIconMaterial() {
-        return increaseButton ? Material.LIGHT_BLUE_STAINED_GLASS_PANE : Material.RED_STAINED_GLASS_PANE;
+        return increaseButton ? Material.BLUE_STAINED_GLASS_PANE : Material.RED_STAINED_GLASS_PANE;
     }
 
     @Override
