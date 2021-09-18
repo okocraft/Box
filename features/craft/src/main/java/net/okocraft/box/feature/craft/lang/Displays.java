@@ -11,7 +11,7 @@ import static net.kyori.adventure.text.format.NamedTextColor.BLACK;
 import static net.kyori.adventure.text.format.NamedTextColor.GOLD;
 import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
-import static net.okocraft.box.feature.gui.internal.lang.Styles.NO_STYLE;
+import static net.okocraft.box.feature.gui.api.lang.Styles.NO_STYLE;
 
 public final class Displays {
 

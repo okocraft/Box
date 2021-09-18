@@ -1,7 +1,6 @@
 package net.okocraft.box.feature.autostore.gui;
 
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.feature.autostore.model.AutoStoreSetting;
 import net.okocraft.box.feature.autostore.model.SettingManager;
@@ -9,8 +8,6 @@ import net.okocraft.box.feature.gui.api.menu.Menu;
 import net.okocraft.box.feature.gui.api.mode.BoxItemClickMode;
 import net.okocraft.box.feature.gui.api.mode.SettingMenuButton;
 import net.okocraft.box.feature.gui.api.util.TranslationUtil;
-import net.okocraft.box.feature.gui.internal.lang.Displays;
-import net.okocraft.box.feature.gui.internal.lang.Styles;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -19,6 +16,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Optional;
+
+import static net.kyori.adventure.text.format.NamedTextColor.GOLD;
+import static net.okocraft.box.feature.gui.api.lang.Styles.NO_STYLE;
 
 @SuppressWarnings("ClassCanBeRecord")
 public class AutoStoreClickMode implements BoxItemClickMode {
@@ -36,7 +37,7 @@ public class AutoStoreClickMode implements BoxItemClickMode {
 
     @Override
     public @NotNull Component getDisplayName() {
-        return Displays.AUTOSTORE_MODE_DISPLAY_NAME;
+        return AutoStoreMenuDisplays.AUTOSTORE_MODE_DISPLAY_NAME;
     }
 
     @Override
@@ -58,23 +59,17 @@ public class AutoStoreClickMode implements BoxItemClickMode {
 
     @Override
     public void applyIconMeta(@NotNull Player viewer, @NotNull BoxItem item, @NotNull ItemMeta target) {
-        var result = new ArrayList<Component>();
+        var newLore = Optional.ofNullable(target.lore()).map(ArrayList::new).orElseGet(ArrayList::new);
 
-        var original = target.lore();
-
-        if (original != null) {
-            result.addAll(original);
-        }
-
-        result.add(Component.empty());
+        newLore.add(Component.empty());
 
         var enabled = settingManager.get(viewer).getPerItemModeSetting().isEnabled(item);
 
-        result.add(TranslationUtil.render(Displays.AUTOSTORE_MODE_LORE.apply(enabled), viewer));
+        newLore.add(TranslationUtil.render(AutoStoreMenuDisplays.AUTOSTORE_MODE_LORE.apply(enabled), viewer));
 
-        result.add(Component.empty());
+        newLore.add(Component.empty());
 
-        target.lore(result);
+        target.lore(newLore);
     }
 
     @Override
@@ -106,7 +101,7 @@ public class AutoStoreClickMode implements BoxItemClickMode {
         @Override
         public @Nullable ItemMeta applyIconMeta(@NotNull Player viewer, @NotNull ItemMeta target) {
             var displayName = TranslationUtil.render(
-                    Displays.AUTOSTORE_MODE_SETTING_MENU_TITLE.style(Styles.NO_STYLE).color(NamedTextColor.GOLD),
+                    AutoStoreMenuDisplays.AUTOSTORE_MODE_SETTING_MENU_TITLE.style(NO_STYLE.color(GOLD)),
                     viewer
             );
 

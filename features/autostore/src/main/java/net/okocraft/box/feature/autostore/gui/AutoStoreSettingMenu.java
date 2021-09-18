@@ -4,12 +4,11 @@ import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.feature.autostore.model.AutoStoreSetting;
 import net.okocraft.box.feature.gui.api.button.RefreshableButton;
+import net.okocraft.box.feature.gui.api.buttons.BackButton;
 import net.okocraft.box.feature.gui.api.menu.AbstractMenu;
 import net.okocraft.box.feature.gui.api.menu.Menu;
 import net.okocraft.box.feature.gui.api.menu.RenderedButton;
 import net.okocraft.box.feature.gui.api.util.TranslationUtil;
-import net.okocraft.box.feature.gui.internal.button.BackButton;
-import net.okocraft.box.feature.gui.internal.lang.Displays;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -46,7 +45,7 @@ public class AutoStoreSettingMenu extends AbstractMenu {
 
     @Override
     public @NotNull Component getTitle() {
-        return Displays.AUTOSTORE_MODE_SETTING_MENU_TITLE;
+        return AutoStoreMenuDisplays.AUTOSTORE_MODE_SETTING_MENU_TITLE;
     }
 
     @Override
@@ -83,9 +82,13 @@ public class AutoStoreSettingMenu extends AbstractMenu {
 
         @Override
         public @Nullable ItemMeta applyIconMeta(@NotNull Player viewer, @NotNull ItemMeta target) {
-            target.displayName(TranslationUtil.render(Displays.AUTOSTORE_MODE_SETTING_MENU_CHANGE_MODE, viewer));
+            target.displayName(TranslationUtil.render(AutoStoreMenuDisplays.AUTOSTORE_MODE_SETTING_MENU_CHANGE_MODE, viewer));
 
-            var lore = isAllMode() ? Displays.AUTOSTORE_MODE_SETTING_MENU_CHANGE_TO_PER_ITEM : Displays.AUTOSTORE_MODE_SETTING_MENU_CHANGE_TO_ALL;
+            var lore =
+                    isAllMode() ?
+                            AutoStoreMenuDisplays.AUTOSTORE_MODE_SETTING_MENU_CHANGE_TO_PER_ITEM :
+                            AutoStoreMenuDisplays.AUTOSTORE_MODE_SETTING_MENU_CHANGE_TO_ALL;
+
             lore = TranslationUtil.render(lore, viewer);
 
             target.lore(List.of(Component.empty(), lore, Component.empty()));
@@ -130,17 +133,18 @@ public class AutoStoreSettingMenu extends AbstractMenu {
 
         @Override
         public @Nullable ItemMeta applyIconMeta(@NotNull Player viewer, @NotNull ItemMeta target) {
-            target.displayName(TranslationUtil.render(Displays.AUTOSTORE_MODE_SETTING_MENU_BULK_EDITING_TITLE, viewer));
+            var displayName = AutoStoreMenuDisplays.AUTOSTORE_MODE_SETTING_MENU_BULK_EDITING_TITLE;
+            target.displayName(TranslationUtil.render(displayName, viewer));
 
             var lore = new ArrayList<Component>();
 
             lore.add(Component.empty());
-            lore.add(Displays.AUTOSTORE_MODE_SETTING_MENU_BULK_EDITING_LEFT_CLICK);
-            lore.add(Displays.AUTOSTORE_MODE_SETTING_MENU_BULK_EDITING_RIGHT_CLICK);
+            lore.add(AutoStoreMenuDisplays.AUTOSTORE_MODE_SETTING_MENU_BULK_EDITING_LEFT_CLICK);
+            lore.add(AutoStoreMenuDisplays.AUTOSTORE_MODE_SETTING_MENU_BULK_EDITING_RIGHT_CLICK);
             lore.add(Component.empty());
 
             if (recent != null) {
-                lore.add(Displays.AUTOSTORE_MODE_SETTING_MENU_BULK_EDITING_RECENT.apply(recent));
+                lore.add(AutoStoreMenuDisplays.AUTOSTORE_MODE_SETTING_MENU_BULK_EDITING_RECENT.apply(recent));
                 lore.add(Component.empty());
             }
 

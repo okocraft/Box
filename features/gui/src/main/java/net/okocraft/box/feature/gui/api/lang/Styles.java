@@ -1,4 +1,4 @@
-package net.okocraft.box.feature.gui.internal.lang;
+package net.okocraft.box.feature.gui.api.lang;
 
 import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextDecoration;

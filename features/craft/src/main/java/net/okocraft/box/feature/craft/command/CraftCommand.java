@@ -9,8 +9,7 @@ import net.okocraft.box.feature.craft.menu.CraftMenu;
 import net.okocraft.box.feature.craft.menu.RecipeSelector;
 import net.okocraft.box.feature.craft.model.RecipeHolder;
 import net.okocraft.box.feature.gui.api.menu.Menu;
-import net.okocraft.box.feature.gui.internal.holder.BoxInventoryHolder;
-import org.bukkit.Sound;
+import net.okocraft.box.feature.gui.api.util.MenuOpener;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -20,7 +19,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 public class CraftCommand extends AbstractCommand {
@@ -67,17 +65,7 @@ public class CraftCommand extends AbstractCommand {
             menu = new RecipeSelector(item.get(), recipeHolder, null);
         }
 
-        var holder = new BoxInventoryHolder(menu);
-
-        holder.initializeMenu(player);
-        holder.applyContents();
-
-        CompletableFuture.runAsync(
-                () -> player.openInventory(holder.getInventory()),
-                BoxProvider.get().getExecutorProvider().getMainThread()
-        ).join();
-
-        player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 100f, 2.0f);
+        MenuOpener.open(menu, player);
     }
 
     @Override

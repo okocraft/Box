@@ -2,8 +2,9 @@ package net.okocraft.box.feature.gui.internal.button;
 
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.okocraft.box.feature.category.model.Category;
+import net.okocraft.box.feature.gui.api.buttons.MenuButton;
+import net.okocraft.box.feature.gui.api.lang.Styles;
 import net.okocraft.box.feature.gui.api.util.TranslationUtil;
-import net.okocraft.box.feature.gui.internal.lang.Styles;
 import net.okocraft.box.feature.gui.internal.menu.CategoryMenu;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;

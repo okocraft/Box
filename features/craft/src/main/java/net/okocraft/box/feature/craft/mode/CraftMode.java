@@ -1,7 +1,6 @@
 package net.okocraft.box.feature.craft.mode;
 
 import net.kyori.adventure.text.Component;
-import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.feature.craft.lang.Displays;
 import net.okocraft.box.feature.craft.menu.CraftMenu;
@@ -10,8 +9,8 @@ import net.okocraft.box.feature.craft.model.RecipeHolder;
 import net.okocraft.box.feature.gui.api.menu.Menu;
 import net.okocraft.box.feature.gui.api.mode.BoxItemClickMode;
 import net.okocraft.box.feature.gui.api.mode.SettingMenuButton;
+import net.okocraft.box.feature.gui.api.util.MenuOpener;
 import net.okocraft.box.feature.gui.api.util.TranslationUtil;
-import net.okocraft.box.feature.gui.internal.holder.BoxInventoryHolder;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -19,8 +18,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
+import java.util.Optional;
 
+@SuppressWarnings("ClassCanBeRecord")
 public class CraftMode implements BoxItemClickMode {
 
     private final Map<BoxItem, RecipeHolder> recipeMap;
@@ -57,38 +57,24 @@ public class CraftMode implements BoxItemClickMode {
             menu = new RecipeSelector(context.item(), recipes, context.currentMenu());
         }
 
-        var holder = new BoxInventoryHolder(menu);
-
-        holder.initializeMenu(clicker);
-        holder.applyContents();
-
-        CompletableFuture.runAsync(
-                () -> clicker.openInventory(holder.getInventory()),
-                BoxProvider.get().getExecutorProvider().getMainThread()
-        ).join();
-
-        clicker.playSound(clicker.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 100f, 2.0f);
+        MenuOpener.open(menu, clicker);
     }
 
     @Override
     public void applyIconMeta(@NotNull Player viewer, @NotNull BoxItem item, @NotNull ItemMeta target) {
-        var result = new ArrayList<Component>();
-        var original = target.lore();
+        var newLore = Optional.ofNullable(target.lore()).map(ArrayList::new).orElseGet(ArrayList::new);
 
-        if (original != null) {
-            result.addAll(original);
-        }
-
-        result.add(Component.empty());
+        newLore.add(Component.empty());
 
         if (recipeMap.containsKey(item)) {
-            result.add(TranslationUtil.render(Displays.CLICK_TO_SHOW_RECIPES, viewer));
+            newLore.add(TranslationUtil.render(Displays.CLICK_TO_SHOW_RECIPES, viewer));
         } else {
-            result.add(TranslationUtil.render(Displays.RECIPE_NOT_FOUND, viewer));
+            newLore.add(TranslationUtil.render(Displays.RECIPE_NOT_FOUND, viewer));
         }
-        result.add(Component.empty());
 
-        target.lore(result);
+        newLore.add(Component.empty());
+
+        target.lore(newLore);
     }
 
     @Override

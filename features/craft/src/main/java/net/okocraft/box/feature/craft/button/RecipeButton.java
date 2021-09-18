@@ -9,7 +9,7 @@ import net.okocraft.box.feature.craft.util.IngredientRenderer;
 import net.okocraft.box.feature.gui.api.button.RefreshableButton;
 import net.okocraft.box.feature.gui.api.menu.Menu;
 import net.okocraft.box.feature.gui.api.util.TranslationUtil;
-import net.okocraft.box.feature.gui.internal.button.MenuButton;
+import net.okocraft.box.feature.gui.api.buttons.MenuButton;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -25,7 +25,7 @@ import static net.kyori.adventure.text.Component.translatable;
 import static net.kyori.adventure.text.format.NamedTextColor.AQUA;
 import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
 import static net.kyori.adventure.text.format.NamedTextColor.YELLOW;
-import static net.okocraft.box.feature.gui.internal.lang.Styles.NO_STYLE;
+import static net.okocraft.box.feature.gui.api.lang.Styles.NO_STYLE;
 
 public class RecipeButton extends MenuButton implements RefreshableButton {
 

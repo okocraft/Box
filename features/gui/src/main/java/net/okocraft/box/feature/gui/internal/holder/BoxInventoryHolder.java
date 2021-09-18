@@ -81,8 +81,4 @@ public class BoxInventoryHolder implements InventoryHolder {
             viewer.updateInventory();
         }
     }
-
-    public void onOpen(@NotNull Player viewer) {
-        menu.onOpen(viewer);
-    }
 }

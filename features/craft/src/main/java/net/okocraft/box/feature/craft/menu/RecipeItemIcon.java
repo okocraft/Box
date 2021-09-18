@@ -3,7 +3,7 @@ package net.okocraft.box.feature.craft.menu;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.okocraft.box.feature.gui.api.menu.RenderedButton;
-import net.okocraft.box.feature.gui.internal.lang.Styles;
+import net.okocraft.box.feature.gui.api.lang.Styles;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;

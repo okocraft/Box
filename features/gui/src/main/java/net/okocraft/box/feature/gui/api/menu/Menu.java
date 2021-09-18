@@ -21,7 +21,4 @@ public interface Menu {
     boolean isUpdated();
 
     void updateMenu(@NotNull Player viewer);
-
-    default void onOpen(@NotNull Player viewer) {
-    }
 }

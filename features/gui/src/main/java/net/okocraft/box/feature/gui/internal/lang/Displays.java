@@ -12,9 +12,7 @@ import static net.kyori.adventure.text.format.NamedTextColor.AQUA;
 import static net.kyori.adventure.text.format.NamedTextColor.BLACK;
 import static net.kyori.adventure.text.format.NamedTextColor.GOLD;
 import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
-import static net.kyori.adventure.text.format.NamedTextColor.GREEN;
-import static net.kyori.adventure.text.format.NamedTextColor.RED;
-import static net.okocraft.box.feature.gui.internal.lang.Styles.NO_STYLE;
+import static net.okocraft.box.feature.gui.api.lang.Styles.NO_STYLE;
 
 public final class Displays {
 
@@ -104,7 +102,7 @@ public final class Displays {
                             .color(GRAY)
                             .build();
 
-    public static final SingleArgument<Integer> CHANGE_TRANSACTION_AMOUNT_BUTTON_SET_TO_UNIT=
+    public static final SingleArgument<Integer> CHANGE_TRANSACTION_AMOUNT_BUTTON_SET_TO_UNIT =
             unit ->
                     translatable()
                             .key("box.gui.buttons.change-transaction-amount.set-to-unit")
@@ -157,64 +155,6 @@ public final class Displays {
                     translatable()
                             .key("box.gui.modes.storage-mode.current-stock")
                             .args(text(stock, AQUA))
-                            .style(NO_STYLE)
-                            .color(GRAY)
-                            .build();
-
-    public static final Component AUTOSTORE_MODE_DISPLAY_NAME =
-            translatable("box.gui.modes.autostore-mode.display-name");
-
-    public static final Component AUTOSTORE_MODE_ENABLED =
-            translatable("box.gui.modes.autostore-mode.enabled").color(GREEN);
-
-    public static final Component AUTOSTORE_MODE_DISABLED =
-            translatable("box.gui.modes.autostore-mode.disabled").color(RED);
-
-    public static final SingleArgument<Boolean> AUTOSTORE_MODE_LORE =
-            enabled ->
-                    translatable()
-                            .key("box.gui.modes.autostore-mode.lore")
-                            .args(enabled ? AUTOSTORE_MODE_ENABLED : AUTOSTORE_MODE_DISABLED)
-                            .style(NO_STYLE)
-                            .color(GRAY)
-                            .build();
-
-    public static final Component AUTOSTORE_MODE_SETTING_MENU_TITLE =
-            translatable("box.gui.modes.autostore-mode.setting-menu.title", BLACK);
-
-    public static final Component AUTOSTORE_MODE_SETTING_MENU_CHANGE_MODE =
-            translatable("box.gui.modes.autostore-mode.setting-menu.change-mode.display-name", NO_STYLE.color(GOLD));
-
-    public static final Component AUTOSTORE_MODE_SETTING_MENU_CHANGE_TO_ALL =
-            translatable("box.gui.modes.autostore-mode.setting-menu.change-mode.all", NO_STYLE.color(GRAY));
-
-    public static final Component AUTOSTORE_MODE_SETTING_MENU_CHANGE_TO_PER_ITEM =
-            translatable("box.gui.modes.autostore-mode.setting-menu.change-mode.per-item", NO_STYLE.color(GRAY));
-
-    public static final Component AUTOSTORE_MODE_SETTING_MENU_BULK_EDITING_TITLE =
-            translatable("box.gui.modes.autostore-mode.setting-menu.bulk-editing.title", NO_STYLE.color(GOLD));
-
-    public static final Component AUTOSTORE_MODE_SETTING_MENU_BULK_EDITING_LEFT_CLICK =
-            translatable()
-                    .key("box.gui.modes.autostore-mode.setting-menu.bulk-editing.left-click")
-                    .args(AUTOSTORE_MODE_ENABLED)
-                    .style(NO_STYLE)
-                    .color(GRAY)
-                    .build();
-
-    public static final Component AUTOSTORE_MODE_SETTING_MENU_BULK_EDITING_RIGHT_CLICK =
-            translatable()
-                    .key("box.gui.modes.autostore-mode.setting-menu.bulk-editing.right-click")
-                    .args(AUTOSTORE_MODE_DISABLED)
-                    .style(NO_STYLE)
-                    .color(GRAY)
-                    .build();
-
-    public static final SingleArgument<Boolean> AUTOSTORE_MODE_SETTING_MENU_BULK_EDITING_RECENT =
-            enabled ->
-                    translatable()
-                            .key("box.gui.modes.autostore-mode.setting-menu.bulk-editing.recent")
-                            .args(enabled ? AUTOSTORE_MODE_ENABLED : AUTOSTORE_MODE_DISABLED)
                             .style(NO_STYLE)
                             .color(GRAY)
                             .build();

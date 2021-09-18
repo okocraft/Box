@@ -5,8 +5,8 @@ import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.transaction.InventoryTransaction;
 import net.okocraft.box.feature.gui.api.menu.Menu;
-import net.okocraft.box.feature.gui.api.mode.SettingMenuButton;
 import net.okocraft.box.feature.gui.api.mode.BoxItemClickMode;
+import net.okocraft.box.feature.gui.api.mode.SettingMenuButton;
 import net.okocraft.box.feature.gui.api.util.TransactionAmountHolder;
 import net.okocraft.box.feature.gui.api.util.TranslationUtil;
 import net.okocraft.box.feature.gui.internal.lang.Displays;
@@ -18,6 +18,7 @@ import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 public class StorageMode implements BoxItemClickMode {
@@ -46,18 +47,12 @@ public class StorageMode implements BoxItemClickMode {
 
     @Override
     public void applyIconMeta(@NotNull Player viewer, @NotNull BoxItem item, @NotNull ItemMeta target) {
-        var result = new ArrayList<Component>();
+        var newLore = Optional.ofNullable(target.lore()).map(ArrayList::new).orElseGet(ArrayList::new);
 
-        var original = target.lore();
+        newLore.add(Component.empty());
+        newLore.addAll(TranslationUtil.render(createLore(item, viewer), viewer));
 
-        if (original != null) {
-            result.addAll(original);
-        }
-
-        result.add(Component.empty());
-        result.addAll(TranslationUtil.render(createLore(item, viewer), viewer));
-
-        target.lore(result);
+        target.lore(newLore);
     }
 
     @Override

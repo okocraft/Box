@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Supplier;
 
+@SuppressWarnings("ClassCanBeRecord")
 public class BoxItemButton implements RefreshableButton {
 
     private final BoxItem item;

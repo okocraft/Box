@@ -9,7 +9,7 @@ import net.okocraft.box.feature.craft.model.BoxItemRecipe;
 import net.okocraft.box.feature.craft.model.IngredientHolder;
 import net.okocraft.box.feature.craft.model.SelectedRecipe;
 import net.okocraft.box.feature.gui.api.util.TranslationUtil;
-import net.okocraft.box.feature.gui.internal.lang.Styles;
+import net.okocraft.box.feature.gui.api.lang.Styles;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 

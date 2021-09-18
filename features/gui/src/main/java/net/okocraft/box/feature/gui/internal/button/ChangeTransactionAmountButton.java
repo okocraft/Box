@@ -1,11 +1,11 @@
 package net.okocraft.box.feature.gui.internal.button;
 
 import net.kyori.adventure.text.Component;
+import net.okocraft.box.feature.gui.api.button.RefreshableButton;
 import net.okocraft.box.feature.gui.api.menu.Menu;
 import net.okocraft.box.feature.gui.api.util.TransactionAmountHolder;
-import net.okocraft.box.feature.gui.internal.lang.Displays;
-import net.okocraft.box.feature.gui.api.button.RefreshableButton;
 import net.okocraft.box.feature.gui.api.util.TranslationUtil;
+import net.okocraft.box.feature.gui.internal.lang.Displays;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;

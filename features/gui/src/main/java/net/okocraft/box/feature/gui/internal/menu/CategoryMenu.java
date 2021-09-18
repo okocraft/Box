@@ -3,14 +3,14 @@ package net.okocraft.box.feature.gui.internal.menu;
 import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.feature.category.model.Category;
+import net.okocraft.box.feature.gui.api.button.Button;
+import net.okocraft.box.feature.gui.api.buttons.BackButton;
 import net.okocraft.box.feature.gui.api.menu.paginate.AbstractPaginatedMenu;
 import net.okocraft.box.feature.gui.internal.button.BoxItemButton;
 import net.okocraft.box.feature.gui.internal.button.ChangeTransactionAmountButton;
 import net.okocraft.box.feature.gui.internal.button.ChangeUnitButton;
 import net.okocraft.box.feature.gui.internal.button.ModeButton;
 import net.okocraft.box.feature.gui.internal.lang.Displays;
-import net.okocraft.box.feature.gui.api.button.Button;
-import net.okocraft.box.feature.gui.internal.button.BackButton;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 

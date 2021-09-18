@@ -7,7 +7,7 @@ import net.okocraft.box.feature.craft.util.CustomCraftTimes;
 import net.okocraft.box.feature.gui.api.button.RefreshableButton;
 import net.okocraft.box.feature.gui.api.menu.Menu;
 import net.okocraft.box.feature.gui.api.util.TranslationUtil;
-import net.okocraft.box.feature.gui.internal.lang.Styles;
+import net.okocraft.box.feature.gui.api.lang.Styles;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
