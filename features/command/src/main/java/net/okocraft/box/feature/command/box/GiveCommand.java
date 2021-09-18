@@ -42,7 +42,7 @@ public class GiveCommand extends AbstractCommand {
             return;
         }
 
-        if (!target.hasPermission(getPermissionNode())) {
+        if (!target.hasPermission(getPermissionNode()) || BoxProvider.get().isDisabledWorld(target)) {
             sender.sendMessage(BoxMessage.GIVE_TARGET_NO_PERMISSION.apply(target, getPermissionNode()));
             return;
         }
