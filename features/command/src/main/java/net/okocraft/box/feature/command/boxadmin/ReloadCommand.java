@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 public class ReloadCommand extends AbstractCommand {
 
     public ReloadCommand() {
-        super("reload", "box.command.admin.reload");
+        super("reload", "box.admin.command.reload");
     }
 
     @Override

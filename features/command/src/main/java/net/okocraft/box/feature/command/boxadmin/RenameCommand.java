@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 public class RenameCommand extends AbstractCommand {
 
     public RenameCommand() {
-        super("rename", "box.command.admin.rename");
+        super("rename", "box.admin.command.rename");
     }
 
     @Override

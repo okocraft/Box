@@ -93,7 +93,7 @@ public class StockModifyCommands {
     private static abstract class ModifyCommand extends AbstractCommand {
 
         private ModifyCommand(@NotNull String name, @NotNull Set<String> aliases) {
-            super(name, "box.command.admin." + name, aliases);
+            super(name, "box.admin.command." + name, aliases);
         }
 
         @Override

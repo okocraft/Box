@@ -8,3 +8,88 @@ commands:
     aliases: [b, okobox]
   boxadmin:
     aliases: [ba, badmin]
+permissions:
+  box.default:
+    default: true
+    children: 
+      - box.command
+      - box.autostore
+      - box.stick
+  box.command:
+    default: true
+    children: 
+      - box.command.deposit
+      - box.command.give
+      - box.command.withdraw
+      - box.command.autostore
+      - box.command.craft
+      - box.command.gui
+      - box.command.stick
+  box.command.deposit:
+    default: true
+  box.command.give:
+    default: true
+  box.command.withdraw:
+    default: true
+  box.command.autostore:
+    default: true
+  box.command.craft:
+    default: true
+  box.command.gui:
+    default: true
+  box.command.stick:
+    default: true
+  box.autostore:
+    default: true
+  box.stick:
+    default: true
+    children:
+      - boc.stick.menu
+      - box.stick.block
+      - box.stick.food
+      - box.stick.tool
+      - box.stick.potion
+  box.stick.menu:
+    default: true
+  box.stick.block:
+    default: true
+  box.stick.food:
+    default: true
+  box.stick.tool:
+    default: true
+  box.stick.potion:
+    default: true
+  box.admin:
+    default: op
+    children:
+      - box.admin.command
+      - box.admin.ignore-disabled-world
+  box.admin.command:
+    default: op
+    children: 
+      - box.admin.command.infinity
+      - box.admin.command.register
+      - box.admin.command.reload
+      - box.admin.command.rename
+      - box.admin.command.give
+      - box.admin.command.set
+      - box.admin.command.take
+      - box.admin.command.version
+  box.admin.command.infinity:
+    default: op
+  box.admin.command.register:
+    default: op
+  box.admin.command.reload:
+    default: op
+  box.admin.command.rename:
+    default: op
+  box.admin.command.give:
+    default: op
+  box.admin.command.set:
+    default: op
+  box.admin.command.take:
+    default: op
+  box.admin.command.version:
+    default: op
+  box.admin.ignore-disabled-world:
+    default: op

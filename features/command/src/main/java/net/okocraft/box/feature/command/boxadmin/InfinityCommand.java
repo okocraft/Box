@@ -21,7 +21,7 @@ public class InfinityCommand extends AbstractCommand {
     private static final StockHolder INFINITY_STOCK_HOLDER = new InfinityStockHolder();
 
     public InfinityCommand() {
-        super("infinity", "box.command.admin.infinity", Set.of("i", "inf"));
+        super("infinity", "box.admin.command.infinity", Set.of("i", "inf"));
     }
 
     @Override

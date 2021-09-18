@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 public class RegisterCommand extends AbstractCommand {
 
     public RegisterCommand() {
-        super("register", "box.command.admin.register");
+        super("register", "box.admin.command.register");
     }
 
     @Override

@@ -41,6 +41,10 @@ public class ItemListener implements Listener {
             return;
         }
 
+        if (!player.hasPermission("box.autostore")) {
+            return;
+        }
+
         var item = event.getItem().getItemStack();
 
         var boxItem = BoxProvider.get().getItemManager().getBoxItem(item);

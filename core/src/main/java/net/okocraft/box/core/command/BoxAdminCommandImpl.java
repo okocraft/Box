@@ -15,7 +15,7 @@ public class BoxAdminCommandImpl extends BaseCommand implements BoxAdminCommand 
 
     @Override
     public @NotNull String getPermissionNode() {
-        return "boxadmin.command";
+        return "box.admin.command";
     }
 
     @Override
