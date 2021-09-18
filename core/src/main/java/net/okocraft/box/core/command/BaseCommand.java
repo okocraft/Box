@@ -71,6 +71,10 @@ public abstract class BaseCommand implements Command, SubCommandHoldable, Comman
             return Collections.emptyList();
         }
 
+        if (sender instanceof Player player && BoxProvider.get().isDisabledWorld(player)) {
+            return Collections.emptyList();
+        }
+
         if (args.length == 1) {
             return subCommandHolder.getSubCommands().stream()
                     .filter(cmd -> sender.hasPermission(cmd.getPermissionNode()))
