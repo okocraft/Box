@@ -46,7 +46,7 @@ public class StickListener implements Listener {
             return;
         }
 
-        if (BoxProvider.get().isDisabledWorld(player.getWorld()) ||
+        if (BoxProvider.get().isDisabledWorld(player) ||
                 !boxStickItem.check(player.getInventory().getItemInMainHand())) {
             return;
         }
@@ -169,7 +169,7 @@ public class StickListener implements Listener {
             return false;
         }
 
-        if (BoxProvider.get().isDisabledWorld(player.getWorld())) {
+        if (BoxProvider.get().isDisabledWorld(player)) {
             return false;
         }
 

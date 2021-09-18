@@ -36,9 +36,9 @@ import net.okocraft.box.core.util.executor.BoxExecutorProvider;
 import net.okocraft.box.core.util.executor.InternalExecutors;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
-import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -381,8 +381,9 @@ public class BoxPlugin implements BoxAPI {
     }
 
     @Override
-    public boolean isDisabledWorld(@NotNull World world) {
-        return configuration.get(Settings.DISABLED_WORLDS).contains(world.getName());
+    public boolean isDisabledWorld(@NotNull Player player) {
+        return configuration.get(Settings.DISABLED_WORLDS).contains(player.getWorld().getName()) &&
+                !player.hasPermission("box.admin.ignore-disabled-world");
     }
 
     @Override

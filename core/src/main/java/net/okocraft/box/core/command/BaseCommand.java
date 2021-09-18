@@ -10,6 +10,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
@@ -31,6 +32,11 @@ public abstract class BaseCommand implements Command, SubCommandHoldable, Comman
     public void onCommand(@NotNull CommandSender sender, @NotNull String[] args) {
         if (!sender.hasPermission(getPermissionNode())) {
             sender.sendMessage(GeneralMessage.ERROR_NO_PERMISSION.apply(getPermissionNode()));
+            return;
+        }
+
+        if (sender instanceof Player player && BoxProvider.get().isDisabledWorld(player)) {
+            sender.sendMessage(GeneralMessage.ERROR_DISABLED_WORLD.apply(player.getWorld()));
             return;
         }
 

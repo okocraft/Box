@@ -37,7 +37,7 @@ public class ItemListener implements Listener {
             return;
         }
 
-        if (BoxProvider.get().isDisabledWorld(player.getWorld())) {
+        if (BoxProvider.get().isDisabledWorld(player)) {
             return;
         }
 

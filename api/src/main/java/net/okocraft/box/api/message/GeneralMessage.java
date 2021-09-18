@@ -2,6 +2,7 @@ package net.okocraft.box.api.message;
 
 import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.message.argument.SingleArgument;
+import org.bukkit.World;
 
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.Component.translatable;
@@ -66,6 +67,17 @@ public final class GeneralMessage {
                     translatable()
                             .key("box.error.command.invalid-number")
                             .args(text(invalid, AQUA))
+                            .color(RED)
+                            .build();
+
+    /**
+     * A message sent when Box is disabled in that world.
+     */
+    public static final SingleArgument<World> ERROR_DISABLED_WORLD =
+            world ->
+                    translatable()
+                            .key("box.error.disabled-world")
+                            .args(text(world.getName(), AQUA))
                             .color(RED)
                             .build();
 }
