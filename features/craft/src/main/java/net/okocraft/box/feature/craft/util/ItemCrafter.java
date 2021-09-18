@@ -3,7 +3,7 @@ package net.okocraft.box.feature.craft.util;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.model.stock.StockHolder;
 import net.okocraft.box.api.transaction.InventoryTransaction;
-import net.okocraft.box.feature.craft.model2.SelectedRecipe;
+import net.okocraft.box.feature.craft.model.SelectedRecipe;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 

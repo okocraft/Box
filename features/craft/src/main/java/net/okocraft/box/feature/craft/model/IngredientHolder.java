@@ -1,4 +1,4 @@
-package net.okocraft.box.feature.craft.model2;
+package net.okocraft.box.feature.craft.model;
 
 import net.okocraft.box.api.BoxProvider;
 import org.bukkit.inventory.ItemStack;

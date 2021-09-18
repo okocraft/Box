@@ -4,7 +4,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.okocraft.box.feature.craft.lang.Displays;
 import net.okocraft.box.feature.craft.menu.CraftMenu;
-import net.okocraft.box.feature.craft.model2.BoxItemRecipe;
+import net.okocraft.box.feature.craft.model.BoxItemRecipe;
 import net.okocraft.box.feature.craft.util.IngredientRenderer;
 import net.okocraft.box.feature.gui.api.button.RefreshableButton;
 import net.okocraft.box.feature.gui.api.menu.Menu;

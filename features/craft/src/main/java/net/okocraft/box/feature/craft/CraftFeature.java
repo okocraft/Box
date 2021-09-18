@@ -6,7 +6,7 @@ import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.feature.craft.command.CraftCommand;
 import net.okocraft.box.feature.craft.loader.RecipeLoader;
 import net.okocraft.box.feature.craft.mode.CraftMode;
-import net.okocraft.box.feature.craft.model2.RecipeHolder;
+import net.okocraft.box.feature.craft.model.RecipeHolder;
 import net.okocraft.box.feature.gui.api.mode.ClickModeRegistry;
 
 import java.util.Map;

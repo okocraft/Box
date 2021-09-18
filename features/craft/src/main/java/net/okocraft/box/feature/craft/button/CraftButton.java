@@ -3,7 +3,7 @@ package net.okocraft.box.feature.craft.button;
 import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.feature.craft.lang.Displays;
-import net.okocraft.box.feature.craft.model2.SelectedRecipe;
+import net.okocraft.box.feature.craft.model.SelectedRecipe;
 import net.okocraft.box.feature.craft.util.IngredientRenderer;
 import net.okocraft.box.feature.craft.util.ItemCrafter;
 import net.okocraft.box.feature.gui.api.button.RefreshableButton;
