@@ -6,7 +6,7 @@ import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.transaction.InventoryTransaction;
 import net.okocraft.box.feature.gui.api.menu.Menu;
 import net.okocraft.box.feature.gui.api.mode.BoxItemClickMode;
-import net.okocraft.box.feature.gui.api.mode.SettingMenuButton;
+import net.okocraft.box.feature.gui.api.mode.AdditionalButton;
 import net.okocraft.box.feature.gui.api.util.TransactionAmountHolder;
 import net.okocraft.box.feature.gui.api.util.TranslationUtil;
 import net.okocraft.box.feature.gui.internal.lang.Displays;
@@ -56,12 +56,12 @@ public class StorageMode implements BoxItemClickMode {
     }
 
     @Override
-    public boolean hasSettingMenu() {
+    public boolean hasAdditionalButton() {
         return false;
     }
 
     @Override
-    public @NotNull SettingMenuButton createSettingMenuButton(@NotNull Player viewer, @NotNull Menu currentMenu) {
+    public @NotNull AdditionalButton createAdditionalButton(@NotNull Player viewer, @NotNull Menu currentMenu) {
         throw new UnsupportedOperationException();
     }
 

@@ -61,10 +61,10 @@ public class CategoryMenu extends AbstractPaginatedMenu<BoxItem> {
 
         var mode = modeButton.getCurrentMode();
 
-        if (mode.hasSettingMenu()) {
-            var settingButton = mode.createSettingMenuButton(viewer, this);
-            settingButton.setSlot(52);
-            buttons.add(settingButton);
+        if (mode.hasAdditionalButton()) {
+            var additionalButton = mode.createAdditionalButton(viewer, this);
+            additionalButton.setSlot(52);
+            buttons.add(additionalButton);
         }
     }
 }

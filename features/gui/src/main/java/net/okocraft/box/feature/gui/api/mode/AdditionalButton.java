@@ -9,12 +9,12 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Supplier;
 
-public abstract class SettingMenuButton implements Button {
+public abstract class AdditionalButton implements Button {
 
     private final Supplier<Menu> menuSupplier;
     private int slot;
 
-    protected SettingMenuButton(@NotNull Supplier<Menu> menuSupplier) {
+    protected AdditionalButton(@NotNull Supplier<Menu> menuSupplier) {
         this.menuSupplier = menuSupplier;
     }
 

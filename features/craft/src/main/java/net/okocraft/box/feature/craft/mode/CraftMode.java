@@ -8,7 +8,7 @@ import net.okocraft.box.feature.craft.menu.RecipeSelector;
 import net.okocraft.box.feature.craft.model.RecipeHolder;
 import net.okocraft.box.feature.gui.api.menu.Menu;
 import net.okocraft.box.feature.gui.api.mode.BoxItemClickMode;
-import net.okocraft.box.feature.gui.api.mode.SettingMenuButton;
+import net.okocraft.box.feature.gui.api.mode.AdditionalButton;
 import net.okocraft.box.feature.gui.api.util.MenuOpener;
 import net.okocraft.box.feature.gui.api.util.TranslationUtil;
 import org.bukkit.Sound;
@@ -78,12 +78,12 @@ public class CraftMode implements BoxItemClickMode {
     }
 
     @Override
-    public boolean hasSettingMenu() {
+    public boolean hasAdditionalButton() {
         return false;
     }
 
     @Override
-    public @NotNull SettingMenuButton createSettingMenuButton(@NotNull Player viewer, @NotNull Menu currentMenu) {
+    public @NotNull AdditionalButton createAdditionalButton(@NotNull Player viewer, @NotNull Menu currentMenu) {
         throw new UnsupportedOperationException();
     }
 }

@@ -6,7 +6,7 @@ import net.okocraft.box.feature.autostore.model.AutoStoreSetting;
 import net.okocraft.box.feature.autostore.model.SettingManager;
 import net.okocraft.box.feature.gui.api.menu.Menu;
 import net.okocraft.box.feature.gui.api.mode.BoxItemClickMode;
-import net.okocraft.box.feature.gui.api.mode.SettingMenuButton;
+import net.okocraft.box.feature.gui.api.mode.AdditionalButton;
 import net.okocraft.box.feature.gui.api.util.TranslationUtil;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -72,16 +72,16 @@ public class AutoStoreClickMode implements BoxItemClickMode {
     }
 
     @Override
-    public boolean hasSettingMenu() {
+    public boolean hasAdditionalButton() {
         return true;
     }
 
     @Override
-    public @NotNull SettingMenuButton createSettingMenuButton(@NotNull Player viewer, @NotNull Menu currentMenu) {
+    public @NotNull AdditionalButton createAdditionalButton(@NotNull Player viewer, @NotNull Menu currentMenu) {
         return new AutoStoreSettingMenuButton(settingManager.get(viewer), currentMenu);
     }
 
-    private static class AutoStoreSettingMenuButton extends SettingMenuButton {
+    private static class AutoStoreSettingMenuButton extends AdditionalButton {
 
         protected AutoStoreSettingMenuButton(@NotNull AutoStoreSetting setting, @NotNull Menu backTo) {
             super(() -> new AutoStoreSettingMenu(setting, backTo));

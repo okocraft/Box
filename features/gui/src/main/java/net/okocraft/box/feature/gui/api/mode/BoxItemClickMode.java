@@ -19,9 +19,9 @@ public interface BoxItemClickMode {
 
     void applyIconMeta(@NotNull Player viewer, @NotNull BoxItem item, @NotNull ItemMeta target);
 
-    boolean hasSettingMenu();
+    boolean hasAdditionalButton();
 
-    @NotNull SettingMenuButton createSettingMenuButton(@NotNull Player viewer, @NotNull Menu currentMenu);
+    @NotNull AdditionalButton createAdditionalButton(@NotNull Player viewer, @NotNull Menu currentMenu);
 
     record Context(@NotNull Player clicker, @NotNull BoxItem item,
                    @NotNull ClickType clickType, @Nullable Menu currentMenu) {
