@@ -30,7 +30,6 @@ public class CraftCommand extends AbstractCommand {
         this.recipeMap = recipeMap;
     }
 
-    @SuppressWarnings("DuplicatedCode")
     @Override
     public void onCommand(@NotNull CommandSender sender, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
