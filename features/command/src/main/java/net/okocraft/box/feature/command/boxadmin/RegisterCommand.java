@@ -1,5 +1,6 @@
 package net.okocraft.box.feature.command.boxadmin;
 
+import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.command.AbstractCommand;
 import net.okocraft.box.api.message.GeneralMessage;
@@ -44,5 +45,10 @@ public class RegisterCommand extends AbstractCommand {
                     player.sendMessage(BoxAdminMessage.REGISTER_FAILURE.apply(e));
                     return null;
                 });
+    }
+
+    @Override
+    public @NotNull Component getHelp() {
+        return BoxAdminMessage.REGISTER_HELP;
     }
 }

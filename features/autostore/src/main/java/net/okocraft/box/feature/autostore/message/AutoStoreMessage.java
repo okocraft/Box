@@ -9,6 +9,7 @@ import net.okocraft.box.feature.autostore.model.mode.AutoStoreMode;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.Component.translatable;
 import static net.kyori.adventure.text.format.NamedTextColor.AQUA;
+import static net.kyori.adventure.text.format.NamedTextColor.DARK_GRAY;
 import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
 import static net.kyori.adventure.text.format.NamedTextColor.GREEN;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
@@ -93,4 +94,19 @@ public final class AutoStoreMessage {
                             .args(text(invalid, AQUA))
                             .color(RED)
                             .build();
+
+    public static final Component COMMAND_HELP_1 =
+            translatable("box.autostore.command.help.toggle.command-line", AQUA)
+                    .append(text(" - ", DARK_GRAY))
+                    .append(translatable("box.autostore.command.help.toggle.description", GRAY));
+
+    public static final Component COMMAND_HELP_2 =
+            translatable("box.autostore.command.help.all.command-line", AQUA)
+                    .append(text(" - ", DARK_GRAY))
+                    .append(translatable("box.autostore.command.help.all.description", GRAY));
+
+    public static final Component COMMAND_HELP_3 =
+            translatable("box.autostore.command.help.peritem.command-line", AQUA)
+                    .append(text(" - ", DARK_GRAY))
+                    .append(translatable("box.autostore.command.help.peritem.description", GRAY));
 }

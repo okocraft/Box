@@ -1,5 +1,6 @@
 package net.okocraft.box.feature.command.boxadmin;
 
+import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.command.AbstractCommand;
 import net.okocraft.box.api.message.GeneralMessage;
@@ -24,6 +25,7 @@ public class RenameCommand extends AbstractCommand {
     public void onCommand(@NotNull CommandSender sender, @NotNull String[] args) {
         if (args.length < 3) {
             sender.sendMessage(GeneralMessage.ERROR_COMMAND_NOT_ENOUGH_ARGUMENT);
+            sender.sendMessage(getHelp());
             return;
         }
 
@@ -71,5 +73,10 @@ public class RenameCommand extends AbstractCommand {
         } else {
             return Collections.emptyList();
         }
+    }
+
+    @Override
+    public @NotNull Component getHelp() {
+        return BoxAdminMessage.RENAME_HELP;
     }
 }

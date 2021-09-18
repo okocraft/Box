@@ -12,7 +12,10 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
+import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.Component.translatable;
+import static net.kyori.adventure.text.format.NamedTextColor.AQUA;
+import static net.kyori.adventure.text.format.NamedTextColor.DARK_GRAY;
 import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
 
@@ -22,6 +25,11 @@ public class StickCommand extends AbstractCommand {
             translatable("box.stick.command.could-not-give-stick", RED);
     private static final Component GIVE_SUCCESS =
             translatable("box.stick.command.success", GRAY);
+
+    private static final Component HELP =
+            translatable("box.stick.command.help.command-line", AQUA)
+                    .append(text(" - ", DARK_GRAY))
+                    .append(translatable("box.stick.command.help.description", GRAY));
 
     private final BoxStickItem boxStickItem;
 
@@ -70,5 +78,10 @@ public class StickCommand extends AbstractCommand {
 
         inventory.setItemInOffHand(boxStickItem.create(player.locale()));
         player.sendMessage(GIVE_SUCCESS);
+    }
+
+    @Override
+    public @NotNull Component getHelp() {
+        return HELP;
     }
 }

@@ -1,5 +1,6 @@
 package net.okocraft.box.feature.craft.command;
 
+import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.command.AbstractCommand;
 import net.okocraft.box.api.message.GeneralMessage;
@@ -80,5 +81,10 @@ public class CraftCommand extends AbstractCommand {
                 .stream()
                 .filter(itemName -> itemName.startsWith(itemNameFilter))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public @NotNull Component getHelp() {
+        return Displays.COMMAND_HELP;
     }
 }

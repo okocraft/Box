@@ -8,6 +8,8 @@ import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.Component.translatable;
 import static net.kyori.adventure.text.format.NamedTextColor.AQUA;
 import static net.kyori.adventure.text.format.NamedTextColor.BLACK;
+import static net.kyori.adventure.text.format.NamedTextColor.DARK_GRAY;
+import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
 import static net.okocraft.box.feature.gui.api.lang.Styles.NO_DECORATION_AQUA;
 import static net.okocraft.box.feature.gui.api.lang.Styles.NO_DECORATION_GOLD;
@@ -153,6 +155,11 @@ public final class Displays {
                             .args(item.getDisplayName().color(AQUA).hoverEvent(item.getOriginal()))
                             .color(RED)
                             .build();
+
+    public static final Component COMMAND_HELP =
+            translatable("box.craft.command.help.command-line", AQUA)
+                    .append(text(" - ", DARK_GRAY))
+                    .append(translatable("box.craft.command.help.description", GRAY));
 
     private Displays() {
         throw new UnsupportedOperationException();

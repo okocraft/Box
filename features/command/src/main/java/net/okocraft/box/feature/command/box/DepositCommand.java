@@ -1,5 +1,6 @@
 package net.okocraft.box.feature.command.box;
 
+import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.command.AbstractCommand;
 import net.okocraft.box.api.message.GeneralMessage;
@@ -206,5 +207,14 @@ public class DepositCommand extends AbstractCommand {
         } else {
             return Collections.emptyList();
         }
+    }
+
+    @Override
+    public @NotNull Component getHelp() {
+        return Component.text()
+                .append(BoxMessage.DEPOSIT_HELP_1).append(Component.newline())
+                .append(BoxMessage.DEPOSIT_HELP_2).append(Component.newline())
+                .append(BoxMessage.DEPOSIT_HELP_3)
+                .build();
     }
 }

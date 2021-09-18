@@ -1,5 +1,6 @@
 package net.okocraft.box.api.command;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
@@ -32,6 +33,13 @@ public interface Command {
      * @return the set of aliases
      */
     @NotNull @Unmodifiable Set<String> getAliases();
+
+    /**
+     * Gets the helps.
+     *
+     * @return the helps
+     */
+    @NotNull Component getHelp();
 
     /**
      * Executes the command.

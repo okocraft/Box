@@ -1,5 +1,6 @@
 package net.okocraft.box.feature.autostore.command;
 
+import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.command.AbstractCommand;
 import net.okocraft.box.api.message.GeneralMessage;
@@ -36,13 +37,14 @@ public class AutoStoreCommand extends AbstractCommand {
         }
 
         if (args.length < 2) {
-            // TODO: GUI
             player.sendMessage(GeneralMessage.ERROR_COMMAND_NOT_ENOUGH_ARGUMENT);
+            player.sendMessage(getHelp());
             return;
         }
 
         if (args[1].isEmpty()) {
             player.sendMessage(AutoStoreMessage.COMMAND_MODE_NOT_SPECIFIED);
+            player.sendMessage(getHelp());
             return;
         }
 
@@ -231,5 +233,14 @@ public class AutoStoreCommand extends AbstractCommand {
 
     private void callEvent(@NotNull AutoStoreSetting setting) {
         BoxProvider.get().getEventBus().callEvent(new AutoStoreSettingChangeEvent(setting));
+    }
+
+    @Override
+    public @NotNull Component getHelp() {
+        return Component.text()
+                .append(AutoStoreMessage.COMMAND_HELP_1).append(Component.newline())
+                .append(AutoStoreMessage.COMMAND_HELP_2).append(Component.newline())
+                .append(AutoStoreMessage.COMMAND_HELP_3)
+                .build();
     }
 }

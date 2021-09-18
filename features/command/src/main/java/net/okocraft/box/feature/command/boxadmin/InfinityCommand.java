@@ -1,5 +1,6 @@
 package net.okocraft.box.feature.command.boxadmin;
 
+import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.command.AbstractCommand;
 import net.okocraft.box.api.message.GeneralMessage;
@@ -7,6 +8,7 @@ import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.model.stock.StockData;
 import net.okocraft.box.api.model.stock.StockHolder;
 import net.okocraft.box.feature.command.message.BoxAdminMessage;
+import net.okocraft.box.feature.command.message.BoxMessage;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -49,6 +51,11 @@ public class InfinityCommand extends AbstractCommand {
         if (enabled) {
             player.sendMessage(BoxAdminMessage.INFINITY_MODE_TIP);
         }
+    }
+
+    @Override
+    public @NotNull Component getHelp() {
+        return BoxAdminMessage.INFINITY_HELP;
     }
 
     private static class InfinityStockHolder implements StockHolder {

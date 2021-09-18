@@ -12,6 +12,7 @@ import org.bukkit.inventory.ItemStack;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.Component.translatable;
 import static net.kyori.adventure.text.format.NamedTextColor.AQUA;
+import static net.kyori.adventure.text.format.NamedTextColor.DARK_GRAY;
 import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
 import static net.kyori.adventure.text.format.NamedTextColor.GREEN;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
@@ -26,6 +27,11 @@ public final class BoxAdminMessage {
                             .args(text(version, AQUA))
                             .color(GRAY)
                             .build();
+
+    public static final Component VERSION_HELP =
+            translatable("box.command.boxadmin.version.help.command-line", AQUA)
+                    .append(text(" - ", DARK_GRAY))
+                    .append(translatable("box.command.boxadmin.version.help.description", GRAY));
 
     public static final QuadArgument<String, BoxItem, Integer, Integer> GIVE_SUCCESS_SENDER =
             (targetName, item, increments, currentAmount) ->
@@ -51,6 +57,11 @@ public final class BoxAdminMessage {
                             .color(GRAY)
                             .build();
 
+    public static final Component GIVE_HELP =
+            translatable("box.command.boxadmin.give.help.command-line", AQUA)
+                    .append(text(" - ", DARK_GRAY))
+                    .append(translatable("box.command.boxadmin.give.help.description", GRAY));
+
     public static final TripleArgument<String, BoxItem, Integer> SET_SUCCESS_SENDER =
             (targetName, item, currentAmount) ->
                     translatable()
@@ -75,6 +86,11 @@ public final class BoxAdminMessage {
                             .color(GRAY)
                             .build();
 
+    public static final Component SET_HELP =
+            translatable("box.command.boxadmin.set.help.command-line", AQUA)
+                    .append(text(" - ", DARK_GRAY))
+                    .append(translatable("box.command.boxadmin.set.help.description", GRAY));
+
     public static final QuadArgument<String, BoxItem, Integer, Integer> TAKE_SUCCESS_SENDER =
             (targetName, item, increments, currentAmount) ->
                     translatable()
@@ -98,6 +114,11 @@ public final class BoxAdminMessage {
                             )
                             .color(GRAY)
                             .build();
+
+    public static final Component TAKE_HELP =
+            translatable("box.command.boxadmin.take.help.command-line", AQUA)
+                    .append(text(" - ", DARK_GRAY))
+                    .append(translatable("box.command.boxadmin.take.help.description", GRAY));
 
     public static final Component REGISTER_IS_AIR = translatable("box.command.boxadmin.register.is-air", RED);
 
@@ -131,11 +152,21 @@ public final class BoxAdminMessage {
                             .color(RED)
                             .build();
 
+    public static final Component REGISTER_HELP =
+            translatable("box.command.boxadmin.register.help.command-line", AQUA)
+                    .append(text(" - ", DARK_GRAY))
+                    .append(translatable("box.command.boxadmin.register.help.description", GRAY));
+
     public static final Component RELOAD_START =
             translatable("box.command.boxadmin.reload.start", GRAY);
 
     public static final Component RELOAD_FINISH =
             translatable("box.command.boxadmin.reload.finish", GRAY);
+
+    public static final Component RELOAD_HELP =
+            translatable("box.command.boxadmin.reload.help.command-line", AQUA)
+                    .append(text(" - ", DARK_GRAY))
+                    .append(translatable("box.command.boxadmin.reload.help.description", GRAY));
 
     public static final SingleArgument<BoxItem> RENAME_IS_NOT_CUSTOM_ITEM =
             item ->
@@ -169,6 +200,11 @@ public final class BoxAdminMessage {
                             .color(RED)
                             .build();
 
+    public static final Component RENAME_HELP =
+            translatable("box.command.boxadmin.rename.help.command-line", AQUA)
+                    .append(text(" - ", DARK_GRAY))
+                    .append(translatable("box.command.boxadmin.rename.help.description", GRAY));
+
     public static final Component INFINITY_MODE_ENABLE = translatable("box.command.boxadmin.infinity.enabled");
 
     public static final Component INFINITY_MODE_DISABLED = translatable("box.command.boxadmin.infinity.disabled");
@@ -182,6 +218,11 @@ public final class BoxAdminMessage {
                             .build();
 
     public static final Component INFINITY_MODE_TIP = translatable("box.command.boxadmin.infinity.tip", GRAY);
+
+    public static final Component INFINITY_HELP =
+            translatable("box.command.boxadmin.infinity.help.command-line", AQUA)
+                    .append(text(" - ", DARK_GRAY))
+                    .append(translatable("box.command.boxadmin.infinity.help.description", GRAY));
 
     private BoxAdminMessage() {
         throw new UnsupportedOperationException();

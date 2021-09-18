@@ -1,5 +1,6 @@
 package net.okocraft.box.feature.command.box;
 
+import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.command.AbstractCommand;
 import net.okocraft.box.api.message.GeneralMessage;
@@ -33,6 +34,7 @@ public class WithdrawCommand extends AbstractCommand {
 
         if (args.length < 2) {
             sender.sendMessage(GeneralMessage.ERROR_COMMAND_NOT_ENOUGH_ARGUMENT);
+            sender.sendMessage(getHelp());
             return;
         }
 
@@ -101,5 +103,10 @@ public class WithdrawCommand extends AbstractCommand {
                 .map(BoxItem::getPlainName)
                 .filter(itemName -> itemName.startsWith(itemNameFilter))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public @NotNull Component getHelp() {
+        return BoxMessage.WITHDRAW_HELP;
     }
 }

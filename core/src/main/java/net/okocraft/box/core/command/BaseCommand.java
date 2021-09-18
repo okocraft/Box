@@ -23,6 +23,10 @@ import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 
+import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.format.NamedTextColor.DARK_GRAY;
+import static net.kyori.adventure.text.format.NamedTextColor.GOLD;
+
 public abstract class BaseCommand implements Command, SubCommandHoldable, CommandExecutor, TabCompleter, Listener {
 
     private final SubCommandHolder subCommandHolder = new SubCommandHolder();
@@ -45,6 +49,7 @@ public abstract class BaseCommand implements Command, SubCommandHoldable, Comman
                 runCommandAsync(commandOfNoArgument, sender, args);
             } else {
                 sender.sendMessage(ErrorMessages.ERROR_COMMAND_NO_ARGUMENT);
+                sendHelp(sender);
             }
             return;
         }
@@ -52,7 +57,10 @@ public abstract class BaseCommand implements Command, SubCommandHoldable, Comman
         var optionalSubCommand = subCommandHolder.search(args[0]);
 
         if (optionalSubCommand.isEmpty()) {
-            sender.sendMessage(GeneralMessage.ERROR_COMMAND_SUBCOMMAND_NOT_FOUND);
+            if (!args[0].equalsIgnoreCase("help")) {
+                sender.sendMessage(GeneralMessage.ERROR_COMMAND_SUBCOMMAND_NOT_FOUND);
+            }
+            sendHelp(sender);
             return;
         }
 
@@ -147,6 +155,20 @@ public abstract class BaseCommand implements Command, SubCommandHoldable, Comman
 
         event.setCompletions(onTabComplete(event.getSender(), args));
         event.setHandled(true);
+    }
+
+    private void sendHelp(@NotNull CommandSender sender) {
+        sender.sendMessage(
+                text("============================== ", DARK_GRAY)
+                        .append(text("Box Help", GOLD))
+                        .append(text(" ============================== ", DARK_GRAY))
+        );
+
+        sender.sendMessage(getHelp());
+        subCommandHolder.getSubCommands()
+                .stream()
+                .map(Command::getHelp)
+                .forEach(sender::sendMessage);
     }
 
     private void runCommandAsync(@NotNull Command command, @NotNull CommandSender sender, @NotNull String[] args) {

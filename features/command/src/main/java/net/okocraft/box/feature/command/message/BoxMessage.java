@@ -12,6 +12,7 @@ import static net.kyori.adventure.text.Component.newline;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.Component.translatable;
 import static net.kyori.adventure.text.format.NamedTextColor.AQUA;
+import static net.kyori.adventure.text.format.NamedTextColor.DARK_GRAY;
 import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
 
@@ -47,6 +48,21 @@ public final class BoxMessage {
 
     public static final Component DEPOSIT_NOT_FOUND =
             translatable("box.command.box.deposit.not-found", RED);
+
+    public static final Component DEPOSIT_HELP_1 =
+            translatable("box.command.box.deposit.help.main-hand.command-line", AQUA)
+                    .append(text(" - ", DARK_GRAY))
+                    .append(translatable("box.command.box.deposit.help.main-hand.description", GRAY));
+
+    public static final Component DEPOSIT_HELP_2 =
+            translatable("box.command.box.deposit.help.all.command-line", AQUA)
+                    .append(text(" - ", DARK_GRAY))
+                    .append(translatable("box.command.box.deposit.help.all.description", GRAY));
+
+    public static final Component DEPOSIT_HELP_3 =
+            translatable("box.command.box.deposit.help.item.command-line", AQUA)
+                    .append(text(" - ", DARK_GRAY))
+                    .append(translatable("box.command.box.deposit.help.item.description", GRAY));
 
     public static final QuadArgument<String, BoxItem, Integer, Integer> GIVE_SUCCESS_SENDER =
             (targetName, item, amount, current) ->
@@ -90,6 +106,11 @@ public final class BoxMessage {
                             .color(RED)
                             .build();
 
+    public static final Component GIVE_HELP =
+            translatable("box.command.box.give.help.command-line", AQUA)
+                    .append(text(" - ", DARK_GRAY))
+                    .append(translatable("box.command.box.give.help.description", GRAY));
+
     public static final TripleArgument<BoxItem, Integer, Integer> WITHDRAW_SUCCESS =
             (item, amount, current) ->
                     translatable()
@@ -118,6 +139,11 @@ public final class BoxMessage {
 
     public static final Component WITHDRAW_INVENTORY_IS_FULL =
             translatable("box.command.box.withdraw.inventory-is-full", RED);
+
+    public static final Component WITHDRAW_HELP =
+            translatable("box.command.box.withdraw.help.command-line", AQUA)
+                    .append(text(" - ", DARK_GRAY))
+                    .append(translatable("box.command.box.withdraw.help.description", GRAY));
 
     private BoxMessage() {
         throw new UnsupportedOperationException();
