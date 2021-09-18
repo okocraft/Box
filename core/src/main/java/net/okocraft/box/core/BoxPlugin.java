@@ -343,6 +343,11 @@ public class BoxPlugin implements BoxAPI {
 
     @Override
     public void register(@NotNull BoxFeature boxFeature) {
+        if (configuration.get(Settings.DISABLED_FEATURES).contains(boxFeature.getName())) {
+            getLogger().warning("Feature " + boxFeature.getName() + " is disabled by disabled-features in config.yml");
+            return;
+        }
+
         try {
             boxFeature.enable();
         } catch (Throwable throwable) {

@@ -24,6 +24,9 @@ public final class Settings {
     public static final ConfigValue<List<String>> DISABLED_WORLDS =
             config -> config.getStringList("disabled-worlds");
 
+    public static final ConfigValue<List<String>> DISABLED_FEATURES =
+            config -> config.getStringList("disabled-features");
+
     private Settings() {
         throw new UnsupportedOperationException();
     }
