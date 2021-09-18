@@ -21,9 +21,9 @@ public class CommandFeature extends AbstractBoxFeature {
             List.of(new DepositCommand(), new GiveCommand(), new WithdrawCommand());
 
     public final List<Command> boxAdminSubCommands =
-            List.of(new RegisterCommand(), new InfinityCommand(), new ReloadCommand(), new RenameCommand(),
-                    StockModifyCommands.give(), StockModifyCommands.set(), StockModifyCommands.take(),
-                    new VersionCommand());
+            List.of(StockModifyCommands.give(), StockModifyCommands.set(), StockModifyCommands.take(),
+                    new InfinityCommand(), new RegisterCommand(), new ReloadCommand(),
+                    new RenameCommand(), new VersionCommand());
 
     public CommandFeature() {
         super("command");
