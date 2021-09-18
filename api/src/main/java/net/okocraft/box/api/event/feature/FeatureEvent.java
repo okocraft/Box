@@ -41,6 +41,14 @@ public class FeatureEvent extends Event {
         return type;
     }
 
+    @Override
+    public String toString() {
+        return "FeatureEvent{" +
+                "feature=" + feature +
+                ", type=" + type +
+                '}';
+    }
+
     /**
      * Types of this event.
      */
