@@ -36,10 +36,7 @@ public abstract class BaseCommand implements Command, SubCommandHoldable, Comman
 
         if (args.length == 0) {
             if (commandOfNoArgument != null && sender.hasPermission(commandOfNoArgument.getPermissionNode())) {
-                CompletableFuture.runAsync(
-                        () -> commandOfNoArgument.onCommand(sender, args),
-                        BoxProvider.get().getExecutorProvider().getExecutor()
-                ).exceptionallyAsync(e -> reportError(sender, args, e));
+                runCommandAsync(commandOfNoArgument, sender, args);
             } else {
                 sender.sendMessage(ErrorMessages.ERROR_COMMAND_NO_ARGUMENT);
             }
@@ -56,10 +53,7 @@ public abstract class BaseCommand implements Command, SubCommandHoldable, Comman
         var subCommand = optionalSubCommand.get();
 
         if (sender.hasPermission(subCommand.getPermissionNode())) {
-            CompletableFuture.runAsync(
-                    () -> subCommand.onCommand(sender, args),
-                    BoxProvider.get().getExecutorProvider().getExecutor()
-            ).exceptionallyAsync(e -> reportError(sender, args, e));
+            runCommandAsync(subCommand, sender, args);
         } else {
             sender.sendMessage(GeneralMessage.ERROR_NO_PERMISSION.apply(subCommand.getPermissionNode()));
         }
@@ -90,7 +84,7 @@ public abstract class BaseCommand implements Command, SubCommandHoldable, Comman
         return subCommandHolder;
     }
 
-    public void changeNoArgumentCommand(@Nullable  Command command) {
+    public void changeNoArgumentCommand(@Nullable Command command) {
         commandOfNoArgument = command;
     }
 
@@ -145,7 +139,14 @@ public abstract class BaseCommand implements Command, SubCommandHoldable, Comman
         event.setHandled(true);
     }
 
-    private Void reportError(@NotNull CommandSender sender, @NotNull String[] args, @NotNull Throwable throwable) {
+    private void runCommandAsync(@NotNull Command command, @NotNull CommandSender sender, @NotNull String[] args) {
+        CompletableFuture.runAsync(
+                () -> command.onCommand(sender, args),
+                BoxProvider.get().getExecutorProvider().getExecutor()
+        ).exceptionallyAsync(e -> reportError(sender, args, e));
+    }
+
+    private @Nullable Void reportError(@NotNull CommandSender sender, @NotNull String[] args, @NotNull Throwable throwable) {
         sender.sendMessage(ErrorMessages.ERROR_WHILE_EXECUTING_COMMAND.apply(throwable));
 
         BoxProvider.get().getLogger().log(
