@@ -1,10 +1,8 @@
 package net.okocraft.box.core.listener;
 
 import net.okocraft.box.api.BoxProvider;
-import net.okocraft.box.core.BoxPlugin;
 import net.okocraft.box.core.message.ErrorMessages;
 import net.okocraft.box.core.player.BoxPlayerMapImpl;
-import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
