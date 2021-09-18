@@ -151,6 +151,15 @@ public final class Displays {
     public static final Component RECIPE_NOT_FOUND =
             translatable("box.gui.modes.craft-mode.recipe-not-found", NO_STYLE.color(RED));
 
+    public static final SingleArgument<BoxItem> RECIPE_NOT_FOUND_COMMAND =
+            item ->
+                    translatable()
+                            .key("box.command.box.craft.recipe-not-found")
+                            .args(item.getDisplayName().color(AQUA).hoverEvent(item.getOriginal()))
+                            .style(NO_STYLE)
+                            .color(RED)
+                            .build();
+
     public static final Component BULK_INGREDIENT_CHANGE_MODE =
             translatable("box.gui.buttons.craft.ingredient-change-mode.bulk", NO_STYLE.color(GOLD));
 
