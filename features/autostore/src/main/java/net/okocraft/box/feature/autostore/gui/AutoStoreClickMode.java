@@ -1,4 +1,4 @@
-package net.okocraft.box.feature.gui.internal.hook.autostore;
+package net.okocraft.box.feature.autostore.gui;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -20,11 +20,12 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 
+@SuppressWarnings("ClassCanBeRecord")
 public class AutoStoreClickMode implements BoxItemClickMode {
 
     private final SettingManager settingManager;
 
-    AutoStoreClickMode(@NotNull SettingManager settingManager) {
+    public AutoStoreClickMode(@NotNull SettingManager settingManager) {
         this.settingManager = settingManager;
     }
 

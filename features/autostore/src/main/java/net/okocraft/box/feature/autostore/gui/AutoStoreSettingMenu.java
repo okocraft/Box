@@ -1,4 +1,4 @@
-package net.okocraft.box.feature.gui.internal.hook.autostore;
+package net.okocraft.box.feature.autostore.gui;
 
 import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.BoxProvider;
