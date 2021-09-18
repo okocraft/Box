@@ -1,13 +1,13 @@
 package net.okocraft.box.api.event.feature;
 
-import com.github.siroshun09.event4j.event.Event;
+import net.okocraft.box.api.event.BoxEvent;
 import net.okocraft.box.api.feature.BoxFeature;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * A class that represents a {@link BoxFeature} related event.
  */
-public class FeatureEvent extends Event {
+public class FeatureEvent extends BoxEvent {
 
     private final BoxFeature feature;
     private final Type type;

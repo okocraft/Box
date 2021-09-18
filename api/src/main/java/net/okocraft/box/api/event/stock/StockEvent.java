@@ -1,6 +1,6 @@
 package net.okocraft.box.api.event.stock;
 
-import com.github.siroshun09.event4j.event.Event;
+import net.okocraft.box.api.event.BoxEvent;
 import net.okocraft.box.api.model.stock.StockHolder;
 import net.okocraft.box.api.model.stock.UserStockHolder;
 import org.jetbrains.annotations.NotNull;
@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
  * Therefore, you need to be very careful not to call methods
  * that cause changes to a {@link StockHolder} in the event, as this may result in an infinite loop.
  */
-public class StockEvent extends Event {
+public class StockEvent extends BoxEvent {
 
     private final StockHolder stockHolder;
 

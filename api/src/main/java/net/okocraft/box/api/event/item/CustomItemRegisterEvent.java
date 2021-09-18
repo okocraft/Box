@@ -1,13 +1,13 @@
 package net.okocraft.box.api.event.item;
 
-import com.github.siroshun09.event4j.event.Event;
+import net.okocraft.box.api.event.BoxEvent;
 import net.okocraft.box.api.model.item.BoxCustomItem;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * An event that is called when a new {@link BoxCustomItem} has been registered.
  */
-public class CustomItemRegisterEvent extends Event {
+public class CustomItemRegisterEvent extends BoxEvent {
 
     private final BoxCustomItem newItem;
 

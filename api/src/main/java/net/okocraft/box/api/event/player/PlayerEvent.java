@@ -1,13 +1,13 @@
 package net.okocraft.box.api.event.player;
 
-import com.github.siroshun09.event4j.event.Event;
+import net.okocraft.box.api.event.BoxEvent;
 import net.okocraft.box.api.player.BoxPlayer;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * A class that represents a {@link BoxPlayer} related event.
  */
-public class PlayerEvent extends Event {
+public class PlayerEvent extends BoxEvent {
 
     private final BoxPlayer boxPlayer;
 
