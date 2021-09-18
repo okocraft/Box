@@ -104,7 +104,7 @@ public final class Displays {
     public static final DoubleArgument<Category, BoxItemClickMode> CATEGORY_MENU_TITLE =
             (category, mode) ->
                     translatable()
-                            .key("box.gui.menus.category-menu.title")
+                            .key("box.gui.menus.category-menu")
                             .args(
                                     category.getDisplayName().color(BLACK),
                                     mode.getDisplayName().color(BLACK)

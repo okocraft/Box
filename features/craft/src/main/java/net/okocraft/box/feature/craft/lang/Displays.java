@@ -19,7 +19,15 @@ public final class Displays {
     public static final SingleArgument<BoxItem> CRAFT_MENU_TITLE =
             result ->
                     translatable()
-                            .key("box.gui.menus.craft-menu.title")
+                            .key("box.craft.gui.menus.craft")
+                            .args(translatable(result.getOriginal(), BLACK))
+                            .color(BLACK)
+                            .build();
+
+    public static final SingleArgument<BoxItem> RECIPE_SELECTOR_TITLE =
+            result ->
+                    translatable()
+                            .key("box.craft.gui.menus.recipe-selector")
                             .args(translatable(result.getOriginal(), BLACK))
                             .color(BLACK)
                             .build();
@@ -27,38 +35,38 @@ public final class Displays {
     public static final SingleArgument<Integer> CRAFT_BUTTON_DISPLAY_NAME =
             times ->
                     translatable()
-                            .key("box.gui.buttons.craft.display-name")
+                            .key("box.craft.gui.buttons.display-name")
                             .args(text(times, NO_DECORATION_AQUA))
                             .style(NO_DECORATION_GRAY)
                             .build();
 
     public static final Component CRAFT_BUTTON_INGREDIENTS =
-            translatable("box.gui.buttons.craft.ingredients", NO_DECORATION_GRAY);
+            translatable("box.craft.gui.buttons.ingredients", NO_DECORATION_GRAY);
 
     public static final Component RECIPE_BUTTON_CLICK_TO_SHOW_DETAILS =
-            translatable("box.gui.buttons.craft.click-to-show-details", NO_DECORATION_GRAY);
+            translatable("box.craft.gui.buttons.click-to-show-details", NO_DECORATION_GRAY);
 
     public static final SingleArgument<Integer> CRAFT_BUTTON_CURRENT_STOCK =
             stock ->
                     translatable()
-                            .key("box.gui.buttons.craft.current-stock")
+                            .key("box.craft.gui.buttons.current-stock")
                             .args(text(stock, AQUA))
                             .style(NO_DECORATION_GRAY)
                             .build();
 
     public static final Component DISTRIBUTION_BUTTON_DISPLAY_NAME =
-            translatable("box.gui.buttons.craft.distribution.display-name", NO_DECORATION_GOLD);
+            translatable("box.craft.gui.buttons.distribution.display-name", NO_DECORATION_GOLD);
 
     public static final Component DISTRIBUTION_BUTTON_INVENTORY =
-            translatable("box.gui.buttons.craft.distribution.inventory", AQUA);
+            translatable("box.craft.gui.buttons.distribution.inventory", AQUA);
 
     public static final Component DISTRIBUTION_BUTTON_BOX =
-            translatable("box.gui.buttons.craft.distribution.box", AQUA);
+            translatable("box.craft.gui.buttons.distribution.box", AQUA);
 
     public static final SingleArgument<Boolean> DISTRIBUTION_CURRENT =
             current ->
                     translatable()
-                            .key("box.gui.buttons.craft.distribution.current")
+                            .key("box.craft.gui.buttons.distribution.current")
                             .args(current ? DISTRIBUTION_BUTTON_INVENTORY : DISTRIBUTION_BUTTON_BOX)
                             .style(NO_DECORATION_GRAY)
                             .build();
@@ -66,52 +74,52 @@ public final class Displays {
     public static final SingleArgument<Boolean> DISTRIBUTION_CLICK_TO_CHANGE =
             current ->
                     translatable()
-                            .key("box.gui.buttons.craft.distribution.click-to-change")
+                            .key("box.craft.gui.buttons.distribution.click-to-change")
                             .args(current ? DISTRIBUTION_BUTTON_BOX : DISTRIBUTION_BUTTON_INVENTORY)
                             .style(NO_DECORATION_GRAY)
                             .build();
 
     public static final Component CHANGE_UNIT_BUTTON_DISPLAY_NAME =
             translatable()
-                    .key("box.gui.buttons.craft.change-unit.display-name")
+                    .key("box.craft.gui.buttons.change-unit.display-name")
                     .style(NO_DECORATION_GOLD)
                     .build();
 
     public static final Component CHANGE_UNIT_BUTTON_SHIFT_CLICK_TO_RESET_TIMES =
-            translatable("box.gui.buttons.craft.change-unit.shift-click-to-reset-times", NO_DECORATION_GRAY);
+            translatable("box.craft.gui.buttons.change-unit.shift-click-to-reset-times", NO_DECORATION_GRAY);
 
     public static final SingleArgument<Integer> CHANGE_CRAFT_TIMES_BUTTON_CURRENT =
             currentAmount ->
                     translatable()
-                            .key("box.gui.buttons.craft.change-times.current")
+                            .key("box.craft.gui.buttons.change-times.current")
                             .args(text(currentAmount, AQUA))
                             .style(NO_DECORATION_GRAY)
                             .build();
 
     public static final Component CHANGE_CRAFT_TIMES_BUTTON_INCREASE_DISPLAY_NAME =
             translatable()
-                    .key("box.gui.buttons.craft.change-times.increase.display-name")
+                    .key("box.craft.gui.buttons.change-times.increase.display-name")
                     .style(NO_DECORATION_GOLD)
                     .build();
 
     public static final SingleArgument<Integer> CHANGE_CRAFT_TIMES_BUTTON_INCREASE_LORE =
             unit ->
                     translatable()
-                            .key("box.gui.buttons.craft.change-times.increase.lore")
+                            .key("box.craft.gui.buttons.change-times.increase.lore")
                             .args(text(unit, AQUA))
                             .style(NO_DECORATION_GRAY)
                             .build();
 
     public static final Component CHANGE_CRAFT_TIMES_BUTTON_DECREASE_DISPLAY_NAME =
             translatable()
-                    .key("box.gui.buttons.craft.change-times.decrease.display-name")
+                    .key("box.craft.gui.buttons.change-times.decrease.display-name")
                     .style(NO_DECORATION_GOLD)
                     .build();
 
     public static final SingleArgument<Integer> CHANGE_CRAFT_TIMES_BUTTON_DECREASE_LORE =
             unit ->
                     translatable()
-                            .key("box.gui.buttons.craft.change-times.decrease.lore")
+                            .key("box.craft.gui.buttons.change-times.decrease.lore")
                             .args(text(unit, AQUA))
                             .style(NO_DECORATION_GRAY)
                             .build();
@@ -119,40 +127,32 @@ public final class Displays {
     public static final SingleArgument<Integer> CHANGE_CRAFT_TIMES_BUTTON_SET_TO_UNIT =
             unit ->
                     translatable()
-                            .key("box.gui.buttons.craft.change-times.set-to-unit")
+                            .key("box.craft.gui.buttons.change-times.set-to-unit")
                             .args(text(unit, AQUA))
                             .style(NO_DECORATION_GRAY)
                             .build();
 
-    public static final SingleArgument<BoxItem> RECIPE_SELECTOR_TITLE =
-            result ->
-                    translatable()
-                            .key("box.gui.menus.recipe-selector.title")
-                            .args(translatable(result.getOriginal(), BLACK))
-                            .color(BLACK)
-                            .build();
-
-    public static final Component CRAFT_MODE = translatable("box.gui.modes.craft-mode.display-name");
+    public static final Component CRAFT_MODE = translatable("box.craft.gui.mode.display-name");
 
     public static final Component CLICK_TO_SHOW_RECIPES =
-            translatable("box.gui.modes.craft-mode.click-to-show-recipes", NO_DECORATION_GRAY);
+            translatable("box.craft.gui.mode.click-to-show-recipes", NO_DECORATION_GRAY);
 
     public static final Component RECIPE_NOT_FOUND =
-            translatable("box.gui.modes.craft-mode.recipe-not-found", NO_DECORATION_RED);
+            translatable("box.craft.gui.mode.recipe-not-found", NO_DECORATION_RED);
 
-    public static final SingleArgument<BoxItem> RECIPE_NOT_FOUND_COMMAND =
+    public static final Component BULK_INGREDIENT_CHANGE_MODE =
+            translatable("box.craft.gui.buttons.ingredient-change-mode.bulk", NO_DECORATION_GOLD);
+
+    public static final Component EACH_INGREDIENT_CHANGE_MODE =
+            translatable("box.craft.gui.buttons.ingredient-change-mode.each", NO_DECORATION_GOLD);
+
+    public static final SingleArgument<BoxItem> COMMAND_RECIPE_NOT_FOUND =
             item ->
                     translatable()
-                            .key("box.command.box.craft.recipe-not-found")
+                            .key("box.craft.command.recipe-not-found")
                             .args(item.getDisplayName().color(AQUA).hoverEvent(item.getOriginal()))
                             .color(RED)
                             .build();
-
-    public static final Component BULK_INGREDIENT_CHANGE_MODE =
-            translatable("box.gui.buttons.craft.ingredient-change-mode.bulk", NO_DECORATION_GOLD);
-
-    public static final Component EACH_INGREDIENT_CHANGE_MODE =
-            translatable("box.gui.buttons.craft.ingredient-change-mode.each", NO_DECORATION_GOLD);
 
     private Displays() {
         throw new UnsupportedOperationException();

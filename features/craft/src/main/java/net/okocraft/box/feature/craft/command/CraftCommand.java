@@ -53,7 +53,7 @@ public class CraftCommand extends AbstractCommand {
         var recipeHolder = recipeMap.get(item.get());
 
         if (recipeHolder == null || recipeHolder.getRecipeList().isEmpty()) {
-            player.sendMessage(Displays.RECIPE_NOT_FOUND_COMMAND.apply(item.get()));
+            player.sendMessage(Displays.COMMAND_RECIPE_NOT_FOUND.apply(item.get()));
             return;
         }
 

@@ -20,6 +20,21 @@ box:
       tip:
         all-mode-disabled: "一括収納モードが無効になっています。"
         how-to-toggle-all-mode: "{0} で切り替えることができます。"
+    gui:
+      mode:
+        display-name: "自動収納設定"
+        lore: "自動収納: {0}"
+      setting-menu:
+        title: "自動収納機能 設定メニュー"
+        change-mode:
+          display-name: "自動収納モード変更"
+          all: "クリックで一括収納モードにする"
+          per-item: "クリックで個別収納モードにする"
+        bulk-editing:
+          title: "個別収納モード 一括変更"
+          left-click: "左クリックですべて {0} にする"
+          right-click: "右クリックですべて {0} にする"
+          recent: "最近の一括変更操作: {0}"
   category:
     reloaded: "カテゴリーを再読み込みしました。"
     name:
@@ -76,8 +91,6 @@ box:
         stop: "インベントリに空きがなくなったため引き出しを途中で止めました。"
         no-stock: "アイテム {0} の在庫がありません。"
         inventory-is-full: "インベントリに空きがありません。"
-      craft:
-        recipe-not-found: "アイテム {0} の利用可能なレシピはありません。"
     boxadmin:
       give:
         success:
@@ -112,6 +125,43 @@ box:
           target: "{0} からアイテム {1} を {2} 個減らされました (現在 {3} 個)。"
       version:
         info: "Box {0}"
+  craft:
+    command:
+      recipe-not-found: "アイテム {0} の利用可能なレシピはありません。"
+    gui:
+      buttons:
+        display-name: "{0} 回クラフト"
+        ingredients: "素材"
+        click-to-show-details: "シフトクリックで詳細を表示する"
+        current-stock: "現在の在庫: {0}"
+        distribution:
+          display-name: "アイテムの収納先"
+          inventory: "インベントリ"
+          box: "Box"
+          current: "クラフトしたアイテムの収納先: {0}"
+          click-to-change: "クリックで {0} に変更"
+        change-unit:
+          display-name: "クラフト回数の増減単位を変更"
+          shift-click-to-reset-times: "シフトクリックで回数をリセット"
+        change-times:
+          current: "現在のクラフト回数: {0}"
+          increase:
+            display-name: "増やす"
+            lore: "クリックでクラフト回数を {0} 増やす"
+          decrease:
+            display-name: "減らす"
+            lore: "クリックでクラフト回数を {0} 減らす"
+          set-to-unit: "クリックでクラフト回数を {0} にする"
+        ingredient-change-mode:
+          bulk: "素材一括変更モード"
+          each: "各素材変更モード"
+      menus:
+        craft: "{0} のクラフト"
+        recipe-selector: "{0} のレシピ"
+      mode:
+        display-name: "クラフトモード"
+        click-to-show-recipes: "クリックしてレシピを表示する"
+        recipe-not-found: "レシピがありません"
   error:
     no-permission: "権限がありません: {0}"
     player-data:
@@ -145,66 +195,15 @@ box:
         previous: "前のページ"
         next: "次のページ"
       mode-change: "モード変更"
-      craft:
-        display-name: "{0} 回クラフト"
-        ingredients: "素材"
-        click-to-show-details: "シフトクリックで詳細を表示する"
-        current-stock: "現在の在庫: {0}"
-        distribution:
-          display-name: "アイテムの収納先"
-          inventory: "インベントリ"
-          box: "Box"
-          current: "クラフトしたアイテムの収納先: {0}"
-          click-to-change: "クリックで {0} に変更"
-        change-unit:
-          display-name: "クラフト回数の増減単位を変更"
-          shift-click-to-reset-times: "シフトクリックで回数をリセット"
-        change-times:
-          current: "現在のクラフト回数: {0}"
-          increase:
-            display-name: "増やす"
-            lore: "クリックでクラフト回数を {0} 増やす"
-          decrease:
-            display-name: "減らす"
-            lore: "クリックでクラフト回数を {0} 減らす"
-          set-to-unit: "クリックでクラフト回数を {0} にする"
-        ingredient-change-mode:
-          bulk: "素材一括変更モード"
-          each: "各素材変更モード"
     menus:
       category-selector: "カテゴリー選択"
-      category-menu:
-        title: "{0} ({1})"
-      craft-menu:
-        title: "{0} のクラフト"
-      recipe-selector:
-        title: "{0} のレシピ"
+      category-menu: "{0} ({1})"
     modes:
       storage-mode:
         display-name: "収納モード"
         left-click-to-deposit: "左クリックで {0} 個預ける"
         right-click-to-withdraw: "右クリックで {0} 個引き出す"
         current-stock: "現在の在庫数: {0} 個"
-      autostore-mode:
-        display-name: "自動収納設定"
-        lore: "自動収納: {0}"
-        enabled: "有効"
-        disabled: "無効"
-        setting-menu:
-          title: "自動収納機能 設定メニュー"
-          change-mode:
-            display-name: "自動収納モード変更"
-            all: "クリックで一括収納モードにする"
-            per-item: "クリックで個別収納モードにする"
-          bulk-editing:
-            title: "個別収納モード 一括変更"
-            left-click: "左クリックですべて {0} にする"
-            right-click: "右クリックですべて {0} にする"
-            recent: "最近の一括変更操作: {0}"
-      craft-mode:
-        display-name: "クラフトモード"
-        click-to-show-recipes: "クリックしてレシピを表示する"
-        recipe-not-found: "レシピがありません"
   stick:
     item:
       display-name: "Box Stick"
