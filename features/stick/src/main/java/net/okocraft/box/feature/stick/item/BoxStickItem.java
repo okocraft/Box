@@ -1,6 +1,8 @@
 package net.okocraft.box.feature.stick.item;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.Style;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.translation.GlobalTranslator;
 import net.okocraft.box.api.BoxProvider;
 import org.bukkit.Material;
@@ -16,16 +18,20 @@ import java.util.stream.Collectors;
 
 import static net.kyori.adventure.text.Component.empty;
 import static net.kyori.adventure.text.Component.translatable;
-import static net.kyori.adventure.text.format.NamedTextColor.DARK_BLUE;
+import static net.kyori.adventure.text.format.NamedTextColor.BLUE;
 import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
 
 public class BoxStickItem {
 
-    private static final Component DISPLAY_NAME = translatable("box.stick.item.display-name", DARK_BLUE);
+    private static final Style NO_DECORATION =
+            Style.style().decoration(TextDecoration.ITALIC, TextDecoration.State.FALSE).build();
+
+    private static final Component DISPLAY_NAME =
+            translatable("box.stick.item.display-name", NO_DECORATION.color(BLUE));
     private static final List<Component> LORE = List.of(
             empty(),
-            translatable("box.stick.item.lore-1", GRAY),
-            translatable("box.stick.item.lore-2", GRAY),
+            translatable("box.stick.item.lore-1", NO_DECORATION.color(GRAY)),
+            translatable("box.stick.item.lore-2", NO_DECORATION.color(GRAY)),
             empty()
     );
 

@@ -13,7 +13,7 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 import static net.kyori.adventure.text.Component.translatable;
-import static net.kyori.adventure.text.format.NamedTextColor.AQUA;
+import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
 
 public class StickCommand extends AbstractCommand {
@@ -21,7 +21,7 @@ public class StickCommand extends AbstractCommand {
     private static final Component COULD_NOT_GIVE_STICK =
             translatable("box.stick.command.could-not-give-stick", RED);
     private static final Component GIVE_SUCCESS =
-            translatable("box.stick.command.success", AQUA);
+            translatable("box.stick.command.success", GRAY);
 
     private final BoxStickItem boxStickItem;
 
