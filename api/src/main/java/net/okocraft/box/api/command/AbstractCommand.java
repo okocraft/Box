@@ -1,6 +1,5 @@
 package net.okocraft.box.api.command;
 
-import net.okocraft.box.api.message.GeneralMessage;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
