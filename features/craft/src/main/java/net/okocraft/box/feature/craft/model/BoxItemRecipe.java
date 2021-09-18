@@ -5,6 +5,5 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public record BoxItemRecipe(@NotNull List<BoxItemIngredient> ingredients,
-                            @NotNull BoxItem result, @NotNull RecipePreview preview) {
+public record BoxItemRecipe(@NotNull List<IngredientHolder> ingredients, @NotNull BoxItem result, int amount) {
 }
