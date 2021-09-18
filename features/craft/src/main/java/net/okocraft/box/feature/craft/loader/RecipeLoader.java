@@ -12,6 +12,7 @@ public final class RecipeLoader {
     public static @NotNull Map<BoxItem, RecipeHolder> load() {
         var processor = new Processor();
         Bukkit.recipeIterator().forEachRemaining(processor::processRecipe);
+        AdditionalRecipes.RECIPES.forEach(processor::processRecipe);
         return processor.result();
     }
 
