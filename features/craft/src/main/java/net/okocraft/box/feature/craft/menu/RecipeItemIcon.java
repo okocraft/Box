@@ -1,9 +1,8 @@
 package net.okocraft.box.feature.craft.menu;
 
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
-import net.okocraft.box.feature.gui.api.menu.RenderedButton;
 import net.okocraft.box.feature.gui.api.lang.Styles;
+import net.okocraft.box.feature.gui.api.menu.RenderedButton;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -51,8 +50,7 @@ public record RecipeItemIcon(@NotNull CraftMenu.CurrentRecipe currentRecipe, int
                     Component.text()
                             .append(Component.text(" > "))
                             .append(Component.translatable(ingredient.item().getOriginal()))
-                            .style(Styles.NO_STYLE)
-                            .color(ingredient == ingredients.getSelected() ? NamedTextColor.AQUA : NamedTextColor.GRAY)
+                            .style(ingredient == ingredients.getSelected() ? Styles.NO_DECORATION_AQUA : Styles.NO_DECORATION_GRAY)
                             .build()
             );
         }

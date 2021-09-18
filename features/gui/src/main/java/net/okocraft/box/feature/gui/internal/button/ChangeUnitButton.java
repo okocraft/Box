@@ -1,7 +1,6 @@
 package net.okocraft.box.feature.gui.internal.button;
 
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import net.okocraft.box.feature.gui.api.button.RefreshableButton;
 import net.okocraft.box.feature.gui.api.lang.Styles;
 import net.okocraft.box.feature.gui.api.menu.Menu;
@@ -51,8 +50,7 @@ public class ChangeUnitButton implements RefreshableButton {
             lore.add(
                     Component.text()
                             .content(" > " + unit.getAmount())
-                            .style(Styles.NO_STYLE)
-                            .color(currentUnit == unit ? NamedTextColor.AQUA : NamedTextColor.GRAY)
+                            .style(currentUnit == unit ? Styles.NO_DECORATION_AQUA : Styles.NO_DECORATION_GRAY)
                             .build()
             );
         }

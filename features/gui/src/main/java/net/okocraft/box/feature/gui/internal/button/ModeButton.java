@@ -1,7 +1,6 @@
 package net.okocraft.box.feature.gui.internal.button;
 
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import net.okocraft.box.feature.gui.api.button.RefreshableButton;
 import net.okocraft.box.feature.gui.api.lang.Styles;
 import net.okocraft.box.feature.gui.api.mode.BoxItemClickMode;
@@ -80,14 +79,13 @@ public class ModeButton implements RefreshableButton {
         var modes = ClickModeRegistry.getModes();
 
         for (int i = 0, limit = modes.size(); i < limit; i++) {
-            var color = i == currentIndex ? NamedTextColor.AQUA : NamedTextColor.GRAY;
+            var style = i == currentIndex ? Styles.NO_DECORATION_AQUA : Styles.NO_DECORATION_GRAY;
 
             result.add(
                     Component.text()
                             .append(Component.text(" > "))
                             .append(modes.get(i).getDisplayName())
-                            .style(Styles.NO_STYLE)
-                            .color(color)
+                            .style(style)
                             .build()
             );
         }

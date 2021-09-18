@@ -18,8 +18,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Optional;
 
-import static net.kyori.adventure.text.format.NamedTextColor.GOLD;
-import static net.okocraft.box.feature.gui.api.lang.Styles.NO_STYLE;
+import static net.okocraft.box.feature.gui.api.lang.Styles.NO_DECORATION_GOLD;
 
 @SuppressWarnings("ClassCanBeRecord")
 public class AutoStoreClickMode implements BoxItemClickMode {
@@ -101,7 +100,7 @@ public class AutoStoreClickMode implements BoxItemClickMode {
         @Override
         public @Nullable ItemMeta applyIconMeta(@NotNull Player viewer, @NotNull ItemMeta target) {
             var displayName = TranslationUtil.render(
-                    AutoStoreMenuDisplays.AUTOSTORE_MODE_SETTING_MENU_TITLE.style(NO_STYLE.color(GOLD)),
+                    AutoStoreMenuDisplays.AUTOSTORE_MODE_SETTING_MENU_TITLE.style(NO_DECORATION_GOLD),
                     viewer
             );
 

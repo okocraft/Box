@@ -1,6 +1,5 @@
 package net.okocraft.box.feature.gui.internal.button;
 
-import net.kyori.adventure.text.format.NamedTextColor;
 import net.okocraft.box.feature.category.model.Category;
 import net.okocraft.box.feature.gui.api.buttons.MenuButton;
 import net.okocraft.box.feature.gui.api.lang.Styles;
@@ -36,9 +35,7 @@ public class CategoryButton extends MenuButton {
     @Override
     public @Nullable ItemMeta applyIconMeta(@NotNull Player viewer, @NotNull ItemMeta target) {
         var displayName =
-                TranslationUtil.render(category.getDisplayName(), viewer)
-                        .style(Styles.NO_STYLE)
-                        .color(NamedTextColor.GOLD);
+                TranslationUtil.render(category.getDisplayName(), viewer).style(Styles.NO_DECORATION_GOLD);
 
         target.displayName(displayName);
 

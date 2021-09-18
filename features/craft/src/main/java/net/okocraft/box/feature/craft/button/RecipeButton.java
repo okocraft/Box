@@ -7,9 +7,9 @@ import net.okocraft.box.feature.craft.menu.CraftMenu;
 import net.okocraft.box.feature.craft.model.BoxItemRecipe;
 import net.okocraft.box.feature.craft.util.IngredientRenderer;
 import net.okocraft.box.feature.gui.api.button.RefreshableButton;
+import net.okocraft.box.feature.gui.api.buttons.MenuButton;
 import net.okocraft.box.feature.gui.api.menu.Menu;
 import net.okocraft.box.feature.gui.api.util.TranslationUtil;
-import net.okocraft.box.feature.gui.api.buttons.MenuButton;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -22,10 +22,9 @@ import java.util.ArrayList;
 import static net.kyori.adventure.text.Component.space;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.Component.translatable;
-import static net.kyori.adventure.text.format.NamedTextColor.AQUA;
-import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
-import static net.kyori.adventure.text.format.NamedTextColor.YELLOW;
-import static net.okocraft.box.feature.gui.api.lang.Styles.NO_STYLE;
+import static net.okocraft.box.feature.gui.api.lang.Styles.NO_DECORATION_AQUA;
+import static net.okocraft.box.feature.gui.api.lang.Styles.NO_DECORATION_GRAY;
+import static net.okocraft.box.feature.gui.api.lang.Styles.NO_DECORATION_YELLOW;
 
 public class RecipeButton extends MenuButton implements RefreshableButton {
 
@@ -68,7 +67,7 @@ public class RecipeButton extends MenuButton implements RefreshableButton {
         target.displayName(
                 translatable(recipe.result().getOriginal()).decoration(TextDecoration.ITALIC, TextDecoration.State.FALSE)
                         .append(Component.space())
-                        .append(text("#" + number, NO_STYLE.color(YELLOW)))
+                        .append(text("#" + number, NO_DECORATION_YELLOW))
         );
 
         var lore = new ArrayList<Component>();
@@ -78,11 +77,11 @@ public class RecipeButton extends MenuButton implements RefreshableButton {
 
         lore.add(Component.empty());
         lore.add(
-                text(" -> ", NO_STYLE.color(GRAY))
+                text(" -> ", NO_DECORATION_GRAY)
                         .append(translatable(recipe.result().getOriginal(), recipe.result().getDisplayName().style()))
                         .append(space())
-                        .append(text("x", GRAY))
-                        .append(text(recipe.amount(), AQUA))
+                        .append(text("x", NO_DECORATION_GRAY))
+                        .append(text(recipe.amount(), NO_DECORATION_AQUA))
         );
 
         if (simple) {

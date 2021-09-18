@@ -1,13 +1,12 @@
 package net.okocraft.box.feature.craft.button;
 
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import net.okocraft.box.feature.craft.lang.Displays;
 import net.okocraft.box.feature.craft.util.CustomCraftTimes;
 import net.okocraft.box.feature.gui.api.button.RefreshableButton;
+import net.okocraft.box.feature.gui.api.lang.Styles;
 import net.okocraft.box.feature.gui.api.menu.Menu;
 import net.okocraft.box.feature.gui.api.util.TranslationUtil;
-import net.okocraft.box.feature.gui.api.lang.Styles;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -51,8 +50,7 @@ public class ChangeUnitButton implements RefreshableButton {
             lore.add(
                     Component.text()
                             .content(" > " + unit.getAmount())
-                            .style(Styles.NO_STYLE)
-                            .color(currentUnit == unit ? NamedTextColor.AQUA : NamedTextColor.GRAY)
+                            .style(currentUnit == unit ? Styles.NO_DECORATION_AQUA : Styles.NO_DECORATION_GRAY)
                             .build()
             );
         }

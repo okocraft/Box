@@ -8,8 +8,8 @@ import net.okocraft.box.feature.craft.model.BoxIngredientItem;
 import net.okocraft.box.feature.craft.model.BoxItemRecipe;
 import net.okocraft.box.feature.craft.model.IngredientHolder;
 import net.okocraft.box.feature.craft.model.SelectedRecipe;
-import net.okocraft.box.feature.gui.api.util.TranslationUtil;
 import net.okocraft.box.feature.gui.api.lang.Styles;
+import net.okocraft.box.feature.gui.api.util.TranslationUtil;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,9 +20,6 @@ import static net.kyori.adventure.text.Component.empty;
 import static net.kyori.adventure.text.Component.space;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.Component.translatable;
-import static net.kyori.adventure.text.format.NamedTextColor.AQUA;
-import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
-import static net.kyori.adventure.text.format.NamedTextColor.RED;
 
 
 public final class IngredientRenderer {
@@ -47,14 +44,14 @@ public final class IngredientRenderer {
             int need = ingredient.getValue() * times;
 
             int current = stockHolder.getAmount(item);
-            var style = Styles.NO_STYLE.color(need < current ? AQUA : RED);
+            var style = need < current ? Styles.NO_DECORATION_AQUA : Styles.NO_DECORATION_RED;
 
             target.add(
                     space().toBuilder()
                             .append(translatable(item.getOriginal(), style))
-                            .append(text(": ", Styles.NO_STYLE.color(GRAY)))
+                            .append(text(": ", Styles.NO_DECORATION_GRAY))
                             .append(text(need, style))
-                            .append(text("/", Styles.NO_STYLE.color(GRAY)))
+                            .append(text("/", Styles.NO_DECORATION_GRAY))
                             .append(text(current, style))
                             .build()
             );
@@ -85,7 +82,7 @@ public final class IngredientRenderer {
         int ingredientCounter = 0;
         int ingredientLast = ingredientMap.size();
 
-        var loreStyle = Styles.NO_STYLE.color(GRAY);
+        var loreStyle = Styles.NO_DECORATION_GRAY;
 
         for (var ingredient : ingredientMap.entrySet()) {
             ingredientCounter++;
@@ -113,7 +110,7 @@ public final class IngredientRenderer {
                     line = line.append(
                             text().append(space())
                                     .append(text("x", loreStyle))
-                                    .append(text(need, Styles.NO_STYLE.color(AQUA)))
+                                    .append(text(need, Styles.NO_DECORATION_AQUA))
                     );
                 }
 
