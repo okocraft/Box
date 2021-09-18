@@ -49,7 +49,7 @@ public record RecipeItemIcon(@NotNull CraftMenu.CurrentRecipe currentRecipe, int
         for (var ingredient : ingredients.get()) {
             lore.add(
                     Component.text()
-                            .append(Component.text("> "))
+                            .append(Component.text(" > "))
                             .append(Component.translatable(ingredient.item().getOriginal()))
                             .style(Styles.NO_STYLE)
                             .color(ingredient == ingredients.getSelected() ? NamedTextColor.AQUA : NamedTextColor.GRAY)
