@@ -38,21 +38,21 @@ public class StickListener implements Listener {
     public void onInteract(@NotNull PlayerInteractEvent event) {
         var player = event.getPlayer();
 
-        if (event.getHand() == EquipmentSlot.OFF_HAND ||
-                event.getAction() == Action.PHYSICAL ||
-                !player.hasPermission("box.stick.menu")) {
+        if (event.getAction() == Action.PHYSICAL || event.getAction().isLeftClick() ||
+                BoxProvider.get().isDisabledWorld(player) || !player.hasPermission("box.stick.menu")) {
             return;
         }
 
-        if (BoxProvider.get().isDisabledWorld(player) ||
-                !boxStickItem.check(player.getInventory().getItemInMainHand())) {
-            return;
-        }
+        var mainHand = player.getInventory().getItemInMainHand();
+        var offHand = player.getInventory().getItemInOffHand();
 
-        var command = BoxProvider.get().getConfiguration().get(MENU_COMMAND_SETTING);
+        if ((event.getHand() == EquipmentSlot.HAND && boxStickItem.check(mainHand)) ||
+                (event.getHand() == EquipmentSlot.OFF_HAND && mainHand.getType().isAir() && boxStickItem.check(offHand))) {
+            var command = BoxProvider.get().getConfiguration().get(MENU_COMMAND_SETTING);
 
-        if (!command.isEmpty()) {
-            Bukkit.dispatchCommand(player, command);
+            if (!command.isEmpty()) {
+                Bukkit.dispatchCommand(player, command);
+            }
         }
     }
 
