@@ -133,7 +133,7 @@ public class PlayerListener implements Listener {
      * 
      * @param event EntityPickupItemEvent
      */
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void autoStoreDroppedItem(EntityPickupItemEvent event) {
         if (!config.isAutoStoreEnabled()) {
             return;

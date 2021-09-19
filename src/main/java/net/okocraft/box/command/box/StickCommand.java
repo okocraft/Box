@@ -20,6 +20,7 @@ package net.okocraft.box.command.box;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.PlayerInventory;
 
 import net.okocraft.box.command.BaseCommand;
 
@@ -43,6 +44,15 @@ class StickCommand extends BaseCommand {
             return false;
         }
 
-        return ((Player) sender).getInventory().addItem(config.getStick()).isEmpty();
+        Player player = (Player) sender;
+        PlayerInventory inv = player.getInventory();
+        int firstEmpty = inv.firstEmpty();
+        if (firstEmpty == -1) {
+            messages.sendInventoryIsFull(sender);
+            return true;
+        }
+        inv.setItem(firstEmpty, inv.getItemInOffHand());
+        inv.setItemInOffHand(config.getStick());
+        return true;
     }
 }
