@@ -21,8 +21,12 @@ import static net.kyori.adventure.text.format.NamedTextColor.RED;
 
 public class StickCommand extends AbstractCommand {
 
+    private static final Component ALREADY_HAVE =
+            translatable("box.stick.command.already-have", RED);
+
     private static final Component COULD_NOT_GIVE_STICK =
             translatable("box.stick.command.could-not-give-stick", RED);
+
     private static final Component GIVE_SUCCESS =
             translatable("box.stick.command.success", GRAY);
 
@@ -56,6 +60,11 @@ public class StickCommand extends AbstractCommand {
         var currentOffHand = inventory.getItemInOffHand();
 
         if (!currentOffHand.getType().isAir()) {
+            if (boxStickItem.check(currentOffHand)) {
+                player.sendMessage(ALREADY_HAVE);
+                return;
+            }
+
             int firstEmpty = -1;
             var storage = inventory.getStorageContents();
 
