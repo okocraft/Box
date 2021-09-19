@@ -7,7 +7,9 @@ import net.okocraft.box.api.message.GeneralMessage;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.model.stock.StockData;
 import net.okocraft.box.api.model.stock.StockHolder;
+import net.okocraft.box.api.player.BoxPlayer;
 import net.okocraft.box.feature.command.message.BoxAdminMessage;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -27,12 +29,26 @@ public class InfinityCommand extends AbstractCommand {
 
     @Override
     public void onCommand(@NotNull CommandSender sender, @NotNull String[] args) {
-        if (!(sender instanceof Player player)) {
-            sender.sendMessage(GeneralMessage.ERROR_COMMAND_ONLY_PLAYER);
-            return;
-        }
+        BoxPlayer boxPlayer;
 
-        var boxPlayer = BoxProvider.get().getBoxPlayerMap().get(player);
+        if (1 < args.length) {
+            var target = Bukkit.getPlayer(args[1]);
+
+            if (target == null) {
+                sender.sendMessage(GeneralMessage.ERROR_COMMAND_PLAYER_NOT_FOUND.apply(args[1]));
+                return;
+            } else {
+                boxPlayer = BoxProvider.get().getBoxPlayerMap().get(target);
+            }
+        } else {
+            if (sender instanceof Player player) {
+                boxPlayer = BoxProvider.get().getBoxPlayerMap().get(player);
+            } else {
+                sender.sendMessage(GeneralMessage.ERROR_COMMAND_NOT_ENOUGH_ARGUMENT);
+                sender.sendMessage(getHelp());
+                return;
+            }
+        }
 
         boolean enabled;
 
@@ -44,11 +60,17 @@ public class InfinityCommand extends AbstractCommand {
             enabled = true;
         }
 
+        var target = boxPlayer.getPlayer();
 
-        player.sendMessage(BoxAdminMessage.INFINITY_MODE_TOGGLE.apply(enabled));
+        if (sender instanceof Player player && player.getUniqueId().equals(target.getUniqueId())) {
+            sender.sendMessage(BoxAdminMessage.INFINITY_MODE_TOGGLE.apply(enabled));
+        } else {
+            sender.sendMessage(BoxAdminMessage.INFINITY_MODE_TOGGLE_SENDER.apply(target, enabled));
+            target.sendMessage(BoxAdminMessage.INFINITY_MODE_TOGGLE_TARGET.apply(sender, enabled));
+        }
 
         if (enabled) {
-            player.sendMessage(BoxAdminMessage.INFINITY_MODE_TIP);
+            target.sendMessage(BoxAdminMessage.INFINITY_MODE_TIP);
         }
     }
 

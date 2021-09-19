@@ -2,11 +2,14 @@ package net.okocraft.box.feature.command.message;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
+import net.okocraft.box.api.message.argument.DoubleArgument;
 import net.okocraft.box.api.message.argument.QuadArgument;
 import net.okocraft.box.api.message.argument.SingleArgument;
 import net.okocraft.box.api.message.argument.TripleArgument;
 import net.okocraft.box.api.model.item.BoxCustomItem;
 import net.okocraft.box.api.model.item.BoxItem;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import static net.kyori.adventure.text.Component.text;
@@ -214,6 +217,28 @@ public final class BoxAdminMessage {
                     translatable()
                             .key("box.command.boxadmin.infinity.toggle")
                             .args(enabled ? INFINITY_MODE_ENABLE.color(GREEN) : INFINITY_MODE_DISABLED.color(RED))
+                            .color(GRAY)
+                            .build();
+
+    public static final DoubleArgument<Player, Boolean> INFINITY_MODE_TOGGLE_SENDER =
+            (target, enabled) ->
+                    translatable()
+                            .key("box.command.boxadmin.infinity.toggle-sender")
+                            .args(
+                                    text(target.getName(), AQUA),
+                                    enabled ? INFINITY_MODE_ENABLE.color(GREEN) : INFINITY_MODE_DISABLED.color(RED)
+                            )
+                            .color(GRAY)
+                            .build();
+
+    public static final DoubleArgument<CommandSender, Boolean> INFINITY_MODE_TOGGLE_TARGET =
+            (sender, enabled) ->
+                    translatable()
+                            .key("box.command.boxadmin.infinity.toggle-target")
+                            .args(
+                                    text(sender.getName(), AQUA),
+                                    enabled ? INFINITY_MODE_ENABLE.color(GREEN) : INFINITY_MODE_DISABLED.color(RED)
+                            )
                             .color(GRAY)
                             .build();
 
