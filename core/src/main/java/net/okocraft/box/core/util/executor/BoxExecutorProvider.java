@@ -1,27 +1,31 @@
 package net.okocraft.box.core.util.executor;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.util.ExecutorProvider;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.Executor;
-import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 public class BoxExecutorProvider implements ExecutorProvider {
 
-    private final ForkJoinPool worker = new ForkJoinPool(
+    private final ExecutorService executor = Executors.newFixedThreadPool(
             Math.min(Runtime.getRuntime().availableProcessors(), 4),
-            ForkJoinPool.defaultForkJoinWorkerThreadFactory,
-            this::reportUncaughtException,
-            false
+            new ThreadFactoryBuilder()
+                    .setDaemon(true)
+                    .setNameFormat("box-worker-%d")
+                    .setUncaughtExceptionHandler(this::reportUncaughtException)
+                    .build()
     );
 
     @Override
     public @NotNull Executor getExecutor() {
-        return worker;
+        return executor;
     }
 
     @Override
@@ -30,10 +34,10 @@ public class BoxExecutorProvider implements ExecutorProvider {
     }
 
     public void shutdown() throws InterruptedException {
-        worker.shutdown();
+        executor.shutdown();
 
         //noinspection ResultOfMethodCallIgnored
-        worker.awaitTermination(1, TimeUnit.MINUTES);
+        executor.awaitTermination(1, TimeUnit.MINUTES);
     }
 
 
