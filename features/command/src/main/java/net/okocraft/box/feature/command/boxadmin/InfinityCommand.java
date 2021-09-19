@@ -8,7 +8,6 @@ import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.model.stock.StockData;
 import net.okocraft.box.api.model.stock.StockHolder;
 import net.okocraft.box.feature.command.message.BoxAdminMessage;
-import net.okocraft.box.feature.command.message.BoxMessage;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
