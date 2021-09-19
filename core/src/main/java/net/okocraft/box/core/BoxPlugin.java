@@ -217,6 +217,9 @@ public class BoxPlugin implements BoxAPI {
             getLogger().log(Level.SEVERE, "Could not shutdown executors", e);
         }
 
+        getLogger().info("Unloading translations...");
+        translationDirectory.unload();
+
         getLogger().info("Successfully disabled!");
     }
 
