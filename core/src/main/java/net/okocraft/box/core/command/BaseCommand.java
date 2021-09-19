@@ -16,7 +16,6 @@ import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -183,7 +182,7 @@ public abstract class BaseCommand implements Command, SubCommandHoldable, Comman
 
         BoxProvider.get().getLogger().log(
                 Level.SEVERE,
-                "Failed to execute command (/" + getName() + " " + Arrays.toString(args) + ")",
+                "Failed to execute command (/" + getName() + " " + String.join(" ", args) + ")",
                 throwable
         );
 
