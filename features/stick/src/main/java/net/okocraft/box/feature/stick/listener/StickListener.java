@@ -6,8 +6,6 @@ import net.okocraft.box.feature.stick.item.BoxStickItem;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
-import org.bukkit.Sound;
-import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.ThrownPotion;
 import org.bukkit.event.EventHandler;
@@ -111,7 +109,6 @@ public class StickListener implements Listener {
 
         if (tryConsumingStock(player, copied)) {
             original.setAmount(2);
-            player.playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, SoundCategory.PLAYERS, 1f, 1f);
         }
     }
 
