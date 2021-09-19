@@ -5,6 +5,7 @@ import com.github.siroshun09.configapi.yaml.YamlConfiguration;
 import com.github.siroshun09.event4j.bus.EventBus;
 import com.github.siroshun09.translationloader.directory.TranslationDirectory;
 import net.kyori.adventure.key.Key;
+import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.command.base.BoxAdminCommand;
@@ -51,6 +52,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -225,6 +228,15 @@ public class BoxPlugin implements BoxAPI {
 
     @Override
     public void reload(@NotNull CommandSender sender) {
+        var playerMessenger = new Consumer<Supplier<Component>>() {
+            @Override
+            public void accept(Supplier<Component> componentSupplier) {
+                if (sender instanceof Player) {
+                    sender.sendMessage(componentSupplier.get());
+                }
+            }
+        };
+
         if (!(sender instanceof ConsoleCommandSender)) {
             getLogger().info("Reloading box...");
         }
@@ -233,7 +245,7 @@ public class BoxPlugin implements BoxAPI {
             configuration.reload();
             Debugger.log(() -> "config.yml reloaded");
         } catch (Throwable e) {
-            sender.sendMessage(ErrorMessages.ERROR_RELOAD_FAILURE.apply("config.yml", e));
+            playerMessenger.accept(() -> ErrorMessages.ERROR_RELOAD_FAILURE.apply("config.yml", e));
             getLogger().log(Level.SEVERE, "Could not reload config.yml", e);
         }
 
@@ -242,7 +254,7 @@ public class BoxPlugin implements BoxAPI {
             translationDirectory.load();
             Debugger.log(() -> "languages reloaded");
         } catch (Throwable e) {
-            sender.sendMessage(ErrorMessages.ERROR_RELOAD_FAILURE.apply("languages", e));
+            playerMessenger.accept(() -> ErrorMessages.ERROR_RELOAD_FAILURE.apply("languages", e));
             getLogger().log(Level.SEVERE, "Could not reload languages", e);
         }
 
@@ -253,7 +265,7 @@ public class BoxPlugin implements BoxAPI {
                     eventBus.callEvent(new FeatureEvent(feature, FeatureEvent.Type.RELOAD));
                     Debugger.log(() -> feature.getName() + " reloaded");
                 } catch (Throwable e) {
-                    sender.sendMessage(ErrorMessages.ERROR_RELOAD_FAILURE.apply(feature.getName(), e));
+                    playerMessenger.accept(() -> ErrorMessages.ERROR_RELOAD_FAILURE.apply(feature.getName(), e));
                     getLogger().log(Level.SEVERE, "Could not reload " + feature.getName(), e);
                 }
             }

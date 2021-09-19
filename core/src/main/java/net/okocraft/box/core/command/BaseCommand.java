@@ -178,7 +178,9 @@ public abstract class BaseCommand implements Command, SubCommandHoldable, Comman
     }
 
     private @Nullable Void reportError(@NotNull CommandSender sender, @NotNull String[] args, @NotNull Throwable throwable) {
-        sender.sendMessage(ErrorMessages.ERROR_WHILE_EXECUTING_COMMAND.apply(throwable));
+        if (sender instanceof Player) {
+            sender.sendMessage(ErrorMessages.ERROR_WHILE_EXECUTING_COMMAND.apply(throwable));
+        }
 
         BoxProvider.get().getLogger().log(
                 Level.SEVERE,
