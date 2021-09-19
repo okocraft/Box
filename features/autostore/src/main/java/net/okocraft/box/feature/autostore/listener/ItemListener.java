@@ -4,7 +4,6 @@ import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.feature.autostore.model.SettingManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
-import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -64,7 +63,7 @@ public class ItemListener implements Listener {
 
             event.getItem().remove();
             event.setCancelled(true);
-            player.playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, SoundCategory.MASTER, 100f, 1f);
+            player.playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, 0.2f, (float) Math.random() + 1.0f);
         }
     }
 }
