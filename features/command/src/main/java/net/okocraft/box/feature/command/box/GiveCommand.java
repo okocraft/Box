@@ -44,8 +44,18 @@ public class GiveCommand extends AbstractCommand {
             return;
         }
 
-        if (!target.hasPermission(getPermissionNode()) || BoxProvider.get().isDisabledWorld(target)) {
+        if (player.getUniqueId().equals(target.getUniqueId())) {
+            sender.sendMessage(BoxMessage.GIVE_SELF);
+            return;
+        }
+
+        if (!target.hasPermission(getPermissionNode())) {
             sender.sendMessage(BoxMessage.GIVE_TARGET_NO_PERMISSION.apply(target, getPermissionNode()));
+            return;
+        }
+
+        if (BoxProvider.get().isDisabledWorld(target)) {
+            sender.sendMessage(BoxMessage.GIVE_TARGET_IS_IN_DISABLED_WORLD.apply(target, target.getWorld()));
             return;
         }
 

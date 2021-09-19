@@ -6,6 +6,7 @@ import net.okocraft.box.api.message.argument.QuadArgument;
 import net.okocraft.box.api.message.argument.SingleArgument;
 import net.okocraft.box.api.message.argument.TripleArgument;
 import net.okocraft.box.api.model.item.BoxItem;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import static net.kyori.adventure.text.Component.newline;
@@ -98,11 +99,21 @@ public final class BoxMessage {
                             .color(RED)
                             .build();
 
+    public static final Component GIVE_SELF = translatable("box.command.box.give.self", RED);
+
     public static final DoubleArgument<Player, String> GIVE_TARGET_NO_PERMISSION =
             (target, permission) ->
                     translatable()
                             .key("box.command.box.give.target-no-permission")
                             .args(text(target.getName(), AQUA), text(permission, AQUA))
+                            .color(RED)
+                            .build();
+
+    public static final DoubleArgument<Player, World> GIVE_TARGET_IS_IN_DISABLED_WORLD =
+            (target, world) ->
+                    translatable()
+                            .key("box.command.box.give.target-is-in-disabled-world")
+                            .args(text(target.getName(), AQUA), text(world.getName(), AQUA))
                             .color(RED)
                             .build();
 
