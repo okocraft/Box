@@ -58,7 +58,7 @@ final class ItemTable {
         this.database = database;
         database.execute("CREATE TABLE IF NOT EXISTS " + TABLE + " (id INTEGER PRIMARY KEY " + (database.isSQLite() ? "AUTOINCREMENT" : "AUTO_INCREMENT") + ", item VARCHAR(4096) NOT NULL, customname VARCHAR(255) UNIQUE)");
         loadItems();
-        updateItems();
+        // updateItems();
         addDefaultItems();
     }
 
