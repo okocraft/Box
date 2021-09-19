@@ -92,8 +92,8 @@ public class CraftButton implements RefreshableButton {
         var recipe = recipeSupplier.get();
 
         if (ItemCrafter.craft(clicker, recipe, times)) {
-            sound = Sound.BLOCK_SMITHING_TABLE_USE;
-            pitch = 1.25f;
+            sound = Sound.BLOCK_LEVER_CLICK;
+            pitch = 1.0f;
         } else {
             sound = Sound.ENTITY_ENDERMAN_TELEPORT;
             pitch = 1.5f;
