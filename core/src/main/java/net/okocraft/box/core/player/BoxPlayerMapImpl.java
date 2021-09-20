@@ -8,7 +8,6 @@ import net.okocraft.box.api.model.manager.UserManager;
 import net.okocraft.box.api.model.user.BoxUser;
 import net.okocraft.box.api.player.BoxPlayer;
 import net.okocraft.box.api.player.BoxPlayerMap;
-import net.okocraft.box.api.util.Debugger;
 import net.okocraft.box.core.message.ErrorMessages;
 import net.okocraft.box.core.model.user.BoxUserImpl;
 import org.bukkit.Bukkit;
@@ -44,8 +43,6 @@ public class BoxPlayerMapImpl implements BoxPlayerMap {
 
             updateUserName(boxUser);
 
-            Debugger.log(() -> "Loading player stock data... (" + player.getName() + ")");
-
             var userStock = stockManager.loadUserStock(boxUser).join();
 
             var boxPlayer = new BoxPlayerImpl(player, userStock);
@@ -62,7 +59,6 @@ public class BoxPlayerMapImpl implements BoxPlayerMap {
         if (boxPlayer != null) {
             BoxProvider.get().getEventBus().callEvent(new PlayerUnloadEvent(boxPlayer));
 
-            Debugger.log(() -> "Unloading player data... (" + player.getName() + ")");
             return stockManager.saveUserStock(boxPlayer.getUserStockHolder());
         } else {
             return CompletableFuture.completedFuture(null);
@@ -85,7 +81,6 @@ public class BoxPlayerMapImpl implements BoxPlayerMap {
         for (var boxPlayer : playerMap.values()) {
             BoxProvider.get().getEventBus().callEvent(new PlayerUnloadEvent(boxPlayer));
 
-            Debugger.log(() -> "Unloading player data... (" + boxPlayer.getName().orElse("Unknown") + ")");
             stockManager.saveUserStock(boxPlayer.getUserStockHolder())
                     .exceptionallyAsync(e -> {
                         if (boxPlayer.getPlayer().isOnline()) {
@@ -103,8 +98,6 @@ public class BoxPlayerMapImpl implements BoxPlayerMap {
     }
 
     private void updateUserName(@NotNull BoxUser user) {
-        Debugger.log(() -> "Updating player's uuid and name... (" + user.getName().orElse("Unknown") + ")");
-
         userManager.saveUser(user)
                 .exceptionallyAsync(e -> {
                     BoxProvider.get().getLogger().log(Level.SEVERE,

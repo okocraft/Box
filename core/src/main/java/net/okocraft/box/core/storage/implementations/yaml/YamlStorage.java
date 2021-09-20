@@ -1,6 +1,5 @@
 package net.okocraft.box.core.storage.implementations.yaml;
 
-import net.okocraft.box.api.util.Debugger;
 import net.okocraft.box.core.storage.Storage;
 import net.okocraft.box.core.storage.model.item.ItemStorage;
 import net.okocraft.box.core.storage.model.stock.StockStorage;
@@ -30,16 +29,12 @@ public class YamlStorage implements Storage {
     public void init() throws Exception {
         Files.createDirectories(rootDirectory);
 
-        Debugger.log(() -> "Initializing user storage...");
         userStorage.init();
 
-        Debugger.log(() -> "Initializing item storage...");
         itemStorage.init();
 
-        Debugger.log(() -> "Initializing stock storage...");
         stockStorage.init();
 
-        Debugger.log(() -> "Initializing custom data storage...");
         customDataStorage.init();
     }
 

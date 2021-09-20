@@ -8,7 +8,6 @@ import net.okocraft.box.api.event.stock.StockIncreaseEvent;
 import net.okocraft.box.api.event.stock.StockSetEvent;
 import net.okocraft.box.api.model.stock.UserStockHolder;
 import net.okocraft.box.api.model.user.BoxUser;
-import net.okocraft.box.api.util.Debugger;
 import net.okocraft.box.core.message.ErrorMessages;
 import net.okocraft.box.core.storage.Storage;
 import net.okocraft.box.core.util.executor.InternalExecutors;
@@ -65,19 +64,26 @@ public class ModifiedStockHolderSaveTask {
     }
 
     private void runTask() {
+        BoxProvider.get().getLogger().info("Saving stock data... (" + modifiedStockHolders.size() + " players");
         var copied = List.copyOf(modifiedStockHolders);
 
         modifiedStockHolders.clear();
 
-        copied.stream()
-                .filter(UserStockHolder::isOnline)
-                .forEach(this::saveUserStockHolder);
+        var success =
+                copied.stream()
+                        .filter(UserStockHolder::isOnline)
+                        .map(this::saveUserStockHolder)
+                        .anyMatch(Boolean.FALSE::equals);
+
+        if (success) {
+            BoxProvider.get().getLogger().info("Player's stock data has been saved!");
+        }
     }
 
-    private void saveUserStockHolder(@NotNull UserStockHolder userStockHolder) {
+    private boolean saveUserStockHolder(@NotNull UserStockHolder userStockHolder) {
         try {
             storage.getStockStorage().saveUserStockHolder(userStockHolder);
-            Debugger.log(() -> "Saved the user's stockholder (" + userStockHolder.getUser().getUUID() + ")");
+            return true;
         } catch (Exception e) {
             Optional.of(userStockHolder.getUser())
                     .map(BoxUser::getUUID)
@@ -89,6 +95,7 @@ public class ModifiedStockHolderSaveTask {
                     "Could not save the user's stockholder (" + userStockHolder.getUser().getUUID() + ")",
                     e
             );
+            return false;
         }
     }
 }

@@ -18,13 +18,14 @@ import net.okocraft.box.api.model.manager.ItemManager;
 import net.okocraft.box.api.model.manager.StockManager;
 import net.okocraft.box.api.model.manager.UserManager;
 import net.okocraft.box.api.player.BoxPlayerMap;
-import net.okocraft.box.api.util.Debugger;
 import net.okocraft.box.api.util.ExecutorProvider;
 import net.okocraft.box.core.command.BoxAdminCommandImpl;
 import net.okocraft.box.core.command.BoxCommandImpl;
 import net.okocraft.box.core.config.Settings;
+import net.okocraft.box.core.listener.DebugListener;
 import net.okocraft.box.core.listener.PlayerConnectionListener;
 import net.okocraft.box.core.message.ErrorMessages;
+import net.okocraft.box.core.message.MicsMessages;
 import net.okocraft.box.core.model.data.BoxCustomDataContainer;
 import net.okocraft.box.core.model.manager.BoxItemManager;
 import net.okocraft.box.core.model.manager.BoxStockManager;
@@ -65,6 +66,7 @@ public class BoxPlugin implements BoxAPI {
 
     private final YamlConfiguration configuration;
     private final TranslationDirectory translationDirectory;
+    private final DebugListener debugListener = new DebugListener();
 
     private final EventBus eventBus = EventBus.newEventBus();
     private final BoxExecutorProvider executorProvider = new BoxExecutorProvider();
@@ -119,8 +121,10 @@ public class BoxPlugin implements BoxAPI {
             return false;
         }
 
-        Debugger.ENABLED = configuration.get(Settings.DEBUG);
-        Debugger.log(() -> "Debug mode is ENABLED");
+        if (configuration.get(Settings.DEBUG)) {
+            debugListener.register();
+            getLogger().info("Debug mode is ENABLED");
+        }
 
         getLogger().info("Successfully loaded!");
 
@@ -204,6 +208,8 @@ public class BoxPlugin implements BoxAPI {
             playerMap.unloadAll();
         }
 
+        debugListener.unregister();
+
         getLogger().info("Closing the storage...");
         try {
             storage.close();
@@ -237,22 +243,29 @@ public class BoxPlugin implements BoxAPI {
             }
         };
 
+        debugListener.unregister();
+
         if (!(sender instanceof ConsoleCommandSender)) {
             getLogger().info("Reloading box...");
         }
 
         try {
             configuration.reload();
-            Debugger.log(() -> "config.yml reloaded");
+            sender.sendMessage(MicsMessages.CONFIG_RELOADED);
         } catch (Throwable e) {
             playerMessenger.accept(() -> ErrorMessages.ERROR_RELOAD_FAILURE.apply("config.yml", e));
             getLogger().log(Level.SEVERE, "Could not reload config.yml", e);
         }
 
+        if (configuration.get(Settings.DEBUG)) {
+            debugListener.register();
+            getLogger().info("Debug mode is ENABLED");
+        }
+
         try {
             translationDirectory.createDirectoryIfNotExists(this::saveDefaultLanguages);
             translationDirectory.load();
-            Debugger.log(() -> "languages reloaded");
+            sender.sendMessage(MicsMessages.LANGUAGES_RELOADED);
         } catch (Throwable e) {
             playerMessenger.accept(() -> ErrorMessages.ERROR_RELOAD_FAILURE.apply("languages", e));
             getLogger().log(Level.SEVERE, "Could not reload languages", e);
@@ -263,7 +276,6 @@ public class BoxPlugin implements BoxAPI {
                 try {
                     reloadable.reload(sender);
                     eventBus.callEvent(new FeatureEvent(feature, FeatureEvent.Type.RELOAD));
-                    Debugger.log(() -> feature.getName() + " reloaded");
                 } catch (Throwable e) {
                     playerMessenger.accept(() -> ErrorMessages.ERROR_RELOAD_FAILURE.apply(feature.getName(), e));
                     getLogger().log(Level.SEVERE, "Could not reload " + feature.getName(), e);

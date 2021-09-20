@@ -4,7 +4,6 @@ import com.github.siroshun09.configapi.yaml.YamlConfiguration;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.model.item.BoxCustomItem;
 import net.okocraft.box.api.model.item.BoxItem;
-import net.okocraft.box.api.util.Debugger;
 import net.okocraft.box.core.model.item.BoxCustomItemImpl;
 import net.okocraft.box.core.storage.model.item.AbstractItemStorage;
 import org.bukkit.Bukkit;
@@ -122,11 +121,6 @@ class YamlItemStorage extends AbstractItemStorage {
     @Override
     protected void saveVersionedItems(@NotNull String version, @NotNull Collection<BoxItem> items) throws Exception {
         var file = YamlConfiguration.create(itemDirectory.resolve(version + ".yml"));
-
-        if (Files.exists(file.getPath())) {
-            Debugger.log(() -> "All items already exported!");
-            return;
-        }
 
         for (var item : items) {
             file.set(item.getInternalId() + ".name", item.getPlainName());
