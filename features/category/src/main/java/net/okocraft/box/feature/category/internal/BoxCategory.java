@@ -1,4 +1,4 @@
-package net.okocraft.box.feature.category.impl;
+package net.okocraft.box.feature.category.internal;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TranslatableComponent;

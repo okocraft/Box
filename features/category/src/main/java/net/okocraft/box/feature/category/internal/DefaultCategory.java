@@ -1,4 +1,4 @@
-package net.okocraft.box.feature.category.impl;
+package net.okocraft.box.feature.category.internal;
 
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;

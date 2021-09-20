@@ -1,4 +1,4 @@
-package net.okocraft.box.feature.category.impl;
+package net.okocraft.box.feature.category.internal;
 
 import com.destroystokyo.paper.MaterialTags;
 import net.okocraft.box.api.model.item.BoxItem;
@@ -155,7 +155,6 @@ import static org.bukkit.Material.FEATHER;
 import static org.bukkit.Material.FERMENTED_SPIDER_EYE;
 import static org.bukkit.Material.FERN;
 import static org.bukkit.Material.FILLED_MAP;
-import static org.bukkit.Material.FIRE_CHARGE;
 import static org.bukkit.Material.FISHING_ROD;
 import static org.bukkit.Material.FLETCHING_TABLE;
 import static org.bukkit.Material.FLINT_AND_STEEL;

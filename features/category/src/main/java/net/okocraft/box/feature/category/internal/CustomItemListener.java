@@ -1,4 +1,4 @@
-package net.okocraft.box.feature.category.impl;
+package net.okocraft.box.feature.category.internal;
 
 import com.github.siroshun09.event4j.handlerlist.Key;
 import net.okocraft.box.api.BoxProvider;

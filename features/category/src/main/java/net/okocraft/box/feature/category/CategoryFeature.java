@@ -7,8 +7,8 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.feature.AbstractBoxFeature;
 import net.okocraft.box.api.feature.Reloadable;
-import net.okocraft.box.feature.category.impl.CategoryLoader;
-import net.okocraft.box.feature.category.impl.CustomItemListener;
+import net.okocraft.box.feature.category.internal.CategoryLoader;
+import net.okocraft.box.feature.category.internal.CustomItemListener;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
