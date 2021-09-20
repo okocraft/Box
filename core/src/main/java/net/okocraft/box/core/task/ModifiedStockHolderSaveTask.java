@@ -64,7 +64,7 @@ public class ModifiedStockHolderSaveTask {
     }
 
     private void runTask() {
-        BoxProvider.get().getLogger().info("Saving stock data... (" + modifiedStockHolders.size() + " players");
+        BoxProvider.get().getLogger().info("Saving stock data... (" + modifiedStockHolders.size() + " players)");
         var copied = List.copyOf(modifiedStockHolders);
 
         modifiedStockHolders.clear();
@@ -72,8 +72,7 @@ public class ModifiedStockHolderSaveTask {
         var success =
                 copied.stream()
                         .filter(UserStockHolder::isOnline)
-                        .map(this::saveUserStockHolder)
-                        .anyMatch(Boolean.FALSE::equals);
+                        .allMatch(this::saveUserStockHolder);
 
         if (success) {
             BoxProvider.get().getLogger().info("Player's stock data has been saved!");
