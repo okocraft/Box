@@ -32,6 +32,8 @@ public class BoxStickItem {
             empty(),
             translatable("box.stick.item.lore-1", NO_DECORATION.color(GRAY)),
             translatable("box.stick.item.lore-2", NO_DECORATION.color(GRAY)),
+            empty(),
+            translatable("box.stick.item.lore-3", NO_DECORATION.color(GRAY)),
             empty()
     );
 
