@@ -26,7 +26,7 @@ public class CustomItemListener {
         for (var category : CategoryHolder.get()) {
             if (category instanceof BoxCategory boxCategory &&
                     category.getName().equals(DefaultCategory.CUSTOM_ITEMS.getName())) {
-                boxCategory.add(event.getNewItem());
+                boxCategory.add(event.getItem());
             }
         }
     }

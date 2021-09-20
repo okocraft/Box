@@ -1,13 +1,12 @@
 package net.okocraft.box.api.event.item;
 
-import net.okocraft.box.api.event.BoxEvent;
 import net.okocraft.box.api.model.item.BoxCustomItem;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * An event that is called when a new {@link BoxCustomItem} has been registered.
  */
-public class CustomItemRegisterEvent extends BoxEvent {
+public class CustomItemRegisterEvent extends ItemEvent {
 
     private final BoxCustomItem newItem;
 
@@ -17,6 +16,7 @@ public class CustomItemRegisterEvent extends BoxEvent {
      * @param newItem a registered {@link BoxCustomItem}
      */
     public CustomItemRegisterEvent(@NotNull BoxCustomItem newItem) {
+        super(newItem);
         this.newItem = newItem;
     }
 
@@ -25,7 +25,8 @@ public class CustomItemRegisterEvent extends BoxEvent {
      *
      * @return the registered {@link BoxCustomItem}
      */
-    public @NotNull BoxCustomItem getNewItem() {
+    @Override
+    public @NotNull BoxCustomItem getItem() {
         return newItem;
     }
 
