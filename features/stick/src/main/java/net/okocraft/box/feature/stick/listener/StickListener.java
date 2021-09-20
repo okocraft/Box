@@ -5,14 +5,15 @@ import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.feature.stick.item.BoxStickItem;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
-import org.bukkit.Material;
+import org.bukkit.entity.AbstractArrow;
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.ThrownPotion;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemBreakEvent;
@@ -118,29 +119,63 @@ public class StickListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-    public void onPotionThrow(@NotNull ProjectileLaunchEvent event) {
-        if (!(event.getEntity() instanceof ThrownPotion potion)) {
+    public void onProjectileLaunch(@NotNull ProjectileLaunchEvent event) {
+        if (!(event.getEntity().getShooter() instanceof Player player)) {
             return;
         }
 
-        if (!(potion.getShooter() instanceof Player player)) {
-            return;
-        }
+        var permissionNodeSuffix =
+                switch (event.getEntity().getType()) {
+                    case EGG -> "egg";
+                    case ENDER_PEARL -> "enderpearl";
+                    case FIREWORK -> "firework";
+                    case SNOWBALL -> "snowball";
+                    case SPLASH_POTION -> "potion";
+                    case THROWN_EXP_BOTTLE -> "expbottle";
+                    default -> null;
+                };
 
-        if (!player.hasPermission("box.stick.potion")) {
+        if (permissionNodeSuffix == null ||
+                !player.hasPermission("box.stick." + permissionNodeSuffix)) {
             return;
         }
 
         var mainHand = player.getInventory().getItemInMainHand();
 
-        if (mainHand.getType() != Material.SPLASH_POTION &&
-                mainHand.getType() != Material.LINGERING_POTION) {
+        if (tryConsumingStock(player, mainHand)) {
+            mainHand.setAmount(mainHand.getAmount() + 1);
+            player.updateInventory();
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onShoot(@NotNull EntityShootBowEvent event) {
+        if (!(event.getEntity() instanceof Player player) ||
+                !player.hasPermission("box.stick.arrow") ||
+                !(event.getProjectile() instanceof Arrow arrow)) {
             return;
         }
 
-        if (tryConsumingStock(player, mainHand)) {
-            mainHand.setAmount(mainHand.getAmount() + 1);
-            player.getInventory().setItemInMainHand(mainHand);
+        if (!checkPlayerCondition(player)) {
+            return;
+        }
+
+        if (!event.shouldConsumeItem()) {
+            return;
+        }
+
+        var arrowItem = event.getConsumable();
+
+        if (arrowItem != null && tryConsumingStock(player, arrowItem)) {
+            event.setConsumeItem(false);
+            player.updateInventory();
+
+            // If setConsumeItem is set to false, the arrow will not be picked up.
+            // This task overwrites it after 1 tick.
+            Bukkit.getScheduler().runTask(
+                    BoxProvider.get().getPluginInstance(),
+                    () -> arrow.setPickupStatus(AbstractArrow.PickupStatus.ALLOWED)
+            );
         }
     }
 
