@@ -2,6 +2,7 @@ package net.okocraft.box.core.model.manager;
 
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.event.item.CustomItemRegisterEvent;
+import net.okocraft.box.api.event.item.CustomItemRenameEvent;
 import net.okocraft.box.api.model.item.BoxCustomItem;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.model.manager.ItemManager;
@@ -137,8 +138,13 @@ public class BoxItemManager implements ItemManager {
             }
 
             var internal = (BoxCustomItemImpl) item;
+
+            var previousName = item.getPlainName();
             internal.setPlainName(newName);
+
             updateItemNameCache();
+
+            BoxProvider.get().getEventBus().callEvent(new CustomItemRenameEvent(internal, previousName));
 
             return internal;
         }, executor);

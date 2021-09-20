@@ -1,9 +1,9 @@
 package net.okocraft.box.core.storage.model.item;
 
 import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.api.event.item.ItemImportEvent;
 import net.okocraft.box.api.model.item.BoxCustomItem;
 import net.okocraft.box.api.model.item.BoxItem;
-import net.okocraft.box.api.util.Debugger;
 import net.okocraft.box.core.config.Settings;
 import net.okocraft.box.core.model.item.BoxCustomItemImpl;
 import net.okocraft.box.core.model.item.BoxItemImpl;
@@ -36,8 +36,6 @@ public abstract class AbstractItemStorage implements ItemStorage {
         saveNewCustomItem(item);
         saveVersionedItem(Bukkit.getMinecraftVersion(), item);
 
-        Debugger.log(() -> "Custom item registered: (name: " + plainName + ", id: " + id + ")");
-
         return item;
     }
 
@@ -48,34 +46,32 @@ public abstract class AbstractItemStorage implements ItemStorage {
         onLoadingAllItemsStarted();
 
         if (BoxProvider.get().getConfiguration().get(Settings.ITEM_ENABLE_DEFAULTS)) {
-            Debugger.log(() -> "Importing default items...");
             processDefaultItems(DefaultItemProvider.getDefaultItems(), itemList);
         }
 
         if (BoxProvider.get().getConfiguration().get(Settings.ITEM_ENABLE_POTIONS)) {
-            Debugger.log(() -> "Importing default potions...");
             processDefaultItems(DefaultItemProvider.getDefaultPotions(), itemList);
         }
 
         if (BoxProvider.get().getConfiguration().get(Settings.ITEM_ENABLE_ENCHANTED_BOOKS)) {
-            Debugger.log(() -> "Importing default enchanted books...");
             processDefaultItems(DefaultItemProvider.getDefaultEnchantedBooks(), itemList);
         }
 
         if (BoxProvider.get().getConfiguration().get(Settings.ITEM_ENABLE_FIREWORK_ROCKETS)) {
-            Debugger.log(() -> "Importing default firework rockets...");
             processDefaultItems(DefaultItemProvider.getDefaultFireworks(), itemList);
         }
 
-        Debugger.log(() -> "Importing custom items...");
+        var defaultItems = itemList.size();
+        BoxProvider.get().getLogger().info(defaultItems + " default items imported!");
+
         var customItems = loadCustomItems();
 
         processCustomItems(customItems, itemList);
 
-        Debugger.log(() -> "Exporting all items...");
+        BoxProvider.get().getLogger().info(customItems.size() + " custom items imported!");
+
         saveVersionedItems(Bukkit.getMinecraftVersion(), itemList);
 
-        Debugger.log(() -> "Updating custom items...");
         updateCustomItems(customItems);
 
         onLoadingAllItemsFinished();
@@ -105,9 +101,8 @@ public abstract class AbstractItemStorage implements ItemStorage {
 
             if (checkItem(boxItem, itemList)) {
                 itemList.add(boxItem);
-                Debugger.log(() -> "Imported a default item: " + item.plainName());
-            } else {
-                Debugger.log(() -> "Ignored a default item: " + item.plainName());
+                BoxProvider.get().getEventBus()
+                        .callEvent(new ItemImportEvent(boxItem, ItemImportEvent.ItemType.DEFAULT_ITEM));
             }
         }
     }
@@ -116,9 +111,8 @@ public abstract class AbstractItemStorage implements ItemStorage {
         for (var item : customItems) {
             if (checkItem(item, itemList)) {
                 itemList.add(item);
-                Debugger.log(() -> "Imported a custom item: " + item.getPlainName());
-            } else {
-                Debugger.log(() -> "Ignored a custom item: " + item.getPlainName());
+                BoxProvider.get().getEventBus()
+                        .callEvent(new ItemImportEvent(item, ItemImportEvent.ItemType.CUSTOM_ITEM));
             }
         }
     }
