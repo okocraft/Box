@@ -128,16 +128,17 @@ public class BoxItemManager implements ItemManager {
                 throw new IllegalStateException("The same name is already used (" + newName + ")");
             }
 
-            var internal = (BoxCustomItemImpl) item;
-
-            internal.setPlainName(newName);
-            updateItemNameCache();
+            var copy = new BoxCustomItemImpl(item.getOriginal(), newName, item.getInternalId());
 
             try {
-                itemStorage.saveCustomItem(internal);
+                itemStorage.saveCustomItem(copy);
             } catch (Exception e) {
                 throw new RuntimeException("Could not save the custom item", e);
             }
+
+            var internal = (BoxCustomItemImpl) item;
+            internal.setPlainName(newName);
+            updateItemNameCache();
 
             return internal;
         }, executor);
