@@ -3,7 +3,7 @@ package net.okocraft.box.feature.category.internal;
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 
-public enum DefaultCategory {
+enum DefaultCategory {
     ARMORS("armors", Material.LEATHER_HELMET),
     BOWS("bows", Material.BOW),
     CANDLES("candles", Material.CANDLE),
@@ -47,11 +47,11 @@ public enum DefaultCategory {
         this.iconMaterial = iconMaterial;
     }
 
-    public @NotNull String getName() {
+    @NotNull String getName() {
         return name;
     }
 
-    public @NotNull Material getIconMaterial() {
+    @NotNull Material getIconMaterial() {
         return iconMaterial;
     }
 }
