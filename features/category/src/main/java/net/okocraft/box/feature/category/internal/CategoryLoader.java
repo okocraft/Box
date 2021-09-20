@@ -6,7 +6,6 @@ import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.feature.category.model.Category;
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -17,7 +16,7 @@ import java.util.function.Predicate;
 
 public class CategoryLoader {
 
-    public static @NotNull CategoryLoader.CategoryLoadResult load(@NotNull YamlConfiguration yaml) {
+    public static @NotNull List<Category> load(@NotNull YamlConfiguration yaml) {
         var itemManager = BoxProvider.get().getItemManager();
         var items = new ArrayList<>(itemManager.getBoxItemSet());
         var result = new LinkedHashMap<String, BoxCategory>();
@@ -86,21 +85,7 @@ public class CategoryLoader {
                 DefaultCategory.CUSTOM_ITEMS.getName(),
                 name -> createCategory(DefaultCategory.CUSTOM_ITEMS));
 
-        return new CategoryLoadResult(List.copyOf(result.values()));
-    }
-
-    public static record CategoryLoadResult(@NotNull @Unmodifiable List<Category> categoryList) {
-
-        public @NotNull CategoryLoadResult export(@NotNull YamlConfiguration yaml) throws Exception {
-            for (var category : categoryList) {
-                yaml.set("icons." + category.getName(), category.getIconMaterial().name());
-                yaml.set(category.getName(), category.getItems().stream().map(BoxItem::getPlainName).toList());
-            }
-
-            yaml.save();
-
-            return this;
-        }
+        return List.copyOf(result.values());
     }
 
     private static @NotNull BoxCategory createCategory(@NotNull DefaultCategory defaultCategory) {
