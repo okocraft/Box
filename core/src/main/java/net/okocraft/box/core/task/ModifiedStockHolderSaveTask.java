@@ -64,6 +64,10 @@ public class ModifiedStockHolderSaveTask {
     }
 
     private void runTask() {
+        if (modifiedStockHolders.isEmpty()) {
+            return;
+        }
+
         BoxProvider.get().getLogger().info("Saving stock data... (" + modifiedStockHolders.size() + " players)");
         var copied = List.copyOf(modifiedStockHolders);
 
