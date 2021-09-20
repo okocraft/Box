@@ -19,6 +19,7 @@ class BoxCategory implements Category {
     private final Material iconMaterial;
 
     private final List<BoxItem> items = new ArrayList<>();
+    private List<BoxItem> copiedItems = null;
 
     BoxCategory(@NotNull String name, @NotNull Material iconMaterial) {
         this.name = name;
@@ -43,11 +44,20 @@ class BoxCategory implements Category {
 
     @Override
     public @NotNull @Unmodifiable List<BoxItem> getItems() {
-        return List.copyOf(items);
+        if (copiedItems == null) {
+            copiedItems = List.copyOf(items);
+        }
+
+        return copiedItems;
     }
 
     void add(@NotNull BoxItem item) {
         items.add(item);
+
+        // if the items are already copied, update them.
+        if (copiedItems != null) {
+            copiedItems = List.copyOf(items);
+        }
     }
 
     @Override
