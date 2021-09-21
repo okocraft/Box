@@ -21,7 +21,7 @@ public class CustomItemListener {
         BoxProvider.get()
                 .getEventBus()
                 .getHandlerList(CustomItemRenameEvent.class)
-                .subscribe(listenerKey, this::processEvent);
+                .subscribe(listenerKey, event -> saveCategories());
     }
 
     public void unregister(@NotNull Key listenerKey) {
@@ -41,18 +41,19 @@ public class CustomItemListener {
             if (category instanceof BoxCategory boxCategory &&
                     category.getName().equals(DefaultCategory.CUSTOM_ITEMS.getName())) {
                 boxCategory.add(event.getItem());
+                saveCategories();
                 return;
             }
         }
     }
 
-    private void processEvent(@NotNull CustomItemRenameEvent event) {
+    private void saveCategories() {
         try (var yaml =
                      YamlConfiguration.create(BoxProvider.get().getPluginDirectory().resolve("categories.yml"))) {
             CategoryExporter.export(yaml);
             yaml.save();
         } catch (Exception e) {
-            BoxProvider.get().getLogger().log(Level.SEVERE, "Could not load categories.yml", e);
+            BoxProvider.get().getLogger().log(Level.SEVERE, "Could not save categories.yml", e);
         }
     }
 }
