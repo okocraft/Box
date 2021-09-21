@@ -23,6 +23,12 @@ public class InventoryListener implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onClick(@NotNull InventoryClickEvent event) {
+        var inventoryView = event.getView();
+
+        if (inventoryView.getTopInventory().getHolder() instanceof BoxInventoryHolder) {
+            event.setCancelled(true);
+        }
+
         var clicked = event.getClickedInventory();
 
         if (clicked == null || !(clicked.getHolder() instanceof BoxInventoryHolder holder)) {
