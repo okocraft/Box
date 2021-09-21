@@ -74,13 +74,8 @@ public class StickListener implements Listener {
         var inHand = event.getItemInHand();
         var mainHandItem = player.getInventory().getItemInMainHand();
 
-        if (!inHand.isSimilar(mainHandItem)) {
-            return;
-        }
-
-        if (tryConsumingStock(player, mainHandItem)) {
-            mainHandItem.setAmount(mainHandItem.getAmount());
-            player.getInventory().setItemInMainHand(mainHandItem);
+        if (inHand.equals(mainHandItem) && tryConsumingStock(player, mainHandItem)) {
+            player.getInventory().setItemInMainHand(mainHandItem.clone());
         }
     }
 
