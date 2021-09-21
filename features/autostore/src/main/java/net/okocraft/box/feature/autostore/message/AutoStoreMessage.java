@@ -76,9 +76,6 @@ public final class AutoStoreMessage {
                             .color(GRAY)
                             .build();
 
-    public static final Component COMMAND_MODE_NOT_SPECIFIED =
-            translatable("box.autostore.command.mode-not-specified", RED);
-
     public static final SingleArgument<String> COMMAND_MODE_NOT_FOUND =
             mode ->
                     translatable()

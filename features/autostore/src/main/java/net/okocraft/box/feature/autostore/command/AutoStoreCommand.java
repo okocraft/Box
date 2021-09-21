@@ -43,12 +43,6 @@ public class AutoStoreCommand extends AbstractCommand {
             return;
         }
 
-        if (args[1].isEmpty()) {
-            player.sendMessage(AutoStoreMessage.COMMAND_MODE_NOT_SPECIFIED);
-            player.sendMessage(getHelp());
-            return;
-        }
-
         var setting = settingManager.get(player);
 
         boolean allMode; // true is AllMode, false is PerItemMode
