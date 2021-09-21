@@ -79,7 +79,7 @@ public class ModifiedStockHolderSaveTask {
                         .allMatch(this::saveUserStockHolder);
 
         if (success) {
-            BoxProvider.get().getLogger().info("Player's stock data has been saved!");
+            BoxProvider.get().getLogger().info("Stock data saved successfully!");
         }
     }
 
