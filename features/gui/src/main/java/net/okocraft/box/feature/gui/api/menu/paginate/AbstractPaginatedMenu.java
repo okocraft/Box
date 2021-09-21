@@ -136,7 +136,7 @@ public abstract class AbstractPaginatedMenu<T> extends AbstractMenu implements P
 
         @Override
         public int getIconAmount() {
-            return currentPage + (next ? 1 : -1);
+            return Math.min(currentPage + (next ? 1 : -1), 64);
         }
 
         @Override
