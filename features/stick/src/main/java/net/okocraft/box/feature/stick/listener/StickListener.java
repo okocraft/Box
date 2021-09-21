@@ -5,6 +5,7 @@ import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.feature.stick.item.BoxStickItem;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.Material;
 import org.bukkit.entity.AbstractArrow;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
@@ -152,6 +153,12 @@ public class StickListener implements Listener {
         if (!(event.getEntity() instanceof Player player) ||
                 !checkPlayerCondition(player, "box.stick.arrow") ||
                 !(event.getProjectile() instanceof Arrow arrow)) {
+            return;
+        }
+
+        var bow = event.getBow();
+
+        if (bow == null || bow.getType() != Material.BOW || !event.shouldConsumeItem()) {
             return;
         }
 
