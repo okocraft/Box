@@ -22,6 +22,11 @@ public class ItemEvent extends BoxEvent {
         this.item = Objects.requireNonNull(item);
     }
 
+    /**
+     * Gets the {@link BoxItem} of this event.
+     *
+     * @return the {@link BoxItem} of this event
+     */
     public @NotNull BoxItem getItem() {
         return item;
     }
