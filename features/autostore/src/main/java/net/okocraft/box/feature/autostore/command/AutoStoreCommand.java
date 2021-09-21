@@ -8,6 +8,7 @@ import net.okocraft.box.feature.autostore.event.AutoStoreSettingChangeEvent;
 import net.okocraft.box.feature.autostore.message.AutoStoreMessage;
 import net.okocraft.box.feature.autostore.model.AutoStoreSetting;
 import net.okocraft.box.feature.autostore.model.SettingManager;
+import net.okocraft.box.feature.autostore.model.mode.AutoStoreMode;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -110,7 +111,10 @@ public class AutoStoreCommand extends AbstractCommand {
             return;
         }
 
-        setting.getAllModeSetting().setEnabled(enabled);
+        var allModeSetting = setting.getAllModeSetting();
+        changeCurrentMode(player, setting, allModeSetting);
+
+        allModeSetting.setEnabled(enabled);
         player.sendMessage(AutoStoreMessage.COMMAND_ALL_MODE_TOGGLED.apply(enabled));
 
         callEvent(setting);
@@ -137,6 +141,8 @@ public class AutoStoreCommand extends AbstractCommand {
                 Boolean bool = getBoolean(args[3]);
 
                 if (bool != null) {
+                    changeCurrentMode(player, setting, perItemModeSetting);
+
                     perItemModeSetting.setEnabledItems(bool ? itemManager.getBoxItemSet() : Collections.emptyList());
                     player.sendMessage(AutoStoreMessage.COMMAND_PER_ITEM_ALL_TOGGLED.apply(bool));
 
@@ -153,6 +159,8 @@ public class AutoStoreCommand extends AbstractCommand {
 
         var boxItem = optionalBoxItem.get();
         Boolean bool = 3 < args.length ? getBoolean(args[3]) : null;
+
+        changeCurrentMode(player, setting, perItemModeSetting);
 
         if (bool != null) {
             perItemModeSetting.setEnabled(boxItem, bool);
@@ -233,6 +241,14 @@ public class AutoStoreCommand extends AbstractCommand {
 
     private void callEvent(@NotNull AutoStoreSetting setting) {
         BoxProvider.get().getEventBus().callEvent(new AutoStoreSettingChangeEvent(setting));
+    }
+
+    private void changeCurrentMode(@NotNull Player player, @NotNull AutoStoreSetting setting,
+                                   @NotNull AutoStoreMode changeTo) {
+        if (changeTo != setting.getCurrentMode()) {
+            setting.setMode(changeTo);
+            player.sendMessage(AutoStoreMessage.COMMAND_MODE_CHANGED.apply(setting.getCurrentMode()));
+        }
     }
 
     @Override
