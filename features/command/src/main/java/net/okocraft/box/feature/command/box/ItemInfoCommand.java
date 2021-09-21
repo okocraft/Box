@@ -4,6 +4,7 @@ import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.command.AbstractCommand;
 import net.okocraft.box.api.message.GeneralMessage;
+import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.feature.command.message.BoxMessage;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -24,23 +25,38 @@ public class ItemInfoCommand extends AbstractCommand {
             return;
         }
 
-        var item = player.getInventory().getItemInMainHand();
+        BoxItem boxItem;
 
-        if (item.getType().isAir()) {
-            player.sendMessage(BoxMessage.ITEM_INFO_IS_AIR);
-            return;
+        if (1 < args.length) {
+            var optionalBoxItem = BoxProvider.get().getItemManager().getBoxItem(args[1]);
+
+            if (optionalBoxItem.isPresent()) {
+                boxItem = optionalBoxItem.get();
+            } else {
+                sender.sendMessage(GeneralMessage.ERROR_COMMAND_ITEM_NOT_FOUND.apply(args[1]));
+                return;
+            }
+        } else {
+            var itemInMainHand = player.getInventory().getItemInMainHand();
+
+            if (itemInMainHand.getType().isAir()) {
+                player.sendMessage(BoxMessage.ITEM_INFO_IS_AIR);
+                return;
+            }
+
+            var optionalBoxItem = BoxProvider.get().getItemManager().getBoxItem(itemInMainHand);
+
+            if (optionalBoxItem.isPresent()) {
+                boxItem = optionalBoxItem.get();
+            } else {
+                player.sendMessage(BoxMessage.ITEM_INFO_NOT_REGISTERED);
+                return;
+            }
         }
 
-        var boxItem = BoxProvider.get().getItemManager().getBoxItem(item);
+        int stock = BoxProvider.get().getBoxPlayerMap().get(player).getCurrentStockHolder().getAmount(boxItem);
 
-        if (boxItem.isEmpty()) {
-            player.sendMessage(BoxMessage.ITEM_INFO_NOT_REGISTERED);
-            return;
-        }
-
-        int stock = BoxProvider.get().getBoxPlayerMap().get(player).getCurrentStockHolder().getAmount(boxItem.get());
-
-        player.sendMessage(BoxMessage.ITEM_INFO_NAME.apply(boxItem.get()));
+        player.sendMessage(BoxMessage.ITEM_INFO_NAME.apply(boxItem));
         player.sendMessage(BoxMessage.ITEM_INFO_STOCK.apply(stock));
     }
 
