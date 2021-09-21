@@ -66,7 +66,7 @@ public class StickListener implements Listener {
     public void onBlockPlace(@NotNull BlockPlaceEvent event) {
         var player = event.getPlayer();
 
-        if (!player.hasPermission("box.stick.block")) {
+        if (!checkPlayerCondition(player, "box.stick.block")) {
             return;
         }
 
@@ -87,7 +87,7 @@ public class StickListener implements Listener {
     public void onItemConsume(@NotNull PlayerItemConsumeEvent event) {
         var player = event.getPlayer();
 
-        if (!player.hasPermission("box.stick.food")) {
+        if (!checkPlayerCondition(player, "box.stick.food")) {
             return;
         }
 
@@ -100,7 +100,7 @@ public class StickListener implements Listener {
     public void onItemBreak(@NotNull PlayerItemBreakEvent event) {
         var player = event.getPlayer();
 
-        if (!player.hasPermission("box.stick.tool")) {
+        if (!checkPlayerCondition(player, "box.stick.tool")) {
             return;
         }
 
@@ -135,8 +135,7 @@ public class StickListener implements Listener {
                     default -> null;
                 };
 
-        if (permissionNodeSuffix == null ||
-                !player.hasPermission("box.stick." + permissionNodeSuffix)) {
+        if (permissionNodeSuffix == null || !checkPlayerCondition(player, "box.stick." + permissionNodeSuffix)) {
             return;
         }
 
@@ -151,16 +150,8 @@ public class StickListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onShoot(@NotNull EntityShootBowEvent event) {
         if (!(event.getEntity() instanceof Player player) ||
-                !player.hasPermission("box.stick.arrow") ||
+                !checkPlayerCondition(player, "box.stick.arrow") ||
                 !(event.getProjectile() instanceof Arrow arrow)) {
-            return;
-        }
-
-        if (!checkPlayerCondition(player)) {
-            return;
-        }
-
-        if (!event.shouldConsumeItem()) {
             return;
         }
 
@@ -180,10 +171,6 @@ public class StickListener implements Listener {
     }
 
     private boolean tryConsumingStock(@NotNull Player player, @NotNull ItemStack item) {
-        if (!checkPlayerCondition(player)) {
-            return false;
-        }
-
         var boxItem = BoxProvider.get().getItemManager().getBoxItem(item);
 
         if (boxItem.isEmpty()) {
@@ -205,13 +192,17 @@ public class StickListener implements Listener {
         }
     }
 
-    private boolean checkPlayerCondition(@NotNull Player player) {
+    private boolean checkPlayerCondition(@NotNull Player player, @NotNull String permissionNode) {
         if (player.getGameMode() != GameMode.ADVENTURE &&
                 player.getGameMode() != GameMode.SURVIVAL) {
             return false;
         }
 
         if (BoxProvider.get().isDisabledWorld(player)) {
+            return false;
+        }
+
+        if (!player.hasPermission(permissionNode)) {
             return false;
         }
 
