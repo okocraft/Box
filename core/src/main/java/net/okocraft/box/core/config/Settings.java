@@ -27,6 +27,9 @@ public final class Settings {
     public static final ConfigValue<List<String>> DISABLED_FEATURES =
             config -> config.getStringList("disabled-features");
 
+    public static final ConfigValue<Long> STOCK_DATA_SAVE_INTERVAL =
+            config -> config.getLong("stock-data-save-interval", 5);
+
     private Settings() {
         throw new UnsupportedOperationException();
     }
