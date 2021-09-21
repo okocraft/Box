@@ -10,6 +10,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityPickupItemEvent;
+import org.bukkit.event.player.PlayerPickupArrowEvent;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("ClassCanBeRecord")
@@ -36,34 +38,46 @@ public class ItemListener implements Listener {
             return;
         }
 
+        if (processEvent(player, event.getItem().getItemStack())) {
+            event.setCancelled(true);
+            event.getItem().remove();
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onArrowPickup(@NotNull PlayerPickupArrowEvent event) {
+        if (processEvent(event.getPlayer(), event.getArrow().getItemStack())) {
+            event.setCancelled(true);
+            event.getArrow().remove();
+        }
+    }
+
+    private boolean processEvent(@NotNull Player player, @NotNull ItemStack item) {
         if (BoxProvider.get().isDisabledWorld(player)) {
-            return;
+            return false;
         }
 
         if (!player.hasPermission("box.autostore")) {
-            return;
+            return false;
         }
-
-        var item = event.getItem().getItemStack();
 
         var boxItem = BoxProvider.get().getItemManager().getBoxItem(item);
 
         if (boxItem.isEmpty()) {
-            return;
+            return false;
         }
 
-        var setting = settingManager.get(player);
-
-        if (setting.getCurrentMode().isEnabled(boxItem.get())) {
+        if (settingManager.get(player).getCurrentMode().isEnabled(boxItem.get())) {
             BoxProvider.get()
                     .getBoxPlayerMap()
                     .get(player)
                     .getCurrentStockHolder()
                     .increase(boxItem.get(), item.getAmount());
 
-            event.getItem().remove();
-            event.setCancelled(true);
             player.playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, 0.2f, (float) Math.random() + 1.0f);
+            return true;
+        } else {
+            return false;
         }
     }
 }
