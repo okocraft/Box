@@ -106,7 +106,7 @@ public class AutoStoreCommand extends AbstractCommand {
 
                     callEvent(setting);
                 } else {
-                    player.sendMessage(AutoStoreMessage.COMMAND_NOT_BOOLEAN.apply(args[2]));
+                    player.sendMessage(AutoStoreMessage.COMMAND_NOT_BOOLEAN.apply(args[3]));
                 }
             } else {
                 player.sendMessage(GeneralMessage.ERROR_COMMAND_ITEM_NOT_FOUND.apply(args[2]));
