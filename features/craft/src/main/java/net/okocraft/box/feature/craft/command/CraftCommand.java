@@ -40,6 +40,7 @@ public class CraftCommand extends AbstractCommand {
 
         if (args.length < 2) {
             sender.sendMessage(GeneralMessage.ERROR_COMMAND_NOT_ENOUGH_ARGUMENT);
+            sender.sendMessage(getHelp());
             return;
         }
 
