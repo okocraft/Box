@@ -93,7 +93,7 @@ public class SettingManager {
                         setting.getAllModeSetting()
         );
 
-        setting.getAllModeSetting().setEnabled(data.getBoolean("all-mode-enabled"));
+        setting.setEnabled(data.getBoolean("enable"));
 
         var enabledItems =
                 data.getIntegerList("per-item-mode-enabled")
@@ -113,7 +113,7 @@ public class SettingManager {
 
         data.set("mode", setting.getCurrentMode().getModeName());
 
-        data.set("all-mode-enabled", setting.getAllModeSetting().isEnabled());
+        data.set("enable", setting.isEnabled());
 
         var list =
                 setting.getPerItemModeSetting()

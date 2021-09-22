@@ -58,4 +58,12 @@ public class AutoStoreMenuDisplays {
                             .args(AutoStoreMessage.ENABLED_NAME.apply(enabled))
                             .style(NO_DECORATION_GRAY)
                             .build();
+
+    static final SingleArgument<Boolean> AUTOSTORE_MODE_SETTING_MENU_TOGGLE_BUTTON =
+            enabled ->
+                    translatable()
+                            .key("box.autostore.gui.setting-menu.toggle-button")
+                            .args(AutoStoreMessage.ENABLED_NAME.apply(enabled))
+                            .style(NO_DECORATION_GRAY)
+                            .build();
 }

@@ -31,29 +31,19 @@ public final class AutoStoreMessage {
                     translatable("box.autostore.enabled", GREEN) :
                     translatable("box.autostore.disabled", RED);
 
+    public static final SingleArgument<Boolean> COMMAND_AUTOSTORE_TOGGLED =
+            enabled ->
+                    translatable()
+                            .key("box.autostore.command.autostore-toggled")
+                            .args(ENABLED_NAME.apply(enabled))
+                            .color(GRAY)
+                            .build();
+
     public static final SingleArgument<AutoStoreMode> COMMAND_MODE_CHANGED =
             mode ->
                     translatable()
                             .key("box.autostore.command.mode-changed")
                             .args(AUTO_STORE_MODE_NAME.apply(mode).color(AQUA))
-                            .color(GRAY)
-                            .build();
-
-    public static final Component COMMAND_TIP_ALL_MODE_DISABLED =
-            translatable("box.autostore.command.tip.all-mode-disabled", GRAY);
-
-    public static final Component COMMAND_TIP_HOW_TO_TOGGLE_ALL_MODE =
-            translatable()
-                    .key("box.autostore.command.tip.how-to-toggle-all-mode")
-                    .args(text("/box autostore all", AQUA))
-                    .color(GRAY)
-                    .build();
-
-    public static final SingleArgument<Boolean> COMMAND_ALL_MODE_TOGGLED =
-            enabled ->
-                    translatable()
-                            .key("box.autostore.command.all-toggled")
-                            .args(ENABLED_NAME.apply(enabled))
                             .color(GRAY)
                             .build();
 

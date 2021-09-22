@@ -14,6 +14,8 @@ public class AutoStoreSetting {
     private final PerItemModeSetting perItemModeSetting = new PerItemModeSetting();
     private final Player player;
 
+    private boolean enabled = false;
+
     private AutoStoreMode currentMode = allModeSetting;
 
     public AutoStoreSetting(@NotNull Player player) {
@@ -40,6 +42,14 @@ public class AutoStoreSetting {
         return perItemModeSetting;
     }
 
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -62,6 +72,7 @@ public class AutoStoreSetting {
                 "allModeSetting=" + allModeSetting +
                 ", perItemModeSetting=" + perItemModeSetting +
                 ", player=" + player +
+                ", enabled=" + enabled +
                 ", currentMode=" + currentMode +
                 '}';
     }
