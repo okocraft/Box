@@ -52,6 +52,8 @@ public class AutoStoreClickMode implements BoxItemClickMode {
 
         perItemSetting.setEnabled(context.item(), enabled);
 
+        playerSetting.setEnabled(true);
+
         playerSetting.setMode(perItemSetting);
 
         var sound = enabled ? Sound.BLOCK_WOODEN_BUTTON_CLICK_ON : Sound.BLOCK_WOODEN_BUTTON_CLICK_OFF;
