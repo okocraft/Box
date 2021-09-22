@@ -13,7 +13,7 @@ public class PerItemModeSetting implements AutoStoreMode {
 
     @Override
     public @NotNull String getModeName() {
-        return "per-item";
+        return "item";
     }
 
     @Override

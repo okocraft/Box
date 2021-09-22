@@ -88,7 +88,7 @@ public class SettingManager {
         var mode = data.getString("mode");
 
         setting.setMode(
-                mode.equals("per-item") ?
+                mode.equals("item") ?
                         setting.getPerItemModeSetting() :
                         setting.getAllModeSetting()
         );
@@ -96,7 +96,7 @@ public class SettingManager {
         setting.setEnabled(data.getBoolean("enable"));
 
         var enabledItems =
-                data.getIntegerList("per-item-mode-enabled")
+                data.getIntegerList("item-mode-enabled")
                         .stream()
                         .map(BoxProvider.get().getItemManager()::getBoxItem)
                         .filter(Optional::isPresent)
@@ -123,7 +123,7 @@ public class SettingManager {
                         .sorted()
                         .toList();
 
-        data.set("per-item-mode-enabled", list);
+        data.set("item-mode-enabled", list);
 
         return data;
     }

@@ -149,7 +149,7 @@ public class AutoStoreCommand extends AbstractCommand {
         }
 
         if (args.length == 2) {
-            return Stream.of("all", "peritem", "on", "off")
+            return Stream.of("all", "item", "on", "off")
                     .filter(mode -> mode.startsWith(args[1].toLowerCase(Locale.ROOT)))
                     .collect(Collectors.toList());
         }
@@ -191,7 +191,7 @@ public class AutoStoreCommand extends AbstractCommand {
     }
 
     private boolean isPerItem(@NotNull String arg) {
-        return !arg.isEmpty() && arg.length() < 8 && (arg.charAt(0) == 'p' || arg.charAt(0) == 'P');
+        return !arg.isEmpty() && arg.length() < 5 && (arg.charAt(0) == 'i' || arg.charAt(0) == 'I');
     }
 
     private void callEvent(@NotNull AutoStoreSetting setting) {

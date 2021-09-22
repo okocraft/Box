@@ -32,7 +32,7 @@ public class AutoStoreMenuDisplays {
             translatable("box.autostore.gui.setting-menu.change-mode.all", NO_DECORATION_GRAY);
 
     static final Component AUTOSTORE_MODE_SETTING_MENU_CHANGE_TO_PER_ITEM =
-            translatable("box.autostore.gui.setting-menu.change-mode.per-item", NO_DECORATION_GRAY);
+            translatable("box.autostore.gui.setting-menu.change-mode.item", NO_DECORATION_GRAY);
 
     static final Component AUTOSTORE_MODE_SETTING_MENU_BULK_EDITING_TITLE =
             translatable("box.autostore.gui.setting-menu.bulk-editing.title", NO_DECORATION_GOLD);

@@ -5,7 +5,7 @@ box:
     reloaded: "自動収納機能を再読み込みしました。"
     mode:
       all: "一括収納"
-      per-item: "個別収納"
+      item: "個別収納"
     enabled: "有効"
     disabled: "無効"
     command:
@@ -14,14 +14,14 @@ box:
           command-line: "/box autostore [on/off]"
           description: "自動収納機能のオン/オフを切り替える"
         all:
-          command-line: "/box autostore [all/peritem]"
+          command-line: "/box autostore [all/item]"
           description: "自動収納モードを切り替える"
-        peritem:
-          command-line: "/box autostore peritem <アイテム名> [on/off]"
+        item:
+          command-line: "/box autostore item <アイテム名> [on/off]"
           description: "収納設定を切り替える"
       autostore-toggled: "自動収納機能を {0} にしました。"
       mode-changed: "自動収納モードを {0} にしました。"
-      per-item:
+      item:
         all-toggled: "すべてのアイテムの自動収納設定を {0} にしました。"
         item-toggled: "アイテム {0} の自動収納設定を {1} にしました。"
       mode-not-found: "自動収納モードに {0} はありません。"
@@ -35,7 +35,7 @@ box:
         change-mode:
           display-name: "自動収納モード変更"
           all: "クリックで一括収納モードにする"
-          per-item: "クリックで個別収納モードにする"
+          item: "クリックで個別収納モードにする"
         toggle-button: "クリックで自動収納機能を {0} にする"
         bulk-editing:
           title: "個別収納モード 一括変更"

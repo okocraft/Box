@@ -50,7 +50,7 @@ public final class AutoStoreMessage {
     public static final SingleArgument<Boolean> COMMAND_PER_ITEM_ALL_TOGGLED =
             enabled ->
                     translatable()
-                            .key("box.autostore.command.per-item.all-toggled")
+                            .key("box.autostore.command.item.all-toggled")
                             .args(ENABLED_NAME.apply(enabled))
                             .color(GRAY)
                             .build();
@@ -58,7 +58,7 @@ public final class AutoStoreMessage {
     public static final DoubleArgument<BoxItem, Boolean> COMMAND_PER_ITEM_ITEM_TOGGLED =
             (item, enabled) ->
                     translatable()
-                            .key("box.autostore.command.per-item.item-toggled")
+                            .key("box.autostore.command.item.item-toggled")
                             .args(
                                     item.getDisplayName().color(AQUA).hoverEvent(item.getOriginal()),
                                     ENABLED_NAME.apply(enabled)
@@ -93,7 +93,7 @@ public final class AutoStoreMessage {
                     .append(translatable("box.autostore.command.help.all.description", GRAY));
 
     public static final Component COMMAND_HELP_3 =
-            translatable("box.autostore.command.help.peritem.command-line", AQUA)
+            translatable("box.autostore.command.help.item.command-line", AQUA)
                     .append(text(" - ", DARK_GRAY))
-                    .append(translatable("box.autostore.command.help.peritem.description", GRAY));
+                    .append(translatable("box.autostore.command.help.item.description", GRAY));
 }
