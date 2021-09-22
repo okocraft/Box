@@ -2,6 +2,7 @@ package net.okocraft.box.feature.gui.internal.holder;
 
 import net.kyori.adventure.text.Component;
 import net.okocraft.box.feature.gui.api.menu.Menu;
+import net.okocraft.box.feature.gui.api.util.TranslationUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -16,7 +17,7 @@ public class BoxInventoryHolder implements InventoryHolder {
     private final int size;
     private final ItemStack[] icons;
 
-    private Component title;
+    private Component savedTitle;
     private Inventory inventory;
     private boolean inventoryChanged = false;
 
@@ -24,9 +25,6 @@ public class BoxInventoryHolder implements InventoryHolder {
         this.menu = menu;
         this.size = menu.getRows() * 9;
         this.icons = new ItemStack[size];
-
-        this.title = menu.getTitle();
-        this.inventory = Bukkit.createInventory(this, size, title);
     }
 
     @Override
@@ -39,20 +37,17 @@ public class BoxInventoryHolder implements InventoryHolder {
     }
 
     public void initializeMenu(@NotNull Player viewer) {
+        savedTitle = menu.getTitle();
+        inventory = Bukkit.createInventory(this, size, TranslationUtil.render(savedTitle, viewer));
         menu.updateMenu(viewer);
         menu.applyIcons(icons);
     }
 
     public boolean updateMenu(@NotNull Player viewer) {
-        if (!title.equals(menu.getTitle())) {
-            title = menu.getTitle();
-            inventory = Bukkit.createInventory(this, size, title);
+        if (!savedTitle.equals(menu.getTitle())) {
             inventoryChanged = true;
-
-            menu.updateMenu(viewer);
-            menu.applyIcons(icons);
+            initializeMenu(viewer);
             applyContents();
-
             return true;
         }
 
