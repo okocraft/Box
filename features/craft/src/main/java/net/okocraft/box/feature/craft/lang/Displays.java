@@ -45,8 +45,11 @@ public final class Displays {
     public static final Component CRAFT_BUTTON_INGREDIENTS =
             translatable("box.craft.gui.buttons.ingredients", NO_DECORATION_GRAY);
 
-    public static final Component RECIPE_BUTTON_CLICK_TO_SHOW_DETAILS =
-            translatable("box.craft.gui.buttons.click-to-show-details", NO_DECORATION_GRAY);
+    public static final Component RECIPE_BUTTON_SHIFT_CLICK_TO_SHOW_DETAILS =
+            translatable("box.craft.gui.buttons.shift-click-to-show-details", NO_DECORATION_GRAY);
+
+    public static final Component RECIPE_BUTTON_SHIFT_CLICK_TO_SHOW_RECIPES =
+            translatable("box.craft.gui.buttons.shift-click-to-show-recipes", NO_DECORATION_GRAY);
 
     public static final SingleArgument<Integer> CRAFT_BUTTON_CURRENT_STOCK =
             stock ->

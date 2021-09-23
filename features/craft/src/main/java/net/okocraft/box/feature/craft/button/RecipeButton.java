@@ -86,7 +86,7 @@ public class RecipeButton extends MenuButton implements RefreshableButton {
 
         if (simple) {
             lore.add(Component.empty());
-            lore.add(TranslationUtil.render(Displays.RECIPE_BUTTON_CLICK_TO_SHOW_DETAILS, viewer));
+            lore.add(TranslationUtil.render(Displays.RECIPE_BUTTON_SHIFT_CLICK_TO_SHOW_DETAILS, viewer));
         }
 
         target.lore(lore);

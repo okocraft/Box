@@ -12,11 +12,11 @@ import net.okocraft.box.feature.craft.model.IngredientHolder;
 import net.okocraft.box.feature.craft.model.SelectedRecipe;
 import net.okocraft.box.feature.craft.util.CustomCraftTimes;
 import net.okocraft.box.feature.gui.api.button.Button;
+import net.okocraft.box.feature.gui.api.buttons.BackButton;
+import net.okocraft.box.feature.gui.api.buttons.CloseButton;
 import net.okocraft.box.feature.gui.api.menu.AbstractMenu;
 import net.okocraft.box.feature.gui.api.menu.Menu;
 import net.okocraft.box.feature.gui.api.menu.RenderedButton;
-import net.okocraft.box.feature.gui.api.buttons.BackButton;
-import net.okocraft.box.feature.gui.api.buttons.CloseButton;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -90,7 +90,12 @@ public class CraftMenu extends AbstractMenu {
 
         for (var ingredient : recipe.ingredients()) {
             int pos = ingredient.getSlot();
-            addButton(new RecipeItemIcon(currentRecipe, RECIPE_SLOTS.get(pos), pos, bulkIngredientChange, updateFlag));
+            addButton(
+                    new RecipeItemIcon(
+                            currentRecipe, viewer, RECIPE_SLOTS.get(pos), pos,
+                            bulkIngredientChange, updateFlag, this
+                    )
+            );
         }
 
         var result = recipe.result().getClonedItem();
