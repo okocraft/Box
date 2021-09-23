@@ -44,7 +44,7 @@ public final class IngredientRenderer {
             int need = ingredient.getValue() * times;
 
             int current = stockHolder.getAmount(item);
-            var style = need < current ? Styles.NO_DECORATION_AQUA : Styles.NO_DECORATION_RED;
+            var style = need <= current ? Styles.NO_DECORATION_AQUA : Styles.NO_DECORATION_RED;
 
             target.add(
                     space().toBuilder()
