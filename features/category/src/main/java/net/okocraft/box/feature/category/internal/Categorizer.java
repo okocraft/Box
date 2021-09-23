@@ -1,7 +1,6 @@
 package net.okocraft.box.feature.category.internal;
 
 import com.destroystokyo.paper.MaterialTags;
-import net.okocraft.box.api.model.item.BoxItem;
 import org.bukkit.Material;
 import org.bukkit.Tag;
 import org.bukkit.inventory.ItemStack;
@@ -9,7 +8,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
-import java.util.function.Function;
 
 import static com.destroystokyo.paper.MaterialTags.ARROWS;
 import static com.destroystokyo.paper.MaterialTags.AXES;
@@ -306,18 +304,7 @@ import static org.bukkit.Tag.WOOL;
 
 final class Categorizer {
 
-    static boolean byTag(@NotNull BoxItem item, @NotNull Function<DefaultCategory, BoxCategory> func) {
-        var category = checkTags(item.getOriginal());
-
-        if (category != null) {
-            func.apply(category).add(item);
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    private static @Nullable DefaultCategory checkTags(@NotNull ItemStack item) {
+    static @Nullable DefaultCategory checkTags(@NotNull ItemStack item) {
         // Check the tags in order of the amount of Material they have.
 
         var type = item.getType();
@@ -437,17 +424,6 @@ final class Categorizer {
         return false;
     }
 
-    static boolean byMaterial(@NotNull BoxItem item, @NotNull Function<DefaultCategory, BoxCategory> func) {
-        var category = checkMaterial(item.getOriginal().getType());
-
-        if (category != null) {
-            func.apply(category).add(item);
-            return true;
-        } else {
-            return false;
-        }
-    }
-
     private static final Set<Material> DECORATIONS = Set.of(
             ARMOR_STAND, ANVIL, BEACON, BELL, BLAST_FURNACE, BARREL, BOOKSHELF, BREWING_STAND, CAMPFIRE,
             CARTOGRAPHY_TABLE, CAULDRON, CHAIN, CHEST, CHIPPED_ANVIL, COMPOSTER, CRAFTING_TABLE, DAMAGED_ANVIL,
@@ -518,7 +494,7 @@ final class Categorizer {
             SPAWNER, STRUCTURE_BLOCK, STRUCTURE_VOID
     );
 
-    private static @Nullable DefaultCategory checkMaterial(@NotNull Material type) {
+    static @Nullable DefaultCategory checkMaterial(@NotNull Material type) {
         if (UNAVAILABLE.contains(type) || type.name().contains("INFESTED")) {
             return DefaultCategory.UNAVAILABLE;
         }

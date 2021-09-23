@@ -1,6 +1,6 @@
 package net.okocraft.box.feature.category.internal;
 
-import com.github.siroshun09.configapi.yaml.YamlConfiguration;
+import com.github.siroshun09.configapi.api.Configuration;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.feature.category.model.Category;
@@ -13,14 +13,14 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.function.Predicate;
 
 public class CategoryLoader {
 
-    public static @NotNull @Unmodifiable List<Category> load(@NotNull YamlConfiguration yaml) {
+    public static @NotNull @Unmodifiable List<Category> load(@NotNull Configuration yaml) {
         var itemManager = BoxProvider.get().getItemManager();
         var items = new ArrayList<>(itemManager.getBoxItemSet());
         var result = new LinkedHashMap<String, BoxCategory>();
+        var itemCategoryMap = new LinkedHashMap<String, List<String>>(); // category name - item list
 
         for (var key : yaml.getKeyList()) {
             if (key.equals("icons") ||
@@ -40,51 +40,55 @@ public class CategoryLoader {
                 temp = Material.STONE;
             }
 
-            var iconMaterial = temp;
+            var itemNameList = yaml.getStringList(key);
 
-            var category = result.computeIfAbsent(key, k -> new BoxCategory(k, iconMaterial));
+            itemCategoryMap.computeIfAbsent(key, k -> new ArrayList<>()).addAll(itemNameList);
 
-            for (var itemName : yaml.getStringList(key)) {
+            for (var itemName : itemNameList) {
                 var optionalBoxItem = itemManager.getBoxItem(itemName);
 
-                if (optionalBoxItem.isPresent()) {
-                    category.add(optionalBoxItem.get());
-                    items.remove(optionalBoxItem.get());
-                } else {
-                    BoxProvider.get().getLogger().warning("Unknown item name: " + itemName);
-                }
+                var iconMaterial = temp;
+
+                optionalBoxItem.ifPresent(boxItem -> {
+                    var category = result.computeIfAbsent(key, k -> new BoxCategory(k, iconMaterial));
+
+                    category.add(boxItem);
+                    items.remove(boxItem);
+                });
             }
         }
 
-        items.stream()
-                .sorted(Comparator.comparing(BoxItem::getPlainName))
-                .filter(Predicate.not(
-                        item -> Categorizer.byTag(
-                                item,
-                                def -> result.computeIfAbsent(def.getName(), key -> createCategory(def))
-                        ))
-                )
-                .filter(Predicate.not(
-                        item -> Categorizer.byMaterial(
-                                item,
-                                def -> result.computeIfAbsent(def.getName(), key -> createCategory(def))
-                        ))
-                )
-                .forEach(item -> {
-                    var category =
-                            itemManager.isCustomItem(item) ?
-                                    DefaultCategory.CUSTOM_ITEMS :
-                                    DefaultCategory.UNCATEGORIZED;
+        for (var item : items.stream().sorted(Comparator.comparing(BoxItem::getPlainName)).toList()) {
+            BoxProvider.get().getLogger().info("Uncategorized item: " + item.getPlainName());
 
-                    result.computeIfAbsent(
-                            category.getName(),
-                            name -> createCategory(category)
-                    ).add(item);
-                });
+            var tempCategory = Categorizer.checkTags(item.getOriginal());
+
+            if (tempCategory == null) {
+                tempCategory = Categorizer.checkMaterial(item.getOriginal().getType());
+            }
+
+            if (tempCategory == null) {
+                tempCategory = itemManager.isCustomItem(item) ?
+                        DefaultCategory.CUSTOM_ITEMS :
+                        DefaultCategory.UNCATEGORIZED;
+            }
+
+            var category = tempCategory;
+
+            result.computeIfAbsent(category.getName(), k -> createCategory(category)).add(item);
+            itemCategoryMap.computeIfAbsent(category.getName(), k -> new ArrayList<>()).add(item.getPlainName());
+
+            BoxProvider.get().getLogger().info("Added item to category " + category.getName());
+        }
 
         result.computeIfAbsent(
                 DefaultCategory.CUSTOM_ITEMS.getName(),
                 name -> createCategory(DefaultCategory.CUSTOM_ITEMS));
+
+        // update categories.yml
+        for (var entry : itemCategoryMap.entrySet()) {
+            yaml.set(entry.getKey(), entry.getValue());
+        }
 
         return List.copyOf(result.values());
     }

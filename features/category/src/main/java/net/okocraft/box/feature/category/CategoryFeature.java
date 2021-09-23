@@ -7,7 +7,6 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.feature.AbstractBoxFeature;
 import net.okocraft.box.api.feature.Reloadable;
-import net.okocraft.box.feature.category.internal.CategoryExporter;
 import net.okocraft.box.feature.category.internal.CategoryLoader;
 import net.okocraft.box.feature.category.internal.CustomItemListener;
 import org.bukkit.command.CommandSender;
@@ -34,7 +33,7 @@ public class CategoryFeature extends AbstractBoxFeature implements Reloadable {
 
             CategoryHolder.addAll(CategoryLoader.load(yaml));
 
-            CategoryExporter.export(yaml);
+            yaml.save();
         } catch (Exception e) {
             BoxProvider.get().getLogger().log(Level.SEVERE, "Could not load categories.yml", e);
         }
