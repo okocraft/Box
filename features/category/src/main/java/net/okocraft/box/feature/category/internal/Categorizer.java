@@ -313,8 +313,12 @@ final class Categorizer {
             return DefaultCategory.SPAWN_EGGS;
         }
 
-        if (isTagged(item, SANDSTONES, STONE_BRICKS, RED_SANDSTONES)) {
+        if (STONE_BRICKS.isTagged(type)) {
             return DefaultCategory.STONES;
+        }
+
+        if (isTagged(item, SANDSTONES, RED_SANDSTONES)) {
+            return DefaultCategory.SANDS;
         }
 
         if (isTagged(item, MaterialTags.ORES, RAW_ORES, RAW_ORE_BLOCKS)) {
@@ -477,7 +481,7 @@ final class Categorizer {
 
     private static final String[] STONE_FILTERS = {
             "ANDESITE", "BASALT", "BLACKSTONE", "COBBLESTONE", "DEEPSLATE",
-            "DIORITE", "GRANITE", "SANDSTONE", "MOSSY_STONE", "SMOOTH_STONE"
+            "DIORITE", "GRANITE", "MOSSY_STONE", "SMOOTH_STONE"
     };
 
     private static final Set<Material> TOOLS = Set.of(
@@ -535,6 +539,10 @@ final class Categorizer {
             return DefaultCategory.STONES;
         }
 
+        if (type.name().contains("SANDSTONE")) {
+            return DefaultCategory.SANDS;
+        }
+
         if (type.name().contains("BANNER")) {
             return DefaultCategory.WOOLS;
         }
@@ -552,7 +560,8 @@ final class Categorizer {
         }
 
         return switch (type) {
-            case CLAY, CLAY_BALL, GRAVEL, RED_SAND, SAND -> DefaultCategory.DIRT;
+            case CLAY, CLAY_BALL, GRAVEL -> DefaultCategory.DIRT;
+            case RED_SAND, SAND -> DefaultCategory.SANDS;
             case DRAGON_BREATH, DRAGON_EGG, END_CRYSTAL -> DefaultCategory.END;
             case ENCHANTED_BOOK -> DefaultCategory.ENCHANTED_BOOKS;
             case SADDLE -> DefaultCategory.HORSE;

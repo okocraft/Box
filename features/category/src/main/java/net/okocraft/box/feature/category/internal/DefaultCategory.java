@@ -30,6 +30,7 @@ enum DefaultCategory {
     REDSTONES("redstones", Material.REDSTONE),
     SHULKER_BOXES("shulker-boxes", Material.SHULKER_BOX),
     SPAWN_EGGS("spawn-eggs", Material.COW_SPAWN_EGG),
+    SANDS("sands", Material.SAND),
     STONES("stones", Material.STONE),
     TERRACOTTA("terracotta", Material.TERRACOTTA),
     TOOLS("tools", Material.IRON_PICKAXE),
