@@ -81,7 +81,7 @@ public class CraftMenu extends AbstractMenu {
                         Displays.CHANGE_CRAFT_TIMES_BUTTON_DECREASE_DISPLAY_NAME,
                         Displays.CHANGE_CRAFT_TIMES_BUTTON_DECREASE_LORE,
                         Displays.CHANGE_CRAFT_TIMES_BUTTON_CURRENT,
-                        46,
+                        45,
                         this
                 )
         );
@@ -91,7 +91,7 @@ public class CraftMenu extends AbstractMenu {
                         craftTimesHolder,
                         Displays.CHANGE_UNIT_BUTTON_DISPLAY_NAME,
                         Displays.CHANGE_UNIT_BUTTON_SHIFT_CLICK_TO_RESET_TIMES,
-                        47,
+                        46,
                         this
                 )
         );
@@ -103,16 +103,16 @@ public class CraftMenu extends AbstractMenu {
                         Displays.CHANGE_CRAFT_TIMES_BUTTON_SET_TO_UNIT,
                         Displays.CHANGE_CRAFT_TIMES_BUTTON_INCREASE_LORE,
                         Displays.CHANGE_CRAFT_TIMES_BUTTON_CURRENT,
-                        48,
+                        47,
                         this
                 )
         );
 
-        buttons.add(backTo != null ? new BackButton(backTo, 49) : new CloseButton());
-
         buttons.add(
                 new CraftButton(currentRecipe::getSelectedRecipe, craftTimesHolder::getAmount, viewer, 48, updateFlag)
         );
+
+        buttons.add(backTo != null ? new BackButton(backTo, 49) : new CloseButton());
 
         for (int i = 0; i < CRAFT_TIMES.length; i++) {
             buttons.add(new CraftButton(currentRecipe::getSelectedRecipe, CRAFT_TIMES[i], viewer, 50 + i, updateFlag));
