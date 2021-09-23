@@ -28,24 +28,31 @@ public class CraftButton implements RefreshableButton {
     private final Player crafter;
     private final int slot;
     private final AtomicBoolean craftedFlag;
+    private boolean customTimes;
 
     public CraftButton(@NotNull Supplier<SelectedRecipe> recipeSupplier, int times, @NotNull Player crafter,
                        int slot, @NotNull AtomicBoolean craftedFlag) {
         this(recipeSupplier, () -> times, crafter, slot, craftedFlag);
+        customTimes = false; // overwrite
     }
 
-    public CraftButton(@NotNull Supplier<SelectedRecipe> recipeSupplier,  @NotNull Supplier<Integer> timesSupplier, @NotNull Player crafter,
+    public CraftButton(@NotNull Supplier<SelectedRecipe> recipeSupplier, @NotNull Supplier<Integer> timesSupplier, @NotNull Player crafter,
                        int slot, @NotNull AtomicBoolean craftedFlag) {
         this.recipeSupplier = recipeSupplier;
         this.timesSupplier = timesSupplier;
         this.crafter = crafter;
         this.slot = slot;
         this.craftedFlag = craftedFlag;
+        this.customTimes = true;
     }
 
     @Override
     public @NotNull Material getIconMaterial() {
-        return canCraft() ? Material.LIME_DYE : Material.GRAY_DYE;
+        if (customTimes) {
+            return canCraft() ? Material.GLOWSTONE_DUST : Material.GUNPOWDER;
+        } else {
+            return canCraft() ? Material.LIME_DYE : Material.GRAY_DYE;
+        }
     }
 
     @Override
