@@ -43,7 +43,7 @@ public class DebugListener {
                             "stockholderName='" + decreaseEvent.getStockHolder().getName() + "', " +
                             "stockholderClass=" + decreaseEvent.getStockHolder().getClass().getSimpleName() + ", " +
                             "boxItem=" + decreaseEvent.getItem() + ", " +
-                            "increments=" + decreaseEvent.getDecrements() + ", " +
+                            "decrements=" + decreaseEvent.getDecrements() + ", " +
                             "current=" + decreaseEvent.getAmount() +
                             "}"
             );
