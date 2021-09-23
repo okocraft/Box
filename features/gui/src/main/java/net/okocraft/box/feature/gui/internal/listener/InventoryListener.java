@@ -20,6 +20,7 @@ import java.util.logging.Level;
 public class InventoryListener implements Listener {
 
     private final Map<UUID, CompletableFuture<?>> clickTaskMap = new HashMap<>();
+    private final Map<UUID, Long> lastClickTime = new HashMap<>();
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onClick(@NotNull InventoryClickEvent event) {
@@ -48,6 +49,14 @@ public class InventoryListener implements Listener {
         if (currentTask != null && !currentTask.isDone()) {
             return;
         }
+
+        var lastClickTime = this.lastClickTime.get(clicker.getUniqueId());
+
+        if (lastClickTime != null && System.currentTimeMillis() - lastClickTime < 150) {
+            return;
+        }
+
+        this.lastClickTime.put(clicker.getUniqueId(), System.currentTimeMillis());
 
         var task = CompletableFuture.runAsync(
                 () -> processClick(holder, clicker, event.getSlot(), event.getClick()),
