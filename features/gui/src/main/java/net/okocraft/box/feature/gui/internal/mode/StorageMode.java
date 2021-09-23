@@ -162,6 +162,10 @@ public class StorageMode implements BoxItemClickMode {
         @SuppressWarnings("DuplicatedCode")
         @Override
         public void onClick(@NotNull Player clicker, @NotNull ClickType clickType) {
+            if (!clickType.isShiftClick()) {
+                return;
+            }
+
             var resultList = CompletableFuture.supplyAsync(
                     () -> InventoryTransaction.depositItemsInInventory(clicker.getInventory()),
                     BoxProvider.get().getExecutorProvider().getMainThread()
