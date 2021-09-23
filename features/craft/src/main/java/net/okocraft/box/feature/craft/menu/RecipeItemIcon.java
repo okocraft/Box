@@ -1,6 +1,7 @@
 package net.okocraft.box.feature.craft.menu;
 
 import net.kyori.adventure.text.Component;
+import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.feature.craft.RecipeRegistry;
 import net.okocraft.box.feature.craft.lang.Displays;
 import net.okocraft.box.feature.gui.api.lang.Styles;
@@ -47,12 +48,16 @@ public record RecipeItemIcon(@NotNull CraftMenu.CurrentRecipe currentRecipe,
 
         var lore = new ArrayList<Component>();
 
+        var stockHolder = BoxProvider.get().getBoxPlayerMap().get(viewer).getCurrentStockHolder();
+
         if (ingredients.size() != 1) {
             for (var ingredient : ingredients.get()) {
                 lore.add(
                         Component.text()
                                 .append(Component.text(" > "))
                                 .append(Component.translatable(ingredient.item().getOriginal()))
+                                .append(Component.space())
+                                .append(Component.text("(" + stockHolder.getAmount(ingredient.item()) + ")"))
                                 .style(ingredient == ingredients.getSelected() ? Styles.NO_DECORATION_AQUA : Styles.NO_DECORATION_GRAY)
                                 .build()
                 );
