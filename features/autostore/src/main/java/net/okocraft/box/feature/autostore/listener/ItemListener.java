@@ -69,7 +69,7 @@ public class ItemListener implements Listener {
 
         var setting = settingManager.get(player);
 
-        if (setting.isEnabled() || setting.getCurrentMode().isEnabled(boxItem.get())) {
+        if (setting.isEnabled() && setting.getCurrentMode().isEnabled(boxItem.get())) {
             BoxProvider.get()
                     .getBoxPlayerMap()
                     .get(player)
