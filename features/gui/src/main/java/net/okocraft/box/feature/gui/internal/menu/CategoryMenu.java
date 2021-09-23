@@ -11,15 +11,19 @@ import net.okocraft.box.feature.gui.internal.button.ChangeTransactionAmountButto
 import net.okocraft.box.feature.gui.internal.button.ChangeUnitButton;
 import net.okocraft.box.feature.gui.internal.button.ModeButton;
 import net.okocraft.box.feature.gui.internal.lang.Displays;
+import net.okocraft.box.feature.gui.internal.util.ClickModeMemory;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class CategoryMenu extends AbstractPaginatedMenu<BoxItem> {
 
     private final Category category;
-    private final ModeButton modeButton = new ModeButton(50);
+    private final AtomicBoolean updateFlag = new AtomicBoolean(false);
+
+    private final ModeButton modeButton = new ModeButton(50, updateFlag);
     private final BackButton backButton = new BackButton(new CategorySelectorMenu(), getRows() * 9 - 5);
 
     private final ChangeTransactionAmountButton decreaseTransactionAmountButton =
@@ -41,13 +45,18 @@ public class CategoryMenu extends AbstractPaginatedMenu<BoxItem> {
     }
 
     @Override
+    public boolean shouldUpdate() {
+        return updateFlag.getAndSet(false) || super.shouldUpdate();
+    }
+
+    @Override
     public @NotNull Component getTitle() {
-        return Displays.CATEGORY_MENU_TITLE.apply(category, modeButton.getCurrentMode());
+        return Displays.CATEGORY_MENU_TITLE.apply(category);
     }
 
     @Override
     protected @NotNull Button createButton(@NotNull BoxItem instance, int slot) {
-        return new BoxItemButton(instance, slot, modeButton::getCurrentMode, this);
+        return new BoxItemButton(instance, slot, this);
     }
 
     @Override
@@ -59,7 +68,7 @@ public class CategoryMenu extends AbstractPaginatedMenu<BoxItem> {
         buttons.add(changeUnitButton);
         buttons.add(increaseTransactionAmountButton);
 
-        var mode = modeButton.getCurrentMode();
+        var mode = ClickModeMemory.getMode(viewer);
 
         if (mode.hasAdditionalButton()) {
             var additionalButton = mode.createAdditionalButton(viewer, this);

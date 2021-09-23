@@ -1,10 +1,8 @@
 package net.okocraft.box.feature.gui.internal.lang;
 
 import net.kyori.adventure.text.Component;
-import net.okocraft.box.api.message.argument.DoubleArgument;
 import net.okocraft.box.api.message.argument.SingleArgument;
 import net.okocraft.box.feature.category.model.Category;
-import net.okocraft.box.feature.gui.api.mode.BoxItemClickMode;
 
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.Component.translatable;
@@ -101,14 +99,11 @@ public final class Displays {
     public static final Component CATEGORY_SELECTOR_MENU =
             translatable("box.gui.menus.category-selector", BLACK);
 
-    public static final DoubleArgument<Category, BoxItemClickMode> CATEGORY_MENU_TITLE =
-            (category, mode) ->
+    public static final SingleArgument<Category> CATEGORY_MENU_TITLE =
+            category ->
                     translatable()
                             .key("box.gui.menus.category-menu")
-                            .args(
-                                    category.getDisplayName().color(BLACK),
-                                    mode.getDisplayName().color(BLACK)
-                            )
+                            .args(category.getDisplayName().color(BLACK))
                             .color(BLACK)
                             .build();
 
