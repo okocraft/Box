@@ -54,6 +54,11 @@ public abstract class AbstractStockHolder implements StockHolder {
 
         BoxProvider.get().getEventBus().callEvent(new StockIncreaseEvent(this, item, increment, amount));
 
+        if (amount < 0) {
+            BoxProvider.get().getLogger()
+                    .warning(item.getPlainName() + " is negative number: " + amount + " (" + getName() + ")");
+        }
+
         return amount;
     }
 
@@ -67,6 +72,11 @@ public abstract class AbstractStockHolder implements StockHolder {
         var amount = getStock(item).addAndGet(-decrement);
 
         BoxProvider.get().getEventBus().callEvent(new StockDecreaseEvent(this, item, decrement, amount));
+
+        if (amount < 0) {
+            BoxProvider.get().getLogger()
+                    .warning(item.getPlainName() + " is negative number: " + amount + " (" + getName() + ")");
+        }
 
         return amount;
     }
