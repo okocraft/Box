@@ -14,6 +14,12 @@ import org.bukkit.event.player.PlayerPickupArrowEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.Component.translatable;
+import static net.kyori.adventure.text.format.NamedTextColor.AQUA;
+import static net.kyori.adventure.text.format.NamedTextColor.DARK_GRAY;
+import static net.kyori.adventure.text.format.NamedTextColor.WHITE;
+
 @SuppressWarnings("ClassCanBeRecord")
 public class ItemListener implements Listener {
 
@@ -70,11 +76,21 @@ public class ItemListener implements Listener {
         var setting = settingManager.get(player);
 
         if (setting.isEnabled() && setting.getCurrentMode().isEnabled(boxItem.get())) {
-            BoxProvider.get()
-                    .getBoxPlayerMap()
-                    .get(player)
-                    .getCurrentStockHolder()
-                    .increase(boxItem.get(), item.getAmount());
+            var current =
+                    BoxProvider.get()
+                            .getBoxPlayerMap()
+                            .get(player)
+                            .getCurrentStockHolder()
+                            .increase(boxItem.get(), item.getAmount());
+
+            player.sendActionBar(
+                    translatable(boxItem.get().getOriginal())
+                            .append(text(" - ", DARK_GRAY))
+                            .append(text(current, WHITE))
+                            .append(text(" (", DARK_GRAY))
+                            .append(text("+" + item.getAmount(), AQUA))
+                            .append(text(")", DARK_GRAY))
+            );
 
             player.playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, 0.2f, (float) Math.random() + 1.0f);
             return true;
