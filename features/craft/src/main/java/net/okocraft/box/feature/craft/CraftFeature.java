@@ -18,9 +18,8 @@ import java.util.Map;
 
 public class CraftFeature extends AbstractBoxFeature implements Reloadable {
 
-    private final Map<BoxItem, RecipeHolder> recipeMap = RecipeLoader.load();
-    private final CraftMode craftMode = new CraftMode(recipeMap);
-    private final CraftCommand craftCommand = new CraftCommand(recipeMap);
+    private final CraftMode craftMode = new CraftMode();
+    private final CraftCommand craftCommand = new CraftCommand();
 
     public CraftFeature() {
         super("craft");
@@ -28,6 +27,7 @@ public class CraftFeature extends AbstractBoxFeature implements Reloadable {
 
     @Override
     public void enable() {
+        RecipeRegistry.setRecipeMap(RecipeLoader.load());
         ClickModeRegistry.register(craftMode);
         BoxProvider.get().getBoxCommand().getSubCommandHolder().register(craftCommand);
     }

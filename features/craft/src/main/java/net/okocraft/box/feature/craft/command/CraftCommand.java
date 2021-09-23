@@ -4,11 +4,10 @@ import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.command.AbstractCommand;
 import net.okocraft.box.api.message.GeneralMessage;
-import net.okocraft.box.api.model.item.BoxItem;
+import net.okocraft.box.feature.craft.RecipeRegistry;
 import net.okocraft.box.feature.craft.lang.Displays;
 import net.okocraft.box.feature.craft.menu.CraftMenu;
 import net.okocraft.box.feature.craft.menu.RecipeSelector;
-import net.okocraft.box.feature.craft.model.RecipeHolder;
 import net.okocraft.box.feature.gui.api.menu.Menu;
 import net.okocraft.box.feature.gui.api.util.MenuOpener;
 import org.bukkit.command.CommandSender;
@@ -18,17 +17,13 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 public class CraftCommand extends AbstractCommand {
 
-    private final Map<BoxItem, RecipeHolder> recipeMap;
-
-    public CraftCommand(@NotNull Map<BoxItem, RecipeHolder> recipeMap) {
+    public CraftCommand() {
         super("craft", "box.command.craft", Set.of("c"));
-        this.recipeMap = recipeMap;
     }
 
     @Override
@@ -51,7 +46,7 @@ public class CraftCommand extends AbstractCommand {
             return;
         }
 
-        var recipeHolder = recipeMap.get(item.get());
+        var recipeHolder = RecipeRegistry.getRecipes(item.get());
 
         if (recipeHolder == null || recipeHolder.getRecipeList().isEmpty()) {
             player.sendMessage(Displays.COMMAND_RECIPE_NOT_FOUND.apply(item.get()));
