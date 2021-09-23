@@ -7,7 +7,7 @@ import net.okocraft.box.api.transaction.InventoryTransaction;
 import net.okocraft.box.feature.gui.api.menu.Menu;
 import net.okocraft.box.feature.gui.api.mode.AdditionalButton;
 import net.okocraft.box.feature.gui.api.mode.BoxItemClickMode;
-import net.okocraft.box.feature.gui.api.util.TransactionAmountHolder;
+import net.okocraft.box.feature.gui.api.session.PlayerSession;
 import net.okocraft.box.feature.gui.api.util.TranslationUtil;
 import net.okocraft.box.feature.gui.internal.lang.Displays;
 import org.bukkit.Material;
@@ -25,6 +25,8 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 public class StorageMode implements BoxItemClickMode {
+
+    private static final String TRANSACTION_AMOUNT_NAME = "transaction-amount";
 
     @Override
     public @NotNull String getName() {
@@ -70,7 +72,8 @@ public class StorageMode implements BoxItemClickMode {
 
     private @NotNull @Unmodifiable List<Component> createLore(@NotNull BoxItem item, @NotNull Player player) {
         int currentStock = BoxProvider.get().getBoxPlayerMap().get(player).getCurrentStockHolder().getAmount(item);
-        int transactionAmount = TransactionAmountHolder.getAmount(player);
+        int transactionAmount =
+                PlayerSession.get(player).getCustomNumberHolder(TRANSACTION_AMOUNT_NAME).getAmount();
 
         return List.of(
                 Displays.STORAGE_MODE_LEFT_CLICK_TO_DEPOSIT.apply(transactionAmount),
@@ -83,12 +86,14 @@ public class StorageMode implements BoxItemClickMode {
     @SuppressWarnings("DuplicatedCode")
     private void processDeposit(@NotNull Context context) {
         var player = context.clicker();
+        int transactionAmount =
+                PlayerSession.get(player).getCustomNumberHolder(TRANSACTION_AMOUNT_NAME).getAmount();
 
         var resultList = CompletableFuture.supplyAsync(
                 () -> InventoryTransaction.depositItem(
                         player.getInventory(),
                         context.item(),
-                        TransactionAmountHolder.getAmount(player)
+                        transactionAmount
                 ),
                 BoxProvider.get().getExecutorProvider().getMainThread()
         ).join();
@@ -119,7 +124,10 @@ public class StorageMode implements BoxItemClickMode {
             return;
         }
 
-        var amount = Math.min(currentStock, TransactionAmountHolder.getAmount(player));
+        int transactionAmount =
+                PlayerSession.get(player).getCustomNumberHolder(TRANSACTION_AMOUNT_NAME).getAmount();
+
+        var amount = Math.min(currentStock, transactionAmount);
 
         var result = CompletableFuture.supplyAsync(
                 () -> InventoryTransaction.withdraw(player.getInventory(), context.item(), amount),

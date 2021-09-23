@@ -3,13 +3,13 @@ package net.okocraft.box.feature.craft.util;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 public class Distribution {
 
-    private static final List<UUID> TO_INVENTORY = new ArrayList<>();
+    private static final Set<UUID> TO_INVENTORY = new HashSet<>();
 
     public static boolean toInventory(@NotNull Player player) {
         return TO_INVENTORY.contains(player.getUniqueId());

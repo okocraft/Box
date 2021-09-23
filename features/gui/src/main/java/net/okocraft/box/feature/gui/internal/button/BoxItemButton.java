@@ -4,7 +4,7 @@ import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.feature.gui.api.button.RefreshableButton;
 import net.okocraft.box.feature.gui.api.menu.Menu;
 import net.okocraft.box.feature.gui.api.mode.BoxItemClickMode;
-import net.okocraft.box.feature.gui.internal.util.ClickModeMemory;
+import net.okocraft.box.feature.gui.api.session.PlayerSession;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -40,7 +40,9 @@ public class BoxItemButton implements RefreshableButton {
         var itemMeta = item.getOriginal().getItemMeta();
 
         if (itemMeta != null) {
-            ClickModeMemory.getMode(viewer).applyIconMeta(viewer, item, itemMeta);
+            PlayerSession.get(viewer)
+                    .getBoxItemClickMode()
+                    .applyIconMeta(viewer, item, itemMeta);
         }
 
         return itemMeta;
@@ -53,6 +55,7 @@ public class BoxItemButton implements RefreshableButton {
 
     @Override
     public void onClick(@NotNull Player clicker, @NotNull ClickType clickType) {
-        ClickModeMemory.getMode(clicker).onClick(new BoxItemClickMode.Context(clicker, item, clickType, menu));
+        var context = new BoxItemClickMode.Context(clicker, item, clickType, menu);
+        PlayerSession.get(clicker).getBoxItemClickMode().onClick(context);
     }
 }

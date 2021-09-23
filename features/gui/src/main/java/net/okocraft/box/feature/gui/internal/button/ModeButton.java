@@ -4,9 +4,9 @@ import net.kyori.adventure.text.Component;
 import net.okocraft.box.feature.gui.api.button.RefreshableButton;
 import net.okocraft.box.feature.gui.api.lang.Styles;
 import net.okocraft.box.feature.gui.api.mode.ClickModeRegistry;
+import net.okocraft.box.feature.gui.api.session.PlayerSession;
 import net.okocraft.box.feature.gui.api.util.TranslationUtil;
 import net.okocraft.box.feature.gui.internal.lang.Displays;
-import net.okocraft.box.feature.gui.internal.util.ClickModeMemory;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -58,14 +58,15 @@ public class ModeButton implements RefreshableButton {
     @Override
     public void onClick(@NotNull Player clicker, @NotNull ClickType clickType) {
         var modes = ClickModeRegistry.getModes();
+        var session = PlayerSession.get(clicker);
 
-        int nextIndex = modes.indexOf(ClickModeMemory.getMode(clicker)) + 1;
+        int nextIndex = modes.indexOf(session.getBoxItemClickMode()) + 1;
 
         if (modes.size() <= nextIndex) {
             nextIndex = 0;
         }
 
-        ClickModeMemory.changeMode(clicker, modes.get(nextIndex));
+        session.setBoxItemClickMode(modes.get(nextIndex));
 
         clicker.playSound(clicker.getLocation(), Sound.BLOCK_COMPARATOR_CLICK, 100f, 1.5f);
 
@@ -77,8 +78,10 @@ public class ModeButton implements RefreshableButton {
 
         var modes = ClickModeRegistry.getModes();
 
+        var currentMode = PlayerSession.get(viewer).getBoxItemClickMode();
+
         for (var mode : modes) {
-            var style = ClickModeMemory.getMode(viewer) == mode ? Styles.NO_DECORATION_AQUA : Styles.NO_DECORATION_GRAY;
+            var style = currentMode == mode ? Styles.NO_DECORATION_AQUA : Styles.NO_DECORATION_GRAY;
 
             result.add(
                     Component.text()

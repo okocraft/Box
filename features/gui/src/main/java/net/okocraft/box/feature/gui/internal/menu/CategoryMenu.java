@@ -5,13 +5,14 @@ import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.feature.category.model.Category;
 import net.okocraft.box.feature.gui.api.button.Button;
 import net.okocraft.box.feature.gui.api.buttons.BackButton;
+import net.okocraft.box.feature.gui.api.buttons.customnumber.ChangeCustomNumberUnitButton;
+import net.okocraft.box.feature.gui.api.buttons.customnumber.DecreaseCustomNumberButton;
+import net.okocraft.box.feature.gui.api.buttons.customnumber.IncreaseCustomNumberButton;
 import net.okocraft.box.feature.gui.api.menu.paginate.AbstractPaginatedMenu;
+import net.okocraft.box.feature.gui.api.session.PlayerSession;
 import net.okocraft.box.feature.gui.internal.button.BoxItemButton;
-import net.okocraft.box.feature.gui.internal.button.ChangeTransactionAmountButton;
-import net.okocraft.box.feature.gui.internal.button.ChangeUnitButton;
 import net.okocraft.box.feature.gui.internal.button.ModeButton;
 import net.okocraft.box.feature.gui.internal.lang.Displays;
-import net.okocraft.box.feature.gui.internal.util.ClickModeMemory;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -25,14 +26,6 @@ public class CategoryMenu extends AbstractPaginatedMenu<BoxItem> {
 
     private final ModeButton modeButton = new ModeButton(50, updateFlag);
     private final BackButton backButton = new BackButton(new CategorySelectorMenu(), getRows() * 9 - 5);
-
-    private final ChangeTransactionAmountButton decreaseTransactionAmountButton =
-            new ChangeTransactionAmountButton(46, false, this);
-
-    private final ChangeUnitButton changeUnitButton = new ChangeUnitButton(47, this);
-
-    private final ChangeTransactionAmountButton increaseTransactionAmountButton =
-            new ChangeTransactionAmountButton(48, true, this);
 
     public CategoryMenu(@NotNull Category category) {
         super(category.getItems());
@@ -64,11 +57,42 @@ public class CategoryMenu extends AbstractPaginatedMenu<BoxItem> {
         buttons.add(modeButton);
         buttons.add(backButton);
 
-        buttons.add(decreaseTransactionAmountButton);
-        buttons.add(changeUnitButton);
-        buttons.add(increaseTransactionAmountButton);
+        var transactionAmountHolder = PlayerSession.get(viewer).getCustomNumberHolder("transaction-amount");
 
-        var mode = ClickModeMemory.getMode(viewer);
+        buttons.add(
+                new DecreaseCustomNumberButton(
+                        transactionAmountHolder,
+                        Displays.CHANGE_TRANSACTION_AMOUNT_BUTTON_DECREASE_DISPLAY_NAME,
+                        Displays.CHANGE_TRANSACTION_AMOUNT_BUTTON_DECREASE_LORE,
+                        Displays.CHANGE_TRANSACTION_AMOUNT_BUTTON_CURRENT,
+                        46,
+                        this
+                )
+        );
+
+        buttons.add(
+                new ChangeCustomNumberUnitButton(
+                        transactionAmountHolder,
+                        Displays.CHANGE_UNIT_BUTTON_DISPLAY_NAME,
+                        Displays.CHANGE_UNIT_BUTTON_SHIFT_CLICK_TO_RESET_AMOUNT,
+                        47,
+                        this
+                )
+        );
+
+        buttons.add(
+                new IncreaseCustomNumberButton(
+                        transactionAmountHolder,
+                        Displays.CHANGE_TRANSACTION_AMOUNT_BUTTON_INCREASE_DISPLAY_NAME,
+                        Displays.CHANGE_TRANSACTION_AMOUNT_BUTTON_SET_TO_UNIT,
+                        Displays.CHANGE_TRANSACTION_AMOUNT_BUTTON_INCREASE_LORE,
+                        Displays.CHANGE_TRANSACTION_AMOUNT_BUTTON_CURRENT,
+                        48,
+                        this
+                )
+        );
+
+        var mode = PlayerSession.get(viewer).getBoxItemClickMode();
 
         if (mode.hasAdditionalButton()) {
             var additionalButton = mode.createAdditionalButton(viewer, this);

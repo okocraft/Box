@@ -1,8 +1,6 @@
 package net.okocraft.box.feature.craft.menu;
 
 import net.kyori.adventure.text.Component;
-import net.okocraft.box.feature.craft.button.ChangeCraftTimesButton;
-import net.okocraft.box.feature.craft.button.ChangeUnitButton;
 import net.okocraft.box.feature.craft.button.CraftButton;
 import net.okocraft.box.feature.craft.button.DistributionButton;
 import net.okocraft.box.feature.craft.button.IngredientChangeModeButton;
@@ -10,13 +8,16 @@ import net.okocraft.box.feature.craft.lang.Displays;
 import net.okocraft.box.feature.craft.model.BoxItemRecipe;
 import net.okocraft.box.feature.craft.model.IngredientHolder;
 import net.okocraft.box.feature.craft.model.SelectedRecipe;
-import net.okocraft.box.feature.craft.util.CustomCraftTimes;
 import net.okocraft.box.feature.gui.api.button.Button;
 import net.okocraft.box.feature.gui.api.buttons.BackButton;
 import net.okocraft.box.feature.gui.api.buttons.CloseButton;
+import net.okocraft.box.feature.gui.api.buttons.customnumber.ChangeCustomNumberUnitButton;
+import net.okocraft.box.feature.gui.api.buttons.customnumber.DecreaseCustomNumberButton;
+import net.okocraft.box.feature.gui.api.buttons.customnumber.IncreaseCustomNumberButton;
 import net.okocraft.box.feature.gui.api.menu.AbstractMenu;
 import net.okocraft.box.feature.gui.api.menu.Menu;
 import net.okocraft.box.feature.gui.api.menu.RenderedButton;
+import net.okocraft.box.feature.gui.api.session.PlayerSession;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -72,14 +73,45 @@ public class CraftMenu extends AbstractMenu {
             }
         }
 
-        buttons.add(new ChangeCraftTimesButton(45, false, this));
-        buttons.add(new ChangeUnitButton(46, this));
-        buttons.add(new ChangeCraftTimesButton(47, true, this));
+        var craftTimesHolder = PlayerSession.get(viewer).getCustomNumberHolder("craft-times");
+
+        buttons.add(
+                new DecreaseCustomNumberButton(
+                        craftTimesHolder,
+                        Displays.CHANGE_CRAFT_TIMES_BUTTON_DECREASE_DISPLAY_NAME,
+                        Displays.CHANGE_CRAFT_TIMES_BUTTON_DECREASE_LORE,
+                        Displays.CHANGE_CRAFT_TIMES_BUTTON_CURRENT,
+                        46,
+                        this
+                )
+        );
+
+        buttons.add(
+                new ChangeCustomNumberUnitButton(
+                        craftTimesHolder,
+                        Displays.CHANGE_UNIT_BUTTON_DISPLAY_NAME,
+                        Displays.CHANGE_UNIT_BUTTON_SHIFT_CLICK_TO_RESET_TIMES,
+                        47,
+                        this
+                )
+        );
+
+        buttons.add(
+                new IncreaseCustomNumberButton(
+                        craftTimesHolder,
+                        Displays.CHANGE_CRAFT_TIMES_BUTTON_INCREASE_DISPLAY_NAME,
+                        Displays.CHANGE_CRAFT_TIMES_BUTTON_SET_TO_UNIT,
+                        Displays.CHANGE_CRAFT_TIMES_BUTTON_INCREASE_LORE,
+                        Displays.CHANGE_CRAFT_TIMES_BUTTON_CURRENT,
+                        48,
+                        this
+                )
+        );
+
         buttons.add(backTo != null ? new BackButton(backTo, 49) : new CloseButton());
 
         buttons.add(
-                new CraftButton(currentRecipe::getSelectedRecipe,
-                        () -> CustomCraftTimes.getAmount(viewer), viewer, 48, updateFlag)
+                new CraftButton(currentRecipe::getSelectedRecipe, craftTimesHolder::getAmount, viewer, 48, updateFlag)
         );
 
         for (int i = 0; i < CRAFT_TIMES.length; i++) {
