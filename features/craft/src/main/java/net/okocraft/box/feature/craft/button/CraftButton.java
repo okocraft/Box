@@ -20,6 +20,12 @@ import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 
+import static net.kyori.adventure.text.Component.space;
+import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.Component.translatable;
+import static net.okocraft.box.feature.gui.api.lang.Styles.NO_DECORATION_AQUA;
+import static net.okocraft.box.feature.gui.api.lang.Styles.NO_DECORATION_GRAY;
+
 public class CraftButton implements RefreshableButton {
 
     private final Supplier<SelectedRecipe> recipeSupplier;
@@ -74,6 +80,15 @@ public class CraftButton implements RefreshableButton {
 
         lore.add(Component.empty());
         IngredientRenderer.render(lore, recipe, viewer, times);
+
+        lore.add(Component.empty());
+        lore.add(
+                text(" -> ", NO_DECORATION_GRAY)
+                        .append(translatable(recipe.result().getOriginal(), recipe.result().getDisplayName().style()))
+                        .append(space())
+                        .append(text("x", NO_DECORATION_GRAY))
+                        .append(text(recipe.amount() * times, NO_DECORATION_AQUA))
+        );
 
         lore.add(Component.empty());
 
