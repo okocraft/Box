@@ -1,19 +1,35 @@
 package net.okocraft.box.feature.craft.util;
 
 import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.model.stock.StockHolder;
 import net.okocraft.box.api.transaction.InventoryTransaction;
 import net.okocraft.box.feature.craft.model.SelectedRecipe;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
 import java.util.concurrent.CompletableFuture;
 
 public class ItemCrafter {
 
     public static boolean canCraft(@NotNull StockHolder stockHolder, @NotNull SelectedRecipe recipe, int times) {
+        var ingredientMap = new HashMap<BoxItem, Integer>();
+
         for (var ingredient : recipe.ingredients()) {
-            if (stockHolder.getAmount(ingredient.item()) < ingredient.amount() * times) {
+            ingredientMap.put(
+                    ingredient.item(),
+                    ingredientMap.getOrDefault(ingredient.item(), 0) + ingredient.amount()
+            );
+        }
+
+        for (var ingredient : ingredientMap.entrySet()) {
+            var item = ingredient.getKey();
+
+            int need = ingredient.getValue() * times;
+            int current = stockHolder.getAmount(item);
+
+            if (current < need) {
                 return false;
             }
         }
