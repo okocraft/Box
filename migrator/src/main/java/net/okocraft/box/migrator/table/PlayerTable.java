@@ -30,14 +30,14 @@ public class PlayerTable {
                 var uuid = UUID.fromString(rs.getString("uuid"));
                 var name = rs.getString("name");
 
-                userIdMap.put(new TempBoxUser(uuid, name), id);
+                userIdMap.put(new MigratedBoxUser(uuid, name), id);
             }
         });
 
         return userIdMap;
     }
 
-    public record TempBoxUser(@NotNull UUID uuid, @NotNull String name) implements BoxUser {
+    private record MigratedBoxUser(@NotNull UUID uuid, @NotNull String name) implements BoxUser {
 
         @Override
         public @NotNull UUID getUUID() {
