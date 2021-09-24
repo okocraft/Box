@@ -57,7 +57,7 @@ public class BoxMigrator extends JavaPlugin {
                         sender.sendMessage("Migrated from MySQL!");
                     }
                 }
-                sender.sendMessage("Shut down the server and delete this plugin jar (BoxMigrator-x.x.x.jar).");
+                sender.sendMessage("Please stop the server and delete BoxMigrator-x.x.x.jar.");
             }).exceptionallyAsync(throwable -> {
                 getLogger().log(Level.SEVERE, "Could not complete migration", throwable);
                 return null;
