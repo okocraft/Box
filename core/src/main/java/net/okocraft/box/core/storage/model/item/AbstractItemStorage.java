@@ -4,7 +4,6 @@ import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.event.item.ItemImportEvent;
 import net.okocraft.box.api.model.item.BoxCustomItem;
 import net.okocraft.box.api.model.item.BoxItem;
-import net.okocraft.box.core.config.Settings;
 import net.okocraft.box.core.model.item.BoxCustomItemImpl;
 import net.okocraft.box.core.model.item.BoxItemImpl;
 import net.okocraft.box.core.util.DefaultItemProvider;
@@ -45,21 +44,13 @@ public abstract class AbstractItemStorage implements ItemStorage {
 
         onLoadingAllItemsStarted();
 
-        if (BoxProvider.get().getConfiguration().get(Settings.ITEM_ENABLE_DEFAULTS)) {
-            processDefaultItems(DefaultItemProvider.getDefaultItems(), itemList);
-        }
+        processDefaultItems(DefaultItemProvider.getDefaultItems(), itemList);
 
-        if (BoxProvider.get().getConfiguration().get(Settings.ITEM_ENABLE_POTIONS)) {
-            processDefaultItems(DefaultItemProvider.getDefaultPotions(), itemList);
-        }
+        processDefaultItems(DefaultItemProvider.getDefaultPotions(), itemList);
 
-        if (BoxProvider.get().getConfiguration().get(Settings.ITEM_ENABLE_ENCHANTED_BOOKS)) {
-            processDefaultItems(DefaultItemProvider.getDefaultEnchantedBooks(), itemList);
-        }
+        processDefaultItems(DefaultItemProvider.getDefaultEnchantedBooks(), itemList);
 
-        if (BoxProvider.get().getConfiguration().get(Settings.ITEM_ENABLE_FIREWORK_ROCKETS)) {
-            processDefaultItems(DefaultItemProvider.getDefaultFireworks(), itemList);
-        }
+        processDefaultItems(DefaultItemProvider.getDefaultFireworks(), itemList);
 
         var defaultItems = itemList.size();
         BoxProvider.get().getLogger().info(defaultItems + " default items imported!");

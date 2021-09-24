@@ -1,7 +1,7 @@
 package net.okocraft.box.feature.autostore.listener;
 
 import net.okocraft.box.api.BoxProvider;
-import net.okocraft.box.feature.autostore.model.SettingManager;
+import net.okocraft.box.feature.autostore.AutoStoreFeature;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -20,14 +20,7 @@ import static net.kyori.adventure.text.format.NamedTextColor.AQUA;
 import static net.kyori.adventure.text.format.NamedTextColor.DARK_GRAY;
 import static net.kyori.adventure.text.format.NamedTextColor.WHITE;
 
-@SuppressWarnings("ClassCanBeRecord")
 public class ItemListener implements Listener {
-
-    private final SettingManager settingManager;
-
-    public ItemListener(@NotNull SettingManager settingManager) {
-        this.settingManager = settingManager;
-    }
 
     public void register() {
         var plugin = BoxProvider.get().getPluginInstance();
@@ -73,9 +66,9 @@ public class ItemListener implements Listener {
             return false;
         }
 
-        var setting = settingManager.get(player);
+        var setting = AutoStoreFeature.container().get(player);
 
-        if (setting.isEnabled() && setting.getCurrentMode().isEnabled(boxItem.get())) {
+        if (setting.isEnabled() && setting.shouldAutoStore(boxItem.get())) {
             var current =
                     BoxProvider.get()
                             .getBoxPlayerMap()

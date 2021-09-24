@@ -4,7 +4,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.feature.autostore.message.AutoStoreMessage;
-import net.okocraft.box.feature.autostore.model.AutoStoreSetting;
+import net.okocraft.box.feature.autostore.model.setting.AutoStoreSetting;
 import net.okocraft.box.feature.gui.api.button.RefreshableButton;
 import net.okocraft.box.feature.gui.api.buttons.BackButton;
 import net.okocraft.box.feature.gui.api.menu.AbstractMenu;
@@ -72,7 +72,7 @@ public class AutoStoreSettingMenu extends AbstractMenu {
 
         @Override
         public @NotNull Material getIconMaterial() {
-            return isAllMode() ? Material.REDSTONE_TORCH : Material.SOUL_TORCH;
+            return setting.isAllMode() ? Material.REDSTONE_TORCH : Material.SOUL_TORCH;
         }
 
         @Override
@@ -85,7 +85,7 @@ public class AutoStoreSettingMenu extends AbstractMenu {
             target.displayName(TranslationUtil.render(AutoStoreMenuDisplays.AUTOSTORE_MODE_SETTING_MENU_CHANGE_MODE, viewer));
 
             var lore =
-                    isAllMode() ?
+                    setting.isAllMode() ?
                             AutoStoreMenuDisplays.AUTOSTORE_MODE_SETTING_MENU_CHANGE_TO_PER_ITEM :
                             AutoStoreMenuDisplays.AUTOSTORE_MODE_SETTING_MENU_CHANGE_TO_ALL;
 
@@ -103,18 +103,13 @@ public class AutoStoreSettingMenu extends AbstractMenu {
 
         @Override
         public void onClick(@NotNull Player clicker, @NotNull ClickType clickType) {
-            var changeTo = isAllMode() ? setting.getPerItemModeSetting() : setting.getAllModeSetting();
-            setting.setMode(changeTo);
+            setting.setAllMode(!setting.isAllMode());
 
             if (!setting.isEnabled()) {
                 setting.setEnabled(true);
             }
 
             clicker.playSound(clicker.getLocation(), Sound.BLOCK_COMPARATOR_CLICK, 100f, 1.5f);
-        }
-
-        private boolean isAllMode() {
-            return setting.getCurrentMode() == setting.getAllModeSetting();
         }
     }
 
@@ -229,8 +224,8 @@ public class AutoStoreSettingMenu extends AbstractMenu {
                 setting.setEnabled(true);
             }
 
-            if (setting.getCurrentMode() != perItemSetting) {
-                setting.setMode(perItemSetting);
+            if (setting.isAllMode()) {
+                setting.setAllMode(false);
             }
 
             if (sound != null) {
