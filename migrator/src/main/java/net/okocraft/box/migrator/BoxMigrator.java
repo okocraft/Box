@@ -98,6 +98,7 @@ public class BoxMigrator extends JavaPlugin {
             return true;
         }
 
+        sender.sendMessage("/boxmigrate <sqlite/mysql>");
         return true;
     }
 
