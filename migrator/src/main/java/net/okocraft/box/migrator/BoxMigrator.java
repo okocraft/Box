@@ -46,12 +46,16 @@ public class BoxMigrator extends JavaPlugin {
             CompletableFuture.runAsync(() -> {
                 if (isSQLite) {
                     sender.sendMessage("Starting migrate from SQLite...");
-                    processSQLite();
-                    sender.sendMessage("Migrated from SQLite!");
+
+                    if (processSQLite()) {
+                        sender.sendMessage("Migrated from SQLite!");
+                    }
                 } else {
                     sender.sendMessage("Starting migrate from MySQL...");
-                    processMySQL();
-                    sender.sendMessage("Migrated from MySQL!");
+
+                    if (processMySQL()) {
+                        sender.sendMessage("Migrated from MySQL!");
+                    }
                 }
                 sender.sendMessage("Shut down the server and delete this plugin jar (BoxMigrator-x.x.x.jar).");
             }).exceptionallyAsync(throwable -> {
@@ -102,18 +106,26 @@ public class BoxMigrator extends JavaPlugin {
         return true;
     }
 
-    private void processSQLite() {
-        var database = new SQLiteDatabase(BoxProvider.get().getPluginDirectory().resolve("database.db"));
-        migrate(database);
-        database.close();
+    private boolean processSQLite() {
+        var databasePath = BoxProvider.get().getPluginDirectory().resolve("database.db");
+
+        if (Files.isRegularFile(databasePath)) {
+            var database = new SQLiteDatabase(databasePath);
+            migrate(database);
+            database.close();
+            return true;
+        } else {
+            getLogger().warning("./plugins/Box/database.db does not exist!");
+            return false;
+        }
     }
 
-    private void processMySQL() {
+    private boolean processMySQL() {
         var configPath = BoxProvider.get().getPluginDirectory().resolve("mysql.yml");
 
         if (Files.isRegularFile(configPath)) {
             getLogger().warning("mysql.yml not found!");
-            return;
+            return false;
         }
 
         Database database;
@@ -125,7 +137,7 @@ public class BoxMigrator extends JavaPlugin {
 
             if (section == null) {
                 getLogger().warning("Could not found 'database.mysql-setting' in mysql.yml");
-                return;
+                return false;
             }
 
             database = new MySQLDatabase(
@@ -137,11 +149,12 @@ public class BoxMigrator extends JavaPlugin {
             );
         } catch (IOException e) {
             getLogger().log(Level.SEVERE, "Could not load mysql.yml", e);
-            return;
+            return false;
         }
 
         migrate(database);
         database.close();
+        return true;
     }
 
     private void migrate(@NotNull Database database) {
