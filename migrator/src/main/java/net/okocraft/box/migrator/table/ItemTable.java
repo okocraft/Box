@@ -47,7 +47,8 @@ public class ItemTable {
 
                         item.setAmount(1);
 
-                        itemMap.put(rs.getInt("id"), item);
+                        int id = rs.getInt("id");
+                        itemMap.put(id, item);
 
                         var boxItem = itemManager.getBoxItem(item);
 
@@ -64,12 +65,19 @@ public class ItemTable {
                         if (customItem != null) {
                             var customName = rs.getString("customname");
 
-                            if (customName != null) {
+                            if (customName != null && !customName.equals(customItem.getPlainName())) {
                                 itemManager.renameCustomItem(customItem, customName).join();
                             }
+
+                            BoxProvider.get().getLogger().info("Migrated custom item: " + id + " -> " + customItem.getPlainName());
+                            return;
+                        } else {
+                            BoxProvider.get().getLogger().info("Migrated item: " + id + " -> " + boxItem.get().getPlainName());
                         }
                     }
                 });
+
+        BoxProvider.get().getLogger().info("All items have been migrated!!");
 
         return itemMap;
     }
