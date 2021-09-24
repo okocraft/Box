@@ -4,7 +4,6 @@ import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.message.argument.DoubleArgument;
 import net.okocraft.box.api.message.argument.SingleArgument;
 import net.okocraft.box.api.model.item.BoxItem;
-import net.okocraft.box.feature.autostore.model.mode.AutoStoreMode;
 
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.Component.translatable;
@@ -23,8 +22,8 @@ public final class AutoStoreMessage {
             translatable("box.autostore.reloaded", GRAY);
 
 
-    public static final SingleArgument<AutoStoreMode> AUTO_STORE_MODE_NAME =
-            mode -> translatable("box.autostore.mode." + mode.getModeName());
+    public static final SingleArgument<Boolean> AUTO_STORE_MODE_NAME =
+            allMode -> translatable("box.autostore.mode." + (allMode ? "all" : "item"));
 
     public static final SingleArgument<Boolean> ENABLED_NAME =
             bool -> bool ?
@@ -39,11 +38,11 @@ public final class AutoStoreMessage {
                             .color(GRAY)
                             .build();
 
-    public static final SingleArgument<AutoStoreMode> COMMAND_MODE_CHANGED =
-            mode ->
+    public static final SingleArgument<Boolean> COMMAND_MODE_CHANGED =
+            allMode ->
                     translatable()
                             .key("box.autostore.command.mode-changed")
-                            .args(AUTO_STORE_MODE_NAME.apply(mode).color(AQUA))
+                            .args(AUTO_STORE_MODE_NAME.apply(allMode).color(AQUA))
                             .color(GRAY)
                             .build();
 

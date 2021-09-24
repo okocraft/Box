@@ -8,7 +8,7 @@ import net.okocraft.box.feature.autostore.gui.AutoStoreClickMode;
 import net.okocraft.box.feature.autostore.listener.BoxPlayerListener;
 import net.okocraft.box.feature.autostore.listener.ItemListener;
 import net.okocraft.box.feature.autostore.message.AutoStoreMessage;
-import net.okocraft.box.feature.autostore.model.SettingManager;
+import net.okocraft.box.feature.autostore.model.container.AutoStoreSettingContainer;
 import net.okocraft.box.feature.autostore.task.AutoStoreSettingSaveTask;
 import net.okocraft.box.feature.gui.api.mode.ClickModeRegistry;
 import org.bukkit.command.CommandSender;
@@ -20,14 +20,18 @@ import java.util.concurrent.TimeUnit;
 
 public class AutoStoreFeature extends AbstractBoxFeature implements Reloadable {
 
-    private final SettingManager settingManager = new SettingManager();
+    private static final AutoStoreSettingContainer CONTAINER = new AutoStoreSettingContainer();
 
-    private final BoxPlayerListener boxPlayerListener = new BoxPlayerListener(settingManager);
-    private final ItemListener itemListener = new ItemListener(settingManager);
-    private final AutoStoreSettingSaveTask autoSaveTask = new AutoStoreSettingSaveTask(settingManager);
+    public static @NotNull AutoStoreSettingContainer container() {
+        return CONTAINER;
+    }
 
-    private final AutoStoreCommand autoStoreCommand = new AutoStoreCommand(settingManager);
-    private final AutoStoreClickMode autoStoreClickMode = new AutoStoreClickMode(settingManager);
+    private final BoxPlayerListener boxPlayerListener = new BoxPlayerListener();
+    private final ItemListener itemListener = new ItemListener();
+    private final AutoStoreSettingSaveTask autoSaveTask = new AutoStoreSettingSaveTask();
+
+    private final AutoStoreCommand autoStoreCommand = new AutoStoreCommand();
+    private final AutoStoreClickMode autoStoreClickMode = new AutoStoreClickMode();
 
     private ScheduledExecutorService scheduler;
 
@@ -37,7 +41,7 @@ public class AutoStoreFeature extends AbstractBoxFeature implements Reloadable {
 
     @Override
     public void enable() {
-        settingManager.loadAll();
+        CONTAINER.loadAll();
         boxPlayerListener.register(getListenerKey());
         itemListener.register();
 
@@ -62,7 +66,7 @@ public class AutoStoreFeature extends AbstractBoxFeature implements Reloadable {
             autoSaveTask.unregisterListener(getListenerKey());
         }
 
-        settingManager.unloadAll();
+        CONTAINER.unloadAll();
     }
 
     @Override

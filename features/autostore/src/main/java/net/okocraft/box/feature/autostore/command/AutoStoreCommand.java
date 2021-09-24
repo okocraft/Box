@@ -4,11 +4,10 @@ import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.command.AbstractCommand;
 import net.okocraft.box.api.message.GeneralMessage;
+import net.okocraft.box.feature.autostore.AutoStoreFeature;
 import net.okocraft.box.feature.autostore.event.AutoStoreSettingChangeEvent;
 import net.okocraft.box.feature.autostore.message.AutoStoreMessage;
-import net.okocraft.box.feature.autostore.model.AutoStoreSetting;
-import net.okocraft.box.feature.autostore.model.SettingManager;
-import net.okocraft.box.feature.autostore.model.mode.AutoStoreMode;
+import net.okocraft.box.feature.autostore.model.setting.AutoStoreSetting;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -23,11 +22,8 @@ import java.util.stream.Stream;
 
 public class AutoStoreCommand extends AbstractCommand {
 
-    private final SettingManager settingManager;
-
-    public AutoStoreCommand(@NotNull SettingManager settingManager) {
+    public AutoStoreCommand() {
         super("autostore", "box.command.autostore", Set.of("a", "as"));
-        this.settingManager = settingManager;
     }
 
     @Override
@@ -37,7 +33,7 @@ public class AutoStoreCommand extends AbstractCommand {
             return;
         }
 
-        var setting = settingManager.get(player);
+        var setting = AutoStoreFeature.container().get(player);
 
         Boolean toggleAutoStore;
 
@@ -54,9 +50,8 @@ public class AutoStoreCommand extends AbstractCommand {
         }
 
         if (isAll(args[1])) {
-            enableAutoStore(setting);
-            setting.setMode(setting.getAllModeSetting());
-            player.sendMessage(AutoStoreMessage.COMMAND_MODE_CHANGED.apply(setting.getCurrentMode()));
+            enableAutoStore(setting, player);
+            changeCurrentMode(setting, true, player);
             return;
         }
 
@@ -66,10 +61,10 @@ public class AutoStoreCommand extends AbstractCommand {
         }
 
         if (args.length < 3) {
-            enableAutoStore(setting);
-            setting.setMode(setting.getPerItemModeSetting());
+            enableAutoStore(setting, player);
+            setting.setAllMode(false);
 
-            player.sendMessage(AutoStoreMessage.COMMAND_MODE_CHANGED.apply(setting.getCurrentMode()));
+            player.sendMessage(AutoStoreMessage.COMMAND_MODE_CHANGED.apply(setting.isAllMode()));
 
             callEvent(setting);
         } else {
@@ -98,8 +93,8 @@ public class AutoStoreCommand extends AbstractCommand {
                 Boolean bool = getBoolean(args[3]);
 
                 if (bool != null) {
-                    enableAutoStore(setting);
-                    changeCurrentMode(setting, perItemModeSetting);
+                    enableAutoStore(setting, player);
+                    changeCurrentMode(setting, false, player);
 
                     perItemModeSetting.setEnabledItems(bool ? itemManager.getBoxItemSet() : Collections.emptyList());
                     player.sendMessage(AutoStoreMessage.COMMAND_PER_ITEM_ALL_TOGGLED.apply(bool));
@@ -118,8 +113,8 @@ public class AutoStoreCommand extends AbstractCommand {
         var boxItem = optionalBoxItem.get();
         Boolean bool = 3 < args.length ? getBoolean(args[3]) : null;
 
-        enableAutoStore(setting);
-        changeCurrentMode(setting, perItemModeSetting);
+        enableAutoStore(setting, player);
+        changeCurrentMode(setting, false, player);
 
         if (bool != null) {
             perItemModeSetting.setEnabled(boxItem, bool);
@@ -198,17 +193,18 @@ public class AutoStoreCommand extends AbstractCommand {
         BoxProvider.get().getEventBus().callEvent(new AutoStoreSettingChangeEvent(setting));
     }
 
-    private void enableAutoStore(@NotNull AutoStoreSetting setting) {
+    private void enableAutoStore(@NotNull AutoStoreSetting setting, @NotNull Player player) {
         if (!setting.isEnabled()) {
             setting.setEnabled(true);
-            setting.getPlayer().sendMessage(AutoStoreMessage.COMMAND_AUTOSTORE_TOGGLED.apply(true));
+            player.sendMessage(AutoStoreMessage.COMMAND_AUTOSTORE_TOGGLED.apply(true));
         }
     }
 
-    private void changeCurrentMode(@NotNull AutoStoreSetting setting, @NotNull AutoStoreMode changeTo) {
-        if (changeTo != setting.getCurrentMode()) {
-            setting.setMode(changeTo);
-            setting.getPlayer().sendMessage(AutoStoreMessage.COMMAND_MODE_CHANGED.apply(setting.getCurrentMode()));
+    private void changeCurrentMode(@NotNull AutoStoreSetting setting,
+                                   boolean allMode, @NotNull Player player) {
+        if (setting.isAllMode() != allMode) {
+            setting.setAllMode(allMode);
+            player.sendMessage(AutoStoreMessage.COMMAND_MODE_CHANGED.apply(setting.isAllMode()));
         }
     }
 

@@ -1,7 +1,7 @@
 package net.okocraft.box.feature.autostore.event;
 
 import com.github.siroshun09.event4j.event.Event;
-import net.okocraft.box.feature.autostore.model.AutoStoreSetting;
+import net.okocraft.box.feature.autostore.model.setting.AutoStoreSetting;
 import org.jetbrains.annotations.NotNull;
 
 public class AutoStoreSettingChangeEvent extends Event {

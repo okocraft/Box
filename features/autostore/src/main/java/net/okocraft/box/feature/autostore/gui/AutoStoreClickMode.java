@@ -2,11 +2,11 @@ package net.okocraft.box.feature.autostore.gui;
 
 import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.model.item.BoxItem;
-import net.okocraft.box.feature.autostore.model.AutoStoreSetting;
-import net.okocraft.box.feature.autostore.model.SettingManager;
+import net.okocraft.box.feature.autostore.AutoStoreFeature;
+import net.okocraft.box.feature.autostore.model.setting.AutoStoreSetting;
 import net.okocraft.box.feature.gui.api.menu.Menu;
-import net.okocraft.box.feature.gui.api.mode.BoxItemClickMode;
 import net.okocraft.box.feature.gui.api.mode.AdditionalButton;
+import net.okocraft.box.feature.gui.api.mode.BoxItemClickMode;
 import net.okocraft.box.feature.gui.api.util.MenuOpener;
 import net.okocraft.box.feature.gui.api.util.TranslationUtil;
 import org.bukkit.Material;
@@ -22,14 +22,7 @@ import java.util.Optional;
 
 import static net.okocraft.box.feature.gui.api.lang.Styles.NO_DECORATION_GOLD;
 
-@SuppressWarnings("ClassCanBeRecord")
 public class AutoStoreClickMode implements BoxItemClickMode {
-
-    private final SettingManager settingManager;
-
-    public AutoStoreClickMode(@NotNull SettingManager settingManager) {
-        this.settingManager = settingManager;
-    }
 
     @Override
     public @NotNull String getName() {
@@ -45,7 +38,7 @@ public class AutoStoreClickMode implements BoxItemClickMode {
     public void onClick(@NotNull Context context) {
         var player = context.clicker();
 
-        var playerSetting = settingManager.get(player);
+        var playerSetting = AutoStoreFeature.container().get(player);
         var perItemSetting = playerSetting.getPerItemModeSetting();
 
         var enabled = !perItemSetting.isEnabled(context.item());
@@ -53,8 +46,7 @@ public class AutoStoreClickMode implements BoxItemClickMode {
         perItemSetting.setEnabled(context.item(), enabled);
 
         playerSetting.setEnabled(true);
-
-        playerSetting.setMode(perItemSetting);
+        playerSetting.setAllMode(false);
 
         var sound = enabled ? Sound.BLOCK_WOODEN_BUTTON_CLICK_ON : Sound.BLOCK_WOODEN_BUTTON_CLICK_OFF;
         player.playSound(player.getLocation(), sound, 100f, 1.5f);
@@ -66,7 +58,7 @@ public class AutoStoreClickMode implements BoxItemClickMode {
 
         newLore.add(Component.empty());
 
-        var enabled = settingManager.get(viewer).getPerItemModeSetting().isEnabled(item);
+        var enabled = AutoStoreFeature.container().get(viewer).getPerItemModeSetting().isEnabled(item);
 
         newLore.add(TranslationUtil.render(AutoStoreMenuDisplays.AUTOSTORE_MODE_LORE.apply(enabled), viewer));
 
@@ -82,7 +74,7 @@ public class AutoStoreClickMode implements BoxItemClickMode {
 
     @Override
     public @NotNull AdditionalButton createAdditionalButton(@NotNull Player viewer, @NotNull Menu currentMenu) {
-        return new AutoStoreSettingMenuButton(settingManager.get(viewer), currentMenu);
+        return new AutoStoreSettingMenuButton(AutoStoreFeature.container().get(viewer), currentMenu);
     }
 
     private static class AutoStoreSettingMenuButton extends AdditionalButton {
