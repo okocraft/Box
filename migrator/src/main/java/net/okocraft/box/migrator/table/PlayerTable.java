@@ -13,6 +13,7 @@ import java.util.UUID;
  * source:
  * https://github.com/okocraft/Box/blob/master/src/main/java/net/okocraft/box/database/PlayerTable.java
  */
+@SuppressWarnings("ClassCanBeRecord")
 public class PlayerTable {
 
     private final Database database;
