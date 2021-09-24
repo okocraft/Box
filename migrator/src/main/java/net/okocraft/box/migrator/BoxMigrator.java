@@ -22,11 +22,17 @@ import java.util.logging.Level;
 public class BoxMigrator extends JavaPlugin {
 
     private Boolean isSQLite;
+    private boolean migrated;
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (!(sender instanceof ConsoleCommandSender)) {
             sender.sendMessage("This command can only be executed from the console.");
+            return true;
+        }
+
+        if (migrated) {
+            sender.sendMessage("Already migrated!");
             return true;
         }
 
@@ -36,6 +42,7 @@ public class BoxMigrator extends JavaPlugin {
         }
 
         if (isSQLite != null && args[0].equalsIgnoreCase("confirm")) {
+            migrated = true;
             CompletableFuture.runAsync(() -> {
                 if (isSQLite) {
                     sender.sendMessage("Starting migrate from SQLite...");
@@ -46,6 +53,9 @@ public class BoxMigrator extends JavaPlugin {
                     processMySQL();
                     sender.sendMessage("Migrated from MySQL!");
                 }
+            }).exceptionallyAsync(throwable -> {
+                getLogger().log(Level.SEVERE, "Could not complete migration", throwable);
+                return null;
             });
 
             return true;
