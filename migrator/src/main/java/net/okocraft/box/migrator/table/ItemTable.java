@@ -36,13 +36,13 @@ public class ItemTable {
                         var base64Data = rs.getString("item");
 
                         if (base64Data == null || base64Data.isEmpty()) {
-                            return;
+                            continue;
                         }
 
                         var item = fromString(base64Data);
 
                         if (item == null || item.getType().isAir() || !item.getType().isItem()) {
-                            return;
+                            continue;
                         }
 
                         item.setAmount(1);
@@ -70,7 +70,6 @@ public class ItemTable {
                             }
 
                             BoxProvider.get().getLogger().info("Migrated custom item: " + id + " -> " + customItem.getPlainName());
-                            return;
                         } else {
                             BoxProvider.get().getLogger().info("Migrated item: " + id + " -> " + boxItem.get().getPlainName());
                         }
