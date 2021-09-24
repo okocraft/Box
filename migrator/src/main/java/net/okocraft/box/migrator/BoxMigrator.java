@@ -53,6 +53,7 @@ public class BoxMigrator extends JavaPlugin {
                     processMySQL();
                     sender.sendMessage("Migrated from MySQL!");
                 }
+                sender.sendMessage("Shut down the server and delete this plugin jar (BoxMigrator-x.x.x.jar).");
             }).exceptionallyAsync(throwable -> {
                 getLogger().log(Level.SEVERE, "Could not complete migration", throwable);
                 return null;
@@ -79,17 +80,16 @@ public class BoxMigrator extends JavaPlugin {
             sender.sendMessage("");
             sender.sendMessage("To migrate from MySQL, please follow the steps below.");
             sender.sendMessage("1. create ./plugins/Box/mysql.yml");
-            sender.sendMessage("2. Write the following Yaml settings.");
             sender.sendMessage(
                     """
+                            2. Write the following Yaml settings
                             database:
                               mysql-settings:
                                 host: "<localhost or database address>"
                                 port: "<database port, default 3306>"
                                 user: "<username>"
                                 password: "<password>"
-                                db-name: "<database-name>"
-                            """
+                                db-name: "<database-name>\""""
             );
             sender.sendMessage("This is the same structure as the previous config.yml.");
             sender.sendMessage("3. run /boxmigrate confirm");
