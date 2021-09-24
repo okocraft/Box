@@ -71,6 +71,9 @@ public class BoxMigrator extends JavaPlugin {
             sender.sendMessage("The stock data to be migrated will be added to the existing stock data.");
             sender.sendMessage("The AutoStore settings will not be migrated.");
             sender.sendMessage("");
+            sender.sendMessage("Please be sure to check the following pages as well.");
+            sender.sendMessage("https://github.com/okocraft/Box/wiki/migration-from-v3");
+            sender.sendMessage("");
             sender.sendMessage("To start the migration, run /boxmigrate confirm.");
 
             isSQLite = true;
@@ -96,6 +99,10 @@ public class BoxMigrator extends JavaPlugin {
                                 db-name: "<database-name>\""""
             );
             sender.sendMessage("This is the same structure as the previous config.yml.");
+            sender.sendMessage("");
+            sender.sendMessage("Please be sure to check the following pages as well.");
+            sender.sendMessage("https://github.com/okocraft/Box/wiki/migration-from-v3");
+            sender.sendMessage("");
             sender.sendMessage("3. run /boxmigrate confirm");
 
             isSQLite = false;
