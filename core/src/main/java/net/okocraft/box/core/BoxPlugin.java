@@ -24,6 +24,7 @@ import net.okocraft.box.core.command.BoxCommandImpl;
 import net.okocraft.box.core.config.Settings;
 import net.okocraft.box.core.listener.DebugListener;
 import net.okocraft.box.core.listener.PlayerConnectionListener;
+import net.okocraft.box.core.listener.StockHolderListener;
 import net.okocraft.box.core.message.ErrorMessages;
 import net.okocraft.box.core.message.MicsMessages;
 import net.okocraft.box.core.model.data.BoxCustomDataContainer;
@@ -33,7 +34,7 @@ import net.okocraft.box.core.model.manager.BoxUserManager;
 import net.okocraft.box.core.player.BoxPlayerMapImpl;
 import net.okocraft.box.core.storage.Storage;
 import net.okocraft.box.core.storage.implementations.yaml.YamlStorage;
-import net.okocraft.box.core.task.ModifiedStockHolderSaveTask;
+import net.okocraft.box.core.task.AutoSaveTask;
 import net.okocraft.box.core.util.executor.BoxExecutorProvider;
 import net.okocraft.box.core.util.executor.InternalExecutors;
 import org.bukkit.Bukkit;
@@ -76,14 +77,15 @@ public class BoxPlugin implements BoxAPI {
 
     private final List<BoxFeature> features = new ArrayList<>();
 
+    private final AutoSaveTask autoSaveTask = new AutoSaveTask();
+    private final StockHolderListener stockHolderListener = new StockHolderListener();
+
     private Storage storage;
     private BoxItemManager itemManager;
     private BoxStockManager stockManager;
     private BoxUserManager userManager;
     private BoxCustomDataContainer customDataContainer;
     private BoxPlayerMapImpl playerMap;
-
-    private ModifiedStockHolderSaveTask autoSaveTask;
 
     public BoxPlugin(@NotNull JavaPlugin plugin, @NotNull Path jarFile) {
         this.plugin = plugin;
@@ -162,8 +164,8 @@ public class BoxPlugin implements BoxAPI {
 
         Bukkit.getPluginManager().registerEvents(new PlayerConnectionListener(playerMap), plugin);
 
-        autoSaveTask = new ModifiedStockHolderSaveTask(storage);
         autoSaveTask.start();
+        stockHolderListener.register();
 
         getLogger().info("Registering commands...");
 
@@ -200,9 +202,8 @@ public class BoxPlugin implements BoxAPI {
         getLogger().info("Disabling features...");
         List.copyOf(features).forEach(this::unregister);
 
-        if (autoSaveTask != null) {
-            autoSaveTask.stop();
-        }
+        stockHolderListener.unregister();
+        autoSaveTask.stop();
 
         if (playerMap != null) {
             playerMap.unloadAll();
