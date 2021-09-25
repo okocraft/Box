@@ -4,7 +4,7 @@ import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.model.stock.UserStockHolder;
 import net.okocraft.box.api.model.user.BoxUser;
-import net.okocraft.box.feature.autostore.AutoStoreFeature;
+import net.okocraft.box.feature.autostore.model.AutoStoreSettingContainer;
 import net.okocraft.box.feature.autostore.model.setting.AutoStoreSetting;
 import net.okocraft.box.migrator.database.Database;
 import org.bukkit.Bukkit;
@@ -40,7 +40,7 @@ public class MasterTable {
 
         if (player != null) {
             stockHolder = BoxProvider.get().getBoxPlayerMap().get(player).getUserStockHolder();
-            autoStoreSetting = AutoStoreFeature.container().get(player);
+            autoStoreSetting = AutoStoreSettingContainer.INSTANCE.get(player);
         } else {
             stockHolder = BoxProvider.get().getStockManager().loadUserStock(user).join();
             autoStoreSetting = new AutoStoreSetting(user.getUUID());
@@ -93,7 +93,7 @@ public class MasterTable {
         autoStoreMigrator.finish();
 
         if (autoStoreMigrator.shouldSave()) {
-            AutoStoreFeature.container().save(autoStoreSetting).join();
+            AutoStoreSettingContainer.INSTANCE.save(autoStoreSetting).join();
         }
     }
 

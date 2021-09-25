@@ -1,4 +1,4 @@
-package net.okocraft.box.feature.autostore.model.container;
+package net.okocraft.box.feature.autostore.model;
 
 import com.github.siroshun09.configapi.api.Configuration;
 import com.github.siroshun09.configapi.api.MappedConfiguration;

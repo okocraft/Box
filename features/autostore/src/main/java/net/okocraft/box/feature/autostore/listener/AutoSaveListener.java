@@ -3,8 +3,8 @@ package net.okocraft.box.feature.autostore.listener;
 import com.github.siroshun09.event4j.handlerlist.Key;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.event.general.AutoSaveStartEvent;
-import net.okocraft.box.feature.autostore.AutoStoreFeature;
 import net.okocraft.box.feature.autostore.event.AutoStoreSettingChangeEvent;
+import net.okocraft.box.feature.autostore.model.AutoStoreSettingContainer;
 import net.okocraft.box.feature.autostore.model.setting.AutoStoreSetting;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
@@ -45,7 +45,7 @@ public class AutoSaveListener {
         copied.stream()
                 .filter(setting -> Bukkit.getPlayer(setting.getUuid()) != null)
                 .forEach(setting -> {
-                    var task = AutoStoreFeature.container().save(setting);
+                    var task = AutoStoreSettingContainer.INSTANCE.save(setting);
 
                     task.exceptionallyAsync(throwable -> {
                         BoxProvider.get().getLogger().log(

@@ -4,9 +4,9 @@ import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.command.AbstractCommand;
 import net.okocraft.box.api.message.GeneralMessage;
-import net.okocraft.box.feature.autostore.AutoStoreFeature;
 import net.okocraft.box.feature.autostore.event.AutoStoreSettingChangeEvent;
 import net.okocraft.box.feature.autostore.message.AutoStoreMessage;
+import net.okocraft.box.feature.autostore.model.AutoStoreSettingContainer;
 import net.okocraft.box.feature.autostore.model.setting.AutoStoreSetting;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -33,7 +33,7 @@ public class AutoStoreCommand extends AbstractCommand {
             return;
         }
 
-        var setting = AutoStoreFeature.container().get(player);
+        var setting = AutoStoreSettingContainer.INSTANCE.get(player);
 
         Boolean toggleAutoStore;
 

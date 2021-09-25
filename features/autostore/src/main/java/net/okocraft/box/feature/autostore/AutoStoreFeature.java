@@ -9,18 +9,12 @@ import net.okocraft.box.feature.autostore.listener.AutoSaveListener;
 import net.okocraft.box.feature.autostore.listener.BoxPlayerListener;
 import net.okocraft.box.feature.autostore.listener.ItemListener;
 import net.okocraft.box.feature.autostore.message.AutoStoreMessage;
-import net.okocraft.box.feature.autostore.model.container.AutoStoreSettingContainer;
+import net.okocraft.box.feature.autostore.model.AutoStoreSettingContainer;
 import net.okocraft.box.feature.gui.api.mode.ClickModeRegistry;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
 public class AutoStoreFeature extends AbstractBoxFeature implements Reloadable {
-
-    private static final AutoStoreSettingContainer CONTAINER = new AutoStoreSettingContainer();
-
-    public static @NotNull AutoStoreSettingContainer container() {
-        return CONTAINER;
-    }
 
     private final BoxPlayerListener boxPlayerListener = new BoxPlayerListener();
     private final AutoSaveListener autoSaveListener = new AutoSaveListener();
@@ -35,7 +29,7 @@ public class AutoStoreFeature extends AbstractBoxFeature implements Reloadable {
 
     @Override
     public void enable() {
-        CONTAINER.loadAll();
+        AutoStoreSettingContainer.INSTANCE.loadAll();
 
         boxPlayerListener.register(getListenerKey());
         autoSaveListener.register(getListenerKey());
@@ -56,7 +50,7 @@ public class AutoStoreFeature extends AbstractBoxFeature implements Reloadable {
         autoSaveListener.unregister();
         boxPlayerListener.unregister();
 
-        CONTAINER.unloadAll();
+        AutoStoreSettingContainer.INSTANCE.unloadAll();
     }
 
     @Override

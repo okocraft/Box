@@ -4,8 +4,8 @@ import com.github.siroshun09.event4j.handlerlist.Key;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.event.player.PlayerLoadEvent;
 import net.okocraft.box.api.event.player.PlayerUnloadEvent;
-import net.okocraft.box.feature.autostore.AutoStoreFeature;
 import net.okocraft.box.feature.autostore.message.AutoStoreMessage;
+import net.okocraft.box.feature.autostore.model.AutoStoreSettingContainer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.logging.Level;
@@ -35,7 +35,7 @@ public class BoxPlayerListener {
     private void onLoad(@NotNull PlayerLoadEvent event) {
         var player = event.getBoxPlayer().getPlayer();
 
-        AutoStoreFeature.container().load(player)
+        AutoStoreSettingContainer.INSTANCE.load(player)
                 .exceptionallyAsync(throwable -> {
                     BoxProvider.get().getLogger().log(
                             Level.SEVERE,
@@ -52,7 +52,7 @@ public class BoxPlayerListener {
     private void onUnload(@NotNull PlayerUnloadEvent event) {
         var player = event.getBoxPlayer().getPlayer();
 
-        AutoStoreFeature.container().unload(player)
+        AutoStoreSettingContainer.INSTANCE.unload(player)
                 .exceptionallyAsync(throwable -> {
                     BoxProvider.get().getLogger().log(
                             Level.SEVERE,

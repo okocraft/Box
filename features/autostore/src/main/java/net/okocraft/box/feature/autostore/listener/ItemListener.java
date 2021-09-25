@@ -1,7 +1,7 @@
 package net.okocraft.box.feature.autostore.listener;
 
 import net.okocraft.box.api.BoxProvider;
-import net.okocraft.box.feature.autostore.AutoStoreFeature;
+import net.okocraft.box.feature.autostore.model.AutoStoreSettingContainer;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -60,7 +60,7 @@ public class ItemListener implements Listener {
             return false;
         }
 
-        var setting = AutoStoreFeature.container().get(player);
+        var setting = AutoStoreSettingContainer.INSTANCE.get(player);
 
         if (setting.isEnabled() && setting.shouldAutoStore(boxItem.get())) {
             BoxProvider.get()

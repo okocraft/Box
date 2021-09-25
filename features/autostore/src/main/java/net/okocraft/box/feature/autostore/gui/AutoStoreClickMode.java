@@ -2,7 +2,7 @@ package net.okocraft.box.feature.autostore.gui;
 
 import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.model.item.BoxItem;
-import net.okocraft.box.feature.autostore.AutoStoreFeature;
+import net.okocraft.box.feature.autostore.model.AutoStoreSettingContainer;
 import net.okocraft.box.feature.autostore.model.setting.AutoStoreSetting;
 import net.okocraft.box.feature.gui.api.menu.Menu;
 import net.okocraft.box.feature.gui.api.mode.AdditionalButton;
@@ -43,7 +43,7 @@ public class AutoStoreClickMode implements BoxItemClickMode {
     public void onClick(@NotNull Context context) {
         var player = context.clicker();
 
-        var playerSetting = AutoStoreFeature.container().get(player);
+        var playerSetting = AutoStoreSettingContainer.INSTANCE.get(player);
         var perItemSetting = playerSetting.getPerItemModeSetting();
 
         var enabled = !perItemSetting.isEnabled(context.item());
@@ -63,7 +63,7 @@ public class AutoStoreClickMode implements BoxItemClickMode {
 
         newLore.add(Component.empty());
 
-        var enabled = AutoStoreFeature.container().get(viewer).getPerItemModeSetting().isEnabled(item);
+        var enabled = AutoStoreSettingContainer.INSTANCE.get(viewer).getPerItemModeSetting().isEnabled(item);
 
         newLore.add(TranslationUtil.render(AutoStoreMenuDisplays.AUTOSTORE_MODE_LORE.apply(enabled), viewer));
 
@@ -79,7 +79,7 @@ public class AutoStoreClickMode implements BoxItemClickMode {
 
     @Override
     public @NotNull AdditionalButton createAdditionalButton(@NotNull Player viewer, @NotNull Menu currentMenu) {
-        return new AutoStoreSettingMenuButton(AutoStoreFeature.container().get(viewer), currentMenu);
+        return new AutoStoreSettingMenuButton(AutoStoreSettingContainer.INSTANCE.get(viewer), currentMenu);
     }
 
     private static class AutoStoreSettingMenuButton extends AdditionalButton {

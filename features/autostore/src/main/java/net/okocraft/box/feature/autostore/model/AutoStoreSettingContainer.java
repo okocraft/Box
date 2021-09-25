@@ -1,4 +1,4 @@
-package net.okocraft.box.feature.autostore.model.container;
+package net.okocraft.box.feature.autostore.model;
 
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.feature.autostore.message.AutoStoreMessage;
@@ -15,6 +15,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 
 public class AutoStoreSettingContainer {
+
+    public static final AutoStoreSettingContainer INSTANCE = new AutoStoreSettingContainer();
 
     private final Map<UUID, AutoStoreSetting> settingMap = new HashMap<>();
 
