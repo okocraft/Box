@@ -9,7 +9,7 @@ import java.sql.SQLException;
 
 /*
  * source:
- * https://github.com/okocraft/Box/blob/master/src/main/java/net/okocraft/box/database/Database.java
+ * https://github.com/okocraft/Box/blob/v3/master/src/main/java/net/okocraft/box/database/Database.java
  */
 public class MySQLDatabase implements Database {
 

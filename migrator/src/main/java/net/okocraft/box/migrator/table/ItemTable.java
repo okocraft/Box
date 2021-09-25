@@ -15,7 +15,7 @@ import java.util.Map;
 
 /*
  * source:
- * https://github.com/okocraft/Box/blob/master/src/main/java/net/okocraft/box/database/ItemTable.java
+ * https://github.com/okocraft/Box/blob/v3/master/src/main/java/net/okocraft/box/database/ItemTable.java
  */
 @SuppressWarnings("ClassCanBeRecord")
 public class ItemTable {

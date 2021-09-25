@@ -11,7 +11,7 @@ import java.util.logging.Level;
 
 /*
  * source:
- * https://github.com/okocraft/Box/blob/master/src/main/java/net/okocraft/box/database/Database.java
+ * https://github.com/okocraft/Box/blob/v3/master/src/main/java/net/okocraft/box/database/Database.java
  */
 public interface Database {
 

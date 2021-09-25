@@ -17,7 +17,7 @@ import java.util.Map;
 
 /*
  * source:
- * https://github.com/okocraft/Box/blob/master/src/main/java/net/okocraft/box/database/MasterTable.java
+ * https://github.com/okocraft/Box/blob/v3/master/src/main/java/net/okocraft/box/database/MasterTable.java
  */
 @SuppressWarnings("ClassCanBeRecord")
 public class MasterTable {
