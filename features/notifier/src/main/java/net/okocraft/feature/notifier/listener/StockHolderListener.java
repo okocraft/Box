@@ -30,6 +30,16 @@ public class StockHolderListener {
     private Key listenerKey;
 
     public void register(@NotNull Key listenerKey) {
+        for (var player : Bukkit.getOnlinePlayers()) {
+            var boxPlayer = BoxProvider.get().getBoxPlayerMap().get(player);
+
+            var stockHolder = boxPlayer.getCurrentStockHolder();
+
+            if (!(stockHolder instanceof UserStockHolder)) {
+                addToMap(stockHolder.getUUID(), player.getUniqueId());
+            }
+        }
+
         this.listenerKey = listenerKey;
 
         var eventBus = BoxProvider.get().getEventBus();
@@ -53,6 +63,8 @@ public class StockHolderListener {
         eventBus.getHandlerList(StockSetEvent.class).unsubscribeAll(listenerKey);
 
         eventBus.getHandlerList(PlayerStockHolderChangeEvent.class).unsubscribeAll(listenerKey);
+
+        stockHolderMap.clear();
     }
 
     public void onIncrease(@NotNull StockIncreaseEvent event) {
