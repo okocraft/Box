@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.UUID;
 
 public class UserStockHolderImpl extends AbstractStockHolder implements UserStockHolder {
 
@@ -25,6 +26,11 @@ public class UserStockHolderImpl extends AbstractStockHolder implements UserStoc
     @Override
     public @NotNull String getName() {
         return user.getName().orElse("Unknown");
+    }
+
+    @Override
+    public @NotNull UUID getUUID() {
+        return user.getUUID();
     }
 
     @Override
