@@ -4,6 +4,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.translation.GlobalTranslator;
+import net.okocraft.box.api.BoxProvider;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
@@ -21,6 +22,8 @@ import static net.kyori.adventure.text.format.NamedTextColor.BLUE;
 import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
 
 public class BoxStickItem {
+
+    private static final NamespacedKey V3_STICK_KEY = BoxProvider.get().createNamespacedKey("boxstick");
 
     private static final Style NO_DECORATION =
             Style.style().decoration(TextDecoration.ITALIC, TextDecoration.State.FALSE).build();
@@ -64,6 +67,11 @@ public class BoxStickItem {
     public boolean check(@NotNull ItemStack itemStack) {
         var meta = itemStack.getItemMeta();
 
-        return meta != null && meta.getPersistentDataContainer().has(key, PersistentDataType.BYTE);
+        if (meta == null) {
+            return false;
+        }
+
+        return meta.getPersistentDataContainer().has(key, PersistentDataType.BYTE) ||
+                meta.getPersistentDataContainer().has(V3_STICK_KEY, PersistentDataType.INTEGER);
     }
 }
