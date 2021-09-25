@@ -4,7 +4,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.translation.GlobalTranslator;
-import net.okocraft.box.api.BoxProvider;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
@@ -28,6 +27,7 @@ public class BoxStickItem {
 
     private static final Component DISPLAY_NAME =
             translatable("box.stick.item.display-name", NO_DECORATION.color(BLUE));
+
     private static final List<Component> LORE = List.of(
             empty(),
             translatable("box.stick.item.lore-1", NO_DECORATION.color(GRAY)),
@@ -37,7 +37,11 @@ public class BoxStickItem {
             empty()
     );
 
-    private final NamespacedKey key = BoxProvider.get().createNamespacedKey("stick");
+    private final NamespacedKey key;
+
+    public BoxStickItem(@NotNull NamespacedKey key) {
+        this.key = key;
+    }
 
     public ItemStack create(@NotNull Locale locale) {
         var item = new ItemStack(Material.STICK);
