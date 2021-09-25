@@ -1,4 +1,4 @@
-package net.okocraft.feature.notifier.factory;
+package net.okocraft.box.feature.notifier.factory;
 
 import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.model.item.BoxItem;

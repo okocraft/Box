@@ -7,7 +7,7 @@ import net.okocraft.box.feature.command.CommandFeature;
 import net.okocraft.box.feature.craft.CraftFeature;
 import net.okocraft.box.feature.gui.GuiFeature;
 import net.okocraft.box.feature.stick.StickFeature;
-import net.okocraft.feature.notifier.NotifierFeature;
+import net.okocraft.box.feature.notifier.NotifierFeature;
 
 import java.util.List;
 

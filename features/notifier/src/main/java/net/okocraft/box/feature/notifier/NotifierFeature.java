@@ -1,7 +1,7 @@
-package net.okocraft.feature.notifier;
+package net.okocraft.box.feature.notifier;
 
 import net.okocraft.box.api.feature.AbstractBoxFeature;
-import net.okocraft.feature.notifier.listener.StockHolderListener;
+import net.okocraft.box.feature.notifier.listener.StockHolderListener;
 
 public class NotifierFeature extends AbstractBoxFeature {
 

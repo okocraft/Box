@@ -1,4 +1,4 @@
-package net.okocraft.feature.notifier.listener;
+package net.okocraft.box.feature.notifier.listener;
 
 import com.github.siroshun09.event4j.handlerlist.Key;
 import net.kyori.adventure.text.Component;
@@ -11,7 +11,7 @@ import net.okocraft.box.api.event.stock.StockIncreaseEvent;
 import net.okocraft.box.api.event.stock.StockSetEvent;
 import net.okocraft.box.api.model.stock.StockHolder;
 import net.okocraft.box.api.model.stock.UserStockHolder;
-import net.okocraft.feature.notifier.factory.NotificationFactory;
+import net.okocraft.box.feature.notifier.factory.NotificationFactory;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
