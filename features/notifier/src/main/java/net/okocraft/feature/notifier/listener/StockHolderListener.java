@@ -4,6 +4,7 @@ import com.github.siroshun09.event4j.handlerlist.Key;
 import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.event.player.PlayerStockHolderChangeEvent;
+import net.okocraft.box.api.event.player.PlayerUnloadEvent;
 import net.okocraft.box.api.event.stock.StockDecreaseEvent;
 import net.okocraft.box.api.event.stock.StockEvent;
 import net.okocraft.box.api.event.stock.StockIncreaseEvent;
@@ -49,6 +50,7 @@ public class StockHolderListener {
         eventBus.getHandlerList(StockSetEvent.class).subscribe(listenerKey, this::onSet);
 
         eventBus.getHandlerList(PlayerStockHolderChangeEvent.class).subscribe(listenerKey, this::onStockHolderChange);
+        eventBus.getHandlerList(PlayerUnloadEvent.class).subscribe(listenerKey, this::onUnload);
     }
 
     public void unregister() {
@@ -63,6 +65,7 @@ public class StockHolderListener {
         eventBus.getHandlerList(StockSetEvent.class).unsubscribeAll(listenerKey);
 
         eventBus.getHandlerList(PlayerStockHolderChangeEvent.class).unsubscribeAll(listenerKey);
+        eventBus.getHandlerList(PlayerUnloadEvent.class).unsubscribeAll(listenerKey);
 
         stockHolderMap.clear();
     }
@@ -124,6 +127,15 @@ public class StockHolderListener {
 
         if (!(previousStockHolder instanceof UserStockHolder)) {
             removeFromMap(previousStockHolder.getUUID(), playerUuid);
+        }
+    }
+
+    public void onUnload(@NotNull PlayerUnloadEvent event) {
+        var player = event.getBoxPlayer();
+        var stockHolder = player.getCurrentStockHolder();
+
+        if (!(stockHolder instanceof UserStockHolder)) {
+            removeFromMap(stockHolder.getUUID(), player.getUUID());
         }
     }
 
