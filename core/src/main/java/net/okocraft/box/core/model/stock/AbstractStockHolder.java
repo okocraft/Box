@@ -38,9 +38,12 @@ public abstract class AbstractStockHolder implements StockHolder {
 
     @Override
     public void setAmount(@NotNull BoxItem item, int amount) {
-        getStock(item).set(amount);
+        var stock = getStock(item);
 
-        BoxProvider.get().getEventBus().callEvent(new StockSetEvent(this, item, amount));
+        var previous = stock.get();
+        stock.set(amount);
+
+        BoxProvider.get().getEventBus().callEvent(new StockSetEvent(this, item, amount, previous));
     }
 
     @Override
