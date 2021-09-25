@@ -15,6 +15,7 @@ public class PlayerStockHolderChangeEvent extends PlayerEvent {
      * The constructor of a {@link PlayerStockHolderChangeEvent}.
      *
      * @param boxPlayer the player of this event
+     * @param previous the previous {@link StockHolder}
      */
     public PlayerStockHolderChangeEvent(@NotNull BoxPlayer boxPlayer,
                                         @NotNull StockHolder previous) {
