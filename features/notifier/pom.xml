@@ -6,20 +6,21 @@
 
     <parent>
         <groupId>net.okocraft.box</groupId>
-        <artifactId>parent</artifactId>
+        <artifactId>features</artifactId>
         <version>4.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>features</artifactId>
-    <packaging>pom</packaging>
+    <groupId>net.okocraft.box.feature</groupId>
+    <artifactId>notifier</artifactId>
+    <version>4.0.0-SNAPSHOT</version>
 
-    <modules>
-        <module>autostore</module>
-        <module>command</module>
-        <module>stick</module>
-        <module>category</module>
-        <module>gui</module>
-        <module>craft</module>
-        <module>notifier</module>
-    </modules>
+    <dependencies>
+        <dependency>
+            <groupId>net.okocraft.box</groupId>
+            <artifactId>api</artifactId>
+            <version>4.0.0-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
 </project>

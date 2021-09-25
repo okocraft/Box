@@ -11,18 +11,21 @@ public class StockSetEvent extends StockEvent {
 
     private final BoxItem item;
     private final int amount;
+    private final int previousAmount;
 
     /**
      * The constructor of {@link StockEvent}.
      *
-     * @param stockHolder the stockholder of the event
-     * @param item        the item of the stock
-     * @param amount      the current amount of the stock
+     * @param stockHolder    the stockholder of the event
+     * @param item           the item of the stock
+     * @param amount         the current amount of the stock
+     * @param previousAmount the amount of stock before set
      */
-    public StockSetEvent(@NotNull StockHolder stockHolder, @NotNull BoxItem item, int amount) {
+    public StockSetEvent(@NotNull StockHolder stockHolder, @NotNull BoxItem item, int amount, int previousAmount) {
         super(stockHolder);
         this.item = item;
         this.amount = amount;
+        this.previousAmount = previousAmount;
     }
 
     /**
@@ -41,6 +44,15 @@ public class StockSetEvent extends StockEvent {
      */
     public int getAmount() {
         return amount;
+    }
+
+    /**
+     * Gets the amount of stock before set.
+     *
+     * @return the amount of stock before set
+     */
+    public int getPreviousAmount() {
+        return previousAmount;
     }
 
     @Override

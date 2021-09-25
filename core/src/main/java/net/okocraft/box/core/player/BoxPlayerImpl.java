@@ -1,5 +1,7 @@
 package net.okocraft.box.core.player;
 
+import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.api.event.player.PlayerStockHolderChangeEvent;
 import net.okocraft.box.api.model.stock.StockHolder;
 import net.okocraft.box.api.model.stock.UserStockHolder;
 import net.okocraft.box.api.player.BoxPlayer;
@@ -40,7 +42,9 @@ public class BoxPlayerImpl implements BoxPlayer {
 
     @Override
     public void setCurrentStockHolder(@NotNull StockHolder stockHolder) {
+        var previous = currentHolder;
         currentHolder = Objects.requireNonNull(stockHolder);
+        BoxProvider.get().getEventBus().callEvent(new PlayerStockHolderChangeEvent(this, previous));
     }
 
     @Override

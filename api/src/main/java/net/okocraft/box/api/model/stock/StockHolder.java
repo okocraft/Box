@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.Collection;
+import java.util.UUID;
 
 /**
  * An interface that holds stocks.
@@ -19,6 +20,13 @@ public interface StockHolder {
      * @return the name of this holder
      */
     @NotNull String getName();
+
+    /**
+     * Gets the uuid of this holder.
+     *
+     * @return the uuid of this holder
+     */
+    @NotNull UUID getUUID();
 
     /**
      * Gets the stock quantity of the specified item.

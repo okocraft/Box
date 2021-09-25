@@ -24,11 +24,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.jetbrains.annotations.NotNull;
 
-import static net.kyori.adventure.text.Component.text;
-import static net.kyori.adventure.text.Component.translatable;
-import static net.kyori.adventure.text.format.NamedTextColor.DARK_GRAY;
-import static net.kyori.adventure.text.format.NamedTextColor.WHITE;
-
 @SuppressWarnings("ClassCanBeRecord")
 public class StickListener implements Listener {
 
@@ -184,12 +179,7 @@ public class StickListener implements Listener {
         var stockHolder = BoxProvider.get().getBoxPlayerMap().get(player).getCurrentStockHolder();
 
         if (0 < stockHolder.getAmount(boxItem.get())) {
-            int current = stockHolder.decrease(boxItem.get());
-            player.sendActionBar(
-                    translatable(boxItem.get().getOriginal())
-                            .append(text(" - ", DARK_GRAY))
-                            .append(text(current, WHITE))
-            );
+            stockHolder.decrease(boxItem.get());
             return true;
         } else {
             return false;

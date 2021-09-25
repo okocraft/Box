@@ -18,10 +18,9 @@ import org.jetbrains.annotations.Unmodifiable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
+import java.util.UUID;
 
 public class InfinityCommand extends AbstractCommand {
-
-    private static final StockHolder INFINITY_STOCK_HOLDER = new InfinityStockHolder();
 
     public InfinityCommand() {
         super("infinity", "box.admin.command.infinity", Set.of("i", "inf"));
@@ -52,11 +51,11 @@ public class InfinityCommand extends AbstractCommand {
 
         boolean enabled;
 
-        if (boxPlayer.getCurrentStockHolder() == INFINITY_STOCK_HOLDER) {
+        if (boxPlayer.getCurrentStockHolder() instanceof InfinityStockHolder) {
             boxPlayer.setCurrentStockHolder(boxPlayer.getUserStockHolder());
             enabled = false;
         } else {
-            boxPlayer.setCurrentStockHolder(INFINITY_STOCK_HOLDER);
+            boxPlayer.setCurrentStockHolder(new InfinityStockHolder());
             enabled = true;
         }
 
@@ -81,9 +80,16 @@ public class InfinityCommand extends AbstractCommand {
 
     private static class InfinityStockHolder implements StockHolder {
 
+        private final UUID uuid = UUID.randomUUID();
+
         @Override
         public @NotNull String getName() {
             return "infinity";
+        }
+
+        @Override
+        public @NotNull UUID getUUID() {
+            return uuid;
         }
 
         @Override
