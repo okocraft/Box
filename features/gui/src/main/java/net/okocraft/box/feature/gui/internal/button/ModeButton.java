@@ -19,11 +19,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-@SuppressWarnings("ClassCanBeRecord")
 public class ModeButton implements RefreshableButton {
 
     private final int slot;
     private final AtomicBoolean updateFlag;
+
+    private Material iconMaterial = Material.REDSTONE_TORCH; // temp
 
     public ModeButton(int slot, @NotNull AtomicBoolean updateFlag) {
         this.slot = slot;
@@ -32,7 +33,7 @@ public class ModeButton implements RefreshableButton {
 
     @Override
     public @NotNull Material getIconMaterial() {
-        return Material.REDSTONE_TORCH;
+        return iconMaterial;
     }
 
     @Override
@@ -93,5 +94,9 @@ public class ModeButton implements RefreshableButton {
         }
 
         return result;
+    }
+
+    public void setIconMaterial(Material iconMaterial) {
+        this.iconMaterial = iconMaterial;
     }
 }

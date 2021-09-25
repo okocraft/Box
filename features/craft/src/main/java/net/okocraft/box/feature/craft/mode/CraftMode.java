@@ -11,6 +11,7 @@ import net.okocraft.box.feature.gui.api.mode.AdditionalButton;
 import net.okocraft.box.feature.gui.api.mode.BoxItemClickMode;
 import net.okocraft.box.feature.gui.api.util.MenuOpener;
 import net.okocraft.box.feature.gui.api.util.TranslationUtil;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -24,6 +25,11 @@ public class CraftMode implements BoxItemClickMode {
     @Override
     public @NotNull String getName() {
         return "craft";
+    }
+
+    @Override
+    public @NotNull Material getIconMaterial() {
+        return Material.CRAFTING_TABLE;
     }
 
     @Override

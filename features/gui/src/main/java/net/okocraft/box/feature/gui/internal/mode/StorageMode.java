@@ -34,6 +34,11 @@ public class StorageMode implements BoxItemClickMode {
     }
 
     @Override
+    public @NotNull Material getIconMaterial() {
+        return Material.CHEST;
+    }
+
+    @Override
     public @NotNull Component getDisplayName() {
         return Displays.STORAGE_MODE_DISPLAY_NAME;
     }
@@ -146,7 +151,7 @@ public class StorageMode implements BoxItemClickMode {
 
         @Override
         public @NotNull Material getIconMaterial() {
-            return Material.CHEST;
+            return Material.NETHER_STAR;
         }
 
         @Override

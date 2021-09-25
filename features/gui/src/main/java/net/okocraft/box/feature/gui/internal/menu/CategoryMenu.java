@@ -54,7 +54,6 @@ public class CategoryMenu extends AbstractPaginatedMenu<BoxItem> {
 
     @Override
     protected void addAdditionalButtons(@NotNull Player viewer, @NotNull List<Button> buttons) {
-        buttons.add(modeButton);
         buttons.add(backButton);
 
         var transactionAmountHolder = PlayerSession.get(viewer).getCustomNumberHolder("transaction-amount");
@@ -93,6 +92,9 @@ public class CategoryMenu extends AbstractPaginatedMenu<BoxItem> {
         );
 
         var mode = PlayerSession.get(viewer).getBoxItemClickMode();
+
+        modeButton.setIconMaterial(mode.getIconMaterial());
+        buttons.add(modeButton);
 
         if (mode.hasAdditionalButton()) {
             var additionalButton = mode.createAdditionalButton(viewer, this);

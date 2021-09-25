@@ -30,6 +30,11 @@ public class AutoStoreClickMode implements BoxItemClickMode {
     }
 
     @Override
+    public @NotNull Material getIconMaterial() {
+        return Material.LEVER;
+    }
+
+    @Override
     public @NotNull Component getDisplayName() {
         return AutoStoreMenuDisplays.AUTOSTORE_MODE_DISPLAY_NAME;
     }
