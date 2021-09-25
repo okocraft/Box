@@ -137,7 +137,9 @@ public final class Displays {
     public static final Component STORAGE_MODE_DEPOSIT_ALL_BUTTON_DISPLAY_NAME =
             translatable("box.gui.modes.storage-mode.deposit-all.display-name", NO_DECORATION_GOLD);
 
-    public static final Component STORAGE_MODE_DEPOSIT_ALL_BUTTON_LORE =
-            translatable("box.gui.modes.storage-mode.deposit-all.lore", NO_DECORATION_GRAY);
+    public static final Component STORAGE_MODE_DEPOSIT_ALL_BUTTON_LORE_1 =
+            translatable("box.gui.modes.storage-mode.deposit-all.lore-1", NO_DECORATION_GRAY);
 
+    public static final Component STORAGE_MODE_DEPOSIT_ALL_BUTTON_LORE_2 =
+            translatable("box.gui.modes.storage-mode.deposit-all.lore-2", NO_DECORATION_GRAY);
 }

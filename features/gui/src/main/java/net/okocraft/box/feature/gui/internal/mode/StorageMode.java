@@ -160,7 +160,8 @@ public class StorageMode implements BoxItemClickMode {
 
             target.lore(List.of(
                     Component.empty(),
-                    TranslationUtil.render(Displays.STORAGE_MODE_DEPOSIT_ALL_BUTTON_LORE, viewer),
+                    TranslationUtil.render(Displays.STORAGE_MODE_DEPOSIT_ALL_BUTTON_LORE_1, viewer),
+                    TranslationUtil.render(Displays.STORAGE_MODE_DEPOSIT_ALL_BUTTON_LORE_2, viewer),
                     Component.empty()
             ));
 
