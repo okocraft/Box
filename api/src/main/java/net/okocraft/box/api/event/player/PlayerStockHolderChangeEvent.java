@@ -5,7 +5,7 @@ import net.okocraft.box.api.player.BoxPlayer;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * An {@link PlayerEvent} called when the player changed the {@link StockHolder}.
+ * A {@link PlayerEvent} called when the player changed the {@link StockHolder}.
  */
 public class PlayerStockHolderChangeEvent extends PlayerEvent {
 
