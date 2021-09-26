@@ -1,0 +1,311 @@
+box:
+  autostore:
+    error:
+      failed-to-load-settings: "自動収納設定の読み込みに失敗しました。管理者にお問い合わせください。"
+    reloaded: "自動収納機能を再読み込みしました。"
+    mode:
+      all: "一括収納"
+      item: "個別収納"
+    enabled: "有効"
+    disabled: "無効"
+    command:
+      help:
+        toggle:
+          command-line: "/box autostore [on/off]"
+          description: "自動収納機能のオン/オフを切り替える"
+        all:
+          command-line: "/box autostore [all/item]"
+          description: "自動収納モードを切り替える"
+        item:
+          command-line: "/box autostore item <アイテム名> [on/off]"
+          description: "収納設定を切り替える"
+      autostore-toggled: "自動収納機能を {0} にしました。"
+      mode-changed: "自動収納モードを {0} にしました。"
+      item:
+        all-toggled: "すべてのアイテムの自動収納設定を {0} にしました。"
+        item-toggled: "アイテム {0} の自動収納設定を {1} にしました。"
+      mode-not-found: "自動収納モードに {0} はありません。"
+      not-boolean: "{0} は有効な真偽値ではありません。"
+    gui:
+      mode:
+        display-name: "自動収納設定"
+        lore: "自動収納: {0}"
+      setting-menu:
+        title: "自動収納機能 設定メニュー"
+        change-mode:
+          display-name: "自動収納モード変更"
+          all: "クリックで一括収納モードにする"
+          item: "クリックで個別収納モードにする"
+        toggle-button: "クリックで自動収納機能を {0} にする"
+        bulk-editing:
+          title: "個別収納モード 一括変更"
+          left-click: "左クリックですべて {0} にする"
+          right-click: "右クリックですべて {0} にする"
+          recent: "最近の一括変更操作: {0}"
+  category:
+    reloaded: "カテゴリーを再読み込みしました。"
+    name:
+      armors: "防具"
+      bows: "弓矢"
+      candles: "ろうそく"
+      concretes: "コンクリート"
+      custom-items: "カスタムアイテム"
+      decorations: "装飾ブロック"
+      dirt: "土類"
+      dyes: "染料"
+      enchanted-books: "エンチャント本"
+      end: "エンド"
+      farms: "農業・食料"
+      flowers: "草花"
+      glasses: "ガラス"
+      horse: "馬"
+      misc: "その他"
+      mob-drops: "モブドロップ品"
+      mushrooms: "きのこ"
+      music-discs: "ディスク"
+      nether: "ネザー"
+      oceans: "海類"
+      ores: "鉱石"
+      potions: "ポーション"
+      rails: "レール"
+      redstones: "レッドストーン"
+      sand: "砂類"
+      shulker-boxes: "シュルカーボックス"
+      spawn-eggs: "スポーンエッグ"
+      stones: "石類"
+      terracotta: "テラコッタ"
+      tools: "ツール"
+      unavailable: "入手不可"
+      uncategorized: "未分類"
+      woods: "木材"
+      wools: "羊毛"
+  command:
+    box:
+      help:
+        command-line: "/box <サブコマンド>"
+        description: "Box の基本コマンド"
+      deposit:
+        success: "アイテム {0} を {1} 個預けました (現在 {2} 個)。"
+        all-success: "インベントリ内の預けられるアイテム {0} 個をすべて預けました。"
+        is-air: "手に何も持っていません。"
+        item-not-registered: "手に持っているアイテムは Box に登録されていません。"
+        not-deposited: "指定したアイテムはインベントリ内にありませんでした。"
+        not-found: "インベントリ内に預けられるアイテムはありませんでした。"
+        help:
+          main-hand:
+            command-line: "/box deposit [数量]"
+            description: "手に持っているアイテムを預ける"
+          all:
+            command-line: "/box deposit all"
+            description: "インベントリ内のアイテムをすべて預ける"
+          item:
+            command-line: "/box deposit <アイテム名> [数量]"
+            description: "指定したアイテムを預ける"
+      give:
+        success:
+          sender: "プレイヤー {0} にアイテム {1} を {2} 個送りました (現在 {3} 個)。"
+          target: "プレイヤー {0} からアイテム {1} を {2} 個送られました (現在 {3} 個)。"
+        no-stock: "アイテム {0} の在庫がありません。"
+        self: "自分自身に送ることはできません。"
+        target-no-permission: "プレイヤー {0} は権限 {1} を持っていません。"
+        target-is-in-disabled-world: "プレイヤー {0} は Box が使えないワールド {1} にいます。"
+        help:
+          command-line: "/box give <プレイヤー名> <アイテム名> [数量]"
+          description: "アイテムを送る"
+      withdraw:
+        success: "アイテム {0} を {1} 個引き出しました (現在 {2} 個)。"
+        stop: "インベントリに空きがなくなったため引き出しを終了しました。"
+        no-stock: "アイテム {0} の在庫がありません。"
+        inventory-is-full: "インベントリに空きがありません。"
+        help:
+          command-line: "/box withdraw <アイテム名> [数量]"
+          description: "アイテムを引き出す"
+      iteminfo:
+        is-air: "手に何も持っていません。"
+        item-not-registered: "手に持っているアイテムは Box に登録されていません。"
+        name: "アイテム登録名: {0}"
+        stock: "現在の在庫数: {0}"
+        help:
+          command-line: "/box iteminfo [アイテム名]"
+          description: "手持ちまたは指定したアイテムの情報を表示する"
+    boxadmin:
+      help:
+        command-line: "/boxadmin <サブコマンド>"
+        description: "Box の管理者用コマンド"
+      give:
+        success:
+          sender: "プレイヤー {0} にアイテム {1} を {2} 個付与しました (現在 {3} 個)。"
+          target: "{0} からアイテム {1} を {2} 個付与されました (現在 {3} 個)。"
+        help:
+          command-line: "/boxadmin give <プレイヤー名> <アイテム名> <数量>"
+          description: "在庫を増やす"
+      infinity:
+        enabled: "有効"
+        disabled: "無効"
+        toggle: "無限在庫モードを {0} にしました。"
+        toggle-sender: "プレイヤー {0} の無限在庫モードを {1} にしました。"
+        toggle-target: "{0} に無限在庫モードを {1} にされました。"
+        tip: "無限在庫モードでは収納されるアイテム情報が保存されません。"
+        help:
+          command-line: "/boxadmin infinity"
+          description: "無限在庫モードにする"
+      register:
+        is-air: "手に何も持っていません。"
+        already-registered: "アイテム {0} はすでに登録されています。"
+        success: "アイテム {0} を名前 {1} として新しく登録しました。"
+        failure: "アイテムの登録に失敗しました。エラーメッセージ: {0}"
+        tip-rename: "登録したアイテムは /boxadmin rename <item-name> <new> で改名できます。"
+        help:
+          command-line: "/boxadmin register"
+          description: "手に持っているアイテムを Box に登録する"
+      reload:
+        start: "Box を再読み込みしています..."
+        finish: "Box の再読み込みが完了しました。"
+        help:
+          command-line: "/boxadmin reload"
+          description: "Box を再読み込みする"
+      rename:
+        is-not-custom-item: "アイテム {0} の名前を変更することはできません。"
+        already-used-name: "アイテム名 {0} はすでに使用されています。"
+        success: "アイテム名を {0} に変更しました。"
+        failure: "アイテム名の変更に失敗しました。エラーメッセージ: {0}"
+        help:
+          command-line: "/boxadmin rename <現在の名前> <新しい名前>"
+          description: "アイテムの名前を変更する"
+      set:
+        success:
+          sender: "プレイヤー {0} のアイテム {1} を {2} 個にセットしました。"
+          target: "{0} にアイテム {1} を {2} 個にセットされました。"
+        help:
+          command-line: "/boxadmin set <プレイヤー名> <アイテム名> <数量>"
+          description: "在庫をセットする"
+      take:
+        success:
+          sender: "プレイヤー {0} にアイテム {1} を {2} 個減らしました (現在 {3} 個)。"
+          target: "{0} にアイテム {1} を {2} 個減らされました (現在 {3} 個)。"
+        help:
+          command-line: "/boxadmin take <プレイヤー名> <アイテム名> <数量>"
+          description: "在庫を減らす"
+      version:
+        info: "Box {0}"
+        help:
+          command-line: "/boxadmin version"
+          description: "現在の Box のバージョンを表示する"
+  craft:
+    command:
+      recipe-not-found: "アイテム {0} の利用可能なレシピはありません。"
+      recipe-reloaded: "クラフトレシピを再読み込みしました。"
+      help:
+        command-line: "/box craft <アイテム名>"
+        description: "アイテムのレシピを表示する"
+    gui:
+      buttons:
+        display-name: "{0} 回クラフト"
+        ingredients: "素材"
+        shift-click-to-show-details: "シフトクリックで詳細を表示する"
+        shift-click-to-show-recipes: "シフトクリックでレシピを表示する"
+        current-stock: "現在の在庫: {0}"
+        distribution:
+          display-name: "アイテムの収納先"
+          inventory: "インベントリ"
+          box: "Box"
+          current: "クラフトしたアイテムの収納先: {0}"
+          click-to-change: "クリックで {0} に変更"
+        change-unit:
+          display-name: "クラフト回数の増減単位を変更"
+          shift-click-to-reset-times: "シフトクリックで回数をリセット"
+        change-times:
+          current: "現在のクラフト回数: {0}"
+          increase:
+            display-name: "増やす"
+            lore: "クリックでクラフト回数を {0} 増やす"
+          decrease:
+            display-name: "減らす"
+            lore: "クリックでクラフト回数を {0} 減らす"
+          set-to-unit: "クリックでクラフト回数を {0} にする"
+        ingredient-change-mode:
+          bulk: "素材一括変更モード"
+          each: "各素材変更モード"
+      menus:
+        craft: "{0} のクラフト"
+        recipe-selector: "{0} のレシピ"
+      mode:
+        display-name: "クラフトモード"
+        click-to-show-recipes: "クリックしてレシピを表示する"
+        recipe-not-found: "レシピがありません"
+  gui:
+    reloaded: "GUI 機能を再読み込みしました。"
+    command-help:
+      command-line: "/box gui"
+      description: "Box のメニューを開く"
+    buttons:
+      back: "戻る"
+      change-unit:
+        display-name: "増減単位を変更"
+        shift-click-to-reset-amount: "シフトクリックで操作量をリセットする"
+      change-transaction-amount:
+        current: "現在の操作量: {0}"
+        decrease:
+          display-name: "減らす"
+          lore: "クリックで操作量を {0} 減らす"
+        increase:
+          display-name: "増やす"
+          lore: "クリックで操作量を {0} 増やす"
+        set-to-unit: "クリックで操作量を {0} にする"
+      close: "閉じる"
+      page-switch:
+        previous: "前のページ"
+        next: "次のページ"
+      mode-change: "モード変更"
+    menus:
+      category-selector: "カテゴリー選択"
+      category-menu: "{0}"
+    modes:
+      storage-mode:
+        display-name: "収納モード"
+        left-click-to-deposit: "左クリックで {0} 個預ける"
+        right-click-to-withdraw: "右クリックで {0} 個引き出す"
+        current-stock: "現在の在庫数: {0} 個"
+        deposit-all:
+          display-name: "すべて預ける"
+          lore-1: "シフトクリックで"
+          lore-2: "インベントリ内のアイテムをすべて預ける"
+  stick:
+    item:
+      display-name: "Box Stick"
+      lore-1: "オフハンドにこれを持つと"
+      lore-2: "アイテムを使った時に Box から消費します。"
+      lore-3: "また、右クリックでメニューを開けます。"
+    command:
+      success: "Box Stick をオフハンドに持ちました。"
+      already-have: "すでに Box Stick がオフハンドにあります。"
+      could-not-give-stick: "インベントリが満杯のため Box Stick をオフハンドに持てませんでした。"
+      help:
+        command-line: "/box stick"
+        description: "Box Stick をオフハンドに持つ"
+      customstick:
+        success: "手に持っているアイテムを Box Stick として使えるようにしました。"
+        already: "手に持っているアイテムはすでに Box Stick として使えます。"
+        is-air: "手に何も持っていません。"
+        help:
+          command-line: "/boxadmin customstick"
+          description: "手持ちのアイテムを Box Stick にする"
+  error:
+    disabled-world: "ワールド {0} では Box を使えません。"
+    failed-to-reload-feature: "{0} の再読み込みに失敗しました。エラーメッセージ: {1}"
+    failed-to-execute-command: "コマンドの実行に失敗しました。エラーメッセージ: {0}"
+    no-permission: "権限がありません: {0}"
+    player-data:
+      load-on-join: "Box の在庫データの読み込みに失敗しました。管理者にお問い合わせください。"
+      save: "Box の在庫データの保存に失敗しました。管理者にお問い合わせください。"
+    command:
+      only-player: "ゲーム内のプレイヤーのみ実行できます。"
+      no-argument: "引数がありません。"
+      not-enough-argument: "引数が足りません。"
+      subcommand-not-found: "指定したサブコマンドは見つかりませんでした。"
+      player-not-found: "プレイヤー {0} は見つかりませんでした。"
+      item-not-found: "アイテム {0} は見つかりませんでした。"
+      invalid-number: "{0} は有効な数値ではありません。"
+  mics:
+    config-reloaded: "config.yml を再読み込みしました。"
+    languages-reloaded: "言語ファイルを再読み込みしました。"

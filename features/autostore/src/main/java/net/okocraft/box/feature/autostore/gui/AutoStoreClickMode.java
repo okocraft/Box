@@ -1,0 +1,122 @@
+package net.okocraft.box.feature.autostore.gui;
+
+import net.kyori.adventure.text.Component;
+import net.okocraft.box.api.model.item.BoxItem;
+import net.okocraft.box.feature.autostore.model.AutoStoreSettingContainer;
+import net.okocraft.box.feature.autostore.model.setting.AutoStoreSetting;
+import net.okocraft.box.feature.gui.api.menu.Menu;
+import net.okocraft.box.feature.gui.api.mode.AdditionalButton;
+import net.okocraft.box.feature.gui.api.mode.BoxItemClickMode;
+import net.okocraft.box.feature.gui.api.util.MenuOpener;
+import net.okocraft.box.feature.gui.api.util.TranslationUtil;
+import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.Optional;
+
+import static net.okocraft.box.feature.gui.api.lang.Styles.NO_DECORATION_GOLD;
+
+public class AutoStoreClickMode implements BoxItemClickMode {
+
+    @Override
+    public @NotNull String getName() {
+        return "autostore";
+    }
+
+    @Override
+    public @NotNull Material getIconMaterial() {
+        return Material.LEVER;
+    }
+
+    @Override
+    public @NotNull Component getDisplayName() {
+        return AutoStoreMenuDisplays.AUTOSTORE_MODE_DISPLAY_NAME;
+    }
+
+    @Override
+    public void onClick(@NotNull Context context) {
+        var player = context.clicker();
+
+        var playerSetting = AutoStoreSettingContainer.INSTANCE.get(player);
+        var perItemSetting = playerSetting.getPerItemModeSetting();
+
+        var enabled = !perItemSetting.isEnabled(context.item());
+
+        perItemSetting.setEnabled(context.item(), enabled);
+
+        playerSetting.setEnabled(true);
+        playerSetting.setAllMode(false);
+
+        var sound = enabled ? Sound.BLOCK_WOODEN_BUTTON_CLICK_ON : Sound.BLOCK_WOODEN_BUTTON_CLICK_OFF;
+        player.playSound(player.getLocation(), sound, 100f, 1.5f);
+    }
+
+    @Override
+    public void applyIconMeta(@NotNull Player viewer, @NotNull BoxItem item, @NotNull ItemMeta target) {
+        var newLore = Optional.ofNullable(target.lore()).map(ArrayList::new).orElseGet(ArrayList::new);
+
+        newLore.add(Component.empty());
+
+        var enabled = AutoStoreSettingContainer.INSTANCE.get(viewer).getPerItemModeSetting().isEnabled(item);
+
+        newLore.add(TranslationUtil.render(AutoStoreMenuDisplays.AUTOSTORE_MODE_LORE.apply(enabled), viewer));
+
+        newLore.add(Component.empty());
+
+        target.lore(newLore);
+    }
+
+    @Override
+    public boolean hasAdditionalButton() {
+        return true;
+    }
+
+    @Override
+    public @NotNull AdditionalButton createAdditionalButton(@NotNull Player viewer, @NotNull Menu currentMenu) {
+        return new AutoStoreSettingMenuButton(AutoStoreSettingContainer.INSTANCE.get(viewer), currentMenu);
+    }
+
+    private static class AutoStoreSettingMenuButton extends AdditionalButton {
+
+        private final AutoStoreSetting setting;
+        private final Menu backTo;
+
+        private AutoStoreSettingMenuButton(@NotNull AutoStoreSetting setting, @NotNull Menu backTo) {
+            this.setting = setting;
+            this.backTo = backTo;
+        }
+
+        @Override
+        public @NotNull Material getIconMaterial() {
+            return Material.SUNFLOWER;
+        }
+
+        @Override
+        public int getIconAmount() {
+            return 1;
+        }
+
+        @Override
+        public @Nullable ItemMeta applyIconMeta(@NotNull Player viewer, @NotNull ItemMeta target) {
+            var displayName = TranslationUtil.render(
+                    AutoStoreMenuDisplays.AUTOSTORE_MODE_SETTING_MENU_TITLE.style(NO_DECORATION_GOLD),
+                    viewer
+            );
+
+            target.displayName(displayName);
+
+            return target;
+        }
+
+        @Override
+        public final void onClick(@NotNull Player clicker, @NotNull ClickType clickType) {
+            MenuOpener.open(new AutoStoreSettingMenu(setting, backTo), clicker);
+        }
+    }
+}
