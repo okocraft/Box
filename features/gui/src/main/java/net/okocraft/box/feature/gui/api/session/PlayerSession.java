@@ -36,4 +36,8 @@ public class PlayerSession {
     public @NotNull CustomNumberHolder getCustomNumberHolder(@NotNull String numberName) {
         return customNumberMap.computeIfAbsent(numberName, k -> new CustomNumberHolder());
     }
+
+    public void resetCustomNumbers() {
+        customNumberMap.values().forEach(num -> num.setAmount(1));
+    }
 }

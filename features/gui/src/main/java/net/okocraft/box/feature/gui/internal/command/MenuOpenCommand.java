@@ -2,6 +2,8 @@ package net.okocraft.box.feature.gui.internal.command;
 
 import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.command.AbstractCommand;
+import net.okocraft.box.feature.gui.api.mode.ClickModeRegistry;
+import net.okocraft.box.feature.gui.api.session.PlayerSession;
 import net.okocraft.box.feature.gui.api.util.MenuOpener;
 import net.okocraft.box.feature.gui.internal.menu.CategorySelectorMenu;
 import org.bukkit.command.CommandSender;
@@ -27,6 +29,10 @@ public class MenuOpenCommand extends AbstractCommand {
         if (!(sender instanceof Player player)) {
             return;
         }
+
+        var session =PlayerSession.get(player);
+        session.setBoxItemClickMode(ClickModeRegistry.getModes().get(0));
+        session.resetCustomNumbers();
 
         MenuOpener.open(new CategorySelectorMenu(), player);
     }

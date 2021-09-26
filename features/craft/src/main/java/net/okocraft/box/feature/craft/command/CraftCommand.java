@@ -9,6 +9,7 @@ import net.okocraft.box.feature.craft.lang.Displays;
 import net.okocraft.box.feature.craft.menu.CraftMenu;
 import net.okocraft.box.feature.craft.menu.RecipeSelector;
 import net.okocraft.box.feature.gui.api.menu.Menu;
+import net.okocraft.box.feature.gui.api.session.PlayerSession;
 import net.okocraft.box.feature.gui.api.util.MenuOpener;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -54,6 +55,8 @@ public class CraftCommand extends AbstractCommand {
         }
 
         Menu menu;
+
+        PlayerSession.get(player).resetCustomNumbers();
 
         if (recipeHolder.getRecipeList().size() == 1) {
             menu = new CraftMenu(recipeHolder.getRecipeList().get(0), null);
