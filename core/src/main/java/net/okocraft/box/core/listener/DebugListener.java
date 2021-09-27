@@ -75,7 +75,7 @@ public class DebugListener {
         if (event instanceof PlayerLoadEvent loadEvent) {
             printLog(loadEvent.getEventName() + "{" +
                     "playerUuid=" + loadEvent.getBoxPlayer().getUUID() + ", " +
-                    "playerName='" + loadEvent.getBoxPlayer().getPlayer().getName() + "'" +
+                    "playerName='" + loadEvent.getBoxPlayer().getName() + "'" +
                     "}"
             );
             return;
@@ -84,7 +84,7 @@ public class DebugListener {
         if (event instanceof PlayerUnloadEvent unloadEvent) {
             printLog(unloadEvent.getEventName() + "{" +
                     "playerUuid=" + unloadEvent.getBoxPlayer().getUUID() + ", " +
-                    "playerName='" + unloadEvent.getBoxPlayer().getPlayer().getName() + "'" +
+                    "playerName='" + unloadEvent.getBoxPlayer().getName() + "'" +
                     "}"
             );
             return;

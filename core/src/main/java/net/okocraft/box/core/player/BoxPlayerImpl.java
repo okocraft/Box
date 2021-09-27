@@ -9,7 +9,6 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
-import java.util.Optional;
 import java.util.UUID;
 
 public class BoxPlayerImpl implements BoxPlayer {
@@ -53,7 +52,7 @@ public class BoxPlayerImpl implements BoxPlayer {
     }
 
     @Override
-    public @NotNull Optional<String> getName() {
-        return Optional.of(player.getName());
+    public @NotNull String getName() {
+        return player.getName();
     }
 }

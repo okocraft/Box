@@ -2,14 +2,29 @@ package net.okocraft.box.api.player;
 
 import net.okocraft.box.api.model.stock.StockHolder;
 import net.okocraft.box.api.model.stock.UserStockHolder;
-import net.okocraft.box.api.model.user.BoxUser;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.UUID;
+
 /**
- * An interface of the online {@link BoxUser}.
+ * An interface of the online user.
  */
-public interface BoxPlayer extends BoxUser {
+public interface BoxPlayer {
+
+    /**
+     * Gets the {@link UUID} of this user.
+     *
+     * @return the {@link UUID} of this user
+     */
+    @NotNull UUID getUUID();
+
+    /**
+     * Gets the name of this user.
+     *
+     * @return the name of this user
+     */
+    @NotNull String getName();
 
     /**
      * Gets the {@link Player} instance.
