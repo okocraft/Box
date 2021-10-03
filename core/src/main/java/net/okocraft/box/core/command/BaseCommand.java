@@ -19,7 +19,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 
 import static net.kyori.adventure.text.Component.text;
@@ -171,10 +170,9 @@ public abstract class BaseCommand implements Command, SubCommandHoldable, Comman
     }
 
     private void runCommandAsync(@NotNull Command command, @NotNull CommandSender sender, @NotNull String[] args) {
-        CompletableFuture.runAsync(
-                () -> command.onCommand(sender, args),
-                BoxProvider.get().getExecutorProvider().getExecutor()
-        ).exceptionallyAsync(e -> reportError(sender, args, e));
+        BoxProvider.get().getTaskFactory()
+                .runAsync(() -> command.onCommand(sender, args))
+                .exceptionallyAsync(e -> reportError(sender, args, e));
     }
 
     private @Nullable Void reportError(@NotNull CommandSender sender, @NotNull String[] args, @NotNull Throwable throwable) {

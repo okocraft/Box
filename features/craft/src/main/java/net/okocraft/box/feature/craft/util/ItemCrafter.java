@@ -9,7 +9,6 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
-import java.util.concurrent.CompletableFuture;
 
 public class ItemCrafter {
 
@@ -52,13 +51,15 @@ public class ItemCrafter {
         int storeAmount = resultAmount;
 
         if (Distribution.toInventory(crafter)) {
-            var result = CompletableFuture.supplyAsync(
-                    () -> InventoryTransaction.withdraw(
-                            crafter.getInventory(),
-                            recipe.result(),
-                            resultAmount
-                    ), BoxProvider.get().getExecutorProvider().getMainThread()
-            ).join();
+            var result =
+                    BoxProvider.get().getTaskFactory()
+                            .supply(() ->
+                                    InventoryTransaction.withdraw(
+                                            crafter.getInventory(),
+                                            recipe.result(),
+                                            resultAmount
+                                    )
+                            ).join();
 
             if (result.getType().isModified()) {
                 storeAmount = resultAmount - result.getAmount();

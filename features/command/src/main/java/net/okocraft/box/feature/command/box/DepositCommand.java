@@ -21,7 +21,6 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -97,10 +96,9 @@ public class DepositCommand extends AbstractCommand {
 
     private void depositItemInMainHand(@NotNull Player player, int amount) {
         var result =
-                CompletableFuture.supplyAsync(
-                        () -> InventoryTransaction.depositItemInMainHand(player, amount),
-                        BoxProvider.get().getExecutorProvider().getMainThread()
-                ).join();
+                BoxProvider.get().getTaskFactory()
+                        .supply(() -> InventoryTransaction.depositItemInMainHand(player, amount))
+                        .join();
 
         if (result.getType().isModified()) {
             var item = result.getItem();
@@ -122,10 +120,9 @@ public class DepositCommand extends AbstractCommand {
 
     private void depositAll(@NotNull Player player) {
         var resultList =
-                CompletableFuture.supplyAsync(
-                        () -> InventoryTransaction.depositItemsInInventory(player.getInventory()),
-                        BoxProvider.get().getExecutorProvider().getMainThread()
-                ).join();
+                BoxProvider.get().getTaskFactory()
+                        .supply(() -> InventoryTransaction.depositItemsInInventory(player.getInventory()))
+                        .join();
 
         var stockHolder = BoxProvider.get().getBoxPlayerMap().get(player).getCurrentStockHolder();
 
@@ -138,10 +135,9 @@ public class DepositCommand extends AbstractCommand {
 
     private void depositItem(@NotNull Player player, @NotNull BoxItem boxItem, int amount) {
         var resultList =
-                CompletableFuture.supplyAsync(
-                        () -> InventoryTransaction.depositItem(player.getInventory(), boxItem, amount),
-                        BoxProvider.get().getExecutorProvider().getMainThread()
-                ).join();
+                BoxProvider.get().getTaskFactory()
+                        .supply(() -> InventoryTransaction.depositItem(player.getInventory(), boxItem, amount))
+                        .join();
 
         var stockHolder = BoxProvider.get().getBoxPlayerMap().get(player).getCurrentStockHolder();
 

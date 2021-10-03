@@ -22,7 +22,6 @@ import org.jetbrains.annotations.Unmodifiable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 
 public class StorageMode implements BoxItemClickMode {
 
@@ -94,14 +93,14 @@ public class StorageMode implements BoxItemClickMode {
         int transactionAmount =
                 PlayerSession.get(player).getCustomNumberHolder(TRANSACTION_AMOUNT_NAME).getAmount();
 
-        var resultList = CompletableFuture.supplyAsync(
-                () -> InventoryTransaction.depositItem(
-                        player.getInventory(),
-                        context.item(),
-                        transactionAmount
-                ),
-                BoxProvider.get().getExecutorProvider().getMainThread()
-        ).join();
+        var resultList =
+                BoxProvider.get().getTaskFactory()
+                        .supply(() -> InventoryTransaction.depositItem(
+                                        player.getInventory(),
+                                        context.item(),
+                                        transactionAmount
+                                )
+                        ).join();
 
         if (!resultList.getType().isModified()) {
             player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 100f, 1.5f);
@@ -134,10 +133,10 @@ public class StorageMode implements BoxItemClickMode {
 
         var amount = Math.min(currentStock, transactionAmount);
 
-        var result = CompletableFuture.supplyAsync(
-                () -> InventoryTransaction.withdraw(player.getInventory(), context.item(), amount),
-                BoxProvider.get().getExecutorProvider().getMainThread()
-        ).join();
+        var result =
+                BoxProvider.get().getTaskFactory()
+                        .supply(() -> InventoryTransaction.withdraw(player.getInventory(), context.item(), amount))
+                        .join();
 
         if (result.getType().isModified()) {
             stockHolder.decrease(result.getItem(), result.getAmount());
@@ -180,10 +179,10 @@ public class StorageMode implements BoxItemClickMode {
                 return;
             }
 
-            var resultList = CompletableFuture.supplyAsync(
-                    () -> InventoryTransaction.depositItemsInInventory(clicker.getInventory()),
-                    BoxProvider.get().getExecutorProvider().getMainThread()
-            ).join();
+            var resultList =
+                    BoxProvider.get().getTaskFactory()
+                            .supply(() -> InventoryTransaction.depositItemsInInventory(clicker.getInventory()))
+                            .join();
 
             if (!resultList.getType().isModified()) {
                 clicker.playSound(clicker.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 100f, 1.5f);

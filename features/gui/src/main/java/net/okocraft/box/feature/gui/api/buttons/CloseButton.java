@@ -13,8 +13,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.concurrent.CompletableFuture;
-
 public class CloseButton implements Button {
 
     @Override
@@ -40,10 +38,7 @@ public class CloseButton implements Button {
 
     @Override
     public void onClick(@NotNull Player clicker, @NotNull ClickType clickType) {
-        CompletableFuture.runAsync(
-                clicker::closeInventory, BoxProvider.get().getExecutorProvider().getMainThread()
-        );
-
+        BoxProvider.get().getTaskFactory().run(clicker::closeInventory);
         clicker.playSound(clicker.getLocation(), Sound.BLOCK_CHEST_CLOSE, SoundCategory.MASTER, 100f, 1.5f);
     }
 }

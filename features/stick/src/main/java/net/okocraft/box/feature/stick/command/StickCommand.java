@@ -10,7 +10,6 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
 
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.Component.translatable;
@@ -49,10 +48,7 @@ public class StickCommand extends AbstractCommand {
             return;
         }
 
-        CompletableFuture.runAsync(
-                () -> runCommand(player),
-                BoxProvider.get().getExecutorProvider().getMainThread()
-        ).join();
+        BoxProvider.get().getTaskFactory().run(() -> runCommand(player)).join();
     }
 
     private void runCommand(@NotNull Player player) {
