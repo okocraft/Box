@@ -16,6 +16,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
@@ -119,6 +120,8 @@ public interface BoxAPI {
      *
      * @return the {@link ExecutorProvider}
      */
+    @Deprecated(forRemoval = true)
+    @ApiStatus.ScheduledForRemoval(inVersion = "4.2.0")
     @NotNull ExecutorProvider getExecutorProvider();
 
     /**
