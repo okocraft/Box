@@ -10,6 +10,7 @@ import net.okocraft.box.api.model.manager.ItemManager;
 import net.okocraft.box.api.model.manager.StockManager;
 import net.okocraft.box.api.model.manager.UserManager;
 import net.okocraft.box.api.player.BoxPlayerMap;
+import net.okocraft.box.api.taskfactory.TaskFactory;
 import net.okocraft.box.api.util.ExecutorProvider;
 import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandSender;
@@ -105,6 +106,13 @@ public interface BoxAPI {
      * @return the {@link CustomDataContainer}
      */
     @NotNull CustomDataContainer getCustomDataContainer();
+
+    /**
+     * Gets the {@link TaskFactory}.
+     *
+     * @return the {@link TaskFactory}
+     */
+    @NotNull TaskFactory getTaskFactory();
 
     /**
      * Gets the {@link ExecutorProvider}.
