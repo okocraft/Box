@@ -52,14 +52,9 @@ public class ItemCrafter {
 
         if (Distribution.toInventory(crafter)) {
             var result =
-                    BoxProvider.get().getTaskFactory()
-                            .supply(() ->
-                                    InventoryTransaction.withdraw(
-                                            crafter.getInventory(),
-                                            recipe.result(),
-                                            resultAmount
-                                    )
-                            ).join();
+                    BoxProvider.get().getTaskFactory().supply(
+                            () -> InventoryTransaction.withdraw(crafter.getInventory(), recipe.result(), resultAmount)
+                    ).join();
 
             if (result.getType().isModified()) {
                 storeAmount = resultAmount - result.getAmount();

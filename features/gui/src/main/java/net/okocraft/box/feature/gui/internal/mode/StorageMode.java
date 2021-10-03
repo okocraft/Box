@@ -94,13 +94,9 @@ public class StorageMode implements BoxItemClickMode {
                 PlayerSession.get(player).getCustomNumberHolder(TRANSACTION_AMOUNT_NAME).getAmount();
 
         var resultList =
-                BoxProvider.get().getTaskFactory()
-                        .supply(() -> InventoryTransaction.depositItem(
-                                        player.getInventory(),
-                                        context.item(),
-                                        transactionAmount
-                                )
-                        ).join();
+                BoxProvider.get().getTaskFactory().supply(
+                        () -> InventoryTransaction.depositItem(player.getInventory(), context.item(), transactionAmount)
+                ).join();
 
         if (!resultList.getType().isModified()) {
             player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 100f, 1.5f);
