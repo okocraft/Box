@@ -60,7 +60,11 @@ public class BoxTaskFactory implements TaskFactory {
         );
     }
 
-    private @NotNull Executor getMainThread() {
+    public @NotNull Executor getExecutor() {
+        return executor;
+    }
+
+    public @NotNull Executor getMainThread() {
         return Bukkit.getScheduler().getMainThreadExecutor(BoxProvider.get().getPluginInstance());
     }
 }
