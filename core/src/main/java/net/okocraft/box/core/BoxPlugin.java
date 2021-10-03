@@ -224,7 +224,7 @@ public class BoxPlugin implements BoxAPI {
         getLogger().info("Shutting down executors...");
 
         try {
-            executorProvider.shutdown();
+            taskFactory.shutdown();
             InternalExecutors.shutdownAll();
         } catch (InterruptedException e) {
             getLogger().log(Level.SEVERE, "Could not shutdown executors", e);
