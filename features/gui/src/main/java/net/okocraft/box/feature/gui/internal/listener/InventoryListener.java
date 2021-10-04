@@ -58,17 +58,17 @@ public class InventoryListener implements Listener {
 
         this.lastClickTime.put(clicker.getUniqueId(), System.currentTimeMillis());
 
-        var task = CompletableFuture.runAsync(
-                () -> processClick(holder, clicker, event.getSlot(), event.getClick()),
-                BoxProvider.get().getExecutorProvider().getExecutor()
-        ).exceptionallyAsync(throwable -> {
-            BoxProvider.get().getLogger().log(
-                    Level.SEVERE,
-                    "Could not complete click task (" + clicker.getName() + ")",
-                    throwable
-            );
-            return null;
-        });
+        var task =
+                BoxProvider.get().getTaskFactory()
+                        .runAsync(() -> processClick(holder, clicker, event.getSlot(), event.getClick()))
+                        .exceptionallyAsync(throwable -> {
+                            BoxProvider.get().getLogger().log(
+                                    Level.SEVERE,
+                                    "Could not complete click task (" + clicker.getName() + ")",
+                                    throwable
+                            );
+                            return null;
+                        });
 
         clickTaskMap.put(clicker.getUniqueId(), task);
     }
@@ -78,10 +78,7 @@ public class InventoryListener implements Listener {
         holder.processClick(clicker, slot, type);
 
         if (holder.updateMenu(clicker)) {
-            CompletableFuture.runAsync(
-                    () -> holder.updateInventory(clicker),
-                    BoxProvider.get().getExecutorProvider().getMainThread()
-            ).join();
+            BoxProvider.get().getTaskFactory().run(() -> holder.updateInventory(clicker)).join();
         }
     }
 }

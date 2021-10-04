@@ -10,11 +10,13 @@ import net.okocraft.box.api.model.manager.ItemManager;
 import net.okocraft.box.api.model.manager.StockManager;
 import net.okocraft.box.api.model.manager.UserManager;
 import net.okocraft.box.api.player.BoxPlayerMap;
+import net.okocraft.box.api.taskfactory.TaskFactory;
 import net.okocraft.box.api.util.ExecutorProvider;
 import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
@@ -107,10 +109,19 @@ public interface BoxAPI {
     @NotNull CustomDataContainer getCustomDataContainer();
 
     /**
+     * Gets the {@link TaskFactory}.
+     *
+     * @return the {@link TaskFactory}
+     */
+    @NotNull TaskFactory getTaskFactory();
+
+    /**
      * Gets the {@link ExecutorProvider}.
      *
      * @return the {@link ExecutorProvider}
      */
+    @Deprecated(forRemoval = true)
+    @ApiStatus.ScheduledForRemoval(inVersion = "4.2.0")
     @NotNull ExecutorProvider getExecutorProvider();
 
     /**

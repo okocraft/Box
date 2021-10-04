@@ -16,8 +16,6 @@ import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.concurrent.CompletableFuture;
-
 public class GuiFeature extends AbstractBoxFeature implements Reloadable {
 
     private final MenuOpenCommand command = new MenuOpenCommand();
@@ -53,10 +51,7 @@ public class GuiFeature extends AbstractBoxFeature implements Reloadable {
         if (Bukkit.isPrimaryThread()) {
             closeMenus();
         } else {
-            CompletableFuture.runAsync(
-                    this::closeMenus,
-                    BoxProvider.get().getExecutorProvider().getMainThread()
-            ).join();
+            BoxProvider.get().getTaskFactory().run(this::closeMenus).join();
         }
 
         HandlerList.unregisterAll(listener);
