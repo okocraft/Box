@@ -22,6 +22,8 @@ public class TransactionResultList {
      */
     @Contract(value = "_ -> new", pure = true)
     public static @NotNull TransactionResultList create(@NotNull TransactionResultType type) {
+        Objects.requireNonNull(type);
+
         if (!type.isModified()) {
             return new TransactionResultList(type, null);
         } else {
@@ -41,6 +43,9 @@ public class TransactionResultList {
     @Contract(value = "_, _ -> new", pure = true)
     public static @NotNull TransactionResultList create(@NotNull TransactionResultType type,
                                                         @NotNull List<TransactionResult> resultList) {
+        Objects.requireNonNull(type);
+        Objects.requireNonNull(resultList);
+
         if (type.isModified()) {
             return new TransactionResultList(type, resultList);
         } else {

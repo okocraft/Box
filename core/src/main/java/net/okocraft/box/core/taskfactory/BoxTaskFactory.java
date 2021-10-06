@@ -6,6 +6,7 @@ import net.okocraft.box.api.taskfactory.TaskFactory;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
@@ -27,21 +28,25 @@ public class BoxTaskFactory implements TaskFactory {
 
     @Override
     public @NotNull CompletableFuture<Void> run(@NotNull Runnable task) {
+        Objects.requireNonNull(task);
         return CompletableFuture.runAsync(task, getMainThread());
     }
 
     @Override
     public @NotNull <T> CompletableFuture<T> supply(@NotNull Supplier<T> supplier) {
+        Objects.requireNonNull(supplier);
         return CompletableFuture.supplyAsync(supplier, getMainThread());
     }
 
     @Override
     public @NotNull CompletableFuture<Void> runAsync(@NotNull Runnable task) {
+        Objects.requireNonNull(task);
         return CompletableFuture.runAsync(task, executor);
     }
 
     @Override
     public @NotNull <T> CompletableFuture<T> supplyAsync(@NotNull Supplier<T> supplier) {
+        Objects.requireNonNull(supplier);
         return CompletableFuture.supplyAsync(supplier, executor);
     }
 

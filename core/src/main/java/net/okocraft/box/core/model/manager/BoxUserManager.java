@@ -6,6 +6,7 @@ import net.okocraft.box.core.storage.model.user.UserStorage;
 import net.okocraft.box.core.util.executor.InternalExecutors;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -23,6 +24,8 @@ public class BoxUserManager implements UserManager {
 
     @Override
     public @NotNull CompletableFuture<@NotNull BoxUser> loadUser(@NotNull UUID uuid) {
+        Objects.requireNonNull(uuid);
+
         return CompletableFuture.supplyAsync(() -> {
             try {
                 return userStorage.getUser(uuid);
@@ -34,6 +37,8 @@ public class BoxUserManager implements UserManager {
 
     @Override
     public @NotNull CompletableFuture<Void> saveUser(@NotNull BoxUser boxUser) {
+        Objects.requireNonNull(boxUser);
+
         return CompletableFuture.runAsync(() -> {
             try {
                 userStorage.saveBoxUser(boxUser);
@@ -45,6 +50,8 @@ public class BoxUserManager implements UserManager {
 
     @Override
     public @NotNull CompletableFuture<Optional<BoxUser>> search(@NotNull String name) {
+        Objects.requireNonNull(name);
+
         return CompletableFuture.supplyAsync(() -> {
             try {
                 return userStorage.search(name);

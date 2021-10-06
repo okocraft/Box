@@ -2,6 +2,8 @@ package net.okocraft.box.api;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 /**
  * A class to provide {@link BoxAPI}.
  */
@@ -31,7 +33,7 @@ public final class BoxProvider {
      */
     public static void set(@NotNull BoxAPI api) {
         if (API == null) {
-            API = api;
+            API = Objects.requireNonNull(api);
         } else {
             throw new IllegalStateException("BoxAPI is already set.");
         }

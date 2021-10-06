@@ -6,6 +6,7 @@ import net.okocraft.box.core.storage.model.data.CustomDataStorage;
 import net.okocraft.box.core.util.executor.InternalExecutors;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 
@@ -21,6 +22,9 @@ public class BoxCustomDataContainer implements CustomDataContainer {
 
     @Override
     public @NotNull CompletableFuture<@NotNull Configuration> get(@NotNull String namespace, @NotNull String key) {
+        Objects.requireNonNull(namespace);
+        Objects.requireNonNull(key);
+
         return CompletableFuture.supplyAsync(() -> {
             try {
                 return customDataStorage.load(namespace, key);
@@ -32,6 +36,10 @@ public class BoxCustomDataContainer implements CustomDataContainer {
 
     @Override
     public @NotNull CompletableFuture<Void> set(@NotNull String namespace, @NotNull String key, @NotNull Configuration configuration) {
+        Objects.requireNonNull(namespace);
+        Objects.requireNonNull(key);
+        Objects.requireNonNull(configuration);
+
         return CompletableFuture.runAsync(() -> {
             try {
                 customDataStorage.save(namespace, key, configuration);

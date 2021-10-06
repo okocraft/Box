@@ -33,6 +33,7 @@ public abstract class AbstractStockHolder implements StockHolder {
 
     @Override
     public int getAmount(@NotNull BoxItem item) {
+        Objects.requireNonNull(item);
         return Optional.ofNullable(stockData.get(item)).map(AtomicInteger::get).orElse(0);
     }
 
@@ -126,6 +127,7 @@ public abstract class AbstractStockHolder implements StockHolder {
     }
 
     private @NotNull AtomicInteger getStock(@NotNull BoxItem item) {
+        Objects.requireNonNull(item);
         return stockData.computeIfAbsent(item, i -> new AtomicInteger(0));
     }
 }
