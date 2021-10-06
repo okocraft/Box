@@ -2,6 +2,7 @@ package net.okocraft.box.feature.gui.internal.listener;
 
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.feature.gui.internal.holder.BoxInventoryHolder;
+import net.okocraft.box.feature.gui.internal.lang.Displays;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -10,6 +11,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -61,14 +63,7 @@ public class InventoryListener implements Listener {
         var task =
                 BoxProvider.get().getTaskFactory()
                         .runAsync(() -> processClick(holder, clicker, event.getSlot(), event.getClick()))
-                        .exceptionallyAsync(throwable -> {
-                            BoxProvider.get().getLogger().log(
-                                    Level.SEVERE,
-                                    "Could not complete click task (" + clicker.getName() + ")",
-                                    throwable
-                            );
-                            return null;
-                        });
+                        .exceptionallyAsync(e -> reportError(clicker, e));
 
         clickTaskMap.put(clicker.getUniqueId(), task);
     }
@@ -80,5 +75,17 @@ public class InventoryListener implements Listener {
         if (holder.updateMenu(clicker)) {
             BoxProvider.get().getTaskFactory().run(() -> holder.updateInventory(clicker)).join();
         }
+    }
+
+    private @Nullable Void reportError(@NotNull Player player, @NotNull Throwable throwable) {
+        player.sendMessage(Displays.ERROR_WHILE_CLICK_PROCESSING.apply(throwable));
+
+        BoxProvider.get().getLogger().log(
+                Level.SEVERE,
+                "An error occurred while processing a click event (" + player.getName() + ")",
+                throwable
+        );
+
+        return null;
     }
 }
