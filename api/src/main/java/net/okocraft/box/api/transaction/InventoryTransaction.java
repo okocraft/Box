@@ -8,6 +8,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import static net.okocraft.box.api.transaction.TransactionResultType.DEPOSITED;
 import static net.okocraft.box.api.transaction.TransactionResultType.IS_AIR;
@@ -29,6 +30,8 @@ public final class InventoryTransaction {
      * @return the {@link TransactionResult}
      */
     public static @NotNull TransactionResult depositItemInMainHand(@NotNull Player player, int depositLimit) {
+        Objects.requireNonNull(player);
+
         if (depositLimit < 1) {
             return TransactionResult.create(NOT_DEPOSITED);
         }
@@ -65,6 +68,8 @@ public final class InventoryTransaction {
      * @return the {@link TransactionResultList}
      */
     public static @NotNull TransactionResultList depositItemsInInventory(@NotNull Inventory inventory) {
+        Objects.requireNonNull(inventory);
+
         var result = new ArrayList<TransactionResult>();
         var contents = inventory.getStorageContents();
 
@@ -100,7 +105,10 @@ public final class InventoryTransaction {
      * @return the {@link TransactionResultList}
      */
     public static @NotNull TransactionResultList depositItem(@NotNull Inventory inventory,
-                                                      @NotNull BoxItem boxItem, int depositLimit) {
+                                                             @NotNull BoxItem boxItem, int depositLimit) {
+        Objects.requireNonNull(inventory);
+        Objects.requireNonNull(boxItem);
+
         if (depositLimit < 1) {
             return TransactionResultList.create(NOT_DEPOSITED);
         }
@@ -153,12 +161,15 @@ public final class InventoryTransaction {
      * Withdraws items to an inventory.
      *
      * @param inventory the target inventory
-     * @param boxItem the item to withdraw
-     * @param amount the amount of item
+     * @param boxItem   the item to withdraw
+     * @param amount    the amount of item
      * @return the {@link TransactionResult}
      */
     public static @NotNull TransactionResult withdraw(@NotNull Inventory inventory,
-                                               @NotNull BoxItem boxItem, int amount) {
+                                                      @NotNull BoxItem boxItem, int amount) {
+        Objects.requireNonNull(inventory);
+        Objects.requireNonNull(boxItem);
+
         var toStore = amount;
         var maxStackSize = boxItem.getOriginal().getMaxStackSize();
 

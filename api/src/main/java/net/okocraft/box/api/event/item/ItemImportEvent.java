@@ -3,6 +3,8 @@ package net.okocraft.box.api.event.item;
 import net.okocraft.box.api.model.item.BoxItem;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 /**
  * A event called when the {@link BoxItem} is imported.
  * <p>
@@ -20,7 +22,7 @@ public class ItemImportEvent extends ItemEvent {
      */
     public ItemImportEvent(@NotNull BoxItem importedItem, @NotNull ItemType type) {
         super(importedItem);
-        this.type = type;
+        this.type = Objects.requireNonNull(type);
     }
 
     /**

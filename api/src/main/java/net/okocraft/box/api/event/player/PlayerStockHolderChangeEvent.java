@@ -4,6 +4,8 @@ import net.okocraft.box.api.model.stock.StockHolder;
 import net.okocraft.box.api.player.BoxPlayer;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 /**
  * A {@link PlayerEvent} called when the player changed the {@link StockHolder}.
  */
@@ -20,7 +22,7 @@ public class PlayerStockHolderChangeEvent extends PlayerEvent {
     public PlayerStockHolderChangeEvent(@NotNull BoxPlayer boxPlayer,
                                         @NotNull StockHolder previous) {
         super(boxPlayer);
-        this.previous = previous;
+        this.previous = Objects.requireNonNull(previous);
     }
 
     /**

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -34,6 +35,7 @@ public interface SubCommandHoldable {
          * @param subCommands the set of subcommands
          */
         public SubCommandHolder(@NotNull Command... subCommands) {
+            Objects.requireNonNull(subCommands);
             this.subCommands = new ArrayList<>(Arrays.asList(subCommands));
         }
 
@@ -74,7 +76,7 @@ public interface SubCommandHoldable {
          * @return the search result
          */
         public @NotNull Optional<Command> search(@NotNull String name) {
-            name = name.toLowerCase(Locale.ROOT);
+            name = Objects.requireNonNull(name).toLowerCase(Locale.ROOT);
 
             for (var subCommand : subCommands) {
                 if (subCommand.getName().equals(name) || subCommand.getAliases().contains(name)) {

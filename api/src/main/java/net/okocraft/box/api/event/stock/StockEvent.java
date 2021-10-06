@@ -5,6 +5,8 @@ import net.okocraft.box.api.model.stock.StockHolder;
 import net.okocraft.box.api.model.stock.UserStockHolder;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 /**
  * A class that represents a {@link StockHolder} related event.
  * <p>
@@ -23,7 +25,7 @@ public class StockEvent extends BoxEvent {
      * @param stockHolder the stockholder of the event
      */
     public StockEvent(@NotNull StockHolder stockHolder) {
-        this.stockHolder = stockHolder;
+        this.stockHolder = Objects.requireNonNull(stockHolder);
     }
 
     /**

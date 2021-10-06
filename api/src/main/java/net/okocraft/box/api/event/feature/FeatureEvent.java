@@ -4,6 +4,8 @@ import net.okocraft.box.api.event.BoxEvent;
 import net.okocraft.box.api.feature.BoxFeature;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 /**
  * A class that represents a {@link BoxFeature} related event.
  */
@@ -19,8 +21,8 @@ public class FeatureEvent extends BoxEvent {
      * @param type    the type of this event
      */
     public FeatureEvent(@NotNull BoxFeature feature, @NotNull Type type) {
-        this.feature = feature;
-        this.type = type;
+        this.feature = Objects.requireNonNull(feature);
+        this.type = Objects.requireNonNull(type);
     }
 
     /**

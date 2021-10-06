@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -39,7 +40,7 @@ public class BoxItemManager implements ItemManager {
 
     @Override
     public @NotNull Optional<BoxItem> getBoxItem(@NotNull ItemStack itemStack) {
-        var copied = itemStack.clone();
+        var copied = Objects.requireNonNull(itemStack).clone();
 
         copied.setAmount(1);
 
@@ -48,7 +49,7 @@ public class BoxItemManager implements ItemManager {
 
     @Override
     public @NotNull Optional<BoxItem> getBoxItem(@NotNull String name) {
-        name = name.toUpperCase(Locale.ROOT);
+        name = Objects.requireNonNull(name).toUpperCase(Locale.ROOT);
 
         for (var item : itemMap.values()) {
             if (item.getPlainName().equals(name)) {
@@ -72,7 +73,7 @@ public class BoxItemManager implements ItemManager {
 
     @Override
     public boolean isRegistered(@NotNull ItemStack itemStack) {
-        var copied = itemStack.clone();
+        var copied = Objects.requireNonNull(itemStack).clone();
 
         copied.setAmount(1);
 
@@ -81,6 +82,8 @@ public class BoxItemManager implements ItemManager {
 
     @Override
     public boolean isUsed(@NotNull String name) {
+        Objects.requireNonNull(name);
+
         var nameSet = itemNameCache;
         return nameSet.contains(name);
     }
@@ -92,6 +95,8 @@ public class BoxItemManager implements ItemManager {
 
     @Override
     public @NotNull CompletableFuture<@NotNull BoxCustomItem> registerCustomItem(@NotNull ItemStack original) {
+        Objects.requireNonNull(original);
+
         return CompletableFuture.supplyAsync(() -> {
             var copied = original.clone();
 
@@ -119,7 +124,11 @@ public class BoxItemManager implements ItemManager {
     }
 
     @Override
-    public @NotNull CompletableFuture<@NotNull BoxCustomItem> renameCustomItem(@NotNull BoxCustomItem item, @NotNull String newName) {
+    public @NotNull CompletableFuture<@NotNull BoxCustomItem> renameCustomItem(@NotNull BoxCustomItem item,
+                                                                               @NotNull String newName) {
+        Objects.requireNonNull(item);
+        Objects.requireNonNull(newName);
+
         return CompletableFuture.supplyAsync(() -> {
             if (!isCustomItem(item)) {
                 throw new IllegalStateException("Could not rename item because the item is created by box.");

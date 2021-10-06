@@ -7,6 +7,7 @@ import net.okocraft.box.core.storage.model.stock.StockStorage;
 import net.okocraft.box.core.util.executor.InternalExecutors;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 
@@ -22,6 +23,8 @@ public class BoxStockManager implements StockManager {
 
     @Override
     public @NotNull CompletableFuture<@NotNull UserStockHolder> loadUserStock(@NotNull BoxUser user) {
+        Objects.requireNonNull(user);
+
         return CompletableFuture.supplyAsync(() -> {
             try {
                 return stockStorage.loadUserStockHolder(user);
@@ -33,6 +36,8 @@ public class BoxStockManager implements StockManager {
 
     @Override
     public @NotNull CompletableFuture<Void> saveUserStock(@NotNull UserStockHolder stockHolder) {
+        Objects.requireNonNull(stockHolder);
+
         return CompletableFuture.runAsync(() -> {
             try {
                 stockStorage.saveUserStockHolder(stockHolder);
