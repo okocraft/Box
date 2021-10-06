@@ -1,6 +1,7 @@
 package net.okocraft.box.feature.gui.internal.lang;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.okocraft.box.api.message.argument.SingleArgument;
 import net.okocraft.box.feature.category.model.Category;
 
@@ -142,4 +143,12 @@ public final class Displays {
 
     public static final Component STORAGE_MODE_DEPOSIT_ALL_BUTTON_LORE_2 =
             translatable("box.gui.modes.storage-mode.deposit-all.lore-2", NO_DECORATION_GRAY);
+
+    public static final SingleArgument<Throwable> ERROR_WHILE_CLICK_PROCESSING =
+            throwable ->
+                    Component.translatable()
+                            .key("box.gui.error-occurred")
+                            .args(Component.text(throwable.getMessage(), NamedTextColor.WHITE))
+                            .color(NamedTextColor.RED)
+                            .build();
 }
