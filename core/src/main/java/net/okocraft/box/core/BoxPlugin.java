@@ -116,7 +116,7 @@ public class BoxPlugin implements BoxAPI {
 
         getLogger().info("Loading languages...");
 
-        translationDirectory.getRegistry().defaultLocale(Locale.JAPAN);
+        translationDirectory.getRegistry().defaultLocale(Locale.ENGLISH);
 
         try {
             translationDirectory.createDirectoryIfNotExists(this::saveDefaultLanguages);
