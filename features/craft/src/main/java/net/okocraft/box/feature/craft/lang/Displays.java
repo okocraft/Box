@@ -60,18 +60,18 @@ public final class Displays {
                             .build();
 
     public static final Component DISTRIBUTION_BUTTON_DISPLAY_NAME =
-            translatable("box.craft.gui.buttons.distribution.display-name", NO_DECORATION_GOLD);
+            translatable("box.craft.gui.buttons.destination.display-name", NO_DECORATION_GOLD);
 
     public static final Component DISTRIBUTION_BUTTON_INVENTORY =
-            translatable("box.craft.gui.buttons.distribution.inventory", AQUA);
+            translatable("box.craft.gui.buttons.destination.inventory", AQUA);
 
     public static final Component DISTRIBUTION_BUTTON_BOX =
-            translatable("box.craft.gui.buttons.distribution.box", AQUA);
+            translatable("box.craft.gui.buttons.destination.box", AQUA);
 
     public static final SingleArgument<Boolean> DISTRIBUTION_CURRENT =
             current ->
                     translatable()
-                            .key("box.craft.gui.buttons.distribution.current")
+                            .key("box.craft.gui.buttons.destination.current")
                             .args(current ? DISTRIBUTION_BUTTON_INVENTORY : DISTRIBUTION_BUTTON_BOX)
                             .style(NO_DECORATION_GRAY)
                             .build();
@@ -79,7 +79,7 @@ public final class Displays {
     public static final SingleArgument<Boolean> DISTRIBUTION_CLICK_TO_CHANGE =
             current ->
                     translatable()
-                            .key("box.craft.gui.buttons.distribution.click-to-change")
+                            .key("box.craft.gui.buttons.destination.click-to-change")
                             .args(current ? DISTRIBUTION_BUTTON_BOX : DISTRIBUTION_BUTTON_INVENTORY)
                             .style(NO_DECORATION_GRAY)
                             .build();

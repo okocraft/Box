@@ -1,0 +1,312 @@
+box:
+  autostore:
+    error:
+      failed-to-load-settings: "Failed to load the auto-store settings. Please contact the administrator."
+    reloaded: "The auto-store feature has been reloaded."
+    mode:
+      all: "All items"
+      item: "Per item"
+    enabled: "Enabled"
+    disabled: "Disabled"
+    command:
+      help:
+        toggle:
+          command-line: "/box autostore [on/off]"
+          description: "Switches on/off auto-store"
+        all:
+          command-line: "/box autostore [all/item]"
+          description: "Changes auto-store mode"
+        item:
+          command-line: "/box autostore item <item> [on/off]"
+          description: "Changes the auto-store setting of the item"
+      autostore-toggled: "Auto-store is now {0}."
+      mode-changed: "Auto-store mode is now {0}."
+      item:
+        all-toggled: "Set the auto-store setting of all items to {0}."
+        item-toggled: "Set the auto-store setting of the item {0} to {1}."
+      mode-not-found: "Auto-store mode {0} is not found."
+      not-boolean: "{0} is not boolean. [on/off/true/false]"
+    gui:
+      mode:
+        display-name: "Auto-store setting"
+        lore: "Auto-store setting: {0}"
+      setting-menu:
+        title: "Auto-store setting menu"
+        change-mode:
+          display-name: "Change auto-store mode"
+          all: "Click to change mode to 'all items'"
+          item: "Click to change mode to 'per item'"
+        toggle-button: "Click to set auto-store to {0}"
+        bulk-editing:
+          title: "Bulk change operation for per-item mode"
+          left-click: "Press LMB to set all items to {0}"
+          right-click: "Press RMB to set all items to {0}"
+          recent: "Recent bulk change operation: {0}"
+  category:
+    reloaded: "The category feature has been reloaded."
+    name:
+      armors: "Armors"
+      bows: "Bows"
+      candles: "Candles"
+      concretes: "Concretes"
+      custom-items: "Custom items"
+      decorations: "Decorations"
+      dirt: "Dirt"
+      dyes: "Dyes"
+      enchanted-books: "Enchanted books"
+      end: "End"
+      farms: "Farms"
+      flowers: "Flowers"
+      glasses: "Glasses"
+      horse: "Horse"
+      misc: "Misc"
+      mob-drops: "Mob drops"
+      mushrooms: "Mushrooms"
+      music-discs: "Music discs"
+      nether: "Nether"
+      oceans: "Oceans"
+      ores: "Ores"
+      potions: "Potions"
+      rails: "Rails"
+      redstones: "Redstones"
+      sand: "Sand"
+      shulker-boxes: "Shulker boxes"
+      spawn-eggs: "Spawn eggs"
+      stones: "Stones"
+      terracotta: "Terracotta"
+      tools: "Tools"
+      unavailable: "Unavailable"
+      uncategorized: "Uncategorized"
+      woods: "Woods"
+      wools: "Wools"
+  command:
+    box:
+      help:
+        command-line: "/box <subcommands>"
+        description: "Box base command"
+      deposit:
+        success: "Deposited {0}x{1} (Now {2})"
+        all-success: "Deposited {0} items in your inventory that can be deposited."
+        is-air: "You have no item in your main hand."
+        item-not-registered: "The item in your main hand is not registered."
+        not-deposited: "The specified item is not present in your inventory."
+        not-found: "No items could be deposited in your inventory."
+        help:
+          main-hand:
+            command-line: "/box deposit [amount]"
+            description: "Deposits the item in your main hand"
+          all:
+            command-line: "/box deposit all"
+            description: "Deposits all items"
+          item:
+            command-line: "/box deposit <item> [amount]"
+            description: "Deposits specified item"
+      give:
+        success:
+          sender: "Sent {1}x{2} to player {0} (Now {3})."
+          target: "Received {1}x{2} from player {0} (Now {3})."
+        no-stock: "Item {0} is out of stock."
+        self: "You can't send it to yourself."
+        target-no-permission: "Player {0} doesn't have the permission {1}."
+        target-is-in-disabled-world: "Player {0} is in world {1} where Box is not available."
+        help:
+          command-line: "/box give <player> <item> [amount]"
+          description: "Sends items to others"
+      withdraw:
+        success: "Withdrew {0}x{1} (Now {2})."
+        stop: "Withdrawal was cancelled because your inventory has no space."
+        no-stock: "Item {0} is out of stock."
+        inventory-is-full: "Your inventory is full."
+        help:
+          command-line: "/box withdraw <item> [amount]"
+          description: "Withdraws item"
+      iteminfo:
+        is-air: "You have no item in your main hand."
+        item-not-registered: "The item in your main hand is not registered."
+        name: "Item Name: {0}"
+        stock: "Current stocks: {0}"
+        help:
+          command-line: "/box iteminfo [item]"
+          description: "Shows information about the item you have or specify."
+    boxadmin:
+      help:
+        command-line: "/boxadmin <subcommands>"
+        description: "Box Admin command"
+      give:
+        success:
+          sender: "Gave {1}x{2} to player {0} (Now {3})."
+          target: "{0} give you {1}x{2} (Now {3})."
+        help:
+          command-line: "/boxadmin give <player> <item> <amount>"
+          description: "Increases stocks"
+      infinity:
+        enabled: "Enabled"
+        disabled: "Disabled"
+        toggle: "Infinite stock mode has been {0}."
+        toggle-sender: "{1} infinite stock mode for player {0}."
+        toggle-target: "Infinite stock mode has been {1} by {0}."
+        tip: "Infinite stock mode does not save deposited items' data."
+        help:
+          command-line: "/boxadmin infinity [player]"
+          description: "Toggles infinite stock mode"
+      register:
+        is-air: "You have no item in your main hand."
+        already-registered: "{0} is already registered."
+        success: "{0} has been registered as name {1}."
+        failure: "Failed to register the item. Error message: {0}"
+        tip-rename: "Registered items can be renamed with /boxadmin rename ."
+        help:
+          command-line: "/boxadmin register"
+          description: "Registers item in main hand to Box"
+      reload:
+        start: "Reloading Box..."
+        finish: "Box has been reloaded!"
+        help:
+          command-line: "/boxadmin reload"
+          description: "Reloads Box"
+      rename:
+        is-not-custom-item: "The name of item {0} cannot be renamed."
+        already-used-name: "The item name {0} is already used."
+        success: "The item has been renamed to {0}."
+        failure: "Failed to rename the item name. Error message: {0}"
+        help:
+          command-line: "/boxadmin rename <current name> <new name>"
+          description: "Changes item name"
+      set:
+        success:
+          sender: "Player {0}'s item {1} has been set to {2}."
+          target: "Item {1} has been set to {2} by {0}."
+        help:
+          command-line: "/boxadmin set <player> <item name> <amount>"
+          description: "Sets stocks"
+      take:
+        success:
+          sender: "Took {1}x{2} from player {0} (Now {3})."
+          target: "{0} took {1}x{2} (Now {3})."
+        help:
+          command-line: "/boxadmin take <player> <item name> <amount>"
+          description: "Decreases stocks"
+      version:
+        info: "Box {0}"
+        help:
+          command-line: "/boxadmin version"
+          description: "Show the current version of Box"
+  craft:
+    command:
+      recipe-not-found: "There is no recipe of item {0}."
+      recipe-reloaded: "Item recipes have been reloaded."
+      help:
+        command-line: "/box craft <item name>"
+        description: "Shows the item recipe"
+    gui:
+      buttons:
+        display-name: "{0} crafts"
+        ingredients: "Ingredients"
+        shift-click-to-show-details: "Shift + click to show details"
+        shift-click-to-show-recipes: "Shift + click to show recipes"
+        current-stock: "Current stocks: {0}"
+        destination:
+          display-name: "Destination"
+          inventory: "Inventory"
+          box: "Box"
+          current: "Destination of crafted items: {0}"
+          click-to-change: "Click to change to {0}"
+        change-unit:
+          display-name: "Change unit"
+          shift-click-to-reset-times: "Shift + click to reset craft times"
+        change-times:
+          current: "Current craft times: {0}"
+          increase:
+            display-name: "Increase"
+            lore: "Click to increase craft times by {0}"
+          decrease:
+            display-name: "Decrease"
+            lore: "Click to decrease craft times by {0}"
+          set-to-unit: "Click to set craft times to {0}"
+        ingredient-change-mode:
+          bulk: "Bulk ingredient change"
+          each: "Partial ingredient change"
+      menus:
+        craft: "Craft of {0}"
+        recipe-selector: "Recipes of {0}"
+      mode:
+        display-name: "Craft mode"
+        click-to-show-recipes: "Click to show recipes"
+        recipe-not-found: "There is no recipe"
+  gui:
+    reloaded: "GUI feature has been reloaded."
+    error-occurred: "An error occurred while click process. Error message: {0}"
+    command-help:
+      command-line: "/box gui"
+      description: "Opens Box menu"
+    buttons:
+      back: "Back"
+      change-unit:
+        display-name: "Change the unit"
+        shift-click-to-reset-amount: "Shift + click to reset the transaction amount"
+      change-transaction-amount:
+        current: "Current transaction amount: {0}"
+        decrease:
+          display-name: "Decrease"
+          lore: "Click to decrease the transaction amount by {0}"
+        increase:
+          display-name: "Increase"
+          lore: "Click to increase the transaction amount  by {0}"
+        set-to-unit: "Click to set transaction amount to {0}"
+      close: "Close"
+      page-switch:
+        previous: "Previous page"
+        next: "Next page"
+      mode-change: "Change mode"
+    menus:
+      category-selector: "Category selector"
+      category-menu: "{0}"
+    modes:
+      storage-mode:
+        display-name: "Storage mode"
+        left-click-to-deposit: "Press LMB to deposit {0} items"
+        right-click-to-withdraw: "Press RMB to withdraw {0} items"
+        current-stock: "Current stocks: {0}"
+        deposit-all:
+          display-name: "Deposits all items"
+          lore-1: "Shift + click to deposit"
+          lore-2: "all items in the inventory"
+  stick:
+    item:
+      display-name: "Box Stick"
+      lore-1: "Holding this in off hand to"
+      lore-2: "consume items from Box when use them."
+      lore-3: "Also, press RMB to open the menu."
+    command:
+      success: "Gave your off hand Box Stick."
+      already-have: "You already have Box Stick in your off hand."
+      could-not-give-stick: "Could not give your off hand Box Stick because your inventory is full."
+      help:
+        command-line: "/box stick"
+        description: "Gives your off hand Box Stick"
+      customstick:
+        success: "The item in your hand can now be used as Box Stick."
+        already: "The item in your hand can already be used as Box Stick."
+        is-air: "You have no item in your main hand."
+        help:
+          command-line: "/boxadmin customstick"
+          description: "Makes item in main hand a Box Stick"
+  error:
+    disabled-world: "Box cannot be used in world {0}."
+    failed-to-reload-feature: "Failed to reload {0}. Error message: {1}"
+    failed-to-execute-command: "Failed to execute command. Error message: {1}"
+    no-permission: "You don't have the permission: {0}"
+    player-data:
+      load-on-join: "Failed to load the stock data. Please contact the administrator."
+      save: "Failed to save the stock data. Please contact the administrator."
+    command:
+      only-player: "This command can only be executed by the player in game."
+      no-argument: "There is no argument."
+      not-enough-argument: "The arguments is not enough."
+      subcommand-not-found: "Box could not recognize the specified subcommand."
+      player-not-found: "The player {0} could not be found."
+      item-not-found: "The item {0} could not be found."
+      invalid-number: "{0} is not a valid number."
+  mics:
+    config-reloaded: "config.yml has been reloaded."
+    languages-reloaded: "Language files have been reloaded."
