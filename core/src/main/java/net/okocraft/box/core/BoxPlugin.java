@@ -119,7 +119,8 @@ public class BoxPlugin implements BoxAPI {
         translationDirectory.getRegistry().defaultLocale(Locale.ENGLISH);
 
         try {
-            translationDirectory.createDirectoryIfNotExists(this::saveDefaultLanguages);
+            translationDirectory.createDirectoryIfNotExists();
+            saveDefaultLanguages(translationDirectory.getDirectory());
             translationDirectory.load();
         } catch (IOException e) {
             getLogger().log(Level.SEVERE, "Could not load languages", e);
@@ -267,7 +268,8 @@ public class BoxPlugin implements BoxAPI {
         }
 
         try {
-            translationDirectory.createDirectoryIfNotExists(this::saveDefaultLanguages);
+            translationDirectory.createDirectoryIfNotExists();
+            saveDefaultLanguages(translationDirectory.getDirectory());
             translationDirectory.load();
             sender.sendMessage(MicsMessages.LANGUAGES_RELOADED);
         } catch (Throwable e) {
@@ -294,10 +296,10 @@ public class BoxPlugin implements BoxAPI {
 
     private void saveDefaultLanguages(@NotNull Path directory) throws IOException {
         var english = "en.yml";
-        ResourceUtils.copyFromJar(jarFile, english, directory.resolve(english));
+        ResourceUtils.copyFromJarIfNotExists(jarFile, english, directory.resolve(english));
 
         var japanese = "ja_JP.yml";
-        ResourceUtils.copyFromJar(jarFile, japanese, directory.resolve(japanese));
+        ResourceUtils.copyFromJarIfNotExists(jarFile, japanese, directory.resolve(japanese));
     }
 
     @Override
