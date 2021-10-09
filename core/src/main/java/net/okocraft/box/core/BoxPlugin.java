@@ -271,6 +271,7 @@ public class BoxPlugin implements BoxAPI {
             translationDirectory.createDirectoryIfNotExists();
             saveDefaultLanguages(translationDirectory.getDirectory());
             translationDirectory.load();
+            translationDirectory.getRegistry().defaultLocale(Locale.ENGLISH);
             sender.sendMessage(MicsMessages.LANGUAGES_RELOADED);
         } catch (Throwable e) {
             playerMessenger.accept(() -> ErrorMessages.ERROR_RELOAD_FAILURE.apply("languages", e));
