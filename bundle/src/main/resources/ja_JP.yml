@@ -134,7 +134,7 @@ box:
         description: "Box の管理者用コマンド"
       give:
         success:
-          sender: "プレイヤー {0} のアイテム {1} の在庫を {2} 個増やされました (現在 {3} 個)。"
+          sender: "プレイヤー {0} のアイテム {1} の在庫を {2} 個増やしました (現在 {3} 個)。"
           target: "{0} にアイテム {1} の在庫を {2} 個増やされました (現在 {3} 個)。"
         help:
           command-line: "/boxadmin give <プレイヤー名> <アイテム名> <数量>"
@@ -147,14 +147,14 @@ box:
         toggle-target: "{0} に無限在庫モードを {1} にされました。"
         tip: "無限在庫モードでは収納されるアイテム情報が保存されません。"
         help:
-          command-line: "/boxadmin infinity"
+          command-line: "/boxadmin infinity [プレイヤー名]"
           description: "無限在庫モードにする"
       register:
         is-air: "手に何も持っていません。"
         already-registered: "アイテム {0} はすでに登録されています。"
         success: "アイテム {0} を名前 {1} として新しく登録しました。"
         failure: "アイテムの登録に失敗しました。エラーメッセージ: {0}"
-        tip-rename: "登録したアイテムは /boxadmin rename <item-name> <new> で改名できます。"
+        tip-rename: "登録したアイテムは /boxadmin rename で改名できます。"
         help:
           command-line: "/boxadmin register"
           description: "手に持っているアイテムを Box に登録する"
