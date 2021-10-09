@@ -293,6 +293,9 @@ public class BoxPlugin implements BoxAPI {
     }
 
     private void saveDefaultLanguages(@NotNull Path directory) throws IOException {
+        var english = "en.yml";
+        ResourceUtils.copyFromJar(jarFile, english, directory.resolve(english));
+
         var japanese = "ja_JP.yml";
         ResourceUtils.copyFromJar(jarFile, japanese, directory.resolve(japanese));
     }
