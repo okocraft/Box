@@ -145,7 +145,7 @@ public class BoxPlugin implements BoxAPI {
         try {
             storage.init();
         } catch (Exception e) {
-            getLogger().log(Level.SEVERE, "Could not initialize" + storage.getName() + "storage", e);
+            getLogger().log(Level.SEVERE, "Could not initialize " + storage.getName() + " storage", e);
             return false;
         }
 
