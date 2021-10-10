@@ -140,10 +140,12 @@ public class BoxPlugin implements BoxAPI {
     public boolean enable() {
         storage = new YamlStorage(getPluginDirectory().resolve("data")); // TODO: SQLite, MySQL, or something else...
 
+        getLogger().info("Initializing " + storage.getName() + " storage...");
+
         try {
             storage.init();
         } catch (Exception e) {
-            getLogger().log(Level.SEVERE, "Could not initialize a storage", e);
+            getLogger().log(Level.SEVERE, "Could not initialize" + storage.getName() + "storage", e);
             return false;
         }
 
@@ -194,8 +196,6 @@ public class BoxPlugin implements BoxAPI {
         Bukkit.getPluginManager().registerEvents(boxCommand, plugin);
         Bukkit.getPluginManager().registerEvents(boxAdminCommand, plugin);
 
-        getLogger().info("Successfully enabled!");
-
         return true;
     }
 
@@ -203,8 +203,10 @@ public class BoxPlugin implements BoxAPI {
         getLogger().info("Unregistering all listeners...");
         HandlerList.unregisterAll(getPluginInstance());
 
-        getLogger().info("Disabling features...");
-        List.copyOf(features).forEach(this::unregister);
+        if (!features.isEmpty()) {
+            getLogger().info("Disabling features...");
+            List.copyOf(features).forEach(this::unregister);
+        }
 
         stockHolderListener.unregister();
         autoSaveTask.stop();
@@ -233,8 +235,6 @@ public class BoxPlugin implements BoxAPI {
 
         getLogger().info("Unloading translations...");
         translationDirectory.unload();
-
-        getLogger().info("Successfully disabled!");
     }
 
     @Override
@@ -386,7 +386,7 @@ public class BoxPlugin implements BoxAPI {
     @Override
     public void register(@NotNull BoxFeature boxFeature) {
         if (configuration.get(Settings.DISABLED_FEATURES).contains(boxFeature.getName())) {
-            getLogger().warning("Feature " + boxFeature.getName() + " is disabled by disabled-features in config.yml");
+            getLogger().warning("The " + boxFeature.getName() + " feature is disabled in config.yml");
             return;
         }
 
@@ -395,7 +395,7 @@ public class BoxPlugin implements BoxAPI {
         } catch (Throwable throwable) {
             getLogger().log(
                     Level.SEVERE,
-                    "Could not enable the feature: " + boxFeature.getName(),
+                    "Could not enable the " + boxFeature.getName() + " feature",
                     throwable
             );
             boxFeature.disable();
@@ -406,12 +406,12 @@ public class BoxPlugin implements BoxAPI {
 
         eventBus.callEvent(new FeatureEvent(boxFeature, FeatureEvent.Type.REGISTER));
 
-        getLogger().info("Feature " + boxFeature.getName() + " has been enabled.");
+        getLogger().info("The " + boxFeature.getName() + " feature has been enabled.");
     }
 
     @Override
     public void unregister(@NotNull BoxFeature boxFeature) {
-        getLogger().info("Disabling feature " + boxFeature.getName() + "...");
+        getLogger().info("Disabling the " + boxFeature.getName() + " feature...");
         features.remove(boxFeature);
 
         try {
@@ -419,7 +419,7 @@ public class BoxPlugin implements BoxAPI {
         } catch (Throwable throwable) {
             getLogger().log(
                     Level.SEVERE,
-                    "Could not disable the feature: " + boxFeature.getName(),
+                    "Could not disable the " + boxFeature.getName() + " feature",
                     throwable
             );
         }
