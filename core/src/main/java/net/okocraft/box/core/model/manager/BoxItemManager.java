@@ -81,7 +81,7 @@ public class BoxItemManager implements ItemManager {
     }
 
     @Override
-    public boolean isUsed(@NotNull String name) {
+    public boolean isUsedName(@NotNull String name) {
         Objects.requireNonNull(name);
 
         var nameSet = itemNameCache;
