@@ -54,7 +54,7 @@ public class StockEvent extends BoxEvent {
      * before calling this method.
      *
      * @return the {@link UserStockHolder}
-     * @throws IllegalStateException if the {@link StockEvent} of this event is not {@link UserStockHolder}
+     * @throws IllegalStateException if the {@link StockHolder} of this event is not {@link UserStockHolder}
      */
     public @NotNull UserStockHolder getUserStockHolder() {
         if (stockHolder instanceof UserStockHolder userStockHolder) {
