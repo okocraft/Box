@@ -8,6 +8,7 @@ import net.okocraft.box.api.event.player.PlayerUnloadEvent;
 import net.okocraft.box.api.event.stock.StockDecreaseEvent;
 import net.okocraft.box.api.event.stock.StockIncreaseEvent;
 import net.okocraft.box.api.event.stock.StockSetEvent;
+import net.okocraft.box.api.event.stockholder.StockHolderLoadEvent;
 import net.okocraft.box.api.event.stockholder.StockHolderSaveEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -57,6 +58,16 @@ public class DebugListener {
                             "stockholderClass=" + setEvent.getStockHolder().getClass().getSimpleName() + ", " +
                             "boxItem=" + setEvent.getItem() + ", " +
                             "current=" + setEvent.getAmount() +
+                            "}"
+            );
+            return;
+        }
+
+        if (event instanceof StockHolderLoadEvent loadEvent) {
+            printLog(
+                    loadEvent.getEventName() + "{" +
+                            "stockholderName='" + loadEvent.getStockHolder().getName() + "', " +
+                            "stockholderClass=" + loadEvent.getStockHolder().getClass().getSimpleName() +
                             "}"
             );
             return;
