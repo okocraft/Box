@@ -23,7 +23,7 @@ public interface UserStockHolder extends StockHolder {
      *
      * @return whether the owner of this holder is online or not
      */
-    @Deprecated
+    @Deprecated(forRemoval = true)
     @ApiStatus.ScheduledForRemoval(inVersion = "4.2.0")
     boolean isOnline();
 }
