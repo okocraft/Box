@@ -192,6 +192,10 @@ public class StockModifyCommands {
 
             int current = modifyStock(target, item.get(), amount);
 
+            if (targetPlayer == null) {
+                BoxProvider.get().getStockManager().saveUserStock(target).join();
+            }
+
             sendMessage(sender, targetPlayer, target.getName(), item.get(), amount, current);
         }
 
