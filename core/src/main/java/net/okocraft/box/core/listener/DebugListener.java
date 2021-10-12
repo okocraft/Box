@@ -4,6 +4,7 @@ import com.github.siroshun09.event4j.handlerlist.Key;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.event.BoxEvent;
 import net.okocraft.box.api.event.player.PlayerEvent;
+import net.okocraft.box.api.event.player.PlayerStockHolderChangeEvent;
 import net.okocraft.box.api.event.stock.StockDecreaseEvent;
 import net.okocraft.box.api.event.stock.StockIncreaseEvent;
 import net.okocraft.box.api.event.stock.StockSetEvent;
@@ -72,6 +73,19 @@ public class DebugListener {
         }
 
         if (event instanceof PlayerEvent playerEvent) {
+            if (event instanceof PlayerStockHolderChangeEvent changeEvent) {
+                printLog(changeEvent.getEventName() + "{" +
+                        "playerUuid=" + changeEvent.getBoxPlayer().getUUID() + ", " +
+                        "playerName='" + changeEvent.getBoxPlayer().getName() + "', " +
+                        "previousStockHolderName='" + changeEvent.getPreviousStockHolder().getName() + "', " +
+                        "previousStockHolderClass='" + changeEvent.getPreviousStockHolder().getClass().getSimpleName() + "'," +
+                        "currentStockHolderName='" + changeEvent.getBoxPlayer().getName() + "', " +
+                        "currentStockHolderClass='" + changeEvent.getBoxPlayer().getClass().getSimpleName() + "'" +
+                        "}"
+                );
+                return;
+            }
+
             printLog(playerEvent.getEventName() + "{" +
                     "playerUuid=" + playerEvent.getBoxPlayer().getUUID() + ", " +
                     "playerName='" + playerEvent.getBoxPlayer().getName() + "'" +
