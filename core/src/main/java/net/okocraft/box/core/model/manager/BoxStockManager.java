@@ -1,5 +1,8 @@
 package net.okocraft.box.core.model.manager;
 
+import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.api.event.stockholder.StockHolderLoadEvent;
+import net.okocraft.box.api.event.stockholder.StockHolderSaveEvent;
 import net.okocraft.box.api.model.manager.StockManager;
 import net.okocraft.box.api.model.stock.UserStockHolder;
 import net.okocraft.box.api.model.user.BoxUser;
@@ -26,11 +29,15 @@ public class BoxStockManager implements StockManager {
         Objects.requireNonNull(user);
 
         return CompletableFuture.supplyAsync(() -> {
+            UserStockHolder stockHolder;
             try {
-                return stockStorage.loadUserStockHolder(user);
+                stockHolder = stockStorage.loadUserStockHolder(user);
             } catch (Exception e) {
                 throw new RuntimeException("Could not load user stock holder (" + user.getUUID() + ")", e);
             }
+
+            BoxProvider.get().getEventBus().callEvent(new StockHolderLoadEvent(stockHolder));
+            return stockHolder;
         }, executor);
     }
 
@@ -41,6 +48,7 @@ public class BoxStockManager implements StockManager {
         return CompletableFuture.runAsync(() -> {
             try {
                 stockStorage.saveUserStockHolder(stockHolder);
+                BoxProvider.get().getEventBus().callEvent(new StockHolderSaveEvent(stockHolder));
             } catch (Exception e) {
                 throw new RuntimeException("Could not save user stock holder (" + stockHolder.getUser().getUUID() + ")", e);
             }

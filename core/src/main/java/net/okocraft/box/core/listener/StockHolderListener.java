@@ -7,7 +7,6 @@ import net.okocraft.box.api.event.player.PlayerUnloadEvent;
 import net.okocraft.box.api.event.stock.StockDecreaseEvent;
 import net.okocraft.box.api.event.stock.StockEvent;
 import net.okocraft.box.api.event.stock.StockIncreaseEvent;
-import net.okocraft.box.api.event.stock.StockSaveEvent;
 import net.okocraft.box.api.event.stock.StockSetEvent;
 import net.okocraft.box.api.model.stock.UserStockHolder;
 import net.okocraft.box.api.model.user.BoxUser;
@@ -70,7 +69,6 @@ public class StockHolderListener {
     private void save(@NotNull UserStockHolder userStockHolder) {
         try {
             BoxProvider.get().getStockManager().saveUserStock(userStockHolder).join();
-            BoxProvider.get().getEventBus().callEvent(new StockSaveEvent(userStockHolder));
         } catch (Exception e) {
             Optional.of(userStockHolder.getUser())
                     .map(BoxUser::getUUID)
