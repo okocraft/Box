@@ -8,6 +8,7 @@ import net.okocraft.box.api.event.stock.StockDecreaseEvent;
 import net.okocraft.box.api.event.stock.StockEvent;
 import net.okocraft.box.api.event.stock.StockIncreaseEvent;
 import net.okocraft.box.api.event.stock.StockSetEvent;
+import net.okocraft.box.api.event.stockholder.StockHolderSaveEvent;
 import net.okocraft.box.api.model.stock.UserStockHolder;
 import net.okocraft.box.api.model.user.BoxUser;
 import net.okocraft.box.core.message.ErrorMessages;
@@ -31,6 +32,7 @@ public class StockHolderListener {
         eventBus.getHandlerList(StockIncreaseEvent.class).subscribe(listenerKey, this::enqueueStockHolder);
         eventBus.getHandlerList(StockDecreaseEvent.class).subscribe(listenerKey, this::enqueueStockHolder);
 
+        eventBus.getHandlerList(StockHolderSaveEvent.class).subscribe(listenerKey, this::dequeueStockHolder);
         eventBus.getHandlerList(PlayerUnloadEvent.class).subscribe(listenerKey, this::dequeueStockHolder);
 
         eventBus.getHandlerList(AutoSaveStartEvent.class).subscribe(listenerKey, this::saveModifiedStockHolders);
@@ -47,6 +49,12 @@ public class StockHolderListener {
             if (!modifiedStockHolders.contains(userStockHolder)) {
                 modifiedStockHolders.add(userStockHolder);
             }
+        }
+    }
+
+    private void dequeueStockHolder(@NotNull StockHolderSaveEvent event) {
+        if (!modifiedStockHolders.isEmpty() && event.isUserStockHolder()) {
+            modifiedStockHolders.remove(event.getUserStockHolder());
         }
     }
 
