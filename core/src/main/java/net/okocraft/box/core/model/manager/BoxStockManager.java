@@ -1,5 +1,7 @@
 package net.okocraft.box.core.model.manager;
 
+import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.api.event.stockholder.StockHolderSaveEvent;
 import net.okocraft.box.api.model.manager.StockManager;
 import net.okocraft.box.api.model.stock.UserStockHolder;
 import net.okocraft.box.api.model.user.BoxUser;
@@ -41,6 +43,7 @@ public class BoxStockManager implements StockManager {
         return CompletableFuture.runAsync(() -> {
             try {
                 stockStorage.saveUserStockHolder(stockHolder);
+                BoxProvider.get().getEventBus().callEvent(new StockHolderSaveEvent(stockHolder));
             } catch (Exception e) {
                 throw new RuntimeException("Could not save user stock holder (" + stockHolder.getUser().getUUID() + ")", e);
             }
