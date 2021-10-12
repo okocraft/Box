@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
  * You need to be very careful not to call methods that cause changes to a {@link StockHolder} in the event,
  * as this may result in an infinite loop.
  */
+// TODO: move StockEvent classes to api.event.stockholder in version 5.0.0
 public class StockEvent extends StockHolderEvent {
 
     /**
