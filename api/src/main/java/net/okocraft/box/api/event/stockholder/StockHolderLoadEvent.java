@@ -16,4 +16,11 @@ public class StockHolderLoadEvent extends StockHolderEvent {
     public StockHolderLoadEvent(@NotNull StockHolder stockHolder) {
         super(stockHolder);
     }
+
+    @Override
+    public String toString() {
+        return "StockHolderLoadEvent{" +
+                "stockholder=" + getStockHolder() +
+                "}";
+    }
 }
