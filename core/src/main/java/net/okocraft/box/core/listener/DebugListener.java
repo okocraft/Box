@@ -7,8 +7,8 @@ import net.okocraft.box.api.event.player.PlayerLoadEvent;
 import net.okocraft.box.api.event.player.PlayerUnloadEvent;
 import net.okocraft.box.api.event.stock.StockDecreaseEvent;
 import net.okocraft.box.api.event.stock.StockIncreaseEvent;
-import net.okocraft.box.api.event.stock.StockSaveEvent;
 import net.okocraft.box.api.event.stock.StockSetEvent;
+import net.okocraft.box.api.event.stockholder.StockHolderSaveEvent;
 import org.jetbrains.annotations.NotNull;
 
 public class DebugListener {
@@ -62,7 +62,7 @@ public class DebugListener {
             return;
         }
 
-        if (event instanceof StockSaveEvent saveEvent) {
+        if (event instanceof StockHolderSaveEvent saveEvent) {
             printLog(
                     saveEvent.getEventName() + "{" +
                             "stockholderName='" + saveEvent.getStockHolder().getName() + "', " +
