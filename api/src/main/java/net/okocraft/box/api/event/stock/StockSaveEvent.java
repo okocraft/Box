@@ -6,6 +6,8 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * A {@link StockEvent} called when the stockholder has been saved.
+ *
+ * @deprecated use {@link net.okocraft.box.api.event.stockholder.StockHolderSaveEvent}. This event is no longer called.
  */
 @Deprecated(forRemoval = true)
 @ApiStatus.ScheduledForRemoval(inVersion = "4.2.0")
