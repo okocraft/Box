@@ -8,10 +8,12 @@ import net.okocraft.box.api.message.argument.SingleArgument;
 import net.okocraft.box.api.message.argument.TripleArgument;
 import net.okocraft.box.api.model.item.BoxCustomItem;
 import net.okocraft.box.api.model.item.BoxItem;
+import net.okocraft.box.api.model.stock.UserStockHolder;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import static net.kyori.adventure.text.Component.newline;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.Component.translatable;
 import static net.kyori.adventure.text.format.NamedTextColor.AQUA;
@@ -248,6 +250,55 @@ public final class BoxAdminMessage {
             translatable("box.command.boxadmin.infinity.help.command-line", AQUA)
                     .append(text(" - ", DARK_GRAY))
                     .append(translatable("box.command.boxadmin.infinity.help.description", GRAY));
+
+    public static final SingleArgument<UserStockHolder> RESET_SUCCESS_SENDER =
+            target -> translatable()
+                    .key("box.command.boxadmin.reset.success.sender")
+                    .args(text(target.getName(), AQUA))
+                    .color(GRAY)
+                    .build();
+
+    public static final SingleArgument<CommandSender> RESET_SUCCESS_TARGET =
+            sender -> translatable()
+                    .key("box.command.boxadmin.reset.success.target")
+                    .args(text(sender.getName(), AQUA))
+                    .color(GRAY)
+                    .build();
+
+    public static final Component RESET_CANCEL =
+            translatable("box.command.boxadmin.reset.cancel", GRAY);
+
+    public static final SingleArgument<UserStockHolder> RESET_CONFIRMATION =
+            target -> text()
+                    .append(
+                            translatable()
+                                    .key("box.command.boxadmin.reset.confirmation.info")
+                                    .args(text(target.getName(), AQUA))
+                                    .color(GRAY)
+                                    .build()
+                    ).append(newline())
+                    .append(translatable("box.command.boxadmin.reset.confirmation.warning", GRAY))
+                    .append(newline())
+                    .append(
+                            translatable()
+                                    .key("box.command.boxadmin.reset.confirmation.confirm-command")
+                                    .args(text("/boxadmin reset confirm", AQUA))
+                                    .color(GRAY)
+                                    .build()
+                    ).append(newline())
+                    .append(
+                            translatable()
+                                    .key("box.command.boxadmin.reset.confirmation.cancel-command")
+                                    .args(text("/boxadmin reset cancel", AQUA))
+                                    .color(GRAY)
+                                    .build()
+                    )
+                    .build();
+
+    public static final Component RESET_HELP =
+            translatable("box.command.boxadmin.reset.help.command-line", AQUA)
+                    .append(text(" - ", DARK_GRAY))
+                    .append(translatable("box.command.boxadmin.reset.help.description", GRAY));
 
     private BoxAdminMessage() {
         throw new UnsupportedOperationException();

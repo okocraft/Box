@@ -172,6 +172,19 @@ box:
         help:
           command-line: "/boxadmin rename <current name> <new name>"
           description: "Changes item name"
+      reset:
+        success:
+          sender: "All stocks of player {0} has been reset."
+          target: "All stocks has been reset by {0}."
+        cancel: "Cancelled reset operation."
+        confirmation:
+          info: "Reset all stocks of player {0}."
+          warning: "This operation cannot be undone."
+          confirm-command: "To confirm, run {0}."
+          cancel-command: "To cancel, run {0}."
+        help:
+          command-line: "/boxadmin reset <player>"
+          description: "Resets all stocks"
       set:
         success:
           sender: "Player {0}''s item {1} has been set to {2}."
