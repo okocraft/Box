@@ -7,10 +7,9 @@ import net.okocraft.box.api.command.Command;
 import net.okocraft.box.api.message.GeneralMessage;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.model.stock.StockHolder;
-import net.okocraft.box.api.model.stock.UserStockHolder;
-import net.okocraft.box.api.model.user.BoxUser;
 import net.okocraft.box.feature.command.message.BoxAdminMessage;
 import net.okocraft.box.feature.command.util.TabCompleter;
+import net.okocraft.box.feature.command.util.UserStockHolderOperator;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -20,7 +19,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 public class StockModifyCommands {
 
@@ -120,60 +118,6 @@ public class StockModifyCommands {
                 return;
             }
 
-            try {
-                var uuid = UUID.fromString(args[1]);
-                processUUID(sender, uuid, args);
-            } catch (IllegalArgumentException ignored) {
-                processPlayerName(sender, args);
-            }
-        }
-
-        private void processUUID(@NotNull CommandSender sender, @NotNull UUID uuid,
-                                 @NotNull String[] args) {
-            var player = Bukkit.getPlayer(uuid);
-
-            if (player != null) {
-                var boxPlayer = BoxProvider.get().getBoxPlayerMap().get(player);
-                processCommand(sender, boxPlayer.getUserStockHolder(), player, args);
-                return;
-            }
-
-            var boxUser = BoxProvider.get().getUserManager().loadUser(uuid).join();
-            var userStockHolder = BoxProvider.get().getStockManager().loadUserStock(boxUser).join();
-            processCommand(sender, userStockHolder, null, args);
-        }
-
-        private void processPlayerName(@NotNull CommandSender sender, @NotNull String[] args) {
-            var player = Bukkit.getPlayer(args[1]);
-
-            if (player != null) {
-                processPlayer(sender, player, args);
-                return;
-            }
-
-            var boxUser = BoxProvider.get().getUserManager().search(args[1]).join();
-
-            if (boxUser.isPresent()) {
-                processBoxUser(sender, boxUser.get(), args);
-            } else {
-                sender.sendMessage(GeneralMessage.ERROR_COMMAND_PLAYER_NOT_FOUND.apply(args[1]));
-            }
-        }
-
-        private void processPlayer(@NotNull CommandSender sender, @NotNull Player target,
-                                   @NotNull String[] args) {
-            var boxPlayer = BoxProvider.get().getBoxPlayerMap().get(target);
-            processCommand(sender, boxPlayer.getUserStockHolder(), target, args);
-        }
-
-        private void processBoxUser(@NotNull CommandSender sender, @NotNull BoxUser target,
-                                    @NotNull String[] args) {
-            var userStockHolder = BoxProvider.get().getStockManager().loadUserStock(target).join();
-            processCommand(sender, userStockHolder, null, args);
-        }
-
-        private void processCommand(@NotNull CommandSender sender, @NotNull UserStockHolder target,
-                                    @Nullable Player targetPlayer, @NotNull String[] args) {
             var item = BoxProvider.get().getItemManager().getBoxItem(args[2]);
 
             if (item.isEmpty()) {
@@ -190,13 +134,21 @@ public class StockModifyCommands {
                 return;
             }
 
-            int current = modifyStock(target, item.get(), amount);
+            UserStockHolderOperator.create(args[1])
+                    .supportOffline(true)
+                    .stockHolderOperator(target -> {
+                        int current = modifyStock(target, item.get(), amount);
 
-            if (targetPlayer == null) {
-                BoxProvider.get().getStockManager().saveUserStock(target).join();
-            }
+                        var targetPlayer = Bukkit.getPlayer(target.getUUID());
 
-            sendMessage(sender, targetPlayer, target.getName(), item.get(), amount, current);
+                        if (targetPlayer == null) {
+                            BoxProvider.get().getStockManager().saveUserStock(target).join();
+                        }
+
+                        sendMessage(sender, targetPlayer, target.getName(), item.get(), amount, current);
+                    })
+                    .onNotFound(name -> sender.sendMessage(GeneralMessage.ERROR_COMMAND_PLAYER_NOT_FOUND.apply(name)))
+                    .run();
         }
 
         abstract int modifyStock(@NotNull StockHolder stockHolder, @NotNull BoxItem item, int amount);
