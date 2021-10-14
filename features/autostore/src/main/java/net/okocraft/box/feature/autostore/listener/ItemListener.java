@@ -50,7 +50,9 @@ public class ItemListener implements Listener {
             return false;
         }
 
-        if (!player.hasPermission("box.autostore")) {
+        var setting = AutoStoreSettingContainer.INSTANCE.get(player);
+
+        if (!setting.isEnabled() || !player.hasPermission("box.autostore")) {
             return false;
         }
 
@@ -60,9 +62,7 @@ public class ItemListener implements Listener {
             return false;
         }
 
-        var setting = AutoStoreSettingContainer.INSTANCE.get(player);
-
-        if (setting.isEnabled() && setting.shouldAutoStore(boxItem.get())) {
+        if (setting.shouldAutoStore(boxItem.get())) {
             BoxProvider.get()
                     .getBoxPlayerMap()
                     .get(player)
