@@ -7,6 +7,7 @@ import net.okocraft.box.api.message.GeneralMessage;
 import net.okocraft.box.api.model.stock.UserStockHolder;
 import net.okocraft.box.feature.command.message.BoxAdminMessage;
 import net.okocraft.box.feature.command.util.TabCompleter;
+import net.okocraft.box.feature.command.util.UserStockHolderOperator;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
@@ -16,7 +17,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 
 public class ResetCommand extends AbstractCommand {
 
@@ -67,25 +67,14 @@ public class ResetCommand extends AbstractCommand {
             return;
         }
 
-        var targetPlayer = Bukkit.getPlayer(args[1]);
-        UserStockHolder targetStockHolder;
-
-        if (targetPlayer != null) {
-            targetStockHolder = BoxProvider.get().getBoxPlayerMap().get(targetPlayer).getUserStockHolder();
-        } else {
-            targetStockHolder =
-                    BoxProvider.get().getUserManager().search(args[1]).join()
-                            .map(BoxProvider.get().getStockManager()::loadUserStock)
-                            .map(CompletableFuture::join)
-                            .orElse(null);
-        }
-
-        if (targetStockHolder != null) {
-            confirmationMap.put(sender, targetStockHolder);
-            sender.sendMessage(BoxAdminMessage.RESET_CONFIRMATION.apply(targetStockHolder));
-        } else {
-            sender.sendMessage(GeneralMessage.ERROR_COMMAND_PLAYER_NOT_FOUND.apply(args[1]));
-        }
+        UserStockHolderOperator.create(args[1])
+                .supportOffline(true)
+                .stockHolderOperator(targetStockHolder -> {
+                    confirmationMap.put(sender, targetStockHolder);
+                    sender.sendMessage(BoxAdminMessage.RESET_CONFIRMATION.apply(targetStockHolder));
+                })
+                .onNotFound(name -> sender.sendMessage(GeneralMessage.ERROR_COMMAND_PLAYER_NOT_FOUND.apply(name)))
+                .run();
     }
 
     @Override
