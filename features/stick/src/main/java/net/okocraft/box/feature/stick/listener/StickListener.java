@@ -60,6 +60,11 @@ public class StickListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onBlockPlace(@NotNull BlockPlaceEvent event) {
+        // ignore POWDER_SNOW because it cannot be replenished
+        if (event.getBlockPlaced().getType() == Material.POWDER_SNOW) {
+            return;
+        }
+
         var player = event.getPlayer();
 
         if (!checkPlayerCondition(player, "box.stick.block")) {
