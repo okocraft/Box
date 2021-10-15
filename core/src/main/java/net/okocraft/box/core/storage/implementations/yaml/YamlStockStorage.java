@@ -9,8 +9,10 @@ import net.okocraft.box.core.model.stock.UserStockHolderImpl;
 import net.okocraft.box.core.storage.model.stock.StockStorage;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 
 class YamlStockStorage implements StockStorage {
@@ -18,11 +20,29 @@ class YamlStockStorage implements StockStorage {
     private final Path stockDirectory;
 
     YamlStockStorage(@NotNull Path rootDirectory) {
-        this.stockDirectory = rootDirectory.resolve("stocks");
+        this.stockDirectory = rootDirectory.resolve("stock");
     }
 
     @Override
     public void init() throws Exception {
+        if (Files.exists(stockDirectory)) {
+            return;
+        }
+
+        var parent = stockDirectory.getParent();
+
+        if (parent != null) {
+            var oldStockDirectory = parent.resolve("stocks");
+
+            if (Files.exists(oldStockDirectory)) {
+                try {
+                    Files.move(oldStockDirectory, stockDirectory, StandardCopyOption.REPLACE_EXISTING);
+                    return;
+                } catch (IOException ignored) {
+                }
+            }
+        }
+
         Files.createDirectories(stockDirectory);
     }
 
