@@ -50,6 +50,12 @@ public class ItemListener implements Listener {
             return false;
         }
 
+        var playerMap = BoxProvider.get().getBoxPlayerMap();
+
+        if (!playerMap.isLoaded(player)) {
+            return false;
+        }
+
         var setting = AutoStoreSettingContainer.INSTANCE.get(player);
 
         if (!setting.isEnabled() || !player.hasPermission("box.autostore")) {
@@ -63,12 +69,7 @@ public class ItemListener implements Listener {
         }
 
         if (setting.shouldAutoStore(boxItem.get())) {
-            BoxProvider.get()
-                    .getBoxPlayerMap()
-                    .get(player)
-                    .getCurrentStockHolder()
-                    .increase(boxItem.get(), item.getAmount());
-
+            playerMap.get(player).getCurrentStockHolder().increase(boxItem.get(), item.getAmount());
             player.playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, 0.2f, (float) Math.random() + 1.0f);
             return true;
         } else {

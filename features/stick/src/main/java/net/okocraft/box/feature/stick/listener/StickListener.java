@@ -181,7 +181,13 @@ public class StickListener implements Listener {
             return false;
         }
 
-        var stockHolder = BoxProvider.get().getBoxPlayerMap().get(player).getCurrentStockHolder();
+        var playerMap = BoxProvider.get().getBoxPlayerMap();
+
+        if (!playerMap.isLoaded(player)) {
+            return false;
+        }
+
+        var stockHolder = playerMap.get(player).getCurrentStockHolder();
 
         if (0 < stockHolder.getAmount(boxItem.get())) {
             stockHolder.decrease(boxItem.get());

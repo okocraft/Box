@@ -67,9 +67,10 @@ public class UserStockHolderOperator {
         }
 
         var player = uuid != null ? Bukkit.getPlayer(uuid) : Bukkit.getPlayer(argument);
+        var playerMap = BoxProvider.get().getBoxPlayerMap();
 
-        if (player != null) {
-            return BoxProvider.get().getBoxPlayerMap().get(player).getUserStockHolder();
+        if (player != null && playerMap.isLoaded(player)) {
+            return playerMap.get(player).getUserStockHolder();
         }
 
         if (supportOffline) {
