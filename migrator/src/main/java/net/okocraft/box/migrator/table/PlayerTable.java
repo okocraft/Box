@@ -30,7 +30,17 @@ public class PlayerTable {
         database.execute("SELECT id, uuid, name FROM box_players", rs -> {
             while (rs.next()) {
                 var id = rs.getInt("id");
-                var uuid = UUID.fromString(rs.getString("uuid"));
+
+                var strUuid = rs.getString("uuid");
+                UUID uuid;
+
+                try {
+                    uuid = UUID.fromString(strUuid);
+                } catch (IllegalArgumentException e) {
+                    BoxProvider.get().getLogger().warning("Could not parse a string to uuid: " + strUuid);
+                    continue;
+                }
+
                 var name = rs.getString("name");
 
                 var user = new MigratedBoxUser(uuid, name);
