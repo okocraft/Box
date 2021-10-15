@@ -9,6 +9,14 @@ import org.jetbrains.annotations.NotNull;
 public interface BoxPlayerMap {
 
     /**
+     * Checks if the {@link BoxPlayer} of specified player is loaded.
+     *
+     * @param player the {@link Player} to check
+     * @return {@code true} if loaded, {@code false} otherwise
+     */
+    boolean isLoaded(@NotNull Player player);
+
+    /**
      * Gets the {@link BoxPlayer}.
      *
      * @param player the {@link Player}

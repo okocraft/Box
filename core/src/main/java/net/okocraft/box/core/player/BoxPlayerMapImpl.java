@@ -33,6 +33,11 @@ public class BoxPlayerMapImpl implements BoxPlayerMap {
     }
 
     @Override
+    public boolean isLoaded(@NotNull Player player) {
+        return playerMap.containsKey(player);
+    }
+
+    @Override
     public @NotNull BoxPlayer get(@NotNull Player player) {
         Objects.requireNonNull(player);
 
