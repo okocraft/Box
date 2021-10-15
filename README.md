@@ -42,3 +42,48 @@ Box には以下のような特徴があります。
 * `languages/ja_JP.yml`
 
 が生成されます。起動後、何も設定しなくても使い始めることができます。
+
+## API
+
+### Javadocs
+
+- [Latest Release](https://okocraft.github.io/Box/release)
+- [Snapshot](https://okocraft.github.io/Box/snapshot)
+
+### Usage
+
+#### 1. Add a repository
+
+```xml
+<repository>
+    <id>okocraft-box-repo</id>
+    <url>https://okocraft.github.io/Box/maven/</url>
+</repository>
+```
+
+```gradle
+repositories {
+    maven {
+        url 'https://okocraft.github.io/Box/maven/'
+    }
+}
+```
+
+For snapshot version, use https://okocraft.github.io/Box/maven-snapshot/
+
+#### 2. Add to dependencies
+
+```xml
+<dependency>
+    <groupId>net.okocraft.box</groupId>
+    <artifactId>api</artifactId>
+    <version>4.1.0-SNAPSHOT</version>
+    <scope>provided</scope>
+</dependency>
+```
+
+```gradle
+dependencies {
+    compileOnly 'net.okocraft.box:api:4.1.0-SNAPSHOT'
+}
+```
