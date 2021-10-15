@@ -26,41 +26,4 @@
             <scope>compile</scope>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.3.1</version>
-                <executions>
-                    <execution>
-                        <id>attach-docs</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <source>${java.version}</source>
-                    <charset>${project.charset}</charset>
-                    <encoding>${project.charset}</encoding>
-                    <docencoding>${project.charset}</docencoding>
-                    <linksource>true</linksource>
-                    <locale>en_US</locale>
-                    <notimestamp>true</notimestamp>
-                    <show>protected</show>
-                    <quiet>true</quiet>
-                    <links>
-                        <link>https://papermc.io/javadocs/paper/1.17/</link>
-                        <link>https://jd.adventure.kyori.net/api/4.8.1/</link>
-                        <link>https://javadoc.io/doc/org.jetbrains/annotations/22.0.0/</link>
-                        <link>https://siroshun09.github.io/ConfigAPI/</link>
-                        <link>https://siroshun09.github.io/Event4J/</link>
-                    </links>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 </project>
