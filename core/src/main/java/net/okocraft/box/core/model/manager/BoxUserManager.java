@@ -49,6 +49,19 @@ public class BoxUserManager implements UserManager {
     }
 
     @Override
+    public @NotNull CompletableFuture<Void> saveUserIfNotExists(@NotNull BoxUser boxUser) {
+        Objects.requireNonNull(boxUser);
+
+        return CompletableFuture.runAsync(() -> {
+            try {
+                userStorage.saveBoxUserIfNotExists(boxUser);
+            } catch (Exception e) {
+                throw new RuntimeException("Could not save the box user (" + boxUser.getUUID() + ")", e);
+            }
+        }, executor);
+    }
+
+    @Override
     public @NotNull CompletableFuture<Optional<BoxUser>> search(@NotNull String name) {
         Objects.requireNonNull(name);
 

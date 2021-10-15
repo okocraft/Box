@@ -16,5 +16,7 @@ public interface UserStorage {
 
     void saveBoxUser(@NotNull BoxUser user) throws Exception;
 
+    void saveBoxUserIfNotExists(@NotNull BoxUser user) throws Exception;
+
     @NotNull Optional<BoxUser> search(@NotNull String name) throws Exception;
 }

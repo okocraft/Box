@@ -35,8 +35,18 @@ class YamlUserStorage implements UserStorage {
 
     @Override
     public void saveBoxUser(@NotNull BoxUser user) throws Exception {
-        userData.set(user.getUUID().toString(), user.getName().orElse(""));
-        userData.save();
+        if (user.getName().isPresent()) {
+            userData.set(user.getUUID().toString(), user.getName().get());
+            userData.save();
+        }
+    }
+
+    @Override
+    public void saveBoxUserIfNotExists(@NotNull BoxUser user) throws Exception {
+        if (user.getName().isPresent() && userData.get(user.getUUID().toString()) == null) {
+            userData.set(user.getUUID().toString(), user.getName().get());
+            userData.save();
+        }
     }
 
     @Override
