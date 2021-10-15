@@ -15,7 +15,7 @@ jobs:
       - name: Build with Maven
         run: |
           mvn clean
-          mvn -B package --file pom.xml
+          mvn -B package --file pom.xml -D maven.javadoc.skip=true
       - name: Move the artifact
         run: |
           mkdir staging
