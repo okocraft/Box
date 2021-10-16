@@ -8,6 +8,8 @@ import org.jetbrains.annotations.NotNull;
 
 public interface Storage {
 
+    @NotNull String getName();
+
     void init() throws Exception;
 
     void close() throws Exception;

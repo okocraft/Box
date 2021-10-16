@@ -3,6 +3,7 @@ package net.okocraft.box.api.message;
 import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.message.argument.SingleArgument;
 import org.bukkit.World;
+import org.bukkit.entity.Player;
 
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.Component.translatable;
@@ -78,6 +79,23 @@ public final class GeneralMessage {
                     translatable()
                             .key("box.error.disabled-world")
                             .args(text(world.getName(), AQUA))
+                            .color(RED)
+                            .build();
+
+    /**
+     * A message sent when the player is not loaded.
+     */
+    public static final Component ERROR_PLAYER_NOT_LOADED =
+            translatable("box.error.player-data.not-loaded.self", RED);
+
+    /**
+     * A message sent when the targeted player is not loaded.
+     */
+    public static final SingleArgument<Player> ERROR_TARGET_PLAYER_NOT_LOADED =
+            target ->
+                    translatable()
+                            .key("box.error.player-data.not-loaded.other")
+                            .args(text(target.getName(), AQUA))
                             .color(RED)
                             .build();
 }

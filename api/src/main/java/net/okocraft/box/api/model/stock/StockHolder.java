@@ -8,7 +8,7 @@ import java.util.Collection;
 import java.util.UUID;
 
 /**
- * An interface that holds stocks.
+ * An interface that holds stock.
  * <p>
  * The implementation of this interface must be thread-safe.
  */
@@ -86,7 +86,7 @@ public interface StockHolder {
     @NotNull @Unmodifiable Collection<BoxItem> getStockedItems();
 
     /**
-     * Gets the current stocks as a {@link StockData} collection.
+     * Gets the current stock as a {@link StockData} collection.
      *
      * @return the collection of {@link StockData}
      */

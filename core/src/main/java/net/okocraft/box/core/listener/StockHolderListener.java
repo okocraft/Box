@@ -3,11 +3,12 @@ package net.okocraft.box.core.listener;
 import com.github.siroshun09.event4j.handlerlist.Key;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.event.general.AutoSaveStartEvent;
+import net.okocraft.box.api.event.player.PlayerUnloadEvent;
 import net.okocraft.box.api.event.stock.StockDecreaseEvent;
 import net.okocraft.box.api.event.stock.StockEvent;
 import net.okocraft.box.api.event.stock.StockIncreaseEvent;
-import net.okocraft.box.api.event.stock.StockSaveEvent;
 import net.okocraft.box.api.event.stock.StockSetEvent;
+import net.okocraft.box.api.event.stockholder.StockHolderSaveEvent;
 import net.okocraft.box.api.model.stock.UserStockHolder;
 import net.okocraft.box.api.model.user.BoxUser;
 import net.okocraft.box.core.message.ErrorMessages;
@@ -27,9 +28,12 @@ public class StockHolderListener {
     public void register() {
         var eventBus = BoxProvider.get().getEventBus();
 
-        eventBus.getHandlerList(StockSetEvent.class).subscribe(listenerKey, this::queueStockHolder);
-        eventBus.getHandlerList(StockIncreaseEvent.class).subscribe(listenerKey, this::queueStockHolder);
-        eventBus.getHandlerList(StockDecreaseEvent.class).subscribe(listenerKey, this::queueStockHolder);
+        eventBus.getHandlerList(StockSetEvent.class).subscribe(listenerKey, this::enqueueStockHolder);
+        eventBus.getHandlerList(StockIncreaseEvent.class).subscribe(listenerKey, this::enqueueStockHolder);
+        eventBus.getHandlerList(StockDecreaseEvent.class).subscribe(listenerKey, this::enqueueStockHolder);
+
+        eventBus.getHandlerList(StockHolderSaveEvent.class).subscribe(listenerKey, this::dequeueStockHolder);
+        eventBus.getHandlerList(PlayerUnloadEvent.class).subscribe(listenerKey, this::dequeueStockHolder);
 
         eventBus.getHandlerList(AutoSaveStartEvent.class).subscribe(listenerKey, this::saveModifiedStockHolders);
     }
@@ -38,7 +42,7 @@ public class StockHolderListener {
         BoxProvider.get().getEventBus().unsubscribeAll(listenerKey);
     }
 
-    private void queueStockHolder(@NotNull StockEvent event) {
+    private void enqueueStockHolder(@NotNull StockEvent event) {
         if (event.isUserStockHolder()) {
             var userStockHolder = event.getUserStockHolder();
 
@@ -46,6 +50,16 @@ public class StockHolderListener {
                 modifiedStockHolders.add(userStockHolder);
             }
         }
+    }
+
+    private void dequeueStockHolder(@NotNull StockHolderSaveEvent event) {
+        if (!modifiedStockHolders.isEmpty() && event.isUserStockHolder()) {
+            modifiedStockHolders.remove(event.getUserStockHolder());
+        }
+    }
+
+    private void dequeueStockHolder(@NotNull PlayerUnloadEvent event) {
+        modifiedStockHolders.remove(event.getBoxPlayer().getUserStockHolder());
     }
 
     private void saveModifiedStockHolders(@NotNull AutoSaveStartEvent task) {
@@ -57,13 +71,12 @@ public class StockHolderListener {
 
         modifiedStockHolders.clear();
 
-        copied.stream().filter(UserStockHolder::isOnline).forEach(this::save);
+        copied.forEach(this::save);
     }
 
     private void save(@NotNull UserStockHolder userStockHolder) {
         try {
             BoxProvider.get().getStockManager().saveUserStock(userStockHolder).join();
-            BoxProvider.get().getEventBus().callEvent(new StockSaveEvent(userStockHolder));
         } catch (Exception e) {
             Optional.of(userStockHolder.getUser())
                     .map(BoxUser::getUUID)

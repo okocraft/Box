@@ -18,6 +18,7 @@ import net.okocraft.box.api.model.manager.ItemManager;
 import net.okocraft.box.api.model.manager.StockManager;
 import net.okocraft.box.api.model.manager.UserManager;
 import net.okocraft.box.api.player.BoxPlayerMap;
+import net.okocraft.box.api.taskfactory.TaskFactory;
 import net.okocraft.box.api.util.ExecutorProvider;
 import net.okocraft.box.core.command.BoxAdminCommandImpl;
 import net.okocraft.box.core.command.BoxCommandImpl;
@@ -35,6 +36,7 @@ import net.okocraft.box.core.player.BoxPlayerMapImpl;
 import net.okocraft.box.core.storage.Storage;
 import net.okocraft.box.core.storage.implementations.yaml.YamlStorage;
 import net.okocraft.box.core.task.AutoSaveTask;
+import net.okocraft.box.core.taskfactory.BoxTaskFactory;
 import net.okocraft.box.core.util.executor.BoxExecutorProvider;
 import net.okocraft.box.core.util.executor.InternalExecutors;
 import org.bukkit.Bukkit;
@@ -70,6 +72,7 @@ public class BoxPlugin implements BoxAPI {
     private final DebugListener debugListener = new DebugListener();
 
     private final EventBus eventBus = EventBus.newEventBus();
+    private final BoxTaskFactory taskFactory = new BoxTaskFactory();
     private final BoxExecutorProvider executorProvider = new BoxExecutorProvider();
 
     private final BoxCommandImpl boxCommand = new BoxCommandImpl();
@@ -113,10 +116,11 @@ public class BoxPlugin implements BoxAPI {
 
         getLogger().info("Loading languages...");
 
-        translationDirectory.getRegistry().defaultLocale(Locale.JAPAN);
+        translationDirectory.getRegistry().defaultLocale(Locale.ENGLISH);
 
         try {
-            translationDirectory.createDirectoryIfNotExists(this::saveDefaultLanguages);
+            translationDirectory.createDirectoryIfNotExists();
+            saveDefaultLanguages(translationDirectory.getDirectory());
             translationDirectory.load();
         } catch (IOException e) {
             getLogger().log(Level.SEVERE, "Could not load languages", e);
@@ -136,10 +140,12 @@ public class BoxPlugin implements BoxAPI {
     public boolean enable() {
         storage = new YamlStorage(getPluginDirectory().resolve("data")); // TODO: SQLite, MySQL, or something else...
 
+        getLogger().info("Initializing " + storage.getName() + " storage...");
+
         try {
             storage.init();
         } catch (Exception e) {
-            getLogger().log(Level.SEVERE, "Could not initialize a storage", e);
+            getLogger().log(Level.SEVERE, "Could not initialize " + storage.getName() + " storage", e);
             return false;
         }
 
@@ -190,8 +196,6 @@ public class BoxPlugin implements BoxAPI {
         Bukkit.getPluginManager().registerEvents(boxCommand, plugin);
         Bukkit.getPluginManager().registerEvents(boxAdminCommand, plugin);
 
-        getLogger().info("Successfully enabled!");
-
         return true;
     }
 
@@ -199,8 +203,10 @@ public class BoxPlugin implements BoxAPI {
         getLogger().info("Unregistering all listeners...");
         HandlerList.unregisterAll(getPluginInstance());
 
-        getLogger().info("Disabling features...");
-        List.copyOf(features).forEach(this::unregister);
+        if (!features.isEmpty()) {
+            getLogger().info("Disabling features...");
+            List.copyOf(features).forEach(this::unregister);
+        }
 
         stockHolderListener.unregister();
         autoSaveTask.stop();
@@ -221,7 +227,7 @@ public class BoxPlugin implements BoxAPI {
         getLogger().info("Shutting down executors...");
 
         try {
-            executorProvider.shutdown();
+            taskFactory.shutdown();
             InternalExecutors.shutdownAll();
         } catch (InterruptedException e) {
             getLogger().log(Level.SEVERE, "Could not shutdown executors", e);
@@ -229,8 +235,6 @@ public class BoxPlugin implements BoxAPI {
 
         getLogger().info("Unloading translations...");
         translationDirectory.unload();
-
-        getLogger().info("Successfully disabled!");
     }
 
     @Override
@@ -264,8 +268,10 @@ public class BoxPlugin implements BoxAPI {
         }
 
         try {
-            translationDirectory.createDirectoryIfNotExists(this::saveDefaultLanguages);
+            translationDirectory.createDirectoryIfNotExists();
+            saveDefaultLanguages(translationDirectory.getDirectory());
             translationDirectory.load();
+            translationDirectory.getRegistry().defaultLocale(Locale.ENGLISH);
             sender.sendMessage(MicsMessages.LANGUAGES_RELOADED);
         } catch (Throwable e) {
             playerMessenger.accept(() -> ErrorMessages.ERROR_RELOAD_FAILURE.apply("languages", e));
@@ -290,8 +296,11 @@ public class BoxPlugin implements BoxAPI {
     }
 
     private void saveDefaultLanguages(@NotNull Path directory) throws IOException {
+        var english = "en.yml";
+        ResourceUtils.copyFromJarIfNotExists(jarFile, english, directory.resolve(english));
+
         var japanese = "ja_JP.yml";
-        ResourceUtils.copyFromJar(jarFile, japanese, directory.resolve(japanese));
+        ResourceUtils.copyFromJarIfNotExists(jarFile, japanese, directory.resolve(japanese));
     }
 
     @Override
@@ -340,6 +349,11 @@ public class BoxPlugin implements BoxAPI {
     }
 
     @Override
+    public @NotNull TaskFactory getTaskFactory() {
+        return taskFactory;
+    }
+
+    @Override
     public @NotNull ExecutorProvider getExecutorProvider() {
         return executorProvider;
     }
@@ -372,7 +386,7 @@ public class BoxPlugin implements BoxAPI {
     @Override
     public void register(@NotNull BoxFeature boxFeature) {
         if (configuration.get(Settings.DISABLED_FEATURES).contains(boxFeature.getName())) {
-            getLogger().warning("Feature " + boxFeature.getName() + " is disabled by disabled-features in config.yml");
+            getLogger().warning("The " + boxFeature.getName() + " feature is disabled in config.yml");
             return;
         }
 
@@ -381,7 +395,7 @@ public class BoxPlugin implements BoxAPI {
         } catch (Throwable throwable) {
             getLogger().log(
                     Level.SEVERE,
-                    "Could not enable the feature: " + boxFeature.getName(),
+                    "Could not enable the " + boxFeature.getName() + " feature",
                     throwable
             );
             boxFeature.disable();
@@ -392,12 +406,12 @@ public class BoxPlugin implements BoxAPI {
 
         eventBus.callEvent(new FeatureEvent(boxFeature, FeatureEvent.Type.REGISTER));
 
-        getLogger().info("Feature " + boxFeature.getName() + " has been enabled.");
+        getLogger().info("The " + boxFeature.getName() + " feature has been enabled.");
     }
 
     @Override
     public void unregister(@NotNull BoxFeature boxFeature) {
-        getLogger().info("Disabling feature " + boxFeature.getName() + "...");
+        getLogger().info("Disabling the " + boxFeature.getName() + " feature...");
         features.remove(boxFeature);
 
         try {
@@ -405,7 +419,7 @@ public class BoxPlugin implements BoxAPI {
         } catch (Throwable throwable) {
             getLogger().log(
                     Level.SEVERE,
-                    "Could not disable the feature: " + boxFeature.getName(),
+                    "Could not disable the " + boxFeature.getName() + " feature",
                     throwable
             );
         }

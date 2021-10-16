@@ -15,6 +15,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
@@ -32,12 +33,21 @@ public class BoxPlayerMapImpl implements BoxPlayerMap {
     }
 
     @Override
+    public boolean isLoaded(@NotNull Player player) {
+        return playerMap.containsKey(player);
+    }
+
+    @Override
     public @NotNull BoxPlayer get(@NotNull Player player) {
+        Objects.requireNonNull(player);
+
         return Optional.ofNullable(playerMap.get(player))
                 .orElseThrow(() -> new IllegalStateException("player is not loaded (" + player.getName() + ")"));
     }
 
     public @NotNull CompletableFuture<Void> load(@NotNull Player player) {
+        Objects.requireNonNull(player);
+
         return CompletableFuture.runAsync(() -> {
             var boxUser = new BoxUserImpl(player.getUniqueId(), player.getName());
 
@@ -54,6 +64,8 @@ public class BoxPlayerMapImpl implements BoxPlayerMap {
     }
 
     public @NotNull CompletableFuture<Void> unload(@NotNull Player player) {
+        Objects.requireNonNull(player);
+
         var boxPlayer = playerMap.remove(player);
 
         if (boxPlayer != null) {

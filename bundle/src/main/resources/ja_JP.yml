@@ -25,7 +25,7 @@ box:
         all-toggled: "すべてのアイテムの自動収納設定を {0} にしました。"
         item-toggled: "アイテム {0} の自動収納設定を {1} にしました。"
       mode-not-found: "自動収納モードに {0} はありません。"
-      not-boolean: "{0} は有効な真偽値ではありません。"
+      not-boolean: "{0} は有効な真偽値ではありません。[on/off/true/false]"
     gui:
       mode:
         display-name: "自動収納設定"
@@ -134,8 +134,8 @@ box:
         description: "Box の管理者用コマンド"
       give:
         success:
-          sender: "プレイヤー {0} にアイテム {1} を {2} 個付与しました (現在 {3} 個)。"
-          target: "{0} からアイテム {1} を {2} 個付与されました (現在 {3} 個)。"
+          sender: "プレイヤー {0} のアイテム {1} の在庫を {2} 個増やしました (現在 {3} 個)。"
+          target: "{0} にアイテム {1} の在庫を {2} 個増やされました (現在 {3} 個)。"
         help:
           command-line: "/boxadmin give <プレイヤー名> <アイテム名> <数量>"
           description: "在庫を増やす"
@@ -147,14 +147,14 @@ box:
         toggle-target: "{0} に無限在庫モードを {1} にされました。"
         tip: "無限在庫モードでは収納されるアイテム情報が保存されません。"
         help:
-          command-line: "/boxadmin infinity"
+          command-line: "/boxadmin infinity [プレイヤー名]"
           description: "無限在庫モードにする"
       register:
         is-air: "手に何も持っていません。"
         already-registered: "アイテム {0} はすでに登録されています。"
         success: "アイテム {0} を名前 {1} として新しく登録しました。"
         failure: "アイテムの登録に失敗しました。エラーメッセージ: {0}"
-        tip-rename: "登録したアイテムは /boxadmin rename <item-name> <new> で改名できます。"
+        tip-rename: "登録したアイテムは /boxadmin rename で改名できます。"
         help:
           command-line: "/boxadmin register"
           description: "手に持っているアイテムを Box に登録する"
@@ -172,17 +172,30 @@ box:
         help:
           command-line: "/boxadmin rename <現在の名前> <新しい名前>"
           description: "アイテムの名前を変更する"
+      reset:
+        success:
+          sender: "プレイヤー {0} の在庫をすべてリセットしました。"
+          target: "{0} によって在庫がすべてリセットされました。"
+        cancel: "リセット操作をキャンセルしました。"
+        confirmation:
+          info: "プレイヤー {0} の在庫をすべて 0 にします。"
+          warning: "この操作は元に戻すことができません。"
+          confirm-command: "問題なければ {0} を実行してください。"
+          cancel-command: "キャンセルする場合は {0} を実行します。"
+        help:
+          command-line: "/boxadmin reset <プレイヤー名>"
+          description: "在庫をすべてリセットする"
       set:
         success:
-          sender: "プレイヤー {0} のアイテム {1} を {2} 個にセットしました。"
-          target: "{0} にアイテム {1} を {2} 個にセットされました。"
+          sender: "プレイヤー {0} のアイテム {1} の在庫を {2} 個にセットしました。"
+          target: "{0} にアイテム {1} の在庫を {2} 個にセットされました。"
         help:
           command-line: "/boxadmin set <プレイヤー名> <アイテム名> <数量>"
           description: "在庫をセットする"
       take:
         success:
-          sender: "プレイヤー {0} にアイテム {1} を {2} 個減らしました (現在 {3} 個)。"
-          target: "{0} にアイテム {1} を {2} 個減らされました (現在 {3} 個)。"
+          sender: "プレイヤー {0} のアイテム {1} の在庫を {2} 個減らしました (現在 {3} 個)。"
+          target: "{0} にアイテム {1} の在庫を {2} 個減らされました (現在 {3} 個)。"
         help:
           command-line: "/boxadmin take <プレイヤー名> <アイテム名> <数量>"
           description: "在庫を減らす"
@@ -205,7 +218,7 @@ box:
         shift-click-to-show-details: "シフトクリックで詳細を表示する"
         shift-click-to-show-recipes: "シフトクリックでレシピを表示する"
         current-stock: "現在の在庫: {0}"
-        distribution:
+        destination:
           display-name: "アイテムの収納先"
           inventory: "インベントリ"
           box: "Box"
@@ -235,6 +248,7 @@ box:
         recipe-not-found: "レシピがありません"
   gui:
     reloaded: "GUI 機能を再読み込みしました。"
+    error-occurred: "クリック処理中にエラーが発生しました。エラーメッセージ: {0}"
     command-help:
       command-line: "/box gui"
       description: "Box のメニューを開く"
@@ -298,6 +312,9 @@ box:
     player-data:
       load-on-join: "Box の在庫データの読み込みに失敗しました。管理者にお問い合わせください。"
       save: "Box の在庫データの保存に失敗しました。管理者にお問い合わせください。"
+      not-loaded:
+        self: "あなたのプレイヤーデータが読み込まれていません。管理者にお問い合わせください。"
+        other: "プレイヤー {0} のデータが読み込まれていません。管理者にお問い合わせください。"
     command:
       only-player: "ゲーム内のプレイヤーのみ実行できます。"
       no-argument: "引数がありません。"

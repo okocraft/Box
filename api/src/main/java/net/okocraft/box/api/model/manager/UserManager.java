@@ -29,6 +29,14 @@ public interface UserManager {
     @NotNull CompletableFuture<Void> saveUser(@NotNull BoxUser boxUser);
 
     /**
+     * Saves the {@link BoxUser} if it doesn't exist.
+     *
+     * @param boxUser the user to save
+     * @return the {@link CompletableFuture} to save the {@link BoxUser}
+     */
+    @NotNull CompletableFuture<Void> saveUserIfNotExists(@NotNull BoxUser boxUser);
+
+    /**
      * Searches for {@link BoxUser} with the specified name.
      *
      * @param name the name to search

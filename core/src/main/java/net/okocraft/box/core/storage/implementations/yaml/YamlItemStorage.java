@@ -106,28 +106,28 @@ class YamlItemStorage extends AbstractItemStorage {
 
     @Override
     protected void saveVersionedItem(@NotNull String version, @NotNull BoxItem item) throws Exception {
-        var file = YamlConfiguration.create(itemDirectory.resolve(version + ".yml"));
+        try (var file = YamlConfiguration.create(itemDirectory.resolve(version + ".yml"))) {
+            if (Files.exists(file.getPath())) {
+                file.load();
+            }
 
-        if (Files.exists(file.getPath())) {
-            file.load();
+            file.set(item.getInternalId() + ".name", item.getPlainName());
+            file.setBytes(item.getInternalId() + ".data", item.getOriginal().serializeAsBytes());
+
+            file.save();
         }
-
-        file.set(item.getInternalId() + ".name", item.getPlainName());
-        file.setBytes(item.getInternalId() + ".data", item.getOriginal().serializeAsBytes());
-
-        file.save();
     }
 
     @Override
     protected void saveVersionedItems(@NotNull String version, @NotNull Collection<BoxItem> items) throws Exception {
-        var file = YamlConfiguration.create(itemDirectory.resolve(version + ".yml"));
+        try (var file = YamlConfiguration.create(itemDirectory.resolve(version + ".yml"))) {
+            for (var item : items) {
+                file.set(item.getInternalId() + ".name", item.getPlainName());
+                file.setBytes(item.getInternalId() + ".data", item.getOriginal().serializeAsBytes());
+            }
 
-        for (var item : items) {
-            file.set(item.getInternalId() + ".name", item.getPlainName());
-            file.setBytes(item.getInternalId() + ".data", item.getOriginal().serializeAsBytes());
+            file.save();
         }
-
-        file.save();
     }
 
     @Override

@@ -26,6 +26,11 @@ public class YamlStorage implements Storage {
     }
 
     @Override
+    public @NotNull String getName() {
+        return "Yaml";
+    }
+
+    @Override
     public void init() throws Exception {
         Files.createDirectories(rootDirectory);
 

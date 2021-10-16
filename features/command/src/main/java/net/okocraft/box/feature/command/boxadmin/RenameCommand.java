@@ -47,7 +47,7 @@ public class RenameCommand extends AbstractCommand {
 
         var newName = args[2].toUpperCase(Locale.ROOT);
 
-        if (itemManager.isUsed(newName)) {
+        if (itemManager.isUsedName(newName)) {
             sender.sendMessage(BoxAdminMessage.RENAME_ALREADY_USED_NAME.apply(newName));
             return;
         }

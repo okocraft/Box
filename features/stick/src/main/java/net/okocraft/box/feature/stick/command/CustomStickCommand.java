@@ -10,8 +10,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.concurrent.CompletableFuture;
-
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.Component.translatable;
 import static net.kyori.adventure.text.format.NamedTextColor.AQUA;
@@ -58,10 +56,7 @@ public class CustomStickCommand extends AbstractCommand {
             return;
         }
 
-        CompletableFuture.runAsync(
-                () -> makeStick(player),
-                BoxProvider.get().getExecutorProvider().getMainThread()
-        ).join();
+        BoxProvider.get().getTaskFactory().run(() -> makeStick(player)).join();
     }
 
     private void makeStick(@NotNull Player player) {

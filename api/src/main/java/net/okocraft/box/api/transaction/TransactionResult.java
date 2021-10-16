@@ -21,6 +21,8 @@ public class TransactionResult {
      */
     @Contract(value = "_ -> new", pure = true)
     public static @NotNull TransactionResult create(@NotNull TransactionResultType type) {
+        Objects.requireNonNull(type);
+
         if (!type.isModified()) {
             return new TransactionResult(type, null, 0);
         } else {
@@ -40,6 +42,9 @@ public class TransactionResult {
      */
     @Contract(value = "_, _, _ -> new", pure = true)
     public static @NotNull TransactionResult create(@NotNull TransactionResultType type, @NotNull BoxItem item, int amount) {
+        Objects.requireNonNull(type);
+        Objects.requireNonNull(item);
+
         if (type.isModified()) {
             return new TransactionResult(type, item, amount);
         } else {

@@ -6,6 +6,7 @@ import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -40,9 +41,9 @@ public abstract class AbstractCommand implements Command {
      * @param aliases        the set of aliases
      */
     public AbstractCommand(@NotNull String name, @NotNull String permissionNode, @NotNull Set<String> aliases) {
-        this.name = name;
-        this.permissionNode = permissionNode;
-        this.aliases = aliases;
+        this.name = Objects.requireNonNull(name);
+        this.permissionNode = Objects.requireNonNull(permissionNode);
+        this.aliases = Objects.requireNonNull(aliases);
     }
 
     public @NotNull String getName() {

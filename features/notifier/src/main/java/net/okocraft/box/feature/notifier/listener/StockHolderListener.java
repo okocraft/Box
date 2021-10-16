@@ -31,13 +31,15 @@ public class StockHolderListener {
     private Key listenerKey;
 
     public void register(@NotNull Key listenerKey) {
+        var playerMap = BoxProvider.get().getBoxPlayerMap();
+
         for (var player : Bukkit.getOnlinePlayers()) {
-            var boxPlayer = BoxProvider.get().getBoxPlayerMap().get(player);
+            if (playerMap.isLoaded(player)) {
+                var stockHolder = playerMap.get(player).getCurrentStockHolder();
 
-            var stockHolder = boxPlayer.getCurrentStockHolder();
-
-            if (!(stockHolder instanceof UserStockHolder)) {
-                addToMap(stockHolder.getUUID(), player.getUniqueId());
+                if (!(stockHolder instanceof UserStockHolder)) {
+                    addToMap(stockHolder.getUUID(), player.getUniqueId());
+                }
             }
         }
 

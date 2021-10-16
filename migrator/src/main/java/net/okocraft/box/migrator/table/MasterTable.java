@@ -38,8 +38,10 @@ public class MasterTable {
         UserStockHolder stockHolder;
         AutoStoreSetting autoStoreSetting;
 
-        if (player != null) {
-            stockHolder = BoxProvider.get().getBoxPlayerMap().get(player).getUserStockHolder();
+        var playerMap = BoxProvider.get().getBoxPlayerMap();
+
+        if (player != null && playerMap.isLoaded(player)) {
+            stockHolder = playerMap.get(player).getUserStockHolder();
             autoStoreSetting = AutoStoreSettingContainer.INSTANCE.get(player);
         } else {
             stockHolder = BoxProvider.get().getStockManager().loadUserStock(user).join();

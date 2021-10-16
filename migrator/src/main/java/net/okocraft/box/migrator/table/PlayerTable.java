@@ -1,7 +1,9 @@
 package net.okocraft.box.migrator.table;
 
+import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.model.user.BoxUser;
 import net.okocraft.box.migrator.database.Database;
+import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -28,10 +30,29 @@ public class PlayerTable {
         database.execute("SELECT id, uuid, name FROM box_players", rs -> {
             while (rs.next()) {
                 var id = rs.getInt("id");
-                var uuid = UUID.fromString(rs.getString("uuid"));
+
+                var strUuid = rs.getString("uuid");
+                UUID uuid;
+
+                try {
+                    uuid = UUID.fromString(strUuid);
+                } catch (IllegalArgumentException e) {
+                    BoxProvider.get().getLogger().warning("Could not parse a string to uuid: " + strUuid);
+                    continue;
+                }
+
                 var name = rs.getString("name");
 
-                userIdMap.put(new MigratedBoxUser(uuid, name), id);
+                var user = new MigratedBoxUser(uuid, name);
+
+                if (Bukkit.getPlayer(uuid) == null) {
+                    try {
+                        BoxProvider.get().getUserManager().saveUserIfNotExists(user).join();
+                    } catch (Exception ignored) {
+                    }
+                }
+
+                userIdMap.put(user, id);
             }
         });
 

@@ -7,7 +7,6 @@ import net.okocraft.box.api.message.GeneralMessage;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.model.stock.StockData;
 import net.okocraft.box.api.model.stock.StockHolder;
-import net.okocraft.box.api.player.BoxPlayer;
 import net.okocraft.box.feature.command.message.BoxAdminMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -28,26 +27,40 @@ public class InfinityCommand extends AbstractCommand {
 
     @Override
     public void onCommand(@NotNull CommandSender sender, @NotNull String[] args) {
-        BoxPlayer boxPlayer;
+        Player target;
+        boolean self;
 
         if (1 < args.length) {
-            var target = Bukkit.getPlayer(args[1]);
+            target = Bukkit.getPlayer(args[1]);
 
             if (target == null) {
                 sender.sendMessage(GeneralMessage.ERROR_COMMAND_PLAYER_NOT_FOUND.apply(args[1]));
                 return;
-            } else {
-                boxPlayer = BoxProvider.get().getBoxPlayerMap().get(target);
             }
+
+            self = false;
         } else {
             if (sender instanceof Player player) {
-                boxPlayer = BoxProvider.get().getBoxPlayerMap().get(player);
+                target = player;
             } else {
                 sender.sendMessage(GeneralMessage.ERROR_COMMAND_NOT_ENOUGH_ARGUMENT);
                 sender.sendMessage(getHelp());
                 return;
             }
+
+            self = true;
         }
+
+        var playerMap = BoxProvider.get().getBoxPlayerMap();
+
+        if (!playerMap.isLoaded(target)) {
+            sender.sendMessage(self ?
+                    GeneralMessage.ERROR_PLAYER_NOT_LOADED :
+                    GeneralMessage.ERROR_TARGET_PLAYER_NOT_LOADED.apply(target)
+            );
+        }
+
+        var boxPlayer = playerMap.get(target);
 
         boolean enabled;
 
@@ -58,8 +71,6 @@ public class InfinityCommand extends AbstractCommand {
             boxPlayer.setCurrentStockHolder(new InfinityStockHolder());
             enabled = true;
         }
-
-        var target = boxPlayer.getPlayer();
 
         if (sender instanceof Player player && player.getUniqueId().equals(target.getUniqueId())) {
             sender.sendMessage(BoxAdminMessage.INFINITY_MODE_TOGGLE.apply(enabled));

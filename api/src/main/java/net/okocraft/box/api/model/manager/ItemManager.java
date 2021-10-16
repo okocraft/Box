@@ -3,6 +3,7 @@ package net.okocraft.box.api.model.manager;
 import net.okocraft.box.api.model.item.BoxCustomItem;
 import net.okocraft.box.api.model.item.BoxItem;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
@@ -54,7 +55,20 @@ public interface ItemManager {
      * @param name the name to check
      * @return {@code true} if used, {@code false} otherwise
      */
-    boolean isUsed(@NotNull String name);
+    boolean isUsedName(@NotNull String name);
+
+    /**
+     * Checks if the specified name has already been used.
+     *
+     * @param name the name to check
+     * @return {@code true} if used, {@code false} otherwise
+     * @deprecated use {@link #isUsedName(String)}
+     */
+    @Deprecated(forRemoval = true)
+    @ApiStatus.ScheduledForRemoval(inVersion = "4.2.0")
+    default boolean isUsed(@NotNull String name) {
+        return isUsedName(name);
+    }
 
     /**
      * Checks if the specified item is a custom item created by box itself.

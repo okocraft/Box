@@ -1,5 +1,6 @@
 package net.okocraft.box.api.util;
 
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.Executor;
@@ -7,6 +8,8 @@ import java.util.concurrent.Executor;
 /**
  * An interface for providing {@link Executor}s.
  */
+@Deprecated(forRemoval = true)
+@ApiStatus.ScheduledForRemoval(inVersion = "4.2.0")
 public interface ExecutorProvider {
 
     /**

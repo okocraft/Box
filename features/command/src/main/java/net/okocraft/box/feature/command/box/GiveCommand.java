@@ -89,13 +89,18 @@ public class GiveCommand extends AbstractCommand {
             amount = 1;
         }
 
-        var currentSender = stockHolder.decrease(boxItem, amount);
-        var currentTarget =
-                BoxProvider.get().getBoxPlayerMap().get(target)
-                        .getCurrentStockHolder().increase(boxItem, amount);
+        var playerMap = BoxProvider.get().getBoxPlayerMap();
 
-        player.sendMessage(BoxMessage.GIVE_SUCCESS_SENDER.apply(target.getName(), boxItem, amount, currentSender));
-        target.sendMessage(BoxMessage.GIVE_SUCCESS_TARGET.apply(player.getName(), boxItem, amount, currentTarget));
+        if (!playerMap.isLoaded(target)) {
+            sender.sendMessage(GeneralMessage.ERROR_TARGET_PLAYER_NOT_LOADED.apply(target));
+            return;
+        }
+
+        var senderCurrent = stockHolder.decrease(boxItem, amount);
+        var targetCurrent = playerMap.get(target).getCurrentStockHolder().increase(boxItem, amount);
+
+        player.sendMessage(BoxMessage.GIVE_SUCCESS_SENDER.apply(target.getName(), boxItem, amount, senderCurrent));
+        target.sendMessage(BoxMessage.GIVE_SUCCESS_TARGET.apply(player.getName(), boxItem, amount, targetCurrent));
     }
 
     @Override

@@ -7,8 +7,6 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.concurrent.CompletableFuture;
-
 public final class MenuOpener {
 
     public static void open(@NotNull Menu menu, @NotNull Player viewer) {
@@ -17,10 +15,9 @@ public final class MenuOpener {
         holder.initializeMenu(viewer);
         holder.applyContents();
 
-        CompletableFuture.runAsync(
-                () -> viewer.openInventory(holder.getInventory()),
-                BoxProvider.get().getExecutorProvider().getMainThread()
-        ).join();
+        BoxProvider.get().getTaskFactory()
+                .run(() -> viewer.openInventory(holder.getInventory()))
+                .join();
 
         viewer.playSound(viewer.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 100f, 2.0f);
     }

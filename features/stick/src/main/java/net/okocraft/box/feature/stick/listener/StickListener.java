@@ -60,6 +60,11 @@ public class StickListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onBlockPlace(@NotNull BlockPlaceEvent event) {
+        // ignore POWDER_SNOW because it cannot be replenished
+        if (event.getBlockPlaced().getType() == Material.POWDER_SNOW) {
+            return;
+        }
+
         var player = event.getPlayer();
 
         if (!checkPlayerCondition(player, "box.stick.block")) {
@@ -176,7 +181,13 @@ public class StickListener implements Listener {
             return false;
         }
 
-        var stockHolder = BoxProvider.get().getBoxPlayerMap().get(player).getCurrentStockHolder();
+        var playerMap = BoxProvider.get().getBoxPlayerMap();
+
+        if (!playerMap.isLoaded(player)) {
+            return false;
+        }
+
+        var stockHolder = playerMap.get(player).getCurrentStockHolder();
 
         if (0 < stockHolder.getAmount(boxItem.get())) {
             stockHolder.decrease(boxItem.get());
