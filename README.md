@@ -77,13 +77,13 @@ For snapshot version, use https://okocraft.github.io/Box/maven-snapshot/
 <dependency>
     <groupId>net.okocraft.box</groupId>
     <artifactId>api</artifactId>
-    <version>4.1.0-SNAPSHOT</version>
+    <version>4.1.0</version>
     <scope>provided</scope>
 </dependency>
 ```
 
 ```gradle
 dependencies {
-    compileOnly 'net.okocraft.box:api:4.1.0-SNAPSHOT'
+    compileOnly 'net.okocraft.box:api:4.1.0'
 }
 ```
