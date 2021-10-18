@@ -1,7 +1,6 @@
 package net.okocraft.box.api.model.stock;
 
 import net.okocraft.box.api.model.user.BoxUser;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -17,13 +16,4 @@ public interface UserStockHolder extends StockHolder {
      * @return the owner of this holder
      */
     @NotNull BoxUser getUser();
-
-    /**
-     * Checks if the owner of this holder is online.
-     *
-     * @return whether the owner of this holder is online or not
-     */
-    @Deprecated(forRemoval = true)
-    @ApiStatus.ScheduledForRemoval(inVersion = "4.2.0")
-    boolean isOnline();
 }

@@ -3,7 +3,6 @@ package net.okocraft.box.core.model.stock;
 import net.okocraft.box.api.model.stock.StockData;
 import net.okocraft.box.api.model.stock.UserStockHolder;
 import net.okocraft.box.api.model.user.BoxUser;
-import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -36,10 +35,5 @@ public class UserStockHolderImpl extends AbstractStockHolder implements UserStoc
     @Override
     public @NotNull BoxUser getUser() {
         return user;
-    }
-
-    @Override
-    public boolean isOnline() {
-        return Bukkit.getPlayer(user.getUUID()) != null;
     }
 }
