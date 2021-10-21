@@ -18,7 +18,9 @@ import static net.okocraft.box.api.transaction.TransactionResultType.NOT_FOUND;
 import static net.okocraft.box.api.transaction.TransactionResultType.WITHDREW;
 
 /**
- * A class for transacting with inventory. (ALPHA VERSION)
+ * A class for transacting with inventory.
+ * <p>
+ * All methods of this class must be called in the server main thread.
  */
 public final class InventoryTransaction {
 
