@@ -1,6 +1,5 @@
 package net.okocraft.box.core.storage.implementations.yaml;
 
-import com.github.siroshun09.configapi.yaml.YamlConfiguration;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.model.stock.StockData;
 import net.okocraft.box.api.model.stock.UserStockHolder;
@@ -8,12 +7,17 @@ import net.okocraft.box.api.model.user.BoxUser;
 import net.okocraft.box.core.model.stock.UserStockHolderImpl;
 import net.okocraft.box.core.storage.model.stock.StockStorage;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.Objects;
+import java.util.UUID;
 
 class YamlStockStorage implements StockStorage {
 
@@ -58,31 +62,13 @@ class YamlStockStorage implements StockStorage {
             return new UserStockHolderImpl(user);
         }
 
-        var file = YamlConfiguration.create(filePath);
+        var loadedData = new ArrayList<StockData>(50);
 
-        file.load();
-
-        var keys = file.getKeyList();
-        var loadedData = new ArrayList<StockData>(keys.size());
-
-        for (var key : keys) {
-            int id;
-
-            try {
-                id = Integer.parseInt(key);
-            } catch (NumberFormatException e) {
-                BoxProvider.get().getLogger().warning("Could not parse key to id: " + key + " (" + user.getUUID() + ")");
-                continue;
-            }
-
-            var item = BoxProvider.get().getItemManager().getBoxItem(id);
-
-            if (item.isEmpty()) {
-                BoxProvider.get().getLogger().warning("Unknown id: " + id + " (" + user.getUUID() + ")");
-                continue;
-            }
-
-            loadedData.add(new StockData(item.get(), file.getInteger(key)));
+        try (var reader = Files.newBufferedReader(filePath, StandardCharsets.UTF_8)) {
+            reader.lines()
+                    .map(line -> readLine(user.getUUID(), line))
+                    .filter(Objects::nonNull)
+                    .forEach(loadedData::add);
         }
 
         return new UserStockHolderImpl(user, loadedData);
@@ -90,19 +76,61 @@ class YamlStockStorage implements StockStorage {
 
     @Override
     public void saveUserStockHolder(@NotNull UserStockHolder stockHolder) throws Exception {
-        var file = YamlConfiguration.create(stockDirectory.resolve(stockHolder.getUser().getUUID() + ".yml"));
+        var file = stockDirectory.resolve(stockHolder.getUser().getUUID() + ".yml");
 
-        for (var stock : stockHolder.toStockDataCollection()) {
-            var key = String.valueOf(stock.item().getInternalId());
-            int amount = stock.amount();
+        var builder = new StringBuilder(20);
 
-            if (0 < amount) {
-                file.set(key, amount);
-            } else {
-                file.set(key, null);
+        try (var writer =
+                     Files.newBufferedWriter(file, StandardCharsets.UTF_8, StandardOpenOption.CREATE,
+                             StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING)) {
+            for (var stock : stockHolder.toStockDataCollection()) {
+                if (0 < stock.amount()) {
+                    builder.append('\'')
+                            .append(stock.item().getInternalId())
+                            .append('\'')
+                            .append(':')
+                            .append(' ')
+                            .append(stock.amount())
+                            .append(System.lineSeparator());
+                    writer.write(builder.toString());
+                    builder.setLength(0);
+                }
             }
         }
+    }
 
-        file.save();
+    private @Nullable StockData readLine(@NotNull UUID uuid, @NotNull String line) {
+        if (line.isEmpty() || line.equals("{}")) {
+            return null;
+        }
+
+        int itemId;
+
+        try {
+            int start = line.indexOf('\'') + 1;
+            int end = start == 1 ? line.indexOf('\'', start) : line.indexOf(":");
+            itemId = Integer.parseInt(line.substring(start, end));
+        } catch (Exception e) {
+            BoxProvider.get().getLogger().warning("Could not parse stock data: " + line + " (" + uuid + ")");
+            return null;
+        }
+
+        var item = BoxProvider.get().getItemManager().getBoxItem(itemId);
+
+        if (item.isEmpty()) {
+            BoxProvider.get().getLogger().warning("Unknown id: " + itemId + " (" + uuid + ")");
+            return null;
+        }
+
+        int amount;
+
+        try {
+            amount = Integer.parseInt(line.substring(line.lastIndexOf(":") + 2));
+        } catch (Exception e) {
+            BoxProvider.get().getLogger().warning("Could not parse stock data: " + line + " (" + uuid + ")");
+            return null;
+        }
+
+        return new StockData(item.get(), amount);
     }
 }
