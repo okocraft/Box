@@ -7,18 +7,18 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
 public class AutoStoreSettingContainer {
 
     public static final AutoStoreSettingContainer INSTANCE = new AutoStoreSettingContainer();
 
-    private final Map<UUID, AutoStoreSetting> settingMap = new HashMap<>();
+    private final Map<UUID, AutoStoreSetting> settingMap = new ConcurrentHashMap<>();
 
     public @NotNull AutoStoreSetting get(@NotNull Player player) {
         return Optional.ofNullable(settingMap.get(player.getUniqueId()))
