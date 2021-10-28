@@ -39,10 +39,11 @@ public class MasterTable {
         AutoStoreSetting autoStoreSetting;
 
         var playerMap = BoxProvider.get().getBoxPlayerMap();
+        var container = AutoStoreSettingContainer.INSTANCE;
 
         if (player != null && playerMap.isLoaded(player)) {
             stockHolder = playerMap.get(player).getUserStockHolder();
-            autoStoreSetting = AutoStoreSettingContainer.INSTANCE.get(player);
+            autoStoreSetting = container.isLoaded(player) ? container.get(player) : new AutoStoreSetting(user.getUUID());
         } else {
             stockHolder = BoxProvider.get().getStockManager().loadUserStock(user).join();
             autoStoreSetting = new AutoStoreSetting(user.getUUID());
@@ -95,7 +96,7 @@ public class MasterTable {
         autoStoreMigrator.finish();
 
         if (autoStoreMigrator.shouldSave()) {
-            AutoStoreSettingContainer.INSTANCE.save(autoStoreSetting).join();
+            container.save(autoStoreSetting).join();
         }
     }
 

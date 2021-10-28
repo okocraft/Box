@@ -20,6 +20,10 @@ public class AutoStoreSettingContainer {
 
     private final Map<UUID, AutoStoreSetting> settingMap = new ConcurrentHashMap<>();
 
+    public boolean isLoaded(@NotNull Player player) {
+        return settingMap.containsKey(player.getUniqueId());
+    }
+
     public @NotNull AutoStoreSetting get(@NotNull Player player) {
         return Optional.ofNullable(settingMap.get(player.getUniqueId()))
                 .orElseThrow(() -> new IllegalStateException("player is not loaded (" + player.getName() + ")"));
