@@ -21,7 +21,7 @@ public class BoxStockManager implements StockManager {
 
     public BoxStockManager(@NotNull StockStorage stockStorage) {
         this.stockStorage = stockStorage;
-        this.executor = InternalExecutors.newSingleThreadExecutor("Stock-Manager");
+        this.executor = InternalExecutors.newSingleThreadExecutor("Stock Manager");
     }
 
     @Override

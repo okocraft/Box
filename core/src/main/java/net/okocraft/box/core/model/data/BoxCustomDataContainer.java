@@ -17,7 +17,7 @@ public class BoxCustomDataContainer implements CustomDataContainer {
 
     public BoxCustomDataContainer(@NotNull CustomDataStorage customDataStorage) {
         this.customDataStorage = customDataStorage;
-        this.executor = InternalExecutors.newSingleThreadExecutor("Custom-Data");
+        this.executor = InternalExecutors.newSingleThreadExecutor("Custom Data");
     }
 
     @Override

@@ -11,7 +11,8 @@ import java.util.concurrent.TimeUnit;
 
 public final class InternalExecutors {
 
-    private static final String EXECUTOR_PREFIX = "box-";
+    private static final String EXECUTOR_PREFIX = "Box ";
+    private static final String EXECUTOR_SUFFIX = " Thread";
     private static final Collection<ExecutorService> CREATED_EXECUTORS = new HashSet<>();
 
     private static boolean IS_SHUTDOWN = false;

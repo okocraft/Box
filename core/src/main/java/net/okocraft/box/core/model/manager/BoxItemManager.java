@@ -35,7 +35,7 @@ public class BoxItemManager implements ItemManager {
 
     public BoxItemManager(@NotNull ItemStorage itemStorage) {
         this.itemStorage = itemStorage;
-        this.executor = InternalExecutors.newSingleThreadExecutor("Item-Manager");
+        this.executor = InternalExecutors.newSingleThreadExecutor("Item Manager");
     }
 
     @Override
