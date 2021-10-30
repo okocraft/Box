@@ -1,4 +1,4 @@
-name: Maven Deployment
+name: Gradle Deployment
 on:
   push:
     branches:
@@ -27,12 +27,12 @@ jobs:
         if: ${{ github.ref == 'refs/heads/v4/master' }}
         run: |
           rm -rf staging/release
-          mv target/site/apidocs staging/release
+          mv build/docs/aggregateJavadoc staging/release
       - name: Move Javadoc pages to staging directory (snapshot)
         if: ${{ github.ref == 'refs/heads/v4/develop' }}
         run: |
           rm -rf staging/snapshot
-          mv target/site/apidocs staging/snapshot
+          mv build/docs/aggregateJavadoc staging/snapshot
       - name: Create top and not-found pages
         run: |
           cp -f assets/gh-pages.html staging/index.html
