@@ -17,6 +17,12 @@ dependencies {
     implementation(project(":stick"))
 }
 
+tasks.named<Copy>("processResources") {
+    filesMatching("plugin.yml") {
+        expand("projectVersion" to project.version)
+    }
+}
+
 tasks.named<ShadowJar>("shadowJar") {
     minimize()
     archiveFileName.set("Box-${project.version}.jar")
