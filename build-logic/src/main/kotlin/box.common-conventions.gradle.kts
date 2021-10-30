@@ -5,8 +5,6 @@ plugins {
     id("box.publication")
 }
 
-group = "net.okocraft.box"
-
 java {
     sourceCompatibility = JavaVersion.VERSION_16
     targetCompatibility = JavaVersion.VERSION_16
