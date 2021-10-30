@@ -4,6 +4,7 @@ on:
     branches:
       - "v4/master"
       - "v4/develop"
+      - "build/move-to-gradle"
 
 jobs:
   build:
@@ -15,11 +16,13 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '16'
-          cache: 'maven'
+          cache: 'gradle'
       - name: Deploy to staging directory
         run: |
-          mvn clean
-          mvn -B deploy --file pom.xml
+          chmod +x ./gradlew
+          ./gradlew clean
+          ./gradlew publish
+          ./gradlew aggregateJavadoc
       - name: Move Javadoc pages to staging directory (release)
         if: ${{ github.ref == 'refs/heads/v4/master' }}
         run: |
