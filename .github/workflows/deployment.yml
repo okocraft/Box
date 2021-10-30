@@ -29,7 +29,7 @@ jobs:
           rm -rf staging/release
           mv build/docs/aggregateJavadoc staging/release
       - name: Move Javadoc pages to staging directory (snapshot)
-        if: ${{ github.ref == 'refs/heads/v4/develop' }}
+        #if: ${{ github.ref == 'refs/heads/v4/develop' }}
         run: |
           rm -rf staging/snapshot
           mv build/docs/aggregateJavadoc staging/snapshot
