@@ -4,7 +4,6 @@ on:
     branches:
       - "v4/master"
       - "v4/develop"
-      - "build/move-to-gradle"
 
 jobs:
   build:
@@ -29,7 +28,7 @@ jobs:
           rm -rf staging/release
           mv build/docs/aggregateJavadoc staging/release
       - name: Move Javadoc pages to staging directory (snapshot)
-        #if: ${{ github.ref == 'refs/heads/v4/develop' }}
+        if: ${{ github.ref == 'refs/heads/v4/develop' }}
         run: |
           rm -rf staging/snapshot
           mv build/docs/aggregateJavadoc staging/snapshot
