@@ -1,5 +1,6 @@
 package net.okocraft.box.feature.stick.listener;
 
+import com.destroystokyo.paper.MaterialTags;
 import com.github.siroshun09.configapi.api.value.ConfigValue;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.feature.stick.item.BoxStickItem;
@@ -71,8 +72,15 @@ public class StickListener implements Listener {
             return;
         }
 
-        var inHand = event.getItemInHand();
         var mainHandItem = player.getInventory().getItemInMainHand();
+        var material = mainHandItem.getType();
+
+        if (material == Material.FLINT_AND_STEEL || MaterialTags.AXES.isTagged(material) ||
+                MaterialTags.HOES.isTagged(material) || MaterialTags.SHOVELS.isTagged(material)) {
+            return;
+        }
+
+        var inHand = event.getItemInHand();
 
         if (inHand.equals(mainHandItem) && tryConsumingStock(player, mainHandItem)) {
             player.getInventory().setItemInMainHand(mainHandItem.clone());
