@@ -117,7 +117,7 @@ public class BoxItemManager implements ItemManager {
             itemMap.put(copied, customItem);
             updateItemNameCache();
 
-            BoxProvider.get().getEventBus().callEvent(new CustomItemRegisterEvent(customItem));
+            BoxProvider.get().getEventBus().callEventAsync(new CustomItemRegisterEvent(customItem));
 
             return customItem;
         }, executor);
@@ -153,7 +153,7 @@ public class BoxItemManager implements ItemManager {
 
             updateItemNameCache();
 
-            BoxProvider.get().getEventBus().callEvent(new CustomItemRenameEvent(internal, previousName));
+            BoxProvider.get().getEventBus().callEventAsync(new CustomItemRenameEvent(internal, previousName));
 
             return internal;
         }, executor);

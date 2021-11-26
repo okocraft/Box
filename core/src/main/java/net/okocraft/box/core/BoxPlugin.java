@@ -69,7 +69,7 @@ public class BoxPlugin implements BoxAPI {
     private final TranslationDirectory translationDirectory;
     private final DebugListener debugListener = new DebugListener();
 
-    private final EventBus eventBus = EventBus.newEventBus();
+    private final EventBus eventBus = EventBus.newEventBus(InternalExecutors.getEventExecutor());
     private final BoxTaskFactory taskFactory = new BoxTaskFactory();
 
     private final BoxCommandImpl boxCommand = new BoxCommandImpl();

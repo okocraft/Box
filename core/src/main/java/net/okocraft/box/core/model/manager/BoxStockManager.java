@@ -48,10 +48,10 @@ public class BoxStockManager implements StockManager {
         return CompletableFuture.runAsync(() -> {
             try {
                 stockStorage.saveUserStockHolder(stockHolder);
-                BoxProvider.get().getEventBus().callEvent(new StockHolderSaveEvent(stockHolder));
             } catch (Exception e) {
                 throw new RuntimeException("Could not save user stock holder (" + stockHolder.getUser().getUUID() + ")", e);
             }
+            BoxProvider.get().getEventBus().callEvent(new StockHolderSaveEvent(stockHolder));
         }, executor);
     }
 }

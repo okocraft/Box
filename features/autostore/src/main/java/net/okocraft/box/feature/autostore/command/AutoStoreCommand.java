@@ -197,7 +197,7 @@ public class AutoStoreCommand extends AbstractCommand {
     }
 
     private void callEvent(@NotNull AutoStoreSetting setting) {
-        BoxProvider.get().getEventBus().callEvent(new AutoStoreSettingChangeEvent(setting));
+        BoxProvider.get().getEventBus().callEventAsync(new AutoStoreSettingChangeEvent(setting));
     }
 
     private void enableAutoStore(@NotNull AutoStoreSetting setting, @NotNull Player player) {
