@@ -69,6 +69,14 @@ repositories {
 }
 ```
 
+```kotlin
+repositories {
+    maven {
+        url = uri("https://okocraft.github.io/Box/maven/")
+    }
+}
+```
+
 For snapshot version, use https://okocraft.github.io/Box/maven-snapshot/
 
 #### 2. Add to dependencies
@@ -85,5 +93,11 @@ For snapshot version, use https://okocraft.github.io/Box/maven-snapshot/
 ```gradle
 dependencies {
     compileOnly 'net.okocraft.box:api:4.2.0-SNAPSHOT'
+}
+```
+
+```kotlin
+dependencies {
+    compileOnly("net.okocraft.box:api:4.2.0-SNAPSHOT")
 }
 ```
