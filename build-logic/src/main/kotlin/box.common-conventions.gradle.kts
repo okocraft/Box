@@ -1,6 +1,6 @@
 plugins {
     `java-library`
-    `maven-publish`
+
     id("box.dependencies")
     id("box.publication")
 }

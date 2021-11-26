@@ -20,7 +20,7 @@ jobs:
         run: |
           chmod +x ./gradlew
           ./gradlew clean
-          ./gradlew publish
+          ./gradlew publish -P box.publish=true
           ./gradlew aggregateJavadoc
       - name: Move Javadoc pages to staging directory (release)
         if: ${{ github.ref == 'refs/heads/v4/master' }}
