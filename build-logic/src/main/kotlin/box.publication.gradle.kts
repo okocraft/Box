@@ -19,8 +19,8 @@ tasks {
         opts.encoding = Charsets.UTF_8.name()
         opts.links(
             "https://papermc.io/javadocs/paper/1.17/",
-            "https://jd.adventure.kyori.net/api/4.9.2/",
-            "https://javadoc.io/doc/org.jetbrains/annotations/22.0.0/",
+            "https://jd.adventure.kyori.net/api/4.9.3/",
+            "https://javadoc.io/doc/org.jetbrains/annotations/23.0.0/",
             "https://siroshun09.github.io/ConfigAPI/",
             "https://siroshun09.github.io/Event4J/",
             "https://siroshun09.github.io/TranslationLoader/"
