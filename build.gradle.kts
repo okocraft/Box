@@ -6,6 +6,7 @@ tasks {
     aggregateJavadoc {
         sequenceOf(
             "api/**",
+            "feature/autostore/event/AutoStoreSettingChangeEvent.java",
             "feature/autostore/model/**",
             "feature/category/CategoryHolder.java",
             "feature/category/model/Category.java",
