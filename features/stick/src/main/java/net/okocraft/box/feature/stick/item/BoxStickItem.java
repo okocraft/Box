@@ -21,7 +21,7 @@ import static net.kyori.adventure.text.Component.translatable;
 import static net.kyori.adventure.text.format.NamedTextColor.BLUE;
 import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
 
-public class BoxStickItem {
+public record BoxStickItem(NamespacedKey key) {
 
     private static final NamespacedKey V3_STICK_KEY = BoxProvider.get().createNamespacedKey("boxstick");
 
@@ -40,13 +40,7 @@ public class BoxStickItem {
             empty()
     );
 
-    private final NamespacedKey key;
-
-    public BoxStickItem(@NotNull NamespacedKey key) {
-        this.key = key;
-    }
-
-    public ItemStack create(@NotNull Locale locale) {
+    public @NotNull ItemStack create(@NotNull Locale locale) {
         var item = new ItemStack(Material.STICK);
 
         item.editMeta(meta -> makeBoxStick(locale, meta));

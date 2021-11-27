@@ -21,7 +21,7 @@ public class BoxTaskFactory implements TaskFactory {
             Math.min(Runtime.getRuntime().availableProcessors(), 4),
             new ThreadFactoryBuilder()
                     .setDaemon(true)
-                    .setNameFormat("box-worker-%d")
+                    .setNameFormat("Box Worker - #%d")
                     .setUncaughtExceptionHandler(this::reportUncaughtException)
                     .build()
     );

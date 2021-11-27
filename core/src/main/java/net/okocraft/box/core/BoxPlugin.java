@@ -19,7 +19,6 @@ import net.okocraft.box.api.model.manager.StockManager;
 import net.okocraft.box.api.model.manager.UserManager;
 import net.okocraft.box.api.player.BoxPlayerMap;
 import net.okocraft.box.api.taskfactory.TaskFactory;
-import net.okocraft.box.api.util.ExecutorProvider;
 import net.okocraft.box.core.command.BoxAdminCommandImpl;
 import net.okocraft.box.core.command.BoxCommandImpl;
 import net.okocraft.box.core.config.Settings;
@@ -37,7 +36,6 @@ import net.okocraft.box.core.storage.Storage;
 import net.okocraft.box.core.storage.implementations.yaml.YamlStorage;
 import net.okocraft.box.core.task.AutoSaveTask;
 import net.okocraft.box.core.taskfactory.BoxTaskFactory;
-import net.okocraft.box.core.util.executor.BoxExecutorProvider;
 import net.okocraft.box.core.util.executor.InternalExecutors;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
@@ -71,9 +69,8 @@ public class BoxPlugin implements BoxAPI {
     private final TranslationDirectory translationDirectory;
     private final DebugListener debugListener = new DebugListener();
 
-    private final EventBus eventBus = EventBus.newEventBus();
+    private final EventBus eventBus = EventBus.newEventBus(InternalExecutors.getEventExecutor());
     private final BoxTaskFactory taskFactory = new BoxTaskFactory();
-    private final BoxExecutorProvider executorProvider = new BoxExecutorProvider();
 
     private final BoxCommandImpl boxCommand = new BoxCommandImpl();
     private final BoxAdminCommandImpl boxAdminCommand = new BoxAdminCommandImpl();
@@ -351,11 +348,6 @@ public class BoxPlugin implements BoxAPI {
     @Override
     public @NotNull TaskFactory getTaskFactory() {
         return taskFactory;
-    }
-
-    @Override
-    public @NotNull ExecutorProvider getExecutorProvider() {
-        return executorProvider;
     }
 
     @Override

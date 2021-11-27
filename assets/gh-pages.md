@@ -18,12 +18,22 @@
 </repository>
 ```
 
-#### Gradle
+#### Gradle (Groovy DSL)
 
 ```
 repositories {
     maven {
         url 'https://okocraft.github.io/Box/maven/'
+    }
+}
+```
+
+#### Gradle (Kotlin DSL)
+
+```kotlin
+repositories {
+    maven {
+        url = uri("https://okocraft.github.io/Box/maven/")
     }
 }
 ```
@@ -39,7 +49,7 @@ repositories {
 </repository>
 ```
 
-#### Gradle
+#### Gradle (Groovy DSL)
 
 ```
 repositories {
@@ -48,3 +58,15 @@ repositories {
     }
 }
 ```
+
+#### Gradle (Kotlin DSL)
+
+```kotlin
+repositories {
+    maven {
+        url = uri("https://okocraft.github.io/Box/maven-snapshot/")
+    }
+}
+```
+
+<!-- rendering tool https://til.simonwillison.net/tools/render-markdown -->

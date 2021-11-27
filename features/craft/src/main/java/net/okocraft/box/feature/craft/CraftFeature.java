@@ -5,16 +5,12 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.feature.AbstractBoxFeature;
 import net.okocraft.box.api.feature.Reloadable;
-import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.feature.craft.command.CraftCommand;
 import net.okocraft.box.feature.craft.loader.RecipeLoader;
 import net.okocraft.box.feature.craft.mode.CraftMode;
-import net.okocraft.box.feature.craft.model.RecipeHolder;
 import net.okocraft.box.feature.gui.api.mode.ClickModeRegistry;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Map;
 
 public class CraftFeature extends AbstractBoxFeature implements Reloadable {
 

@@ -33,7 +33,14 @@ public class AutoStoreCommand extends AbstractCommand {
             return;
         }
 
-        var setting = AutoStoreSettingContainer.INSTANCE.get(player);
+        var container = AutoStoreSettingContainer.INSTANCE;
+
+        if (!container.isLoaded(player)) {
+            sender.sendMessage(AutoStoreMessage.ERROR_FAILED_TO_LOAD_SETTINGS);
+            return;
+        }
+
+        var setting = container.get(player);
 
         Boolean toggleAutoStore;
 
@@ -190,7 +197,7 @@ public class AutoStoreCommand extends AbstractCommand {
     }
 
     private void callEvent(@NotNull AutoStoreSetting setting) {
-        BoxProvider.get().getEventBus().callEvent(new AutoStoreSettingChangeEvent(setting));
+        BoxProvider.get().getEventBus().callEventAsync(new AutoStoreSettingChangeEvent(setting));
     }
 
     private void enableAutoStore(@NotNull AutoStoreSetting setting, @NotNull Player player) {

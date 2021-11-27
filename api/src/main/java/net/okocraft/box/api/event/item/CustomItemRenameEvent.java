@@ -1,5 +1,6 @@
 package net.okocraft.box.api.event.item;
 
+import net.okocraft.box.api.event.AsyncEvent;
 import net.okocraft.box.api.model.item.BoxCustomItem;
 import org.jetbrains.annotations.NotNull;
 
@@ -8,7 +9,7 @@ import java.util.Objects;
 /**
  * An event that is called when a new {@link BoxCustomItem} has been renamed.
  */
-public class CustomItemRenameEvent extends ItemEvent {
+public class CustomItemRenameEvent extends ItemEvent implements AsyncEvent {
 
     private final BoxCustomItem renamedItem;
     private final String previousName;

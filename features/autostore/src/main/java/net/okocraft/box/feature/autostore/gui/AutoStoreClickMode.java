@@ -42,28 +42,37 @@ public class AutoStoreClickMode implements BoxItemClickMode {
     @Override
     public void onClick(@NotNull Context context) {
         var player = context.clicker();
+        var container = AutoStoreSettingContainer.INSTANCE;
 
-        var playerSetting = AutoStoreSettingContainer.INSTANCE.get(player);
-        var perItemSetting = playerSetting.getPerItemModeSetting();
+        if (container.isLoaded(player)) {
+            var playerSetting = container.get(player);
+            var perItemSetting = playerSetting.getPerItemModeSetting();
 
-        var enabled = !perItemSetting.isEnabled(context.item());
+            var enabled = !perItemSetting.isEnabled(context.item());
 
-        perItemSetting.setEnabled(context.item(), enabled);
+            perItemSetting.setEnabled(context.item(), enabled);
 
-        playerSetting.setEnabled(true);
-        playerSetting.setAllMode(false);
+            playerSetting.setEnabled(true);
+            playerSetting.setAllMode(false);
 
-        var sound = enabled ? Sound.BLOCK_WOODEN_BUTTON_CLICK_ON : Sound.BLOCK_WOODEN_BUTTON_CLICK_OFF;
-        player.playSound(player.getLocation(), sound, 100f, 1.5f);
+            var sound = enabled ? Sound.BLOCK_WOODEN_BUTTON_CLICK_ON : Sound.BLOCK_WOODEN_BUTTON_CLICK_OFF;
+            player.playSound(player.getLocation(), sound, 100f, 1.5f);
+        }
     }
 
     @Override
     public void applyIconMeta(@NotNull Player viewer, @NotNull BoxItem item, @NotNull ItemMeta target) {
+        var container = AutoStoreSettingContainer.INSTANCE;
+
+        if (!container.isLoaded(viewer)) {
+            return;
+        }
+
         var newLore = Optional.ofNullable(target.lore()).map(ArrayList::new).orElseGet(ArrayList::new);
 
         newLore.add(Component.empty());
 
-        var enabled = AutoStoreSettingContainer.INSTANCE.get(viewer).getPerItemModeSetting().isEnabled(item);
+        var enabled = container.get(viewer).getPerItemModeSetting().isEnabled(item);
 
         newLore.add(TranslationUtil.render(AutoStoreMenuDisplays.AUTOSTORE_MODE_LORE.apply(enabled), viewer));
 
@@ -79,7 +88,11 @@ public class AutoStoreClickMode implements BoxItemClickMode {
 
     @Override
     public @NotNull AdditionalButton createAdditionalButton(@NotNull Player viewer, @NotNull Menu currentMenu) {
-        return new AutoStoreSettingMenuButton(AutoStoreSettingContainer.INSTANCE.get(viewer), currentMenu);
+        if (AutoStoreSettingContainer.INSTANCE.isLoaded(viewer)) {
+            return new AutoStoreSettingMenuButton(AutoStoreSettingContainer.INSTANCE.get(viewer), currentMenu);
+        } else {
+            return new AutoStoreSettingMenuButton(currentMenu);
+        }
     }
 
     private static class AutoStoreSettingMenuButton extends AdditionalButton {
@@ -89,6 +102,11 @@ public class AutoStoreClickMode implements BoxItemClickMode {
 
         private AutoStoreSettingMenuButton(@NotNull AutoStoreSetting setting, @NotNull Menu backTo) {
             this.setting = setting;
+            this.backTo = backTo;
+        }
+
+        private AutoStoreSettingMenuButton(@NotNull Menu backTo) {
+            this.setting = null;
             this.backTo = backTo;
         }
 
@@ -116,7 +134,9 @@ public class AutoStoreClickMode implements BoxItemClickMode {
 
         @Override
         public final void onClick(@NotNull Player clicker, @NotNull ClickType clickType) {
-            MenuOpener.open(new AutoStoreSettingMenu(setting, backTo), clicker);
+            if (setting != null) {
+                MenuOpener.open(new AutoStoreSettingMenu(setting, backTo), clicker);
+            }
         }
     }
 }

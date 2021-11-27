@@ -51,12 +51,13 @@ public class ItemListener implements Listener {
         }
 
         var playerMap = BoxProvider.get().getBoxPlayerMap();
+        var container = AutoStoreSettingContainer.INSTANCE;
 
-        if (!playerMap.isLoaded(player)) {
+        if (!playerMap.isLoaded(player) || !container.isLoaded(player)) {
             return false;
         }
 
-        var setting = AutoStoreSettingContainer.INSTANCE.get(player);
+        var setting = container.get(player);
 
         if (!setting.isEnabled() || !player.hasPermission("box.autostore")) {
             return false;

@@ -19,7 +19,7 @@ public class BoxUserManager implements UserManager {
 
     public BoxUserManager(@NotNull UserStorage userStorage) {
         this.userStorage = userStorage;
-        this.executor = InternalExecutors.newSingleThreadExecutor("User-Manager");
+        this.executor = InternalExecutors.newSingleThreadExecutor("User Manager");
     }
 
     @Override

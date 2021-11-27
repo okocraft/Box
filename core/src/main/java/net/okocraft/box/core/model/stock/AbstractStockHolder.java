@@ -44,7 +44,7 @@ public abstract class AbstractStockHolder implements StockHolder {
         var previous = stock.get();
         stock.set(amount);
 
-        BoxProvider.get().getEventBus().callEvent(new StockSetEvent(this, item, amount, previous));
+        BoxProvider.get().getEventBus().callEventAsync(new StockSetEvent(this, item, amount, previous));
     }
 
     @Override
@@ -56,7 +56,7 @@ public abstract class AbstractStockHolder implements StockHolder {
     public int increase(@NotNull BoxItem item, int increment) {
         var amount = getStock(item).addAndGet(increment);
 
-        BoxProvider.get().getEventBus().callEvent(new StockIncreaseEvent(this, item, increment, amount));
+        BoxProvider.get().getEventBus().callEventAsync(new StockIncreaseEvent(this, item, increment, amount));
 
         if (amount < 0) {
             BoxProvider.get().getLogger()
@@ -75,7 +75,7 @@ public abstract class AbstractStockHolder implements StockHolder {
     public int decrease(@NotNull BoxItem item, int decrement) {
         var amount = getStock(item).addAndGet(-decrement);
 
-        BoxProvider.get().getEventBus().callEvent(new StockDecreaseEvent(this, item, decrement, amount));
+        BoxProvider.get().getEventBus().callEventAsync(new StockDecreaseEvent(this, item, decrement, amount));
 
         if (amount < 0) {
             BoxProvider.get().getLogger()

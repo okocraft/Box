@@ -21,7 +21,7 @@ public class BoxStockManager implements StockManager {
 
     public BoxStockManager(@NotNull StockStorage stockStorage) {
         this.stockStorage = stockStorage;
-        this.executor = InternalExecutors.newSingleThreadExecutor("Stock-Manager");
+        this.executor = InternalExecutors.newSingleThreadExecutor("Stock Manager");
     }
 
     @Override
@@ -48,10 +48,10 @@ public class BoxStockManager implements StockManager {
         return CompletableFuture.runAsync(() -> {
             try {
                 stockStorage.saveUserStockHolder(stockHolder);
-                BoxProvider.get().getEventBus().callEvent(new StockHolderSaveEvent(stockHolder));
             } catch (Exception e) {
                 throw new RuntimeException("Could not save user stock holder (" + stockHolder.getUser().getUUID() + ")", e);
             }
+            BoxProvider.get().getEventBus().callEvent(new StockHolderSaveEvent(stockHolder));
         }, executor);
     }
 }

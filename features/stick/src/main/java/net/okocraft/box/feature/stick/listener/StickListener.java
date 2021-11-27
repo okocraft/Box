@@ -60,21 +60,29 @@ public class StickListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onBlockPlace(@NotNull BlockPlaceEvent event) {
+        if (event.getHand() != EquipmentSlot.HAND) {
+            return;
+        }
+
         // ignore POWDER_SNOW because it cannot be replenished
         if (event.getBlockPlaced().getType() == Material.POWDER_SNOW) {
             return;
         }
 
         var player = event.getPlayer();
+        var mainHandItem = player.getInventory().getItemInMainHand();
+
+        // ignore tools (flint and steel, axes, hoes, and shovels)
+        if (0 < mainHandItem.getType().getMaxDurability()) {
+            return;
+        }
 
         if (!checkPlayerCondition(player, "box.stick.block")) {
             return;
         }
 
-        var inHand = event.getItemInHand();
-        var mainHandItem = player.getInventory().getItemInMainHand();
-
-        if (inHand.equals(mainHandItem) && tryConsumingStock(player, mainHandItem)) {
+        if (event.getItemInHand().equals(mainHandItem) &&
+                tryConsumingStock(player, mainHandItem)) {
             player.getInventory().setItemInMainHand(mainHandItem.clone());
         }
     }
@@ -147,7 +155,8 @@ public class StickListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onShoot(@NotNull EntityShootBowEvent event) {
-        if (!(event.getEntity() instanceof Player player) ||
+        if (event.getHand() != EquipmentSlot.HAND ||
+                !(event.getEntity() instanceof Player player) ||
                 !checkPlayerCondition(player, "box.stick.arrow") ||
                 !(event.getProjectile() instanceof Arrow arrow)) {
             return;
