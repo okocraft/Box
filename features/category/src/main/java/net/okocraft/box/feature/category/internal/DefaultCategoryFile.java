@@ -17,15 +17,14 @@ public final class DefaultCategoryFile {
     @SuppressWarnings("deprecation")
     private static @NotNull String getFilename() {
         var id = Bukkit.getUnsafe().getDataVersion();
-        var prefix = "categories_";
-        String filename;
+        String version;
 
         if (id <= 2730) { // ~ 1.17.x
-            filename = prefix + "1_17";
+            version = "1_17";
         } else { // 1.18 ~
-            filename = prefix + "1_18";
+            version = "1_18";
         }
 
-        return filename + ".yml";
+        return "categories_" + version + ".yml";
     }
 }
