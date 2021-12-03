@@ -16,3 +16,5 @@ tasks {
         (options as StandardJavadocDocletOptions).docTitle("Box-$version")
     }
 }
+
+/* cache version for gh-actions: 1 */
