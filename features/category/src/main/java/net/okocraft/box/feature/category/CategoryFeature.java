@@ -1,6 +1,5 @@
 package net.okocraft.box.feature.category;
 
-import com.github.siroshun09.configapi.api.util.ResourceUtils;
 import com.github.siroshun09.configapi.yaml.YamlConfiguration;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -9,9 +8,11 @@ import net.okocraft.box.api.feature.AbstractBoxFeature;
 import net.okocraft.box.api.feature.Reloadable;
 import net.okocraft.box.feature.category.internal.CategoryLoader;
 import net.okocraft.box.feature.category.internal.CustomItemListener;
+import net.okocraft.box.feature.category.internal.DefaultCategoryFile;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
+import java.nio.file.Files;
 import java.util.logging.Level;
 
 public class CategoryFeature extends AbstractBoxFeature implements Reloadable {
@@ -24,10 +25,10 @@ public class CategoryFeature extends AbstractBoxFeature implements Reloadable {
 
     @Override
     public void enable() {
-
-        try (var yaml =
-                     YamlConfiguration.create(BoxProvider.get().getPluginDirectory().resolve("categories.yml"))) {
-            ResourceUtils.copyFromJarIfNotExists(BoxProvider.get().getJar(), "categories.yml", yaml.getPath());
+        try (var yaml = YamlConfiguration.create(BoxProvider.get().getPluginDirectory().resolve("categories.yml"))) {
+            if (!Files.exists(yaml.getPath())) {
+                DefaultCategoryFile.copy(yaml.getPath());
+            }
 
             yaml.load();
 
