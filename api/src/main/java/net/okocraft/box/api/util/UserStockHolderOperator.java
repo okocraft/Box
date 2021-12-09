@@ -1,4 +1,4 @@
-package net.okocraft.box.feature.command.util;
+package net.okocraft.box.api.util;
 
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.model.stock.UserStockHolder;
@@ -10,7 +10,10 @@ import org.jetbrains.annotations.Nullable;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-public class UserStockHolderOperator {
+/**
+ * A utility class to get the UserStockHolder and do something with it.
+ */
+public final class UserStockHolderOperator {
 
     private final String argument;
     private boolean supportOffline = false;
@@ -21,29 +24,56 @@ public class UserStockHolderOperator {
         this.argument = argument;
     }
 
+    /**
+     * Creates a new {@link UserStockHolderOperator}.
+     *
+     * @param argument the argument
+     * @return a new {@link UserStockHolderOperator}
+     */
     @Contract(value = "_ -> new", pure = true)
     public static @NotNull UserStockHolderOperator create(@NotNull String argument) {
         return new UserStockHolderOperator(argument);
     }
 
+    /**
+     * Sets whether to support offline players.
+     *
+     * @param bool {@code true} to support offline players, {@code false} otherwise
+     * @return this builder
+     */
     @Contract(value = "_ -> this")
     public @NotNull UserStockHolderOperator supportOffline(boolean bool) {
         supportOffline = bool;
         return this;
     }
 
+    /**
+     * Sets the {@link Consumer} of the {@link UserStockHolder}.
+     *
+     * @param stockHolderConsumer the {@link Consumer} of the {@link UserStockHolder}
+     * @return this builder
+     */
     @Contract(value = "_ -> this")
     public @NotNull UserStockHolderOperator stockHolderOperator(@NotNull Consumer<UserStockHolder> stockHolderConsumer) {
         this.stockHolderConsumer = stockHolderConsumer;
         return this;
     }
 
+    /**
+     * Sets the {@link Consumer} of the argument that is called when the player is not found.
+     *
+     * @param argumentConsumer the {@link Consumer} of the argument
+     * @return this builder
+     */
     @Contract(value = "_ -> this")
     public @NotNull UserStockHolderOperator onNotFound(@NotNull Consumer<String> argumentConsumer) {
         this.argumentConsumer = argumentConsumer;
         return this;
     }
 
+    /**
+     * Runs this operator.
+     */
     public void run() {
         if (stockHolderConsumer == null) {
             return;
@@ -58,6 +88,11 @@ public class UserStockHolderOperator {
         }
     }
 
+    /**
+     * Gets the search result of the {@link UserStockHolder}.
+     *
+     * @return the search result of the {@link UserStockHolder}
+     */
     public @Nullable UserStockHolder getUserStockHolder() {
         UUID uuid = null;
 
