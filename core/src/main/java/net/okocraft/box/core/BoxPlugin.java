@@ -78,7 +78,6 @@ public class BoxPlugin implements BoxAPI {
     private final List<BoxFeature> features = new ArrayList<>();
 
     private final AutoSaveTask autoSaveTask = new AutoSaveTask();
-    private final StockHolderListener stockHolderListener = new StockHolderListener();
 
     private Storage storage;
     private BoxItemManager itemManager;
@@ -86,6 +85,8 @@ public class BoxPlugin implements BoxAPI {
     private BoxUserManager userManager;
     private BoxCustomDataContainer customDataContainer;
     private BoxPlayerMapImpl playerMap;
+
+    private StockHolderListener stockHolderListener;
 
     public BoxPlugin(@NotNull JavaPlugin plugin, @NotNull Path jarFile) {
         this.plugin = plugin;
@@ -168,6 +169,8 @@ public class BoxPlugin implements BoxAPI {
         Bukkit.getPluginManager().registerEvents(new PlayerConnectionListener(playerMap), plugin);
 
         autoSaveTask.start();
+
+        stockHolderListener = new StockHolderListener(stockManager);
         stockHolderListener.register();
 
         getLogger().info("Registering commands...");

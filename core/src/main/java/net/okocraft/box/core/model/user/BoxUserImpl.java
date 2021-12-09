@@ -36,4 +36,23 @@ public class BoxUserImpl implements BoxUser {
     public void setName(@NotNull String name) {
         this.name = Objects.requireNonNull(name);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        return o instanceof BoxUserImpl boxUser && uuid.equals(boxUser.uuid);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(uuid);
+    }
+
+    @Override
+    public String toString() {
+        return "BoxUserImpl{" +
+                "uuid=" + uuid +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }

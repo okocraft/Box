@@ -6,10 +6,14 @@ import net.okocraft.box.api.event.stockholder.StockHolderSaveEvent;
 import net.okocraft.box.api.model.manager.StockManager;
 import net.okocraft.box.api.model.stock.UserStockHolder;
 import net.okocraft.box.api.model.user.BoxUser;
+import net.okocraft.box.core.model.loader.UserStockHolderLoader;
 import net.okocraft.box.core.storage.model.stock.StockStorage;
 import net.okocraft.box.core.util.executor.InternalExecutors;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
@@ -18,6 +22,8 @@ public class BoxStockManager implements StockManager {
 
     private final StockStorage stockStorage;
     private final ExecutorService executor;
+
+    private final Map<BoxUser, UserStockHolderLoader> loaderMap = new HashMap<>();
 
     public BoxStockManager(@NotNull StockStorage stockStorage) {
         this.stockStorage = stockStorage;
@@ -29,15 +35,15 @@ public class BoxStockManager implements StockManager {
         Objects.requireNonNull(user);
 
         return CompletableFuture.supplyAsync(() -> {
-            UserStockHolder stockHolder;
-            try {
-                stockHolder = stockStorage.loadUserStockHolder(user);
-            } catch (Exception e) {
-                throw new RuntimeException("Could not load user stock holder (" + user.getUUID() + ")", e);
+            if (loaderMap.containsKey(user)) {
+                return loaderMap.get(user);
             }
 
-            BoxProvider.get().getEventBus().callEvent(new StockHolderLoadEvent(stockHolder));
-            return stockHolder;
+            var loader = new UserStockHolderLoader(user, this::loadUserStockHolder);
+            loaderMap.put(user, loader);
+            loader.load();
+
+            return loader;
         }, executor);
     }
 
@@ -53,5 +59,19 @@ public class BoxStockManager implements StockManager {
             }
             BoxProvider.get().getEventBus().callEvent(new StockHolderSaveEvent(stockHolder));
         }, executor);
+    }
+
+    public @NotNull Collection<UserStockHolderLoader> getUserStockHolderLoaders() {
+        return loaderMap.values();
+    }
+
+    private @NotNull UserStockHolder loadUserStockHolder(@NotNull BoxUser user) {
+        try {
+            var stockHolder = stockStorage.loadUserStockHolder(user);
+            BoxProvider.get().getEventBus().callEvent(new StockHolderLoadEvent(stockHolder));
+            return stockHolder;
+        } catch (Exception e) {
+            throw new RuntimeException("Could not load user stock holder (" + user.getUUID() + ")", e);
+        }
     }
 }

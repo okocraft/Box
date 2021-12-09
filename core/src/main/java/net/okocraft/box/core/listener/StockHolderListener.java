@@ -12,6 +12,7 @@ import net.okocraft.box.api.event.stockholder.StockHolderSaveEvent;
 import net.okocraft.box.api.model.stock.UserStockHolder;
 import net.okocraft.box.api.model.user.BoxUser;
 import net.okocraft.box.core.message.ErrorMessages;
+import net.okocraft.box.core.model.manager.BoxStockManager;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,6 +25,11 @@ public class StockHolderListener {
 
     private final Key listenerKey = Key.of(getClass().getSimpleName());
     private final List<UserStockHolder> modifiedStockHolders = new ArrayList<>();
+    private final BoxStockManager stockManager;
+
+    public StockHolderListener(@NotNull BoxStockManager stockManager) {
+        this.stockManager = stockManager;
+    }
 
     public void register() {
         var eventBus = BoxProvider.get().getEventBus();
@@ -72,6 +78,13 @@ public class StockHolderListener {
         modifiedStockHolders.clear();
 
         copied.forEach(this::save);
+
+        for (var loader : stockManager.getUserStockHolderLoaders()) {
+            if (Bukkit.getPlayer(loader.getUser().getUUID()) == null &&
+                    !modifiedStockHolders.contains(loader.getSource()) && loader.isLoaded()) {
+                loader.unload();
+            }
+        }
     }
 
     private void save(@NotNull UserStockHolder userStockHolder) {

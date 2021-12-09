@@ -9,6 +9,7 @@ import net.okocraft.box.api.model.user.BoxUser;
 import net.okocraft.box.api.player.BoxPlayer;
 import net.okocraft.box.api.player.BoxPlayerMap;
 import net.okocraft.box.core.message.ErrorMessages;
+import net.okocraft.box.core.model.loader.UserStockHolderLoader;
 import net.okocraft.box.core.model.user.BoxUserImpl;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -70,7 +71,6 @@ public class BoxPlayerMapImpl implements BoxPlayerMap {
 
         if (boxPlayer != null) {
             BoxProvider.get().getEventBus().callEvent(new PlayerUnloadEvent(boxPlayer));
-
             return stockManager.saveUserStock(boxPlayer.getUserStockHolder());
         } else {
             return CompletableFuture.completedFuture(null);
@@ -91,19 +91,16 @@ public class BoxPlayerMapImpl implements BoxPlayerMap {
 
     public void unloadAll() {
         for (var boxPlayer : playerMap.values()) {
-            BoxProvider.get().getEventBus().callEvent(new PlayerUnloadEvent(boxPlayer));
+            unloadAndSave(boxPlayer).exceptionally(e -> {
+                if (boxPlayer.getPlayer().isOnline()) {
+                    boxPlayer.getPlayer().sendMessage(ErrorMessages.ERROR_SAVE_PLAYER_DATA);
+                }
 
-            stockManager.saveUserStock(boxPlayer.getUserStockHolder())
-                    .exceptionallyAsync(e -> {
-                        if (boxPlayer.getPlayer().isOnline()) {
-                            boxPlayer.getPlayer().sendMessage(ErrorMessages.ERROR_SAVE_PLAYER_DATA);
-                        }
+                BoxProvider.get().getLogger().log(Level.SEVERE,
+                        "Could not save player data (" + boxPlayer.getName() + ")", e);
 
-                        BoxProvider.get().getLogger().log(Level.SEVERE,
-                                "Could not save player data (" + boxPlayer.getName() + ")", e);
-
-                        return null;
-                    });
+                return null;
+            });
         }
 
         playerMap.clear();
@@ -116,5 +113,18 @@ public class BoxPlayerMapImpl implements BoxPlayerMap {
                             "Could not save the uuid and name of player (" + user.getName() + ")", e);
                     return null;
                 });
+    }
+
+    private @NotNull CompletableFuture<Void> unloadAndSave(@NotNull BoxPlayer boxPlayer) {
+        BoxProvider.get().getEventBus().callEvent(new PlayerUnloadEvent(boxPlayer));
+
+        var stockHolder = boxPlayer.getUserStockHolder();
+
+        if (stockHolder instanceof UserStockHolderLoader loader) {
+            stockHolder = loader.getSource();
+            loader.unload();
+        }
+
+        return stockManager.saveUserStock(stockHolder);
     }
 }
