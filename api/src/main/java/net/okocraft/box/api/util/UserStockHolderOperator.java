@@ -11,7 +11,7 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 /**
- * A utility class to get the UserStockHolder and do something with it.
+ * A utility class to get the {@link UserStockHolder}. and do something with it.
  */
 public final class UserStockHolderOperator {
 
