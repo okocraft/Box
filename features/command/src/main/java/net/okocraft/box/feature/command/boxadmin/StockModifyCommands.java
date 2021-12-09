@@ -138,14 +138,7 @@ public class StockModifyCommands {
                     .supportOffline(true)
                     .stockHolderOperator(target -> {
                         int current = modifyStock(target, item.get(), amount);
-
-                        var targetPlayer = Bukkit.getPlayer(target.getUUID());
-
-                        if (targetPlayer == null) {
-                            BoxProvider.get().getStockManager().saveUserStock(target).join();
-                        }
-
-                        sendMessage(sender, targetPlayer, target.getName(), item.get(), amount, current);
+                        sendMessage(sender, Bukkit.getPlayer(target.getUUID()), target.getName(), item.get(), amount, current);
                     })
                     .onNotFound(name -> sender.sendMessage(GeneralMessage.ERROR_COMMAND_PLAYER_NOT_FOUND.apply(name)))
                     .run();
