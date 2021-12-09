@@ -18,7 +18,7 @@ public class PlayerStockHolderChangeEvent extends PlayerEvent implements AsyncEv
      * The constructor of a {@link PlayerStockHolderChangeEvent}.
      *
      * @param boxPlayer the player of this event
-     * @param previous the previous {@link StockHolder}
+     * @param previous  the previous {@link StockHolder}
      */
     public PlayerStockHolderChangeEvent(@NotNull BoxPlayer boxPlayer,
                                         @NotNull StockHolder previous) {
@@ -33,5 +33,27 @@ public class PlayerStockHolderChangeEvent extends PlayerEvent implements AsyncEv
      */
     public @NotNull StockHolder getPreviousStockHolder() {
         return previous;
+    }
+
+    @Override
+    public @NotNull String toDebugLog() {
+        return "PlayerStockHolderChangeEvent{" +
+                "uuid=" + getBoxPlayer().getUUID() +
+                ", name=" + getBoxPlayer().getName() +
+                ", previousStockholderUuid=" + previous.getUUID() +
+                ", previousStockHolderName=" + previous.getName() +
+                ", previousStockHolderClass=" + previous.getClass().getSimpleName() +
+                ", currentStockholderUuid=" + getBoxPlayer().getCurrentStockHolder().getUUID() +
+                ", currentStockHolderName=" + getBoxPlayer().getCurrentStockHolder().getName() +
+                ", currentStockHolderClass=" + getBoxPlayer().getCurrentStockHolder().getClass().getSimpleName() +
+                '}';
+    }
+
+    @Override
+    public String toString() {
+        return "PlayerStockHolderChangeEvent{" +
+                "boxPlayer=" + getBoxPlayer() +
+                ", previous=" + previous +
+                '}';
     }
 }

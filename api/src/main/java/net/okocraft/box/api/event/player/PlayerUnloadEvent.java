@@ -18,6 +18,14 @@ public class PlayerUnloadEvent extends PlayerEvent{
     }
 
     @Override
+    public @NotNull String toDebugLog() {
+        return "PlayerUnloadEvent{" +
+                "uuid=" + getBoxPlayer().getUUID() +
+                ", name=" + getBoxPlayer().getName() +
+                '}';
+    }
+
+    @Override
     public String toString() {
         return "PlayerUnloadEvent{" +
                 "boxPlayer=" + getBoxPlayer() +

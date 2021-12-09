@@ -59,6 +59,18 @@ public class StockIncreaseEvent extends StockEvent {
     }
 
     @Override
+    public @NotNull String toDebugLog() {
+        return "StockIncreaseEvent{" +
+                "stockholderUuid=" + getStockHolder().getUUID() +
+                ", stockHolderName=" + getStockHolder().getName() +
+                ", stockHolderClass=" + getStockHolder().getClass().getSimpleName() +
+                ", item=" + item +
+                ", increments=" + increments +
+                ", amount=" + amount +
+                '}';
+    }
+
+    @Override
     public String toString() {
         return "StockIncreaseEvent{" +
                 "stockholder=" + getStockHolder() +
