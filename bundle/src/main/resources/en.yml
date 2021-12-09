@@ -185,6 +185,31 @@ box:
         help:
           command-line: "/boxadmin reset <player>"
           description: "Resets all stock"
+      stock:
+        help:
+          command-line: "/boxadmin stock <info/list> <args>"
+          description: "Shows player's stock"
+        info:
+          amount: "The amount of player {0}''s item {1} : {2}"
+          help:
+            command-line: "/boxadmin stock info <player> <item name>"
+            description: "Shows the amount of stock"
+        list:
+          header: "Player {0}''s stock list (Page {1}/{2})"
+          amount: "{0}. {1} - {2}"
+          help:
+            command-line: "/boxadmin stock list <player> {args}"
+            description: "Shows the stock list"
+            argument:
+              sorter:
+                format: "{0} ({1}) {2} - Specifies the order of stock"
+                value: "<sort>"
+              page:
+                format: "{0} ({1}) {2} - Specifies the page"
+                value: "<page>"
+              filter:
+                format: "{0} ({1}) {2} - Filters items"
+                value: "<item name>"
       set:
         success:
           sender: "Player {0}''s item {1} has been set to {2}."
