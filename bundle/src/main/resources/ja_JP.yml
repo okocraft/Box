@@ -185,6 +185,31 @@ box:
         help:
           command-line: "/boxadmin reset <プレイヤー名>"
           description: "在庫をすべてリセットする"
+      stock:
+        help:
+          command-line: "/boxadmin stock <info/list> <引数>"
+          description: "在庫情報を表示する"
+        info:
+          amount: "プレイヤー {0} のアイテム {1} の在庫: {2} 個"
+          help:
+            command-line: "/boxadmin stock info <プレイヤー名> <アイテム名>"
+            description: "在庫数を表示する"
+        list:
+          header: "プレイヤー {0} の在庫リスト ({1}/{2}ページ)"
+          amount: "{0}. {1} - {2} 個"
+          help:
+            command-line: "/boxadmin stock list <プレイヤー名> {引数}"
+            description: "在庫リストを表示する"
+            argument:
+              sorter:
+                format: "{0} ({1}) {2} - 表示順を指定する"
+                value: "<ソート方法>"
+              page:
+                format: "{0} ({1}) {2} - ページを指定する"
+                value: "<ページ数>"
+              filter:
+                 format: "{0} ({1}) {2} - アイテムを絞り込む"
+                 value: "<アイテム名>"
       set:
         success:
           sender: "プレイヤー {0} のアイテム {1} の在庫を {2} 個にセットしました。"
