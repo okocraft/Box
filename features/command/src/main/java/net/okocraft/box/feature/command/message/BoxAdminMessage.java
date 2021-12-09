@@ -8,12 +8,14 @@ import net.okocraft.box.api.message.argument.SingleArgument;
 import net.okocraft.box.api.message.argument.TripleArgument;
 import net.okocraft.box.api.model.item.BoxCustomItem;
 import net.okocraft.box.api.model.item.BoxItem;
+import net.okocraft.box.api.model.stock.StockData;
 import net.okocraft.box.api.model.stock.UserStockHolder;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import static net.kyori.adventure.text.Component.newline;
+import static net.kyori.adventure.text.Component.space;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.Component.translatable;
 import static net.kyori.adventure.text.format.NamedTextColor.AQUA;
@@ -299,6 +301,85 @@ public final class BoxAdminMessage {
             translatable("box.command.boxadmin.reset.help.command-line", AQUA)
                     .append(text(" - ", DARK_GRAY))
                     .append(translatable("box.command.boxadmin.reset.help.description", GRAY));
+
+    public static final Component STOCK_HELP =
+            translatable("box.command.boxadmin.stock.help.command-line", AQUA)
+                    .append(text(" - ", DARK_GRAY))
+                    .append(translatable("box.command.boxadmin.stock.help.description", GRAY));
+
+    public static final Component STOCK_INFO_HELP =
+            translatable("box.command.boxadmin.stock.info.help.command-line", AQUA)
+                    .append(text(" - ", DARK_GRAY))
+                    .append(translatable("box.command.boxadmin.stock.info.help.description", GRAY));
+
+    public static final TripleArgument<String, BoxItem, Integer> STOCK_INFO_AMOUNT =
+            (targetName, item, amount) ->
+                    translatable()
+                            .key("box.command.boxadmin.stock.info.amount")
+                            .args(
+                                    text(targetName, AQUA),
+                                    item.getDisplayName().color(AQUA).hoverEvent(item.getOriginal()),
+                                    text(amount, AQUA)
+                            )
+                            .color(GRAY)
+                            .build();
+
+    public static final Component STOCK_LIST_HELP =
+            text().append(translatable("box.command.boxadmin.stock.list.help.command-line", AQUA))
+                    .append(text(" - ", DARK_GRAY))
+                    .append(translatable("box.command.boxadmin.stock.list.help.description", GRAY))
+                    .append(newline()).append(space())
+                    .append(
+                            translatable()
+                                    .key("box.command.boxadmin.stock.list.help.argument.sorter.format")
+                                    .args(
+                                            text("-s", AQUA), text("--sorter", AQUA),
+                                            translatable("box.command.boxadmin.stock.list.help.argument.sorter.value", AQUA)
+                                    )
+                                    .color(GRAY)
+                    ).append(newline()).append(space())
+                    .append(
+                            translatable()
+                                    .key("box.command.boxadmin.stock.list.help.argument.page.format")
+                                    .args(
+                                            text("-p", AQUA), text("--page", AQUA),
+                                            translatable("box.command.boxadmin.stock.list.help.argument.page.value", AQUA)
+                                    )
+                                    .color(GRAY)
+                    ).append(newline()).append(space())
+                    .append(
+                            translatable()
+                                    .key("box.command.boxadmin.stock.list.help.argument.filter.format")
+                                    .args(
+                                            text("-f", AQUA), text("--filter", AQUA),
+                                            translatable("box.command.boxadmin.stock.list.help.argument.page.value", AQUA)
+                                    )
+                                    .color(GRAY)
+                    ).build();
+
+    public static final TripleArgument<UserStockHolder, Integer, Integer> STOCK_LIST_HEADER =
+            (target, page, maxPage) ->
+                    translatable()
+                            .key("box.command.boxadmin.stock.list.header")
+                            .args(
+                                    text(target.getName(), AQUA),
+                                    text(page, AQUA),
+                                    text(maxPage, AQUA)
+                            )
+                            .color(GRAY)
+                            .build();
+
+    public static final DoubleArgument<Integer, StockData> STOCK_LIST_ITEM_AMOUNT =
+            (num, stockData) ->
+                    translatable()
+                            .key("box.command.boxadmin.stock.list.amount")
+                            .args(
+                                    text(num, GRAY),
+                                    stockData.item().getDisplayName().color(AQUA).hoverEvent(stockData.item().getOriginal()),
+                                    text(stockData.amount(), AQUA)
+                            )
+                            .color(GRAY)
+                            .build();
 
     private BoxAdminMessage() {
         throw new UnsupportedOperationException();

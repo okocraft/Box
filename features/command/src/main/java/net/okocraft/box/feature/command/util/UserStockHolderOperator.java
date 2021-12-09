@@ -58,7 +58,7 @@ public class UserStockHolderOperator {
         }
     }
 
-    private @Nullable UserStockHolder getUserStockHolder() {
+    public @Nullable UserStockHolder getUserStockHolder() {
         UUID uuid = null;
 
         try {
