@@ -1,9 +1,11 @@
 package net.okocraft.box.feature.gui.api.session;
 
+import net.okocraft.box.api.model.stock.StockHolder;
 import net.okocraft.box.feature.gui.api.mode.BoxItemClickMode;
 import net.okocraft.box.feature.gui.api.mode.ClickModeRegistry;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,6 +23,7 @@ public class PlayerSession {
     private BoxItemClickMode currentClickMode = ClickModeRegistry.getModes().get(0);
 
     private final Map<String, CustomNumberHolder> customNumberMap = new HashMap<>();
+    private @Nullable StockHolder stockHolder;
 
     private PlayerSession() {
     }
@@ -39,5 +42,17 @@ public class PlayerSession {
 
     public void resetCustomNumbers() {
         customNumberMap.values().forEach(num -> num.setAmount(1));
+    }
+
+    public @NotNull StockHolder getStockHolder() {
+        if (stockHolder != null) {
+            return stockHolder;
+        } else {
+            throw new IllegalStateException("The stockholder is not set");
+        }
+    }
+
+    public void setStockHolder(@Nullable StockHolder stockHolder) {
+        this.stockHolder = stockHolder;
     }
 }

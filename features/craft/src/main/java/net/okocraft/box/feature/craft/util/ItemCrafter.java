@@ -5,6 +5,7 @@ import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.model.stock.StockHolder;
 import net.okocraft.box.api.transaction.InventoryTransaction;
 import net.okocraft.box.feature.craft.model.SelectedRecipe;
+import net.okocraft.box.feature.gui.api.session.PlayerSession;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -37,7 +38,7 @@ public class ItemCrafter {
     }
 
     public static boolean craft(@NotNull Player crafter, @NotNull SelectedRecipe recipe, int times) {
-        var stockHolder = BoxProvider.get().getBoxPlayerMap().get(crafter).getCurrentStockHolder();
+        var stockHolder = PlayerSession.get(crafter).getStockHolder();
 
         if (!canCraft(stockHolder, recipe, times)) {
             return false;
