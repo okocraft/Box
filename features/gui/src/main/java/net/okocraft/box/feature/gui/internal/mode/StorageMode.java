@@ -75,9 +75,10 @@ public class StorageMode implements BoxItemClickMode {
     }
 
     private @NotNull @Unmodifiable List<Component> createLore(@NotNull BoxItem item, @NotNull Player player) {
-        int currentStock = BoxProvider.get().getBoxPlayerMap().get(player).getCurrentStockHolder().getAmount(item);
-        int transactionAmount =
-                PlayerSession.get(player).getCustomNumberHolder(TRANSACTION_AMOUNT_NAME).getAmount();
+        var session = PlayerSession.get(player);
+
+        int currentStock = session.getStockHolder().getAmount(item);
+        int transactionAmount = session.getCustomNumberHolder(TRANSACTION_AMOUNT_NAME).getAmount();
 
         return List.of(
                 Displays.STORAGE_MODE_LEFT_CLICK_TO_DEPOSIT.apply(transactionAmount),
@@ -90,8 +91,9 @@ public class StorageMode implements BoxItemClickMode {
     @SuppressWarnings("DuplicatedCode")
     private void processDeposit(@NotNull Context context) {
         var player = context.clicker();
-        int transactionAmount =
-                PlayerSession.get(player).getCustomNumberHolder(TRANSACTION_AMOUNT_NAME).getAmount();
+        var session = PlayerSession.get(player);
+
+        int transactionAmount = session.getCustomNumberHolder(TRANSACTION_AMOUNT_NAME).getAmount();
 
         var resultList =
                 BoxProvider.get().getTaskFactory().supply(
@@ -103,7 +105,7 @@ public class StorageMode implements BoxItemClickMode {
             return;
         }
 
-        var stockHolder = BoxProvider.get().getBoxPlayerMap().get(player).getCurrentStockHolder();
+        var stockHolder = session.getStockHolder();
 
         resultList.getResultList()
                 .stream()
@@ -115,8 +117,9 @@ public class StorageMode implements BoxItemClickMode {
 
     private void processWithdraw(@NotNull Context context) {
         var player = context.clicker();
+        var session = PlayerSession.get(player);
 
-        var stockHolder = BoxProvider.get().getBoxPlayerMap().get(player).getCurrentStockHolder();
+        var stockHolder = session.getStockHolder();
         var currentStock = stockHolder.getAmount(context.item());
 
         if (currentStock < 1) {
@@ -124,8 +127,7 @@ public class StorageMode implements BoxItemClickMode {
             return;
         }
 
-        int transactionAmount =
-                PlayerSession.get(player).getCustomNumberHolder(TRANSACTION_AMOUNT_NAME).getAmount();
+        int transactionAmount = session.getCustomNumberHolder(TRANSACTION_AMOUNT_NAME).getAmount();
 
         var amount = Math.min(currentStock, transactionAmount);
 
@@ -185,7 +187,7 @@ public class StorageMode implements BoxItemClickMode {
                 return;
             }
 
-            var stockHolder = BoxProvider.get().getBoxPlayerMap().get(clicker).getCurrentStockHolder();
+            var stockHolder = PlayerSession.get(clicker).getStockHolder();
 
             resultList.getResultList()
                     .stream()

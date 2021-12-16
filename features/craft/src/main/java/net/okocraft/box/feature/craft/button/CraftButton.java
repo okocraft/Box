@@ -1,12 +1,12 @@
 package net.okocraft.box.feature.craft.button;
 
 import net.kyori.adventure.text.Component;
-import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.feature.craft.lang.Displays;
 import net.okocraft.box.feature.craft.model.SelectedRecipe;
 import net.okocraft.box.feature.craft.util.IngredientRenderer;
 import net.okocraft.box.feature.craft.util.ItemCrafter;
 import net.okocraft.box.feature.gui.api.button.RefreshableButton;
+import net.okocraft.box.feature.gui.api.session.PlayerSession;
 import net.okocraft.box.feature.gui.api.util.TranslationUtil;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -73,7 +73,7 @@ public class CraftButton implements RefreshableButton {
 
         target.displayName(TranslationUtil.render(Displays.CRAFT_BUTTON_DISPLAY_NAME.apply(times), viewer));
 
-        var stockHolder = BoxProvider.get().getBoxPlayerMap().get(viewer).getCurrentStockHolder();
+        var stockHolder = PlayerSession.get(viewer).getStockHolder();
 
         var lore = new ArrayList<Component>();
         var recipe = recipeSupplier.get();
@@ -127,7 +127,7 @@ public class CraftButton implements RefreshableButton {
 
     private boolean canCraft() {
         return ItemCrafter.canCraft(
-                BoxProvider.get().getBoxPlayerMap().get(crafter).getCurrentStockHolder(),
+                PlayerSession.get(crafter).getStockHolder(),
                 recipeSupplier.get(),
                 timesSupplier.get()
         );

@@ -1,7 +1,11 @@
 package net.okocraft.box.feature.gui.internal.command;
 
 import net.kyori.adventure.text.Component;
+import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.command.AbstractCommand;
+import net.okocraft.box.api.message.GeneralMessage;
+import net.okocraft.box.api.model.stock.StockHolder;
+import net.okocraft.box.api.util.UserStockHolderOperator;
 import net.okocraft.box.feature.gui.api.mode.ClickModeRegistry;
 import net.okocraft.box.feature.gui.api.session.PlayerSession;
 import net.okocraft.box.feature.gui.api.util.MenuOpener;
@@ -27,12 +31,35 @@ public class MenuOpenCommand extends AbstractCommand {
     @Override
     public void onCommand(@NotNull CommandSender sender, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
+            sender.sendMessage(GeneralMessage.ERROR_COMMAND_ONLY_PLAYER);
             return;
         }
 
-        var session =PlayerSession.get(player);
+        var session = PlayerSession.get(player);
+
         session.setBoxItemClickMode(ClickModeRegistry.getModes().get(0));
         session.resetCustomNumbers();
+
+        StockHolder stockHolder;
+
+        if (1 < args.length) {
+            var permission = "box.admin.command.gui.other";
+            if (!sender.hasPermission(permission)) {
+                sender.sendMessage(GeneralMessage.ERROR_NO_PERMISSION.apply(permission));
+                return;
+            }
+
+            stockHolder = UserStockHolderOperator.create(args[1]).supportOffline(true).getUserStockHolder();
+
+            if (stockHolder == null) {
+                sender.sendMessage(GeneralMessage.ERROR_COMMAND_PLAYER_NOT_FOUND.apply(args[1]));
+                return;
+            }
+        } else {
+            stockHolder = BoxProvider.get().getBoxPlayerMap().get(player).getCurrentStockHolder();
+        }
+
+        session.setStockHolder(stockHolder);
 
         MenuOpener.open(new CategorySelectorMenu(), player);
     }
