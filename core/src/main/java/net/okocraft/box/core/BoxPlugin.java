@@ -12,6 +12,7 @@ import net.okocraft.box.api.command.base.BoxAdminCommand;
 import net.okocraft.box.api.command.base.BoxCommand;
 import net.okocraft.box.api.event.feature.FeatureEvent;
 import net.okocraft.box.api.feature.BoxFeature;
+import net.okocraft.box.api.feature.Disableable;
 import net.okocraft.box.api.feature.Reloadable;
 import net.okocraft.box.api.model.data.CustomDataContainer;
 import net.okocraft.box.api.model.manager.ItemManager;
@@ -380,7 +381,8 @@ public class BoxPlugin implements BoxAPI {
 
     @Override
     public void register(@NotNull BoxFeature boxFeature) {
-        if (configuration.get(Settings.DISABLED_FEATURES).contains(boxFeature.getName())) {
+        if (boxFeature instanceof Disableable &&
+                configuration.get(Settings.DISABLED_FEATURES).contains(boxFeature.getName())) {
             getLogger().warning("The " + boxFeature.getName() + " feature is disabled in config.yml");
             return;
         }
