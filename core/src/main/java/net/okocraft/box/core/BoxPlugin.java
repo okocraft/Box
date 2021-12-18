@@ -387,6 +387,19 @@ public class BoxPlugin implements BoxAPI {
             return;
         }
 
+        var dependencies = boxFeature.getDependencies();
+
+        if (!dependencies.isEmpty()) {
+            for (var dependencyClass : dependencies) {
+                if (features.stream().noneMatch(feature -> dependencyClass.isAssignableFrom(feature.getClass()))) {
+                    getLogger().warning(
+                            dependencyClass.getSimpleName() + " that is the dependency of the " + boxFeature.getName() + " is not registered."
+                    );
+                    return;
+                }
+            }
+        }
+
         try {
             boxFeature.enable();
         } catch (Throwable throwable) {
