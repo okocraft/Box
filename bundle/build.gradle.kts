@@ -18,7 +18,7 @@ dependencies {
 }
 
 tasks.named<Copy>("processResources") {
-    filesMatching("plugin.yml") {
+    filesMatching(listOf("plugin.yml", "en.yml", "ja_JP.yml")) {
         expand("projectVersion" to project.version)
     }
 }
