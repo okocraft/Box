@@ -3,6 +3,6 @@ plugins {
 }
 
 dependencies {
-    implementation("com.github.siroshun09.translationloader:translationloader:1.1.1")
+    implementation("com.github.siroshun09.translationloader:translationloader:2.0.0")
     compileOnly(project(":api"))
 }
