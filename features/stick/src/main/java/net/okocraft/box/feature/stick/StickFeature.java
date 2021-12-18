@@ -2,6 +2,7 @@ package net.okocraft.box.feature.stick;
 
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.feature.AbstractBoxFeature;
+import net.okocraft.box.api.feature.Disableable;
 import net.okocraft.box.feature.stick.command.CustomStickCommand;
 import net.okocraft.box.feature.stick.command.StickCommand;
 import net.okocraft.box.feature.stick.item.BoxStickItem;
@@ -10,7 +11,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.event.HandlerList;
 
-public class StickFeature extends AbstractBoxFeature {
+public class StickFeature extends AbstractBoxFeature implements Disableable {
 
     private final NamespacedKey key = BoxProvider.get().createNamespacedKey("stick");
 

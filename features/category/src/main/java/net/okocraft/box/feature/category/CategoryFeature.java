@@ -5,6 +5,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.feature.AbstractBoxFeature;
+import net.okocraft.box.api.feature.Disableable;
 import net.okocraft.box.api.feature.Reloadable;
 import net.okocraft.box.feature.category.internal.CategoryLoader;
 import net.okocraft.box.feature.category.internal.CustomItemListener;
@@ -15,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import java.nio.file.Files;
 import java.util.logging.Level;
 
-public class CategoryFeature extends AbstractBoxFeature implements Reloadable {
+public class CategoryFeature extends AbstractBoxFeature implements Disableable, Reloadable {
 
     private final CustomItemListener customItemListener = new CustomItemListener();
 
