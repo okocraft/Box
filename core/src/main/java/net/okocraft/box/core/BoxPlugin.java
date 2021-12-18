@@ -1,8 +1,11 @@
 package net.okocraft.box.core;
 
+import com.github.siroshun09.configapi.api.Configuration;
 import com.github.siroshun09.configapi.api.util.ResourceUtils;
 import com.github.siroshun09.configapi.yaml.YamlConfiguration;
 import com.github.siroshun09.event4j.bus.EventBus;
+import com.github.siroshun09.translationloader.ConfigurationLoader;
+import com.github.siroshun09.translationloader.TranslationLoader;
 import com.github.siroshun09.translationloader.directory.TranslationDirectory;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
@@ -47,6 +50,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
 import java.io.IOException;
@@ -97,7 +101,14 @@ public class BoxPlugin implements BoxAPI {
         this.configuration =
                 YamlConfiguration.create(pluginDirectory.resolve("config.yml"));
         this.translationDirectory =
-                TranslationDirectory.create(pluginDirectory.resolve("languages"), Key.key("box", "language"));
+                TranslationDirectory.newBuilder()
+                        .setDirectory(pluginDirectory.resolve("languages"))
+                        .setKey(Key.key("box", "language"))
+                        .setDefaultLocale(Locale.ENGLISH)
+                        .onDirectoryCreated(this::saveDefaultLanguages)
+                        .setVersion(getPluginInstance().getDescription().getVersion())
+                        .setTranslationLoaderCreator(this::getBundledTranslation)
+                        .build();
 
         BoxProvider.set(this);
     }
@@ -115,11 +126,7 @@ public class BoxPlugin implements BoxAPI {
 
         getLogger().info("Loading languages...");
 
-        translationDirectory.getRegistry().defaultLocale(Locale.ENGLISH);
-
         try {
-            translationDirectory.createDirectoryIfNotExists();
-            saveDefaultLanguages(translationDirectory.getDirectory());
             translationDirectory.load();
         } catch (IOException e) {
             getLogger().log(Level.SEVERE, "Could not load languages", e);
@@ -269,10 +276,7 @@ public class BoxPlugin implements BoxAPI {
         }
 
         try {
-            translationDirectory.createDirectoryIfNotExists();
-            saveDefaultLanguages(translationDirectory.getDirectory());
             translationDirectory.load();
-            translationDirectory.getRegistry().defaultLocale(Locale.ENGLISH);
             sender.sendMessage(MicsMessages.LANGUAGES_RELOADED);
         } catch (Throwable e) {
             playerMessenger.accept(() -> ErrorMessages.ERROR_RELOAD_FAILURE.apply("languages", e));
@@ -302,6 +306,25 @@ public class BoxPlugin implements BoxAPI {
 
         var japanese = "ja_JP.yml";
         ResourceUtils.copyFromJarIfNotExists(jarFile, japanese, directory.resolve(japanese));
+    }
+
+    private @Nullable TranslationLoader getBundledTranslation(@NotNull Locale locale) throws IOException {
+        var strLocale = locale.toString();
+
+        if (!(strLocale.equals("en") || strLocale.equals("ja_JP"))) {
+            return null;
+        }
+
+        Configuration source;
+
+        try (var input = ResourceUtils.getInputStreamFromJar(getJar(), strLocale + ".yml")) {
+            source = YamlConfiguration.loadFromInputStream(input);
+        }
+
+        var loader = ConfigurationLoader.create(locale, source);
+        loader.load();
+
+        return loader;
     }
 
     @Override
