@@ -4,14 +4,19 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.feature.AbstractBoxFeature;
+import net.okocraft.box.api.feature.BoxFeature;
 import net.okocraft.box.api.feature.Disableable;
 import net.okocraft.box.api.feature.Reloadable;
 import net.okocraft.box.feature.craft.command.CraftCommand;
 import net.okocraft.box.feature.craft.loader.RecipeLoader;
 import net.okocraft.box.feature.craft.mode.CraftMode;
+import net.okocraft.box.feature.gui.GuiFeature;
 import net.okocraft.box.feature.gui.api.mode.ClickModeRegistry;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Unmodifiable;
+
+import java.util.Set;
 
 public class CraftFeature extends AbstractBoxFeature implements Disableable, Reloadable {
 
@@ -48,5 +53,10 @@ public class CraftFeature extends AbstractBoxFeature implements Disableable, Rel
             //
             // IllegalStateException: Exceeded maximum depth of 512 while attempting to flatten components!
         }
+    }
+
+    @Override
+    public @NotNull @Unmodifiable Set<Class<? extends BoxFeature>> getDependencies() {
+        return Set.of(GuiFeature.class);
     }
 }
