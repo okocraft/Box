@@ -1,5 +1,7 @@
 package net.okocraft.box.feature.craft;
 
+import com.github.siroshun09.configapi.api.util.ResourceUtils;
+import com.github.siroshun09.configapi.yaml.YamlConfiguration;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.okocraft.box.api.BoxProvider;
@@ -16,7 +18,9 @@ import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
+import java.io.IOException;
 import java.util.Set;
+import java.util.logging.Level;
 
 public class CraftFeature extends AbstractBoxFeature implements Disableable, Reloadable {
 
@@ -29,8 +33,21 @@ public class CraftFeature extends AbstractBoxFeature implements Disableable, Rel
 
     @Override
     public void enable() {
-        RecipeRegistry.setRecipeMap(RecipeLoader.load());
+        var recipeFile = BoxProvider.get().getPluginDirectory().resolve("recipes.yml");
+
+        var recipeConfig = YamlConfiguration.create(recipeFile);
+
+        try {
+            ResourceUtils.copyFromJarIfNotExists(BoxProvider.get().getJar(), "recipes.yml", recipeConfig.getPath());
+            recipeConfig.load();
+        } catch (IOException e) {
+            BoxProvider.get().getLogger().log(Level.SEVERE, "Could not load recipes.yml", e);
+        }
+
+        RecipeRegistry.setRecipeMap(RecipeLoader.load(recipeConfig));
+
         ClickModeRegistry.register(craftMode);
+
         BoxProvider.get().getBoxCommand().getSubCommandHolder().register(craftCommand);
     }
 
