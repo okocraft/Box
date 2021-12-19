@@ -70,6 +70,13 @@ final class Processor {
         var itemManager = BoxProvider.get().getItemManager();
 
         for (var key : section.getKeyList()) {
+            var resultItem = itemManager.getBoxItem(key);
+
+            if (resultItem.isEmpty()) {
+                logger.warning("Could not get a result item in recipes.yml (" + key + ")");
+                continue;
+            }
+
             var ingredients = new ArrayList<BoxItem>();
 
             for (var ingredientItemName : section.getStringList(key + ".ingredients")) {
@@ -85,14 +92,6 @@ final class Processor {
             }
 
             if (ingredients.isEmpty()) {
-                continue;
-            }
-
-            var resultItemName = section.getString(key + ".result-item");
-            var resultItem = itemManager.getBoxItem(resultItemName);
-
-            if (resultItem.isEmpty()) {
-                logger.warning("Could not get a result item in recipes.yml (" + resultItemName + ")");
                 continue;
             }
 
