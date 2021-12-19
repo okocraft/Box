@@ -5,11 +5,14 @@ import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.command.AbstractCommand;
 import net.okocraft.box.api.message.GeneralMessage;
 import net.okocraft.box.api.model.item.BoxItem;
+import net.okocraft.box.api.util.TabCompleter;
 import net.okocraft.box.feature.command.message.BoxMessage;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 public class ItemInfoCommand extends AbstractCommand {
@@ -63,5 +66,14 @@ public class ItemInfoCommand extends AbstractCommand {
     @Override
     public @NotNull Component getHelp() {
         return BoxMessage.ITEM_INFO_HELP;
+    }
+
+    @Override
+    public @NotNull List<String> onTabComplete(@NotNull CommandSender sender, @NotNull String[] args) {
+        if (args.length == 2) {
+            return TabCompleter.itemNames(args[1]);
+        } else {
+            return Collections.emptyList();
+        }
     }
 }
