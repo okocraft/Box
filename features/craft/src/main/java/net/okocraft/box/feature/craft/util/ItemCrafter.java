@@ -4,6 +4,7 @@ import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.model.stock.StockHolder;
 import net.okocraft.box.api.transaction.InventoryTransaction;
+import net.okocraft.box.feature.craft.event.BoxCraftEvent;
 import net.okocraft.box.feature.craft.model.SelectedRecipe;
 import net.okocraft.box.feature.gui.api.session.PlayerSession;
 import org.bukkit.entity.Player;
@@ -41,6 +42,13 @@ public class ItemCrafter {
         var stockHolder = PlayerSession.get(crafter).getStockHolder();
 
         if (!canCraft(stockHolder, recipe, times)) {
+            return false;
+        }
+
+        var event = new BoxCraftEvent(crafter, recipe, times);
+        BoxProvider.get().getEventBus().callEvent(event);
+
+        if (event.isCancelled()) {
             return false;
         }
 
