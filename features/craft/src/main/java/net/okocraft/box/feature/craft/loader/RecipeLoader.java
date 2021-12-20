@@ -15,7 +15,7 @@ public final class RecipeLoader {
 
         Bukkit.recipeIterator().forEachRemaining(processor::processRecipe);
 
-        AdditionalRecipes.RECIPES.forEach(processor::processRecipe);
+        AdditionalRecipes.getFireworkRocketRecipes().forEach(processor::processRecipe);
 
         processor.processCustomRecipes();
 
