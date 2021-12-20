@@ -44,7 +44,11 @@ public class CraftFeature extends AbstractBoxFeature implements Disableable, Rel
             BoxProvider.get().getLogger().log(Level.SEVERE, "Could not load recipes.yml", e);
         }
 
-        RecipeRegistry.setRecipeMap(RecipeLoader.load(recipeConfig));
+        var recipeMap = RecipeLoader.load(recipeConfig);
+
+        RecipeRegistry.setRecipeMap(recipeMap);
+
+        BoxProvider.get().getLogger().info(recipeMap.size() + " recipes are imported!");
 
         ClickModeRegistry.register(craftMode);
 
