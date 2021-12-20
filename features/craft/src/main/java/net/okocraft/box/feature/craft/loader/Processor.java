@@ -4,6 +4,7 @@ import com.github.siroshun09.configapi.api.Configuration;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.model.manager.ItemManager;
+import net.okocraft.box.feature.craft.event.RecipeImportEvent;
 import net.okocraft.box.feature.craft.model.BoxItemRecipe;
 import net.okocraft.box.feature.craft.model.IngredientHolder;
 import net.okocraft.box.feature.craft.model.RecipeHolder;
@@ -130,7 +131,7 @@ final class Processor {
             }
         }
 
-        getRecipeHolder(result).addRecipe(new BoxItemRecipe(ingredients, result, recipe.getResult().getAmount()));
+        addRecipe(ingredients, result, recipe.getResult().getAmount());
     }
 
     private void processShapelessRecipe(@NotNull ShapelessRecipe recipe, @NotNull BoxItem result) {
@@ -159,7 +160,7 @@ final class Processor {
             slot++;
         }
 
-        getRecipeHolder(result).addRecipe(new BoxItemRecipe(ingredients, result, recipe.getResult().getAmount()));
+        addRecipe(ingredients, result, recipe.getResult().getAmount());
     }
 
     private void processCustomRecipe(@NotNull List<BoxItem> ingredients, @NotNull BoxItem result, int amount) {
@@ -171,7 +172,7 @@ final class Processor {
             slot++;
         }
 
-        getRecipeHolder(result).addRecipe(new BoxItemRecipe(ingredientHolders, result, amount));
+        addRecipe(ingredientHolders, result, amount);
     }
 
     @Contract(pure = true)
@@ -188,7 +189,9 @@ final class Processor {
         return 8;
     }
 
-    private @NotNull RecipeHolder getRecipeHolder(@NotNull BoxItem item) {
-        return recipeMap.computeIfAbsent(item, i -> new RecipeHolder());
+    private void addRecipe(@NotNull List<IngredientHolder> ingredients, @NotNull BoxItem result, int amount) {
+        var recipe = new BoxItemRecipe(ingredients, result, amount);
+        recipeMap.computeIfAbsent(result, i -> new RecipeHolder()).addRecipe(recipe);
+        BoxProvider.get().getEventBus().callEvent(new RecipeImportEvent(recipe));
     }
 }
