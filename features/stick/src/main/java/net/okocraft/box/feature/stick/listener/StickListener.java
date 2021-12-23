@@ -2,13 +2,27 @@ package net.okocraft.box.feature.stick.listener;
 
 import com.github.siroshun09.configapi.api.value.ConfigValue;
 import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.api.model.item.BoxItem;
+import net.okocraft.box.api.transaction.InventoryTransaction;
 import net.okocraft.box.feature.stick.item.BoxStickItem;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.block.Barrel;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.Chest;
+import org.bukkit.block.Container;
+import org.bukkit.block.Dispenser;
+import org.bukkit.block.Dropper;
+import org.bukkit.block.Hopper;
+import org.bukkit.block.Lockable;
+import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.AbstractArrow;
 import org.bukkit.entity.Arrow;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -16,10 +30,14 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
+import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemBreakEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.jetbrains.annotations.NotNull;
@@ -55,6 +73,50 @@ public class StickListener implements Listener {
             if (!command.isEmpty()) {
                 Bukkit.dispatchCommand(player, command);
             }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onInteractBlock(@NotNull PlayerInteractEvent event) {
+        var player = event.getPlayer();
+
+        if (event.getAction() == Action.PHYSICAL || !event.getAction().isLeftClick() ||
+                BoxProvider.get().isDisabledWorld(player) || !player.hasPermission("box.stick.container")) {
+            return;
+        }
+
+        var mainHand = player.getInventory().getItemInMainHand();
+        var offHand = player.getInventory().getItemInOffHand();
+
+        if (event.useInteractedBlock() == Event.Result.DENY || event.useItemInHand() == Event.Result.DENY ||
+                !event.getPlayer().isSneaking() || event.getHand() != EquipmentSlot.HAND || !boxStickItem.check(offHand)) {
+            return;
+        }
+
+        var block = event.getClickedBlock();
+
+        if (block == null || !canDepositOrWithdraw(block.getState())) {
+            return;
+        }
+
+        var state = (Container) block.getState();
+
+        var view = new DummyInventoryView(player, state.getInventory());
+
+        // for WorldGuard (flag: chest-access)
+        if (!checkChestAccess(view)) {
+            return;
+        }
+
+        event.setCancelled(true);
+
+        if (mainHand.getType().isAir()) {
+            depositItemsInInventory(player, view);
+        } else {
+            BoxProvider.get()
+                    .getItemManager()
+                    .getBoxItem(mainHand)
+                    .ifPresent(item -> withdrawToInventory(player, view, item));
         }
     }
 
@@ -221,5 +283,78 @@ public class StickListener implements Listener {
         }
 
         return boxStickItem.check(player.getInventory().getItemInOffHand());
+    }
+
+    private boolean checkChestAccess(@NotNull InventoryView inventoryView) {
+        return new InventoryOpenEvent(inventoryView).callEvent();
+    }
+
+    private boolean canDepositOrWithdraw(@NotNull BlockState state) {
+        return !(state instanceof Lockable lockable && lockable.isLocked()) &&
+                (state instanceof Barrel || state instanceof Chest ||
+                        state instanceof Dispenser || state instanceof Dropper ||
+                        state instanceof Hopper || state instanceof ShulkerBox);
+    }
+
+    private void depositItemsInInventory(@NotNull Player player, @NotNull InventoryView inventoryView) {
+        var stockHolder = BoxProvider.get().getBoxPlayerMap().get(player).getCurrentStockHolder();
+        var resultList = InventoryTransaction.depositItemsInTopInventory(inventoryView);
+
+        if (resultList.getType().isModified()) {
+            resultList.getResultList()
+                    .stream()
+                    .filter(result -> result.getType().isModified())
+                    .forEach(result -> stockHolder.increase(result.getItem(), result.getAmount()));
+            player.playSound(player.getLocation(), Sound.ENTITY_PIG_SADDLE, 100f, 2.0f);
+        }
+    }
+
+    private void withdrawToInventory(@NotNull Player player, @NotNull InventoryView inventoryView, @NotNull BoxItem item) {
+        var stockHolder = BoxProvider.get().getBoxPlayerMap().get(player).getCurrentStockHolder();
+
+        var amount = stockHolder.getAmount(item);
+
+        var result = InventoryTransaction.withdraw(inventoryView, item, amount);
+
+        if (result.getType().isModified()) {
+            stockHolder.decrease(result.getItem(), result.getAmount());
+            player.playSound(player.getLocation(), Sound.ENTITY_PIG_SADDLE, 100f, 1.5f);
+        }
+    }
+
+    private static class DummyInventoryView extends InventoryView {
+
+        private final Player player;
+        private final Inventory inventory;
+
+        private DummyInventoryView(@NotNull Player player, @NotNull Inventory inventory) {
+            this.player = player;
+            this.inventory = inventory;
+        }
+
+        @Override
+        public @NotNull Inventory getTopInventory() {
+            return inventory;
+        }
+
+        @Override
+        public @NotNull Inventory getBottomInventory() {
+            return player.getInventory();
+        }
+
+        @Override
+        public @NotNull HumanEntity getPlayer() {
+            return player;
+        }
+
+        @Override
+        public @NotNull InventoryType getType() {
+            return inventory.getType();
+        }
+
+        @Override
+        public @NotNull String getTitle() {
+            return "";
+        }
     }
 }
