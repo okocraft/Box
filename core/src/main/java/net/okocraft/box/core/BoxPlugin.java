@@ -28,13 +28,13 @@ import net.okocraft.box.core.command.BoxCommandImpl;
 import net.okocraft.box.core.config.Settings;
 import net.okocraft.box.core.listener.DebugListener;
 import net.okocraft.box.core.listener.PlayerConnectionListener;
-import net.okocraft.box.core.listener.StockHolderListener;
 import net.okocraft.box.core.message.ErrorMessages;
 import net.okocraft.box.core.message.MicsMessages;
 import net.okocraft.box.core.model.data.BoxCustomDataContainer;
 import net.okocraft.box.core.model.manager.BoxItemManager;
 import net.okocraft.box.core.model.manager.BoxStockManager;
 import net.okocraft.box.core.model.manager.BoxUserManager;
+import net.okocraft.box.core.model.queue.AutoSaveQueue;
 import net.okocraft.box.core.player.BoxPlayerMapImpl;
 import net.okocraft.box.core.storage.Storage;
 import net.okocraft.box.core.storage.implementations.yaml.YamlStorage;
@@ -82,7 +82,8 @@ public class BoxPlugin implements BoxAPI {
 
     private final List<BoxFeature> features = new ArrayList<>();
 
-    private final AutoSaveTask autoSaveTask = new AutoSaveTask();
+    private final AutoSaveQueue autoSaveQueue = new AutoSaveQueue();
+    private final AutoSaveTask autoSaveTask = new AutoSaveTask(autoSaveQueue);
 
     private Storage storage;
     private BoxItemManager itemManager;
@@ -90,8 +91,6 @@ public class BoxPlugin implements BoxAPI {
     private BoxUserManager userManager;
     private BoxCustomDataContainer customDataContainer;
     private BoxPlayerMapImpl playerMap;
-
-    private StockHolderListener stockHolderListener;
 
     public BoxPlugin(@NotNull JavaPlugin plugin, @NotNull Path jarFile) {
         this.plugin = plugin;
@@ -166,7 +165,7 @@ public class BoxPlugin implements BoxAPI {
             return false;
         }
 
-        stockManager = new BoxStockManager(storage.getStockStorage());
+        stockManager = new BoxStockManager(storage.getStockStorage(), autoSaveQueue);
         userManager = new BoxUserManager(storage.getUserStorage());
 
         customDataContainer = new BoxCustomDataContainer(storage.getCustomDataStorage());
@@ -177,9 +176,6 @@ public class BoxPlugin implements BoxAPI {
         Bukkit.getPluginManager().registerEvents(new PlayerConnectionListener(playerMap), plugin);
 
         autoSaveTask.start();
-
-        stockHolderListener = new StockHolderListener(stockManager);
-        stockHolderListener.register();
 
         getLogger().info("Registering commands...");
 
@@ -216,7 +212,6 @@ public class BoxPlugin implements BoxAPI {
             List.copyOf(features).forEach(this::unregister);
         }
 
-        stockHolderListener.unregister();
         autoSaveTask.stop();
 
         if (playerMap != null) {

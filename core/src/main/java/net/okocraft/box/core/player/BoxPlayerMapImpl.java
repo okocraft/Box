@@ -70,8 +70,7 @@ public class BoxPlayerMapImpl implements BoxPlayerMap {
         var boxPlayer = playerMap.remove(player);
 
         if (boxPlayer != null) {
-            BoxProvider.get().getEventBus().callEvent(new PlayerUnloadEvent(boxPlayer));
-            return stockManager.saveUserStock(boxPlayer.getUserStockHolder());
+            return unloadAndSave(boxPlayer);
         } else {
             return CompletableFuture.completedFuture(null);
         }

@@ -7,11 +7,11 @@ import net.okocraft.box.api.model.manager.StockManager;
 import net.okocraft.box.api.model.stock.UserStockHolder;
 import net.okocraft.box.api.model.user.BoxUser;
 import net.okocraft.box.core.model.loader.UserStockHolderLoader;
+import net.okocraft.box.core.model.queue.AutoSaveQueue;
 import net.okocraft.box.core.storage.model.stock.StockStorage;
 import net.okocraft.box.core.util.executor.InternalExecutors;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -21,12 +21,14 @@ import java.util.concurrent.ExecutorService;
 public class BoxStockManager implements StockManager {
 
     private final StockStorage stockStorage;
+    private final AutoSaveQueue queue;
     private final ExecutorService executor;
 
     private final Map<BoxUser, UserStockHolderLoader> loaderMap = new HashMap<>();
 
-    public BoxStockManager(@NotNull StockStorage stockStorage) {
+    public BoxStockManager(@NotNull StockStorage stockStorage, @NotNull AutoSaveQueue queue) {
         this.stockStorage = stockStorage;
+        this.queue = queue;
         this.executor = InternalExecutors.newSingleThreadExecutor("Stock Manager");
     }
 
@@ -39,7 +41,7 @@ public class BoxStockManager implements StockManager {
                 return loaderMap.get(user);
             }
 
-            var loader = new UserStockHolderLoader(user, this::loadUserStockHolder);
+            var loader = new UserStockHolderLoader(user, this::loadUserStockHolder, queue);
             loaderMap.put(user, loader);
             loader.load();
 
@@ -59,10 +61,6 @@ public class BoxStockManager implements StockManager {
             }
             BoxProvider.get().getEventBus().callEvent(new StockHolderSaveEvent(stockHolder));
         }, executor);
-    }
-
-    public @NotNull Collection<UserStockHolderLoader> getUserStockHolderLoaders() {
-        return loaderMap.values();
     }
 
     private @NotNull UserStockHolder loadUserStockHolder(@NotNull BoxUser user) {
