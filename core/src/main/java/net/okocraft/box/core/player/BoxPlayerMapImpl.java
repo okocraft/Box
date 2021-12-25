@@ -120,6 +120,10 @@ public class BoxPlayerMapImpl implements BoxPlayerMap {
         var stockHolder = boxPlayer.getUserStockHolder();
 
         if (stockHolder instanceof UserStockHolderLoader loader) {
+            if (!loader.isLoaded()) {
+                return CompletableFuture.completedFuture(null);
+            }
+
             stockHolder = loader.getSource();
             loader.unload();
         }
