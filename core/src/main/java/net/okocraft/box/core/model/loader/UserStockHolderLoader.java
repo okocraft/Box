@@ -21,6 +21,7 @@ public class UserStockHolderLoader implements UserStockHolder {
     private final AutoSaveQueue queue;
 
     private final AtomicReference<UserStockHolder> loadedStockHolderReference = new AtomicReference<>();
+    private final Object lock = new Object();
 
     public UserStockHolderLoader(@NotNull BoxUser user,
                                  @NotNull Function<BoxUser, UserStockHolder> loader,
@@ -99,12 +100,21 @@ public class UserStockHolderLoader implements UserStockHolder {
     }
 
     public void load() {
-        loadedStockHolderReference.set(loader.apply(user));
+        synchronized (lock) {
+            if (!isLoaded()) {
+                loadedStockHolderReference.set(loader.apply(user));
+            }
+        }
     }
 
     public void unload() {
         queue.dequeue(this);
-        loadedStockHolderReference.set(null);
+
+        synchronized (lock) {
+            if (isLoaded()) {
+                loadedStockHolderReference.set(null);
+            }
+        }
     }
 
     public @NotNull UserStockHolder getSource() {
