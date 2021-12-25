@@ -90,16 +90,16 @@ public class BoxPlayerMapImpl implements BoxPlayerMap {
 
     public void unloadAll() {
         for (var boxPlayer : playerMap.values()) {
-            unloadAndSave(boxPlayer).exceptionally(e -> {
+            try {
+                unloadAndSave(boxPlayer).join();
+            } catch (Exception e) {
                 if (boxPlayer.getPlayer().isOnline()) {
                     boxPlayer.getPlayer().sendMessage(ErrorMessages.ERROR_SAVE_PLAYER_DATA);
                 }
 
                 BoxProvider.get().getLogger().log(Level.SEVERE,
                         "Could not save player data (" + boxPlayer.getName() + ")", e);
-
-                return null;
-            });
+            }
         }
 
         playerMap.clear();
