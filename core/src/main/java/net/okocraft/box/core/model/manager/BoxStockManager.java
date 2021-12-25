@@ -25,6 +25,7 @@ public class BoxStockManager implements StockManager {
     private final ExecutorService executor;
 
     private final Map<BoxUser, UserStockHolderLoader> loaderMap = new HashMap<>();
+    private final Map<BoxUser, Object> lockMap = new HashMap<>();
 
     public BoxStockManager(@NotNull StockStorage stockStorage, @NotNull AutoSaveQueue queue) {
         this.stockStorage = stockStorage;
@@ -41,7 +42,7 @@ public class BoxStockManager implements StockManager {
                 return loaderMap.get(user);
             }
 
-            var loader = new UserStockHolderLoader(user, this::loadUserStockHolder, queue);
+            var loader = new UserStockHolderLoader(user, this::loadUserStockHolder0, queue);
             loaderMap.put(user, loader);
             loader.load();
 
@@ -55,7 +56,9 @@ public class BoxStockManager implements StockManager {
 
         return CompletableFuture.runAsync(() -> {
             try {
-                stockStorage.saveUserStockHolder(stockHolder);
+                synchronized (getLock(stockHolder.getUser())) {
+                    stockStorage.saveUserStockHolder(stockHolder);
+                }
             } catch (Exception e) {
                 throw new RuntimeException("Could not save user stock holder (" + stockHolder.getUser().getUUID() + ")", e);
             }
@@ -63,13 +66,22 @@ public class BoxStockManager implements StockManager {
         }, executor);
     }
 
-    private @NotNull UserStockHolder loadUserStockHolder(@NotNull BoxUser user) {
+    private @NotNull UserStockHolder loadUserStockHolder0(@NotNull BoxUser user) {
+        UserStockHolder stockHolder;
+
         try {
-            var stockHolder = stockStorage.loadUserStockHolder(user);
-            BoxProvider.get().getEventBus().callEvent(new StockHolderLoadEvent(stockHolder));
-            return stockHolder;
+            synchronized (getLock(user)) {
+                stockHolder = stockStorage.loadUserStockHolder(user);
+            }
         } catch (Exception e) {
             throw new RuntimeException("Could not load user stock holder (" + user.getUUID() + ")", e);
         }
+
+        BoxProvider.get().getEventBus().callEvent(new StockHolderLoadEvent(stockHolder));
+        return stockHolder;
+    }
+
+    private @NotNull Object getLock(@NotNull BoxUser user) {
+        return lockMap.computeIfAbsent(user, u -> new Object());
     }
 }
