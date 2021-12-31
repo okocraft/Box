@@ -124,6 +124,6 @@ public final class DefaultItemProvider {
         return new DefaultItem(Material.FIREWORK_ROCKET + "_" + power, firework);
     }
 
-    public static record DefaultItem(@NotNull String plainName, @NotNull ItemStack itemStack) {
+    public record DefaultItem(@NotNull String plainName, @NotNull ItemStack itemStack) {
     }
 }
