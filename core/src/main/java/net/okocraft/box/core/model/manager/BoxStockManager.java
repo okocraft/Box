@@ -38,13 +38,11 @@ public class BoxStockManager implements StockManager {
         Objects.requireNonNull(user);
 
         return CompletableFuture.supplyAsync(() -> {
-            if (loaderMap.containsKey(user)) {
-                return loaderMap.get(user);
-            }
+            var loader = loaderMap.computeIfAbsent(user, this::createLoader);
 
-            var loader = new UserStockHolderLoader(user, this::loadUserStockHolder0, queue);
-            loaderMap.put(user, loader);
-            loader.load();
+            if (!loader.isLoaded()) {
+                loader.load();
+            }
 
             return loader;
         }, executor);
@@ -64,6 +62,10 @@ public class BoxStockManager implements StockManager {
             }
             BoxProvider.get().getEventBus().callEvent(new StockHolderSaveEvent(stockHolder));
         }, executor);
+    }
+
+    private @NotNull UserStockHolderLoader createLoader(@NotNull BoxUser user) {
+        return new UserStockHolderLoader(user, this::loadUserStockHolder0, queue);
     }
 
     private @NotNull UserStockHolder loadUserStockHolder0(@NotNull BoxUser user) {
