@@ -88,7 +88,6 @@ public class StorageMode implements BoxItemClickMode {
         );
     }
 
-    @SuppressWarnings("DuplicatedCode")
     private void processDeposit(@NotNull Context context) {
         var player = context.clicker();
         var session = PlayerSession.get(player);
@@ -170,7 +169,6 @@ public class StorageMode implements BoxItemClickMode {
             return target;
         }
 
-        @SuppressWarnings("DuplicatedCode")
         @Override
         public void onClick(@NotNull Player clicker, @NotNull ClickType clickType) {
             if (!clickType.isShiftClick()) {
