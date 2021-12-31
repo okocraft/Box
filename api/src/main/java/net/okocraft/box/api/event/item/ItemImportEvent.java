@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 
 /**
- * A event called when the {@link BoxItem} is imported.
+ * An event called when the {@link BoxItem} is imported.
  * <p>
  * This event is for debugging only, and will only be called when the Box is starting.
  */
