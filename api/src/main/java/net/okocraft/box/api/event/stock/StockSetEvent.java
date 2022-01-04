@@ -62,6 +62,7 @@ public class StockSetEvent extends StockEvent {
                 ", stockHolderName=" + getStockHolder().getName() +
                 ", stockHolderClass=" + getStockHolder().getClass().getSimpleName() +
                 ", item=" + item +
+                ", previousAmount=" + previousAmount +
                 ", amount=" + amount +
                 '}';
     }
@@ -71,6 +72,7 @@ public class StockSetEvent extends StockEvent {
         return "StockSetEvent{" +
                 "stockholder=" + getStockHolder() +
                 ", item=" + item +
+                ", previousAmount=" + previousAmount +
                 ", amount=" + amount +
                 '}';
     }
