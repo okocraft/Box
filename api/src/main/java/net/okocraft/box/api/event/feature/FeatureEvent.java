@@ -44,6 +44,14 @@ public class FeatureEvent extends BoxEvent {
     }
 
     @Override
+    public @NotNull String toDebugLog() {
+        return "FeatureEvent{" +
+                "feature=" + feature.getName() +
+                ", type=" + type +
+                '}';
+    }
+
+    @Override
     public String toString() {
         return "FeatureEvent{" +
                 "feature=" + feature +

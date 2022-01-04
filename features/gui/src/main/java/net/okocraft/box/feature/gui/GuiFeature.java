@@ -4,7 +4,10 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.feature.AbstractBoxFeature;
+import net.okocraft.box.api.feature.BoxFeature;
+import net.okocraft.box.api.feature.Disableable;
 import net.okocraft.box.api.feature.Reloadable;
+import net.okocraft.box.feature.category.CategoryFeature;
 import net.okocraft.box.feature.gui.api.mode.ClickModeRegistry;
 import net.okocraft.box.feature.gui.internal.command.MenuOpenCommand;
 import net.okocraft.box.feature.gui.internal.holder.BoxInventoryHolder;
@@ -15,8 +18,11 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Unmodifiable;
 
-public class GuiFeature extends AbstractBoxFeature implements Reloadable {
+import java.util.Set;
+
+public class GuiFeature extends AbstractBoxFeature implements Disableable, Reloadable {
 
     private final MenuOpenCommand command = new MenuOpenCommand();
     private final InventoryListener listener = new InventoryListener();
@@ -77,5 +83,10 @@ public class GuiFeature extends AbstractBoxFeature implements Reloadable {
             //
             // IllegalStateException: Exceeded maximum depth of 512 while attempting to flatten components!
         }
+    }
+
+    @Override
+    public @NotNull @Unmodifiable Set<Class<? extends BoxFeature>> getDependencies() {
+        return Set.of(CategoryFeature.class);
     }
 }

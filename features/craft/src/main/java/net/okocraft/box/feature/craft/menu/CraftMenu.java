@@ -18,7 +18,6 @@ import net.okocraft.box.feature.gui.api.menu.AbstractMenu;
 import net.okocraft.box.feature.gui.api.menu.Menu;
 import net.okocraft.box.feature.gui.api.menu.RenderedButton;
 import net.okocraft.box.feature.gui.api.session.PlayerSession;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -69,7 +68,7 @@ public class CraftMenu extends AbstractMenu {
 
         for (int slot = 0, limit = getRows() * 9; slot < limit; slot++) {
             if (!RECIPE_SLOTS.contains(slot) && slot != 24) {
-                buttons.add(Button.empty(Material.GRAY_STAINED_GLASS_PANE, slot));
+                buttons.add(Button.glassPane(slot));
             }
         }
 

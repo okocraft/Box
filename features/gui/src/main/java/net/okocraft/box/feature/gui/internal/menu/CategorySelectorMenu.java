@@ -8,7 +8,6 @@ import net.okocraft.box.feature.gui.api.buttons.CloseButton;
 import net.okocraft.box.feature.gui.api.menu.paginate.AbstractPaginatedMenu;
 import net.okocraft.box.feature.gui.internal.button.CategoryButton;
 import net.okocraft.box.feature.gui.internal.lang.Displays;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -31,7 +30,7 @@ public class CategorySelectorMenu extends AbstractPaginatedMenu<Category> {
         buttons.add(new CloseButton());
 
         Stream.of(45, 46, 47, 48, 50, 51, 52, 53)
-                .map(slot -> Button.empty(Material.GRAY_STAINED_GLASS_PANE, slot))
+                .map(Button::glassPane)
                 .forEach(buttons::add);
     }
 

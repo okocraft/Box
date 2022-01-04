@@ -2,7 +2,7 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
     id("box.common-conventions")
-    id("com.github.johnrengelman.shadow") version "7.1.0"
+    id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
 dependencies {
@@ -18,7 +18,7 @@ dependencies {
 }
 
 tasks.named<Copy>("processResources") {
-    filesMatching("plugin.yml") {
+    filesMatching(listOf("plugin.yml", "en.yml", "ja_JP.yml")) {
         expand("projectVersion" to project.version)
     }
 }

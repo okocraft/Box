@@ -6,7 +6,7 @@ import net.okocraft.box.api.command.AbstractCommand;
 import net.okocraft.box.api.message.GeneralMessage;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.feature.command.message.BoxMessage;
-import net.okocraft.box.feature.command.util.TabCompleter;
+import net.okocraft.box.api.util.TabCompleter;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;

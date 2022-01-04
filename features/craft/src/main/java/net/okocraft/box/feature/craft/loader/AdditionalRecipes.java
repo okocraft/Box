@@ -12,12 +12,8 @@ import java.util.List;
 
 final class AdditionalRecipes {
 
-    static final List<Recipe> RECIPES;
-
-    static {
-        RECIPES = List.of(
-                fireworkRocket(1), fireworkRocket(2), fireworkRocket(3)
-        );
+    static @NotNull List<Recipe> getFireworkRocketRecipes() {
+        return List.of(fireworkRocket(1), fireworkRocket(2), fireworkRocket(3));
     }
 
     private static @NotNull Recipe fireworkRocket(int power) {

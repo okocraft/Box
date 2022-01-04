@@ -58,4 +58,13 @@ public class StockHolderEvent extends BoxEvent {
             throw new IllegalStateException("The StockHolder of this event is not UserStockHolder.");
         }
     }
+
+    @Override
+    public @NotNull String toDebugLog() {
+        return getEventName() + "{" +
+                "uuid=" + getStockHolder().getUUID() +
+                ", name=" + getStockHolder().getName() +
+                ", class=" + getStockHolder().getClass().getSimpleName() +
+                "}";
+    }
 }

@@ -1,7 +1,6 @@
 package net.okocraft.box.feature.craft.util;
 
 import net.kyori.adventure.text.Component;
-import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.feature.craft.lang.Displays;
 import net.okocraft.box.feature.craft.model.BoxIngredientItem;
@@ -9,6 +8,7 @@ import net.okocraft.box.feature.craft.model.BoxItemRecipe;
 import net.okocraft.box.feature.craft.model.IngredientHolder;
 import net.okocraft.box.feature.craft.model.SelectedRecipe;
 import net.okocraft.box.feature.gui.api.lang.Styles;
+import net.okocraft.box.feature.gui.api.session.PlayerSession;
 import net.okocraft.box.feature.gui.api.util.TranslationUtil;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -26,7 +26,7 @@ public final class IngredientRenderer {
 
     public static void render(@NotNull List<Component> target, @NotNull SelectedRecipe recipe,
                               @NotNull Player viewer, int times) {
-        var stockHolder = BoxProvider.get().getBoxPlayerMap().get(viewer).getCurrentStockHolder();
+        var stockHolder = PlayerSession.get(viewer).getStockHolder();
 
         target.add(TranslationUtil.render(Displays.CRAFT_BUTTON_INGREDIENTS.append(text(":")), viewer));
 

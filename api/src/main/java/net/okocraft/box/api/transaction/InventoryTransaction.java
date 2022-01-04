@@ -3,9 +3,15 @@ package net.okocraft.box.api.transaction;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.model.item.BoxItem;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.inventory.InventoryAction;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -99,6 +105,45 @@ public final class InventoryTransaction {
     }
 
     /**
+     * Deposits items in an {@link InventoryView#getTopInventory()}.
+     * <p>
+     * This method calls {@link InventoryClickEvent} before taking the item from the slot.
+     *
+     * @param inventoryView the target inventory view
+     * @return the {@link TransactionResultList}
+     */
+    public static @NotNull TransactionResultList depositItemsInTopInventory(@NotNull InventoryView inventoryView) {
+        Objects.requireNonNull(inventoryView);
+
+        var inventory = inventoryView.getTopInventory();
+
+        var result = new ArrayList<TransactionResult>();
+        var contents = inventory.getStorageContents();
+
+        for (int i = 0; i < contents.length; i++) {
+            ItemStack item = contents[i];
+
+            if (item == null) {
+                continue;
+            }
+
+            var boxItem = BoxProvider.get().getItemManager().getBoxItem(item);
+
+            if (boxItem.isPresent() && checkClickEvent(inventoryView, i)) {
+                result.add(TransactionResult.create(DEPOSITED, boxItem.get(), item.getAmount()));
+                contents[i] = null;
+            }
+        }
+
+        if (result.isEmpty()) {
+            return TransactionResultList.create(NOT_FOUND);
+        } else {
+            inventory.setStorageContents(contents);
+            return TransactionResultList.create(DEPOSITED, result);
+        }
+    }
+
+    /**
      * Deposits specified items in an inventory.
      *
      * @param inventory    the target inventory
@@ -172,6 +217,29 @@ public final class InventoryTransaction {
         Objects.requireNonNull(inventory);
         Objects.requireNonNull(boxItem);
 
+        return withdraw(null, inventory, boxItem, amount);
+    }
+
+    /**
+     * Withdraws items to an {@link InventoryView#getTopInventory()}.
+     * <p>
+     * This method calls {@link InventoryClickEvent} before storing the item to the slot.
+     *
+     * @param inventoryView the target inventory view
+     * @param boxItem       the item to withdraw
+     * @param amount        the amount of item
+     * @return the {@link TransactionResult}
+     */
+    public static @NotNull TransactionResult withdraw(@NotNull InventoryView inventoryView,
+                                                      @NotNull BoxItem boxItem, int amount) {
+        Objects.requireNonNull(inventoryView);
+        Objects.requireNonNull(boxItem);
+
+        return withdraw(inventoryView, inventoryView.getTopInventory(), boxItem, amount);
+    }
+
+    private static @NotNull TransactionResult withdraw(@Nullable InventoryView view, @NotNull Inventory inventory,
+                                                       @NotNull BoxItem boxItem, int amount) {
         var toStore = amount;
         var maxStackSize = boxItem.getOriginal().getMaxStackSize();
 
@@ -180,11 +248,11 @@ public final class InventoryTransaction {
         for (int i = 0; i < contents.length && 0 < toStore; i++) {
             var item = contents[i];
 
-            if (item != null && item.getType() != boxItem.getOriginal().getType()) {
-                continue;
-            }
-
             if (item == null) {
+                if (view != null && !checkClickEvent(view, i)) {
+                    continue;
+                }
+
                 var cloned = boxItem.getClonedItem();
 
                 if (toStore < maxStackSize) {
@@ -196,10 +264,11 @@ public final class InventoryTransaction {
                 }
 
                 contents[i] = cloned;
-                continue;
-            }
+            } else if (item.isSimilar(boxItem.getOriginal())) {
+                if (view != null && !checkClickEvent(view, i)) {
+                    continue;
+                }
 
-            if (item.isSimilar(boxItem.getOriginal())) {
                 var remaining = maxStackSize - item.getAmount();
 
                 if (remaining != 0) {
@@ -225,5 +294,11 @@ public final class InventoryTransaction {
         } else {
             return TransactionResult.create(TransactionResultType.WITHDREW_PARTIAL, boxItem, amount - toStore);
         }
+    }
+
+    private static boolean checkClickEvent(@NotNull InventoryView view, int slot) {
+        return new InventoryClickEvent(
+                view, InventoryType.SlotType.CONTAINER, slot,
+                ClickType.LEFT, InventoryAction.PLACE_ALL).callEvent();
     }
 }

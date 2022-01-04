@@ -8,8 +8,8 @@ import net.okocraft.box.api.message.GeneralMessage;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.model.stock.StockHolder;
 import net.okocraft.box.feature.command.message.BoxAdminMessage;
-import net.okocraft.box.feature.command.util.TabCompleter;
-import net.okocraft.box.feature.command.util.UserStockHolderOperator;
+import net.okocraft.box.api.util.TabCompleter;
+import net.okocraft.box.api.util.UserStockHolderOperator;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -138,14 +138,7 @@ public class StockModifyCommands {
                     .supportOffline(true)
                     .stockHolderOperator(target -> {
                         int current = modifyStock(target, item.get(), amount);
-
-                        var targetPlayer = Bukkit.getPlayer(target.getUUID());
-
-                        if (targetPlayer == null) {
-                            BoxProvider.get().getStockManager().saveUserStock(target).join();
-                        }
-
-                        sendMessage(sender, targetPlayer, target.getName(), item.get(), amount, current);
+                        sendMessage(sender, Bukkit.getPlayer(target.getUUID()), target.getName(), item.get(), amount, current);
                     })
                     .onNotFound(name -> sender.sendMessage(GeneralMessage.ERROR_COMMAND_PLAYER_NOT_FOUND.apply(name)))
                     .run();

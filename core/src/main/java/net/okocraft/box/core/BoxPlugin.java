@@ -1,8 +1,11 @@
 package net.okocraft.box.core;
 
+import com.github.siroshun09.configapi.api.Configuration;
 import com.github.siroshun09.configapi.api.util.ResourceUtils;
 import com.github.siroshun09.configapi.yaml.YamlConfiguration;
 import com.github.siroshun09.event4j.bus.EventBus;
+import com.github.siroshun09.translationloader.ConfigurationLoader;
+import com.github.siroshun09.translationloader.TranslationLoader;
 import com.github.siroshun09.translationloader.directory.TranslationDirectory;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
@@ -12,6 +15,7 @@ import net.okocraft.box.api.command.base.BoxAdminCommand;
 import net.okocraft.box.api.command.base.BoxCommand;
 import net.okocraft.box.api.event.feature.FeatureEvent;
 import net.okocraft.box.api.feature.BoxFeature;
+import net.okocraft.box.api.feature.Disableable;
 import net.okocraft.box.api.feature.Reloadable;
 import net.okocraft.box.api.model.data.CustomDataContainer;
 import net.okocraft.box.api.model.manager.ItemManager;
@@ -24,13 +28,13 @@ import net.okocraft.box.core.command.BoxCommandImpl;
 import net.okocraft.box.core.config.Settings;
 import net.okocraft.box.core.listener.DebugListener;
 import net.okocraft.box.core.listener.PlayerConnectionListener;
-import net.okocraft.box.core.listener.StockHolderListener;
 import net.okocraft.box.core.message.ErrorMessages;
 import net.okocraft.box.core.message.MicsMessages;
 import net.okocraft.box.core.model.data.BoxCustomDataContainer;
 import net.okocraft.box.core.model.manager.BoxItemManager;
 import net.okocraft.box.core.model.manager.BoxStockManager;
 import net.okocraft.box.core.model.manager.BoxUserManager;
+import net.okocraft.box.core.model.queue.AutoSaveQueue;
 import net.okocraft.box.core.player.BoxPlayerMapImpl;
 import net.okocraft.box.core.storage.Storage;
 import net.okocraft.box.core.storage.implementations.yaml.YamlStorage;
@@ -46,6 +50,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
 import java.io.IOException;
@@ -77,8 +82,8 @@ public class BoxPlugin implements BoxAPI {
 
     private final List<BoxFeature> features = new ArrayList<>();
 
-    private final AutoSaveTask autoSaveTask = new AutoSaveTask();
-    private final StockHolderListener stockHolderListener = new StockHolderListener();
+    private final AutoSaveQueue autoSaveQueue = new AutoSaveQueue();
+    private final AutoSaveTask autoSaveTask = new AutoSaveTask(autoSaveQueue);
 
     private Storage storage;
     private BoxItemManager itemManager;
@@ -95,7 +100,14 @@ public class BoxPlugin implements BoxAPI {
         this.configuration =
                 YamlConfiguration.create(pluginDirectory.resolve("config.yml"));
         this.translationDirectory =
-                TranslationDirectory.create(pluginDirectory.resolve("languages"), Key.key("box", "language"));
+                TranslationDirectory.newBuilder()
+                        .setDirectory(pluginDirectory.resolve("languages"))
+                        .setKey(Key.key("box", "language"))
+                        .setDefaultLocale(Locale.ENGLISH)
+                        .onDirectoryCreated(this::saveDefaultLanguages)
+                        .setVersion(getPluginInstance().getDescription().getVersion())
+                        .setTranslationLoaderCreator(this::getBundledTranslation)
+                        .build();
 
         BoxProvider.set(this);
     }
@@ -113,11 +125,7 @@ public class BoxPlugin implements BoxAPI {
 
         getLogger().info("Loading languages...");
 
-        translationDirectory.getRegistry().defaultLocale(Locale.ENGLISH);
-
         try {
-            translationDirectory.createDirectoryIfNotExists();
-            saveDefaultLanguages(translationDirectory.getDirectory());
             translationDirectory.load();
         } catch (IOException e) {
             getLogger().log(Level.SEVERE, "Could not load languages", e);
@@ -157,7 +165,7 @@ public class BoxPlugin implements BoxAPI {
             return false;
         }
 
-        stockManager = new BoxStockManager(storage.getStockStorage());
+        stockManager = new BoxStockManager(storage.getStockStorage(), autoSaveQueue);
         userManager = new BoxUserManager(storage.getUserStorage());
 
         customDataContainer = new BoxCustomDataContainer(storage.getCustomDataStorage());
@@ -168,7 +176,6 @@ public class BoxPlugin implements BoxAPI {
         Bukkit.getPluginManager().registerEvents(new PlayerConnectionListener(playerMap), plugin);
 
         autoSaveTask.start();
-        stockHolderListener.register();
 
         getLogger().info("Registering commands...");
 
@@ -205,7 +212,6 @@ public class BoxPlugin implements BoxAPI {
             List.copyOf(features).forEach(this::unregister);
         }
 
-        stockHolderListener.unregister();
         autoSaveTask.stop();
 
         if (playerMap != null) {
@@ -265,10 +271,7 @@ public class BoxPlugin implements BoxAPI {
         }
 
         try {
-            translationDirectory.createDirectoryIfNotExists();
-            saveDefaultLanguages(translationDirectory.getDirectory());
             translationDirectory.load();
-            translationDirectory.getRegistry().defaultLocale(Locale.ENGLISH);
             sender.sendMessage(MicsMessages.LANGUAGES_RELOADED);
         } catch (Throwable e) {
             playerMessenger.accept(() -> ErrorMessages.ERROR_RELOAD_FAILURE.apply("languages", e));
@@ -298,6 +301,25 @@ public class BoxPlugin implements BoxAPI {
 
         var japanese = "ja_JP.yml";
         ResourceUtils.copyFromJarIfNotExists(jarFile, japanese, directory.resolve(japanese));
+    }
+
+    private @Nullable TranslationLoader getBundledTranslation(@NotNull Locale locale) throws IOException {
+        var strLocale = locale.toString();
+
+        if (!(strLocale.equals("en") || strLocale.equals("ja_JP"))) {
+            return null;
+        }
+
+        Configuration source;
+
+        try (var input = ResourceUtils.getInputStreamFromJar(getJar(), strLocale + ".yml")) {
+            source = YamlConfiguration.loadFromInputStream(input);
+        }
+
+        var loader = ConfigurationLoader.create(locale, source);
+        loader.load();
+
+        return loader;
     }
 
     @Override
@@ -377,9 +399,23 @@ public class BoxPlugin implements BoxAPI {
 
     @Override
     public void register(@NotNull BoxFeature boxFeature) {
-        if (configuration.get(Settings.DISABLED_FEATURES).contains(boxFeature.getName())) {
+        if (boxFeature instanceof Disableable &&
+                configuration.get(Settings.DISABLED_FEATURES).contains(boxFeature.getName())) {
             getLogger().warning("The " + boxFeature.getName() + " feature is disabled in config.yml");
             return;
+        }
+
+        var dependencies = boxFeature.getDependencies();
+
+        if (!dependencies.isEmpty()) {
+            for (var dependencyClass : dependencies) {
+                if (features.stream().noneMatch(feature -> dependencyClass.isAssignableFrom(feature.getClass()))) {
+                    getLogger().warning(
+                            dependencyClass.getSimpleName() + " that is the dependency of the " + boxFeature.getName() + " is not registered."
+                    );
+                    return;
+                }
+            }
         }
 
         try {

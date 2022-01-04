@@ -1,12 +1,12 @@
 package net.okocraft.box.feature.craft.menu;
 
 import net.kyori.adventure.text.Component;
-import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.feature.craft.RecipeRegistry;
 import net.okocraft.box.feature.craft.lang.Displays;
 import net.okocraft.box.feature.gui.api.lang.Styles;
 import net.okocraft.box.feature.gui.api.menu.Menu;
 import net.okocraft.box.feature.gui.api.menu.RenderedButton;
+import net.okocraft.box.feature.gui.api.session.PlayerSession;
 import net.okocraft.box.feature.gui.api.util.MenuOpener;
 import net.okocraft.box.feature.gui.api.util.TranslationUtil;
 import org.bukkit.Material;
@@ -48,7 +48,7 @@ public record RecipeItemIcon(@NotNull CraftMenu.CurrentRecipe currentRecipe,
 
         var lore = new ArrayList<Component>();
 
-        var stockHolder = BoxProvider.get().getBoxPlayerMap().get(viewer).getCurrentStockHolder();
+        var stockHolder = PlayerSession.get(viewer).getStockHolder();
 
         if (ingredients.size() != 1) {
             for (var ingredient : ingredients.get()) {

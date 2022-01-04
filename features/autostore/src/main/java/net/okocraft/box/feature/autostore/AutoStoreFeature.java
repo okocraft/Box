@@ -2,6 +2,7 @@ package net.okocraft.box.feature.autostore;
 
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.feature.AbstractBoxFeature;
+import net.okocraft.box.api.feature.Disableable;
 import net.okocraft.box.api.feature.Reloadable;
 import net.okocraft.box.feature.autostore.command.AutoStoreCommand;
 import net.okocraft.box.feature.autostore.gui.AutoStoreClickMode;
@@ -14,7 +15,7 @@ import net.okocraft.box.feature.gui.api.mode.ClickModeRegistry;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
-public class AutoStoreFeature extends AbstractBoxFeature implements Reloadable {
+public class AutoStoreFeature extends AbstractBoxFeature implements Disableable, Reloadable {
 
     private final BoxPlayerListener boxPlayerListener = new BoxPlayerListener();
     private final AutoSaveListener autoSaveListener = new AutoSaveListener();

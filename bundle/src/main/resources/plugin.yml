@@ -1,6 +1,6 @@
 name: Box
 main: net.okocraft.box.bundle.BoxBootstrap
-version: ${projectVersion}
+version: "${projectVersion}"
 authors: [ lazy_gon, Siroshun09 ]
 api-version: 1.17
 commands:
@@ -58,6 +58,9 @@ permissions:
       - box.stick.snowball
       - box.stick.expbottle
       - box.stick.potion
+      - box.stick.container
+  box.stick.container:
+    default: true
   box.stick.menu:
     default: true
   box.stick.block:
@@ -93,9 +96,14 @@ permissions:
       - box.admin.command.register
       - box.admin.command.reload
       - box.admin.command.rename
+      - box.admin.command.reset
       - box.admin.command.give
+      - box.admin.command.gui.other
       - box.admin.command.set
       - box.admin.command.take
+      - box.admin.command.stock
+      - box.admin.command.stock.info
+      - box.admin.command.stock.list
       - box.admin.command.version
   box.admin.command.customstick:
     default: op
@@ -107,11 +115,21 @@ permissions:
     default: op
   box.admin.command.rename:
     default: op
+  box.admin.command.reset:
+    default: op
   box.admin.command.give:
+    default: op
+  box.admin.command.gui.other:
     default: op
   box.admin.command.set:
     default: op
   box.admin.command.take:
+    default: op
+  box.admin.command.stock:
+    default: op
+  box.admin.command.stock.info:
+    default: op
+  box.admin.command.stock.list:
     default: op
   box.admin.command.version:
     default: op

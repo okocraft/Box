@@ -14,6 +14,7 @@ import net.okocraft.box.feature.command.boxadmin.RenameCommand;
 import net.okocraft.box.feature.command.boxadmin.ResetCommand;
 import net.okocraft.box.feature.command.boxadmin.StockModifyCommands;
 import net.okocraft.box.feature.command.boxadmin.VersionCommand;
+import net.okocraft.box.feature.command.boxadmin.stock.StockCommand;
 
 import java.util.List;
 
@@ -25,8 +26,9 @@ public class CommandFeature extends AbstractBoxFeature {
 
     public final List<Command> boxAdminSubCommands =
             List.of(StockModifyCommands.give(), StockModifyCommands.set(), StockModifyCommands.take(),
-                    new InfinityCommand(), new RegisterCommand(), new RenameCommand(),
-                    new ReloadCommand(), new ResetCommand(), new VersionCommand());
+                    new StockCommand(), new InfinityCommand(), new RegisterCommand(),
+                    new RenameCommand(), new ReloadCommand(), new ResetCommand(),
+                    new VersionCommand());
 
     public CommandFeature() {
         super("command");

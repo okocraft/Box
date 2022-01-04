@@ -56,10 +56,23 @@ public class StockSetEvent extends StockEvent {
     }
 
     @Override
+    public @NotNull String toDebugLog() {
+        return "StockSetEvent{" +
+                "stockholderUuid=" + getStockHolder().getUUID() +
+                ", stockHolderName=" + getStockHolder().getName() +
+                ", stockHolderClass=" + getStockHolder().getClass().getSimpleName() +
+                ", item=" + item +
+                ", previousAmount=" + previousAmount +
+                ", amount=" + amount +
+                '}';
+    }
+
+    @Override
     public String toString() {
         return "StockSetEvent{" +
                 "stockholder=" + getStockHolder() +
                 ", item=" + item +
+                ", previousAmount=" + previousAmount +
                 ", amount=" + amount +
                 '}';
     }

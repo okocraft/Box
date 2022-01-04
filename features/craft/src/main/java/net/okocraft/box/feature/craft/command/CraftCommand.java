@@ -56,7 +56,10 @@ public class CraftCommand extends AbstractCommand {
 
         Menu menu;
 
-        PlayerSession.get(player).resetCustomNumbers();
+        var session = PlayerSession.get(player);
+
+        session.resetCustomNumbers();
+        session.setStockHolder(BoxProvider.get().getBoxPlayerMap().get(player).getCurrentStockHolder());
 
         if (recipeHolder.getRecipeList().size() == 1) {
             menu = new CraftMenu(recipeHolder.getRecipeList().get(0), null);

@@ -20,6 +20,10 @@ public class IngredientHolder {
         return new IngredientHolder(slot, choice.getChoices());
     }
 
+    public static @NotNull IngredientHolder fromSingleItem(int slot, @NotNull ItemStack itemStack) {
+        return new IngredientHolder(slot, List.of(itemStack));
+    }
+
     private final int slot;
     private final List<BoxIngredientItem> patterns;
 
