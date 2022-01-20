@@ -8,11 +8,9 @@ import net.okocraft.box.api.feature.BoxFeature;
 import net.okocraft.box.api.feature.Disableable;
 import net.okocraft.box.api.feature.Reloadable;
 import net.okocraft.box.feature.category.CategoryFeature;
-import net.okocraft.box.feature.gui.api.mode.ClickModeRegistry;
 import net.okocraft.box.feature.gui.internal.command.MenuOpenCommand;
 import net.okocraft.box.feature.gui.internal.holder.BoxInventoryHolder;
 import net.okocraft.box.feature.gui.internal.listener.InventoryListener;
-import net.okocraft.box.feature.gui.internal.mode.StorageMode;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.HumanEntity;
@@ -27,8 +25,6 @@ public class GuiFeature extends AbstractBoxFeature implements Disableable, Reloa
     private final MenuOpenCommand command = new MenuOpenCommand();
     private final InventoryListener listener = new InventoryListener();
 
-    private final StorageMode storageMode = new StorageMode();
-
     public GuiFeature() {
         super("gui");
     }
@@ -36,8 +32,6 @@ public class GuiFeature extends AbstractBoxFeature implements Disableable, Reloa
     @Override
     public void enable() {
         var boxCommand = BoxProvider.get().getBoxCommand();
-
-        ClickModeRegistry.register(storageMode);
 
         boxCommand.changeNoArgumentCommand(command);
         boxCommand.getSubCommandHolder().register(command);
@@ -48,8 +42,6 @@ public class GuiFeature extends AbstractBoxFeature implements Disableable, Reloa
     @Override
     public void disable() {
         var boxCommand = BoxProvider.get().getBoxCommand();
-
-        ClickModeRegistry.unregister(storageMode);
 
         boxCommand.changeNoArgumentCommand(null);
         boxCommand.getSubCommandHolder().unregister(command);
