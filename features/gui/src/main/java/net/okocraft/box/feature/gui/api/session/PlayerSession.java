@@ -8,7 +8,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,7 +60,8 @@ public class PlayerSession {
     }
 
     public @NotNull @Unmodifiable List<BoxItemClickMode> getAvailableClickModes() {
-        return availableClickModes != null ? availableClickModes : Collections.emptyList();
+        return availableClickModes != null && !availableClickModes.isEmpty() ?
+                availableClickModes : List.of(ClickModeRegistry.getStorageMode());
     }
 
     public void setAvailableClickModes(@NotNull List<BoxItemClickMode> availableClickModes) {
