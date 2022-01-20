@@ -3,7 +3,6 @@ package net.okocraft.box.feature.gui.internal.button;
 import net.kyori.adventure.text.Component;
 import net.okocraft.box.feature.gui.api.button.RefreshableButton;
 import net.okocraft.box.feature.gui.api.lang.Styles;
-import net.okocraft.box.feature.gui.api.mode.ClickModeRegistry;
 import net.okocraft.box.feature.gui.api.session.PlayerSession;
 import net.okocraft.box.feature.gui.api.util.TranslationUtil;
 import net.okocraft.box.feature.gui.internal.lang.Displays;
@@ -58,9 +57,9 @@ public class ModeButton implements RefreshableButton {
 
     @Override
     public void onClick(@NotNull Player clicker, @NotNull ClickType clickType) {
-        var modes = ClickModeRegistry.getModes();
         var session = PlayerSession.get(clicker);
 
+        var modes = session.getAvailableClickModes();
         int nextIndex = modes.indexOf(session.getBoxItemClickMode()) + 1;
 
         if (modes.size() <= nextIndex) {
@@ -77,9 +76,10 @@ public class ModeButton implements RefreshableButton {
     private @NotNull List<Component> createLore(@NotNull Player viewer) {
         var result = new ArrayList<Component>();
 
-        var modes = ClickModeRegistry.getModes();
+        var session = PlayerSession.get(viewer);
 
-        var currentMode = PlayerSession.get(viewer).getBoxItemClickMode();
+        var modes = session.getAvailableClickModes();
+        var currentMode = session.getBoxItemClickMode();
 
         for (var mode : modes) {
             var style = currentMode == mode ? Styles.NO_DECORATION_AQUA : Styles.NO_DECORATION_GRAY;

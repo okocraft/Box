@@ -70,6 +70,11 @@ public class StorageMode implements BoxItemClickMode {
     }
 
     @Override
+    public final boolean canUse(@NotNull Player viewer) {
+        return true; // This is the default mode, so it must always be available to the player.
+    }
+
+    @Override
     public @NotNull AdditionalButton createAdditionalButton(@NotNull Player viewer, @NotNull Menu currentMenu) {
         return new DepositAllButton();
     }

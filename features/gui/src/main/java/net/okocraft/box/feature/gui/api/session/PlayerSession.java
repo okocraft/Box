@@ -6,8 +6,11 @@ import net.okocraft.box.feature.gui.api.mode.ClickModeRegistry;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Unmodifiable;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -20,9 +23,10 @@ public class PlayerSession {
         return SESSION_MAP.computeIfAbsent(player.getUniqueId(), uuid -> new PlayerSession());
     }
 
-    private BoxItemClickMode currentClickMode = ClickModeRegistry.getModes().get(0);
+    private BoxItemClickMode currentClickMode = ClickModeRegistry.getStorageMode();
 
     private final Map<String, CustomNumberHolder> customNumberMap = new HashMap<>();
+    private List<BoxItemClickMode> availableClickModes;
     private @Nullable StockHolder stockHolder;
 
     private PlayerSession() {
@@ -54,5 +58,13 @@ public class PlayerSession {
 
     public void setStockHolder(@Nullable StockHolder stockHolder) {
         this.stockHolder = stockHolder;
+    }
+
+    public @NotNull @Unmodifiable List<BoxItemClickMode> getAvailableClickModes() {
+        return availableClickModes != null ? availableClickModes : Collections.emptyList();
+    }
+
+    public void setAvailableClickModes(@NotNull List<BoxItemClickMode> availableClickModes) {
+        this.availableClickModes = Objects.requireNonNull(availableClickModes);
     }
 }
