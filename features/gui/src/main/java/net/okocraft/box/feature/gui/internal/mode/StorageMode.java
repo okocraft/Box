@@ -93,7 +93,7 @@ public class StorageMode implements BoxItemClickMode {
         );
     }
 
-    private void processDeposit(@NotNull Context context) {
+    public void processDeposit(@NotNull Context context) {
         var player = context.clicker();
         var session = PlayerSession.get(player);
 
@@ -119,7 +119,7 @@ public class StorageMode implements BoxItemClickMode {
         player.playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, 100f, 1.0f);
     }
 
-    private void processWithdraw(@NotNull Context context) {
+    public void processWithdraw(@NotNull Context context) {
         var player = context.clicker();
         var session = PlayerSession.get(player);
 
