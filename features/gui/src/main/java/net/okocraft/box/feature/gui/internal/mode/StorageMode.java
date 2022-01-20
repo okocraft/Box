@@ -86,7 +86,7 @@ public class StorageMode implements BoxItemClickMode {
         return Set.of(GuiType.JAVA);
     }
 
-    private @NotNull @Unmodifiable List<Component> createLore(@NotNull BoxItem item, @NotNull Player player) {
+    protected @NotNull @Unmodifiable List<Component> createLore(@NotNull BoxItem item, @NotNull Player player) {
         var session = PlayerSession.get(player);
 
         int currentStock = session.getStockHolder().getAmount(item);

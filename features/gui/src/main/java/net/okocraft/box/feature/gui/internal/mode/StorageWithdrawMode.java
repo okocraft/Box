@@ -33,7 +33,8 @@ public class StorageWithdrawMode extends StorageMode {
         return Set.of(GuiType.BE);
     }
 
-    private @NotNull @Unmodifiable List<Component> createLore(@NotNull BoxItem item, @NotNull Player player) {
+    @Override
+    protected @NotNull @Unmodifiable List<Component> createLore(@NotNull BoxItem item, @NotNull Player player) {
         var session = PlayerSession.get(player);
 
         int currentStock = session.getStockHolder().getAmount(item);
