@@ -33,10 +33,10 @@ public final class Displays {
                             .style(NO_DECORATION_GRAY)
                             .build();
 
-    public static final SingleArgument<Integer> STORAGE_MODE_CURRENT_STOCK =
+    public static final SingleArgument<Integer> CURRENT_STOCK =
             stock ->
                     translatable()
-                            .key("box.bemode.storage-mode.current-stock")
+                            .key("box.bemode.current-stock")
                             .args(text(stock, AQUA))
                             .style(NO_DECORATION_GRAY)
                             .build();

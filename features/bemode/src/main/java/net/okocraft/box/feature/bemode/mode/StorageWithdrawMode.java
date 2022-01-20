@@ -78,7 +78,7 @@ public class StorageWithdrawMode implements BoxItemClickMode {
         return List.of(
                 Displays.STORAGE_WITHDRAW_MODE_CLICK_TO_WITHDRAW.apply(transactionAmount),
                 Component.empty(),
-                Displays.STORAGE_MODE_CURRENT_STOCK.apply(currentStock)
+                Displays.CURRENT_STOCK.apply(currentStock)
         );
     }
 }
