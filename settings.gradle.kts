@@ -15,6 +15,7 @@ sequenceOf(
 // features
 sequenceOf(
     "autostore",
+    "bemode",
     "category",
     "command",
     "craft",

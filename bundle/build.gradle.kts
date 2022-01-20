@@ -9,6 +9,7 @@ dependencies {
     implementation(project(":api"))
     implementation(project(":core"))
     implementation(project(":autostore"))
+    implementation(project(":bemode"))
     implementation(project(":category"))
     implementation(project(":command"))
     implementation(project(":craft"))

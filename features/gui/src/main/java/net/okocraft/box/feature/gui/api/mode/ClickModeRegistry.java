@@ -10,12 +10,12 @@ import java.util.List;
 
 public final class ClickModeRegistry {
 
-    private static final BoxItemClickMode STORAGE_MODE = new StorageMode();
+    private static final StorageMode STORAGE_MODE = new StorageMode();
     private static final List<BoxItemClickMode> REGISTERED_BOX_ITEM_CLICK_MODE = new ArrayList<>(List.of(STORAGE_MODE));
 
     private static List<BoxItemClickMode> COPIED_REGISTERED_BOX_ITEM_CLICK_MODE = Collections.emptyList();
 
-    public static @NotNull BoxItemClickMode getStorageMode() {
+    public static @NotNull StorageMode getStorageMode() {
         return STORAGE_MODE;
     }
 
