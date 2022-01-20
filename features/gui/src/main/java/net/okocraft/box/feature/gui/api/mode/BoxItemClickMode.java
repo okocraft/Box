@@ -1,5 +1,6 @@
 package net.okocraft.box.feature.gui.api.mode;
 
+import java.util.Set;
 import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.feature.gui.api.menu.Menu;
@@ -26,7 +27,13 @@ public interface BoxItemClickMode {
 
     @NotNull AdditionalButton createAdditionalButton(@NotNull Player viewer, @NotNull Menu currentMenu);
 
+    Set<GuiType> getApplicableGuiTypes();
+
     record Context(@NotNull Player clicker, @NotNull BoxItem item,
                    @NotNull ClickType clickType, @Nullable Menu currentMenu) {
+    }
+
+    enum GuiType {
+        BE, JAVA;
     }
 }

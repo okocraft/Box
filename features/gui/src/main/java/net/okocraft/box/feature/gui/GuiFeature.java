@@ -63,6 +63,10 @@ public class GuiFeature extends AbstractBoxFeature implements Disableable, Reloa
         HandlerList.unregisterAll(listener);
     }
 
+    public MenuOpenCommand getMenuOpenCommand() {
+        return command;
+    }
+
     private void closeMenus() {
         Bukkit.getOnlinePlayers()
                 .stream()

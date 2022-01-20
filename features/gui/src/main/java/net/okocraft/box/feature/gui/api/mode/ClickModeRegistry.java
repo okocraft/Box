@@ -13,7 +13,14 @@ public class ClickModeRegistry {
     private static List<BoxItemClickMode> COPIED_REGISTERED_BOX_ITEM_CLICK_MODE = Collections.emptyList();
 
     public static @NotNull @Unmodifiable List<BoxItemClickMode> getModes() {
-        return COPIED_REGISTERED_BOX_ITEM_CLICK_MODE;
+        return getModes(BoxItemClickMode.GuiType.JAVA);
+    }
+
+    public static @NotNull @Unmodifiable List<BoxItemClickMode> getModes(BoxItemClickMode.GuiType guiType) {
+        return COPIED_REGISTERED_BOX_ITEM_CLICK_MODE
+                .stream()
+                .filter(mode -> mode.getApplicableGuiTypes().contains(guiType))
+                .toList();
     }
 
     public static void register(@NotNull BoxItemClickMode mode) {

@@ -19,6 +19,7 @@ sequenceOf(
     "command",
     "craft",
     "gui",
+    "begui",
     "notifier",
     "stick"
 ).forEach {

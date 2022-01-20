@@ -17,15 +17,20 @@ public class PlayerSession {
     private static final Map<UUID, PlayerSession> SESSION_MAP = new HashMap<>();
 
     public static @NotNull PlayerSession get(@NotNull Player player) {
-        return SESSION_MAP.computeIfAbsent(player.getUniqueId(), uuid -> new PlayerSession());
+        return SESSION_MAP.computeIfAbsent(player.getUniqueId(), uuid -> new PlayerSession(
+                player.getUniqueId().toString().startsWith("00000000")
+                        ? BoxItemClickMode.GuiType.BE
+                        : BoxItemClickMode.GuiType.JAVA
+        ));
     }
 
-    private BoxItemClickMode currentClickMode = ClickModeRegistry.getModes().get(0);
+    private BoxItemClickMode currentClickMode;
 
     private final Map<String, CustomNumberHolder> customNumberMap = new HashMap<>();
     private @Nullable StockHolder stockHolder;
 
-    private PlayerSession() {
+    private PlayerSession(BoxItemClickMode.GuiType defaultGuiType) {
+        this.currentClickMode = ClickModeRegistry.getModes(defaultGuiType).get(0);
     }
 
     public @NotNull BoxItemClickMode getBoxItemClickMode() {

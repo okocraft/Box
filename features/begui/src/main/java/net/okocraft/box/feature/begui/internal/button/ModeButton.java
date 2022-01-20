@@ -1,4 +1,4 @@
-package net.okocraft.box.feature.gui.internal.button;
+package net.okocraft.box.feature.begui.internal.button;
 
 import net.kyori.adventure.text.Component;
 import net.okocraft.box.feature.gui.api.button.RefreshableButton;
@@ -7,7 +7,7 @@ import net.okocraft.box.feature.gui.api.mode.BoxItemClickMode;
 import net.okocraft.box.feature.gui.api.mode.ClickModeRegistry;
 import net.okocraft.box.feature.gui.api.session.PlayerSession;
 import net.okocraft.box.feature.gui.api.util.TranslationUtil;
-import net.okocraft.box.feature.gui.internal.lang.Displays;
+import net.okocraft.box.feature.begui.internal.lang.Displays;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -59,7 +59,7 @@ public class ModeButton implements RefreshableButton {
 
     @Override
     public void onClick(@NotNull Player clicker, @NotNull ClickType clickType) {
-        var modes = ClickModeRegistry.getModes();
+        var modes = ClickModeRegistry.getModes(BoxItemClickMode.GuiType.BE);
         var session = PlayerSession.get(clicker);
 
         int nextIndex = modes.indexOf(session.getBoxItemClickMode()) + 1;
@@ -78,7 +78,7 @@ public class ModeButton implements RefreshableButton {
     private @NotNull List<Component> createLore(@NotNull Player viewer) {
         var result = new ArrayList<Component>();
 
-        var modes = ClickModeRegistry.getModes();
+        var modes = ClickModeRegistry.getModes(BoxItemClickMode.GuiType.BE);
 
         var currentMode = PlayerSession.get(viewer).getBoxItemClickMode();
 

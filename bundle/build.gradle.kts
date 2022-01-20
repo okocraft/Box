@@ -13,6 +13,7 @@ dependencies {
     implementation(project(":command"))
     implementation(project(":craft"))
     implementation(project(":gui"))
+    implementation(project(":begui"))
     implementation(project(":notifier"))
     implementation(project(":stick"))
 }

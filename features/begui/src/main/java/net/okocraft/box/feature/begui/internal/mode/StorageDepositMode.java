@@ -1,16 +1,19 @@
-package net.okocraft.box.feature.gui.internal.mode;
+package net.okocraft.box.feature.begui.internal.mode;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.transaction.InventoryTransaction;
+import net.okocraft.box.feature.begui.internal.lang.Displays;
 import net.okocraft.box.feature.gui.api.menu.Menu;
 import net.okocraft.box.feature.gui.api.mode.AdditionalButton;
 import net.okocraft.box.feature.gui.api.mode.BoxItemClickMode;
 import net.okocraft.box.feature.gui.api.session.PlayerSession;
 import net.okocraft.box.feature.gui.api.util.TranslationUtil;
-import net.okocraft.box.feature.gui.internal.lang.Displays;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -20,17 +23,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-public class StorageMode implements BoxItemClickMode {
+public class StorageDepositMode implements BoxItemClickMode {
 
     private static final String TRANSACTION_AMOUNT_NAME = "transaction-amount";
 
     @Override
     public @NotNull String getName() {
-        return "storage";
+        return "storage_deposit";
     }
 
     @Override
@@ -40,19 +39,12 @@ public class StorageMode implements BoxItemClickMode {
 
     @Override
     public @NotNull Component getDisplayName() {
-        return Displays.STORAGE_MODE_DISPLAY_NAME;
+        return Displays.STORAGE_MODE_DEPOSIT_DISPLAY_NAME;
     }
 
     @Override
     public void onClick(@NotNull Context context) {
-        if (context.clickType().isLeftClick()) {
-            processDeposit(context);
-            return;
-        }
-
-        if (context.clickType().isRightClick()) {
-            processWithdraw(context);
-        }
+        processDeposit(context);
     }
 
     @Override
@@ -77,7 +69,7 @@ public class StorageMode implements BoxItemClickMode {
 
     @Override
     public Set<GuiType> getApplicableGuiTypes() {
-        return Set.of(GuiType.JAVA);
+        return Set.of(GuiType.BE);
     }
 
     private @NotNull @Unmodifiable List<Component> createLore(@NotNull BoxItem item, @NotNull Player player) {
@@ -87,8 +79,7 @@ public class StorageMode implements BoxItemClickMode {
         int transactionAmount = session.getCustomNumberHolder(TRANSACTION_AMOUNT_NAME).getAmount();
 
         return List.of(
-                Displays.STORAGE_MODE_LEFT_CLICK_TO_DEPOSIT.apply(transactionAmount),
-                Displays.STORAGE_MODE_RIGHT_CLICK_TO_WITHDRAW.apply(transactionAmount),
+                Displays.STORAGE_MODE_DEPOSIT_CLICK_TO_DEPOSIT.apply(transactionAmount),
                 Component.empty(),
                 Displays.STORAGE_MODE_CURRENT_STOCK.apply(currentStock)
         );
@@ -118,35 +109,6 @@ public class StorageMode implements BoxItemClickMode {
                 .forEach(result -> stockHolder.increase(result.getItem(), result.getAmount()));
 
         player.playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, 100f, 1.0f);
-    }
-
-    private void processWithdraw(@NotNull Context context) {
-        var player = context.clicker();
-        var session = PlayerSession.get(player);
-
-        var stockHolder = session.getStockHolder();
-        var currentStock = stockHolder.getAmount(context.item());
-
-        if (currentStock < 1) {
-            player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 100f, 1.5f);
-            return;
-        }
-
-        int transactionAmount = session.getCustomNumberHolder(TRANSACTION_AMOUNT_NAME).getAmount();
-
-        var amount = Math.min(currentStock, transactionAmount);
-
-        var result =
-                BoxProvider.get().getTaskFactory()
-                        .supply(() -> InventoryTransaction.withdraw(player.getInventory(), context.item(), amount))
-                        .join();
-
-        if (result.getType().isModified()) {
-            stockHolder.decrease(result.getItem(), result.getAmount());
-            player.playSound(player.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 100f, 1.0f);
-        } else {
-            player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 100f, 1.5f);
-        }
     }
 
     private static class DepositAllButton extends AdditionalButton {

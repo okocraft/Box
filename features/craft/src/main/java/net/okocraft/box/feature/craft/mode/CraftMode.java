@@ -1,5 +1,6 @@
 package net.okocraft.box.feature.craft.mode;
 
+import java.util.Set;
 import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.feature.craft.RecipeRegistry;
@@ -83,5 +84,10 @@ public class CraftMode implements BoxItemClickMode {
     @Override
     public @NotNull AdditionalButton createAdditionalButton(@NotNull Player viewer, @NotNull Menu currentMenu) {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Set<GuiType> getApplicableGuiTypes() {
+        return Set.of(GuiType.BE, GuiType.JAVA);
     }
 }
