@@ -6,6 +6,7 @@ import net.okocraft.box.api.message.argument.SingleArgument;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.Component.translatable;
 import static net.kyori.adventure.text.format.NamedTextColor.AQUA;
+import static net.okocraft.box.feature.gui.api.lang.Styles.NO_DECORATION_GOLD;
 import static net.okocraft.box.feature.gui.api.lang.Styles.NO_DECORATION_GRAY;
 
 public final class Displays {
@@ -40,7 +41,17 @@ public final class Displays {
                             .args(text(stock, AQUA))
                             .style(NO_DECORATION_GRAY)
                             .build();
-    
+
+    public static final Component DEPOSIT_ALL_BUTTON_DISPLAY_NAME =
+            translatable("box.bemode.deposit-all.display-name", NO_DECORATION_GOLD);
+
+    public static final Component DEPOSIT_ALL_BUTTON_LORE =
+            translatable("box.bemode.deposit-all.lore", NO_DECORATION_GRAY);
+
+    public static final Component DEPOSIT_ALL_BUTTON_CONFIRMATION =
+            translatable("box.bemode.deposit-all.confirmation", NO_DECORATION_GRAY);
+
+
     private Displays() {
         throw new UnsupportedOperationException();
     }
