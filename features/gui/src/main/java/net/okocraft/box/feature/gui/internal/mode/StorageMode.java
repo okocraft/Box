@@ -174,6 +174,7 @@ public class StorageMode implements BoxItemClickMode {
             return target;
         }
 
+        @SuppressWarnings("DuplicatedCode")
         @Override
         public void onClick(@NotNull Player clicker, @NotNull ClickType clickType) {
             if (!clickType.isShiftClick()) {
