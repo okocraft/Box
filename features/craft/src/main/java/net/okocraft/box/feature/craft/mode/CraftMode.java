@@ -81,6 +81,11 @@ public class CraftMode implements BoxItemClickMode {
     }
 
     @Override
+    public boolean canUse(@NotNull Player viewer) {
+        return viewer.hasPermission("box.craft");
+    }
+
+    @Override
     public @NotNull AdditionalButton createAdditionalButton(@NotNull Player viewer, @NotNull Menu currentMenu) {
         throw new UnsupportedOperationException();
     }
