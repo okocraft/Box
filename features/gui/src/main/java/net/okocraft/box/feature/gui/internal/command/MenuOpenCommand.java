@@ -7,6 +7,7 @@ import net.okocraft.box.api.message.GeneralMessage;
 import net.okocraft.box.api.model.stock.StockHolder;
 import net.okocraft.box.api.util.TabCompleter;
 import net.okocraft.box.api.util.UserStockHolderOperator;
+import net.okocraft.box.feature.gui.api.event.MenuOpenEvent;
 import net.okocraft.box.feature.gui.api.mode.ClickModeRegistry;
 import net.okocraft.box.feature.gui.api.session.PlayerSession;
 import net.okocraft.box.feature.gui.api.util.MenuOpener;
