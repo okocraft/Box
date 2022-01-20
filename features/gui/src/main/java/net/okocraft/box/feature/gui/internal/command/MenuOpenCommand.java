@@ -48,7 +48,7 @@ public class MenuOpenCommand extends AbstractCommand {
 
         var session = PlayerSession.get(player);
 
-        session.setBoxItemClickMode(ClickModeRegistry.getStorageMode());
+        session.setBoxItemClickMode(null);
         session.resetCustomNumbers();
 
         var modes = ClickModeRegistry.getModes().stream().filter(mode -> mode.canUse(player)).toList();

@@ -22,21 +22,20 @@ public class PlayerSession {
         return SESSION_MAP.computeIfAbsent(player.getUniqueId(), uuid -> new PlayerSession());
     }
 
-    private BoxItemClickMode currentClickMode = ClickModeRegistry.getStorageMode();
-
     private final Map<String, CustomNumberHolder> customNumberMap = new HashMap<>();
     private List<BoxItemClickMode> availableClickModes;
+    private @Nullable BoxItemClickMode currentClickMode;
     private @Nullable StockHolder stockHolder;
 
     private PlayerSession() {
     }
 
     public @NotNull BoxItemClickMode getBoxItemClickMode() {
-        return currentClickMode;
+        return Objects.requireNonNullElse(currentClickMode, getAvailableClickModes().get(0));
     }
 
-    public void setBoxItemClickMode(@NotNull BoxItemClickMode boxItemClickMode) {
-        this.currentClickMode = Objects.requireNonNull(boxItemClickMode);
+    public void setBoxItemClickMode(@Nullable BoxItemClickMode boxItemClickMode) {
+        this.currentClickMode = boxItemClickMode;
     }
 
     public @NotNull CustomNumberHolder getCustomNumberHolder(@NotNull String numberName) {
