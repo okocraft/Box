@@ -87,6 +87,11 @@ public class AutoStoreClickMode implements BoxItemClickMode {
     }
 
     @Override
+    public boolean canUse(@NotNull Player viewer) {
+        return viewer.hasPermission("box.autostore");
+    }
+
+    @Override
     public @NotNull AdditionalButton createAdditionalButton(@NotNull Player viewer, @NotNull Menu currentMenu) {
         if (AutoStoreSettingContainer.INSTANCE.isLoaded(viewer)) {
             return new AutoStoreSettingMenuButton(AutoStoreSettingContainer.INSTANCE.get(viewer), currentMenu);
