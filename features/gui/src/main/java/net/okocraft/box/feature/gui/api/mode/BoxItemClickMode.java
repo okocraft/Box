@@ -1,5 +1,6 @@
 package net.okocraft.box.feature.gui.api.mode;
 
+import java.util.Set;
 import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.feature.gui.api.menu.Menu;
@@ -29,6 +30,8 @@ public interface BoxItemClickMode {
     default boolean canUse(@NotNull Player viewer) {
         return true;
     }
+
+    Set<GuiType> getApplicableGuiTypes();
 
     record Context(@NotNull Player clicker, @NotNull BoxItem item,
                    @NotNull ClickType clickType, @Nullable Menu currentMenu) {

@@ -1,5 +1,6 @@
 package net.okocraft.box.feature.autostore.gui;
 
+import java.util.Set;
 import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.feature.autostore.model.AutoStoreSettingContainer;
@@ -7,6 +8,7 @@ import net.okocraft.box.feature.autostore.model.setting.AutoStoreSetting;
 import net.okocraft.box.feature.gui.api.menu.Menu;
 import net.okocraft.box.feature.gui.api.mode.AdditionalButton;
 import net.okocraft.box.feature.gui.api.mode.BoxItemClickMode;
+import net.okocraft.box.feature.gui.api.mode.GuiType;
 import net.okocraft.box.feature.gui.api.util.MenuOpener;
 import net.okocraft.box.feature.gui.api.util.TranslationUtil;
 import org.bukkit.Material;
@@ -98,6 +100,11 @@ public class AutoStoreClickMode implements BoxItemClickMode {
         } else {
             return new AutoStoreSettingMenuButton(currentMenu);
         }
+    }
+
+    @Override
+    public Set<GuiType> getApplicableGuiTypes() {
+        return Set.of(GuiType.BE, GuiType.JAVA);
     }
 
     private static class AutoStoreSettingMenuButton extends AdditionalButton {

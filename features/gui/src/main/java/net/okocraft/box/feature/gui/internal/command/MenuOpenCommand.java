@@ -7,7 +7,6 @@ import net.okocraft.box.api.message.GeneralMessage;
 import net.okocraft.box.api.model.stock.StockHolder;
 import net.okocraft.box.api.util.TabCompleter;
 import net.okocraft.box.api.util.UserStockHolderOperator;
-import net.okocraft.box.feature.gui.api.mode.ClickModeRegistry;
 import net.okocraft.box.feature.gui.api.session.PlayerSession;
 import net.okocraft.box.feature.gui.api.util.MenuOpener;
 import net.okocraft.box.feature.gui.internal.menu.CategorySelectorMenu;
@@ -42,11 +41,8 @@ public class MenuOpenCommand extends AbstractCommand {
 
         var session = PlayerSession.get(player);
 
-        session.setBoxItemClickMode(ClickModeRegistry.getStorageMode());
+        session.setBoxItemClickMode(session.getAvailableClickModes().get(0));
         session.resetCustomNumbers();
-
-        var modes = ClickModeRegistry.getModes().stream().filter(mode -> mode.canUse(player)).toList();
-        session.setAvailableClickModes(modes);
 
         StockHolder stockHolder;
 

@@ -1,5 +1,6 @@
 package net.okocraft.box.feature.craft.mode;
 
+import java.util.Set;
 import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.feature.craft.RecipeRegistry;
@@ -9,6 +10,7 @@ import net.okocraft.box.feature.craft.menu.RecipeSelector;
 import net.okocraft.box.feature.gui.api.menu.Menu;
 import net.okocraft.box.feature.gui.api.mode.AdditionalButton;
 import net.okocraft.box.feature.gui.api.mode.BoxItemClickMode;
+import net.okocraft.box.feature.gui.api.mode.GuiType;
 import net.okocraft.box.feature.gui.api.util.MenuOpener;
 import net.okocraft.box.feature.gui.api.util.TranslationUtil;
 import org.bukkit.Material;
@@ -88,5 +90,10 @@ public class CraftMode implements BoxItemClickMode {
     @Override
     public @NotNull AdditionalButton createAdditionalButton(@NotNull Player viewer, @NotNull Menu currentMenu) {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Set<GuiType> getApplicableGuiTypes() {
+        return Set.of(GuiType.BE, GuiType.JAVA);
     }
 }

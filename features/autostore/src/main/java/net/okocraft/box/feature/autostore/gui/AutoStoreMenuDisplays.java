@@ -37,19 +37,13 @@ public class AutoStoreMenuDisplays {
     static final Component AUTOSTORE_MODE_SETTING_MENU_BULK_EDITING_TITLE =
             translatable("box.autostore.gui.setting-menu.bulk-editing.title", NO_DECORATION_GOLD);
 
-    static final Component AUTOSTORE_MODE_SETTING_MENU_BULK_EDITING_LEFT_CLICK =
-            translatable()
-                    .key("box.autostore.gui.setting-menu.bulk-editing.left-click")
-                    .args(AutoStoreMessage.ENABLED_NAME.apply(true))
-                    .style(NO_DECORATION_GRAY)
-                    .build();
-
-    static final Component AUTOSTORE_MODE_SETTING_MENU_BULK_EDITING_RIGHT_CLICK =
-            translatable()
-                    .key("box.autostore.gui.setting-menu.bulk-editing.right-click")
-                    .args(AutoStoreMessage.ENABLED_NAME.apply(false))
-                    .style(NO_DECORATION_GRAY)
-                    .build();
+    static final SingleArgument<Boolean> AUTOSTORE_MODE_SETTING_MENU_BULK_EDITING =
+            enabled ->
+                    translatable()
+                            .key("box.autostore.gui.setting-menu.bulk-editing.click")
+                            .args(AutoStoreMessage.ENABLED_NAME.apply(enabled))
+                            .style(NO_DECORATION_GRAY)
+                            .build();
 
     static final SingleArgument<Boolean> AUTOSTORE_MODE_SETTING_MENU_BULK_EDITING_RECENT =
             enabled ->

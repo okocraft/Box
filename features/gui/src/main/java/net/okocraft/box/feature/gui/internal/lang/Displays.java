@@ -111,6 +111,12 @@ public final class Displays {
     public static final Component STORAGE_MODE_DISPLAY_NAME =
             translatable("box.gui.modes.storage-mode.display-name");
 
+    public static final Component STORAGE_DEPOSIT_MODE_DISPLAY_NAME =
+            translatable("box.gui.modes.storage-deposit-mode.display-name");
+
+    public static final Component STORAGE_WITHDRAW_MODE_DISPLAY_NAME =
+            translatable("box.gui.modes.storage-withdraw-mode.display-name");
+
     public static final SingleArgument<Integer> STORAGE_MODE_LEFT_CLICK_TO_DEPOSIT =
             transactionUnit ->
                     translatable()
@@ -123,6 +129,22 @@ public final class Displays {
             transactionUnit ->
                     translatable()
                             .key("box.gui.modes.storage-mode.right-click-to-withdraw")
+                            .args(text(transactionUnit, AQUA))
+                            .style(NO_DECORATION_GRAY)
+                            .build();
+
+    public static final SingleArgument<Integer> STORAGE_DEPOSIT_MODE_CLICK_TO_DEPOSIT =
+            transactionUnit ->
+                    translatable()
+                            .key("box.gui.modes.storage-deposit-mode.click-to-deposit")
+                            .args(text(transactionUnit, AQUA))
+                            .style(NO_DECORATION_GRAY)
+                            .build();
+
+    public static final SingleArgument<Integer> STORAGE_WITHDRAW_MODE_CLICK_TO_WITHDRAW =
+            transactionUnit ->
+                    translatable()
+                            .key("box.gui.modes.storage-withdraw-mode.click-to-withdraw")
                             .args(text(transactionUnit, AQUA))
                             .style(NO_DECORATION_GRAY)
                             .build();

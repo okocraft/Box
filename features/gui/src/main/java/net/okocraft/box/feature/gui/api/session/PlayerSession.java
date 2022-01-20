@@ -3,6 +3,7 @@ package net.okocraft.box.feature.gui.api.session;
 import net.okocraft.box.api.model.stock.StockHolder;
 import net.okocraft.box.feature.gui.api.mode.BoxItemClickMode;
 import net.okocraft.box.feature.gui.api.mode.ClickModeRegistry;
+import net.okocraft.box.feature.gui.api.mode.GuiType;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -20,16 +21,28 @@ public class PlayerSession {
     private static final Map<UUID, PlayerSession> SESSION_MAP = new HashMap<>();
 
     public static @NotNull PlayerSession get(@NotNull Player player) {
-        return SESSION_MAP.computeIfAbsent(player.getUniqueId(), uuid -> new PlayerSession());
+        return SESSION_MAP.computeIfAbsent(player.getUniqueId(), uuid -> new PlayerSession(player));
     }
 
-    private BoxItemClickMode currentClickMode = ClickModeRegistry.getStorageMode();
+    private final Player viewer;
+    private BoxItemClickMode currentClickMode;
+    private final GuiType defaultGuiType;
 
     private final Map<String, CustomNumberHolder> customNumberMap = new HashMap<>();
     private List<BoxItemClickMode> availableClickModes;
     private @Nullable StockHolder stockHolder;
 
-    private PlayerSession() {
+    private PlayerSession(Player viewer) {
+        this.viewer = viewer;
+        this.defaultGuiType = viewer.getUniqueId().toString().startsWith("00000000")
+                ? GuiType.BE
+                : GuiType.JAVA;
+        this.availableClickModes = ClickModeRegistry.getModes(defaultGuiType);
+        this.currentClickMode = availableClickModes.isEmpty() ? null : availableClickModes.get(0);
+    }
+
+    public @NotNull GuiType getDefaultGuiType() {
+        return defaultGuiType;
     }
 
     public @NotNull BoxItemClickMode getBoxItemClickMode() {
@@ -61,7 +74,9 @@ public class PlayerSession {
     }
 
     public @NotNull @Unmodifiable List<BoxItemClickMode> getAvailableClickModes() {
-        return availableClickModes != null ? availableClickModes : Collections.emptyList();
+        return availableClickModes != null
+                ? availableClickModes.stream().filter(mode -> mode.canUse(viewer)).toList()
+                : Collections.emptyList();
     }
 
     public void setAvailableClickModes(@NotNull List<BoxItemClickMode> availableClickModes) {

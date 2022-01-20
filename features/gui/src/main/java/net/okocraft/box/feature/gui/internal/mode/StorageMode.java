@@ -1,5 +1,6 @@
 package net.okocraft.box.feature.gui.internal.mode;
 
+import java.util.Set;
 import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.model.item.BoxItem;
@@ -7,6 +8,7 @@ import net.okocraft.box.api.transaction.InventoryTransaction;
 import net.okocraft.box.feature.gui.api.menu.Menu;
 import net.okocraft.box.feature.gui.api.mode.AdditionalButton;
 import net.okocraft.box.feature.gui.api.mode.BoxItemClickMode;
+import net.okocraft.box.feature.gui.api.mode.GuiType;
 import net.okocraft.box.feature.gui.api.session.PlayerSession;
 import net.okocraft.box.feature.gui.api.util.TranslationUtil;
 import net.okocraft.box.feature.gui.internal.lang.Displays;
@@ -25,7 +27,7 @@ import java.util.Optional;
 
 public class StorageMode implements BoxItemClickMode {
 
-    private static final String TRANSACTION_AMOUNT_NAME = "transaction-amount";
+    protected static final String TRANSACTION_AMOUNT_NAME = "transaction-amount";
 
     @Override
     public @NotNull String getName() {
@@ -79,6 +81,11 @@ public class StorageMode implements BoxItemClickMode {
         return new DepositAllButton();
     }
 
+    @Override
+    public Set<GuiType> getApplicableGuiTypes() {
+        return Set.of(GuiType.JAVA);
+    }
+
     private @NotNull @Unmodifiable List<Component> createLore(@NotNull BoxItem item, @NotNull Player player) {
         var session = PlayerSession.get(player);
 
@@ -93,7 +100,7 @@ public class StorageMode implements BoxItemClickMode {
         );
     }
 
-    private void processDeposit(@NotNull Context context) {
+    protected void processDeposit(@NotNull Context context) {
         var player = context.clicker();
         var session = PlayerSession.get(player);
 
@@ -119,7 +126,7 @@ public class StorageMode implements BoxItemClickMode {
         player.playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, 100f, 1.0f);
     }
 
-    private void processWithdraw(@NotNull Context context) {
+    protected void processWithdraw(@NotNull Context context) {
         var player = context.clicker();
         var session = PlayerSession.get(player);
 
@@ -148,7 +155,7 @@ public class StorageMode implements BoxItemClickMode {
         }
     }
 
-    private static class DepositAllButton extends AdditionalButton {
+    protected static class DepositAllButton extends AdditionalButton {
 
         @Override
         public @NotNull Material getIconMaterial() {
