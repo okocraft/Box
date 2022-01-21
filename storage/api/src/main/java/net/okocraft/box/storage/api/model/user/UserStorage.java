@@ -1,4 +1,4 @@
-package net.okocraft.box.core.storage.model.user;
+package net.okocraft.box.storage.api.model.user;
 
 import net.okocraft.box.api.model.user.BoxUser;
 import org.jetbrains.annotations.NotNull;

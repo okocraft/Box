@@ -1,12 +1,10 @@
-package net.okocraft.box.core.storage.model.item;
+package net.okocraft.box.storage.api.model.item;
 
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.event.item.ItemImportEvent;
 import net.okocraft.box.api.model.item.BoxCustomItem;
 import net.okocraft.box.api.model.item.BoxItem;
-import net.okocraft.box.core.model.item.BoxCustomItemImpl;
-import net.okocraft.box.core.model.item.BoxItemImpl;
-import net.okocraft.box.core.util.DefaultItemProvider;
+import net.okocraft.box.storage.api.factory.item.BoxItemFactory;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -23,14 +21,14 @@ public abstract class AbstractItemStorage implements ItemStorage {
     }
 
     @Override
-    public @NotNull BoxCustomItem registerNewItem(@NotNull ItemStack original) throws Exception {
+    public final @NotNull BoxCustomItem registerNewItem(@NotNull ItemStack original) throws Exception {
         if (isRegisteredItem(original)) {
             throw new IllegalArgumentException("the same item is already registered.");
         }
 
         int id = getNewItemId();
         var plainName = original.getType().name() + "#" + id;
-        var item = new BoxCustomItemImpl(original, plainName, id);
+        var item = BoxItemFactory.createCustomItem(original, plainName, id);
 
         saveNewCustomItem(item);
         saveVersionedItem(Bukkit.getMinecraftVersion(), item);
@@ -39,18 +37,18 @@ public abstract class AbstractItemStorage implements ItemStorage {
     }
 
     @Override
-    public @NotNull @Unmodifiable Collection<BoxItem> loadAllItems() throws Exception {
+    public final @NotNull @Unmodifiable Collection<BoxItem> loadAllItems() throws Exception {
         var itemList = new ArrayList<BoxItem>(500); // current: 1308 items
 
         onLoadingAllItemsStarted();
 
-        processDefaultItems(DefaultItemProvider.getDefaultItems(), itemList);
+        processDefaultItems(DefaultItemProvider.fromMaterials(), itemList);
 
-        processDefaultItems(DefaultItemProvider.getDefaultPotions(), itemList);
+        processDefaultItems(DefaultItemProvider.potions(), itemList);
 
-        processDefaultItems(DefaultItemProvider.getDefaultEnchantedBooks(), itemList);
+        processDefaultItems(DefaultItemProvider.enchantedBooks(), itemList);
 
-        processDefaultItems(DefaultItemProvider.getDefaultFireworks(), itemList);
+        processDefaultItems(DefaultItemProvider.fireworks(), itemList);
 
         var defaultItems = itemList.size();
         BoxProvider.get().getLogger().info(defaultItems + " default items imported!");
@@ -88,7 +86,7 @@ public abstract class AbstractItemStorage implements ItemStorage {
                 continue;
             }
 
-            var boxItem = new BoxItemImpl(item.itemStack(), item.plainName(), id);
+            var boxItem = BoxItemFactory.createDefaultItem(item.itemStack(), item.plainName(), id);
 
             if (checkItem(boxItem, itemList)) {
                 itemList.add(boxItem);

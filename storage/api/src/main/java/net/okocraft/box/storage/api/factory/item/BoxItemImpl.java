@@ -1,4 +1,4 @@
-package net.okocraft.box.core.model.item;
+package net.okocraft.box.storage.api.factory.item;
 
 import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.model.item.BoxItem;
@@ -7,15 +7,15 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-public class BoxItemImpl implements BoxItem {
+class BoxItemImpl implements BoxItem {
 
     private final ItemStack original;
     private final String plainName;
     private final int internalId;
 
     public BoxItemImpl(@NotNull ItemStack original, @NotNull String plainName, int internalId) {
-        this.original = original;
-        this.plainName = plainName;
+        this.original = Objects.requireNonNull(original);
+        this.plainName = Objects.requireNonNull(plainName);
         this.internalId = internalId;
     }
 

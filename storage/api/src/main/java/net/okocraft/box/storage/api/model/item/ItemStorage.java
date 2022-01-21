@@ -1,8 +1,7 @@
-package net.okocraft.box.core.storage.model.item;
+package net.okocraft.box.storage.api.model.item;
 
 import net.okocraft.box.api.model.item.BoxCustomItem;
 import net.okocraft.box.api.model.item.BoxItem;
-import net.okocraft.box.core.model.item.BoxCustomItemImpl;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
@@ -23,5 +22,5 @@ public interface ItemStorage {
 
     @NotNull BoxCustomItem registerNewItem(@NotNull ItemStack original) throws Exception;
 
-    void saveCustomItem(@NotNull BoxCustomItemImpl customItem) throws Exception;
+    void saveCustomItem(@NotNull BoxCustomItem customItem) throws Exception;
 }

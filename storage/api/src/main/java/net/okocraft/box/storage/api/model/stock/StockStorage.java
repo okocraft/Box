@@ -1,4 +1,4 @@
-package net.okocraft.box.core.storage.model.stock;
+package net.okocraft.box.storage.api.model.stock;
 
 import net.okocraft.box.api.model.stock.UserStockHolder;
 import net.okocraft.box.api.model.user.BoxUser;

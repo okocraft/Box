@@ -1,25 +1,22 @@
-package net.okocraft.box.core.model.stock;
+package net.okocraft.box.storage.api.factory.stock;
 
+import net.okocraft.box.api.model.stock.AbstractStockHolder;
 import net.okocraft.box.api.model.stock.StockData;
 import net.okocraft.box.api.model.stock.UserStockHolder;
 import net.okocraft.box.api.model.user.BoxUser;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
-import java.util.Collections;
+import java.util.Objects;
 import java.util.UUID;
 
-public class UserStockHolderImpl extends AbstractStockHolder implements UserStockHolder {
+class UserStockHolderImpl extends AbstractStockHolder implements UserStockHolder {
 
     private final BoxUser user;
 
-    public UserStockHolderImpl(@NotNull BoxUser user) {
-        this(user, Collections.emptyList());
-    }
-
-    public UserStockHolderImpl(@NotNull BoxUser user, @NotNull Collection<StockData> stockDataCollection) {
+    UserStockHolderImpl(@NotNull BoxUser user, @NotNull Collection<StockData> stockDataCollection) {
         super(stockDataCollection);
-        this.user = user;
+        this.user = Objects.requireNonNull(user);
     }
 
     @Override

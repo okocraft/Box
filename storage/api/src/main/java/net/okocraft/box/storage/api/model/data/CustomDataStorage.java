@@ -1,4 +1,4 @@
-package net.okocraft.box.core.storage.model.data;
+package net.okocraft.box.storage.api.model.data;
 
 import com.github.siroshun09.configapi.api.Configuration;
 import org.jetbrains.annotations.NotNull;

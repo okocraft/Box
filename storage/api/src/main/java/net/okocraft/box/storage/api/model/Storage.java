@@ -1,9 +1,9 @@
-package net.okocraft.box.core.storage;
+package net.okocraft.box.storage.api.model;
 
-import net.okocraft.box.core.storage.model.data.CustomDataStorage;
-import net.okocraft.box.core.storage.model.item.ItemStorage;
-import net.okocraft.box.core.storage.model.stock.StockStorage;
-import net.okocraft.box.core.storage.model.user.UserStorage;
+import net.okocraft.box.storage.api.model.data.CustomDataStorage;
+import net.okocraft.box.storage.api.model.item.ItemStorage;
+import net.okocraft.box.storage.api.model.stock.StockStorage;
+import net.okocraft.box.storage.api.model.user.UserStorage;
 import org.jetbrains.annotations.NotNull;
 
 public interface Storage {
