@@ -131,7 +131,7 @@ public class AutoStoreSettingMenu extends AbstractMenu {
         @Override
         public @Nullable ItemMeta applyIconMeta(@NotNull Player viewer, @NotNull ItemMeta target) {
             var displayName =
-                    AutoStoreMessage.ENABLED_NAME.apply(setting.isEnabled())
+                    AutoStoreMessage.ENABLED_OR_DISABLED.apply(setting.isEnabled())
                             .decoration(TextDecoration.ITALIC, TextDecoration.State.FALSE);
 
             target.displayName(TranslationUtil.render(displayName, viewer));

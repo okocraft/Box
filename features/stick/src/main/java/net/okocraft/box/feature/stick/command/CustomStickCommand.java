@@ -10,37 +10,16 @@ import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
-import static net.kyori.adventure.text.Component.text;
-import static net.kyori.adventure.text.Component.translatable;
-import static net.kyori.adventure.text.format.NamedTextColor.AQUA;
-import static net.kyori.adventure.text.format.NamedTextColor.DARK_GRAY;
-import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
-import static net.kyori.adventure.text.format.NamedTextColor.RED;
+import static net.okocraft.box.api.message.Components.commandHelp;
+import static net.okocraft.box.api.message.Components.grayTranslatable;
+import static net.okocraft.box.api.message.Components.redTranslatable;
 
 public class CustomStickCommand extends AbstractCommand {
 
-    private static final Component CUSTOM_STICK_HELP =
-            translatable("box.stick.command.customstick.help.command-line", AQUA)
-                    .append(text(" - ", DARK_GRAY))
-                    .append(translatable("box.stick.command.customstick.help.description", GRAY));
-
-    private static final Component CUSTOM_STICK_SUCCESS =
-            translatable()
-                    .key("box.stick.command.customstick.success")
-                    .color(GRAY)
-                    .build();
-
-    private static final Component CUSTOM_STICK_ALREADY =
-            translatable()
-                    .key("box.stick.command.customstick.already")
-                    .color(RED)
-                    .build();
-
-    private static final Component CUSTOM_STICK_IS_AIR =
-            translatable()
-                    .key("box.stick.command.customstick.is-air")
-                    .color(RED)
-                    .build();
+    private static final Component CUSTOM_STICK_HELP = commandHelp("box.stick.command.customstick");
+    private static final Component CUSTOM_STICK_SUCCESS = grayTranslatable("box.stick.command.customstick.success");
+    private static final Component CUSTOM_STICK_ALREADY = redTranslatable("box.stick.command.customstick.already");
+    private static final Component CUSTOM_STICK_IS_AIR = redTranslatable("box.stick.command.customstick.is-air");
 
     private final NamespacedKey key;
 

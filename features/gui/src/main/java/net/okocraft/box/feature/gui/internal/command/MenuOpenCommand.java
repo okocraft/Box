@@ -8,6 +8,7 @@ import net.okocraft.box.api.model.stock.StockHolder;
 import net.okocraft.box.api.util.TabCompleter;
 import net.okocraft.box.api.util.UserStockHolderOperator;
 import net.okocraft.box.feature.gui.api.event.MenuOpenEvent;
+import net.okocraft.box.api.message.Components;
 import net.okocraft.box.feature.gui.api.mode.ClickModeRegistry;
 import net.okocraft.box.feature.gui.api.session.PlayerSession;
 import net.okocraft.box.feature.gui.api.util.MenuOpener;
@@ -20,21 +21,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import static net.kyori.adventure.text.Component.text;
-import static net.kyori.adventure.text.Component.translatable;
-import static net.kyori.adventure.text.format.NamedTextColor.AQUA;
-import static net.kyori.adventure.text.format.NamedTextColor.DARK_GRAY;
-import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
-import static net.kyori.adventure.text.format.NamedTextColor.RED;
-
 public class MenuOpenCommand extends AbstractCommand {
 
     private static final String OTHER_PLAYERS_GUI_PERMISSION = "box.admin.command.gui.other";
-    private static final Component CANNOT_OPEN_MENU = translatable("box.gui.cannot-open-menu", RED);
-    private static final Component COMMAND_HELP =
-            translatable("box.gui.command-help.command-line", AQUA)
-                    .append(text(" - ", DARK_GRAY))
-                    .append(translatable("box.gui.command-help.description", GRAY));
+    private static final Component CANNOT_OPEN_MENU = Components.redTranslatable("box.gui.cannot-open-menu");
+    private static final Component COMMAND_HELP =Components.commandHelp("box.gui.command-help", false);
 
     public MenuOpenCommand() {
         super("gui", "box.command.gui", Set.of("g", "menu", "m"));

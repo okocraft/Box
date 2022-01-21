@@ -5,7 +5,7 @@ import net.okocraft.box.api.message.argument.SingleArgument;
 import net.okocraft.box.feature.autostore.message.AutoStoreMessage;
 
 import static net.kyori.adventure.text.Component.translatable;
-import static net.kyori.adventure.text.format.NamedTextColor.BLACK;
+import static net.okocraft.box.api.message.Components.blackTranslatable;
 import static net.okocraft.box.feature.gui.api.lang.Styles.NO_DECORATION_GOLD;
 import static net.okocraft.box.feature.gui.api.lang.Styles.NO_DECORATION_GRAY;
 
@@ -18,12 +18,11 @@ public class AutoStoreMenuDisplays {
             enabled ->
                     translatable()
                             .key("box.autostore.gui.mode.lore")
-                            .args(AutoStoreMessage.ENABLED_NAME.apply(enabled))
+                            .args(AutoStoreMessage.ENABLED_OR_DISABLED.apply(enabled))
                             .style(NO_DECORATION_GRAY)
                             .build();
 
-    static final Component AUTOSTORE_MODE_SETTING_MENU_TITLE =
-            translatable("box.autostore.gui.setting-menu.title", BLACK);
+    static final Component AUTOSTORE_MODE_SETTING_MENU_TITLE = blackTranslatable("box.autostore.gui.setting-menu.title");
 
     static final Component AUTOSTORE_MODE_SETTING_MENU_CHANGE_MODE =
             translatable("box.autostore.gui.setting-menu.change-mode.display-name", NO_DECORATION_GOLD);
@@ -41,7 +40,7 @@ public class AutoStoreMenuDisplays {
             enabled ->
                     translatable()
                             .key("box.autostore.gui.setting-menu.bulk-editing.click")
-                            .args(AutoStoreMessage.ENABLED_NAME.apply(enabled))
+                            .args(AutoStoreMessage.ENABLED_OR_DISABLED.apply(enabled))
                             .style(NO_DECORATION_GRAY)
                             .build();
 
@@ -49,7 +48,7 @@ public class AutoStoreMenuDisplays {
             enabled ->
                     translatable()
                             .key("box.autostore.gui.setting-menu.bulk-editing.double-click")
-                            .args(AutoStoreMessage.ENABLED_NAME.apply(enabled))
+                            .args(AutoStoreMessage.ENABLED_OR_DISABLED.apply(enabled))
                             .style(NO_DECORATION_GRAY)
                             .build();
 
@@ -57,7 +56,7 @@ public class AutoStoreMenuDisplays {
             enabled ->
                     translatable()
                             .key("box.autostore.gui.setting-menu.bulk-editing.recent")
-                            .args(AutoStoreMessage.ENABLED_NAME.apply(enabled))
+                            .args(AutoStoreMessage.ENABLED_OR_DISABLED.apply(enabled))
                             .style(NO_DECORATION_GRAY)
                             .build();
 
@@ -65,7 +64,7 @@ public class AutoStoreMenuDisplays {
             enabled ->
                     translatable()
                             .key("box.autostore.gui.setting-menu.toggle-button")
-                            .args(AutoStoreMessage.ENABLED_NAME.apply(enabled))
+                            .args(AutoStoreMessage.ENABLED_OR_DISABLED.apply(enabled))
                             .style(NO_DECORATION_GRAY)
                             .build();
 }
