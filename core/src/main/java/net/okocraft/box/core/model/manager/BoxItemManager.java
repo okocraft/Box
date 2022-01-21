@@ -6,8 +6,8 @@ import net.okocraft.box.api.event.item.CustomItemRenameEvent;
 import net.okocraft.box.api.model.item.BoxCustomItem;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.model.manager.ItemManager;
-import net.okocraft.box.core.model.item.BoxCustomItemImpl;
-import net.okocraft.box.core.storage.model.item.ItemStorage;
+import net.okocraft.box.storage.api.factory.item.BoxItemFactory;
+import net.okocraft.box.storage.api.model.item.ItemStorage;
 import net.okocraft.box.core.util.executor.InternalExecutors;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -90,7 +90,7 @@ public class BoxItemManager implements ItemManager {
 
     @Override
     public boolean isCustomItem(@NotNull BoxItem item) {
-        return item instanceof BoxCustomItemImpl;
+        return BoxItemFactory.checkCustomItem(item);
     }
 
     @Override
@@ -130,7 +130,7 @@ public class BoxItemManager implements ItemManager {
         Objects.requireNonNull(newName);
 
         return CompletableFuture.supplyAsync(() -> {
-            if (!isCustomItem(item)) {
+            if (!BoxItemFactory.checkCustomItem(item)) {
                 throw new IllegalStateException("Could not rename item because the item is created by box.");
             }
 
@@ -138,7 +138,7 @@ public class BoxItemManager implements ItemManager {
                 throw new IllegalStateException("The same name is already used (" + newName + ")");
             }
 
-            var copy = new BoxCustomItemImpl(item.getOriginal(), newName, item.getInternalId());
+            var copy = BoxItemFactory.createCustomItem(item.getOriginal(), newName, item.getInternalId());
 
             try {
                 itemStorage.saveCustomItem(copy);
@@ -146,16 +146,14 @@ public class BoxItemManager implements ItemManager {
                 throw new RuntimeException("Could not save the custom item", e);
             }
 
-            var internal = (BoxCustomItemImpl) item;
-
             var previousName = item.getPlainName();
-            internal.setPlainName(newName);
+            BoxItemFactory.renameCustomItem(item, newName);
 
             updateItemNameCache();
 
-            BoxProvider.get().getEventBus().callEventAsync(new CustomItemRenameEvent(internal, previousName));
+            BoxProvider.get().getEventBus().callEventAsync(new CustomItemRenameEvent(item, previousName));
 
-            return internal;
+            return item;
         }, executor);
     }
 

@@ -37,11 +37,11 @@ import net.okocraft.box.core.model.manager.BoxStockManager;
 import net.okocraft.box.core.model.manager.BoxUserManager;
 import net.okocraft.box.core.model.queue.AutoSaveQueue;
 import net.okocraft.box.core.player.BoxPlayerMapImpl;
-import net.okocraft.box.core.storage.Storage;
-import net.okocraft.box.core.storage.implementations.yaml.YamlStorage;
 import net.okocraft.box.core.task.AutoSaveTask;
 import net.okocraft.box.core.taskfactory.BoxTaskFactory;
 import net.okocraft.box.core.util.executor.InternalExecutors;
+import net.okocraft.box.storage.api.model.Storage;
+import net.okocraft.box.storage.api.registry.StorageRegistry;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandSender;
@@ -144,7 +144,16 @@ public class BoxPlugin implements BoxAPI {
     }
 
     public boolean enable() {
-        storage = new YamlStorage(getPluginDirectory().resolve("data")); // TODO: SQLite, MySQL, or something else...
+        var storageType = "yaml";
+        var storageSupplier = StorageRegistry.getStorageSupplier(storageType); // TODO other storage type
+
+        if (storageSupplier == null) {
+            getLogger().warning(storageType + " is not found!");
+            getLogger().warning("Using Yaml storage...");
+            storageSupplier = StorageRegistry.getYamlStorageSupplier();
+        }
+
+        storage = storageSupplier.get();
 
         getLogger().info("Initializing " + storage.getName() + " storage...");
 
