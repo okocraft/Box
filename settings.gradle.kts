@@ -13,6 +13,17 @@ sequenceOf(
     project(":$boxPrefix-$it").projectDir = file(it)
 }
 
+val storagePrefix = "$boxPrefix-storage"
+
+// storage
+sequenceOf(
+    "api",
+    "implementation"
+).forEach {
+    include(":$storagePrefix-$it")
+    project(":$storagePrefix-$it").projectDir = file("./storage/$it")
+}
+
 val featureSuffix = "feature"
 
 // features
