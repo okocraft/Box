@@ -1,12 +1,11 @@
-package net.okocraft.box.core.model.stock;
+package net.okocraft.box.api.model.stock;
 
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.event.stockholder.stock.StockDecreaseEvent;
 import net.okocraft.box.api.event.stockholder.stock.StockIncreaseEvent;
 import net.okocraft.box.api.event.stockholder.stock.StockSetEvent;
 import net.okocraft.box.api.model.item.BoxItem;
-import net.okocraft.box.api.model.stock.StockData;
-import net.okocraft.box.api.model.stock.StockHolder;
+import net.okocraft.box.api.model.user.BoxUser;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
@@ -19,6 +18,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
+/**
+ * An abstract implementation of {@link StockHolder}.
+ * <p>
+ * The {@link UserStockHolder} returned by
+ * {@link net.okocraft.box.api.model.manager.StockManager#loadUserStock(BoxUser)} or
+ * {@link net.okocraft.box.api.player.BoxPlayer#getUserStockHolder()}
+ * extends this abstract class.
+ */
 public abstract class AbstractStockHolder implements StockHolder {
 
     private static final Collector<StockData, ?, ConcurrentMap<BoxItem, AtomicInteger>> TO_MAP =
@@ -26,6 +33,11 @@ public abstract class AbstractStockHolder implements StockHolder {
 
     private final ConcurrentMap<BoxItem, AtomicInteger> stockData;
 
+    /**
+     * The constructor of {@link AbstractStockHolder}
+     *
+     * @param stockData the collection of {@link StockData} to restore stock
+     */
     protected AbstractStockHolder(@NotNull Collection<StockData> stockData) {
         Objects.requireNonNull(stockData);
         this.stockData = stockData.stream().collect(TO_MAP);
@@ -37,6 +49,14 @@ public abstract class AbstractStockHolder implements StockHolder {
         return Optional.ofNullable(stockData.get(item)).map(AtomicInteger::get).orElse(0);
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * This method calls {@link StockSetEvent} asynchronous.
+     *
+     * @param item   the item to set the stock quantity
+     * @param amount the amount
+     */
     @Override
     public void setAmount(@NotNull BoxItem item, int amount) {
         var stock = getStock(item);
@@ -47,11 +67,28 @@ public abstract class AbstractStockHolder implements StockHolder {
         BoxProvider.get().getEventBus().callEventAsync(new StockSetEvent(this, item, amount, previous));
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * This method calls {@link StockIncreaseEvent} asynchronous.
+     *
+     * @param item the item to set the stock quantity
+     * @return the stock quantity after increasing
+     */
     @Override
     public int increase(@NotNull BoxItem item) {
         return increase(item, 1);
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * This method calls {@link StockIncreaseEvent} asynchronous.
+     *
+     * @param item      the item to increase the stock
+     * @param increment the amount to increase the stock
+     * @return the stock quantity after increasing
+     */
     @Override
     public int increase(@NotNull BoxItem item, int increment) {
         var amount = getStock(item).addAndGet(increment);
@@ -66,11 +103,28 @@ public abstract class AbstractStockHolder implements StockHolder {
         return amount;
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * This method calls {@link StockDecreaseEvent} asynchronous.
+     *
+     * @param item the item to decrease the stock
+     * @return the stock quantity after decreasing
+     */
     @Override
     public int decrease(@NotNull BoxItem item) {
         return decrease(item, 1);
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * This method calls {@link StockDecreaseEvent} asynchronous.
+     *
+     * @param item      the item to decrease the stock
+     * @param decrement the amount to decrease the stock
+     * @return the stock quantity after decreasing
+     */
     @Override
     public int decrease(@NotNull BoxItem item, int decrement) {
         var amount = getStock(item).addAndGet(-decrement);
@@ -95,7 +149,7 @@ public abstract class AbstractStockHolder implements StockHolder {
     }
 
     @Override
-    public @NotNull Collection<StockData> toStockDataCollection() {
+    public @NotNull @Unmodifiable Collection<StockData> toStockDataCollection() {
         return stockData.entrySet()
                 .stream()
                 .map(entry -> new StockData(entry.getKey(), entry.getValue().get()))
@@ -122,6 +176,11 @@ public abstract class AbstractStockHolder implements StockHolder {
                 '}';
     }
 
+    /**
+     * Returns {@link Map#toString()} of stock data.
+     *
+     * @return {@link Map#toString()} of stock data
+     */
     protected @NotNull String getStockDataString() {
         return stockData.toString();
     }
