@@ -1,11 +1,11 @@
-package net.okocraft.box.core.storage.implementations.yaml;
+package net.okocraft.box.storage.implementation.yaml;
 
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.model.stock.StockData;
 import net.okocraft.box.api.model.stock.UserStockHolder;
 import net.okocraft.box.api.model.user.BoxUser;
-import net.okocraft.box.core.model.stock.UserStockHolderImpl;
-import net.okocraft.box.core.storage.model.stock.StockStorage;
+import net.okocraft.box.storage.api.factory.stock.UserStockHolderFactory;
+import net.okocraft.box.storage.api.model.stock.StockStorage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -59,7 +59,7 @@ class YamlStockStorage implements StockStorage {
         var filePath = stockDirectory.resolve(user.getUUID() + ".yml");
 
         if (!Files.exists(filePath)) {
-            return new UserStockHolderImpl(user);
+            return UserStockHolderFactory.create(user);
         }
 
         var loadedData = new ArrayList<StockData>(50);
@@ -71,7 +71,7 @@ class YamlStockStorage implements StockStorage {
                     .forEach(loadedData::add);
         }
 
-        return new UserStockHolderImpl(user, loadedData);
+        return UserStockHolderFactory.create(user, loadedData);
     }
 
     @Override

@@ -1,8 +1,8 @@
-package net.okocraft.box.core.storage.implementations.yaml;
+package net.okocraft.box.storage.implementation.yaml;
 
 import com.github.siroshun09.configapi.api.Configuration;
 import com.github.siroshun09.configapi.yaml.YamlConfiguration;
-import net.okocraft.box.core.storage.model.data.CustomDataStorage;
+import net.okocraft.box.storage.api.model.data.CustomDataStorage;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Files;
@@ -22,7 +22,7 @@ public class YamlCustomDataStorage implements CustomDataStorage {
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() {
     }
 
     @Override

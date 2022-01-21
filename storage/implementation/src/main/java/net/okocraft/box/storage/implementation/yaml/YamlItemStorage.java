@@ -1,11 +1,11 @@
-package net.okocraft.box.core.storage.implementations.yaml;
+package net.okocraft.box.storage.implementation.yaml;
 
 import com.github.siroshun09.configapi.yaml.YamlConfiguration;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.model.item.BoxCustomItem;
 import net.okocraft.box.api.model.item.BoxItem;
-import net.okocraft.box.core.model.item.BoxCustomItemImpl;
-import net.okocraft.box.core.storage.model.item.AbstractItemStorage;
+import net.okocraft.box.storage.api.factory.item.BoxItemFactory;
+import net.okocraft.box.storage.api.model.item.AbstractItemStorage;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -82,7 +82,7 @@ class YamlItemStorage extends AbstractItemStorage {
     }
 
     @Override
-    public void saveCustomItem(@NotNull BoxCustomItemImpl customItem) throws Exception {
+    public void saveCustomItem(@NotNull BoxCustomItem customItem) throws Exception {
         saveNewCustomItem(customItem);
         saveVersionedItem(Bukkit.getMinecraftVersion(), customItem);
     }
@@ -162,7 +162,7 @@ class YamlItemStorage extends AbstractItemStorage {
                 continue;
             }
 
-            result.add(new BoxCustomItemImpl(item, name, id));
+            result.add(BoxItemFactory.createCustomItem(item, name, id));
         }
 
         return result;

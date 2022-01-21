@@ -1,9 +1,9 @@
-package net.okocraft.box.core.storage.implementations.yaml;
+package net.okocraft.box.storage.implementation.yaml;
 
 import com.github.siroshun09.configapi.yaml.YamlConfiguration;
 import net.okocraft.box.api.model.user.BoxUser;
-import net.okocraft.box.core.model.user.BoxUserImpl;
-import net.okocraft.box.core.storage.model.user.UserStorage;
+import net.okocraft.box.storage.api.factory.user.BoxUserFactory;
+import net.okocraft.box.storage.api.model.user.UserStorage;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
@@ -30,7 +30,7 @@ class YamlUserStorage implements UserStorage {
     @Override
     public @NotNull BoxUser getUser(@NotNull UUID uuid) {
         var name = userData.getString(uuid.toString());
-        return name.isEmpty() ? new BoxUserImpl(uuid) : new BoxUserImpl(uuid, name);
+        return BoxUserFactory.create(uuid, name.isEmpty() ? null : name);
     }
 
     @Override
@@ -76,6 +76,6 @@ class YamlUserStorage implements UserStorage {
 
         var savedName = userData.getString(strUuid);
 
-        return Optional.of(new BoxUserImpl(uuid, savedName));
+        return Optional.of(BoxUserFactory.create(uuid, savedName));
     }
 }
