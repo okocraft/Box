@@ -278,4 +278,8 @@ public final class Components {
                 .append(grayTranslatable(keyPrefix + ".description"))
                 .build();
     }
+
+    private Components() {
+        throw new UnsupportedOperationException();
+    }
 }
