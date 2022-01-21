@@ -11,177 +11,103 @@ import org.bukkit.entity.Player;
 
 import static net.kyori.adventure.text.Component.newline;
 import static net.kyori.adventure.text.Component.text;
-import static net.kyori.adventure.text.Component.translatable;
-import static net.kyori.adventure.text.format.NamedTextColor.AQUA;
-import static net.kyori.adventure.text.format.NamedTextColor.DARK_GRAY;
-import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
-import static net.kyori.adventure.text.format.NamedTextColor.RED;
+import static net.okocraft.box.api.message.Components.aquaItemName;
+import static net.okocraft.box.api.message.Components.aquaText;
+import static net.okocraft.box.api.message.Components.commandHelp;
+import static net.okocraft.box.api.message.Components.grayTranslatable;
+import static net.okocraft.box.api.message.Components.redTranslatable;
 
 public final class BoxMessage {
 
     public static final TripleArgument<BoxItem, Integer, Integer> DEPOSIT_SUCCESS =
-            (item, amount, current) ->
-                    translatable()
-                            .key("box.command.box.deposit.success")
-                            .args(
-                                    item.getDisplayName().color(AQUA).hoverEvent(item.getOriginal()),
-                                    text(amount, AQUA),
-                                    text(current, AQUA)
-                            )
-                            .color(GRAY)
-                            .build();
+            (item, amount, current) -> grayTranslatable(
+                    "box.command.box.deposit.success",
+                    aquaItemName(item), aquaText(amount), aquaText(current)
+            );
 
     public static final SingleArgument<Integer> DEPOSIT_ALL_SUCCESS =
-            amount -> translatable()
-                    .key("box.command.box.deposit.all-success")
-                    .args(text(amount, AQUA))
-                    .color(GRAY)
-                    .build();
+            amount -> grayTranslatable("box.command.box.deposit.all-success", aquaText(amount));
 
-    public static final Component DEPOSIT_IS_AIR =
-            translatable("box.command.box.deposit.is-air", RED);
+    public static final Component DEPOSIT_IS_AIR = redTranslatable("box.command.box.deposit.is-air");
 
     public static final Component DEPOSIT_ITEM_NOT_REGISTERED =
-            translatable("box.command.box.deposit.item-not-registered", RED);
+            redTranslatable("box.command.box.deposit.item-not-registered");
 
-    public static final Component DEPOSIT_NOT_DEPOSITED =
-            translatable("box.command.box.deposit.not-deposited", RED);
+    public static final Component DEPOSIT_NOT_DEPOSITED = redTranslatable("box.command.box.deposit.not-deposited");
 
-    public static final Component DEPOSIT_NOT_FOUND =
-            translatable("box.command.box.deposit.not-found", RED);
+    public static final Component DEPOSIT_NOT_FOUND = redTranslatable("box.command.box.deposit.not-found");
 
-    public static final Component DEPOSIT_HELP_1 =
-            translatable("box.command.box.deposit.help.main-hand.command-line", AQUA)
-                    .append(text(" - ", DARK_GRAY))
-                    .append(translatable("box.command.box.deposit.help.main-hand.description", GRAY));
+    public static final Component DEPOSIT_HELP_1 = commandHelp("box.command.box.deposit.help.main-hand", false);
 
-    public static final Component DEPOSIT_HELP_2 =
-            translatable("box.command.box.deposit.help.all.command-line", AQUA)
-                    .append(text(" - ", DARK_GRAY))
-                    .append(translatable("box.command.box.deposit.help.all.description", GRAY));
+    public static final Component DEPOSIT_HELP_2 = commandHelp("box.command.box.deposit.help.all", false);
 
-    public static final Component DEPOSIT_HELP_3 =
-            translatable("box.command.box.deposit.help.item.command-line", AQUA)
-                    .append(text(" - ", DARK_GRAY))
-                    .append(translatable("box.command.box.deposit.help.item.description", GRAY));
+    public static final Component DEPOSIT_HELP_3 = commandHelp("box.command.box.deposit.help.item", false);
 
     public static final QuadArgument<String, BoxItem, Integer, Integer> GIVE_SUCCESS_SENDER =
-            (targetName, item, amount, current) ->
-                    translatable()
-                            .key("box.command.box.give.success.sender")
-                            .args(
-                                    text(targetName, AQUA),
-                                    item.getDisplayName().color(AQUA).hoverEvent(item.getOriginal()),
-                                    text(amount, AQUA),
-                                    text(current, AQUA)
-                            )
-                            .color(GRAY)
-                            .build();
+            (targetName, item, amount, current) -> grayTranslatable(
+                    "box.command.box.give.success.sender",
+                    aquaText(targetName), aquaItemName(item), aquaText(amount), aquaText(current)
+            );
 
     public static final QuadArgument<String, BoxItem, Integer, Integer> GIVE_SUCCESS_TARGET =
-            (senderName, item, amount, current) ->
-                    translatable()
-                            .key("box.command.box.give.success.target")
-                            .args(
-                                    text(senderName, AQUA),
-                                    item.getDisplayName().color(AQUA).hoverEvent(item.getOriginal()),
-                                    text(amount, AQUA),
-                                    text(current, AQUA)
-                            )
-                            .color(GRAY)
-                            .build();
+            (senderName, item, amount, current) -> grayTranslatable(
+                    "box.command.box.give.success.target",
+                    aquaText(senderName), aquaItemName(item), aquaText(amount), aquaText(current)
+            );
 
     public static final SingleArgument<BoxItem> GIVE_NO_STOCK =
-            item ->
-                    translatable()
-                            .key("box.command.box.give.no-stock")
-                            .args(item.getDisplayName().color(AQUA).hoverEvent(item.getOriginal()))
-                            .color(RED)
-                            .build();
+            item -> redTranslatable("box.command.box.give.no-stock", aquaItemName(item));
 
-    public static final Component GIVE_SELF = translatable("box.command.box.give.self", RED);
+    public static final Component GIVE_SELF = redTranslatable("box.command.box.give.self");
 
     public static final DoubleArgument<Player, String> GIVE_TARGET_NO_PERMISSION =
-            (target, permission) ->
-                    translatable()
-                            .key("box.command.box.give.target-no-permission")
-                            .args(text(target.getName(), AQUA), text(permission, AQUA))
-                            .color(RED)
-                            .build();
+            (target, permission) -> redTranslatable(
+                    "box.command.box.give.target-no-permission",
+                    aquaText(target.getName()), aquaText(permission)
+            );
 
     public static final DoubleArgument<Player, World> GIVE_TARGET_IS_IN_DISABLED_WORLD =
             (target, world) ->
-                    translatable()
-                            .key("box.command.box.give.target-is-in-disabled-world")
-                            .args(text(target.getName(), AQUA), text(world.getName(), AQUA))
-                            .color(RED)
-                            .build();
+                    redTranslatable(
+                            "box.command.box.give.target-is-in-disabled-world",
+                            aquaText(target.getName()), aquaText(world.getName())
+                    );
 
-    public static final Component GIVE_HELP =
-            translatable("box.command.box.give.help.command-line", AQUA)
-                    .append(text(" - ", DARK_GRAY))
-                    .append(translatable("box.command.box.give.help.description", GRAY));
+    public static final Component GIVE_HELP = commandHelp("box.command.box.give");
 
     public static final TripleArgument<BoxItem, Integer, Integer> WITHDRAW_SUCCESS =
-            (item, amount, current) ->
-                    translatable()
-                            .key("box.command.box.withdraw.success")
-                            .args(
-                                    item.getDisplayName().color(AQUA).hoverEvent(item.getOriginal()),
-                                    text(amount, AQUA),
-                                    text(current, AQUA)
-                            )
-                            .color(GRAY)
-                            .build();
+            (item, amount, current) -> grayTranslatable(
+                    "box.command.box.withdraw.success",
+                    aquaItemName(item), aquaText(amount), aquaText(current)
+            );
 
     public static final TripleArgument<BoxItem, Integer, Integer> WITHDRAW_PARTIAL_SUCCESS =
             (item, amount, current) ->
-                    translatable("box.command.box.withdraw.stop", RED)
+                    text().append(redTranslatable("box.command.box.withdraw.stop"))
                             .append(newline())
-                            .append(WITHDRAW_SUCCESS.apply(item, amount, current));
+                            .append(WITHDRAW_SUCCESS.apply(item, amount, current))
+                            .build();
 
     public static final SingleArgument<BoxItem> WITHDRAW_NO_STOCK =
-            item ->
-                    translatable()
-                            .key("box.command.box.withdraw.no-stock")
-                            .args(item.getDisplayName().color(AQUA).hoverEvent(item.getOriginal()))
-                            .color(RED)
-                            .build();
+            item -> redTranslatable("box.command.box.withdraw.no-stock", aquaItemName(item));
 
     public static final Component WITHDRAW_INVENTORY_IS_FULL =
-            translatable("box.command.box.withdraw.inventory-is-full", RED);
+            redTranslatable("box.command.box.withdraw.inventory-is-full");
 
-    public static final Component WITHDRAW_HELP =
-            translatable("box.command.box.withdraw.help.command-line", AQUA)
-                    .append(text(" - ", DARK_GRAY))
-                    .append(translatable("box.command.box.withdraw.help.description", GRAY));
+    public static final Component WITHDRAW_HELP = commandHelp("box.command.box.withdraw");
 
-    public static final Component ITEM_INFO_IS_AIR =
-            translatable("box.command.box.iteminfo.is-air", RED);
+    public static final Component ITEM_INFO_IS_AIR = redTranslatable("box.command.box.iteminfo.is-air");
 
     public static final Component ITEM_INFO_NOT_REGISTERED =
-            translatable("box.command.box.iteminfo.item-not-registered", RED);
+            redTranslatable("box.command.box.iteminfo.item-not-registered");
 
     public static final SingleArgument<BoxItem> ITEM_INFO_NAME =
-            item ->
-                    translatable()
-                            .key("box.command.box.iteminfo.name")
-                            .args(text(item.getPlainName()).color(AQUA).hoverEvent(item.getOriginal()))
-                            .color(GRAY)
-                            .build();
+            item -> grayTranslatable("box.command.box.iteminfo.name", aquaItemName(item));
 
     public static final SingleArgument<Integer> ITEM_INFO_STOCK =
-            stock ->
-                    translatable()
-                            .key("box.command.box.iteminfo.stock")
-                            .args(text(stock, AQUA))
-                            .color(GRAY)
-                            .build();
+            stock -> grayTranslatable("box.command.box.iteminfo.stock", aquaText(stock));
 
-    public static final Component ITEM_INFO_HELP =
-            translatable("box.command.box.iteminfo.help.command-line", AQUA)
-                    .append(text(" - ", DARK_GRAY))
-                    .append(translatable("box.command.box.iteminfo.help.description", GRAY));
+    public static final Component ITEM_INFO_HELP = commandHelp("box.command.box.iteminfo");
 
     private BoxMessage() {
         throw new UnsupportedOperationException();

@@ -1,37 +1,35 @@
 package net.okocraft.box.core.message;
 
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import net.okocraft.box.api.message.argument.DoubleArgument;
 import net.okocraft.box.api.message.argument.SingleArgument;
+
+import static net.okocraft.box.api.message.Components.aquaText;
+import static net.okocraft.box.api.message.Components.redTranslatable;
+import static net.okocraft.box.api.message.Components.whiteText;
 
 public final class ErrorMessages {
 
     public static final Component ERROR_LOAD_PLAYER_DATA_ON_JOIN =
-            Component.translatable("box.error.player-data.load-on-join", NamedTextColor.RED);
+            redTranslatable("box.error.player-data.load-on-join");
 
     public static final Component ERROR_SAVE_PLAYER_DATA =
-            Component.translatable("box.error.player-data.save", NamedTextColor.RED);
+            redTranslatable("box.error.player-data.save");
 
     public static final Component ERROR_COMMAND_NO_ARGUMENT =
-            Component.translatable("box.error.command.no-argument", NamedTextColor.RED);
+            redTranslatable("box.error.command.no-argument");
 
     public static final DoubleArgument<String, Throwable> ERROR_RELOAD_FAILURE =
             (name, throwable) ->
-                    Component.translatable()
-                            .key("box.error.failed-to-reload-feature")
-                            .args(
-                                    Component.text(name, NamedTextColor.AQUA),
-                                    Component.text(throwable.getMessage(), NamedTextColor.WHITE)
-                            )
-                            .color(NamedTextColor.RED)
-                            .build();
+                    redTranslatable(
+                            "box.error.failed-to-reload-feature",
+                            aquaText(name), whiteText(throwable.getMessage())
+                    );
 
     public static final SingleArgument<Throwable> ERROR_WHILE_EXECUTING_COMMAND =
             throwable ->
-                    Component.translatable()
-                            .key("box.error.failed-to-execute-command")
-                            .args(Component.text(throwable.getMessage(), NamedTextColor.WHITE))
-                            .color(NamedTextColor.RED)
-                            .build();
+                    redTranslatable(
+                            "box.error.failed-to-execute-command",
+                            whiteText(throwable.getMessage())
+                    );
 }

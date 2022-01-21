@@ -7,10 +7,10 @@ import org.jetbrains.annotations.NotNull;
 
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.Component.translatable;
-import static net.kyori.adventure.text.format.NamedTextColor.AQUA;
 import static net.kyori.adventure.text.format.NamedTextColor.DARK_GRAY;
-import static net.kyori.adventure.text.format.NamedTextColor.RED;
-import static net.kyori.adventure.text.format.NamedTextColor.WHITE;
+import static net.okocraft.box.api.message.Components.aquaText;
+import static net.okocraft.box.api.message.Components.redText;
+import static net.okocraft.box.api.message.Components.whiteText;
 
 public class NotificationFactory {
 
@@ -60,12 +60,11 @@ public class NotificationFactory {
                 translatable()
                         .key(item.getOriginal())
                         .append(COMMON_PARTS_1)
-                        .append(text(current, WHITE));
+                        .append(whiteText(current));
 
         if (diff != 0) {
-            var minus = diff < 0;
             notification.append(COMMON_PARTS_2)
-                    .append(text((minus ? "-" : "+") + Math.abs(diff), minus ? RED : AQUA))
+                    .append(0 <= diff ? aquaText("+" + diff) : redText(diff))
                     .append(COMMON_PARTS_3);
         }
 

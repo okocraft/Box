@@ -1,11 +1,10 @@
 package net.okocraft.box.feature.bemode.lang;
 
 import net.kyori.adventure.text.Component;
+import net.okocraft.box.api.message.Components;
 import net.okocraft.box.api.message.argument.SingleArgument;
 
-import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.Component.translatable;
-import static net.kyori.adventure.text.format.NamedTextColor.AQUA;
 import static net.okocraft.box.feature.gui.api.lang.Styles.NO_DECORATION_GOLD;
 import static net.okocraft.box.feature.gui.api.lang.Styles.NO_DECORATION_GRAY;
 
@@ -22,7 +21,7 @@ public final class Displays {
             transactionUnit ->
                     translatable()
                             .key("box.bemode.storage-deposit-mode.click-to-deposit")
-                            .args(text(transactionUnit, AQUA))
+                            .args(Components.aquaText(transactionUnit))
                             .style(NO_DECORATION_GRAY)
                             .build();
 
@@ -30,7 +29,7 @@ public final class Displays {
             transactionUnit ->
                     translatable()
                             .key("box.bemode.storage-withdraw-mode.click-to-withdraw")
-                            .args(text(transactionUnit, AQUA))
+                            .args(Components.aquaText(transactionUnit))
                             .style(NO_DECORATION_GRAY)
                             .build();
 
@@ -38,7 +37,7 @@ public final class Displays {
             stock ->
                     translatable()
                             .key("box.bemode.current-stock")
-                            .args(text(stock, AQUA))
+                            .args(Components.aquaText(stock))
                             .style(NO_DECORATION_GRAY)
                             .build();
 

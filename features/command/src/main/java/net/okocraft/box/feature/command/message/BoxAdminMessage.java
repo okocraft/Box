@@ -17,369 +17,214 @@ import org.bukkit.inventory.ItemStack;
 import static net.kyori.adventure.text.Component.newline;
 import static net.kyori.adventure.text.Component.space;
 import static net.kyori.adventure.text.Component.text;
-import static net.kyori.adventure.text.Component.translatable;
-import static net.kyori.adventure.text.format.NamedTextColor.AQUA;
-import static net.kyori.adventure.text.format.NamedTextColor.DARK_GRAY;
-import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
-import static net.kyori.adventure.text.format.NamedTextColor.GREEN;
-import static net.kyori.adventure.text.format.NamedTextColor.RED;
-import static net.kyori.adventure.text.format.NamedTextColor.WHITE;
+import static net.okocraft.box.api.message.Components.aquaItemName;
+import static net.okocraft.box.api.message.Components.aquaText;
+import static net.okocraft.box.api.message.Components.aquaTranslatable;
+import static net.okocraft.box.api.message.Components.commandHelp;
+import static net.okocraft.box.api.message.Components.grayText;
+import static net.okocraft.box.api.message.Components.grayTranslatable;
+import static net.okocraft.box.api.message.Components.greenTranslatable;
+import static net.okocraft.box.api.message.Components.redTranslatable;
+import static net.okocraft.box.api.message.Components.whiteText;
 
 public final class BoxAdminMessage {
 
     public static final SingleArgument<String> VERSION_INFO =
             version ->
-                    translatable()
-                            .key("box.command.boxadmin.version.info")
-                            .args(text(version, AQUA))
-                            .color(GRAY)
-                            .build();
+                    grayTranslatable(
+                            "box.command.boxadmin.version.info",
+                            aquaText(version)
+                    );
 
-    public static final Component VERSION_HELP =
-            translatable("box.command.boxadmin.version.help.command-line", AQUA)
-                    .append(text(" - ", DARK_GRAY))
-                    .append(translatable("box.command.boxadmin.version.help.description", GRAY));
+    public static final Component VERSION_HELP = commandHelp("box.command.boxadmin.version");
 
     public static final QuadArgument<String, BoxItem, Integer, Integer> GIVE_SUCCESS_SENDER =
             (targetName, item, increments, currentAmount) ->
-                    translatable()
-                            .key("box.command.boxadmin.give.success.sender")
-                            .args(
-                                    text(targetName, AQUA),
-                                    item.getDisplayName().color(AQUA).hoverEvent(item.getOriginal()),
-                                    text(increments, AQUA), text(currentAmount, AQUA)
-                            )
-                            .color(GRAY)
-                            .build();
+                    grayTranslatable(
+                            "box.command.boxadmin.give.success.sender",
+                            aquaText(targetName), aquaItemName(item),
+                            aquaText(increments), aquaText(currentAmount)
+                    );
 
     public static final QuadArgument<String, BoxItem, Integer, Integer> GIVE_SUCCESS_TARGET =
             (senderName, item, increments, currentAmount) ->
-                    translatable()
-                            .key("box.command.boxadmin.give.success.target")
-                            .args(
-                                    text(senderName, AQUA),
-                                    item.getDisplayName().color(AQUA).hoverEvent(item.getOriginal()),
-                                    text(increments, AQUA), text(currentAmount, AQUA)
-                            )
-                            .color(GRAY)
-                            .build();
+                    grayTranslatable(
+                            "box.command.boxadmin.give.success.target",
+                            aquaText(senderName), aquaItemName(item),
+                            aquaText(increments), aquaText(currentAmount)
+                    );
 
-    public static final Component GIVE_HELP =
-            translatable("box.command.boxadmin.give.help.command-line", AQUA)
-                    .append(text(" - ", DARK_GRAY))
-                    .append(translatable("box.command.boxadmin.give.help.description", GRAY));
+    public static final Component GIVE_HELP = commandHelp("box.command.boxadmin.give");
 
     public static final TripleArgument<String, BoxItem, Integer> SET_SUCCESS_SENDER =
             (targetName, item, currentAmount) ->
-                    translatable()
-                            .key("box.command.boxadmin.set.success.sender")
-                            .args(
-                                    text(targetName, AQUA),
-                                    item.getDisplayName().color(AQUA).hoverEvent(item.getOriginal()),
-                                    text(currentAmount, AQUA)
-                            )
-                            .color(GRAY)
-                            .build();
+                    grayTranslatable(
+                            "box.command.boxadmin.set.success.sender",
+                            aquaText(targetName), aquaItemName(item), aquaText(currentAmount)
+                    );
 
     public static final TripleArgument<String, BoxItem, Integer> SET_SUCCESS_TARGET =
             (senderName, item, currentAmount) ->
-                    translatable()
-                            .key("box.command.boxadmin.set.success.target")
-                            .args(
-                                    text(senderName, AQUA),
-                                    item.getDisplayName().color(AQUA).hoverEvent(item.getOriginal()),
-                                    text(currentAmount, AQUA)
-                            )
-                            .color(GRAY)
-                            .build();
+                    grayTranslatable(
+                            "box.command.boxadmin.set.success.target",
+                            aquaText(senderName), aquaItemName(item), aquaText(currentAmount)
+                    );
 
-    public static final Component SET_HELP =
-            translatable("box.command.boxadmin.set.help.command-line", AQUA)
-                    .append(text(" - ", DARK_GRAY))
-                    .append(translatable("box.command.boxadmin.set.help.description", GRAY));
+    public static final Component SET_HELP = commandHelp("box.command.boxadmin.set");
 
     public static final QuadArgument<String, BoxItem, Integer, Integer> TAKE_SUCCESS_SENDER =
             (targetName, item, increments, currentAmount) ->
-                    translatable()
-                            .key("box.command.boxadmin.take.success.sender")
-                            .args(
-                                    text(targetName, AQUA),
-                                    item.getDisplayName().color(AQUA).hoverEvent(item.getOriginal()),
-                                    text(increments, AQUA), text(currentAmount, AQUA)
-                            )
-                            .color(GRAY)
-                            .build();
+                    grayTranslatable(
+                            "box.command.boxadmin.take.success.sender",
+                            aquaText(targetName), aquaItemName(item),
+                            aquaText(increments), aquaText(currentAmount)
+                    );
 
     public static final QuadArgument<String, BoxItem, Integer, Integer> TAKE_SUCCESS_TARGET =
             (senderName, item, increments, currentAmount) ->
-                    translatable()
-                            .key("box.command.boxadmin.take.success.target")
-                            .args(
-                                    text(senderName, AQUA),
-                                    item.getDisplayName().color(AQUA).hoverEvent(item.getOriginal()),
-                                    text(increments, AQUA), text(currentAmount, AQUA)
-                            )
-                            .color(GRAY)
-                            .build();
+                    grayTranslatable(
+                            "box.command.boxadmin.take.success.target",
+                            aquaText(senderName), aquaItemName(item),
+                            aquaText(increments), aquaText(currentAmount)
+                    );
 
-    public static final Component TAKE_HELP =
-            translatable("box.command.boxadmin.take.help.command-line", AQUA)
-                    .append(text(" - ", DARK_GRAY))
-                    .append(translatable("box.command.boxadmin.take.help.description", GRAY));
+    public static final Component TAKE_HELP = commandHelp("box.command.boxadmin.take");
 
-    public static final Component REGISTER_IS_AIR = translatable("box.command.boxadmin.register.is-air", RED);
+    public static final Component REGISTER_IS_AIR = redTranslatable("box.command.boxadmin.register.is-air");
 
     public static final SingleArgument<ItemStack> REGISTER_ALREADY_REGISTERED =
-            item ->
-                    translatable()
-                            .key("box.command.boxadmin.register.already-registered")
-                            .args(item.displayName().color(AQUA).hoverEvent(item))
-                            .color(RED)
-                            .build();
+            item -> redTranslatable("box.command.boxadmin.register.already-registered", aquaItemName(item));
 
     public static final SingleArgument<BoxCustomItem> REGISTER_SUCCESS =
-            item ->
-                    translatable()
-                            .key("box.command.boxadmin.register.success")
-                            .args(
-                                    item.getDisplayName().color(AQUA).hoverEvent(item.getOriginal()),
-                                    text(item.getPlainName(), AQUA)
-                                            .clickEvent(ClickEvent.copyToClipboard(item.getPlainName()))
-                            )
-                            .color(GRAY)
-                            .build();
+            item -> grayTranslatable(
+                    "box.command.boxadmin.register.success",
+                    aquaItemName(item),
+                    aquaText(item.getPlainName()).clickEvent(ClickEvent.copyToClipboard(item.getPlainName()))
+            );
 
-    public static final Component REGISTER_TIP_RENAME = translatable("box.command.boxadmin.register.tip-rename", GRAY);
+    public static final Component REGISTER_TIP_RENAME = grayTranslatable("box.command.boxadmin.register.tip-rename");
 
     public static final SingleArgument<Throwable> REGISTER_FAILURE =
-            throwable ->
-                    translatable()
-                            .key("box.command.boxadmin.register.failure")
-                            .args(text(throwable.getMessage(), WHITE))
-                            .color(RED)
-                            .build();
+            throwable -> redTranslatable("box.command.boxadmin.register.failure", whiteText(throwable.getMessage()));
 
-    public static final Component REGISTER_HELP =
-            translatable("box.command.boxadmin.register.help.command-line", AQUA)
-                    .append(text(" - ", DARK_GRAY))
-                    .append(translatable("box.command.boxadmin.register.help.description", GRAY));
+    public static final Component REGISTER_HELP = commandHelp("box.command.boxadmin.register");
 
-    public static final Component RELOAD_START =
-            translatable("box.command.boxadmin.reload.start", GRAY);
+    public static final Component RELOAD_START = grayTranslatable("box.command.boxadmin.reload.start");
 
-    public static final Component RELOAD_FINISH =
-            translatable("box.command.boxadmin.reload.finish", GRAY);
+    public static final Component RELOAD_FINISH = grayTranslatable("box.command.boxadmin.reload.finish");
 
-    public static final Component RELOAD_HELP =
-            translatable("box.command.boxadmin.reload.help.command-line", AQUA)
-                    .append(text(" - ", DARK_GRAY))
-                    .append(translatable("box.command.boxadmin.reload.help.description", GRAY));
+    public static final Component RELOAD_HELP = commandHelp("box.command.boxadmin.reload");
 
     public static final SingleArgument<BoxItem> RENAME_IS_NOT_CUSTOM_ITEM =
-            item ->
-                    translatable()
-                            .key("box.command.boxadmin.rename.is-not-custom-item")
-                            .args(text(item.getPlainName(), AQUA).hoverEvent(item.getOriginal()))
-                            .color(RED)
-                            .build();
+            item -> redTranslatable("box.command.boxadmin.rename.is-not-custom-item", aquaItemName(item));
 
     public static final SingleArgument<String> RENAME_ALREADY_USED_NAME =
-            name ->
-                    translatable()
-                            .key("box.command.boxadmin.rename.already-used-name")
-                            .args(text(name, AQUA))
-                            .color(RED)
-                            .build();
+            name -> redTranslatable("box.command.boxadmin.rename.already-used-name", aquaText(name));
 
     public static final SingleArgument<BoxItem> RENAME_SUCCESS =
-            item ->
-                    translatable()
-                            .key("box.command.boxadmin.rename.success")
-                            .args(text(item.getPlainName(), AQUA).hoverEvent(item.getOriginal()))
-                            .color(GRAY)
-                            .build();
+            item -> grayTranslatable("box.command.boxadmin.rename.success", aquaItemName(item));
 
     public static final SingleArgument<Throwable> RENAME_FAILURE =
-            throwable ->
-                    translatable()
-                            .key("box.command.boxadmin.rename.failure")
-                            .args(text(throwable.getMessage(), WHITE))
-                            .color(RED)
-                            .build();
+            throwable -> redTranslatable("box.command.boxadmin.rename.failure", whiteText(throwable.getMessage()));
 
-    public static final Component RENAME_HELP =
-            translatable("box.command.boxadmin.rename.help.command-line", AQUA)
-                    .append(text(" - ", DARK_GRAY))
-                    .append(translatable("box.command.boxadmin.rename.help.description", GRAY));
+    public static final Component RENAME_HELP = commandHelp("box.command.boxadmin.rename");
 
-    public static final Component INFINITY_MODE_ENABLE = translatable("box.command.boxadmin.infinity.enabled");
+    public static final Component INFINITY_MODE_ENABLE = greenTranslatable("box.command.boxadmin.infinity.enabled");
 
-    public static final Component INFINITY_MODE_DISABLED = translatable("box.command.boxadmin.infinity.disabled");
+    public static final Component INFINITY_MODE_DISABLED = redTranslatable("box.command.boxadmin.infinity.disabled");
 
     public static final SingleArgument<Boolean> INFINITY_MODE_TOGGLE =
-            enabled ->
-                    translatable()
-                            .key("box.command.boxadmin.infinity.toggle")
-                            .args(enabled ? INFINITY_MODE_ENABLE.color(GREEN) : INFINITY_MODE_DISABLED.color(RED))
-                            .color(GRAY)
-                            .build();
+            enabled -> grayTranslatable(
+                    "box.command.boxadmin.infinity.toggle",
+                    enabled ? INFINITY_MODE_ENABLE : INFINITY_MODE_DISABLED
+            );
 
     public static final DoubleArgument<Player, Boolean> INFINITY_MODE_TOGGLE_SENDER =
-            (target, enabled) ->
-                    translatable()
-                            .key("box.command.boxadmin.infinity.toggle-sender")
-                            .args(
-                                    text(target.getName(), AQUA),
-                                    enabled ? INFINITY_MODE_ENABLE.color(GREEN) : INFINITY_MODE_DISABLED.color(RED)
-                            )
-                            .color(GRAY)
-                            .build();
+            (target, enabled) -> grayTranslatable(
+                    "box.command.boxadmin.infinity.toggle-sender",
+                    aquaText(target.getName()),
+                    enabled ? INFINITY_MODE_ENABLE : INFINITY_MODE_DISABLED
+            );
 
     public static final DoubleArgument<CommandSender, Boolean> INFINITY_MODE_TOGGLE_TARGET =
-            (sender, enabled) ->
-                    translatable()
-                            .key("box.command.boxadmin.infinity.toggle-target")
-                            .args(
-                                    text(sender.getName(), AQUA),
-                                    enabled ? INFINITY_MODE_ENABLE.color(GREEN) : INFINITY_MODE_DISABLED.color(RED)
-                            )
-                            .color(GRAY)
-                            .build();
+            (sender, enabled) -> grayTranslatable(
+                    "box.command.boxadmin.infinity.toggle-target",
+                    aquaText(sender.getName()),
+                    enabled ? INFINITY_MODE_ENABLE : INFINITY_MODE_DISABLED
+            );
 
-    public static final Component INFINITY_MODE_TIP = translatable("box.command.boxadmin.infinity.tip", GRAY);
+    public static final Component INFINITY_MODE_TIP = grayTranslatable("box.command.boxadmin.infinity.tip");
 
-    public static final Component INFINITY_HELP =
-            translatable("box.command.boxadmin.infinity.help.command-line", AQUA)
-                    .append(text(" - ", DARK_GRAY))
-                    .append(translatable("box.command.boxadmin.infinity.help.description", GRAY));
+    public static final Component INFINITY_HELP = commandHelp("box.command.boxadmin.infinity");
 
     public static final SingleArgument<UserStockHolder> RESET_SUCCESS_SENDER =
-            target -> translatable()
-                    .key("box.command.boxadmin.reset.success.sender")
-                    .args(text(target.getName(), AQUA))
-                    .color(GRAY)
-                    .build();
+            target -> grayTranslatable("box.command.boxadmin.reset.success.sender", aquaText(target.getName()));
 
     public static final SingleArgument<CommandSender> RESET_SUCCESS_TARGET =
-            sender -> translatable()
-                    .key("box.command.boxadmin.reset.success.target")
-                    .args(text(sender.getName(), AQUA))
-                    .color(GRAY)
-                    .build();
+            sender -> grayTranslatable("box.command.boxadmin.reset.success.target", aquaText(sender.getName()));
 
-    public static final Component RESET_CANCEL =
-            translatable("box.command.boxadmin.reset.cancel", GRAY);
+    public static final Component RESET_CANCEL = grayTranslatable("box.command.boxadmin.reset.cancel");
 
     public static final SingleArgument<UserStockHolder> RESET_CONFIRMATION =
-            target -> text()
-                    .append(
-                            translatable()
-                                    .key("box.command.boxadmin.reset.confirmation.info")
-                                    .args(text(target.getName(), AQUA))
-                                    .color(GRAY)
-                                    .build()
-                    ).append(newline())
-                    .append(translatable("box.command.boxadmin.reset.confirmation.warning", GRAY))
-                    .append(newline())
-                    .append(
-                            translatable()
-                                    .key("box.command.boxadmin.reset.confirmation.confirm-command")
-                                    .args(text("/boxadmin reset confirm", AQUA))
-                                    .color(GRAY)
-                                    .build()
-                    ).append(newline())
-                    .append(
-                            translatable()
-                                    .key("box.command.boxadmin.reset.confirmation.cancel-command")
-                                    .args(text("/boxadmin reset cancel", AQUA))
-                                    .color(GRAY)
-                                    .build()
-                    )
-                    .build();
+            target ->
+                    text().append(grayTranslatable(
+                                    "box.command.boxadmin.reset.confirmation.info", aquaText(target.getName())
+                            )).append(newline())
+                            .append(grayTranslatable("box.command.boxadmin.reset.confirmation.warning"))
+                            .append(newline())
+                            .append(confirmationCommand("confirm"))
+                            .append(newline())
+                            .append(confirmationCommand("cancel"))
+                            .build();
 
-    public static final Component RESET_HELP =
-            translatable("box.command.boxadmin.reset.help.command-line", AQUA)
-                    .append(text(" - ", DARK_GRAY))
-                    .append(translatable("box.command.boxadmin.reset.help.description", GRAY));
+    private static Component confirmationCommand(String arg) {
+        return grayTranslatable(
+                "box.command.boxadmin.reset.confirmation." + arg + "-command",
+                aquaText("/boxadmin reset " + arg)
+        );
+    }
 
-    public static final Component STOCK_HELP =
-            translatable("box.command.boxadmin.stock.help.command-line", AQUA)
-                    .append(text(" - ", DARK_GRAY))
-                    .append(translatable("box.command.boxadmin.stock.help.description", GRAY));
+    public static final Component RESET_HELP = commandHelp("box.command.boxadmin.reset");
 
-    public static final Component STOCK_INFO_HELP =
-            translatable("box.command.boxadmin.stock.info.help.command-line", AQUA)
-                    .append(text(" - ", DARK_GRAY))
-                    .append(translatable("box.command.boxadmin.stock.info.help.description", GRAY));
+    public static final Component STOCK_HELP = commandHelp("box.command.boxadmin.stock");
+
+    public static final Component STOCK_INFO_HELP = commandHelp("box.command.boxadmin.stock.info");
 
     public static final TripleArgument<String, BoxItem, Integer> STOCK_INFO_AMOUNT =
-            (targetName, item, amount) ->
-                    translatable()
-                            .key("box.command.boxadmin.stock.info.amount")
-                            .args(
-                                    text(targetName, AQUA),
-                                    item.getDisplayName().color(AQUA).hoverEvent(item.getOriginal()),
-                                    text(amount, AQUA)
-                            )
-                            .color(GRAY)
-                            .build();
+            (targetName, item, amount) -> grayTranslatable(
+                    "box.command.boxadmin.stock.info.amount",
+                    aquaText(targetName), aquaItemName(item), aquaText(amount)
+            );
 
     public static final Component STOCK_LIST_HELP =
-            text().append(translatable("box.command.boxadmin.stock.list.help.command-line", AQUA))
-                    .append(text(" - ", DARK_GRAY))
-                    .append(translatable("box.command.boxadmin.stock.list.help.description", GRAY))
+            text().append(commandHelp("box.command.boxadmin.stock.list"))
                     .append(newline()).append(space())
-                    .append(
-                            translatable()
-                                    .key("box.command.boxadmin.stock.list.help.argument.sorter.format")
-                                    .args(
-                                            text("-s", AQUA), text("--sorter", AQUA),
-                                            translatable("box.command.boxadmin.stock.list.help.argument.sorter.value", AQUA)
-                                    )
-                                    .color(GRAY)
-                    ).append(newline()).append(space())
-                    .append(
-                            translatable()
-                                    .key("box.command.boxadmin.stock.list.help.argument.page.format")
-                                    .args(
-                                            text("-p", AQUA), text("--page", AQUA),
-                                            translatable("box.command.boxadmin.stock.list.help.argument.page.value", AQUA)
-                                    )
-                                    .color(GRAY)
-                    ).append(newline()).append(space())
-                    .append(
-                            translatable()
-                                    .key("box.command.boxadmin.stock.list.help.argument.filter.format")
-                                    .args(
-                                            text("-f", AQUA), text("--filter", AQUA),
-                                            translatable("box.command.boxadmin.stock.list.help.argument.page.value", AQUA)
-                                    )
-                                    .color(GRAY)
-                    ).build();
+                    .append(stockListArgumentHelp("sorter", "s"))
+                    .append(newline()).append(space())
+                    .append(stockListArgumentHelp("page", "p"))
+                    .append(newline()).append(space())
+                    .append(stockListArgumentHelp("filter", "f"))
+                    .build();
+
+    private static Component stockListArgumentHelp(String arg, String shortArg) {
+        var keyPrefix = "box.command.boxadmin.stock.list.help.argument." + arg;
+        return grayTranslatable(
+                keyPrefix + ".format",
+                aquaText("-" + shortArg), aquaText("--" + arg), aquaTranslatable(keyPrefix + ".value")
+        );
+    }
 
     public static final TripleArgument<UserStockHolder, Integer, Integer> STOCK_LIST_HEADER =
-            (target, page, maxPage) ->
-                    translatable()
-                            .key("box.command.boxadmin.stock.list.header")
-                            .args(
-                                    text(target.getName(), AQUA),
-                                    text(page, AQUA),
-                                    text(maxPage, AQUA)
-                            )
-                            .color(GRAY)
-                            .build();
+            (target, page, maxPage) -> grayTranslatable(
+                    "box.command.boxadmin.stock.list.header",
+                    aquaText(target.getName()), aquaText(page), aquaText(maxPage)
+            );
 
     public static final DoubleArgument<Integer, StockData> STOCK_LIST_ITEM_AMOUNT =
-            (num, stockData) ->
-                    translatable()
-                            .key("box.command.boxadmin.stock.list.amount")
-                            .args(
-                                    text(num, GRAY),
-                                    stockData.item().getDisplayName().color(AQUA).hoverEvent(stockData.item().getOriginal()),
-                                    text(stockData.amount(), AQUA)
-                            )
-                            .color(GRAY)
-                            .build();
+            (num, stockData) -> grayTranslatable(
+                    "box.command.boxadmin.stock.list.amount",
+                    grayText(num), aquaItemName(stockData.item()), aquaText(stockData.amount())
+            );
 
     private BoxAdminMessage() {
         throw new UnsupportedOperationException();

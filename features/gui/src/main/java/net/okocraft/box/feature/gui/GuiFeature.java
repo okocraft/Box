@@ -1,12 +1,11 @@
 package net.okocraft.box.feature.gui;
 
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.feature.AbstractBoxFeature;
 import net.okocraft.box.api.feature.BoxFeature;
 import net.okocraft.box.api.feature.Disableable;
 import net.okocraft.box.api.feature.Reloadable;
+import net.okocraft.box.api.message.Components;
 import net.okocraft.box.feature.category.CategoryFeature;
 import net.okocraft.box.feature.gui.internal.command.MenuOpenCommand;
 import net.okocraft.box.feature.gui.internal.holder.BoxInventoryHolder;
@@ -68,7 +67,7 @@ public class GuiFeature extends AbstractBoxFeature implements Disableable, Reloa
         enable();
 
         try {
-            sender.sendMessage(Component.translatable("box.gui.reloaded", NamedTextColor.GRAY));
+            sender.sendMessage(Components.grayTranslatable("box.gui.reloaded"));
         } catch (Exception ignored) {
             // I don't know why it loops infinitely and throws an exception when the message send to the console.
             // It's probably a bug of Paper or Adventure.
