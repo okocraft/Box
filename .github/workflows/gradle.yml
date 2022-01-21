@@ -28,8 +28,12 @@ jobs:
           mv api/build staging/api
           mv bundle/build staging/bundle
           mv core/build staging/core
+          mkdir staging/storage
+          mv storage/api/build staging/storage/api
+          mv storage/implementation/build staging/storage/implementation
           mkdir staging/features
           mv features/autostore/build staging/features/autostore
+          mv features/bemode/build staging/features/bemode
           mv features/category/build staging/features/category
           mv features/command/build staging/features/command
           mv features/craft/build staging/features/craft
