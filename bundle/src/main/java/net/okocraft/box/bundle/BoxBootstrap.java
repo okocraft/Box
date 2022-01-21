@@ -58,7 +58,7 @@ public final class BoxBootstrap extends JavaPlugin {
             return;
         }
 
-        Bundled.FEATURES.forEach(boxPlugin::register);
+        Bundled.features().forEach(boxPlugin::register);
 
         var timeTaken = Duration.between(startTime, Instant.now());
         getLogger().info("Successfully enabled! (" + timeTaken.toMillis() + "ms)");
@@ -67,7 +67,7 @@ public final class BoxBootstrap extends JavaPlugin {
     @Override
     public void onDisable() {
         if (isPaper && isLoaded) {
-            Bundled.FEATURES.forEach(boxPlugin::unregister);
+            Bundled.features().forEach(boxPlugin::unregister);
             boxPlugin.disable();
             getLogger().info("Successfully disabled. Goodbye!");
         }
