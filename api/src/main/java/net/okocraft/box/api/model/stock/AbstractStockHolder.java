@@ -177,9 +177,9 @@ public abstract class AbstractStockHolder implements StockHolder {
     }
 
     /**
-     * Returns {@link Map#toString()} of stock data.
+     * Returns {@link Object#toString()} of stock data map.
      *
-     * @return {@link Map#toString()} of stock data
+     * @return {@link Object#toString()} of stock data map
      */
     protected @NotNull String getStockDataString() {
         return stockData.toString();
