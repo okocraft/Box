@@ -1,5 +1,6 @@
 package net.okocraft.box.bundle;
 
+import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.feature.BoxFeature;
 import net.okocraft.box.feature.autostore.AutoStoreFeature;
 import net.okocraft.box.feature.bemode.BEModeFeature;
@@ -9,10 +10,14 @@ import net.okocraft.box.feature.craft.CraftFeature;
 import net.okocraft.box.feature.gui.GuiFeature;
 import net.okocraft.box.feature.notifier.NotifierFeature;
 import net.okocraft.box.feature.stick.StickFeature;
+import net.okocraft.box.storage.api.model.Storage;
+import net.okocraft.box.storage.implementation.yaml.YamlStorage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
 
 final class Bundled {
 
@@ -23,5 +28,15 @@ final class Bundled {
 
     static @NotNull @Unmodifiable List<BoxFeature> features() {
         return FEATURES;
+    }
+
+    static @NotNull @Unmodifiable Map<String, Supplier<Storage>> storageMap() {
+        return Map.of(
+                YamlStorage.STORAGE_NAME, Bundled::createYamlStorage
+        );
+    }
+
+    private static @NotNull Storage createYamlStorage() {
+        return new YamlStorage(BoxProvider.get().getPluginDirectory().resolve("data"));
     }
 }

@@ -1,6 +1,7 @@
 package net.okocraft.box.bundle;
 
 import net.okocraft.box.core.BoxPlugin;
+import net.okocraft.box.storage.api.registry.StorageRegistry;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -25,6 +26,8 @@ public final class BoxBootstrap extends JavaPlugin {
         }
 
         this.boxPlugin = new BoxPlugin(this, getFile().toPath());
+
+        Bundled.storageMap().forEach(StorageRegistry::register);
     }
 
     @Override
