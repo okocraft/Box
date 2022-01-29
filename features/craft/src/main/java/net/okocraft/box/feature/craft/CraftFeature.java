@@ -11,6 +11,7 @@ import net.okocraft.box.api.message.Components;
 import net.okocraft.box.feature.craft.command.CraftCommand;
 import net.okocraft.box.feature.craft.loader.RecipeLoader;
 import net.okocraft.box.feature.craft.mode.CraftMode;
+import net.okocraft.box.feature.craft.model.ModelCache;
 import net.okocraft.box.feature.gui.GuiFeature;
 import net.okocraft.box.feature.gui.api.mode.ClickModeRegistry;
 import org.bukkit.command.CommandSender;
@@ -43,7 +44,14 @@ public class CraftFeature extends AbstractBoxFeature implements Disableable, Rel
             BoxProvider.get().getLogger().log(Level.SEVERE, "Could not load recipes.yml", e);
         }
 
+        // Reduce objects that will be generated
+        // BoxIngredientItem 5030 -> 325
+        // IngredientHolder 3506 -> 1417
+        ModelCache.createCache();
+
         var recipeMap = RecipeLoader.load(recipeConfig);
+
+        ModelCache.clearCache();
 
         RecipeRegistry.setRecipeMap(recipeMap);
 

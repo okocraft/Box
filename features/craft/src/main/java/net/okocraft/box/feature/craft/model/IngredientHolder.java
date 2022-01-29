@@ -14,28 +14,28 @@ import java.util.Objects;
 public class IngredientHolder {
 
     public static @NotNull IngredientHolder fromMaterialChoice(int slot, @NotNull RecipeChoice.MaterialChoice choice) {
-        return new IngredientHolder(slot, choice.getChoices().stream().map(ItemStack::new).toList());
+        return ModelCache.getIngredientHolder(slot, choice.getChoices().stream().map(ItemStack::new).toList());
     }
 
     public static @NotNull IngredientHolder fromExactChoice(int slot, @NotNull RecipeChoice.ExactChoice choice) {
-        return new IngredientHolder(slot, choice.getChoices());
+        return ModelCache.getIngredientHolder(slot, choice.getChoices());
     }
 
     public static @NotNull IngredientHolder fromSingleItem(int slot, @NotNull ItemStack itemStack) {
-        return new IngredientHolder(slot, List.of(itemStack));
+        return ModelCache.getIngredientHolder(slot, List.of(itemStack));
     }
 
     private final int slot;
     private final List<BoxIngredientItem> patterns;
 
-    private IngredientHolder(int slot, @NotNull List<ItemStack> patterns) {
+    IngredientHolder(int slot, @NotNull List<ItemStack> patterns) {
         this.slot = slot;
 
         var tempPattern = new ArrayList<BoxIngredientItem>();
 
         for (var item : patterns) {
             var boxItem = BoxProvider.get().getItemManager().getBoxItem(item);
-            boxItem.ifPresent(value -> tempPattern.add(new BoxIngredientItem(value, item.getAmount())));
+            boxItem.ifPresent(value -> tempPattern.add(ModelCache.getIngredientItem(value, item.getAmount())));
         }
 
         this.patterns = Collections.unmodifiableList(tempPattern);
