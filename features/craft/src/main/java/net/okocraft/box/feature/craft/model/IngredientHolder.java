@@ -58,6 +58,10 @@ public class IngredientHolder {
         if (o == null || getClass() != o.getClass()) return false;
         IngredientHolder that = (IngredientHolder) o;
 
+        if (slot != that.slot) {
+            return false;
+        }
+
         if (patterns.size() != that.patterns.size()) {
             return false;
         }
@@ -73,7 +77,7 @@ public class IngredientHolder {
 
     @Override
     public int hashCode() {
-        return patterns.hashCode();
+        return Objects.hash(slot, patterns);
     }
 
     public static class SelectableIngredients {
