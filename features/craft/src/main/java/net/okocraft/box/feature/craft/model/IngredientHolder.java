@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -37,7 +38,7 @@ public class IngredientHolder {
             boxItem.ifPresent(value -> tempPattern.add(new BoxIngredientItem(value, item.getAmount())));
         }
 
-        this.patterns = List.copyOf(tempPattern);
+        this.patterns = Collections.unmodifiableList(tempPattern);
     }
 
     public int getSlot() {
