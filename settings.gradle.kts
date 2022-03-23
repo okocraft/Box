@@ -3,14 +3,17 @@ pluginManagement {
 }
 
 rootProject.name = "box"
+val boxPrefix = rootProject.name
 
 sequenceOf(
     "api",
     "core",
 ).forEach {
-    include(it)
-    project(":$it").projectDir = file(it)
+    include("$boxPrefix-$it")
+    project(":$boxPrefix-$it").projectDir = file(it)
 }
+
+val featureSuffix = "feature"
 
 // features
 sequenceOf(
@@ -23,9 +26,9 @@ sequenceOf(
     "notifier",
     "stick"
 ).forEach {
-    include(it)
-    project(":$it").projectDir = file("./features/$it")
+    include("$boxPrefix-$it-$featureSuffix")
+    project(":$boxPrefix-$it-$featureSuffix").projectDir = file("./features/$it")
 }
 
-include("bundle")
-project(":bundle").projectDir = file("bundle")
+include("$boxPrefix-bundle")
+project(":$boxPrefix-bundle").projectDir = file("bundle")

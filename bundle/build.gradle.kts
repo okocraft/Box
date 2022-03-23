@@ -6,16 +6,9 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":api"))
-    implementation(project(":core"))
-    implementation(project(":autostore"))
-    implementation(project(":bemode"))
-    implementation(project(":category"))
-    implementation(project(":command"))
-    implementation(project(":craft"))
-    implementation(project(":gui"))
-    implementation(project(":notifier"))
-    implementation(project(":stick"))
+    rootProject.childProjects.values
+        .filterNot { project -> project.name == "box-bundle" }
+        .forEach { project -> implementation(project); println(project) }
 }
 
 tasks.named<Copy>("processResources") {

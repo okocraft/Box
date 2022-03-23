@@ -3,6 +3,6 @@ plugins {
 }
 
 dependencies {
-    compileOnly(project(":api"))
-    compileOnly(project(":gui"))
+    compileOnly(project(":box-api"))
+    compileOnly(project(":box-gui-feature"))
 }
