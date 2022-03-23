@@ -1,5 +1,5 @@
 plugins {
-    id("box.feature-conventions")
+    id("box.common-conventions")
 }
 
 dependencies {
