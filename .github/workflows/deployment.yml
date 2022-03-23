@@ -17,12 +17,19 @@ jobs:
           distribution: 'temurin'
           java-version: '16'
           cache: 'gradle'
+      - name: Validate Gradle wrapper
+        uses: gradle/wrapper-validation-action@v1.0.4
+      - run: chmod +x ./gradlew
       - name: Deploy to staging directory
-        run: |
-          chmod +x ./gradlew
-          ./gradlew clean
-          ./gradlew publish -P box.publish=true
-          ./gradlew aggregateJavadoc
+        uses: gradle/gradle-build-action@v2.1.4
+        with:
+          arguments: |
+            clean
+            publish -P box.publish=true
+      - name: Generate Javadocs
+        uses: gradle/gradle-build-action@v2.1.4
+        with:
+          arguments: aggregateJavadoc
       - name: Move Javadoc pages to staging directory (release)
         if: ${{ github.ref == 'refs/heads/v4/master' }}
         run: |
