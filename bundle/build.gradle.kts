@@ -8,7 +8,7 @@ plugins {
 dependencies {
     rootProject.childProjects.values
         .filterNot { project -> project.name == "box-bundle" }
-        .forEach { project -> implementation(project); println(project) }
+        .forEach { project -> implementation(project) }
 }
 
 tasks.named<Copy>("processResources") {
