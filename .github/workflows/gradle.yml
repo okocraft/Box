@@ -12,12 +12,16 @@ jobs:
           distribution: 'temurin'
           java-version: '16'
           cache: 'gradle'
-      - name: Build
-        run: |
-          chmod +x ./gradlew
-          ./gradlew clean
-          ./gradlew build
-          ./gradlew shadowJar
+      - name: Validate Gradle wrapper
+        uses: gradle/wrapper-validation-action@v1.0.4
+      - run: chmod +x ./gradlew
+      - name: Build with Gradle
+        uses: gradle/gradle-build-action@v2.1.4
+        with:
+          arguments: |
+            clean
+            build
+            shadowJar
       - name: Move the artifact
         run: |
           mkdir staging
