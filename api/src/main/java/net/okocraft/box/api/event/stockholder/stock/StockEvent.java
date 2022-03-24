@@ -13,12 +13,24 @@ import org.jetbrains.annotations.NotNull;
  */
 public class StockEvent extends StockHolderEvent implements AsyncEvent {
 
+    private final int amount;
+
     /**
      * The constructor of {@link StockEvent}.
      *
      * @param stockHolder the stockholder of the event
      */
-    public StockEvent(@NotNull StockHolder stockHolder) {
+    public StockEvent(@NotNull StockHolder stockHolder, int amount) {
         super(stockHolder);
+        this.amount = amount;
+    }
+
+    /**
+     * Gets the current amount of the stock.
+     *
+     * @return the current amount of the stock
+     */
+    public int getAmount() {
+        return amount;
     }
 }

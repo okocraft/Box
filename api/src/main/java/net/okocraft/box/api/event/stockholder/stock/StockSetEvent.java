@@ -10,7 +10,6 @@ import org.jetbrains.annotations.NotNull;
 public class StockSetEvent extends StockEvent {
 
     private final BoxItem item;
-    private final int amount;
     private final int previousAmount;
 
     /**
@@ -22,9 +21,8 @@ public class StockSetEvent extends StockEvent {
      * @param previousAmount the amount of stock before set
      */
     public StockSetEvent(@NotNull StockHolder stockHolder, @NotNull BoxItem item, int amount, int previousAmount) {
-        super(stockHolder);
+        super(stockHolder, amount);
         this.item = item;
-        this.amount = amount;
         this.previousAmount = previousAmount;
     }
 
@@ -35,15 +33,6 @@ public class StockSetEvent extends StockEvent {
      */
     public @NotNull BoxItem getItem() {
         return item;
-    }
-
-    /**
-     * Gets the current amount of the stock.
-     *
-     * @return the current amount of the stock
-     */
-    public int getAmount() {
-        return amount;
     }
 
     /**
@@ -63,7 +52,7 @@ public class StockSetEvent extends StockEvent {
                 ", stockHolderClass=" + getStockHolder().getClass().getSimpleName() +
                 ", item=" + item +
                 ", previousAmount=" + previousAmount +
-                ", amount=" + amount +
+                ", amount=" + getAmount() +
                 '}';
     }
 
@@ -73,7 +62,7 @@ public class StockSetEvent extends StockEvent {
                 "stockholder=" + getStockHolder() +
                 ", item=" + item +
                 ", previousAmount=" + previousAmount +
-                ", amount=" + amount +
+                ", amount=" + getAmount() +
                 '}';
     }
 }

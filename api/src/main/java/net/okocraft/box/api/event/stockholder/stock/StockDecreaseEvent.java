@@ -13,7 +13,6 @@ public class StockDecreaseEvent extends StockEvent {
 
     private final BoxItem item;
     private final int decrements;
-    private final int amount;
 
     /**
      * The constructor of {@link StockEvent}.
@@ -25,10 +24,9 @@ public class StockDecreaseEvent extends StockEvent {
      */
     public StockDecreaseEvent(@NotNull StockHolder stockHolder, @NotNull BoxItem item,
                               int decrements, int currentAmount) {
-        super(stockHolder);
+        super(stockHolder, currentAmount);
         this.item = Objects.requireNonNull(item);
         this.decrements = decrements;
-        this.amount = currentAmount;
     }
 
     /**
@@ -49,15 +47,6 @@ public class StockDecreaseEvent extends StockEvent {
         return decrements;
     }
 
-    /**
-     * Gets the current amount of the stock.
-     *
-     * @return the current amount of the stock
-     */
-    public int getAmount() {
-        return amount;
-    }
-
     @Override
     public @NotNull String toDebugLog() {
         return "StockDecreaseEvent{" +
@@ -66,7 +55,7 @@ public class StockDecreaseEvent extends StockEvent {
                 ", stockHolderClass=" + getStockHolder().getClass().getSimpleName() +
                 ", item=" + item +
                 ", decrements=" + decrements +
-                ", amount=" + amount +
+                ", amount=" + getAmount() +
                 '}';
     }
 
@@ -76,7 +65,7 @@ public class StockDecreaseEvent extends StockEvent {
                 "stockholder=" + getStockHolder() +
                 ", item=" + item +
                 ", decrements=" + decrements +
-                ", amount=" + amount +
+                ", amount=" + getAmount() +
                 '}';
     }
 }
