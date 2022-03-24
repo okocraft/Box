@@ -20,7 +20,7 @@ tasks {
         opts.addStringOption("Xdoclint:none", "-quiet")
         opts.links(
             "https://papermc.io/javadocs/paper/1.18/",
-            "https://jd.adventure.kyori.net/api/4.9.3/",
+            "https://jd.adventure.kyori.net/api/4.10.1/",
             "https://javadoc.io/doc/org.jetbrains/annotations/23.0.0/",
             "https://siroshun09.github.io/ConfigAPI/",
             "https://javadoc.io/doc/com.github.siroshun09.event4j/event4j/2.2.0/",
