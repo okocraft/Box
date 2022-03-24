@@ -17,6 +17,7 @@ tasks {
         val opts = options as StandardJavadocDocletOptions
 
         opts.encoding = Charsets.UTF_8.name()
+        opts.addStringOption("Xdoclint:none", "-quiet")
         opts.links(
             "https://papermc.io/javadocs/paper/1.17/",
             "https://jd.adventure.kyori.net/api/4.9.3/",
