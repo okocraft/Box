@@ -1,4 +1,4 @@
-package net.okocraft.box.api.event.stock;
+package net.okocraft.box.api.event.stockholder.stock;
 
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.model.stock.StockHolder;
@@ -7,12 +7,12 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 
 /**
- * A {@link StockEvent} called when the stock is decreased.
+ * A {@link StockEvent} called when the stock is increased.
  */
-public class StockDecreaseEvent extends StockEvent {
+public class StockIncreaseEvent extends StockEvent {
 
     private final BoxItem item;
-    private final int decrements;
+    private final int increments;
     private final int amount;
 
     /**
@@ -20,14 +20,14 @@ public class StockDecreaseEvent extends StockEvent {
      *
      * @param stockHolder   the stockholder of the event
      * @param item          the item of the stock
-     * @param decrements    the amount of decreased
+     * @param increments    the amount of increased
      * @param currentAmount the current amount of the stock
      */
-    public StockDecreaseEvent(@NotNull StockHolder stockHolder, @NotNull BoxItem item,
-                              int decrements, int currentAmount) {
+    public StockIncreaseEvent(@NotNull StockHolder stockHolder, @NotNull BoxItem item,
+                              int increments, int currentAmount) {
         super(stockHolder);
         this.item = Objects.requireNonNull(item);
-        this.decrements = decrements;
+        this.increments = increments;
         this.amount = currentAmount;
     }
 
@@ -41,12 +41,12 @@ public class StockDecreaseEvent extends StockEvent {
     }
 
     /**
-     * Gets the amount of decreased.
+     * Gets the amount of increased.
      *
-     * @return the amount of decreased
+     * @return the amount of increased
      */
-    public int getDecrements() {
-        return decrements;
+    public int getIncrements() {
+        return increments;
     }
 
     /**
@@ -60,22 +60,22 @@ public class StockDecreaseEvent extends StockEvent {
 
     @Override
     public @NotNull String toDebugLog() {
-        return "StockDecreaseEvent{" +
+        return "StockIncreaseEvent{" +
                 "stockholderUuid=" + getStockHolder().getUUID() +
                 ", stockHolderName=" + getStockHolder().getName() +
                 ", stockHolderClass=" + getStockHolder().getClass().getSimpleName() +
                 ", item=" + item +
-                ", decrements=" + decrements +
+                ", increments=" + increments +
                 ", amount=" + amount +
                 '}';
     }
 
     @Override
     public String toString() {
-        return "StockDecreaseEvent{" +
+        return "StockIncreaseEvent{" +
                 "stockholder=" + getStockHolder() +
                 ", item=" + item +
-                ", decrements=" + decrements +
+                ", increments=" + increments +
                 ", amount=" + amount +
                 '}';
     }

@@ -1,9 +1,9 @@
 package net.okocraft.box.core.model.stock;
 
 import net.okocraft.box.api.BoxProvider;
-import net.okocraft.box.api.event.stock.StockDecreaseEvent;
-import net.okocraft.box.api.event.stock.StockIncreaseEvent;
-import net.okocraft.box.api.event.stock.StockSetEvent;
+import net.okocraft.box.api.event.stockholder.stock.StockDecreaseEvent;
+import net.okocraft.box.api.event.stockholder.stock.StockIncreaseEvent;
+import net.okocraft.box.api.event.stockholder.stock.StockSetEvent;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.model.stock.StockData;
 import net.okocraft.box.api.model.stock.StockHolder;

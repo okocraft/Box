@@ -1,4 +1,4 @@
-package net.okocraft.box.api.event.stock;
+package net.okocraft.box.api.event.stockholder.stock;
 
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.model.stock.StockHolder;

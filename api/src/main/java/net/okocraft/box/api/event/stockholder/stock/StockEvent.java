@@ -1,4 +1,4 @@
-package net.okocraft.box.api.event.stock;
+package net.okocraft.box.api.event.stockholder.stock;
 
 import net.okocraft.box.api.event.AsyncEvent;
 import net.okocraft.box.api.event.stockholder.StockHolderEvent;
@@ -11,7 +11,6 @@ import org.jetbrains.annotations.NotNull;
  * You need to be very careful not to call methods that cause changes to a {@link StockHolder} in the event,
  * as this may result in an infinite loop.
  */
-// TODO: move StockEvent classes to api.event.stockholder in version 5.0.0
 public class StockEvent extends StockHolderEvent implements AsyncEvent {
 
     /**
