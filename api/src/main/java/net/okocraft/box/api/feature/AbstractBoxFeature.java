@@ -1,6 +1,6 @@
 package net.okocraft.box.api.feature;
 
-import com.github.siroshun09.event4j.handlerlist.Key;
+import com.github.siroshun09.event4j.key.Key;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -20,7 +20,7 @@ public abstract class AbstractBoxFeature implements BoxFeature {
      */
     protected AbstractBoxFeature(@NotNull String name) {
         this.name = Objects.requireNonNull(name);
-        this.listenerKey = Key.of(name);
+        this.listenerKey = Key.create(name);
     }
 
     @Override

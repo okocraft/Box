@@ -13,6 +13,7 @@ import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.command.base.BoxAdminCommand;
 import net.okocraft.box.api.command.base.BoxCommand;
+import net.okocraft.box.api.event.BoxEvent;
 import net.okocraft.box.api.event.feature.FeatureEvent;
 import net.okocraft.box.api.feature.BoxFeature;
 import net.okocraft.box.api.feature.Disableable;
@@ -74,7 +75,7 @@ public class BoxPlugin implements BoxAPI {
     private final TranslationDirectory translationDirectory;
     private final DebugListener debugListener = new DebugListener();
 
-    private final EventBus eventBus = EventBus.newEventBus(InternalExecutors.getEventExecutor());
+    private final EventBus<BoxEvent> eventBus = EventBus.create(BoxEvent.class, InternalExecutors.getEventExecutor());
     private final BoxTaskFactory taskFactory = new BoxTaskFactory();
 
     private final BoxCommandImpl boxCommand = new BoxCommandImpl();
@@ -378,7 +379,7 @@ public class BoxPlugin implements BoxAPI {
     }
 
     @Override
-    public @NotNull EventBus getEventBus() {
+    public @NotNull EventBus<BoxEvent> getEventBus() {
         return eventBus;
     }
 

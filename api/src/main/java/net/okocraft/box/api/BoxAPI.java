@@ -4,6 +4,7 @@ import com.github.siroshun09.configapi.yaml.YamlConfiguration;
 import com.github.siroshun09.event4j.bus.EventBus;
 import net.okocraft.box.api.command.base.BoxAdminCommand;
 import net.okocraft.box.api.command.base.BoxCommand;
+import net.okocraft.box.api.event.BoxEvent;
 import net.okocraft.box.api.feature.BoxFeature;
 import net.okocraft.box.api.model.data.CustomDataContainer;
 import net.okocraft.box.api.model.manager.ItemManager;
@@ -97,7 +98,7 @@ public interface BoxAPI {
      *
      * @return the {@link EventBus}
      */
-    @NotNull EventBus getEventBus();
+    @NotNull EventBus<BoxEvent> getEventBus();
 
     /**
      * Gets the {@link CustomDataContainer}.

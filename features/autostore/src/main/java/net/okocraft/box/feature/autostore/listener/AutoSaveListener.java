@@ -1,6 +1,6 @@
 package net.okocraft.box.feature.autostore.listener;
 
-import com.github.siroshun09.event4j.handlerlist.Key;
+import com.github.siroshun09.event4j.key.Key;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.event.general.AutoSaveStartEvent;
 import net.okocraft.box.feature.autostore.event.AutoStoreSettingChangeEvent;
@@ -24,16 +24,18 @@ public class AutoSaveListener {
 
         var eventBus = BoxProvider.get().getEventBus();
 
-        eventBus.getHandlerList(AutoStoreSettingChangeEvent.class)
+        eventBus.getSubscriber(AutoStoreSettingChangeEvent.class)
                 .subscribe(listenerKey, event -> modifiedSettings.add(event.getSetting()));
-        eventBus.getHandlerList(AutoSaveStartEvent.class).subscribe(listenerKey, this::saveModifiedSettings);
+
+        eventBus.getSubscriber(AutoSaveStartEvent.class)
+                .subscribe(listenerKey, this::saveModifiedSettings);
     }
 
     public void unregister() {
         if (listenerKey != null) {
             var eventBus = BoxProvider.get().getEventBus();
-            eventBus.getHandlerList(AutoStoreSettingChangeEvent.class).unsubscribeAll(listenerKey);
-            eventBus.getHandlerList(AutoSaveStartEvent.class).unsubscribeAll(listenerKey);
+            eventBus.getSubscriber(AutoStoreSettingChangeEvent.class).unsubscribeAll(listenerKey);
+            eventBus.getSubscriber(AutoSaveStartEvent.class).unsubscribeAll(listenerKey);
         }
     }
 
