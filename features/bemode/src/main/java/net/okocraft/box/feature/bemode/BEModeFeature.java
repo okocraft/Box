@@ -29,7 +29,7 @@ public class BEModeFeature extends AbstractBoxFeature {
         ClickModeRegistry.register(storageWithdrawMode);
 
         BoxProvider.get().getEventBus()
-                .getHandlerList(MenuOpenEvent.class)
+                .getSubscriber(MenuOpenEvent.class)
                 .subscribe(getListenerKey(), new MenuOpenListener());
     }
 

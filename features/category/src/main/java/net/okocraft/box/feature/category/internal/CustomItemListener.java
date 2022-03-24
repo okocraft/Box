@@ -1,7 +1,7 @@
 package net.okocraft.box.feature.category.internal;
 
 import com.github.siroshun09.configapi.yaml.YamlConfiguration;
-import com.github.siroshun09.event4j.handlerlist.Key;
+import com.github.siroshun09.event4j.key.Key;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.event.item.CustomItemRegisterEvent;
 import net.okocraft.box.api.event.item.CustomItemRenameEvent;
@@ -19,24 +19,24 @@ public class CustomItemListener {
     public void register(@NotNull Key listenerKey) {
         BoxProvider.get()
                 .getEventBus()
-                .getHandlerList(CustomItemRegisterEvent.class)
+                .getSubscriber(CustomItemRegisterEvent.class)
                 .subscribe(listenerKey, this::processEvent);
 
         BoxProvider.get()
                 .getEventBus()
-                .getHandlerList(CustomItemRenameEvent.class)
+                .getSubscriber(CustomItemRenameEvent.class)
                 .subscribe(listenerKey, this::processEvent);
     }
 
     public void unregister(@NotNull Key listenerKey) {
         BoxProvider.get()
                 .getEventBus()
-                .getHandlerList(CustomItemRegisterEvent.class)
+                .getSubscriber(CustomItemRegisterEvent.class)
                 .unsubscribeAll(listenerKey);
 
         BoxProvider.get()
                 .getEventBus()
-                .getHandlerList(CustomItemRenameEvent.class)
+                .getSubscriber(CustomItemRenameEvent.class)
                 .unsubscribeAll(listenerKey);
     }
 

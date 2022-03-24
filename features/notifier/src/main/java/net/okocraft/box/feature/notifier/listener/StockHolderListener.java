@@ -1,6 +1,6 @@
 package net.okocraft.box.feature.notifier.listener;
 
-import com.github.siroshun09.event4j.handlerlist.Key;
+import com.github.siroshun09.event4j.key.Key;
 import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.event.player.PlayerStockHolderChangeEvent;
@@ -47,12 +47,12 @@ public class StockHolderListener {
 
         var eventBus = BoxProvider.get().getEventBus();
 
-        eventBus.getHandlerList(StockIncreaseEvent.class).subscribe(listenerKey, this::onIncrease);
-        eventBus.getHandlerList(StockDecreaseEvent.class).subscribe(listenerKey, this::onDecrease);
-        eventBus.getHandlerList(StockSetEvent.class).subscribe(listenerKey, this::onSet);
+        eventBus.getSubscriber(StockIncreaseEvent.class).subscribe(listenerKey, this::onIncrease);
+        eventBus.getSubscriber(StockDecreaseEvent.class).subscribe(listenerKey, this::onDecrease);
+        eventBus.getSubscriber(StockSetEvent.class).subscribe(listenerKey, this::onSet);
 
-        eventBus.getHandlerList(PlayerStockHolderChangeEvent.class).subscribe(listenerKey, this::onStockHolderChange);
-        eventBus.getHandlerList(PlayerUnloadEvent.class).subscribe(listenerKey, this::onUnload);
+        eventBus.getSubscriber(PlayerStockHolderChangeEvent.class).subscribe(listenerKey, this::onStockHolderChange);
+        eventBus.getSubscriber(PlayerUnloadEvent.class).subscribe(listenerKey, this::onUnload);
     }
 
     public void unregister() {
@@ -62,12 +62,12 @@ public class StockHolderListener {
 
         var eventBus = BoxProvider.get().getEventBus();
 
-        eventBus.getHandlerList(StockIncreaseEvent.class).unsubscribeAll(listenerKey);
-        eventBus.getHandlerList(StockDecreaseEvent.class).unsubscribeAll(listenerKey);
-        eventBus.getHandlerList(StockSetEvent.class).unsubscribeAll(listenerKey);
+        eventBus.getSubscriber(StockIncreaseEvent.class).unsubscribeAll(listenerKey);
+        eventBus.getSubscriber(StockDecreaseEvent.class).unsubscribeAll(listenerKey);
+        eventBus.getSubscriber(StockSetEvent.class).unsubscribeAll(listenerKey);
 
-        eventBus.getHandlerList(PlayerStockHolderChangeEvent.class).unsubscribeAll(listenerKey);
-        eventBus.getHandlerList(PlayerUnloadEvent.class).unsubscribeAll(listenerKey);
+        eventBus.getSubscriber(PlayerStockHolderChangeEvent.class).unsubscribeAll(listenerKey);
+        eventBus.getSubscriber(PlayerUnloadEvent.class).unsubscribeAll(listenerKey);
 
         stockHolderMap.clear();
     }

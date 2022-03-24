@@ -1,6 +1,6 @@
 package net.okocraft.box.feature.autostore.listener;
 
-import com.github.siroshun09.event4j.handlerlist.Key;
+import com.github.siroshun09.event4j.key.Key;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.event.player.PlayerLoadEvent;
 import net.okocraft.box.api.event.player.PlayerUnloadEvent;
@@ -19,16 +19,16 @@ public class BoxPlayerListener {
 
         var eventBus = BoxProvider.get().getEventBus();
 
-        eventBus.getHandlerList(PlayerLoadEvent.class).subscribe(listenerKey, this::onLoad);
+        eventBus.getSubscriber(PlayerLoadEvent.class).subscribe(listenerKey, this::onLoad);
 
-        eventBus.getHandlerList(PlayerUnloadEvent.class).subscribe(listenerKey, this::onUnload);
+        eventBus.getSubscriber(PlayerUnloadEvent.class).subscribe(listenerKey, this::onUnload);
     }
 
     public void unregister() {
         if (listenerKey != null) {
             var eventBus = BoxProvider.get().getEventBus();
-            eventBus.getHandlerList(PlayerLoadEvent.class).unsubscribeAll(listenerKey);
-            eventBus.getHandlerList(PlayerUnloadEvent.class).unsubscribeAll(listenerKey);
+            eventBus.getSubscriber(PlayerLoadEvent.class).unsubscribeAll(listenerKey);
+            eventBus.getSubscriber(PlayerUnloadEvent.class).unsubscribeAll(listenerKey);
         }
     }
 
