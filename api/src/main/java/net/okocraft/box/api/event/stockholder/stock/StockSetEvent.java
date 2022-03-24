@@ -9,7 +9,6 @@ import org.jetbrains.annotations.NotNull;
  */
 public class StockSetEvent extends StockEvent {
 
-    private final BoxItem item;
     private final int previousAmount;
 
     /**
@@ -21,18 +20,8 @@ public class StockSetEvent extends StockEvent {
      * @param previousAmount the amount of stock before set
      */
     public StockSetEvent(@NotNull StockHolder stockHolder, @NotNull BoxItem item, int amount, int previousAmount) {
-        super(stockHolder, amount);
-        this.item = item;
+        super(stockHolder, item, amount);
         this.previousAmount = previousAmount;
-    }
-
-    /**
-     * Gets the item of the stock.
-     *
-     * @return the item of the stock
-     */
-    public @NotNull BoxItem getItem() {
-        return item;
     }
 
     /**
@@ -50,7 +39,7 @@ public class StockSetEvent extends StockEvent {
                 "stockholderUuid=" + getStockHolder().getUUID() +
                 ", stockHolderName=" + getStockHolder().getName() +
                 ", stockHolderClass=" + getStockHolder().getClass().getSimpleName() +
-                ", item=" + item +
+                ", item=" + getItem() +
                 ", previousAmount=" + previousAmount +
                 ", amount=" + getAmount() +
                 '}';
@@ -60,7 +49,7 @@ public class StockSetEvent extends StockEvent {
     public String toString() {
         return "StockSetEvent{" +
                 "stockholder=" + getStockHolder() +
-                ", item=" + item +
+                ", item=" + getItem() +
                 ", previousAmount=" + previousAmount +
                 ", amount=" + getAmount() +
                 '}';

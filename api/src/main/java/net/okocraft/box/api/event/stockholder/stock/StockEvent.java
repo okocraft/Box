@@ -2,8 +2,11 @@ package net.okocraft.box.api.event.stockholder.stock;
 
 import net.okocraft.box.api.event.AsyncEvent;
 import net.okocraft.box.api.event.stockholder.StockHolderEvent;
+import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.model.stock.StockHolder;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
 
 /**
  * A {@link StockHolderEvent} called when the stock of the {@link StockHolder} is modified.
@@ -13,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class StockEvent extends StockHolderEvent implements AsyncEvent {
 
+    private final BoxItem item;
     private final int amount;
 
     /**
@@ -20,9 +24,19 @@ public class StockEvent extends StockHolderEvent implements AsyncEvent {
      *
      * @param stockHolder the stockholder of the event
      */
-    public StockEvent(@NotNull StockHolder stockHolder, int amount) {
+    public StockEvent(@NotNull StockHolder stockHolder, @NotNull BoxItem item, int amount) {
         super(stockHolder);
+        this.item = Objects.requireNonNull(item);
         this.amount = amount;
+    }
+
+    /**
+     * Gets the item of the stock
+     *
+     * @return the item of the stock
+     */
+    public @NotNull BoxItem getItem() {
+        return item;
     }
 
     /**

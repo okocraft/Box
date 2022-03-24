@@ -4,14 +4,11 @@ import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.model.stock.StockHolder;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
-
 /**
  * A {@link StockEvent} called when the stock is increased.
  */
 public class StockIncreaseEvent extends StockEvent {
 
-    private final BoxItem item;
     private final int increments;
 
     /**
@@ -24,18 +21,8 @@ public class StockIncreaseEvent extends StockEvent {
      */
     public StockIncreaseEvent(@NotNull StockHolder stockHolder, @NotNull BoxItem item,
                               int increments, int currentAmount) {
-        super(stockHolder, currentAmount);
-        this.item = Objects.requireNonNull(item);
+        super(stockHolder, item, currentAmount);
         this.increments = increments;
-    }
-
-    /**
-     * Gets the item of the stock
-     *
-     * @return the item of the stock
-     */
-    public @NotNull BoxItem getItem() {
-        return item;
     }
 
     /**
@@ -53,7 +40,7 @@ public class StockIncreaseEvent extends StockEvent {
                 "stockholderUuid=" + getStockHolder().getUUID() +
                 ", stockHolderName=" + getStockHolder().getName() +
                 ", stockHolderClass=" + getStockHolder().getClass().getSimpleName() +
-                ", item=" + item +
+                ", item=" + getItem() +
                 ", increments=" + increments +
                 ", amount=" + getAmount() +
                 '}';
@@ -63,7 +50,7 @@ public class StockIncreaseEvent extends StockEvent {
     public String toString() {
         return "StockIncreaseEvent{" +
                 "stockholder=" + getStockHolder() +
-                ", item=" + item +
+                ", item=" + getItem() +
                 ", increments=" + increments +
                 ", amount=" + getAmount() +
                 '}';
