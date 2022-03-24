@@ -23,6 +23,8 @@ public class StockEvent extends StockHolderEvent implements AsyncEvent {
      * The constructor of {@link StockEvent}.
      *
      * @param stockHolder the stockholder of the event
+     * @param item        the item of the stock
+     * @param amount      the current amount of the stock
      */
     public StockEvent(@NotNull StockHolder stockHolder, @NotNull BoxItem item, int amount) {
         super(stockHolder);
