@@ -1,5 +1,5 @@
 plugins {
-    id("box.storage-conventions")
+    id("box.common-conventions")
 }
 
 dependencies {
