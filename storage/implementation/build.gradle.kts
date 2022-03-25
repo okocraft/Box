@@ -3,6 +3,6 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":api"))
-    implementation(project(":storage-api"))
+    implementation(project(":box-api"))
+    implementation(project(":box-storage-api"))
 }
