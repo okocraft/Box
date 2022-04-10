@@ -12,6 +12,8 @@ public final class ClickModeRegistry {
     private static final StorageMode STORAGE_MODE = new StorageMode();
     private static final List<BoxItemClickMode> REGISTERED_BOX_ITEM_CLICK_MODE = new ArrayList<>(List.of(STORAGE_MODE));
 
+    // Because ClickModeRegistry#getModes is called frequently,
+    // keep a copied list to reduce calls to List#copyOf and Collections#unmodifiableList.
     private static List<BoxItemClickMode> COPIED_REGISTERED_BOX_ITEM_CLICK_MODE = List.copyOf(REGISTERED_BOX_ITEM_CLICK_MODE);
 
     public static @NotNull StorageMode getStorageMode() {
