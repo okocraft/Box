@@ -1,5 +1,5 @@
 plugins {
-    id("io.freefair.aggregate-javadoc") version "6.4.2"
+    id("io.freefair.aggregate-javadoc") version "6.4.3"
 }
 
 tasks {
