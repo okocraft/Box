@@ -21,13 +21,13 @@ jobs:
         uses: gradle/wrapper-validation-action@v1.0.4
       - run: chmod +x ./gradlew
       - name: Deploy to staging directory
-        uses: gradle/gradle-build-action@v2.1.7
+        uses: gradle/gradle-build-action@v2.2.0
         with:
           arguments: |
             clean
             publish -P box.publish=true
       - name: Generate Javadocs
-        uses: gradle/gradle-build-action@v2.1.7
+        uses: gradle/gradle-build-action@v2.2.0
         with:
           arguments: aggregateJavadoc
       - name: Move Javadoc pages to staging directory (release)
