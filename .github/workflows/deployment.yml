@@ -2,8 +2,7 @@ name: Gradle Deployment
 on:
   push:
     branches:
-      - "v4/master"
-      - "v4/develop"
+      - "v5/master"
       - "v5/develop"
 
 jobs:
@@ -32,12 +31,12 @@ jobs:
         with:
           arguments: aggregateJavadoc
       - name: Move Javadoc pages to staging directory (release)
-        if: ${{ github.ref == 'refs/heads/v4/master' }}
+        if: ${{ github.ref == 'refs/heads/v5/master' }}
         run: |
           rm -rf staging/release
           mv build/docs/aggregateJavadoc staging/release
       - name: Move Javadoc pages to staging directory (snapshot)
-        if: ${{ github.ref == 'refs/heads/v4/develop' }}
+        if: ${{ github.ref == 'refs/heads/v5/develop' }}
         run: |
           rm -rf staging/snapshot
           mv build/docs/aggregateJavadoc staging/snapshot
