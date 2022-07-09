@@ -6,11 +6,13 @@ import net.okocraft.box.api.model.item.BoxItem;
 
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.Component.translatable;
-import static net.kyori.adventure.text.format.NamedTextColor.AQUA;
 import static net.kyori.adventure.text.format.NamedTextColor.BLACK;
-import static net.kyori.adventure.text.format.NamedTextColor.DARK_GRAY;
-import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
-import static net.kyori.adventure.text.format.NamedTextColor.RED;
+import static net.okocraft.box.api.message.Components.aquaItemName;
+import static net.okocraft.box.api.message.Components.aquaText;
+import static net.okocraft.box.api.message.Components.aquaTranslatable;
+import static net.okocraft.box.api.message.Components.blackTranslatable;
+import static net.okocraft.box.api.message.Components.commandHelp;
+import static net.okocraft.box.api.message.Components.redTranslatable;
 import static net.okocraft.box.feature.gui.api.lang.Styles.NO_DECORATION_AQUA;
 import static net.okocraft.box.feature.gui.api.lang.Styles.NO_DECORATION_GOLD;
 import static net.okocraft.box.feature.gui.api.lang.Styles.NO_DECORATION_GRAY;
@@ -19,20 +21,10 @@ import static net.okocraft.box.feature.gui.api.lang.Styles.NO_DECORATION_RED;
 public final class Displays {
 
     public static final SingleArgument<BoxItem> CRAFT_MENU_TITLE =
-            result ->
-                    translatable()
-                            .key("box.craft.gui.menus.craft")
-                            .args(translatable(result.getOriginal(), BLACK))
-                            .color(BLACK)
-                            .build();
+            result -> blackTranslatable("box.craft.gui.menus.craft", result.getDisplayName().color(BLACK));
 
     public static final SingleArgument<BoxItem> RECIPE_SELECTOR_TITLE =
-            result ->
-                    translatable()
-                            .key("box.craft.gui.menus.recipe-selector")
-                            .args(translatable(result.getOriginal(), BLACK))
-                            .color(BLACK)
-                            .build();
+            result -> blackTranslatable("box.craft.gui.menus.recipe-selector", result.getDisplayName().color(BLACK));
 
     public static final SingleArgument<Integer> CRAFT_BUTTON_DISPLAY_NAME =
             times ->
@@ -55,7 +47,7 @@ public final class Displays {
             stock ->
                     translatable()
                             .key("box.craft.gui.buttons.current-stock")
-                            .args(text(stock, AQUA))
+                            .args(aquaText(stock))
                             .style(NO_DECORATION_GRAY)
                             .build();
 
@@ -63,10 +55,10 @@ public final class Displays {
             translatable("box.craft.gui.buttons.destination.display-name", NO_DECORATION_GOLD);
 
     public static final Component DISTRIBUTION_BUTTON_INVENTORY =
-            translatable("box.craft.gui.buttons.destination.inventory", AQUA);
+            aquaTranslatable("box.craft.gui.buttons.destination.inventory");
 
     public static final Component DISTRIBUTION_BUTTON_BOX =
-            translatable("box.craft.gui.buttons.destination.box", AQUA);
+            aquaTranslatable("box.craft.gui.buttons.destination.box");
 
     public static final SingleArgument<Boolean> DISTRIBUTION_CURRENT =
             current ->
@@ -97,7 +89,7 @@ public final class Displays {
             currentAmount ->
                     translatable()
                             .key("box.craft.gui.buttons.change-times.current")
-                            .args(text(currentAmount, AQUA))
+                            .args(aquaText(currentAmount))
                             .style(NO_DECORATION_GRAY)
                             .build();
 
@@ -111,7 +103,7 @@ public final class Displays {
             unit ->
                     translatable()
                             .key("box.craft.gui.buttons.change-times.increase.lore")
-                            .args(text(unit, AQUA))
+                            .args(aquaText(unit))
                             .style(NO_DECORATION_GRAY)
                             .build();
 
@@ -125,7 +117,7 @@ public final class Displays {
             unit ->
                     translatable()
                             .key("box.craft.gui.buttons.change-times.decrease.lore")
-                            .args(text(unit, AQUA))
+                            .args(aquaText(unit))
                             .style(NO_DECORATION_GRAY)
                             .build();
 
@@ -133,7 +125,7 @@ public final class Displays {
             unit ->
                     translatable()
                             .key("box.craft.gui.buttons.change-times.set-to-unit")
-                            .args(text(unit, AQUA))
+                            .args(aquaText(unit))
                             .style(NO_DECORATION_GRAY)
                             .build();
 
@@ -152,17 +144,9 @@ public final class Displays {
             translatable("box.craft.gui.buttons.ingredient-change-mode.each", NO_DECORATION_GOLD);
 
     public static final SingleArgument<BoxItem> COMMAND_RECIPE_NOT_FOUND =
-            item ->
-                    translatable()
-                            .key("box.craft.command.recipe-not-found")
-                            .args(item.getDisplayName().color(AQUA).hoverEvent(item.getOriginal()))
-                            .color(RED)
-                            .build();
+            item -> redTranslatable("box.craft.command.recipe-not-found", aquaItemName(item));
 
-    public static final Component COMMAND_HELP =
-            translatable("box.craft.command.help.command-line", AQUA)
-                    .append(text(" - ", DARK_GRAY))
-                    .append(translatable("box.craft.command.help.description", GRAY));
+    public static final Component COMMAND_HELP = commandHelp("box.craft.command");
 
     private Displays() {
         throw new UnsupportedOperationException();

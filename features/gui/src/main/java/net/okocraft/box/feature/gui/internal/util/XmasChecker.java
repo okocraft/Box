@@ -1,10 +1,9 @@
 package net.okocraft.box.feature.gui.internal.util;
 
-import java.time.Instant;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Month;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -23,20 +22,19 @@ public class XmasChecker {
             return;
         }
 
-        var today = LocalDate.now();
+        var today = LocalDateTime.now();
 
         IS_XMAS.set(
                 today.getMonth() == Month.DECEMBER &&
                         (today.getDayOfMonth() == 24 || today.getDayOfMonth() == 25)
         );
 
-        if (NEXT_XMAS_CHECK_TIME.get() == 0) {
-            NEXT_XMAS_CHECK_TIME.set(
-                    Instant.now().plus(1, ChronoUnit.HOURS)
-                            .truncatedTo(ChronoUnit.HOURS).toEpochMilli()
-            );
-        } else {
-            NEXT_XMAS_CHECK_TIME.addAndGet(TimeUnit.HOURS.toMillis(1));
-        }
+        NEXT_XMAS_CHECK_TIME.set(
+                today.truncatedTo(ChronoUnit.DAYS)
+                        .plusDays(1)
+                        .atZone(ZoneId.systemDefault())
+                        .toInstant()
+                        .toEpochMilli()
+        );
     }
 }

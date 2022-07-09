@@ -2,16 +2,16 @@ package net.okocraft.box.feature.craft;
 
 import com.github.siroshun09.configapi.api.util.ResourceUtils;
 import com.github.siroshun09.configapi.yaml.YamlConfiguration;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.feature.AbstractBoxFeature;
 import net.okocraft.box.api.feature.BoxFeature;
 import net.okocraft.box.api.feature.Disableable;
 import net.okocraft.box.api.feature.Reloadable;
+import net.okocraft.box.api.message.Components;
 import net.okocraft.box.feature.craft.command.CraftCommand;
 import net.okocraft.box.feature.craft.loader.RecipeLoader;
 import net.okocraft.box.feature.craft.mode.CraftMode;
+import net.okocraft.box.feature.craft.model.ModelCache;
 import net.okocraft.box.feature.gui.GuiFeature;
 import net.okocraft.box.feature.gui.api.mode.ClickModeRegistry;
 import org.bukkit.command.CommandSender;
@@ -44,7 +44,14 @@ public class CraftFeature extends AbstractBoxFeature implements Disableable, Rel
             BoxProvider.get().getLogger().log(Level.SEVERE, "Could not load recipes.yml", e);
         }
 
+        // Reduce objects that will be generated
+        // BoxIngredientItem 5030 -> 325
+        // IngredientHolder 3506 -> 1417
+        ModelCache.createCache();
+
         var recipeMap = RecipeLoader.load(recipeConfig);
+
+        ModelCache.clearCache();
 
         RecipeRegistry.setRecipeMap(recipeMap);
 
@@ -67,7 +74,7 @@ public class CraftFeature extends AbstractBoxFeature implements Disableable, Rel
         enable();
 
         try {
-            sender.sendMessage(Component.translatable("box.craft.command.recipe-reloaded", NamedTextColor.GRAY));
+            sender.sendMessage(Components.grayTranslatable("box.craft.command.recipe-reloaded"));
         } catch (Exception ignored) {
             // I don't know why it loops infinitely and throws an exception when the message send to the console.
             // It's probably a bug of Paper or Adventure.

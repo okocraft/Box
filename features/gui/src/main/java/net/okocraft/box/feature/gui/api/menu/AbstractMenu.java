@@ -1,5 +1,7 @@
 package net.okocraft.box.feature.gui.api.menu;
 
+import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.feature.gui.api.event.MenuClickEvent;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -33,6 +35,12 @@ public abstract class AbstractMenu implements Menu {
         var button = buttonMap.get(slot);
 
         if (button == null) {
+            return;
+        }
+
+        var event = new MenuClickEvent(clicker, this, button, clickType);
+
+        if (BoxProvider.get().getEventBus().callEvent(event).isCancelled()) {
             return;
         }
 

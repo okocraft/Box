@@ -40,9 +40,21 @@ box:
         toggle-button: "Click to set auto-store to {0}"
         bulk-editing:
           title: "Bulk change operation for per-item mode"
-          left-click: "Press LMB to set all items to {0}"
-          right-click: "Press RMB to set all items to {0}"
+          click: "Click to toggle all items to {0}"
+          double-click: "Double click to toggle all items to {0}"
           recent: "Recent bulk change operation: {0}"
+  bemode:
+    current-stock: "Current stock: {0}"
+    storage-withdraw-mode:
+      display-name: "Storage mode (withdraw)"
+      click-to-withdraw: "Click to withdraw {0} items"
+    storage-deposit-mode:
+      display-name: "Storage mode (deposit)"
+      click-to-deposit: "Click to deposit {0} items"
+    deposit-all:
+      display-name: "Deposits all items"
+      lore: "Double click to deposit"
+      confirmation: "Please click again to confirm"
   category:
     reloaded: "The category feature has been reloaded."
     name:
@@ -275,6 +287,7 @@ box:
   gui:
     reloaded: "GUI feature has been reloaded."
     error-occurred: "An error occurred while click process. Error message: {0}"
+    cannot-open-menu: "You cannot open the menu now."
     command-help:
       command-line: "/box gui"
       description: "Opens Box menu"

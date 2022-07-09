@@ -11,28 +11,18 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
-import static net.kyori.adventure.text.Component.text;
-import static net.kyori.adventure.text.Component.translatable;
-import static net.kyori.adventure.text.format.NamedTextColor.AQUA;
-import static net.kyori.adventure.text.format.NamedTextColor.DARK_GRAY;
-import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
-import static net.kyori.adventure.text.format.NamedTextColor.RED;
+import static net.okocraft.box.api.message.Components.commandHelp;
+import static net.okocraft.box.api.message.Components.redTranslatable;
 
 public class StickCommand extends AbstractCommand {
 
-    private static final Component ALREADY_HAVE =
-            translatable("box.stick.command.already-have", RED);
+    private static final Component ALREADY_HAVE = redTranslatable("box.stick.command.already-have");
 
-    private static final Component COULD_NOT_GIVE_STICK =
-            translatable("box.stick.command.could-not-give-stick", RED);
+    private static final Component COULD_NOT_GIVE_STICK = redTranslatable("box.stick.command.could-not-give-stick");
 
-    private static final Component GIVE_SUCCESS =
-            translatable("box.stick.command.success", GRAY);
+    private static final Component GIVE_SUCCESS = redTranslatable("box.stick.command.success");
 
-    private static final Component HELP =
-            translatable("box.stick.command.help.command-line", AQUA)
-                    .append(text(" - ", DARK_GRAY))
-                    .append(translatable("box.stick.command.help.description", GRAY));
+    private static final Component HELP = commandHelp("box.stick.command");
 
     private final BoxStickItem boxStickItem;
 

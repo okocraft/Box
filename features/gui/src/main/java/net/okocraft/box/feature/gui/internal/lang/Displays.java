@@ -1,14 +1,14 @@
 package net.okocraft.box.feature.gui.internal.lang;
 
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
+import net.okocraft.box.api.message.Components;
 import net.okocraft.box.api.message.argument.SingleArgument;
 import net.okocraft.box.feature.category.model.Category;
 
-import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.Component.translatable;
-import static net.kyori.adventure.text.format.NamedTextColor.AQUA;
 import static net.kyori.adventure.text.format.NamedTextColor.BLACK;
+import static net.okocraft.box.api.message.Components.aquaText;
+import static net.okocraft.box.api.message.Components.redTranslatable;
 import static net.okocraft.box.feature.gui.api.lang.Styles.NO_DECORATION_GOLD;
 import static net.okocraft.box.feature.gui.api.lang.Styles.NO_DECORATION_GRAY;
 
@@ -57,7 +57,7 @@ public final class Displays {
             currentAmount ->
                     translatable()
                             .key("box.gui.buttons.change-transaction-amount.current")
-                            .args(text(currentAmount, AQUA))
+                            .args(aquaText(currentAmount))
                             .style(NO_DECORATION_GRAY)
                             .build();
 
@@ -71,7 +71,7 @@ public final class Displays {
             unit ->
                     translatable()
                             .key("box.gui.buttons.change-transaction-amount.increase.lore")
-                            .args(text(unit, AQUA))
+                            .args(aquaText(unit))
                             .style(NO_DECORATION_GRAY)
                             .build();
 
@@ -85,7 +85,7 @@ public final class Displays {
             unit ->
                     translatable()
                             .key("box.gui.buttons.change-transaction-amount.decrease.lore")
-                            .args(text(unit, AQUA))
+                            .args(aquaText(unit))
                             .style(NO_DECORATION_GRAY)
                             .build();
 
@@ -93,7 +93,7 @@ public final class Displays {
             unit ->
                     translatable()
                             .key("box.gui.buttons.change-transaction-amount.set-to-unit")
-                            .args(text(unit, AQUA))
+                            .args(aquaText(unit))
                             .style(NO_DECORATION_GRAY)
                             .build();
 
@@ -115,7 +115,7 @@ public final class Displays {
             transactionUnit ->
                     translatable()
                             .key("box.gui.modes.storage-mode.left-click-to-deposit")
-                            .args(text(transactionUnit, AQUA))
+                            .args(aquaText(transactionUnit))
                             .style(NO_DECORATION_GRAY)
                             .build();
 
@@ -123,7 +123,7 @@ public final class Displays {
             transactionUnit ->
                     translatable()
                             .key("box.gui.modes.storage-mode.right-click-to-withdraw")
-                            .args(text(transactionUnit, AQUA))
+                            .args(aquaText(transactionUnit))
                             .style(NO_DECORATION_GRAY)
                             .build();
 
@@ -131,7 +131,7 @@ public final class Displays {
             stock ->
                     translatable()
                             .key("box.gui.modes.storage-mode.current-stock")
-                            .args(text(stock, AQUA))
+                            .args(aquaText(stock))
                             .style(NO_DECORATION_GRAY)
                             .build();
 
@@ -145,10 +145,5 @@ public final class Displays {
             translatable("box.gui.modes.storage-mode.deposit-all.lore-2", NO_DECORATION_GRAY);
 
     public static final SingleArgument<Throwable> ERROR_WHILE_CLICK_PROCESSING =
-            throwable ->
-                    Component.translatable()
-                            .key("box.gui.error-occurred")
-                            .args(Component.text(throwable.getMessage(), NamedTextColor.WHITE))
-                            .color(NamedTextColor.RED)
-                            .build();
+            throwable -> redTranslatable("box.gui.error-occurred", Components.whiteText(throwable.getMessage()));
 }

@@ -70,6 +70,11 @@ public class StorageMode implements BoxItemClickMode {
     }
 
     @Override
+    public final boolean canUse(@NotNull Player viewer) {
+        return true; // This is the default mode, so it must always be available to the player.
+    }
+
+    @Override
     public @NotNull AdditionalButton createAdditionalButton(@NotNull Player viewer, @NotNull Menu currentMenu) {
         return new DepositAllButton();
     }
@@ -88,7 +93,7 @@ public class StorageMode implements BoxItemClickMode {
         );
     }
 
-    private void processDeposit(@NotNull Context context) {
+    public void processDeposit(@NotNull Context context) {
         var player = context.clicker();
         var session = PlayerSession.get(player);
 
@@ -114,7 +119,7 @@ public class StorageMode implements BoxItemClickMode {
         player.playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, 100f, 1.0f);
     }
 
-    private void processWithdraw(@NotNull Context context) {
+    public void processWithdraw(@NotNull Context context) {
         var player = context.clicker();
         var session = PlayerSession.get(player);
 
@@ -169,6 +174,7 @@ public class StorageMode implements BoxItemClickMode {
             return target;
         }
 
+        @SuppressWarnings("DuplicatedCode")
         @Override
         public void onClick(@NotNull Player clicker, @NotNull ClickType clickType) {
             if (!clickType.isShiftClick()) {

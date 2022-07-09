@@ -40,9 +40,21 @@ box:
         toggle-button: "クリックで自動収納機能を {0} にする"
         bulk-editing:
           title: "個別収納モード 一括変更"
-          left-click: "左クリックですべて {0} にする"
-          right-click: "右クリックですべて {0} にする"
+          click: "クリックですべて {0} に切り替え"
+          double-click: "ダブルクリックで {0} に切り替え"
           recent: "最近の一括変更操作: {0}"
+  bemode:
+    current-stock: "現在の在庫数: {0} 個"
+    storage-withdraw-mode:
+      display-name: "収納モード (引き出し)"
+      click-to-withdraw: "クリックで {0} 個引き出す"
+    storage-deposit-mode:
+      display-name: "収納モード (預け入れ)"
+      click-to-deposit: "クリックで {0} 個預ける"
+    deposit-all:
+      display-name: "すべて預ける"
+      lore: "ダブルクリックですべて預ける"
+      confirmation: "確認のためもう一度クリックしてください"
   category:
     reloaded: "カテゴリーを再読み込みしました。"
     name:
@@ -209,8 +221,8 @@ box:
                 format: "{0} ({1}) {2} - ページを指定する"
                 value: "<ページ数>"
               filter:
-                 format: "{0} ({1}) {2} - アイテムを絞り込む"
-                 value: "<アイテム名>"
+                format: "{0} ({1}) {2} - アイテムを絞り込む"
+                value: "<アイテム名>"
       set:
         success:
           sender: "プレイヤー {0} のアイテム {1} の在庫を {2} 個にセットしました。"
@@ -275,6 +287,7 @@ box:
   gui:
     reloaded: "GUI 機能を再読み込みしました。"
     error-occurred: "クリック処理中にエラーが発生しました。エラーメッセージ: {0}"
+    cannot-open-menu: "メニューを開くことができませんでした。"
     command-help:
       command-line: "/box gui"
       description: "Box のメニューを開く"

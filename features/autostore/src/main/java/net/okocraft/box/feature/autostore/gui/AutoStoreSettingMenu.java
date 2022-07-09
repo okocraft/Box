@@ -131,7 +131,7 @@ public class AutoStoreSettingMenu extends AbstractMenu {
         @Override
         public @Nullable ItemMeta applyIconMeta(@NotNull Player viewer, @NotNull ItemMeta target) {
             var displayName =
-                    AutoStoreMessage.ENABLED_NAME.apply(setting.isEnabled())
+                    AutoStoreMessage.ENABLED_OR_DISABLED.apply(setting.isEnabled())
                             .decoration(TextDecoration.ITALIC, TextDecoration.State.FALSE);
 
             target.displayName(TranslationUtil.render(displayName, viewer));
@@ -184,8 +184,11 @@ public class AutoStoreSettingMenu extends AbstractMenu {
             var lore = new ArrayList<Component>();
 
             lore.add(Component.empty());
-            lore.add(AutoStoreMenuDisplays.AUTOSTORE_MODE_SETTING_MENU_BULK_EDITING_LEFT_CLICK);
-            lore.add(AutoStoreMenuDisplays.AUTOSTORE_MODE_SETTING_MENU_BULK_EDITING_RIGHT_CLICK);
+
+            boolean nextClick = recent == null || !recent;
+
+            lore.add(AutoStoreMenuDisplays.AUTOSTORE_MODE_SETTING_MENU_BULK_EDITING_CLICK.apply(nextClick));
+            lore.add(AutoStoreMenuDisplays.AUTOSTORE_MODE_SETTING_MENU_BULK_EDITING_DOUBLE_CLICK.apply(!nextClick));
             lore.add(Component.empty());
 
             if (recent != null) {
@@ -206,15 +209,13 @@ public class AutoStoreSettingMenu extends AbstractMenu {
         @Override
         public void onClick(@NotNull Player clicker, @NotNull ClickType clickType) {
             var perItemSetting = setting.getPerItemModeSetting();
-            Sound sound = null;
+            Sound sound;
 
-            if (clickType.isLeftClick()) {
+            if (recent == null || !recent) {
                 perItemSetting.setEnabledItems(BoxProvider.get().getItemManager().getBoxItemSet());
                 sound = Sound.BLOCK_WOODEN_DOOR_OPEN;
                 recent = true;
-            }
-
-            if (clickType.isRightClick()) {
+            } else {
                 perItemSetting.setEnabledItems(Collections.emptyList());
                 sound = Sound.BLOCK_WOODEN_DOOR_CLOSE;
                 recent = false;
@@ -228,9 +229,7 @@ public class AutoStoreSettingMenu extends AbstractMenu {
                 setting.setAllMode(false);
             }
 
-            if (sound != null) {
-                clicker.playSound(clicker.getLocation(), sound, 100f, 1.5f);
-            }
+            clicker.playSound(clicker.getLocation(), sound, 100f, 1.5f);
         }
     }
 }

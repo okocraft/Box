@@ -26,6 +26,10 @@ public interface BoxItemClickMode {
 
     @NotNull AdditionalButton createAdditionalButton(@NotNull Player viewer, @NotNull Menu currentMenu);
 
+    default boolean canUse(@NotNull Player viewer) {
+        return true;
+    }
+
     record Context(@NotNull Player clicker, @NotNull BoxItem item,
                    @NotNull ClickType clickType, @Nullable Menu currentMenu) {
     }
