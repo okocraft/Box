@@ -39,8 +39,9 @@ public class YamlCustomDataStorage implements CustomDataStorage {
     public void save(@NotNull String namespace, @NotNull String key,
                      @NotNull Configuration configuration) throws Exception {
         var file = customDataDirectory.resolve(namespace).resolve(key + ".yml");
-        var yaml = YamlConfiguration.create(file, configuration);
 
-        yaml.save();
+        try (var yaml = YamlConfiguration.create(file, configuration)) {
+            yaml.save();
+        }
     }
 }
