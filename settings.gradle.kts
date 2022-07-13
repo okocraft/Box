@@ -18,7 +18,7 @@ val storagePrefix = "$boxPrefix-storage"
 // storage
 sequenceOf(
     "api",
-    "implementation"
+    "yaml"
 ).forEach {
     include(":$storagePrefix-$it")
     project(":$storagePrefix-$it").projectDir = file("./storage/$it")
