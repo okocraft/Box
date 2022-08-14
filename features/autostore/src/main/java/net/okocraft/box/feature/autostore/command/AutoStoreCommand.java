@@ -51,15 +51,24 @@ public class AutoStoreCommand extends AbstractCommand {
         }
 
         if (toggleAutoStore != null) {
-            setting.setEnabled(toggleAutoStore);
             player.sendMessage(AutoStoreMessage.COMMAND_AUTOSTORE_TOGGLED.apply(toggleAutoStore));
+
+            if (setting.isEnabled() != toggleAutoStore) { // setting changed
+                setting.setEnabled(toggleAutoStore);
+                callEvent(setting);
+            }
+
             return;
         }
 
         if (isAll(args[1])) {
-            enableAutoStore(setting, player);
-            setting.setAllMode(true);
             player.sendMessage(AutoStoreMessage.COMMAND_MODE_CHANGED.apply(setting.isAllMode()));
+
+            if (enableAutoStore(setting, player) || !setting.isAllMode()) { // setting changed
+                setting.setAllMode(true);
+                callEvent(setting);
+            }
+
             return;
         }
 
@@ -69,12 +78,12 @@ public class AutoStoreCommand extends AbstractCommand {
         }
 
         if (args.length < 3) {
-            enableAutoStore(setting, player);
-            setting.setAllMode(false);
-
             player.sendMessage(AutoStoreMessage.COMMAND_MODE_CHANGED.apply(setting.isAllMode()));
 
-            callEvent(setting);
+            if (enableAutoStore(setting, player) || setting.isAllMode()) {
+                setting.setAllMode(false);
+                callEvent(setting);
+            }
         } else {
             processPerItemMode(player, args, setting);
         }
@@ -201,10 +210,13 @@ public class AutoStoreCommand extends AbstractCommand {
         BoxProvider.get().getEventBus().callEventAsync(new AutoStoreSettingChangeEvent(setting));
     }
 
-    private void enableAutoStore(@NotNull AutoStoreSetting setting, @NotNull Player player) {
+    private boolean enableAutoStore(@NotNull AutoStoreSetting setting, @NotNull Player player) {
         if (!setting.isEnabled()) {
             setting.setEnabled(true);
             player.sendMessage(AutoStoreMessage.COMMAND_AUTOSTORE_TOGGLED.apply(true));
+            return true;
+        } else {
+            return false;
         }
     }
 
