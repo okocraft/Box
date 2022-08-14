@@ -1,9 +1,9 @@
-package net.okocraft.box.feature.category.internal;
+package net.okocraft.box.feature.category.internal.category;
 
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 
-enum DefaultCategory {
+public enum CommonDefaultCategory implements DefaultCategory {
     ARMORS("armors", Material.LEATHER_HELMET),
     BOWS("bows", Material.BOW),
     CANDLES("candles", Material.CANDLE),
@@ -23,7 +23,7 @@ enum DefaultCategory {
     MUSHROOMS("mushrooms", Material.RED_MUSHROOM),
     MUSIC_DISCS("music-discs", Material.MUSIC_DISC_CAT),
     NETHER("nether", Material.NETHERRACK),
-    OCEANS("oceans", Material.KELP),
+    OCEANS("oceans", Material.HEART_OF_THE_SEA),
     ORES("ores", Material.IRON_ORE),
     POTIONS("potions", Material.POTION),
     RAILS("rails", Material.RAIL),
@@ -43,16 +43,18 @@ enum DefaultCategory {
     private final String name;
     private final Material iconMaterial;
 
-    DefaultCategory(@NotNull String name, @NotNull Material iconMaterial) {
+    CommonDefaultCategory(@NotNull String name, @NotNull Material iconMaterial) {
         this.name = name;
         this.iconMaterial = iconMaterial;
     }
 
-    @NotNull String getName() {
+    @Override
+    public @NotNull String getName() {
         return name;
     }
 
-    @NotNull Material getIconMaterial() {
+    @Override
+    public @NotNull Material getIconMaterial() {
         return iconMaterial;
     }
 }

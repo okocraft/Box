@@ -7,6 +7,7 @@ import net.okocraft.box.api.event.item.CustomItemRegisterEvent;
 import net.okocraft.box.api.event.item.CustomItemRenameEvent;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.feature.category.CategoryHolder;
+import net.okocraft.box.feature.category.internal.category.CommonDefaultCategory;
 import net.okocraft.box.feature.category.model.Category;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -43,7 +44,7 @@ public class CustomItemListener {
     private void processEvent(@NotNull CustomItemRegisterEvent event) {
         for (var category : CategoryHolder.get()) {
             if (category instanceof BoxCategory boxCategory &&
-                    category.getName().equals(DefaultCategory.CUSTOM_ITEMS.getName())) {
+                    category.getName().equals(CommonDefaultCategory.CUSTOM_ITEMS.getName())) {
                 boxCategory.add(event.getItem());
                 updateCategoriesFile(category, event.getItem(), null);
                 return;

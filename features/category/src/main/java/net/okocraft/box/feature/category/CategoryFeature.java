@@ -8,7 +8,7 @@ import net.okocraft.box.api.feature.Reloadable;
 import net.okocraft.box.api.message.Components;
 import net.okocraft.box.feature.category.internal.CategoryLoader;
 import net.okocraft.box.feature.category.internal.CustomItemListener;
-import net.okocraft.box.feature.category.internal.DefaultCategoryFile;
+import net.okocraft.box.feature.category.internal.BundledCategoryFile;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,7 +27,7 @@ public class CategoryFeature extends AbstractBoxFeature implements Disableable, 
     public void enable() {
         try (var yaml = YamlConfiguration.create(BoxProvider.get().getPluginDirectory().resolve("categories.yml"))) {
             if (!Files.exists(yaml.getPath())) {
-                DefaultCategoryFile.copy(yaml.getPath());
+                BundledCategoryFile.copy(yaml.getPath());
             }
 
             yaml.load();

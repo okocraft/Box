@@ -3,6 +3,9 @@ package net.okocraft.box.feature.category.internal;
 import com.github.siroshun09.configapi.api.Configuration;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.model.item.BoxItem;
+import net.okocraft.box.feature.category.internal.category.Categorizer;
+import net.okocraft.box.feature.category.internal.category.CommonDefaultCategory;
+import net.okocraft.box.feature.category.internal.category.DefaultCategory;
 import net.okocraft.box.feature.category.model.Category;
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
@@ -20,12 +23,11 @@ public class CategoryLoader {
         var itemManager = BoxProvider.get().getItemManager();
         var items = new ArrayList<>(itemManager.getBoxItemSet());
         var result = new LinkedHashMap<String, BoxCategory>();
-        var itemCategoryMap = new LinkedHashMap<String, List<String>>(); // category name - item list
 
         for (var key : yaml.getKeyList()) {
             if (key.equals("icons") ||
-                    key.equals(DefaultCategory.UNCATEGORIZED.getName()) ||
-                    key.equals(DefaultCategory.CUSTOM_ITEMS.getName())) {
+                    key.equals(CommonDefaultCategory.UNCATEGORIZED.getName()) ||
+                    key.equals(CommonDefaultCategory.CUSTOM_ITEMS.getName())) {
                 continue;
             }
 
@@ -42,8 +44,6 @@ public class CategoryLoader {
 
             var itemNameList = yaml.getStringList(key);
 
-            itemCategoryMap.computeIfAbsent(key, k -> new ArrayList<>()).addAll(itemNameList);
-
             for (var itemName : itemNameList) {
                 var optionalBoxItem = itemManager.getBoxItem(itemName);
 
@@ -59,35 +59,32 @@ public class CategoryLoader {
         }
 
         for (var item : items.stream().sorted(Comparator.comparing(BoxItem::getPlainName)).toList()) {
-            BoxProvider.get().getLogger().info("Uncategorized item: " + item.getPlainName());
-
-            var tempCategory = Categorizer.checkTags(item.getOriginal());
-
-            if (tempCategory == null) {
-                tempCategory = Categorizer.checkMaterial(item.getOriginal().getType());
-            }
+            var tempCategory = Categorizer.categorize(item.getOriginal());
 
             if (tempCategory == null) {
                 tempCategory = itemManager.isCustomItem(item) ?
-                        DefaultCategory.CUSTOM_ITEMS :
-                        DefaultCategory.UNCATEGORIZED;
+                        CommonDefaultCategory.CUSTOM_ITEMS :
+                        CommonDefaultCategory.UNCATEGORIZED;
             }
 
             var category = tempCategory;
 
             result.computeIfAbsent(category.getName(), k -> createCategory(category)).add(item);
-            itemCategoryMap.computeIfAbsent(category.getName(), k -> new ArrayList<>()).add(item.getPlainName());
 
-            BoxProvider.get().getLogger().info("Added item to category " + category.getName());
+            BoxProvider.get().getLogger().info("Added uncategorized item '" + item.getPlainName() + "' to category " + category.getName());
         }
 
         result.computeIfAbsent(
-                DefaultCategory.CUSTOM_ITEMS.getName(),
-                name -> createCategory(DefaultCategory.CUSTOM_ITEMS));
+                CommonDefaultCategory.CUSTOM_ITEMS.getName(),
+                name -> createCategory(CommonDefaultCategory.CUSTOM_ITEMS)
+        );
 
         // update categories.yml
-        for (var entry : itemCategoryMap.entrySet()) {
-            yaml.set(entry.getKey(), entry.getValue());
+        yaml.clear();
+
+        for (var category : result.values()) {
+            yaml.set("icons." + category.getName(), category.getIconMaterial().name());
+            yaml.set(category.getName(), category.getItems().stream().map(BoxItem::getPlainName).toList());
         }
 
         return List.copyOf(result.values());
