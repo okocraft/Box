@@ -62,7 +62,7 @@ public class AutoStoreCommand extends AbstractCommand {
         }
 
         if (isAll(args[1])) {
-            player.sendMessage(AutoStoreMessage.COMMAND_MODE_CHANGED.apply(setting.isAllMode()));
+            player.sendMessage(AutoStoreMessage.COMMAND_MODE_CHANGED.apply(true));
 
             if (enableAutoStore(setting, player) || !setting.isAllMode()) { // setting changed
                 setting.setAllMode(true);
@@ -78,7 +78,7 @@ public class AutoStoreCommand extends AbstractCommand {
         }
 
         if (args.length < 3) {
-            player.sendMessage(AutoStoreMessage.COMMAND_MODE_CHANGED.apply(setting.isAllMode()));
+            player.sendMessage(AutoStoreMessage.COMMAND_MODE_CHANGED.apply(false));
 
             if (enableAutoStore(setting, player) || setting.isAllMode()) {
                 setting.setAllMode(false);
