@@ -64,8 +64,7 @@ public class CustomDataTable extends AbstractTable implements CustomDataStorage 
 
             try (var resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    var blob = resultSet.getBlob("data");
-                    return deserializeConfiguration(blob.getBytes(1, (int) blob.length()));
+                    return deserializeConfiguration(readBytesFromResultSet(resultSet, "data"));
                 }
             }
         }
@@ -146,11 +145,8 @@ public class CustomDataTable extends AbstractTable implements CustomDataStorage 
 
     private void insertData(@NotNull Connection connection, @NotNull String namespacedKey, byte[] data) throws SQLException {
         try (var statement = prepareStatement(connection, "INSERT INTO `%table%` (key, data) VALUES(?,?)")) {
-            var blob = connection.createBlob();
-            blob.setBytes(1, data);
-
             statement.setString(1, namespacedKey);
-            statement.setBlob(2, blob);
+            writeBytesToStatement(statement, 2, data);
 
             statement.execute();
         }
@@ -158,10 +154,7 @@ public class CustomDataTable extends AbstractTable implements CustomDataStorage 
 
     private void updateData(@NotNull Connection connection, @NotNull String namespacedKey, byte[] data) throws SQLException {
         try (var statement = prepareStatement(connection, "UPDATE `%table%` SET data=? where key=?")) {
-            var blob = connection.createBlob();
-            blob.setBytes(1, data);
-
-            statement.setBlob(1, blob);
+            writeBytesToStatement(statement, 1, data);
             statement.setString(2, namespacedKey);
 
             statement.execute();

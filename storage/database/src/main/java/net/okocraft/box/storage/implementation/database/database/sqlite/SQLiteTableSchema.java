@@ -38,7 +38,7 @@ public final class SQLiteTableSchema {
     private static class Meta extends AbstractTableSchema {
 
         private Meta(@NotNull String tablePrefix) {
-            super(tablePrefix + "_meta");
+            super(tablePrefix + "meta");
         }
 
         @Override
@@ -55,14 +55,14 @@ public final class SQLiteTableSchema {
     private static class Items extends AbstractTableSchema {
 
         private Items(@NotNull String tablePrefix) {
-            super(tablePrefix + "_items");
+            super(tablePrefix + "items");
         }
 
         @Override
         public @NotNull String createTableStatement() {
             return """
                     CREATE TABLE `%table%` (
-                      `id` INTEGER PRIMARY KEY NOT NULL AUTOINCREMENT,
+                      `id` INTEGER PRIMARY KEY AUTOINCREMENT,
                       `name` VARCHAR(50) NOT NULL,
                       `item_data` BLOB NOT NULL,
                       `is_default_item` INTEGER NOT NULL
@@ -74,7 +74,7 @@ public final class SQLiteTableSchema {
     private static class Stock extends AbstractTableSchema {
 
         private Stock(@NotNull String tablePrefix) {
-            super(tablePrefix + "_stock");
+            super(tablePrefix + "stock");
         }
 
 
@@ -94,7 +94,7 @@ public final class SQLiteTableSchema {
     private static class CustomData extends AbstractTableSchema {
 
         private CustomData(@NotNull String tablePrefix) {
-            super(tablePrefix + "_custom_data");
+            super(tablePrefix + "custom_data");
         }
 
 
@@ -103,7 +103,7 @@ public final class SQLiteTableSchema {
             return """
                     CREATE TABLE `%table%` (
                       `key` VARCHAR(50) PRIMARY KEY NOT NULL,
-                      `value` BLOB  NOT NULL
+                      `data` BLOB  NOT NULL
                     )
                     """;
         }

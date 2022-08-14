@@ -16,6 +16,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -76,11 +77,8 @@ public class ItemTable extends AbstractTable implements ItemStorage {
                 var boxItem = entry.getKey();
                 var defaultItem = entry.getValue();
 
-                var itemBlob = connection.createBlob();
-                itemBlob.setBytes(1, defaultItem.itemStack().serializeAsBytes());
-
                 statement.setString(1, defaultItem.plainName());
-                statement.setBlob(2, itemBlob);
+                writeBytesToStatement(statement, 2, defaultItem.itemStack().serializeAsBytes());
                 statement.setInt(3, boxItem.getInternalId());
 
                 statement.addBatch();
@@ -96,33 +94,34 @@ public class ItemTable extends AbstractTable implements ItemStorage {
     @Override
     public @NotNull List<BoxItem> saveNewDefaultItems(@NotNull List<DefaultItem> newItems) throws Exception {
         var result = new ArrayList<BoxItem>();
+        var map = new HashMap<String, DefaultItem>();
 
-        try (var connection = database.getConnection();
-             var statement = prepareStatement(connection, "INSERT INTO `%table%` (name, item_data, is_default_item) VALUES(?,?,?)", Statement.RETURN_GENERATED_KEYS)) {
+        try (var connection = database.getConnection()) {
+            try (var statement = prepareStatement(connection, "INSERT INTO `%table%` (name, item_data, is_default_item) VALUES(?,?,?)")) {
+                for (var defaultItem : newItems) {
+                    map.put(defaultItem.plainName(), defaultItem);
 
-            for (var defaultItem : newItems) {
-                statement.setString(1, defaultItem.plainName());
+                    statement.setString(1, defaultItem.plainName());
 
-                var itemBlob = connection.createBlob();
-                itemBlob.setBytes(1, defaultItem.itemStack().serializeAsBytes());
+                    writeBytesToStatement(statement, 2, defaultItem.itemStack().serializeAsBytes());
+                    statement.setBoolean(3, true);
 
-                statement.setBlob(2, itemBlob);
-                statement.setBoolean(3, true);
+                    statement.addBatch();
+                }
 
-                statement.addBatch();
+                statement.executeBatch();
             }
 
-            statement.executeBatch();
+            try (var statement = prepareStatement(connection, "SELECT id, name FROM `%table%` WHERE is_default_item=?")) {
+                statement.setBoolean(1, true);
 
-            try (var resultSet = statement.getGeneratedKeys()) {
-                int index = 0;
-                int itemListSize = newItems.size();
+                try (var resultSet = statement.executeQuery()) {
+                    while (resultSet.next()) {
+                        int id = resultSet.getInt("id");
+                        var name = resultSet.getString("name");
 
-                while (resultSet.next() && index < itemListSize) {
-                    int id = resultSet.getInt(1);
-                    var item = newItems.get(index);
-                    result.add(BoxItemFactory.createDefaultItem(item, id));
-                    index++;
+                        result.add(BoxItemFactory.createDefaultItem(map.get(name), id));
+                    }
                 }
             }
         }
@@ -152,11 +151,8 @@ public class ItemTable extends AbstractTable implements ItemStorage {
              var statement = prepareStatement(connection, "UPDATE `%table%` SET name=?, item_data=? WHERE id=?")) {
 
             for (var item : items) {
-                var itemBlob = connection.createBlob();
-                itemBlob.setBytes(1, item.getOriginal().serializeAsBytes());
-
                 statement.setString(1, item.getPlainName());
-                statement.setBlob(2, itemBlob);
+                writeBytesToStatement(statement, 2, item.getOriginal().serializeAsBytes());
                 statement.setInt(3, item.getInternalId());
 
                 statement.addBatch();
@@ -171,21 +167,19 @@ public class ItemTable extends AbstractTable implements ItemStorage {
         try (var connection = database.getConnection();
              var statement = prepareStatement(connection, "INSERT INTO `%table%` (name, item_data, is_default_item) VALUES(?,?,?)", Statement.RETURN_GENERATED_KEYS)) {
             var itemBytes = item.serializeAsBytes();
-
             var itemName = ItemNameGenerator.generate(item.getType().name(), itemBytes);
-            var itemBlob = connection.createBlob();
-            itemBlob.setBytes(1, itemBytes);
 
             statement.setString(1, itemName);
-            statement.setBlob(2, itemBlob);
+            writeBytesToStatement(statement, 2, itemBytes);
             statement.setBoolean(3, false);
 
             statement.execute();
-            var resultSet = statement.getGeneratedKeys();
 
-            if (resultSet.next()) {
-                int id = resultSet.getInt(1);
-                return BoxItemFactory.createCustomItem(item, itemName, id);
+            try (var resultSet = statement.getGeneratedKeys()) {
+                if (resultSet.next()) {
+                    int id = resultSet.getInt(1);
+                    return BoxItemFactory.createCustomItem(item, itemName, id);
+                }
             }
         }
 
@@ -210,13 +204,9 @@ public class ItemTable extends AbstractTable implements ItemStorage {
     private @NotNull BoxItem readResultSet(@NotNull ResultSet resultSet, boolean isDefaultItem) throws SQLException {
         int id = resultSet.getInt("id");
         var name = resultSet.getString("name");
-        var itemDataBlob = resultSet.getBlob("item_data");
+        var itemData = readBytesFromResultSet(resultSet, "item_data");
 
-        if (Integer.MAX_VALUE < itemDataBlob.length()) {
-            throw new IllegalStateException("item data is too long: " + itemDataBlob.length());
-        }
-
-        var item = ItemStack.deserializeBytes(itemDataBlob.getBytes(1, (int) itemDataBlob.length()));
+        var item = ItemStack.deserializeBytes(itemData);
 
         return isDefaultItem ?
                 BoxItemFactory.createDefaultItem(item, name, id) :
