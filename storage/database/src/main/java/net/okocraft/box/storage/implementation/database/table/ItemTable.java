@@ -13,7 +13,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -160,21 +159,26 @@ public class ItemTable extends AbstractTable implements ItemStorage {
 
     @Override
     public @NotNull BoxCustomItem saveNewCustomItem(@NotNull ItemStack item) throws Exception {
-        try (var connection = database.getConnection();
-             var statement = prepareStatement(connection, "INSERT INTO `%table%` (name, item_data, is_default_item) VALUES(?,?,?)", Statement.RETURN_GENERATED_KEYS)) {
+        try (var connection = database.getConnection()) {
             var itemBytes = item.serializeAsBytes();
             var itemName = ItemNameGenerator.generate(item.getType().name(), itemBytes);
 
-            statement.setString(1, itemName);
-            writeBytesToStatement(statement, 2, itemBytes);
-            statement.setBoolean(3, false);
+            try (var statement = prepareStatement(connection, "INSERT INTO `%table%` (name, item_data, is_default_item) VALUES(?,?,?)")) {
+                statement.setString(1, itemName);
+                writeBytesToStatement(statement, 2, itemBytes);
+                statement.setBoolean(3, false);
 
-            statement.execute();
+                statement.execute();
+            }
 
-            try (var resultSet = statement.getGeneratedKeys()) {
-                if (resultSet.next()) {
-                    int id = resultSet.getInt(1);
-                    return BoxItemFactory.createCustomItem(item, itemName, id);
+            try (var statement = prepareStatement(connection, "SELECT id FROM `%table%` WHERE name=? LIMIT 1")) {
+                statement.setString(1, itemName);
+
+                try (var resultSet = statement.executeQuery()) {
+                    if (resultSet.next()) {
+                        int id = resultSet.getInt("id");
+                        return BoxItemFactory.createCustomItem(item, itemName, id);
+                    }
                 }
             }
         }
