@@ -1,4 +1,4 @@
-package net.okocraft.box.storage.api.model.item;
+package net.okocraft.box.storage.api.util.item;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -19,9 +19,20 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-final class DefaultItemProvider {
+public final class DefaultItemProvider {
 
-    static @NotNull List<DefaultItem> fromMaterials() {
+    public static @NotNull List<DefaultItem> all() {
+        var result = new ArrayList<DefaultItem>();
+
+        result.addAll(fromMaterials());
+        result.addAll(potions());
+        result.addAll(enchantedBooks());
+        result.addAll(fireworks());
+
+        return result;
+    }
+
+    private static @NotNull List<DefaultItem> fromMaterials() {
         return Arrays.stream(Material.values())
                 .filter(Predicate.not(Material::isAir))
                 .filter(Material::isItem)
@@ -30,7 +41,7 @@ final class DefaultItemProvider {
                 .collect(Collectors.toList());
     }
 
-    static @NotNull List<DefaultItem> potions() {
+    private static @NotNull List<DefaultItem> potions() {
         var result = new ArrayList<DefaultItem>(175); // current: 168 potions
 
         var potions =
@@ -82,7 +93,7 @@ final class DefaultItemProvider {
         }
     }
 
-    static @NotNull List<DefaultItem> enchantedBooks() {
+    private static @NotNull List<DefaultItem> enchantedBooks() {
         if (Bukkit.getItemFactory().getItemMeta(Material.ENCHANTED_BOOK) instanceof EnchantmentStorageMeta meta) {
             var result = new ArrayList<DefaultItem>(40); // current: 37 enchanted books
 
@@ -103,7 +114,7 @@ final class DefaultItemProvider {
         }
     }
 
-    static @NotNull List<DefaultItem> fireworks() {
+    private static @NotNull List<DefaultItem> fireworks() {
         return Stream.of(1, 2, 3)
                 .map(DefaultItemProvider::createFirework)
                 .collect(Collectors.toList());
@@ -122,8 +133,5 @@ final class DefaultItemProvider {
         firework.setItemMeta(fireworkMeta);
 
         return new DefaultItem(Material.FIREWORK_ROCKET + "_" + power, firework);
-    }
-
-    public record DefaultItem(@NotNull String plainName, @NotNull ItemStack itemStack) {
     }
 }

@@ -2,11 +2,17 @@ package net.okocraft.box.storage.api.factory.item;
 
 import net.okocraft.box.api.model.item.BoxCustomItem;
 import net.okocraft.box.api.model.item.BoxItem;
+import net.okocraft.box.storage.api.util.item.DefaultItem;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 public final class BoxItemFactory {
+
+    @Contract("_,_ -> new")
+    public static @NotNull BoxItem createDefaultItem(@NotNull DefaultItem defaultItem, int internalId) {
+        return new BoxItemImpl(defaultItem.itemStack(), defaultItem.plainName(), internalId);
+    }
 
     @Contract("_, _, _ -> new")
     public static @NotNull BoxItem createDefaultItem(@NotNull ItemStack original,
