@@ -18,6 +18,7 @@ val storagePrefix = "$boxPrefix-storage"
 // storage
 sequenceOf(
     "api",
+    "database",
     "yaml"
 ).forEach {
     include(":$storagePrefix-$it")
