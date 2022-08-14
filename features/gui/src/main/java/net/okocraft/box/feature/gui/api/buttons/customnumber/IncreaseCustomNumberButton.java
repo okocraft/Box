@@ -16,7 +16,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 
-@SuppressWarnings("ClassCanBeRecord")
 public class IncreaseCustomNumberButton implements RefreshableButton {
 
     private final CustomNumberHolder holder;

@@ -42,7 +42,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.jetbrains.annotations.NotNull;
 
-@SuppressWarnings("ClassCanBeRecord")
 public class StickListener implements Listener {
 
     private static final ConfigValue<String> MENU_COMMAND_SETTING =

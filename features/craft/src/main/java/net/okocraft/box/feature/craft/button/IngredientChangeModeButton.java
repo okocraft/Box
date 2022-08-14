@@ -13,7 +13,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-@SuppressWarnings("ClassCanBeRecord")
 public class IngredientChangeModeButton implements RefreshableButton {
 
     private final AtomicBoolean bulkIngredientChange;

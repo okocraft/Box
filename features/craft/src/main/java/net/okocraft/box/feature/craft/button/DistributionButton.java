@@ -15,7 +15,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-@SuppressWarnings("ClassCanBeRecord")
 public class DistributionButton implements RefreshableButton {
 
     private final Player player;

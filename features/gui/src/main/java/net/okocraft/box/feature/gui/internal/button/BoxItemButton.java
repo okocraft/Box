@@ -12,7 +12,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-@SuppressWarnings("ClassCanBeRecord")
 public class BoxItemButton implements RefreshableButton {
 
     private final BoxItem item;

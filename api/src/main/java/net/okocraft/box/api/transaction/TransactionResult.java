@@ -10,7 +10,6 @@ import java.util.Objects;
 /**
  * A class to indicate transaction result.
  */
-@SuppressWarnings("ClassCanBeRecord")
 public class TransactionResult {
 
     /**

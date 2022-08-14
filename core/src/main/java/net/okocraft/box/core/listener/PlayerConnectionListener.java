@@ -11,7 +11,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.logging.Level;
 
-@SuppressWarnings("ClassCanBeRecord")
 public class PlayerConnectionListener implements Listener {
 
     private final BoxPlayerMapImpl playerMap;
