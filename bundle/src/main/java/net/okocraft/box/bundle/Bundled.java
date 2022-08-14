@@ -1,5 +1,6 @@
 package net.okocraft.box.bundle;
 
+import com.github.siroshun09.configapi.api.Configuration;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.feature.BoxFeature;
 import net.okocraft.box.feature.autostore.AutoStoreFeature;
@@ -20,7 +21,7 @@ import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.List;
 import java.util.Map;
-import java.util.function.Supplier;
+import java.util.function.Function;
 
 final class Bundled {
 
@@ -33,22 +34,22 @@ final class Bundled {
         return FEATURES;
     }
 
-    static @NotNull @Unmodifiable Map<String, Supplier<Storage>> storageMap() {
+    static @NotNull @Unmodifiable Map<String, Function<Configuration, Storage>> storageMap() {
         return Map.of(
                 YamlStorage.STORAGE_NAME, Bundled::createYamlStorage,
                 Database.Type.SQLITE.getName(), Bundled::createSQLiteStorage
         );
     }
 
-    private static @NotNull Storage createYamlStorage() {
+    private static @NotNull Storage createYamlStorage(@NotNull Configuration config) {
         return new YamlStorage(BoxProvider.get().getPluginDirectory().resolve("data"));
     }
 
-    private static @NotNull Storage createSQLiteStorage() {
+    private static @NotNull Storage createSQLiteStorage(@NotNull Configuration config) {
         return new DatabaseStorage(
                 new SQLiteDatabase(
                         BoxProvider.get().getPluginDirectory().resolve("box-sqlite.db"),
-                        "box_" // todo: config
+                        config.getString("database.table-prefix", "box_")
                 )
         );
     }

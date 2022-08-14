@@ -145,16 +145,18 @@ public class BoxPlugin implements BoxAPI {
     }
 
     public boolean enable() {
-        var storageType = "yaml";
-        var storageSupplier = StorageRegistry.getStorageSupplier(storageType); // TODO other storage type
+        var storageSection = configuration.getOrCreateSection("storage");
 
-        if (storageSupplier == null) {
+        var storageType = storageSection.getString("type");
+        var storageFunction = StorageRegistry.getStorageFunction(storageType);
+
+        if (storageFunction == null) {
             getLogger().warning(storageType + " is not found!");
             getLogger().warning("Using Yaml storage...");
-            storageSupplier = StorageRegistry.getYamlStorageSupplier();
+            storageFunction = StorageRegistry.getYamlStorageSupplier();
         }
 
-        storage = storageSupplier.get();
+        storage = storageFunction.apply(storageSection);
 
         getLogger().info("Initializing " + storage.getName() + " storage...");
 

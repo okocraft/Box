@@ -1,5 +1,6 @@
 package net.okocraft.box.storage.api.registry;
 
+import com.github.siroshun09.configapi.api.Configuration;
 import net.okocraft.box.storage.api.model.Storage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -8,16 +9,17 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public final class StorageRegistry {
 
-    private static final Map<String, Supplier<Storage>> STORAGE_MAP = new HashMap<>();
+    private static final Map<String, Function<Configuration, Storage>> STORAGE_MAP = new HashMap<>();
 
-    public static void register(@NotNull String name, @NotNull Supplier<Storage> storageSupplier) {
+    public static void register(@NotNull String name, @NotNull Function<Configuration, Storage> storageFunction) {
         Objects.requireNonNull(name);
-        Objects.requireNonNull(storageSupplier);
-        STORAGE_MAP.put(name.toLowerCase(Locale.ENGLISH), storageSupplier);
+        Objects.requireNonNull(storageFunction);
+        STORAGE_MAP.put(name.toLowerCase(Locale.ENGLISH), storageFunction);
     }
 
     public static void unregister(@NotNull String name) {
@@ -25,15 +27,15 @@ public final class StorageRegistry {
         STORAGE_MAP.remove(name.toLowerCase(Locale.ENGLISH));
     }
 
-    public static @Nullable Supplier<Storage> getStorageSupplier(@NotNull String name) {
+    public static @Nullable Function<Configuration, Storage>  getStorageFunction(@NotNull String name) {
         return STORAGE_MAP.get(name.toLowerCase(Locale.ENGLISH));
     }
 
-    public static @NotNull Supplier<Storage> getYamlStorageSupplier() {
-        var supplier = getStorageSupplier("yaml");
+    public static @NotNull Function<Configuration, Storage>  getYamlStorageSupplier() {
+        var function = getStorageFunction("yaml");
 
-        if (supplier != null) {
-            return supplier;
+        if (function != null) {
+            return function;
         } else {
             throw new IllegalStateException("Where is the yaml storage!?");
         }
