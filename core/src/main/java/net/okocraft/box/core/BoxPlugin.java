@@ -32,16 +32,17 @@ import net.okocraft.box.core.listener.PlayerConnectionListener;
 import net.okocraft.box.core.message.ErrorMessages;
 import net.okocraft.box.core.message.MicsMessages;
 import net.okocraft.box.core.model.data.BoxCustomDataContainer;
+import net.okocraft.box.core.model.loader.ItemLoader;
 import net.okocraft.box.core.model.manager.BoxItemManager;
 import net.okocraft.box.core.model.manager.BoxStockManager;
 import net.okocraft.box.core.model.manager.BoxUserManager;
 import net.okocraft.box.core.model.queue.AutoSaveQueue;
 import net.okocraft.box.core.player.BoxPlayerMapImpl;
-import net.okocraft.box.core.storage.Storage;
-import net.okocraft.box.core.storage.implementations.yaml.YamlStorage;
 import net.okocraft.box.core.task.AutoSaveTask;
 import net.okocraft.box.core.taskfactory.BoxTaskFactory;
 import net.okocraft.box.core.util.executor.InternalExecutors;
+import net.okocraft.box.storage.api.model.Storage;
+import net.okocraft.box.storage.api.registry.StorageRegistry;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandSender;
@@ -144,7 +145,18 @@ public class BoxPlugin implements BoxAPI {
     }
 
     public boolean enable() {
-        storage = new YamlStorage(getPluginDirectory().resolve("data")); // TODO: SQLite, MySQL, or something else...
+        var storageSection = configuration.getOrCreateSection("storage");
+
+        var storageType = storageSection.getString("type");
+        var storageFunction = StorageRegistry.getStorageFunction(storageType);
+
+        if (storageFunction == null) {
+            getLogger().warning(storageType + " is not found!");
+            getLogger().warning("Using Yaml storage...");
+            storageFunction = StorageRegistry.getYamlStorageSupplier();
+        }
+
+        storage = storageFunction.apply(storageSection);
 
         getLogger().info("Initializing " + storage.getName() + " storage...");
 
@@ -157,10 +169,8 @@ public class BoxPlugin implements BoxAPI {
 
         getLogger().info("Initializing managers...");
 
-        itemManager = new BoxItemManager(storage.getItemStorage());
-
         try {
-            itemManager.importAllItems();
+            itemManager = ItemLoader.load(storage.getItemStorage());
         } catch (Exception e) {
             getLogger().log(Level.SEVERE, "Could not import items", e);
             return false;

@@ -2,7 +2,7 @@ package net.okocraft.box.core.model.manager;
 
 import net.okocraft.box.api.model.manager.UserManager;
 import net.okocraft.box.api.model.user.BoxUser;
-import net.okocraft.box.core.storage.model.user.UserStorage;
+import net.okocraft.box.storage.api.model.user.UserStorage;
 import net.okocraft.box.core.util.executor.InternalExecutors;
 import org.jetbrains.annotations.NotNull;
 

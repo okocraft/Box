@@ -10,7 +10,7 @@ import net.okocraft.box.api.player.BoxPlayer;
 import net.okocraft.box.api.player.BoxPlayerMap;
 import net.okocraft.box.core.message.ErrorMessages;
 import net.okocraft.box.core.model.loader.UserStockHolderLoader;
-import net.okocraft.box.core.model.user.BoxUserImpl;
+import net.okocraft.box.storage.api.factory.user.BoxUserFactory;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -50,7 +50,7 @@ public class BoxPlayerMapImpl implements BoxPlayerMap {
         Objects.requireNonNull(player);
 
         return CompletableFuture.runAsync(() -> {
-            var boxUser = new BoxUserImpl(player.getUniqueId(), player.getName());
+            var boxUser = BoxUserFactory.create(player.getUniqueId(), player.getName());
 
             updateUserName(boxUser);
 

@@ -6,9 +6,9 @@ import net.okocraft.box.api.event.item.CustomItemRenameEvent;
 import net.okocraft.box.api.model.item.BoxCustomItem;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.model.manager.ItemManager;
-import net.okocraft.box.core.model.item.BoxCustomItemImpl;
-import net.okocraft.box.core.storage.model.item.ItemStorage;
 import net.okocraft.box.core.util.executor.InternalExecutors;
+import net.okocraft.box.storage.api.factory.item.BoxItemFactory;
+import net.okocraft.box.storage.api.model.item.ItemStorage;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
@@ -22,16 +22,17 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
-import java.util.stream.Collectors;
 
 public class BoxItemManager implements ItemManager {
 
     private final ItemStorage itemStorage;
     private final ExecutorService executor;
 
-    private Map<ItemStack, BoxItem> itemMap = Collections.emptyMap();
-    private Set<String> itemNameCache = Collections.emptySet();
+    private final Map<ItemStack, BoxItem> itemMap = createMap();
+    private final Map<String, BoxItem> itemNameMap = createMap();
+    private final Map<Integer, BoxItem> itemIdMap = createMap();
 
     public BoxItemManager(@NotNull ItemStorage itemStorage) {
         this.itemStorage = itemStorage;
@@ -40,57 +41,35 @@ public class BoxItemManager implements ItemManager {
 
     @Override
     public @NotNull Optional<BoxItem> getBoxItem(@NotNull ItemStack itemStack) {
-        var copied = Objects.requireNonNull(itemStack).clone();
-
-        copied.setAmount(1);
-
-        return Optional.ofNullable(itemMap.get(copied));
+        return Optional.ofNullable(itemMap.get(itemStack.asOne()));
     }
 
     @Override
     public @NotNull Optional<BoxItem> getBoxItem(@NotNull String name) {
         name = Objects.requireNonNull(name).toUpperCase(Locale.ROOT);
-
-        for (var item : itemMap.values()) {
-            if (item.getPlainName().equals(name)) {
-                return Optional.of(item);
-            }
-        }
-
-        return Optional.empty();
+        return Optional.ofNullable(itemNameMap.get(name));
     }
 
     @Override
     public @NotNull Optional<BoxItem> getBoxItem(int id) {
-        for (var item : itemMap.values()) {
-            if (item.getInternalId() == id) {
-                return Optional.of(item);
-            }
-        }
-
-        return Optional.empty();
+        return Optional.ofNullable(itemIdMap.get(id));
     }
 
     @Override
     public boolean isRegistered(@NotNull ItemStack itemStack) {
-        var copied = Objects.requireNonNull(itemStack).clone();
-
-        copied.setAmount(1);
-
-        return itemMap.containsKey(copied);
+        return itemMap.containsKey(itemStack.asOne());
     }
 
     @Override
     public boolean isUsedName(@NotNull String name) {
         Objects.requireNonNull(name);
 
-        var nameSet = itemNameCache;
-        return nameSet.contains(name);
+        return itemNameMap.containsKey(name);
     }
 
     @Override
     public boolean isCustomItem(@NotNull BoxItem item) {
-        return item instanceof BoxCustomItemImpl;
+        return BoxItemFactory.checkCustomItem(item);
     }
 
     @Override
@@ -98,9 +77,7 @@ public class BoxItemManager implements ItemManager {
         Objects.requireNonNull(original);
 
         return CompletableFuture.supplyAsync(() -> {
-            var copied = original.clone();
-
-            copied.setAmount(1);
+            var copied = original.asOne();
 
             if (isRegistered(copied)) {
                 throw new IllegalStateException("The item is already registered (item: " + copied + ")");
@@ -109,13 +86,12 @@ public class BoxItemManager implements ItemManager {
             BoxCustomItem customItem;
 
             try {
-                customItem = itemStorage.registerNewItem(copied);
+                customItem = itemStorage.saveNewCustomItem(copied);
             } catch (Exception e) {
                 throw new RuntimeException("Could not register a new item (item: " + copied + ")", e);
             }
 
-            itemMap.put(copied, customItem);
-            updateItemNameCache();
+            addItem(customItem);
 
             BoxProvider.get().getEventBus().callEventAsync(new CustomItemRegisterEvent(customItem));
 
@@ -130,38 +106,34 @@ public class BoxItemManager implements ItemManager {
         Objects.requireNonNull(newName);
 
         return CompletableFuture.supplyAsync(() -> {
-            if (!isCustomItem(item)) {
+            if (!BoxItemFactory.checkCustomItem(item)) {
                 throw new IllegalStateException("Could not rename item because the item is created by box.");
             }
 
-            if (itemNameCache.contains(newName)) {
+            if (itemNameMap.containsKey(newName)) {
                 throw new IllegalStateException("The same name is already used (" + newName + ")");
             }
 
-            var copy = new BoxCustomItemImpl(item.getOriginal(), newName, item.getInternalId());
+            removeItem(item);
+
+            var previousName = item.getPlainName();
+            BoxCustomItem result;
 
             try {
-                itemStorage.saveCustomItem(copy);
+                result = itemStorage.rename(item, newName);
             } catch (Exception e) {
                 throw new RuntimeException("Could not save the custom item", e);
             }
 
-            var internal = (BoxCustomItemImpl) item;
+            BoxProvider.get().getEventBus().callEventAsync(new CustomItemRenameEvent(result, previousName));
 
-            var previousName = item.getPlainName();
-            internal.setPlainName(newName);
-
-            updateItemNameCache();
-
-            BoxProvider.get().getEventBus().callEventAsync(new CustomItemRenameEvent(internal, previousName));
-
-            return internal;
+            return result;
         }, executor);
     }
 
     @Override
     public @NotNull @Unmodifiable Set<String> getItemNameSet() {
-        return itemNameCache;
+        return Collections.unmodifiableSet(itemNameMap.keySet());
     }
 
     @Override
@@ -169,19 +141,23 @@ public class BoxItemManager implements ItemManager {
         return List.copyOf(itemMap.values());
     }
 
-    public void importAllItems() throws Exception {
-        itemMap =
-                itemStorage.loadAllItems()
-                        .stream()
-                        .collect(Collectors.toConcurrentMap(BoxItem::getOriginal, item -> item));
-
-        updateItemNameCache();
+    public void storeItems(@NotNull Collection<? extends BoxItem> items) {
+        items.forEach(this::addItem);
     }
 
-    private void updateItemNameCache() {
-        itemNameCache =
-                itemMap.values().stream()
-                        .map(BoxItem::getPlainName)
-                        .collect(Collectors.toUnmodifiableSet());
+    private void addItem(@NotNull BoxItem item) {
+        itemMap.put(item.getOriginal(), item);
+        itemNameMap.put(item.getPlainName(), item);
+        itemIdMap.put(item.getInternalId(), item);
+    }
+
+    private void removeItem(@NotNull BoxItem item) {
+        itemMap.remove(item.getOriginal());
+        itemNameMap.remove(item.getPlainName());
+        itemIdMap.remove(item.getInternalId());
+    }
+
+    private <K> @NotNull Map<K, BoxItem> createMap() {
+        return new ConcurrentHashMap<>(300, 0.95f);
     }
 }

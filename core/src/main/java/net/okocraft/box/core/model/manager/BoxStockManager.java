@@ -8,7 +8,7 @@ import net.okocraft.box.api.model.stock.UserStockHolder;
 import net.okocraft.box.api.model.user.BoxUser;
 import net.okocraft.box.core.model.loader.UserStockHolderLoader;
 import net.okocraft.box.core.model.queue.AutoSaveQueue;
-import net.okocraft.box.core.storage.model.stock.StockStorage;
+import net.okocraft.box.storage.api.model.stock.StockStorage;
 import net.okocraft.box.core.util.executor.InternalExecutors;
 import org.jetbrains.annotations.NotNull;
 

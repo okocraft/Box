@@ -1,6 +1,7 @@
 package net.okocraft.box.bundle;
 
 import net.okocraft.box.core.BoxPlugin;
+import net.okocraft.box.storage.api.registry.StorageRegistry;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -25,6 +26,8 @@ public final class BoxBootstrap extends JavaPlugin {
         }
 
         this.boxPlugin = new BoxPlugin(this, getFile().toPath());
+
+        Bundled.storageMap().forEach(StorageRegistry::register);
     }
 
     @Override
@@ -58,7 +61,7 @@ public final class BoxBootstrap extends JavaPlugin {
             return;
         }
 
-        Bundled.FEATURES.forEach(boxPlugin::register);
+        Bundled.features().forEach(boxPlugin::register);
 
         var timeTaken = Duration.between(startTime, Instant.now());
         getLogger().info("Successfully enabled! (" + timeTaken.toMillis() + "ms)");
@@ -67,7 +70,7 @@ public final class BoxBootstrap extends JavaPlugin {
     @Override
     public void onDisable() {
         if (isPaper && isLoaded) {
-            Bundled.FEATURES.forEach(boxPlugin::unregister);
+            Bundled.features().forEach(boxPlugin::unregister);
             boxPlugin.disable();
             getLogger().info("Successfully disabled. Goodbye!");
         }
