@@ -281,7 +281,6 @@ import static org.bukkit.Tag.BANNERS;
 import static org.bukkit.Tag.BEDS;
 import static org.bukkit.Tag.BUTTONS;
 import static org.bukkit.Tag.CANDLES;
-import static org.bukkit.Tag.CARPETS;
 import static org.bukkit.Tag.CROPS;
 import static org.bukkit.Tag.DIRT;
 import static org.bukkit.Tag.FLOWERS;
@@ -301,6 +300,7 @@ import static org.bukkit.Tag.WOODEN_SLABS;
 import static org.bukkit.Tag.WOODEN_STAIRS;
 import static org.bukkit.Tag.WOODEN_TRAPDOORS;
 import static org.bukkit.Tag.WOOL;
+import static org.bukkit.Tag.WOOL_CARPETS;
 
 final class Categorizer {
 
@@ -370,7 +370,7 @@ final class Categorizer {
             return DefaultCategory.WOODS;
         }
 
-        if (isTagged(item, WOOL, CARPETS, BEDS, BANNERS)) {
+        if (isTagged(item, WOOL, WOOL_CARPETS, BEDS, BANNERS)) {
             return DefaultCategory.WOOLS;
         }
 
