@@ -25,10 +25,6 @@ public class UserTable extends AbstractTable implements UserStorage {
     }
 
     @Override
-    public void close() {
-    }
-
-    @Override
     public @NotNull BoxUser getUser(@NotNull UUID uuid) throws Exception {
         try (var connection = database.getConnection();
              var statement = prepareStatement(connection, "SELECT username FROM `%table%` WHERE uuid=? LIMIT 1")) {

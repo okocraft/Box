@@ -27,11 +27,6 @@ public class StockTable extends AbstractTable implements StockStorage {
     }
 
     @Override
-    public void close() throws Exception {
-
-    }
-
-    @Override
     public @NotNull UserStockHolder loadUserStockHolder(@NotNull BoxUser user) throws Exception {
         var stock = new ArrayList<StockData>();
 

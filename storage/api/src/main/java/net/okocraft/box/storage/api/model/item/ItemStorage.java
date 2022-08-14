@@ -14,8 +14,6 @@ public interface ItemStorage {
 
     void init() throws Exception;
 
-    void close() throws Exception;
-
     int getDataVersion() throws Exception;
 
     void saveCurrentDataVersion() throws Exception;

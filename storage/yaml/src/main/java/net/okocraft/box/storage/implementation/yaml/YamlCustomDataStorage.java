@@ -22,10 +22,6 @@ public class YamlCustomDataStorage implements CustomDataStorage {
     }
 
     @Override
-    public void close() {
-    }
-
-    @Override
     public @NotNull Configuration load(@NotNull String namespace, @NotNull String key) throws Exception {
         var file = customDataDirectory.resolve(namespace).resolve(key + ".yml");
         var yaml = YamlConfiguration.create(file);

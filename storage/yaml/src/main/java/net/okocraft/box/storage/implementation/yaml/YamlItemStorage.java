@@ -62,10 +62,6 @@ class YamlItemStorage implements ItemStorage {
     }
 
     @Override
-    public void close() {
-    }
-
-    @Override
     public int getDataVersion() {
         return dataVersion;
     }

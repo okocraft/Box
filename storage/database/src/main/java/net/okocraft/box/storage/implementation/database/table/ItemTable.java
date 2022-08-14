@@ -36,10 +36,6 @@ public class ItemTable extends AbstractTable implements ItemStorage {
     }
 
     @Override
-    public void close() throws Exception {
-    }
-
-    @Override
     public int getDataVersion() throws Exception {
         return metaTable.getItemDataVersion();
     }

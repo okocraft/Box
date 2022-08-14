@@ -51,10 +51,6 @@ class YamlStockStorage implements StockStorage {
     }
 
     @Override
-    public void close() {
-    }
-
-    @Override
     public @NotNull UserStockHolder loadUserStockHolder(@NotNull BoxUser user) throws Exception {
         var filePath = stockDirectory.resolve(user.getUUID() + ".yml");
 

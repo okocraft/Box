@@ -50,11 +50,6 @@ public class CustomDataTable extends AbstractTable implements CustomDataStorage 
     }
 
     @Override
-    public void close() throws Exception {
-
-    }
-
-    @Override
     public @NotNull Configuration load(@NotNull String namespace, @NotNull String key) throws Exception {
         var namespacedKey = namespace + ":" + key;
 

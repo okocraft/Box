@@ -10,8 +10,6 @@ public interface UserStorage {
 
     void init() throws Exception;
 
-    void close() throws Exception;
-
     @NotNull BoxUser getUser(@NotNull UUID uuid) throws Exception;
 
     void saveBoxUser(@NotNull BoxUser user) throws Exception;

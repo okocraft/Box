@@ -7,8 +7,6 @@ public interface CustomDataStorage {
 
     void init() throws Exception;
 
-    void close() throws Exception;
-
     @NotNull Configuration load(@NotNull String namespace, @NotNull String key) throws Exception;
 
     void save(@NotNull String namespace, @NotNull String key, @NotNull Configuration configuration) throws Exception;

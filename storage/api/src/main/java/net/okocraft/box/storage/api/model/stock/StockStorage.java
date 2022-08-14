@@ -8,8 +8,6 @@ public interface StockStorage {
 
     void init() throws Exception;
 
-    void close() throws Exception;
-
     @NotNull UserStockHolder loadUserStockHolder(@NotNull BoxUser user) throws Exception;
 
     void saveUserStockHolder(@NotNull UserStockHolder stockHolder) throws Exception;

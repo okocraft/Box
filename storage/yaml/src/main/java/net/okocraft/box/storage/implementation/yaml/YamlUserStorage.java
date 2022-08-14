@@ -24,10 +24,6 @@ class YamlUserStorage implements UserStorage {
     }
 
     @Override
-    public void close() {
-    }
-
-    @Override
     public @NotNull BoxUser getUser(@NotNull UUID uuid) {
         var name = userData.getString(uuid.toString());
         return BoxUserFactory.create(uuid, name.isEmpty() ? null : name);
