@@ -1,11 +1,12 @@
 package net.okocraft.box.core.model.loader;
 
+import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.model.item.BoxCustomItem;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.core.model.manager.BoxItemManager;
+import net.okocraft.box.storage.api.model.item.ItemStorage;
 import net.okocraft.box.storage.api.util.item.DefaultItem;
 import net.okocraft.box.storage.api.util.item.DefaultItemProvider;
-import net.okocraft.box.storage.api.model.item.ItemStorage;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,8 +20,14 @@ import java.util.stream.Collectors;
 public class ItemLoader {
 
     public static @NotNull BoxItemManager load(@NotNull ItemStorage itemStorage) throws Exception {
-        var defaultItems = loadDefaultItems(itemStorage);
-        var customItems = loadCustomItems(itemStorage);
+        var dataVersion = itemStorage.getDataVersion();
+
+        if (currentDataVersion() < dataVersion) {
+            throw new IllegalStateException("Downgrading version is not supported.");
+        }
+
+        var defaultItems = loadDefaultItems(itemStorage, dataVersion);
+        var customItems = loadCustomItems(itemStorage, dataVersion);
 
         var itemManger = new BoxItemManager(itemStorage);
 
@@ -32,14 +39,17 @@ public class ItemLoader {
         return itemManger;
     }
 
-    private static @NotNull List<BoxItem> loadDefaultItems(@NotNull ItemStorage storage) throws Exception {
-        var version = storage.getDataVersion();
+    private static @NotNull List<BoxItem> loadDefaultItems(@NotNull ItemStorage storage, int dataVersion) throws Exception {
+        var logger = BoxProvider.get().getLogger();
+        logger.info("Loading default items...");
 
-        if (version == 0) {
+        if (dataVersion == 0) {
+            logger.warning("No item data found. It takes time to save default items...");
             return storage.saveNewDefaultItems(DefaultItemProvider.all());
-        } else if (version == currentDataVersion()) {
+        } else if (dataVersion == currentDataVersion()) {
             return storage.loadAllDefaultItems();
         } else {
+            logger.warning("Version upgrade detected. Updating default item data...");
             return updateDefaultItems(storage);
         }
     }
@@ -66,14 +76,16 @@ public class ItemLoader {
         return defaultItems;
     }
 
-    private static @NotNull List<BoxCustomItem> loadCustomItems(@NotNull ItemStorage storage) throws Exception {
-        var version = storage.getDataVersion();
+    private static @NotNull List<BoxCustomItem> loadCustomItems(@NotNull ItemStorage storage, int dataVersion) throws Exception {
+        var logger = BoxProvider.get().getLogger();
+        logger.info("Loading custom items...");
 
-        if (version == 0) {
+        if (dataVersion == 0) {
             return Collections.emptyList();
-        } else if (version == currentDataVersion()) {
+        } else if (dataVersion == currentDataVersion()) {
             return storage.loadAllCustomItems();
         } else {
+            logger.warning("Updating custom item data...");
             var items = storage.loadAllCustomItems();
             storage.updateCustomItems(items);
             return items;
