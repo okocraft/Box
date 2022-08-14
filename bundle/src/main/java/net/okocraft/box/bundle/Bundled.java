@@ -11,6 +11,9 @@ import net.okocraft.box.feature.gui.GuiFeature;
 import net.okocraft.box.feature.notifier.NotifierFeature;
 import net.okocraft.box.feature.stick.StickFeature;
 import net.okocraft.box.storage.api.model.Storage;
+import net.okocraft.box.storage.implementation.database.DatabaseStorage;
+import net.okocraft.box.storage.implementation.database.database.Database;
+import net.okocraft.box.storage.implementation.database.database.sqlite.SQLiteDatabase;
 import net.okocraft.box.storage.implementation.yaml.YamlStorage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
@@ -32,11 +35,21 @@ final class Bundled {
 
     static @NotNull @Unmodifiable Map<String, Supplier<Storage>> storageMap() {
         return Map.of(
-                YamlStorage.STORAGE_NAME, Bundled::createYamlStorage
+                YamlStorage.STORAGE_NAME, Bundled::createYamlStorage,
+                Database.Type.SQLITE.getName(), Bundled::createSQLiteStorage
         );
     }
 
     private static @NotNull Storage createYamlStorage() {
         return new YamlStorage(BoxProvider.get().getPluginDirectory().resolve("data"));
+    }
+
+    private static @NotNull Storage createSQLiteStorage() {
+        return new DatabaseStorage(
+                new SQLiteDatabase(
+                        BoxProvider.get().getPluginDirectory().resolve("box-sqlite.db"),
+                        "box_" // todo: config
+                )
+        );
     }
 }
