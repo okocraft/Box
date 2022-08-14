@@ -58,7 +58,8 @@ public class AutoStoreCommand extends AbstractCommand {
 
         if (isAll(args[1])) {
             enableAutoStore(setting, player);
-            changeCurrentMode(setting, true, player);
+            setting.setAllMode(true);
+            player.sendMessage(AutoStoreMessage.COMMAND_MODE_CHANGED.apply(setting.isAllMode()));
             return;
         }
 
@@ -101,7 +102,7 @@ public class AutoStoreCommand extends AbstractCommand {
 
                 if (bool != null) {
                     enableAutoStore(setting, player);
-                    changeCurrentMode(setting, false, player);
+                    changeToPerItemMode(setting, player);
 
                     perItemModeSetting.setEnabledItems(bool ? itemManager.getBoxItemSet() : Collections.emptyList());
                     player.sendMessage(AutoStoreMessage.COMMAND_PER_ITEM_ALL_TOGGLED.apply(bool));
@@ -121,7 +122,7 @@ public class AutoStoreCommand extends AbstractCommand {
         Boolean bool = 3 < args.length ? getBoolean(args[3]) : null;
 
         enableAutoStore(setting, player);
-        changeCurrentMode(setting, false, player);
+        changeToPerItemMode(setting, player);
 
         if (bool != null) {
             perItemModeSetting.setEnabled(boxItem, bool);
@@ -207,10 +208,9 @@ public class AutoStoreCommand extends AbstractCommand {
         }
     }
 
-    private void changeCurrentMode(@NotNull AutoStoreSetting setting,
-                                   boolean allMode, @NotNull Player player) {
-        if (setting.isAllMode() != allMode) {
-            setting.setAllMode(allMode);
+    private void changeToPerItemMode(@NotNull AutoStoreSetting setting, @NotNull Player player) {
+        if (setting.isAllMode()) {
+            setting.setAllMode(false);
             player.sendMessage(AutoStoreMessage.COMMAND_MODE_CHANGED.apply(setting.isAllMode()));
         }
     }
