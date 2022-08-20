@@ -1,4 +1,4 @@
-# Box v4.4.0-SNAPSHOT
+# Box
 
 ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/okocraft/Box)
 ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/okocraft/Box/Maven%20Build)
@@ -85,19 +85,19 @@ For snapshot version, use https://okocraft.github.io/Box/maven-snapshot/
 <dependency>
     <groupId>net.okocraft.box</groupId>
     <artifactId>api</artifactId>
-    <version>4.4.0</version>
+    <version>4.4.1</version>
     <scope>provided</scope>
 </dependency>
 ```
 
 ```gradle
 dependencies {
-    compileOnly 'net.okocraft.box:api:4.4.0'
+    compileOnly 'net.okocraft.box:api:4.4.1'
 }
 ```
 
 ```kotlin
 dependencies {
-    compileOnly("net.okocraft.box:api:4.4.0")
+    compileOnly("net.okocraft.box:api:4.4.1")
 }
 ```
