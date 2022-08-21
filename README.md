@@ -1,4 +1,4 @@
-# Box v4.4.0-SNAPSHOT
+# Box
 
 ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/okocraft/Box)
 ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/okocraft/Box/Maven%20Build)
