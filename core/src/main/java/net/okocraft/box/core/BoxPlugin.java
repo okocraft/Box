@@ -151,8 +151,11 @@ public class BoxPlugin implements BoxAPI {
         var storageFunction = StorageRegistry.getStorageFunction(storageType);
 
         if (storageFunction == null) {
-            getLogger().warning(storageType + " is not found!");
-            getLogger().warning("Using Yaml storage...");
+            if (!storageType.isEmpty()) {
+                getLogger().warning(storageType + " is not found!");
+                getLogger().warning("Using Yaml storage...");
+            }
+
             storageFunction = StorageRegistry.getYamlStorageSupplier();
         }
 
