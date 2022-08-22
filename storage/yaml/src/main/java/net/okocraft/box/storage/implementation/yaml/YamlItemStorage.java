@@ -8,6 +8,7 @@ import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.storage.api.factory.item.BoxItemFactory;
 import net.okocraft.box.storage.api.model.item.ItemStorage;
 import net.okocraft.box.storage.api.util.item.DefaultItem;
+import net.okocraft.box.storage.api.util.item.DefaultItemProvider;
 import net.okocraft.box.storage.api.util.item.ItemNameGenerator;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
@@ -33,6 +34,7 @@ class YamlItemStorage implements ItemStorage {
     private final AtomicInteger lastUsedItemId = new AtomicInteger();
 
     private int dataVersion = 0;
+    private boolean migrationMode = false;
 
     YamlItemStorage(@NotNull Path rootDirectory) {
         this.itemDirectory = rootDirectory.resolve("items");
@@ -50,6 +52,8 @@ class YamlItemStorage implements ItemStorage {
         var oldIdFile = itemDirectory.resolve("last-used-item-id.dat");
 
         if (Files.exists(oldIdFile)) {
+            migrationMode = true;
+
             var data = Files.readString(oldIdFile);
             Optional.ofNullable(parseIntOrNull(data)).ifPresent(lastUsedItemId::set);
             Files.delete(oldIdFile);
@@ -61,9 +65,14 @@ class YamlItemStorage implements ItemStorage {
         }
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public int getDataVersion() {
-        return dataVersion;
+        if (migrationMode) {
+            return Bukkit.getUnsafe().getDataVersion(); // to call #loadAllDefaultItems and #loadAllCustomItems
+        } else {
+            return dataVersion;
+        }
     }
 
     @SuppressWarnings("deprecation")
@@ -76,6 +85,10 @@ class YamlItemStorage implements ItemStorage {
 
     @Override
     public @NotNull List<BoxItem> loadAllDefaultItems() throws Exception {
+        if (migrationMode) {
+            return migrateV4DefaultItems();
+        }
+
         var result = new ArrayList<BoxItem>();
 
         try (var source = defaultItemData.copy()) {
@@ -144,6 +157,10 @@ class YamlItemStorage implements ItemStorage {
 
     @Override
     public @NotNull List<BoxCustomItem> loadAllCustomItems() throws Exception {
+        if (migrationMode) {
+            return migrateV4CustomItems();
+        }
+
         var result = new ArrayList<BoxCustomItem>();
 
         try (var source = customItemData.copy()) {
@@ -240,5 +257,59 @@ class YamlItemStorage implements ItemStorage {
                                                 int id, @NotNull Configuration target) {
         target.set(id + ".name", defaultItem.plainName());
         target.setBytes(id + ".data", defaultItem.itemStack().serializeAsBytes());
+    }
+
+    private @NotNull List<BoxItem> migrateV4DefaultItems() throws Exception {
+        var result = new ArrayList<BoxItem>();
+
+        try (var source = defaultItemData.copy();
+             var target = defaultItemData.copy()) {
+            source.load();
+
+            for (var defaultItem : DefaultItemProvider.all()) {
+                int id = source.getInteger(defaultItem.plainName());
+
+                if (id == 0) {
+                    id = lastUsedItemId.incrementAndGet();
+                }
+
+                result.add(BoxItemFactory.createDefaultItem(defaultItem, id));
+                saveDefaultItemToConfiguration(defaultItem, id, target);
+            }
+
+            target.save();
+            saveLastUsedItemId();
+        }
+
+        return result;
+    }
+
+    private @NotNull List<BoxCustomItem> migrateV4CustomItems() throws Exception {
+        var result = new ArrayList<BoxCustomItem>();
+
+        try (var source = customItemData.copy();
+             var target = customItemData.copy()) {
+            source.load();
+
+            for (var key : source.getKeyList()) {
+                var id = parseIntOrNull(key);
+                var name = getPlainNameFromConfiguration(key, source);
+
+                if (id == null) {
+                    BoxProvider.get().getLogger().warning("Invalid id: " + key + " (name: " + name + ")");
+                    continue;
+                }
+
+                var item = getItemStackFromConfiguration(key, source);
+                var boxCustomItem = BoxItemFactory.createCustomItem(item, name, id);
+
+                result.add(boxCustomItem);
+                saveItemToConfiguration(boxCustomItem, target);
+            }
+
+            target.save();
+        }
+
+        return result;
     }
 }
