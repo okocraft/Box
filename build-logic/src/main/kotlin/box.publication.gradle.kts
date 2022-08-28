@@ -19,8 +19,8 @@ tasks {
         opts.encoding = Charsets.UTF_8.name()
         opts.addStringOption("Xdoclint:none", "-quiet")
         opts.links(
-            "https://jd.papermc.io/paper/1.18/",
-            "https://jd.adventure.kyori.net/api/4.10.1/",
+            "https://jd.papermc.io/paper/1.19/",
+            "https://jd.adventure.kyori.net/api/4.11.0/",
             "https://javadoc.io/doc/org.jetbrains/annotations/23.0.0/",
             "https://siroshun09.github.io/ConfigAPI/",
             "https://siroshun09.github.io/Event4J/3.2.0",
