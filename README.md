@@ -84,7 +84,7 @@ For snapshot version, use https://okocraft.github.io/Box/maven-snapshot/
 ```xml
 <dependency>
     <groupId>net.okocraft.box</groupId>
-    <artifactId>api</artifactId>
+    <artifactId>box-api</artifactId>
     <version>5.0.0-SNAPSHOT</version>
     <scope>provided</scope>
 </dependency>
@@ -92,12 +92,12 @@ For snapshot version, use https://okocraft.github.io/Box/maven-snapshot/
 
 ```gradle
 dependencies {
-    compileOnly 'net.okocraft.box:api:5.0.0-SNAPSHOT'
+    compileOnly 'net.okocraft.box:box-api:5.0.0-SNAPSHOT'
 }
 ```
 
 ```kotlin
 dependencies {
-    compileOnly("net.okocraft.box:api:5.0.0-SNAPSHOT")
+    compileOnly("net.okocraft.box:box-api:5.0.0-SNAPSHOT")
 }
 ```
