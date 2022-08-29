@@ -2,7 +2,8 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
     id("box.common-conventions")
-    id("com.github.johnrengelman.shadow") version "7.1.2"
+    // I wrote it as in the example, and it seems to work normally, but it shows an error on idea.
+    alias(libs.plugins.shadow)
 }
 
 dependencies {

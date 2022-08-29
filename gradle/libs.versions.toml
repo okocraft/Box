@@ -1,0 +1,32 @@
+[versions]
+# common libraries
+adventure = "4.11.0"
+annotations = "23.0.0"
+configapi = "4.6.0"
+event4j = "3.2.0"
+hikaricp = "5.0.1"
+translationloader = "2.0.2"
+
+# gradle plugins
+shadow = "7.1.2"
+
+# platform api
+paper = "1.19.2-R0.1-SNAPSHOT"
+paper-javadoc = "1.19"
+
+[libraries]
+
+# common libraries
+adventure = { module = "net.kyori:adventure-api", version.ref = "adventure" }
+annotations = { module = "org.jetbrains:annotations", version.ref = "annotations" }
+configapi-yaml = { module = "com.github.siroshun09.configapi:configapi-yaml", version.ref = "configapi" }
+event4j = { module = "com.github.siroshun09.event4j:event4j", version.ref = "event4j" }
+hikaricp = { module = "com.zaxxer:HikariCP", version.ref = "hikaricp" }
+translationloader = { module = "com.github.siroshun09.translationloader:translationloader", version.ref ="translationloader"}
+
+# platform api
+paper = { module = "io.papermc.paper:paper-api", version.ref = "paper" }
+
+[plugins]
+
+shadow = {  id = "com.github.johnrengelman.shadow", version.ref = "shadow" }

@@ -3,6 +3,7 @@ plugins {
     `maven-publish`
 }
 
+val libs = extensions.getByType(org.gradle.accessors.dm.LibrariesForLibs::class)
 val release = findProperty("box.release")?.toString()?.toBoolean()
 
 java {
@@ -19,11 +20,11 @@ tasks {
         opts.encoding = Charsets.UTF_8.name()
         opts.addStringOption("Xdoclint:none", "-quiet")
         opts.links(
-            "https://jd.papermc.io/paper/1.19/",
-            "https://jd.adventure.kyori.net/api/4.11.0/",
-            "https://javadoc.io/doc/org.jetbrains/annotations/23.0.0/",
+            "https://jd.papermc.io/paper/${libs.versions.paper.javadoc}/",
+            "https://jd.adventure.kyori.net/api/${libs.versions.adventure}/",
+            "https://javadoc.io/doc/org.jetbrains/annotations/${libs.versions.annotations}/",
             "https://siroshun09.github.io/ConfigAPI/",
-            "https://siroshun09.github.io/Event4J/3.2.0",
+            "https://siroshun09.github.io/Event4J/${libs.versions.event4j}/",
             "https://siroshun09.github.io/TranslationLoader/"
         )
     }
