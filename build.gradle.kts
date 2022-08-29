@@ -1,5 +1,6 @@
 plugins {
-    id("io.freefair.aggregate-javadoc") version "6.5.0.3"
+    // I wrote it as in the example, and it seems to work normally, but it shows an error on idea.
+    alias(libs.plugins.aggregate.javadoc)
 }
 
 tasks {

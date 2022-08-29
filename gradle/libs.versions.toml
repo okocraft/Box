@@ -9,6 +9,7 @@ translationloader = "2.0.2"
 
 # gradle plugins
 shadow = "7.1.2"
+aggregate-javadoc = "6.5.0.3"
 
 # platform api
 paper = "1.19.2-R0.1-SNAPSHOT"
@@ -22,11 +23,12 @@ annotations = { module = "org.jetbrains:annotations", version.ref = "annotations
 configapi-yaml = { module = "com.github.siroshun09.configapi:configapi-yaml", version.ref = "configapi" }
 event4j = { module = "com.github.siroshun09.event4j:event4j", version.ref = "event4j" }
 hikaricp = { module = "com.zaxxer:HikariCP", version.ref = "hikaricp" }
-translationloader = { module = "com.github.siroshun09.translationloader:translationloader", version.ref ="translationloader"}
+translationloader = { module = "com.github.siroshun09.translationloader:translationloader", version.ref = "translationloader" }
 
 # platform api
 paper = { module = "io.papermc.paper:paper-api", version.ref = "paper" }
 
 [plugins]
 
-shadow = {  id = "com.github.johnrengelman.shadow", version.ref = "shadow" }
+shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow" }
+aggregate-javadoc = { id = "io.freefair.aggregate-javadoc", version.ref = "aggregate-javadoc" }
