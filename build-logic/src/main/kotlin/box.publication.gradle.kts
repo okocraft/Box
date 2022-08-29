@@ -62,10 +62,11 @@ publishing {
     repositories {
         maven {
             val stagingDir = rootDir.resolve("staging")
-            if (version.toString().endsWith("-SNAPSHOT")) {
-                url = uri(stagingDir.resolve("maven-snapshot"))
+
+            url = if (release == true) { // Normally, null is never entered here.
+                uri(stagingDir.resolve("maven"))
             } else {
-                url = uri(stagingDir.resolve("maven"))
+                uri(stagingDir.resolve("maven-snapshot"))
             }
         }
     }
