@@ -3,10 +3,10 @@ plugins {
     `maven-publish`
 }
 
-val publishArtifacts = findProperty("box.publish")?.toString()?.toBoolean() ?: false
+val release = findProperty("box.release")?.toString()?.toBoolean()
 
 java {
-    if (publishArtifacts) {
+    if (release != null) { // If null, there is no need to generate Javadoc or Sources.
         withJavadocJar()
         withSourcesJar()
     }
