@@ -1,9 +1,11 @@
+import org.gradle.accessors.dm.LibrariesForLibs
+
 plugins {
     `java-library`
     `maven-publish`
 }
 
-val libs = extensions.getByType(org.gradle.accessors.dm.LibrariesForLibs::class)
+val libs = extensions.getByType(LibrariesForLibs::class)
 val release = findProperty("box.release")?.toString()?.toBoolean()
 
 java {
@@ -20,11 +22,11 @@ tasks {
         opts.encoding = Charsets.UTF_8.name()
         opts.addStringOption("Xdoclint:none", "-quiet")
         opts.links(
-            "https://jd.papermc.io/paper/${libs.versions.paper.javadoc}/",
-            "https://jd.adventure.kyori.net/api/${libs.versions.adventure}/",
-            "https://javadoc.io/doc/org.jetbrains/annotations/${libs.versions.annotations}/",
+            "https://jd.papermc.io/paper/${libs.versions.paper.javadoc.get()}/",
+            "https://jd.adventure.kyori.net/api/${libs.versions.adventure.get()}/",
+            "https://javadoc.io/doc/org.jetbrains/annotations/${libs.versions.annotations.get()}/",
             "https://siroshun09.github.io/ConfigAPI/",
-            "https://siroshun09.github.io/Event4J/${libs.versions.event4j}/",
+            "https://siroshun09.github.io/Event4J/${libs.versions.event4j.get()}/",
             "https://siroshun09.github.io/TranslationLoader/"
         )
     }
