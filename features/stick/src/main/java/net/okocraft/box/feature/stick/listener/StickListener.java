@@ -4,6 +4,7 @@ import com.github.siroshun09.configapi.api.value.ConfigValue;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.transaction.InventoryTransaction;
+import net.okocraft.box.feature.stick.integration.LWCIntegration;
 import net.okocraft.box.feature.stick.item.BoxStickItem;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -109,7 +110,13 @@ public class StickListener implements Listener {
 
         event.setCancelled(true);
 
-        if (mainHand.getType().isAir()) {
+        var deposit = mainHand.getType().isAir();
+
+        if (!LWCIntegration.canModifyInventory(player, state, deposit)) {
+            return;
+        }
+
+        if (deposit) {
             depositItemsInInventory(player, view);
         } else {
             BoxProvider.get()
