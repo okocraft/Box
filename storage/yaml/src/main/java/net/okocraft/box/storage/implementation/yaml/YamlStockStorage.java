@@ -80,7 +80,7 @@ class YamlStockStorage implements StockStorage {
                      Files.newBufferedWriter(file, StandardCharsets.UTF_8, StandardOpenOption.CREATE,
                              StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING)) {
             for (var stock : stockHolder.toStockDataCollection()) {
-                if (0 < stock.amount()) {
+                if (0 != stock.amount()) {
                     builder.append('\'')
                             .append(stock.item().getInternalId())
                             .append('\'')
