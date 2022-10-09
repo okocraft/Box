@@ -137,9 +137,11 @@ public class StockModifyCommands {
                 return;
             }
 
-            if (!allowZero && amount == 0) {
-                sender.sendMessage(GeneralMessage.ERROR_COMMAND_INVALID_NUMBER.apply(args[3]));
-                return;
+            if (amount <= 0) {
+                if (amount != 0 || !allowZero) {
+                    sender.sendMessage(GeneralMessage.ERROR_COMMAND_INVALID_NUMBER.apply(args[3]));
+                    return;
+                }
             }
 
             UserStockHolderOperator.create(args[1])
