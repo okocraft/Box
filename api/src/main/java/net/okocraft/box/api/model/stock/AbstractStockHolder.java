@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 public abstract class AbstractStockHolder implements StockHolder {
 
     public static boolean allowMinus = false;
+    private static boolean firstOverflowed = true;
 
     private static final Collector<StockData, ?, ConcurrentMap<BoxItem, AtomicInteger>> TO_MAP =
             Collectors.toConcurrentMap(StockData::item, data -> new AtomicInteger(data.amount()));
@@ -97,12 +98,20 @@ public abstract class AbstractStockHolder implements StockHolder {
      */
     @Override
     public int increase(@NotNull BoxItem item, int increment) {
-        var amount = getStock(item).addAndGet(increment);
+        var stock = getStock(item);
+        var amount = stock.addAndGet(increment);
 
         BoxProvider.get().getEventBus().callEventAsync(new StockIncreaseEvent(this, item, increment, amount));
 
         if (amount < 0) {
-            BoxProvider.get().getLogger().warning("The number of item " + item.getPlainName() + " that " + getName() + " has is probably overflowing!");
+            var logger = BoxProvider.get().getLogger();
+            int overflowed = (Integer.MIN_VALUE - amount) * -1;
+            logger.warning("The number of " + item.getPlainName() + " that " + getName() + " has is probably overflowing! Actual amount: " + ((long) Integer.MAX_VALUE + overflowed));
+
+            if (firstOverflowed) {
+                firstOverflowed = false;
+                logger.warning("If overflow occurs during normal usage, please create an issue at https://github.com/okocraft/Box/issues.");
+            }
         }
 
         return amount;
