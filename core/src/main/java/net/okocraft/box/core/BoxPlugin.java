@@ -22,6 +22,7 @@ import net.okocraft.box.api.model.data.CustomDataContainer;
 import net.okocraft.box.api.model.manager.ItemManager;
 import net.okocraft.box.api.model.manager.StockManager;
 import net.okocraft.box.api.model.manager.UserManager;
+import net.okocraft.box.api.model.stock.AbstractStockHolder;
 import net.okocraft.box.api.player.BoxPlayerMap;
 import net.okocraft.box.api.taskfactory.TaskFactory;
 import net.okocraft.box.core.command.BoxAdminCommandImpl;
@@ -137,6 +138,11 @@ public class BoxPlugin implements BoxAPI {
         if (configuration.get(Settings.DEBUG)) {
             debugListener.register();
             getLogger().info("Debug mode is ENABLED");
+        }
+
+        if (configuration.get(Settings.ALLOW_MINUS_STOCK)) {
+            AbstractStockHolder.allowMinus = true;
+            getLogger().info("Negative numbers are allowed in the stock");
         }
 
         getLogger().info("Successfully loaded!");

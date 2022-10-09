@@ -28,6 +28,8 @@ import java.util.stream.Collectors;
  */
 public abstract class AbstractStockHolder implements StockHolder {
 
+    public static boolean allowMinus = false;
+
     private static final Collector<StockData, ?, ConcurrentMap<BoxItem, AtomicInteger>> TO_MAP =
             Collectors.toConcurrentMap(StockData::item, data -> new AtomicInteger(data.amount()));
 
@@ -59,6 +61,10 @@ public abstract class AbstractStockHolder implements StockHolder {
      */
     @Override
     public void setAmount(@NotNull BoxItem item, int amount) {
+        if (amount < 0 && !allowMinus) {
+            amount = 0;
+        }
+
         var stock = getStock(item);
 
         var previous = stock.get();
@@ -96,8 +102,7 @@ public abstract class AbstractStockHolder implements StockHolder {
         BoxProvider.get().getEventBus().callEventAsync(new StockIncreaseEvent(this, item, increment, amount));
 
         if (amount < 0) {
-            BoxProvider.get().getLogger()
-                    .warning(item.getPlainName() + " is negative number: " + amount + " (" + getName() + ")");
+            BoxProvider.get().getLogger().warning("The number of item " + item.getPlainName() + " that " + getName() + " has is probably overflowing!");
         }
 
         return amount;
@@ -127,16 +132,19 @@ public abstract class AbstractStockHolder implements StockHolder {
      */
     @Override
     public int decrease(@NotNull BoxItem item, int decrement) {
-        var amount = getStock(item).addAndGet(-decrement);
+        var stock = getStock(item);
+        int decreased = stock.get() - decrement;
 
-        BoxProvider.get().getEventBus().callEventAsync(new StockDecreaseEvent(this, item, decrement, amount));
-
-        if (amount < 0) {
-            BoxProvider.get().getLogger()
-                    .warning(item.getPlainName() + " is negative number: " + amount + " (" + getName() + ")");
+        if (0 <= decreased || allowMinus) {
+            stock.set(decreased);
+        } else {
+            stock.set(0);
+            decreased = 0;
         }
 
-        return amount;
+        BoxProvider.get().getEventBus().callEventAsync(new StockDecreaseEvent(this, item, decrement, decreased));
+
+        return decreased;
     }
 
     @Override

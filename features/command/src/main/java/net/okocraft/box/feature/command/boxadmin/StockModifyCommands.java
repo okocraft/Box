@@ -23,7 +23,7 @@ import java.util.Set;
 public class StockModifyCommands {
 
     public static @NotNull Command give() {
-        return new ModifyCommand("give", Set.of("g")) {
+        return new ModifyCommand("give", Set.of("g"), false) {
 
             @Override
             int modifyStock(@NotNull StockHolder stockHolder, @NotNull BoxItem item, int amount) {
@@ -50,7 +50,7 @@ public class StockModifyCommands {
     }
 
     public static @NotNull Command set() {
-        return new ModifyCommand("set", Set.of("s")) {
+        return new ModifyCommand("set", Set.of("s"), true) {
 
             @Override
             int modifyStock(@NotNull StockHolder stockHolder, @NotNull BoxItem item, int amount) {
@@ -78,7 +78,7 @@ public class StockModifyCommands {
     }
 
     public static @NotNull Command take() {
-        return new ModifyCommand("take", Set.of("t")) {
+        return new ModifyCommand("take", Set.of("t"), false) {
 
             @Override
             int modifyStock(@NotNull StockHolder stockHolder, @NotNull BoxItem item, int amount) {
@@ -106,8 +106,11 @@ public class StockModifyCommands {
 
     private static abstract class ModifyCommand extends AbstractCommand {
 
-        private ModifyCommand(@NotNull String name, @NotNull Set<String> aliases) {
+        private final boolean allowZero;
+
+        private ModifyCommand(@NotNull String name, @NotNull Set<String> aliases, boolean allowZero) {
             super(name, "box.admin.command." + name, aliases);
+            this.allowZero = allowZero;
         }
 
         @Override
@@ -128,8 +131,13 @@ public class StockModifyCommands {
             int amount;
 
             try {
-                amount = Math.max(Integer.parseInt(args[3]), 1);
+                amount = Integer.parseInt(args[3]);
             } catch (NumberFormatException e) {
+                sender.sendMessage(GeneralMessage.ERROR_COMMAND_INVALID_NUMBER.apply(args[3]));
+                return;
+            }
+
+            if (!allowZero && amount == 0) {
                 sender.sendMessage(GeneralMessage.ERROR_COMMAND_INVALID_NUMBER.apply(args[3]));
                 return;
             }

@@ -18,6 +18,9 @@ public final class Settings {
     public static final ConfigValue<Long> STOCK_DATA_SAVE_INTERVAL =
             config -> config.getLong("stock-data-save-interval", 5);
 
+    public static final ConfigValue<Boolean> ALLOW_MINUS_STOCK =
+            config -> config.getBoolean("allow-minus-stock", false);
+
     private Settings() {
         throw new UnsupportedOperationException();
     }
