@@ -31,7 +31,7 @@ public class CustomDataTable extends AbstractTable implements CustomDataStorage 
         var options = new DumperOptions();
         options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
 
-        var representer = new Representer();
+        var representer = new Representer(options);
         representer.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
 
         YAML_SUPPLIER = () -> new Yaml(representer, options);
