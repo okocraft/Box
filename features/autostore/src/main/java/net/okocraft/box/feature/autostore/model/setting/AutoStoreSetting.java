@@ -69,7 +69,7 @@ public class AutoStoreSetting {
     @Override
     public String toString() {
         return "AutoStoreSetting{" +
-                ", uuid=" + uuid +
+                "uuid=" + uuid +
                 ", enabled=" + enabled +
                 ", allMode=" + allMode +
                 ", direct=" + direct +
