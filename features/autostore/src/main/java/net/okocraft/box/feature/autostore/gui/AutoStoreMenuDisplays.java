@@ -11,10 +11,10 @@ import static net.okocraft.box.feature.gui.api.lang.Styles.NO_DECORATION_GRAY;
 
 public class AutoStoreMenuDisplays {
 
-    static final Component AUTOSTORE_MODE_DISPLAY_NAME =
+    public static final Component AUTOSTORE_MODE_DISPLAY_NAME =
             translatable("box.autostore.gui.mode.display-name");
 
-    static final SingleArgument<Boolean> AUTOSTORE_MODE_LORE =
+    public static final SingleArgument<Boolean> AUTOSTORE_MODE_LORE =
             enabled ->
                     translatable()
                             .key("box.autostore.gui.mode.lore")
@@ -22,21 +22,21 @@ public class AutoStoreMenuDisplays {
                             .style(NO_DECORATION_GRAY)
                             .build();
 
-    static final Component AUTOSTORE_MODE_SETTING_MENU_TITLE = blackTranslatable("box.autostore.gui.setting-menu.title");
+    public static final Component AUTOSTORE_MODE_SETTING_MENU_TITLE = blackTranslatable("box.autostore.gui.setting-menu.title");
 
-    static final Component AUTOSTORE_MODE_SETTING_MENU_CHANGE_MODE =
+    public static final Component AUTOSTORE_MODE_SETTING_MENU_CHANGE_MODE =
             translatable("box.autostore.gui.setting-menu.change-mode.display-name", NO_DECORATION_GOLD);
 
-    static final Component AUTOSTORE_MODE_SETTING_MENU_CHANGE_TO_ALL =
+    public static final Component AUTOSTORE_MODE_SETTING_MENU_CHANGE_TO_ALL =
             translatable("box.autostore.gui.setting-menu.change-mode.all", NO_DECORATION_GRAY);
 
-    static final Component AUTOSTORE_MODE_SETTING_MENU_CHANGE_TO_PER_ITEM =
+    public static final Component AUTOSTORE_MODE_SETTING_MENU_CHANGE_TO_PER_ITEM =
             translatable("box.autostore.gui.setting-menu.change-mode.item", NO_DECORATION_GRAY);
 
-    static final Component AUTOSTORE_MODE_SETTING_MENU_BULK_EDITING_TITLE =
+    public static final Component AUTOSTORE_MODE_SETTING_MENU_BULK_EDITING_TITLE =
             translatable("box.autostore.gui.setting-menu.bulk-editing.title", NO_DECORATION_GOLD);
 
-    static final SingleArgument<Boolean> AUTOSTORE_MODE_SETTING_MENU_BULK_EDITING_CLICK =
+    public static final SingleArgument<Boolean> AUTOSTORE_MODE_SETTING_MENU_BULK_EDITING_CLICK =
             enabled ->
                     translatable()
                             .key("box.autostore.gui.setting-menu.bulk-editing.click")
@@ -44,7 +44,7 @@ public class AutoStoreMenuDisplays {
                             .style(NO_DECORATION_GRAY)
                             .build();
 
-    static final SingleArgument<Boolean> AUTOSTORE_MODE_SETTING_MENU_BULK_EDITING_DOUBLE_CLICK =
+    public static final SingleArgument<Boolean> AUTOSTORE_MODE_SETTING_MENU_BULK_EDITING_DOUBLE_CLICK =
             enabled ->
                     translatable()
                             .key("box.autostore.gui.setting-menu.bulk-editing.double-click")
@@ -52,7 +52,7 @@ public class AutoStoreMenuDisplays {
                             .style(NO_DECORATION_GRAY)
                             .build();
 
-    static final SingleArgument<Boolean> AUTOSTORE_MODE_SETTING_MENU_BULK_EDITING_RECENT =
+    public static final SingleArgument<Boolean> AUTOSTORE_MODE_SETTING_MENU_BULK_EDITING_RECENT =
             enabled ->
                     translatable()
                             .key("box.autostore.gui.setting-menu.bulk-editing.recent")
@@ -60,7 +60,7 @@ public class AutoStoreMenuDisplays {
                             .style(NO_DECORATION_GRAY)
                             .build();
 
-    static final SingleArgument<Boolean> AUTOSTORE_MODE_SETTING_MENU_TOGGLE_BUTTON =
+    public static final SingleArgument<Boolean> AUTOSTORE_MODE_SETTING_MENU_TOGGLE_BUTTON =
             enabled ->
                     translatable()
                             .key("box.autostore.gui.setting-menu.toggle-button")
@@ -68,10 +68,10 @@ public class AutoStoreMenuDisplays {
                             .style(NO_DECORATION_GRAY)
                             .build();
 
-    static final Component AUTOSTORE_MODE_SETTING_MENU_TOGGLE_DIRECT =
+    public static final Component AUTOSTORE_MODE_SETTING_MENU_TOGGLE_DIRECT =
             translatable("box.autostore.gui.setting-menu.toggle-direct.display-name", NO_DECORATION_GOLD);
 
-    static final SingleArgument<Boolean> AUTOSTORE_MODE_SETTING_MENU_TOGGLE_DIRECT_LORE =
+    public static final SingleArgument<Boolean> AUTOSTORE_MODE_SETTING_MENU_TOGGLE_DIRECT_LORE =
             enabled ->
                     translatable()
                             .key("box.autostore.gui.setting-menu.toggle-direct.lore")
