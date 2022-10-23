@@ -162,6 +162,7 @@ public class AutoStoreSettingMenu extends AbstractMenu {
             }
 
             clicker.playSound(clicker.getLocation(), Sound.BLOCK_COMPARATOR_CLICK, 100f, 1.5f);
+            callAutoStoreSettingChangeEvent();
         }
     }
 
