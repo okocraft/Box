@@ -67,4 +67,15 @@ public class AutoStoreMenuDisplays {
                             .args(AutoStoreMessage.ENABLED_OR_DISABLED.apply(enabled))
                             .style(NO_DECORATION_GRAY)
                             .build();
+
+    static final Component AUTOSTORE_MODE_SETTING_MENU_TOGGLE_DIRECT =
+            translatable("box.autostore.gui.setting-menu.toggle-direct.display-name", NO_DECORATION_GOLD);
+
+    static final SingleArgument<Boolean> AUTOSTORE_MODE_SETTING_MENU_TOGGLE_DIRECT_LORE =
+            enabled ->
+                    translatable()
+                            .key("box.autostore.gui.setting-menu.toggle-direct.lore")
+                            .args(AutoStoreMessage.ENABLED_OR_DISABLED.apply(enabled))
+                            .style(NO_DECORATION_GRAY)
+                            .build();
 }

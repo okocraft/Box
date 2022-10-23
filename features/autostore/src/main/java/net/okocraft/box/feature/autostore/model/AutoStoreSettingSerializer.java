@@ -18,6 +18,7 @@ class AutoStoreSettingSerializer {
 
         config.set("enable", setting.isEnabled());
         config.set("all-mode", setting.isAllMode());
+        config.set("direct", setting.isDirect());
         config.set(
                 "enabled-items",
                 setting.getPerItemModeSetting()
@@ -36,6 +37,7 @@ class AutoStoreSettingSerializer {
 
         setting.setEnabled(config.getBoolean("enable"));
         setting.setAllMode(config.getBoolean("all-mode"));
+        setting.setDirect(config.getBoolean("direct"));
 
         setting.getPerItemModeSetting().setEnabledItems(
                 config.getIntegerList("enabled-items")

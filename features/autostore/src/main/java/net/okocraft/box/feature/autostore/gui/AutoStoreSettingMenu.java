@@ -1,5 +1,6 @@
 package net.okocraft.box.feature.autostore.gui;
 
+import java.util.stream.Stream;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.okocraft.box.api.BoxProvider;
@@ -32,12 +33,14 @@ public class AutoStoreSettingMenu extends AbstractMenu {
     private final ToggleButton toggleButton;
     private final BulkEditingButton bulkEditingButton;
     private final BackButton backButton;
+    private final AutoStoreDirectButton dirrectButton;
 
     AutoStoreSettingMenu(@NotNull AutoStoreSetting setting, @NotNull Menu backTo) {
         this.setting = setting;
         this.modeButton = new AutoStoreModeButton();
         this.toggleButton = new ToggleButton();
         this.bulkEditingButton = new BulkEditingButton();
+        this.dirrectButton = new AutoStoreDirectButton();
         this.backButton = new BackButton(backTo, 22);
     }
 
@@ -58,9 +61,7 @@ public class AutoStoreSettingMenu extends AbstractMenu {
 
     @Override
     public void updateMenu(@NotNull Player viewer) {
-        var buttons = List.of(modeButton, toggleButton, bulkEditingButton, backButton);
-
-        buttons.stream()
+        Stream.of(modeButton, toggleButton, bulkEditingButton, dirrectButton, backButton)
                 .map(RenderedButton::create)
                 .peek(button -> button.updateIcon(viewer))
                 .forEach(this::addButton);
@@ -103,7 +104,7 @@ public class AutoStoreSettingMenu extends AbstractMenu {
 
         @Override
         public int getSlot() {
-            return 11;
+            return 10;
         }
 
         @Override
@@ -111,6 +112,52 @@ public class AutoStoreSettingMenu extends AbstractMenu {
             setting.setAllMode(!setting.isAllMode());
 
             if (!setting.isEnabled()) {
+                setting.setEnabled(true);
+            }
+
+            clicker.playSound(clicker.getLocation(), Sound.BLOCK_COMPARATOR_CLICK, 100f, 1.5f);
+            callAutoStoreSettingChangeEvent();
+        }
+    }
+
+    private class AutoStoreDirectButton implements RefreshableButton {
+
+        private AutoStoreDirectButton() {
+        }
+
+        @Override
+        public @NotNull Material getIconMaterial() {
+            return Material.HOPPER;
+        }
+
+        @Override
+        public int getIconAmount() {
+            return 1;
+        }
+
+        @Override
+        public @Nullable ItemMeta applyIconMeta(@NotNull Player viewer, @NotNull ItemMeta target) {
+            target.displayName(TranslationUtil.render(AutoStoreMenuDisplays.AUTOSTORE_MODE_SETTING_MENU_TOGGLE_DIRECT, viewer));
+
+            var lore = AutoStoreMenuDisplays.AUTOSTORE_MODE_SETTING_MENU_TOGGLE_DIRECT_LORE.apply(!setting.isDirect());
+
+            lore = TranslationUtil.render(lore, viewer);
+
+            target.lore(List.of(Component.empty(), lore, Component.empty()));
+
+            return target;
+        }
+
+        @Override
+        public int getSlot() {
+            return 15;
+        }
+
+        @Override
+        public void onClick(@NotNull Player clicker, @NotNull ClickType clickType) {
+            setting.setDirect(!setting.isDirect());
+
+            if (setting.isDirect() && !setting.isEnabled()) {
                 setting.setEnabled(true);
             }
 
@@ -210,7 +257,7 @@ public class AutoStoreSettingMenu extends AbstractMenu {
 
         @Override
         public int getSlot() {
-            return 15;
+            return 11;
         }
 
         @Override

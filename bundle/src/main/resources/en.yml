@@ -20,7 +20,11 @@ box:
         item:
           command-line: "/box autostore item <item> [on/off]"
           description: "Changes the auto-store setting of the item"
+        direct:
+          command-line: "/box autostore direct [on/off]"
+          description: "Switches auto-store setting to store drops from block-breaking directly."
       autostore-toggled: "Auto-store is now {0}."
+      autostore-direct-toggled: "Direct-auto-store is now {0}."
       mode-changed: "Auto-store mode is now {0}."
       item:
         all-toggled: "Set the auto-store setting of all items to {0}."
@@ -43,6 +47,9 @@ box:
           click: "Click to toggle all items to {0}"
           double-click: "Double click to toggle all items to {0}"
           recent: "Recent bulk change operation: {0}"
+        toggle-direct:
+          display-name: "Change setting of auto-store direct"
+          lore: "Click to change auto-store direct to {0}"
   bemode:
     current-stock: "Current stock: {0}"
     storage-withdraw-mode:

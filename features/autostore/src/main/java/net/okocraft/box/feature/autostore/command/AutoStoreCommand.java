@@ -61,6 +61,24 @@ public class AutoStoreCommand extends AbstractCommand {
             return;
         }
 
+        if (isDirect(args[1])) {
+            var value = !setting.isDirect();
+            if (args.length > 2) {
+                var bool = getBoolean(args[2]);
+                if (bool != null) {
+                    value = bool;
+                }
+            }
+            player.sendMessage(AutoStoreMessage.COMMAND_AUTOSTORE_DIRECT_TOGGLED.apply(value));
+
+            if ((value && enableAutoStore(setting, player)) || value != setting.isDirect()) {
+                setting.setDirect(value);
+                callEvent(setting);
+            }
+
+            return;
+        }
+
         if (isAll(args[1])) {
             player.sendMessage(AutoStoreMessage.COMMAND_MODE_CHANGED.apply(true));
 
@@ -156,43 +174,49 @@ public class AutoStoreCommand extends AbstractCommand {
 
     @Override
     public @NotNull List<String> onTabComplete(@NotNull CommandSender sender, @NotNull String[] args) {
-        if (!(sender instanceof Player)) {
+        if (!(sender instanceof Player) || args.length < 2) {
             return Collections.emptyList();
         }
 
         if (args.length == 2) {
-            return Stream.of("all", "item", "on", "off")
+            return Stream.of("all", "item", "on", "off", "direct")
                     .filter(mode -> mode.startsWith(args[1].toLowerCase(Locale.ROOT)))
                     .collect(Collectors.toList());
         }
 
-        if (!isPerItem(args[1])) {
-            return Collections.emptyList();
+        if (isDirect(args[1])) {
+            if (args.length == 3) {
+                return Stream.of("on", "off")
+                        .filter(bool -> bool.startsWith(args[2].toLowerCase(Locale.ROOT)))
+                        .collect(Collectors.toList());
+            }
         }
 
-        if (args.length == 3) {
-            var itemNameFilter = args[2].toUpperCase(Locale.ROOT);
+        if (isPerItem(args[1])) {
+            if (args.length == 3) {
+                var itemNameFilter = args[2].toUpperCase(Locale.ROOT);
 
-            var result =
-                    BoxProvider.get()
-                            .getItemManager()
-                            .getItemNameSet()
-                            .stream()
-                            .filter(itemName -> itemName.startsWith(itemNameFilter))
-                            .sorted()
-                            .collect(Collectors.toList());
+                var result =
+                        BoxProvider.get()
+                                .getItemManager()
+                                .getItemNameSet()
+                                .stream()
+                                .filter(itemName -> itemName.startsWith(itemNameFilter))
+                                .sorted()
+                                .collect(Collectors.toList());
 
-            if ("all".startsWith(args[2].toLowerCase(Locale.ROOT))) {
-                result.add("all");
+                if ("all".startsWith(args[2].toLowerCase(Locale.ROOT))) {
+                    result.add("all");
+                }
+
+                return result;
             }
 
-            return result;
-        }
-
-        if (args.length == 4) {
-            return Stream.of("on", "off")
-                    .filter(bool -> bool.startsWith(args[3].toLowerCase(Locale.ROOT)))
-                    .collect(Collectors.toList());
+            if (args.length == 4) {
+                return Stream.of("on", "off")
+                        .filter(bool -> bool.startsWith(args[3].toLowerCase(Locale.ROOT)))
+                        .collect(Collectors.toList());
+            }
         }
 
         return Collections.emptyList();
@@ -204,6 +228,10 @@ public class AutoStoreCommand extends AbstractCommand {
 
     private boolean isPerItem(@NotNull String arg) {
         return !arg.isEmpty() && arg.length() < 5 && (arg.charAt(0) == 'i' || arg.charAt(0) == 'I');
+    }
+
+    private boolean isDirect(String arg) {
+        return !arg.isEmpty() && arg.length() < 7 && (arg.charAt(0) == 'd' || arg.charAt(0) == 'D');
     }
 
     private void callEvent(@NotNull AutoStoreSetting setting) {
@@ -232,7 +260,8 @@ public class AutoStoreCommand extends AbstractCommand {
         return Component.text()
                 .append(AutoStoreMessage.COMMAND_HELP_1).append(Component.newline())
                 .append(AutoStoreMessage.COMMAND_HELP_2).append(Component.newline())
-                .append(AutoStoreMessage.COMMAND_HELP_3)
+                .append(AutoStoreMessage.COMMAND_HELP_3).append(Component.newline())
+                .append(AutoStoreMessage.COMMAND_HELP_4)
                 .build();
     }
 }

@@ -34,6 +34,9 @@ public final class AutoStoreMessage {
     public static final SingleArgument<Boolean> COMMAND_AUTOSTORE_TOGGLED =
             enabled -> grayTranslatable("box.autostore.command.autostore-toggled", ENABLED_OR_DISABLED.apply(enabled));
 
+    public static final SingleArgument<Boolean> COMMAND_AUTOSTORE_DIRECT_TOGGLED =
+            enabled -> grayTranslatable("box.autostore.command.autostore-direct-toggled", ENABLED_OR_DISABLED.apply(enabled));
+
     public static final SingleArgument<Boolean> COMMAND_MODE_CHANGED =
             allMode -> grayTranslatable(
                     "box.autostore.command.mode-changed",
@@ -60,4 +63,6 @@ public final class AutoStoreMessage {
     public static final Component COMMAND_HELP_2 = commandHelp("box.autostore.command.help.all", false);
 
     public static final Component COMMAND_HELP_3 = commandHelp("box.autostore.command.help.item", false);
+
+    public static final Component COMMAND_HELP_4 = commandHelp("box.autostore.command.help.direct", false);
 }

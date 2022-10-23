@@ -1,15 +1,21 @@
 package net.okocraft.box.feature.autostore.listener;
 
+import io.papermc.paper.event.block.PlayerShearBlockEvent;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.feature.autostore.model.AutoStoreSettingContainer;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
+import org.bukkit.entity.Boss;
+import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockDropItemEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
+import org.bukkit.event.player.PlayerHarvestBlockEvent;
 import org.bukkit.event.player.PlayerPickupArrowEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -31,21 +37,59 @@ public class ItemListener implements Listener {
             return;
         }
 
-        if (processEvent(player, event.getItem().getItemStack())) {
+        if (processEvent(player, event.getItem().getItemStack(), false)) {
             event.setCancelled(true);
             event.getItem().remove();
         }
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onBlockDropItem(@NotNull BlockDropItemEvent event) {
+        event.getItems().removeIf(item -> processEvent(event.getPlayer(), item.getItemStack(), true));
+    }
+
+    /**
+     * For killing entities.
+     *
+     * @param event fired on players harvest berries.
+     */
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onEntityDeath(@NotNull EntityDeathEvent event) {
+        var killed = event.getEntity();
+        if (killed instanceof Mob && !(killed instanceof Boss) && killed.getKiller() != null) {
+            event.getDrops().removeIf(item -> processEvent(killed.getKiller(), item, true));
+        }
+    }
+
+    /**
+     * For glow berries and sweet berries.
+     *
+     * @param event fired on players harvest berries.
+     */
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onHarvestBlock(@NotNull PlayerHarvestBlockEvent event) {
+        event.getItemsHarvested().removeIf(item -> processEvent(event.getPlayer(), item, true));
+    }
+
+    /**
+     * For pumpkin seed and honeycomb.
+     *
+     * @param event fired on players shear pumpkins or honeycombs.
+     */
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onShearBlock(@NotNull PlayerShearBlockEvent event) {
+        event.getDrops().removeIf(item -> processEvent(event.getPlayer(), item, true));
+    }
+
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onArrowPickup(@NotNull PlayerPickupArrowEvent event) {
-        if (processEvent(event.getPlayer(), event.getArrow().getItemStack())) {
+        if (processEvent(event.getPlayer(), event.getArrow().getItemStack(), false)) {
             event.setCancelled(true);
             event.getArrow().remove();
         }
     }
 
-    private boolean processEvent(@NotNull Player player, @NotNull ItemStack item) {
+    private boolean processEvent(@NotNull Player player, @NotNull ItemStack item, boolean direct) {
         if (BoxProvider.get().isDisabledWorld(player)) {
             return false;
         }
@@ -63,6 +107,10 @@ public class ItemListener implements Listener {
             return false;
         }
 
+        if (direct && !setting.isDirect()) {
+            return false;
+        }
+
         var boxItem = BoxProvider.get().getItemManager().getBoxItem(item);
 
         if (boxItem.isEmpty()) {
@@ -71,7 +119,9 @@ public class ItemListener implements Listener {
 
         if (setting.shouldAutoStore(boxItem.get())) {
             playerMap.get(player).getCurrentStockHolder().increase(boxItem.get(), item.getAmount());
-            player.playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, 0.2f, (float) Math.random() + 1.0f);
+            if (!direct) {
+                player.playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, 0.2f, (float) Math.random() + 1.0f);
+            }
             return true;
         } else {
             return false;
