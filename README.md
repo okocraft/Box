@@ -43,6 +43,17 @@ Box には以下のような特徴があります。
 
 が生成されます。起動後、何も設定しなくても使い始めることができます。
 
+## Compiling from source
+
+```
+git clone https://github.com/okocraft/Box.git
+cd Box/
+./gradlew build
+```
+
+You can find the bundled jar in the `bundle/build/libs` directory.
+
+
 ## API
 
 ### Javadocs
