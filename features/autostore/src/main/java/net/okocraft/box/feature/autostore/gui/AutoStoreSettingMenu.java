@@ -3,6 +3,7 @@ package net.okocraft.box.feature.autostore.gui;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.feature.autostore.event.AutoStoreSettingChangeEvent;
 import net.okocraft.box.feature.autostore.message.AutoStoreMessage;
 import net.okocraft.box.feature.autostore.model.setting.AutoStoreSetting;
 import net.okocraft.box.feature.gui.api.button.RefreshableButton;
@@ -65,6 +66,10 @@ public class AutoStoreSettingMenu extends AbstractMenu {
                 .forEach(this::addButton);
     }
 
+    private void callAutoStoreSettingChangeEvent() {
+        BoxProvider.get().getEventBus().callEventAsync(new AutoStoreSettingChangeEvent(setting));
+    }
+
     private class AutoStoreModeButton implements RefreshableButton {
 
         private AutoStoreModeButton() {
@@ -110,6 +115,7 @@ public class AutoStoreSettingMenu extends AbstractMenu {
             }
 
             clicker.playSound(clicker.getLocation(), Sound.BLOCK_COMPARATOR_CLICK, 100f, 1.5f);
+            callAutoStoreSettingChangeEvent();
         }
     }
 
@@ -156,6 +162,7 @@ public class AutoStoreSettingMenu extends AbstractMenu {
         public void onClick(@NotNull Player clicker, @NotNull ClickType clickType) {
             setting.setEnabled(!setting.isEnabled());
             clicker.playSound(clicker.getLocation(), Sound.BLOCK_COMPARATOR_CLICK, 100f, 1.5f);
+            callAutoStoreSettingChangeEvent();
         }
     }
 
@@ -230,6 +237,7 @@ public class AutoStoreSettingMenu extends AbstractMenu {
             }
 
             clicker.playSound(clicker.getLocation(), sound, 100f, 1.5f);
+            callAutoStoreSettingChangeEvent();
         }
     }
 }
