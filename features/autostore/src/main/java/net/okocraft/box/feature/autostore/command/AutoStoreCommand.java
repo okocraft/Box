@@ -70,8 +70,12 @@ public class AutoStoreCommand extends AbstractCommand {
                 }
             }
             player.sendMessage(AutoStoreMessage.COMMAND_AUTOSTORE_DIRECT_TOGGLED.apply(value));
-            setting.setDirect(value);
-            callEvent(setting);
+
+            if ((value && enableAutoStore(setting, player)) || value != setting.isDirect()) {
+                setting.setDirect(value);
+                callEvent(setting);
+            }
+
             return;
         }
 
