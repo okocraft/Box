@@ -12,6 +12,11 @@ dependencies {
         .forEach { project -> implementation(project) }
 }
 
+tasks.named("build") {
+    dependsOn(tasks.named("shadowJar"))
+}
+
+
 tasks.named<Copy>("processResources") {
     filesMatching(listOf("plugin.yml", "en.yml", "ja_JP.yml")) {
         expand("projectVersion" to project.version)
