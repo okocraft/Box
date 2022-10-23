@@ -11,6 +11,7 @@ public class AutoStoreSetting {
     private final PerItemSetting perItemSetting = new PerItemSetting();
     private boolean enabled = false;
     private boolean allMode = true;
+    private boolean direct = false;
 
     public AutoStoreSetting(@NotNull UUID uuid) {
         this.uuid = uuid;
@@ -40,6 +41,14 @@ public class AutoStoreSetting {
         this.allMode = allMode;
     }
 
+    public boolean isDirect() {
+        return this.direct;
+    }
+
+    public void setDirect(boolean direct) {
+        this.direct = direct;
+    }
+
     public boolean shouldAutoStore(@NotNull BoxItem item) {
         return allMode || perItemSetting.isEnabled(item);
     }
@@ -63,6 +72,7 @@ public class AutoStoreSetting {
                 ", uuid=" + uuid +
                 ", enabled=" + enabled +
                 ", allMode=" + allMode +
+                ", direct=" + direct +
                 ", perItemModeSetting=" + perItemSetting +
                 '}';
     }

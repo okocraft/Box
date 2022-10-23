@@ -61,6 +61,20 @@ public class AutoStoreCommand extends AbstractCommand {
             return;
         }
 
+        if (isDirect(args[1])) {
+            var value = !setting.isDirect();
+            if (args.length > 2) {
+                var bool = getBoolean(args[2]);
+                if (bool != null) {
+                    value = bool;
+                }
+            }
+            player.sendMessage(AutoStoreMessage.COMMAND_AUTOSTORE_DIRECT_TOGGLED.apply(value));
+            setting.setDirect(value);
+            callEvent(setting);
+            return;
+        }
+
         if (isAll(args[1])) {
             player.sendMessage(AutoStoreMessage.COMMAND_MODE_CHANGED.apply(true));
 
@@ -161,7 +175,7 @@ public class AutoStoreCommand extends AbstractCommand {
         }
 
         if (args.length == 2) {
-            return Stream.of("all", "item", "on", "off")
+            return Stream.of("all", "item", "on", "off", "direct")
                     .filter(mode -> mode.startsWith(args[1].toLowerCase(Locale.ROOT)))
                     .collect(Collectors.toList());
         }
@@ -206,6 +220,10 @@ public class AutoStoreCommand extends AbstractCommand {
         return !arg.isEmpty() && arg.length() < 5 && (arg.charAt(0) == 'i' || arg.charAt(0) == 'I');
     }
 
+    private boolean isDirect(String arg) {
+        return !arg.isEmpty() && arg.length() < 7 && (arg.charAt(0) == 'd' || arg.charAt(0) == 'D');
+    }
+
     private void callEvent(@NotNull AutoStoreSetting setting) {
         BoxProvider.get().getEventBus().callEventAsync(new AutoStoreSettingChangeEvent(setting));
     }
@@ -232,7 +250,8 @@ public class AutoStoreCommand extends AbstractCommand {
         return Component.text()
                 .append(AutoStoreMessage.COMMAND_HELP_1).append(Component.newline())
                 .append(AutoStoreMessage.COMMAND_HELP_2).append(Component.newline())
-                .append(AutoStoreMessage.COMMAND_HELP_3)
+                .append(AutoStoreMessage.COMMAND_HELP_3).append(Component.newline())
+                .append(AutoStoreMessage.COMMAND_HELP_4)
                 .build();
     }
 }

@@ -9,6 +9,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.player.PlayerPickupArrowEvent;
 import org.bukkit.inventory.ItemStack;
@@ -31,21 +32,26 @@ public class ItemListener implements Listener {
             return;
         }
 
-        if (processEvent(player, event.getItem().getItemStack())) {
+        if (processEvent(player, event.getItem().getItemStack(), false)) {
             event.setCancelled(true);
             event.getItem().remove();
         }
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onBlockDropItem(@NotNull BlockDropItemEvent event) {
+        event.getItems().removeIf(item -> processEvent(event.getPlayer(), item.getItemStack(), true));
+    }
+
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onArrowPickup(@NotNull PlayerPickupArrowEvent event) {
-        if (processEvent(event.getPlayer(), event.getArrow().getItemStack())) {
+        if (processEvent(event.getPlayer(), event.getArrow().getItemStack(), false)) {
             event.setCancelled(true);
             event.getArrow().remove();
         }
     }
 
-    private boolean processEvent(@NotNull Player player, @NotNull ItemStack item) {
+    private boolean processEvent(@NotNull Player player, @NotNull ItemStack item, boolean direct) {
         if (BoxProvider.get().isDisabledWorld(player)) {
             return false;
         }
@@ -63,6 +69,10 @@ public class ItemListener implements Listener {
             return false;
         }
 
+        if (direct && !setting.isDirect()) {
+            return false;
+        }
+
         var boxItem = BoxProvider.get().getItemManager().getBoxItem(item);
 
         if (boxItem.isEmpty()) {
@@ -71,7 +81,9 @@ public class ItemListener implements Listener {
 
         if (setting.shouldAutoStore(boxItem.get())) {
             playerMap.get(player).getCurrentStockHolder().increase(boxItem.get(), item.getAmount());
-            player.playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, 0.2f, (float) Math.random() + 1.0f);
+            if (!direct) {
+                player.playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, 0.2f, (float) Math.random() + 1.0f);
+            }
             return true;
         } else {
             return false;
