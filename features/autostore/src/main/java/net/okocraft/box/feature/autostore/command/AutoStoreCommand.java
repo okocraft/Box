@@ -174,7 +174,7 @@ public class AutoStoreCommand extends AbstractCommand {
 
     @Override
     public @NotNull List<String> onTabComplete(@NotNull CommandSender sender, @NotNull String[] args) {
-        if (!(sender instanceof Player)) {
+        if (!(sender instanceof Player) || args.length < 2) {
             return Collections.emptyList();
         }
 
@@ -184,33 +184,39 @@ public class AutoStoreCommand extends AbstractCommand {
                     .collect(Collectors.toList());
         }
 
-        if (!isPerItem(args[1])) {
-            return Collections.emptyList();
+        if (isDirect(args[1])) {
+            if (args.length == 3) {
+                return Stream.of("on", "off")
+                        .filter(bool -> bool.startsWith(args[2].toLowerCase(Locale.ROOT)))
+                        .collect(Collectors.toList());
+            }
         }
 
-        if (args.length == 3) {
-            var itemNameFilter = args[2].toUpperCase(Locale.ROOT);
+        if (isPerItem(args[1])) {
+            if (args.length == 3) {
+                var itemNameFilter = args[2].toUpperCase(Locale.ROOT);
 
-            var result =
-                    BoxProvider.get()
-                            .getItemManager()
-                            .getItemNameSet()
-                            .stream()
-                            .filter(itemName -> itemName.startsWith(itemNameFilter))
-                            .sorted()
-                            .collect(Collectors.toList());
+                var result =
+                        BoxProvider.get()
+                                .getItemManager()
+                                .getItemNameSet()
+                                .stream()
+                                .filter(itemName -> itemName.startsWith(itemNameFilter))
+                                .sorted()
+                                .collect(Collectors.toList());
 
-            if ("all".startsWith(args[2].toLowerCase(Locale.ROOT))) {
-                result.add("all");
+                if ("all".startsWith(args[2].toLowerCase(Locale.ROOT))) {
+                    result.add("all");
+                }
+
+                return result;
             }
 
-            return result;
-        }
-
-        if (args.length == 4) {
-            return Stream.of("on", "off")
-                    .filter(bool -> bool.startsWith(args[3].toLowerCase(Locale.ROOT)))
-                    .collect(Collectors.toList());
+            if (args.length == 4) {
+                return Stream.of("on", "off")
+                        .filter(bool -> bool.startsWith(args[3].toLowerCase(Locale.ROOT)))
+                        .collect(Collectors.toList());
+            }
         }
 
         return Collections.emptyList();
