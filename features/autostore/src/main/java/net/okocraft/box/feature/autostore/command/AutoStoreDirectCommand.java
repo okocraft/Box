@@ -18,17 +18,24 @@ public class AutoStoreDirectCommand extends AutoStoreSubCommand {
 
     @Override
     public void runCommand(@NotNull CommandSender sender, @NotNull String[] args, @NotNull AutoStoreSetting setting) {
-        var value = !setting.isDirect();
-        if (args.length > 2) {
+        boolean result;
+
+        if (2 < args.length) {
             var bool = AutoStoreCommandUtil.getBoolean(args[2]);
             if (bool != null) {
-                value = bool;
+                result = bool;
+            } else {
+                sender.sendMessage(AutoStoreMessage.COMMAND_NOT_BOOLEAN.apply(args[2]));
+                return;
             }
+        } else {
+            result = !setting.isDirect();
         }
-        sender.sendMessage(AutoStoreMessage.COMMAND_AUTOSTORE_DIRECT_TOGGLED.apply(value));
 
-        if ((value && AutoStoreCommandUtil.enableAutoStore(setting, sender)) || value != setting.isDirect()) {
-            setting.setDirect(value);
+        sender.sendMessage(AutoStoreMessage.COMMAND_AUTOSTORE_DIRECT_TOGGLED.apply(result));
+
+        if ((result && AutoStoreCommandUtil.enableAutoStore(setting, sender)) || result != setting.isDirect()) {
+            setting.setDirect(result);
             AutoStoreCommandUtil.callEvent(setting);
         }
     }

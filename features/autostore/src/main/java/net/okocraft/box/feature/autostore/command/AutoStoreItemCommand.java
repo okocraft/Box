@@ -60,18 +60,26 @@ public class AutoStoreItemCommand extends AutoStoreSubCommand {
         }
 
         var boxItem = optionalBoxItem.get();
-        Boolean bool = 3 < args.length ? AutoStoreCommandUtil.getBoolean(args[3]) : null;
+        boolean result;
+
+        if (3 < args.length) {
+            var temp = AutoStoreCommandUtil.getBoolean(args[3]);
+
+            if (temp == null) {
+                sender.sendMessage(AutoStoreMessage.COMMAND_NOT_BOOLEAN.apply(args[3]));
+                return;
+            }
+
+            perItemModeSetting.setEnabled(boxItem, temp);
+            result = temp;
+        } else {
+            result = perItemModeSetting.toggleEnabled(boxItem);
+        }
 
         AutoStoreCommandUtil.enableAutoStore(setting, sender);
         changeToPerItemMode(setting, sender);
 
-        if (bool != null) {
-            perItemModeSetting.setEnabled(boxItem, bool);
-        } else {
-            bool = perItemModeSetting.toggleEnabled(boxItem);
-        }
-
-        sender.sendMessage(AutoStoreMessage.COMMAND_PER_ITEM_ITEM_TOGGLED.apply(boxItem, bool));
+        sender.sendMessage(AutoStoreMessage.COMMAND_PER_ITEM_ITEM_TOGGLED.apply(boxItem, result));
         AutoStoreCommandUtil.callEvent(setting);
     }
 
