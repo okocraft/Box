@@ -3,7 +3,10 @@ package net.okocraft.box.feature.autostore.command;
 import java.util.Optional;
 import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.command.AbstractCommand;
+import net.okocraft.box.api.message.GeneralMessage;
 import net.okocraft.box.feature.autostore.message.AutoStoreMessage;
+import net.okocraft.box.feature.autostore.model.AutoStoreSettingContainer;
+import net.okocraft.box.feature.autostore.model.setting.AutoStoreSetting;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -31,10 +34,17 @@ public class AutoStoreCommand extends AbstractCommand {
             return;
         }
 
-        var setting = AutoStoreCommandUtil.getSettingOrSendError(sender);
-        if (setting == null) {
+        if (!(sender instanceof Player player)) {
+            sender.sendMessage(GeneralMessage.ERROR_COMMAND_ONLY_PLAYER);
             return;
         }
+        var container = AutoStoreSettingContainer.INSTANCE;
+        if (!container.isLoaded(player)) {
+            player.sendMessage(AutoStoreMessage.ERROR_FAILED_TO_LOAD_SETTINGS);
+            return;
+        }
+
+        var setting = container.get(player);
 
         // process autostore toggle
         if (args.length == 1) {
