@@ -60,7 +60,7 @@ public class AutoStoreCommand extends AbstractCommand {
 
         matchSubCommand(args[1]).ifPresentOrElse(
                 subCommand -> subCommand.runCommand(sender, args, setting),
-                () -> sender.sendMessage(AutoStoreMessage.COMMAND_MODE_NOT_FOUND.apply(args[1]))
+                () -> sender.sendMessage(AutoStoreMessage.COMMAND_SUB_COMMAND_NOT_FOUND.apply(args[1]))
         );
     }
 

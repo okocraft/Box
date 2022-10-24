@@ -52,8 +52,8 @@ public final class AutoStoreMessage {
                     aquaItemName(item), ENABLED_OR_DISABLED.apply(enabled)
             );
 
-    public static final SingleArgument<String> COMMAND_MODE_NOT_FOUND =
-            mode -> redTranslatable("box.autostore.command.mode-not-found", aquaText(mode));
+    public static final SingleArgument<String> COMMAND_SUB_COMMAND_NOT_FOUND =
+            mode -> redTranslatable("box.autostore.command.sub-command-not-found", aquaText(mode));
 
     public static final SingleArgument<String> COMMAND_NOT_BOOLEAN =
             invalid -> redTranslatable("box.autostore.command.not-boolean", aquaText(invalid));
