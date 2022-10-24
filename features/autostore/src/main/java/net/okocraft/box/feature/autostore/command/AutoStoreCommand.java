@@ -36,31 +36,29 @@ public class AutoStoreCommand extends AbstractCommand {
             return;
         }
 
-        // other sub commands
-        if (args.length > 1) {
-            var subCommand = matchSubCommand(args[1]);
-            if (subCommand.isPresent()) {
-                subCommand.get().runCommand(sender, args, setting);
-                return;
-            }
-            // fall through for toggle.
-        }
-
-        Boolean toggleAutoStore;
+        // process autostore toggle
         if (args.length == 1) {
-            toggleAutoStore = !setting.isEnabled();
+            changeAutoStore(setting, !setting.isEnabled(), sender);
+            return;
         } else {
-            toggleAutoStore = AutoStoreCommandUtil.getBoolean(args[1]);
-            if (toggleAutoStore == null) {
-                sender.sendMessage(AutoStoreMessage.COMMAND_MODE_NOT_FOUND.apply(args[1]));
+            Boolean value = AutoStoreCommandUtil.getBoolean(args[1]);
+            if (value != null) {
+                changeAutoStore(setting, value, sender);
                 return;
             }
         }
 
-        sender.sendMessage(AutoStoreMessage.COMMAND_AUTOSTORE_TOGGLED.apply(toggleAutoStore));
+        matchSubCommand(args[1]).ifPresentOrElse(
+                subCommand -> subCommand.runCommand(sender, args, setting),
+                () -> sender.sendMessage(AutoStoreMessage.COMMAND_MODE_NOT_FOUND.apply(args[1]))
+        );
+    }
 
-        if (setting.isEnabled() != toggleAutoStore) { // setting changed
-            setting.setEnabled(toggleAutoStore);
+    private void changeAutoStore(@NotNull AutoStoreSetting setting, boolean value, @NotNull CommandSender sender) {
+        sender.sendMessage(AutoStoreMessage.COMMAND_AUTOSTORE_TOGGLED.apply(value));
+
+        if (setting.isEnabled() != value) { // setting changed
+            setting.setEnabled(value);
             AutoStoreCommandUtil.callEvent(setting);
         }
     }
