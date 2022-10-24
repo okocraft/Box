@@ -10,7 +10,8 @@ import org.jetbrains.annotations.Nullable;
 
 final class AutoStoreCommandUtil {
 
-    private AutoStoreCommandUtil() {}
+    private AutoStoreCommandUtil() {
+    }
 
     static boolean enableAutoStore(@NotNull AutoStoreSetting setting, @NotNull CommandSender sender) {
         if (!setting.isEnabled()) {
@@ -36,5 +37,4 @@ final class AutoStoreCommandUtil {
             return null;
         }
     }
-
 }

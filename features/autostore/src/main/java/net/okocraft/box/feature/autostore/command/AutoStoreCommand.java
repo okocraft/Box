@@ -1,6 +1,5 @@
 package net.okocraft.box.feature.autostore.command;
 
-import java.util.Optional;
 import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.command.AbstractCommand;
 import net.okocraft.box.api.message.GeneralMessage;
@@ -14,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -90,7 +90,7 @@ public class AutoStoreCommand extends AbstractCommand {
                 .orElse(Collections.emptyList());
     }
 
-    private Optional<AutoStoreSubCommand> matchSubCommand(String nameOrAlias) {
+    private @NotNull Optional<AutoStoreSubCommand> matchSubCommand(@NotNull String nameOrAlias) {
         return Stream.of(allCommand, directCommand, itemCommand)
                 .filter(command -> command.getName().charAt(0) == nameOrAlias.charAt(0))
                 .findAny();

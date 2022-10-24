@@ -1,10 +1,5 @@
 package net.okocraft.box.feature.autostore.command;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.message.GeneralMessage;
 import net.okocraft.box.api.util.TabCompleter;
@@ -13,14 +8,20 @@ import net.okocraft.box.feature.autostore.model.setting.AutoStoreSetting;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
-public class AutoStoreItemCommand extends AutoStoreSubCommand {
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-    public AutoStoreItemCommand() {
+class AutoStoreItemCommand extends AutoStoreSubCommand {
+
+    AutoStoreItemCommand() {
         super("item");
     }
 
     @Override
-    public void runCommand(@NotNull CommandSender sender, @NotNull String[] args, @NotNull AutoStoreSetting setting) {
+    void runCommand(@NotNull CommandSender sender, @NotNull String[] args, @NotNull AutoStoreSetting setting) {
         // set all mode false
         if (args.length < 3) {
             sender.sendMessage(AutoStoreMessage.COMMAND_MODE_CHANGED.apply(false));
@@ -95,7 +96,7 @@ public class AutoStoreItemCommand extends AutoStoreSubCommand {
     }
 
     @Override
-    public @NotNull List<String> runTabComplete(@NotNull CommandSender sender, @NotNull String[] args) {
+    @NotNull List<String> runTabComplete(@NotNull CommandSender sender, @NotNull String[] args) {
         if (args.length == 3) {
             var result = TabCompleter.itemNames(args[2].toUpperCase(Locale.ROOT));
 

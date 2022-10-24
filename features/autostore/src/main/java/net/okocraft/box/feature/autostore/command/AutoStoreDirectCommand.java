@@ -1,23 +1,24 @@
 package net.okocraft.box.feature.autostore.command;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import net.okocraft.box.feature.autostore.message.AutoStoreMessage;
 import net.okocraft.box.feature.autostore.model.setting.AutoStoreSetting;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
-public class AutoStoreDirectCommand extends AutoStoreSubCommand {
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-    public AutoStoreDirectCommand() {
+class AutoStoreDirectCommand extends AutoStoreSubCommand {
+
+    AutoStoreDirectCommand() {
         super("direct");
     }
 
     @Override
-    public void runCommand(@NotNull CommandSender sender, @NotNull String[] args, @NotNull AutoStoreSetting setting) {
+    void runCommand(@NotNull CommandSender sender, @NotNull String[] args, @NotNull AutoStoreSetting setting) {
         boolean result;
 
         if (2 < args.length) {
@@ -41,7 +42,7 @@ public class AutoStoreDirectCommand extends AutoStoreSubCommand {
     }
 
     @Override
-    public @NotNull List<String> runTabComplete(@NotNull CommandSender sender, @NotNull String[] args) {
+    @NotNull List<String> runTabComplete(@NotNull CommandSender sender, @NotNull String[] args) {
         if (args.length == 3) {
             return Stream.of("on", "off")
                     .filter(bool -> bool.startsWith(args[2].toLowerCase(Locale.ROOT)))
