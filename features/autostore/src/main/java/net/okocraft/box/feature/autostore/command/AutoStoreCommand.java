@@ -58,10 +58,17 @@ public class AutoStoreCommand extends AbstractCommand {
             }
         }
 
-        matchSubCommand(args[1]).ifPresentOrElse(
-                subCommand -> subCommand.runCommand(sender, args, setting),
-                () -> sender.sendMessage(AutoStoreMessage.COMMAND_SUB_COMMAND_NOT_FOUND.apply(args[1]))
-        );
+        var subCommand = matchSubCommand(args[1]);
+
+        if (subCommand.isPresent()) {
+            subCommand.get().runCommand(sender, args, setting);
+        } else {
+            if (!args[1].equalsIgnoreCase("help")) {
+                sender.sendMessage(AutoStoreMessage.COMMAND_SUB_COMMAND_NOT_FOUND.apply(args[1]));
+            }
+
+            sender.sendMessage(getHelp());
+        }
     }
 
     private void changeAutoStore(@NotNull AutoStoreSetting setting, boolean value, @NotNull CommandSender sender) {
