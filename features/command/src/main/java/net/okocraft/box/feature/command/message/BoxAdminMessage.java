@@ -192,6 +192,22 @@ public final class BoxAdminMessage {
                     grayText(num), aquaItemName(stockData.item()), aquaText(stockData.amount())
             );
 
+    public static final DoubleArgument<String, BoxItem> STOCK_RESET_SUCCESS_SENDER =
+            (targetName, item) ->
+                    grayTranslatable(
+                            "box.command.boxadmin.stock.reset.success.sender",
+                            aquaText(targetName), aquaItemName(item)
+                    );
+
+    public static final DoubleArgument<String, BoxItem> STOCK_RESET_SUCCESS_TARGET =
+            (senderName, item) ->
+                    grayTranslatable(
+                            "box.command.boxadmin.stock.reset.success.target",
+                            aquaText(senderName), aquaItemName(item)
+                    );
+
+    public static final Component STOCK_RESET_HELP = commandHelp("box.command.boxadmin.stock.reset");
+
     public static final TripleArgument<String, BoxItem, Integer> STOCK_SET_SUCCESS_SENDER =
             (targetName, item, currentAmount) ->
                     grayTranslatable(

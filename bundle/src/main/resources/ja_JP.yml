@@ -231,6 +231,13 @@ box:
               filter:
                 format: "{0} ({1}) {2} - アイテムを絞り込む"
                 value: "<アイテム名>"
+        reset:
+          success:
+            sender: "プレイヤー {0} のアイテム {1} の在庫をリセットしました。"
+            target: "{0} にアイテム {1} の在庫がリセットされました。。"
+          help:
+            command-line: "/boxadmin reset <プレイヤー名> <アイテム名>"
+            description: "在庫をリセットする"
         set:
           success:
             sender: "プレイヤー {0} のアイテム {1} の在庫を {2} 個にセットしました。"

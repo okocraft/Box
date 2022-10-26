@@ -25,6 +25,7 @@ public class StockCommand extends AbstractCommand implements SubCommandHoldable 
                 StockModifyCommands.give(),
                 new StockInfoCommand(),
                 new StockListCommand(),
+                new StockResetCommand(),
                 StockModifyCommands.set(),
                 StockModifyCommands.take()
         );
