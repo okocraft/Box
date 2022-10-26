@@ -14,9 +14,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-public class StockInfoCommand extends AbstractCommand {
+class StockInfoCommand extends AbstractCommand {
 
-    public StockInfoCommand() {
+    StockInfoCommand() {
         super("info", "box.admin.command.stock.info", Set.of("i"));
     }
 

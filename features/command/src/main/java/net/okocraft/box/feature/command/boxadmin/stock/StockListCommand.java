@@ -25,7 +25,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-public class StockListCommand extends AbstractCommand {
+class StockListCommand extends AbstractCommand {
 
     private static final Map<String, ArgumentType> ARGUMENT_MAP;
 
@@ -40,7 +40,7 @@ public class StockListCommand extends AbstractCommand {
         ARGUMENT_MAP = Collections.unmodifiableMap(map);
     }
 
-    public StockListCommand() {
+    StockListCommand() {
         super("list", "box.admin.command.stock.list", Set.of("l"));
     }
 
@@ -220,19 +220,19 @@ public class StockListCommand extends AbstractCommand {
             this.tabCompleter = tabCompleter;
         }
 
-        public @NotNull String getLongArg() {
+        private @NotNull String getLongArg() {
             return longArg;
         }
 
-        public @NotNull String getShortArg() {
+        private @NotNull String getShortArg() {
             return shortArg;
         }
 
-        public @NotNull BiConsumer<String, Context> getContextConsumer() {
+        private @NotNull BiConsumer<String, Context> getContextConsumer() {
             return contextConsumer;
         }
 
-        public @NotNull Function<String, List<String>> getTabCompleter() {
+        private @NotNull Function<String, List<String>> getTabCompleter() {
             return tabCompleter;
         }
     }
