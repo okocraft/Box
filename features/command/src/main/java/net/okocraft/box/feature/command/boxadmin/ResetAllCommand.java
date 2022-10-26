@@ -17,20 +17,20 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public class ResetCommand extends AbstractCommand {
+public class ResetAllCommand extends AbstractCommand {
 
     private static final String CONFIRM = "confirm";
     private static final String CANCEL = "cancel";
 
     private final Map<CommandSender, UserStockHolder> confirmationMap = new HashMap<>();
 
-    public ResetCommand() {
-        super("reset", "box.admin.command.reset");
+    public ResetAllCommand() {
+        super("resetall", "box.admin.command.resetall");
     }
 
     @Override
     public @NotNull Component getHelp() {
-        return BoxAdminMessage.RESET_HELP;
+        return BoxAdminMessage.RESET_ALL_HELP;
     }
 
     @Override
@@ -48,19 +48,19 @@ public class ResetCommand extends AbstractCommand {
                 target.setAmount(stockedItem, 0);
             }
 
-            sender.sendMessage(BoxAdminMessage.RESET_SUCCESS_SENDER.apply(target));
+            sender.sendMessage(BoxAdminMessage.RESET_ALL_SUCCESS_SENDER.apply(target));
 
             var targetPlayer = Bukkit.getPlayer(target.getUUID());
 
             if (targetPlayer != null && !sender.getName().equals(targetPlayer.getName())) {
-                targetPlayer.sendMessage(BoxAdminMessage.RESET_SUCCESS_TARGET.apply(sender));
+                targetPlayer.sendMessage(BoxAdminMessage.RESET_ALL_SUCCESS_TARGET.apply(sender));
             }
 
             return;
         }
 
         if (CANCEL.equalsIgnoreCase(args[1]) && confirmationMap.remove(sender) != null) {
-            sender.sendMessage(BoxAdminMessage.RESET_CANCEL);
+            sender.sendMessage(BoxAdminMessage.RESET_ALL_CANCEL);
             return;
         }
 
@@ -68,7 +68,7 @@ public class ResetCommand extends AbstractCommand {
                 .supportOffline(true)
                 .stockHolderOperator(targetStockHolder -> {
                     confirmationMap.put(sender, targetStockHolder);
-                    sender.sendMessage(BoxAdminMessage.RESET_CONFIRMATION.apply(targetStockHolder));
+                    sender.sendMessage(BoxAdminMessage.RESET_ALL_CONFIRMATION.apply(targetStockHolder));
                 })
                 .onNotFound(name -> sender.sendMessage(GeneralMessage.ERROR_COMMAND_PLAYER_NOT_FOUND.apply(name)))
                 .run();

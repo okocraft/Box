@@ -106,20 +106,20 @@ public final class BoxAdminMessage {
 
     public static final Component INFINITY_HELP = commandHelp("box.command.boxadmin.infinity");
 
-    public static final SingleArgument<UserStockHolder> RESET_SUCCESS_SENDER =
-            target -> grayTranslatable("box.command.boxadmin.reset.success.sender", aquaText(target.getName()));
+    public static final SingleArgument<UserStockHolder> RESET_ALL_SUCCESS_SENDER =
+            target -> grayTranslatable("box.command.boxadmin.resetall.success.sender", aquaText(target.getName()));
 
-    public static final SingleArgument<CommandSender> RESET_SUCCESS_TARGET =
-            sender -> grayTranslatable("box.command.boxadmin.reset.success.target", aquaText(sender.getName()));
+    public static final SingleArgument<CommandSender> RESET_ALL_SUCCESS_TARGET =
+            sender -> grayTranslatable("box.command.boxadmin.resetall.success.target", aquaText(sender.getName()));
 
-    public static final Component RESET_CANCEL = grayTranslatable("box.command.boxadmin.reset.cancel");
+    public static final Component RESET_ALL_CANCEL = grayTranslatable("box.command.boxadmin.resetall.cancel");
 
-    public static final SingleArgument<UserStockHolder> RESET_CONFIRMATION =
+    public static final SingleArgument<UserStockHolder> RESET_ALL_CONFIRMATION =
             target ->
                     text().append(grayTranslatable(
-                                    "box.command.boxadmin.reset.confirmation.info", aquaText(target.getName())
+                                    "box.command.boxadmin.resetall.confirmation.info", aquaText(target.getName())
                             )).append(newline())
-                            .append(grayTranslatable("box.command.boxadmin.reset.confirmation.warning"))
+                            .append(grayTranslatable("box.command.boxadmin.resetall.confirmation.warning"))
                             .append(newline())
                             .append(confirmationCommand("confirm"))
                             .append(newline())
@@ -128,12 +128,12 @@ public final class BoxAdminMessage {
 
     private static Component confirmationCommand(String arg) {
         return grayTranslatable(
-                "box.command.boxadmin.reset.confirmation." + arg + "-command",
-                aquaText("/boxadmin reset " + arg)
+                "box.command.boxadmin.resetall.confirmation." + arg + "-command",
+                aquaText("/boxadmin resetall " + arg)
         );
     }
 
-    public static final Component RESET_HELP = commandHelp("box.command.boxadmin.reset");
+    public static final Component RESET_ALL_HELP = commandHelp("box.command.boxadmin.resetall");
 
     public static final Component STOCK_HELP = commandHelp("box.command.boxadmin.stock");
 
