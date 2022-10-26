@@ -60,6 +60,7 @@ public class ItemInfoCommand extends AbstractCommand {
         int stock = BoxProvider.get().getBoxPlayerMap().get(player).getCurrentStockHolder().getAmount(boxItem);
 
         player.sendMessage(BoxMessage.ITEM_INFO_NAME.apply(boxItem));
+        player.sendMessage(BoxMessage.ITEM_INFO_ID.apply(boxItem.getPlainName()));
         player.sendMessage(BoxMessage.ITEM_INFO_STOCK.apply(stock));
     }
 
