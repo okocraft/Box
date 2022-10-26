@@ -1,7 +1,6 @@
 package net.okocraft.box.feature.command.boxadmin;
 
 import net.kyori.adventure.text.Component;
-import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.command.AbstractCommand;
 import net.okocraft.box.feature.command.message.BoxAdminMessage;
 import org.bukkit.command.CommandSender;
@@ -17,7 +16,7 @@ public class VersionCommand extends AbstractCommand {
 
     @Override
     public void onCommand(@NotNull CommandSender sender, @NotNull String[] args) {
-        var version = BoxProvider.get().getPluginInstance().getDescription().getVersion();
+        var version = getClass().getPackage().getImplementationVersion();
         sender.sendMessage(BoxAdminMessage.VERSION_INFO.apply(version));
     }
 
