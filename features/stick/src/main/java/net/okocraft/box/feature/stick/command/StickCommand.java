@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Set;
 
 import static net.okocraft.box.api.message.Components.commandHelp;
+import static net.okocraft.box.api.message.Components.grayTranslatable;
 import static net.okocraft.box.api.message.Components.redTranslatable;
 
 public class StickCommand extends AbstractCommand {
@@ -20,7 +21,7 @@ public class StickCommand extends AbstractCommand {
 
     private static final Component COULD_NOT_GIVE_STICK = redTranslatable("box.stick.command.could-not-give-stick");
 
-    private static final Component GIVE_SUCCESS = redTranslatable("box.stick.command.success");
+    private static final Component GIVE_SUCCESS = grayTranslatable("box.stick.command.success");
 
     private static final Component HELP = commandHelp("box.stick.command");
 
