@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 
 import static net.okocraft.box.api.message.Components.aquaText;
 import static net.okocraft.box.api.message.Components.redTranslatable;
+import static net.okocraft.box.api.message.Components.whiteTranslatable;
 
 /**
  * A class that holds general messages
@@ -73,4 +74,8 @@ public final class GeneralMessage {
     public static final SingleArgument<Player> ERROR_TARGET_PLAYER_NOT_LOADED =
             target -> redTranslatable("box.error.player-data.not-loaded.other", aquaText(target.getName()));
 
+    /**
+     * A component to use to hover text (click to copy).
+     */
+    public static final Component HOVER_TEXT_CLICK_TO_COPY = whiteTranslatable("box.mics.hover-text.click-to-copy");
 }

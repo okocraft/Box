@@ -2,6 +2,7 @@ package net.okocraft.box.feature.command.message;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
+import net.okocraft.box.api.message.GeneralMessage;
 import net.okocraft.box.api.message.argument.DoubleArgument;
 import net.okocraft.box.api.message.argument.QuadArgument;
 import net.okocraft.box.api.message.argument.SingleArgument;
@@ -33,7 +34,7 @@ public final class BoxAdminMessage {
             version ->
                     grayTranslatable(
                             "box.command.boxadmin.version.info",
-                            aquaText(version)
+                            aquaText(version).clickEvent(ClickEvent.copyToClipboard(version)).hoverEvent(GeneralMessage.HOVER_TEXT_CLICK_TO_COPY)
                     );
 
     public static final Component VERSION_HELP = commandHelp("box.command.boxadmin.version");
@@ -47,7 +48,7 @@ public final class BoxAdminMessage {
             item -> grayTranslatable(
                     "box.command.boxadmin.register.success",
                     aquaItemName(item),
-                    aquaText(item.getPlainName()).clickEvent(ClickEvent.copyToClipboard(item.getPlainName()))
+                    aquaText(item.getPlainName()).clickEvent(ClickEvent.copyToClipboard(item.getPlainName())).hoverEvent(GeneralMessage.HOVER_TEXT_CLICK_TO_COPY)
             );
 
     public static final Component REGISTER_TIP_RENAME = grayTranslatable("box.command.boxadmin.register.tip-rename");

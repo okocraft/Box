@@ -1,6 +1,8 @@
 package net.okocraft.box.feature.command.message;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.okocraft.box.api.message.GeneralMessage;
 import net.okocraft.box.api.message.argument.DoubleArgument;
 import net.okocraft.box.api.message.argument.QuadArgument;
 import net.okocraft.box.api.message.argument.SingleArgument;
@@ -103,6 +105,9 @@ public final class BoxMessage {
 
     public static final SingleArgument<BoxItem> ITEM_INFO_NAME =
             item -> grayTranslatable("box.command.box.iteminfo.name", aquaItemName(item));
+
+    public static final SingleArgument<String> ITEM_INFO_ID =
+            plainName -> grayTranslatable("box.command.box.iteminfo.id", aquaText(plainName).clickEvent(ClickEvent.copyToClipboard(plainName)).hoverEvent(GeneralMessage.HOVER_TEXT_CLICK_TO_COPY));
 
     public static final SingleArgument<Integer> ITEM_INFO_STOCK =
             stock -> grayTranslatable("box.command.box.iteminfo.stock", aquaText(stock));

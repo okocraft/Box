@@ -154,6 +154,17 @@ public final class Components {
     }
 
     /**
+     * Creates a white {@link Component} from the key of the message.
+     *
+     * @param key the key of the message
+     * @return the created {@link Component}
+     */
+    @Contract(value = "_ -> new", pure = true)
+    public static @NotNull Component whiteTranslatable(@NotNull String key) {
+        return translatable(key, WHITE);
+    }
+
+    /**
      * Creates a gray {@link Component} from the key of the message and arguments.
      *
      * @param key  the key of the message
