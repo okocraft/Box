@@ -17,13 +17,18 @@ import java.util.Set;
 
 public class StockCommand extends AbstractCommand implements SubCommandHoldable {
 
-    private final SubCommandHolder subCommandHolder = new SubCommandHolder();
+    private final SubCommandHolder subCommandHolder;
 
     public StockCommand() {
-        // The alias should be "s", but it is already used, so we use "st".
-        super("stock", "box.admin.command.stock", Set.of("st"));
-        subCommandHolder.register(new StockInfoCommand());
-        subCommandHolder.register(new StockListCommand());
+        super("stock", "box.admin.command.stock", Set.of("s", "st"));
+        this.subCommandHolder = new SubCommandHolder(
+                StockModifyCommands.give(),
+                new StockInfoCommand(),
+                new StockListCommand(),
+                new StockResetCommand(),
+                StockModifyCommands.set(),
+                StockModifyCommands.take()
+        );
     }
 
     @Override

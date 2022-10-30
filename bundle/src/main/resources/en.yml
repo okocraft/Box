@@ -153,13 +153,6 @@ box:
       help:
         command-line: "/boxadmin <subcommands>"
         description: "Box Admin command"
-      give:
-        success:
-          sender: "Gave {1}x{2} to player {0} (Now {3})."
-          target: "{0} give you {1}x{2} (Now {3})."
-        help:
-          command-line: "/boxadmin give <player> <item> <amount>"
-          description: "Increases stock"
       infinity:
         enabled: "Enabled"
         disabled: "Disabled"
@@ -210,6 +203,13 @@ box:
         help:
           command-line: "/boxadmin stock <info/list> <args>"
           description: "Shows player's stock"
+        give:
+          success:
+            sender: "Gave {1}x{2} to player {0} (Now {3})."
+            target: "{0} give you {1}x{2} (Now {3})."
+          help:
+            command-line: "/boxadmin give <player> <item> <amount>"
+            description: "Increases stock"
         info:
           amount: "The amount of player {0}''s item {1} : {2}"
           help:
@@ -231,20 +231,27 @@ box:
               filter:
                 format: "{0} ({1}) {2} - Filters items"
                 value: "<item name>"
-      set:
-        success:
-          sender: "Player {0}''s item {1} has been set to {2}."
-          target: "Item {1} has been set to {2} by {0}."
-        help:
-          command-line: "/boxadmin set <player> <item name> <amount>"
-          description: "Sets stock"
-      take:
-        success:
-          sender: "Took {1}x{2} from player {0} (Now {3})."
-          target: "{0} took {1}x{2} (Now {3})."
-        help:
-          command-line: "/boxadmin take <player> <item name> <amount>"
-          description: "Decreases stock"
+        reset:
+          success:
+            sender: "Player {0}''s item {1} has been reset."
+            target: "Item {1} has been reset by {0}."
+          help:
+            command-line: "/boxadmin reset <player> <item name>"
+            description: "Resets stock"
+        set:
+          success:
+            sender: "Player {0}''s item {1} has been set to {2}."
+            target: "Item {1} has been set to {2} by {0}."
+          help:
+            command-line: "/boxadmin set <player> <item name> <amount>"
+            description: "Sets stock"
+        take:
+          success:
+            sender: "Took {1}x{2} from player {0} (Now {3})."
+            target: "{0} took {1}x{2} (Now {3})."
+          help:
+            command-line: "/boxadmin take <player> <item name> <amount>"
+            description: "Decreases stock"
       version:
         info: "Box {0}"
         help:

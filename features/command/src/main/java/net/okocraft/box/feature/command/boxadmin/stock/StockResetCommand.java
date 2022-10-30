@@ -4,25 +4,29 @@ import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.command.AbstractCommand;
 import net.okocraft.box.api.message.GeneralMessage;
+import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.util.TabCompleter;
 import net.okocraft.box.api.util.UserStockHolderOperator;
 import net.okocraft.box.feature.command.message.BoxAdminMessage;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-class StockInfoCommand extends AbstractCommand {
+class StockResetCommand extends AbstractCommand {
 
-    StockInfoCommand() {
-        super("info", "box.admin.command.stock.info", Set.of("i"));
+    StockResetCommand() {
+        super("reset", "box.admin.command.stock.reset", Set.of("r"));
     }
 
     @Override
     public @NotNull Component getHelp() {
-        return BoxAdminMessage.STOCK_INFO_HELP;
+        return BoxAdminMessage.STOCK_RESET_HELP;
     }
 
     @Override
@@ -33,9 +37,9 @@ class StockInfoCommand extends AbstractCommand {
             return;
         }
 
-        var boxItem = BoxProvider.get().getItemManager().getBoxItem(args[3]);
+        var item = BoxProvider.get().getItemManager().getBoxItem(args[3]);
 
-        if (boxItem.isEmpty()) {
+        if (item.isEmpty()) {
             sender.sendMessage(GeneralMessage.ERROR_COMMAND_ITEM_NOT_FOUND.apply(args[3]));
             return;
         }
@@ -43,9 +47,8 @@ class StockInfoCommand extends AbstractCommand {
         UserStockHolderOperator.create(args[2])
                 .supportOffline(true)
                 .stockHolderOperator(target -> {
-                    var message =
-                            BoxAdminMessage.STOCK_INFO_AMOUNT.apply(target.getName(), boxItem.get(), target.getAmount(boxItem.get()));
-                    sender.sendMessage(message);
+                    target.setAmount(item.get(), 0);
+                    sendMessage(sender, Bukkit.getPlayer(target.getUUID()), target.getName(), item.get());
                 })
                 .onNotFound(name -> sender.sendMessage(GeneralMessage.ERROR_COMMAND_PLAYER_NOT_FOUND.apply(name)))
                 .run();
@@ -62,5 +65,13 @@ class StockInfoCommand extends AbstractCommand {
         }
 
         return Collections.emptyList();
+    }
+
+    private void sendMessage(@NotNull CommandSender sender, @Nullable Player targetPlayer, @NotNull String targetName, BoxItem item) {
+        sender.sendMessage(BoxAdminMessage.STOCK_RESET_SUCCESS_SENDER.apply(targetName, item));
+
+        if (targetPlayer != null && !sender.getName().equals(targetName)) {
+            targetPlayer.sendMessage(BoxAdminMessage.STOCK_RESET_SUCCESS_TARGET.apply(sender.getName(), item));
+        }
     }
 }

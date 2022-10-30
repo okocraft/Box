@@ -153,13 +153,6 @@ box:
       help:
         command-line: "/boxadmin <サブコマンド>"
         description: "Box の管理者用コマンド"
-      give:
-        success:
-          sender: "プレイヤー {0} のアイテム {1} の在庫を {2} 個増やしました (現在 {3} 個)。"
-          target: "{0} にアイテム {1} の在庫を {2} 個増やされました (現在 {3} 個)。"
-        help:
-          command-line: "/boxadmin give <プレイヤー名> <アイテム名> <数量>"
-          description: "在庫を増やす"
       infinity:
         enabled: "有効"
         disabled: "無効"
@@ -210,6 +203,13 @@ box:
         help:
           command-line: "/boxadmin stock <info/list> <引数>"
           description: "在庫情報を表示する"
+        give:
+          success:
+            sender: "プレイヤー {0} のアイテム {1} の在庫を {2} 個増やしました (現在 {3} 個)。"
+            target: "{0} にアイテム {1} の在庫を {2} 個増やされました (現在 {3} 個)。"
+          help:
+            command-line: "/boxadmin give <プレイヤー名> <アイテム名> <数量>"
+            description: "在庫を増やす"
         info:
           amount: "プレイヤー {0} のアイテム {1} の在庫: {2} 個"
           help:
@@ -231,20 +231,27 @@ box:
               filter:
                 format: "{0} ({1}) {2} - アイテムを絞り込む"
                 value: "<アイテム名>"
-      set:
-        success:
-          sender: "プレイヤー {0} のアイテム {1} の在庫を {2} 個にセットしました。"
-          target: "{0} にアイテム {1} の在庫を {2} 個にセットされました。"
-        help:
-          command-line: "/boxadmin set <プレイヤー名> <アイテム名> <数量>"
-          description: "在庫をセットする"
-      take:
-        success:
-          sender: "プレイヤー {0} のアイテム {1} の在庫を {2} 個減らしました (現在 {3} 個)。"
-          target: "{0} にアイテム {1} の在庫を {2} 個減らされました (現在 {3} 個)。"
-        help:
-          command-line: "/boxadmin take <プレイヤー名> <アイテム名> <数量>"
-          description: "在庫を減らす"
+        reset:
+          success:
+            sender: "プレイヤー {0} のアイテム {1} の在庫をリセットしました。"
+            target: "{0} にアイテム {1} の在庫がリセットされました。。"
+          help:
+            command-line: "/boxadmin reset <プレイヤー名> <アイテム名>"
+            description: "在庫をリセットする"
+        set:
+          success:
+            sender: "プレイヤー {0} のアイテム {1} の在庫を {2} 個にセットしました。"
+            target: "{0} にアイテム {1} の在庫を {2} 個にセットされました。"
+          help:
+            command-line: "/boxadmin set <プレイヤー名> <アイテム名> <数量>"
+            description: "在庫をセットする"
+        take:
+          success:
+            sender: "プレイヤー {0} のアイテム {1} の在庫を {2} 個減らしました (現在 {3} 個)。"
+            target: "{0} にアイテム {1} の在庫を {2} 個減らされました (現在 {3} 個)。"
+          help:
+            command-line: "/boxadmin take <プレイヤー名> <アイテム名> <数量>"
+            description: "在庫を減らす"
       version:
         info: "Box {0}"
         help:
