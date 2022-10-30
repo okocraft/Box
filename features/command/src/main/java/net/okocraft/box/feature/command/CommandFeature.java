@@ -11,7 +11,7 @@ import net.okocraft.box.feature.command.boxadmin.InfinityCommand;
 import net.okocraft.box.feature.command.boxadmin.RegisterCommand;
 import net.okocraft.box.feature.command.boxadmin.ReloadCommand;
 import net.okocraft.box.feature.command.boxadmin.RenameCommand;
-import net.okocraft.box.feature.command.boxadmin.ResetCommand;
+import net.okocraft.box.feature.command.boxadmin.ResetAllCommand;
 import net.okocraft.box.feature.command.boxadmin.VersionCommand;
 import net.okocraft.box.feature.command.boxadmin.stock.StockCommand;
 
@@ -25,7 +25,7 @@ public class CommandFeature extends AbstractBoxFeature {
 
     public final List<Command> boxAdminSubCommands =
             List.of(new StockCommand(), new InfinityCommand(), new RegisterCommand(),
-                    new RenameCommand(), new ReloadCommand(), new ResetCommand(),
+                    new RenameCommand(), new ReloadCommand(), new ResetAllCommand(),
                     new VersionCommand());
 
     public CommandFeature() {
