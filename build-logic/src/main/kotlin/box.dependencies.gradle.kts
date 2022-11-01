@@ -14,8 +14,8 @@ repositories {
 }
 
 dependencies {
-    implementation(libs.configapi.yaml)
-    implementation(libs.event4j)
+    api(libs.configapi.yaml)
+    api(libs.event4j)
 
     compileOnly(libs.paper)
     compileOnly(libs.annotations)
