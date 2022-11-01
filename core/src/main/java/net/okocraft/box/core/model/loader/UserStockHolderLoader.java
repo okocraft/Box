@@ -98,6 +98,7 @@ public class UserStockHolderLoader implements UserStockHolder {
     @Override
     public void reset() {
         checkAndGetUserStockHolder().reset();
+        queue.enqueue(this);
     }
 
     public boolean isLoaded() {
