@@ -42,6 +42,7 @@ import net.okocraft.box.core.player.BoxPlayerMapImpl;
 import net.okocraft.box.core.task.AutoSaveTask;
 import net.okocraft.box.core.taskfactory.BoxTaskFactory;
 import net.okocraft.box.core.util.executor.InternalExecutors;
+import net.okocraft.box.storage.api.holder.StorageHolder;
 import net.okocraft.box.storage.api.model.Storage;
 import net.okocraft.box.storage.api.registry.StorageRegistry;
 import org.bukkit.Bukkit;
@@ -175,6 +176,8 @@ public class BoxPlugin implements BoxAPI {
             getLogger().log(Level.SEVERE, "Could not initialize " + storage.getName() + " storage", e);
             return false;
         }
+
+        StorageHolder.init(storage); // set storage for other features/plugins that depend on Storage API
 
         getLogger().info("Initializing managers...");
 
