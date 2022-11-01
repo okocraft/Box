@@ -92,4 +92,9 @@ public interface StockHolder {
      */
     @NotNull @Unmodifiable Collection<StockData> toStockDataCollection();
 
+    /**
+     * Resets all stock.
+     */
+    void reset();
+
 }

@@ -95,6 +95,11 @@ public class UserStockHolderLoader implements UserStockHolder {
         return checkAndGetUserStockHolder().toStockDataCollection();
     }
 
+    @Override
+    public void reset() {
+        checkAndGetUserStockHolder().reset();
+    }
+
     public boolean isLoaded() {
         return loadedStockHolderReference.get() != null;
     }
