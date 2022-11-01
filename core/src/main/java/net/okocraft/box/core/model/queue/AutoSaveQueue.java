@@ -3,17 +3,16 @@ package net.okocraft.box.core.model.queue;
 import net.okocraft.box.core.model.loader.UserStockHolderLoader;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class AutoSaveQueue {
 
-    private final List<UserStockHolderLoader> queue = new ArrayList<>();
+    private final Set<UserStockHolderLoader> queue = new HashSet<>();
 
     public void enqueue(@NotNull UserStockHolderLoader loader) {
-        if (!queue.contains(loader)) {
-            queue.add(loader);
-        }
+        queue.add(loader);
     }
 
     public void dequeue(@NotNull UserStockHolderLoader loader) {
