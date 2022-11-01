@@ -25,5 +25,6 @@ tasks {
         minimize()
         archiveFileName.set("Box-${project.version}.jar")
         relocate("com.github.siroshun09", "net.okocraft.box.lib")
+        relocate("com.zaxxer", "net.okocraft.box.lib")
     }
 }
