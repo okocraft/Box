@@ -44,9 +44,7 @@ public class ResetAllCommand extends AbstractCommand {
         if (CONFIRM.equalsIgnoreCase(args[1]) && confirmationMap.containsKey(sender)) {
             var target = confirmationMap.remove(sender);
 
-            for (var stockedItem : target.getStockedItems()) {
-                target.setAmount(stockedItem, 0);
-            }
+            target.reset();
 
             sender.sendMessage(BoxAdminMessage.RESET_ALL_SUCCESS_SENDER.apply(target));
 
