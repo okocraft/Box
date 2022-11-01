@@ -71,4 +71,8 @@ public class DatabaseStorage implements Storage {
     public @NotNull CustomDataStorage getCustomDataStorage() {
         return customDataTable;
     }
+
+    public @NotNull Database getDatabase() {
+        return database;
+    }
 }
