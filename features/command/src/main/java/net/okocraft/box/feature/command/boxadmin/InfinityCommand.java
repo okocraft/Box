@@ -141,5 +141,9 @@ public class InfinityCommand extends AbstractCommand {
         public @NotNull @Unmodifiable Collection<StockData> toStockDataCollection() {
             return Collections.emptyList();
         }
+
+        @Override
+        public void reset() {
+        }
     }
 }

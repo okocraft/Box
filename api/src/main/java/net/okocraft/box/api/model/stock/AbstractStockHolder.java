@@ -1,6 +1,7 @@
 package net.okocraft.box.api.model.stock;
 
 import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.api.event.stockholder.StockHolderResetEvent;
 import net.okocraft.box.api.event.stockholder.stock.StockDecreaseEvent;
 import net.okocraft.box.api.event.stockholder.stock.StockIncreaseEvent;
 import net.okocraft.box.api.event.stockholder.stock.StockSetEvent;
@@ -171,6 +172,18 @@ public abstract class AbstractStockHolder implements StockHolder {
                 .stream()
                 .map(entry -> new StockData(entry.getKey(), entry.getValue().get()))
                 .toList();
+    }
+
+    /**
+     * {@inheritDoc}
+     * <p>
+     * This method calls {@link StockHolderResetEvent} asynchronous.
+     */
+    @Override
+    public void reset() {
+        var preReset = toStockDataCollection();
+        stockData.values().forEach(stock -> stock.set(0));
+        BoxProvider.get().getEventBus().callEventAsync(new StockHolderResetEvent(this, preReset));
     }
 
     @Override
