@@ -72,7 +72,7 @@ You can find the bundled jar in the `bundle/build/libs` directory.
 </repository>
 ```
 
-```gradle
+```groovy
 repositories {
     maven {
         url 'https://okocraft.github.io/Box/maven/'
@@ -101,7 +101,7 @@ For snapshot version, use https://okocraft.github.io/Box/maven-snapshot/
 </dependency>
 ```
 
-```gradle
+```groovy
 dependencies {
     compileOnly 'net.okocraft.box:box-api:5.0.0-SNAPSHOT'
 }
@@ -110,5 +110,36 @@ dependencies {
 ```kotlin
 dependencies {
     compileOnly("net.okocraft.box:box-api:5.0.0-SNAPSHOT")
+}
+```
+
+#### 3. Relocate ConfigAPI and Event4J
+
+If you are using Box events (`BoxAPI#getEventBus`) or configurations (`BoxAPI#getConfiguration` or using ConfigAPI directly), you have to relocate them.
+
+Add `maven-shade-plugin` or [Gradle Shadow](https://github.com/johnrengelman/shadow) to your project and write the following setting:
+
+```pom
+<relocation>
+    <pattern>com.github.siroshun09.configapi</pattern>
+    <shadedPattern>net.okocraft.box.lib.configapi</shadedPattern>
+</relocation>
+<relocation>
+    <pattern>com.github.siroshun09.event4j</pattern>
+    <shadedPattern>net.okocraft.box.lib.event4j</shadedPattern>
+</relocation>
+```
+
+```groovy
+shadowJar {
+  relocate 'com.github.siroshun09.configapi', 'net.okocraft.box.lib.configapi'
+  relocate 'com.github.siroshun09.event4j', 'net.okocraft.box.lib.event4j'
+}
+```
+
+```kotlin
+shadowJar {
+  relocate("com.github.siroshun09.configapi", "net.okocraft.box.lib.configapi")
+  relocate("com.github.siroshun09.event4j", "net.okocraft.box.lib.event4j")
 }
 ```
