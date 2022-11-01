@@ -119,15 +119,17 @@ If you are using Box events (`BoxAPI#getEventBus`) or configurations (`BoxAPI#ge
 
 Add `maven-shade-plugin` or [Gradle Shadow](https://github.com/johnrengelman/shadow) to your project and write the following setting:
 
-```pom
-<relocation>
+```xml
+<relocations>
+  <relocation>
     <pattern>com.github.siroshun09.configapi</pattern>
     <shadedPattern>net.okocraft.box.lib.configapi</shadedPattern>
-</relocation>
-<relocation>
+  </relocation>
+  <relocation>
     <pattern>com.github.siroshun09.event4j</pattern>
     <shadedPattern>net.okocraft.box.lib.event4j</shadedPattern>
-</relocation>
+  </relocation>
+</relocations>
 ```
 
 ```groovy
