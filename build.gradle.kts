@@ -11,7 +11,9 @@ tasks {
             "feature/autostore/model/**",
             "feature/category/CategoryHolder.java",
             "feature/category/model/Category.java",
-            "feature/gui/api/**"
+            "feature/gui/api/**",
+            "feature/stick/StickFeature.java",
+            "feature/stick/item/BoxStickItem.java"
         ).forEach { include("net/okocraft/box/$it") }
 
         (options as StandardJavadocDocletOptions).docTitle("Box-$version")
