@@ -4,10 +4,9 @@ import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.command.AbstractCommand;
 import net.okocraft.box.api.message.GeneralMessage;
-import org.bukkit.NamespacedKey;
+import net.okocraft.box.feature.stick.item.BoxStickItem;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
 import static net.okocraft.box.api.message.Components.commandHelp;
@@ -21,11 +20,11 @@ public class CustomStickCommand extends AbstractCommand {
     private static final Component CUSTOM_STICK_ALREADY = redTranslatable("box.stick.command.customstick.already");
     private static final Component CUSTOM_STICK_IS_AIR = redTranslatable("box.stick.command.customstick.is-air");
 
-    private final NamespacedKey key;
+    private final BoxStickItem boxStickItem;
 
-    public CustomStickCommand(@NotNull NamespacedKey key) {
+    public CustomStickCommand(@NotNull BoxStickItem boxStickItem) {
         super("customstick", "box.admin.command.customstick");
-        this.key = key;
+        this.boxStickItem = boxStickItem;
     }
 
     @Override
@@ -47,14 +46,12 @@ public class CustomStickCommand extends AbstractCommand {
             return;
         }
 
-        var dataContainer = meta.getPersistentDataContainer();
-
-        if (dataContainer.has(key, PersistentDataType.BYTE)) {
+        if (boxStickItem.check(item)) {
             player.sendMessage(CUSTOM_STICK_ALREADY);
             return;
         }
 
-        dataContainer.set(key, PersistentDataType.BYTE, (byte) 1);
+        boxStickItem.saveBoxStickKey(meta.getPersistentDataContainer());
 
         item.setItemMeta(meta);
 

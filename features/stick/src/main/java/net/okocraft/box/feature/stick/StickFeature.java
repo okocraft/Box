@@ -18,7 +18,7 @@ public class StickFeature extends AbstractBoxFeature implements Disableable {
 
     private final BoxStickItem boxStickItem = new BoxStickItem(key);
     private final StickCommand stickCommand = new StickCommand(boxStickItem);
-    private final CustomStickCommand customStickCommand = new CustomStickCommand(key);
+    private final CustomStickCommand customStickCommand = new CustomStickCommand(boxStickItem);
     private final StickListener stickListener = new StickListener(boxStickItem);
 
     public StickFeature() {
