@@ -10,6 +10,7 @@ import net.okocraft.box.feature.stick.listener.StickListener;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.event.HandlerList;
+import org.jetbrains.annotations.NotNull;
 
 public class StickFeature extends AbstractBoxFeature implements Disableable {
 
@@ -36,5 +37,9 @@ public class StickFeature extends AbstractBoxFeature implements Disableable {
         BoxProvider.get().getBoxCommand().getSubCommandHolder().unregister(stickCommand);
         BoxProvider.get().getBoxAdminCommand().getSubCommandHolder().register(customStickCommand);
         HandlerList.unregisterAll(stickListener);
+    }
+
+    public @NotNull BoxStickItem getBoxStickItem() {
+        return boxStickItem;
     }
 }
