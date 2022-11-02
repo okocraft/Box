@@ -9,6 +9,7 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
@@ -66,7 +67,16 @@ public record BoxStickItem(@NotNull NamespacedKey key) {
         var lore = LORE.stream().map(c -> GlobalTranslator.render(c, locale)).collect(Collectors.toList());
         meta.lore(lore);
 
-        meta.getPersistentDataContainer().set(key, PersistentDataType.BYTE, (byte) 1);
+        saveBoxStickKey(meta.getPersistentDataContainer());
+    }
+
+    /**
+     * Saves the {@link #key()} to {@link org.bukkit.persistence.PersistentDataContainer}
+     *
+     * @param target the target {@link PersistentDataContainer}
+     */
+    public void saveBoxStickKey(@NotNull PersistentDataContainer target) {
+        target.set(key, PersistentDataType.BYTE, (byte) 1);
     }
 
     /**
