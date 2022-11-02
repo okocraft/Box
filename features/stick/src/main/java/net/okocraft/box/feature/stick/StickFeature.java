@@ -39,6 +39,11 @@ public class StickFeature extends AbstractBoxFeature implements Disableable {
         HandlerList.unregisterAll(stickListener);
     }
 
+    /**
+     * Gets the {@link BoxStickItem}.
+     *
+     * @return the {@link BoxStickItem}
+     */
     public @NotNull BoxStickItem getBoxStickItem() {
         return boxStickItem;
     }

@@ -21,7 +21,12 @@ import static net.kyori.adventure.text.Component.translatable;
 import static net.kyori.adventure.text.format.NamedTextColor.BLUE;
 import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
 
-public record BoxStickItem(NamespacedKey key) {
+/**
+ * A record to hold a key representing that the item is a Box Stick and provide methods to check if the {@link ItemStack} is Box Item.
+ *
+ * @param key the {@link NamespacedKey} to use for representing that the item is a Box Stick
+ */
+public record BoxStickItem(@NotNull NamespacedKey key) {
 
     private static final NamespacedKey V3_STICK_KEY = BoxProvider.get().createNamespacedKey("boxstick");
 
@@ -40,6 +45,12 @@ public record BoxStickItem(NamespacedKey key) {
             empty()
     );
 
+    /**
+     * Creates the default stick.
+     *
+     * @param locale the locale to render the item name and lore.
+     * @return the default stick
+     */
     public @NotNull ItemStack create(@NotNull Locale locale) {
         var item = new ItemStack(Material.STICK);
 
@@ -58,6 +69,12 @@ public record BoxStickItem(NamespacedKey key) {
         meta.getPersistentDataContainer().set(key, PersistentDataType.BYTE, (byte) 1);
     }
 
+    /**
+     * Checks if the {@link ItemStack} is a Box Stick.
+     *
+     * @param itemStack the {@link ItemStack} to check
+     * @return if the {@link ItemStack} has {@link #key()} in {@link org.bukkit.persistence.PersistentDataContainer}, returns {@code true}, otherwise {@code false}
+     */
     public boolean check(@NotNull ItemStack itemStack) {
         var meta = itemStack.getItemMeta();
 
