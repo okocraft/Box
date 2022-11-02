@@ -421,6 +421,14 @@ public class BoxPlugin implements BoxAPI {
     }
 
     @Override
+    public @NotNull <T extends BoxFeature> Optional<T> getFeature(@NotNull Class<T> clazz) {
+        return features.stream()
+                .filter(feature -> feature.getClass() == clazz)
+                .map(clazz::cast)
+                .findFirst();
+    }
+
+    @Override
     public void register(@NotNull BoxFeature boxFeature) {
         if (boxFeature instanceof Disableable &&
                 configuration.get(Settings.DISABLED_FEATURES).contains(boxFeature.getName())) {

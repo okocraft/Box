@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Unmodifiable;
 
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 /**
@@ -134,6 +135,17 @@ public interface BoxAPI {
      * @return registered {@link BoxFeature}
      */
     @NotNull @Unmodifiable List<BoxFeature> getFeatures();
+
+    /**
+     * Gets the registered {@link BoxFeature} instance.
+     * <p>
+     * Note: This method returns the first BoxFeature instance with matching class from {@link #getFeatures()}.
+     *
+     * @param clazz the feature class
+     * @param <T>   the type of {@link BoxFeature}
+     * @return if the {@link BoxFeature} is registered, returns its instance, otherwise {@link Optional#empty()}
+     */
+    <T extends BoxFeature> @NotNull Optional<T> getFeature(@NotNull Class<T> clazz);
 
     /**
      * Registers the {@link BoxFeature}.
