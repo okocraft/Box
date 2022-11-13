@@ -181,11 +181,7 @@ public class StickListener implements Listener {
         var original = event.getBrokenItem();
         var copied = original.clone();
 
-        copied.editMeta(meta -> {
-            if (meta instanceof Damageable damageable) {
-                damageable.setDamage(0);
-            }
-        });
+        copied.editMeta(Damageable.class, meta -> meta.setDamage(0));
 
         if (tryConsumingStock(player, copied)) {
             original.setAmount(2);
