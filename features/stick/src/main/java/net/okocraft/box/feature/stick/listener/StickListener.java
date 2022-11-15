@@ -128,7 +128,7 @@ public class StickListener implements Listener {
             if (deposit) {
                 modified = takeResultItem(boxPlayer, furnaceInventory);
             } else {
-                modified = putFuel(boxPlayer, furnaceInventory, mainHand);
+                modified = putIngredient(boxPlayer, furnaceInventory, mainHand) || putFuel(boxPlayer, furnaceInventory, mainHand);
             }
         } else if (view.getTopInventory() instanceof BrewerInventory brewerInventory) { // BrewingStand
             if (deposit) {
@@ -333,6 +333,36 @@ public class StickListener implements Listener {
             player.getCurrentStockHolder().increase(boxItem.get(), result.getAmount());
             inventory.setResult(null);
             playDepositOrWithdrawalSound(player.getPlayer(), true);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private boolean putIngredient(@NotNull BoxPlayer player, @NotNull FurnaceInventory inventory, @NotNull ItemStack mainHand) {
+        var currentInput = inventory.getItem(0);
+
+        if ((currentInput != null && !currentInput.isSimilar(mainHand)) || !inventory.canSmelt(mainHand)) {
+            return false;
+        }
+
+        var input = Objects.requireNonNullElse(currentInput, mainHand);
+        var boxItem = BoxProvider.get().getItemManager().getBoxItem(input);
+
+        if (boxItem.isEmpty()) {
+            return false;
+        }
+
+        int currentAmount = currentInput != null ? currentInput.getAmount() : 0;
+        int maxStackSize = input.getType().getMaxStackSize();
+        int fuelStock = player.getCurrentStockHolder().getAmount(boxItem.get());
+        int newAmount = fuelStock < maxStackSize - currentAmount ? fuelStock + currentAmount : maxStackSize; // This has the same **meaning** as Math.min(fuelStock + currentAmount, 64), but when fuelStock + currentAmount overflows, the way using Math.min causes a bug.
+        int consumption = newAmount - currentAmount;
+
+        if (0 < consumption) {
+            player.getCurrentStockHolder().decrease(boxItem.get(), consumption);
+            inventory.setItem(0, input.clone().asQuantity(newAmount));
+            playDepositOrWithdrawalSound(player.getPlayer(), false);
             return true;
         } else {
             return false;
