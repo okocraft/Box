@@ -39,6 +39,7 @@ import org.bukkit.inventory.meta.Damageable;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
+import java.util.function.Consumer;
 
 public class StickListener implements Listener {
 
@@ -346,52 +347,44 @@ public class StickListener implements Listener {
             return false;
         }
 
-        var input = Objects.requireNonNullElse(currentInput, mainHand);
-        var boxItem = BoxProvider.get().getItemManager().getBoxItem(input);
-
-        if (boxItem.isEmpty()) {
-            return false;
-        }
-
-        int currentAmount = currentInput != null ? currentInput.getAmount() : 0;
-        int maxStackSize = input.getType().getMaxStackSize();
-        int fuelStock = player.getCurrentStockHolder().getAmount(boxItem.get());
-        int newAmount = fuelStock < maxStackSize - currentAmount ? fuelStock + currentAmount : maxStackSize; // This has the same **meaning** as Math.min(fuelStock + currentAmount, 64), but when fuelStock + currentAmount overflows, the way using Math.min causes a bug.
-        int consumption = newAmount - currentAmount;
-
-        if (0 < consumption) {
-            player.getCurrentStockHolder().decrease(boxItem.get(), consumption);
-            inventory.setItem(0, input.clone().asQuantity(newAmount));
-            playDepositOrWithdrawalSound(player.getPlayer(), false);
-            return true;
-        } else {
-            return false;
-        }
+        return putItem(
+                player,
+                Objects.requireNonNullElse(currentInput, mainHand),
+                currentInput != null ? currentInput.getAmount() : 0,
+                item -> inventory.setItem(0, item)
+        );
     }
 
     private boolean putFuel(@NotNull BoxPlayer player, @NotNull FurnaceInventory inventory, @NotNull ItemStack mainHand) {
         var currentFuel = inventory.getFuel();
 
-        if (!inventory.isFuel(mainHand) || (currentFuel != null && !currentFuel.isSimilar(mainHand))) {
+        if ((currentFuel != null && !currentFuel.isSimilar(mainHand)) || !inventory.isFuel(mainHand)) {
             return false;
         }
 
-        var fuel = Objects.requireNonNullElse(currentFuel, mainHand);
-        var boxItem = BoxProvider.get().getItemManager().getBoxItem(fuel);
+        return putItem(
+                player,
+                Objects.requireNonNullElse(currentFuel, mainHand),
+                currentFuel != null ? currentFuel.getAmount() : 0,
+                inventory::setFuel
+        );
+    }
+
+    private boolean putItem(@NotNull BoxPlayer player, @NotNull ItemStack item, int currentAmount, @NotNull Consumer<ItemStack> itemSetter) {
+        var boxItem = BoxProvider.get().getItemManager().getBoxItem(item);
 
         if (boxItem.isEmpty()) {
             return false;
         }
 
-        int currentAmount = currentFuel != null ? currentFuel.getAmount() : 0;
-        int maxStackSize = fuel.getType().getMaxStackSize();
+        int maxStackSize = item.getType().getMaxStackSize();
         int fuelStock = player.getCurrentStockHolder().getAmount(boxItem.get());
         int newAmount = fuelStock < maxStackSize - currentAmount ? fuelStock + currentAmount : maxStackSize; // This has the same **meaning** as Math.min(fuelStock + currentAmount, 64), but when fuelStock + currentAmount overflows, the way using Math.min causes a bug.
         int consumption = newAmount - currentAmount;
 
         if (0 < consumption) {
             player.getCurrentStockHolder().decrease(boxItem.get(), consumption);
-            inventory.setFuel(fuel.clone().asQuantity(newAmount));
+            itemSetter.accept(item.asQuantity(newAmount));
             playDepositOrWithdrawalSound(player.getPlayer(), false);
             return true;
         } else {
@@ -425,27 +418,12 @@ public class StickListener implements Listener {
     }
 
     private boolean putBlazePowder(@NotNull BoxPlayer player, @NotNull BrewerInventory inventory) {
-        var blazePowder = Objects.requireNonNullElseGet(inventory.getFuel(), () -> new ItemStack(Material.BLAZE_POWDER));
-        var boxItem = BoxProvider.get().getItemManager().getBoxItem(blazePowder);
-
-        if (boxItem.isEmpty()) {
-            return false;
-        }
-
-        int currentAmount = inventory.getFuel() != null ? inventory.getFuel().getAmount() : 0;
-        int maxStackSize = blazePowder.getType().getMaxStackSize();
-        int fuelStock = player.getCurrentStockHolder().getAmount(boxItem.get());
-        int newAmount = fuelStock < maxStackSize - currentAmount ? fuelStock + currentAmount : maxStackSize; // This has the same **meaning** as Math.min(fuelStock + currentAmount, 64), but when fuelStock + currentAmount overflows, the way using Math.min causes a bug.
-        int consumption = newAmount - currentAmount;
-
-        if (0 < consumption) {
-            player.getCurrentStockHolder().decrease(boxItem.get(), consumption);
-            inventory.setFuel(blazePowder.clone().asQuantity(newAmount));
-            playDepositOrWithdrawalSound(player.getPlayer(), false);
-            return true;
-        } else {
-            return false;
-        }
+        return putItem(
+                player,
+                Objects.requireNonNullElseGet(inventory.getFuel(), () -> new ItemStack(Material.BLAZE_POWDER)),
+                inventory.getFuel() != null ? inventory.getFuel().getAmount() : 0,
+                inventory::setFuel
+        );
     }
 
     private boolean isPotion(@NotNull Material material) {
