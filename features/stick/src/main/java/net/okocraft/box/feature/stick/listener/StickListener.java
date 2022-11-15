@@ -3,6 +3,7 @@ package net.okocraft.box.feature.stick.listener;
 import com.github.siroshun09.configapi.api.value.ConfigValue;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.model.item.BoxItem;
+import net.okocraft.box.api.player.BoxPlayer;
 import net.okocraft.box.api.transaction.InventoryTransaction;
 import net.okocraft.box.feature.stick.integration.LWCIntegration;
 import net.okocraft.box.feature.stick.item.BoxStickItem;
@@ -10,15 +11,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.Sound;
-import org.bukkit.block.Barrel;
-import org.bukkit.block.BlockState;
-import org.bukkit.block.Chest;
 import org.bukkit.block.Container;
-import org.bukkit.block.Dispenser;
-import org.bukkit.block.Dropper;
-import org.bukkit.block.Hopper;
-import org.bukkit.block.Lockable;
-import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.AbstractArrow;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.HumanEntity;
@@ -36,12 +29,16 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemBreakEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
+import org.bukkit.inventory.BrewerInventory;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.FurnaceInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
 
 public class StickListener implements Listener {
 
@@ -95,13 +92,12 @@ public class StickListener implements Listener {
 
         var block = event.getClickedBlock();
 
-        if (block == null || !canDepositOrWithdraw(block.getState())) {
+        // current containers: Barrel, BlastFurnace, BrewingStand, Chest, Dispenser, Dropper, Furnace, Hopper, ShulkerBox, and Smoker
+        if (block == null || !(block.getState() instanceof Container container) || container.isLocked()) {
             return;
         }
 
-        var state = (Container) block.getState();
-
-        var view = new DummyInventoryView(player, state.getInventory());
+        var view = new DummyInventoryView(player, container.getInventory());
 
         // for WorldGuard (flag: chest-access)
         if (!checkChestAccess(view)) {
@@ -112,17 +108,47 @@ public class StickListener implements Listener {
 
         var deposit = mainHand.getType().isAir();
 
-        if (!LWCIntegration.canModifyInventory(player, state, deposit)) {
+        if (!LWCIntegration.canModifyInventory(player, container, deposit)) {
             return;
         }
 
-        if (deposit) {
-            depositItemsInInventory(player, view);
-        } else {
-            BoxProvider.get()
-                    .getItemManager()
-                    .getBoxItem(mainHand)
-                    .ifPresent(item -> withdrawToInventory(player, view, item));
+        var playerMap = BoxProvider.get().getBoxPlayerMap();
+
+        if (!playerMap.isLoaded(player)) {
+            return;
+        }
+
+        var boxPlayer = playerMap.get(player);
+        boolean modified = false;
+
+        if (view.getTopInventory() instanceof FurnaceInventory furnaceInventory) { // BlastFurnace, Furnace, and Smoker
+            if (deposit) {
+                modified = takeResultItem(boxPlayer, furnaceInventory);
+            } else {
+                modified = putFuel(boxPlayer, furnaceInventory, mainHand);
+            }
+        } else if (view.getTopInventory() instanceof BrewerInventory brewerInventory) { // BrewingStand
+            if (deposit) {
+                modified = takeResultPotions(boxPlayer, brewerInventory);
+            } else if (isPotion(mainHand.getType())) {
+                modified = putPotions(boxPlayer, brewerInventory, mainHand);
+            } else if (mainHand.getType() == Material.BLAZE_POWDER) {
+                modified = putBlazePowder(boxPlayer, brewerInventory);
+            }
+        } else { // other containers (Barrel, Chest, Dispenser, Dropper, Hopper, and ShulkerBox
+            if (deposit) {
+                modified = depositItemsInInventory(boxPlayer, view);
+            } else {
+                var boxItem = BoxProvider.get().getItemManager().getBoxItem(mainHand);
+
+                if (boxItem.isPresent()) {
+                    modified = withdrawToInventory(boxPlayer, view, boxItem.get());
+                }
+            }
+        }
+
+        if (modified) {
+            event.setCancelled(true);
         }
     }
 
@@ -291,37 +317,169 @@ public class StickListener implements Listener {
         return new InventoryOpenEvent(inventoryView).callEvent();
     }
 
-    private boolean canDepositOrWithdraw(@NotNull BlockState state) {
-        return !(state instanceof Lockable lockable && lockable.isLocked()) &&
-                (state instanceof Barrel || state instanceof Chest ||
-                        state instanceof Dispenser || state instanceof Dropper ||
-                        state instanceof Hopper || state instanceof ShulkerBox);
+    private boolean takeResultItem(@NotNull BoxPlayer player, @NotNull FurnaceInventory inventory) {
+        var result = inventory.getResult();
+
+        if (result == null) {
+            return false;
+        }
+
+        var boxItem = BoxProvider.get().getItemManager().getBoxItem(result);
+
+        if (boxItem.isPresent()) {
+            player.getCurrentStockHolder().increase(boxItem.get(), result.getAmount());
+            inventory.setResult(null);
+            playDepositOrWithdrawalSound(player.getPlayer(), true);
+            return true;
+        } else {
+            return false;
+        }
     }
 
-    private void depositItemsInInventory(@NotNull Player player, @NotNull InventoryView inventoryView) {
-        var stockHolder = BoxProvider.get().getBoxPlayerMap().get(player).getCurrentStockHolder();
+    private boolean putFuel(@NotNull BoxPlayer player, @NotNull FurnaceInventory inventory, @NotNull ItemStack mainHand) {
+        var currentFuel = inventory.getFuel();
+
+        if (!inventory.isFuel(mainHand) || (currentFuel != null && !currentFuel.isSimilar(mainHand))) {
+            return false;
+        }
+
+        var fuel = Objects.requireNonNullElse(currentFuel, mainHand);
+        var boxItem = BoxProvider.get().getItemManager().getBoxItem(fuel);
+
+        if (boxItem.isEmpty()) {
+            return false;
+        }
+
+        int currentAmount = currentFuel != null ? currentFuel.getAmount() : 0;
+        int maxStackSize = fuel.getType().getMaxStackSize();
+        int fuelStock = player.getCurrentStockHolder().getAmount(boxItem.get());
+        int newAmount = fuelStock < maxStackSize - currentAmount ? fuelStock + currentAmount : maxStackSize; // This has the same **meaning** as Math.min(fuelStock + currentAmount, 64), but when fuelStock + currentAmount overflows, the way using Math.min causes a bug.
+        int consumption = newAmount - currentAmount;
+
+        if (0 < consumption) {
+            player.getCurrentStockHolder().decrease(boxItem.get(), consumption);
+            inventory.setFuel(fuel.clone().asQuantity(newAmount));
+            playDepositOrWithdrawalSound(player.getPlayer(), false);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private boolean takeResultPotions(@NotNull BoxPlayer player, @NotNull BrewerInventory inventory) {
+        boolean result = false;
+
+        // Brewer Inventory (see BrewingStandMenu.java in NMS)
+        // 0~2: potion slot | 3: ingredients slot | 4: fuel slot
+        for (int i = 0; i < 3; i++) {
+            var potion = inventory.getItem(i);
+
+            if (potion == null) {
+                continue;
+            }
+
+            var boxItem = BoxProvider.get().getItemManager().getBoxItem(potion);
+
+            if (boxItem.isPresent()) {
+                player.getCurrentStockHolder().increase(boxItem.get(), potion.getAmount());
+                inventory.setItem(i, null);
+                playDepositOrWithdrawalSound(player.getPlayer(), true);
+                result = true;
+            }
+        }
+
+        return result;
+    }
+
+    private boolean putBlazePowder(@NotNull BoxPlayer player, @NotNull BrewerInventory inventory) {
+        var blazePowder = Objects.requireNonNullElseGet(inventory.getFuel(), () -> new ItemStack(Material.BLAZE_POWDER));
+        var boxItem = BoxProvider.get().getItemManager().getBoxItem(blazePowder);
+
+        if (boxItem.isEmpty()) {
+            return false;
+        }
+
+        int currentAmount = inventory.getFuel() != null ? inventory.getFuel().getAmount() : 0;
+        int maxStackSize = blazePowder.getType().getMaxStackSize();
+        int fuelStock = player.getCurrentStockHolder().getAmount(boxItem.get());
+        int newAmount = fuelStock < maxStackSize - currentAmount ? fuelStock + currentAmount : maxStackSize; // This has the same **meaning** as Math.min(fuelStock + currentAmount, 64), but when fuelStock + currentAmount overflows, the way using Math.min causes a bug.
+        int consumption = newAmount - currentAmount;
+
+        if (0 < consumption) {
+            player.getCurrentStockHolder().decrease(boxItem.get(), consumption);
+            inventory.setFuel(blazePowder.clone().asQuantity(newAmount));
+            playDepositOrWithdrawalSound(player.getPlayer(), false);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private boolean isPotion(@NotNull Material material) {
+        // see BrewingStandMenu.PotionSlot#mayPlaceItem
+        return material == Material.POTION || material == Material.SPLASH_POTION ||
+                material == Material.LINGERING_POTION || material == Material.GLASS_BOTTLE;
+    }
+
+    private boolean putPotions(@NotNull BoxPlayer player, @NotNull BrewerInventory inventory, @NotNull ItemStack mainHand) {
+        var boxItem = BoxProvider.get().getItemManager().getBoxItem(mainHand);
+
+        if (boxItem.isEmpty()) {
+            return false;
+        }
+
+        boolean result = false;
+
+        // Brewer Inventory (see BrewingStandMenu.java in NMS)
+        // 0~2: potion slot | 3: ingredients slot | 4: fuel slot
+        for (int i = 0; i < 3; i++) {
+            var potion = inventory.getItem(i);
+
+            if (potion != null) { // if the slot is not empty, ignore it.
+                continue;
+            }
+
+            player.getCurrentStockHolder().decrease(boxItem.get());
+            inventory.setItem(i, boxItem.get().getClonedItem());
+            playDepositOrWithdrawalSound(player.getPlayer(), false);
+            result = true;
+        }
+
+        return result;
+    }
+
+    private boolean depositItemsInInventory(@NotNull BoxPlayer player, @NotNull InventoryView inventoryView) {
         var resultList = InventoryTransaction.depositItemsInTopInventory(inventoryView);
 
         if (resultList.getType().isModified()) {
             resultList.getResultList()
                     .stream()
                     .filter(result -> result.getType().isModified())
-                    .forEach(result -> stockHolder.increase(result.getItem(), result.getAmount()));
-            player.playSound(player.getLocation(), Sound.ENTITY_PIG_SADDLE, 100f, 2.0f);
+                    .forEach(result -> player.getCurrentStockHolder().increase(result.getItem(), result.getAmount()));
+            playDepositOrWithdrawalSound(player.getPlayer(), true);
+            return true;
+        } else {
+            return false;
         }
     }
 
-    private void withdrawToInventory(@NotNull Player player, @NotNull InventoryView inventoryView, @NotNull BoxItem item) {
-        var stockHolder = BoxProvider.get().getBoxPlayerMap().get(player).getCurrentStockHolder();
-
+    private boolean withdrawToInventory(@NotNull BoxPlayer player, @NotNull InventoryView inventoryView, @NotNull BoxItem item) {
+        var stockHolder = player.getCurrentStockHolder();
         var amount = stockHolder.getAmount(item);
 
         var result = InventoryTransaction.withdraw(inventoryView, item, amount);
 
         if (result.getType().isModified()) {
             stockHolder.decrease(result.getItem(), result.getAmount());
-            player.playSound(player.getLocation(), Sound.ENTITY_PIG_SADDLE, 100f, 1.5f);
+            playDepositOrWithdrawalSound(player.getPlayer(), false);
+            return true;
+        } else {
+            return false;
         }
+    }
+
+    private void playDepositOrWithdrawalSound(@NotNull Player player, boolean deposit) {
+        player.playSound(player.getLocation(), Sound.ENTITY_PIG_SADDLE, 100f, deposit ? 2.0f : 1.5f);
     }
 
     private static class DummyInventoryView extends InventoryView {
