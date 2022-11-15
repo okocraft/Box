@@ -104,8 +104,6 @@ public class StickListener implements Listener {
             return;
         }
 
-        event.setCancelled(true);
-
         var deposit = mainHand.getType().isAir();
 
         if (!LWCIntegration.canModifyInventory(player, container, deposit)) {
@@ -119,6 +117,11 @@ public class StickListener implements Listener {
         }
 
         var boxPlayer = playerMap.get(player);
+
+        if (player.getGameMode() == GameMode.CREATIVE) {
+            event.setCancelled(true); // This prevents the instant breaking of blocks in creative mode.
+        }
+
         boolean modified = false;
 
         if (view.getTopInventory() instanceof FurnaceInventory furnaceInventory) { // BlastFurnace, Furnace, and Smoker
