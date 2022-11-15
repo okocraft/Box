@@ -138,7 +138,7 @@ public class StickListener implements Listener {
             } else if (mainHand.getType() == Material.BLAZE_POWDER) {
                 modified = putBlazePowder(boxPlayer, brewerInventory);
             }
-        } else { // other containers (Barrel, Chest, Dispenser, Dropper, Hopper, and ShulkerBox
+        } else { // other containers (Barrel, Chest, Dispenser, Dropper, Hopper, and ShulkerBox)
             if (deposit) {
                 modified = depositItemsInInventory(boxPlayer, view);
             } else {
