@@ -2,6 +2,7 @@ package net.okocraft.box.feature.autostore.model.setting;
 
 import net.okocraft.box.api.model.item.BoxItem;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.UnmodifiableView;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -32,8 +33,8 @@ public class PerItemSetting {
         return toggled;
     }
 
-    public @NotNull Set<BoxItem> getEnabledItems() {
-        return enabledItems;
+    public @NotNull @UnmodifiableView Set<BoxItem> getEnabledItems() {
+        return Collections.unmodifiableSet(enabledItems);
     }
 
     public void setEnabledItems(@NotNull Collection<BoxItem> items) {
