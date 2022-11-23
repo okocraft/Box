@@ -4,12 +4,13 @@ import net.okocraft.box.api.model.item.BoxItem;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
 public class PerItemSetting {
 
-    private final Set<BoxItem> enabledItems = new HashSet<>();
+    private final Set<BoxItem> enabledItems = Collections.synchronizedSet(new HashSet<>());
 
     public boolean isEnabled(@NotNull BoxItem item) {
         return enabledItems.contains(item);
