@@ -20,7 +20,7 @@ public final class Categorizer {
             return byMaterials;
         }
 
-        if (MCDataVersion.CURRENT.isAfterOrSame(MCDataVersion.MC_1_19)) {
+        if (MCDataVersion.CURRENT.isAfterOrSame(MCDataVersion.MC_1_19_2)) {
             return MC119Categorizer.categorize(item.getType());
         }
 

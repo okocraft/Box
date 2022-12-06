@@ -589,7 +589,7 @@ final class CommonCategorizer {
 
     @SuppressWarnings("deprecation")
     private static @NotNull Tag<Material> carpets() {
-        if (MCDataVersion.CURRENT.isAfterOrSame(MCDataVersion.MC_1_19)) {
+        if (MCDataVersion.CURRENT.isAfterOrSame(MCDataVersion.MC_1_19_2)) {
             return Tag.WOOL_CARPETS;
         } else {
             return CARPETS;
