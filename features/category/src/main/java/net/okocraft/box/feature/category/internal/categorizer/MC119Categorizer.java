@@ -1,5 +1,7 @@
-package net.okocraft.box.feature.category.internal.category;
+package net.okocraft.box.feature.category.internal.categorizer;
 
+import net.okocraft.box.feature.category.internal.category.CommonDefaultCategory;
+import net.okocraft.box.feature.category.internal.category.DefaultCategory;
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
