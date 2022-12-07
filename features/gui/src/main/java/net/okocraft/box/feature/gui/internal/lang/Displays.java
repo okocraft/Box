@@ -3,7 +3,7 @@ package net.okocraft.box.feature.gui.internal.lang;
 import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.message.Components;
 import net.okocraft.box.api.message.argument.SingleArgument;
-import net.okocraft.box.feature.category.model.Category;
+import net.okocraft.box.feature.category.api.category.Category;
 
 import static net.kyori.adventure.text.Component.translatable;
 import static net.kyori.adventure.text.format.NamedTextColor.BLACK;

@@ -2,7 +2,7 @@ package net.okocraft.box.feature.gui.internal.menu;
 
 import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.model.item.BoxItem;
-import net.okocraft.box.feature.category.model.Category;
+import net.okocraft.box.feature.category.api.category.Category;
 import net.okocraft.box.feature.gui.api.button.Button;
 import net.okocraft.box.feature.gui.api.buttons.BackButton;
 import net.okocraft.box.feature.gui.api.buttons.customnumber.ChangeCustomNumberUnitButton;
