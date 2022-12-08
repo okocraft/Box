@@ -11,7 +11,7 @@ public record MCDataVersion(int dataVersion) {
     public static final MCDataVersion MC_1_18_2 = new MCDataVersion(2975);
     public static final MCDataVersion MC_1_19 = new MCDataVersion(3105);
     public static final MCDataVersion MC_1_19_2 = new MCDataVersion(3120);
-    public static final MCDataVersion MC_1_19_3 = new MCDataVersion(3217); // Not yet finalized - 1.19.3-rc2: 3216
+    public static final MCDataVersion MC_1_19_3 = new MCDataVersion(3218);
 
     public boolean isBefore(@NotNull MCDataVersion other) {
         return dataVersion < other.dataVersion;
