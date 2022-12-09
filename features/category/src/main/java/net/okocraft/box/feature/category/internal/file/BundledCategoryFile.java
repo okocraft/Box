@@ -1,4 +1,4 @@
-package net.okocraft.box.feature.category.internal;
+package net.okocraft.box.feature.category.internal.file;
 
 import com.github.siroshun09.configapi.api.util.ResourceUtils;
 import net.okocraft.box.api.BoxProvider;

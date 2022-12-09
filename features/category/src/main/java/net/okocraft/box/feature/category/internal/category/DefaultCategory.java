@@ -1,5 +1,7 @@
 package net.okocraft.box.feature.category.internal.category;
 
+import net.kyori.adventure.text.Component;
+import net.okocraft.box.feature.category.api.category.Category;
 import org.bukkit.Material;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -14,6 +16,10 @@ public interface DefaultCategory {
     @NotNull String getName();
 
     @NotNull Material getIconMaterial();
+
+    default @NotNull Category toCategory() {
+        return Category.create(Component.translatable("box.category.name." + getName()), getIconMaterial());
+    }
 
     record DefaultCategoryRecord(@NotNull String name, @NotNull Material icon) implements DefaultCategory {
 

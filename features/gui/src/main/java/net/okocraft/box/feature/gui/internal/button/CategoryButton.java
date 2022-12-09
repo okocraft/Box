@@ -1,6 +1,6 @@
 package net.okocraft.box.feature.gui.internal.button;
 
-import net.okocraft.box.feature.category.model.Category;
+import net.okocraft.box.feature.category.api.category.Category;
 import net.okocraft.box.feature.gui.api.buttons.MenuButton;
 import net.okocraft.box.feature.gui.api.lang.Styles;
 import net.okocraft.box.feature.gui.api.util.TranslationUtil;

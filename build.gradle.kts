@@ -9,8 +9,7 @@ tasks {
             "api/**",
             "feature/autostore/event/AutoStoreSettingChangeEvent.java",
             "feature/autostore/model/**",
-            "feature/category/CategoryHolder.java",
-            "feature/category/model/Category.java",
+            "feature/category/api/**",
             "feature/gui/api/**",
             "feature/stick/StickFeature.java",
             "feature/stick/item/BoxStickItem.java"

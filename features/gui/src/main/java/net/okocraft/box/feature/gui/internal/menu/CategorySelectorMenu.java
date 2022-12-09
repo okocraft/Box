@@ -1,8 +1,8 @@
 package net.okocraft.box.feature.gui.internal.menu;
 
 import net.kyori.adventure.text.Component;
-import net.okocraft.box.feature.category.CategoryHolder;
-import net.okocraft.box.feature.category.model.Category;
+import net.okocraft.box.feature.category.api.category.Category;
+import net.okocraft.box.feature.category.api.registry.CategoryRegistry;
 import net.okocraft.box.feature.gui.api.button.Button;
 import net.okocraft.box.feature.gui.api.buttons.CloseButton;
 import net.okocraft.box.feature.gui.api.menu.paginate.AbstractPaginatedMenu;
@@ -17,7 +17,7 @@ import java.util.stream.Stream;
 public class CategorySelectorMenu extends AbstractPaginatedMenu<Category> {
 
     public CategorySelectorMenu() {
-        super(CategoryHolder.get());
+        super(CategoryRegistry.get().values());
     }
 
     @Override
