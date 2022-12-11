@@ -45,7 +45,7 @@ public interface SubCommandHoldable {
          * The returned list can be changed in implementation,
          * but it should not add or remove.
          *
-         * @return the set of subcommands
+         * @return the list of subcommands
          */
         public @NotNull @Unmodifiable List<Command> getSubCommands() {
             return subCommands;

@@ -18,7 +18,7 @@ public final class TabCompleter {
      * Gets the set of item names that match the filter.
      *
      * @param filter the item name filter
-     * @return the set of item names that match the filter
+     * @return the list of item names that match the filter
      */
     public static @NotNull List<String> itemNames(@NotNull String filter) {
         var itemNameFilter = filter.toUpperCase(Locale.ROOT);
@@ -34,7 +34,7 @@ public final class TabCompleter {
      * Gets the set of player names that match the filter.
      *
      * @param filter the player name filter
-     * @return the set of player names that match the filter
+     * @return the list of player names that match the filter
      */
     public static @NotNull List<String> players(@NotNull String filter) {
         var playerNameFilter = filter.toLowerCase(Locale.ROOT);
@@ -52,7 +52,7 @@ public final class TabCompleter {
      *
      * @param filter         the player name filter
      * @param permissionNode the permission node to check
-     * @return the set of player names that match the filter
+     * @return the list of player names that match the filter
      */
     public static @NotNull List<String> players(@NotNull String filter, @NotNull String permissionNode) {
         var playerNameFilter = filter.toLowerCase(Locale.ROOT);

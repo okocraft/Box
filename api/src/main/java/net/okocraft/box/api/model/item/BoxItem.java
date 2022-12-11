@@ -11,9 +11,9 @@ public interface BoxItem {
 
     /**
      * Gets the original {@link ItemStack}.
-     *
+     * <p>
      * The item returned by this method must not be modified.
-     *
+     * <p>
      * If you want to change it, you should use {@link #getClonedItem()}.
      *
      * @return the original {@link ItemStack}
