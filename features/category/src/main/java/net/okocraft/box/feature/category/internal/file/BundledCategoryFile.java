@@ -2,7 +2,7 @@ package net.okocraft.box.feature.category.internal.file;
 
 import com.github.siroshun09.configapi.api.util.ResourceUtils;
 import net.okocraft.box.api.BoxProvider;
-import net.okocraft.box.feature.category.internal.util.MCDataVersion;
+import net.okocraft.box.api.util.MCDataVersion;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;

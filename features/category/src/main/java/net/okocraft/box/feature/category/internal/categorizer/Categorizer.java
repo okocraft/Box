@@ -1,7 +1,7 @@
 package net.okocraft.box.feature.category.internal.categorizer;
 
 import net.okocraft.box.feature.category.internal.category.DefaultCategory;
-import net.okocraft.box.feature.category.internal.util.MCDataVersion;
+import net.okocraft.box.api.util.MCDataVersion;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
