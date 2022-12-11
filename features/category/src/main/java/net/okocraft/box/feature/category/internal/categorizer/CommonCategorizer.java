@@ -2,7 +2,7 @@ package net.okocraft.box.feature.category.internal.categorizer;
 
 import com.destroystokyo.paper.MaterialTags;
 import net.okocraft.box.feature.category.internal.category.CommonDefaultCategory;
-import net.okocraft.box.feature.category.internal.util.MCDataVersion;
+import net.okocraft.box.api.util.MCDataVersion;
 import org.bukkit.Material;
 import org.bukkit.Tag;
 import org.bukkit.inventory.ItemStack;
