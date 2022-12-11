@@ -436,13 +436,15 @@ public class StickListener implements Listener {
     }
 
     private boolean putPotions(@NotNull BoxPlayer player, @NotNull BrewerInventory inventory, @NotNull ItemStack mainHand) {
-        var boxItem = BoxProvider.get().getItemManager().getBoxItem(mainHand);
+        var optionalBoxItem = BoxProvider.get().getItemManager().getBoxItem(mainHand);
 
-        if (boxItem.isEmpty()) {
+        if (optionalBoxItem.isEmpty()) {
             return false;
         }
 
         boolean result = false;
+        var stockHolder = player.getCurrentStockHolder();
+        var item = optionalBoxItem.get();
 
         // Brewer Inventory (see BrewingStandMenu.java in NMS)
         // 0~2: potion slot | 3: ingredients slot | 4: fuel slot
@@ -453,9 +455,11 @@ public class StickListener implements Listener {
                 continue;
             }
 
-            player.getCurrentStockHolder().decrease(boxItem.get());
-            inventory.setItem(i, boxItem.get().getClonedItem());
-            result = true;
+            if (0 < stockHolder.getAmount(item)) {
+                stockHolder.decrease(item);
+                inventory.setItem(i, item.getClonedItem());
+                result = true;
+            }
         }
 
         if (result) {
