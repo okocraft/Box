@@ -8,11 +8,6 @@ import org.jetbrains.annotations.NotNull;
 
 public record ResultItemIcon(@NotNull ItemStack item, int slot) implements RenderedButton {
 
-    public ResultItemIcon(@NotNull ItemStack item, int slot) {
-        this.item = item;
-        this.slot = slot;
-    }
-
     @Override
     public int getSlot() {
         return slot;
