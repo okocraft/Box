@@ -409,9 +409,12 @@ public class StickListener implements Listener {
             if (boxItem.isPresent()) {
                 player.getCurrentStockHolder().increase(boxItem.get(), potion.getAmount());
                 inventory.setItem(i, null);
-                playDepositOrWithdrawalSound(player.getPlayer(), true);
                 result = true;
             }
+        }
+
+        if (result) {
+            playDepositOrWithdrawalSound(player.getPlayer(), true);
         }
 
         return result;
@@ -452,8 +455,11 @@ public class StickListener implements Listener {
 
             player.getCurrentStockHolder().decrease(boxItem.get());
             inventory.setItem(i, boxItem.get().getClonedItem());
-            playDepositOrWithdrawalSound(player.getPlayer(), false);
             result = true;
+        }
+
+        if (result) {
+            playDepositOrWithdrawalSound(player.getPlayer(), false);
         }
 
         return result;
