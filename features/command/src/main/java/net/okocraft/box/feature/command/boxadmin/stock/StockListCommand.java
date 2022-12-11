@@ -184,20 +184,16 @@ class StockListCommand extends AbstractCommand {
     private enum ArgumentType {
         SORTER(
                 "sorter", "s",
-                (arg, context) -> {
-                    context.setSorter(switch (arg.toLowerCase(Locale.ROOT)) {
-                        case "na", "name-asc" -> Context.NAME_ASC;
-                        case "nd", "name-desc" -> Context.NAME_DESC;
-                        case "aa", "amount-asc" -> Context.AMOUNT_ASC;
-                        case "ad", "amount-desc" -> Context.AMOUNT_DESC;
-                        default -> null;
-                    });
-                },
-                arg -> {
-                    return Stream.of("na", "name-asc", "nd", "name-desc", "aa", "amount-asc", "ad", "amount-desc")
-                            .filter(sorter -> sorter.startsWith(arg.toLowerCase(Locale.ENGLISH)))
-                            .toList();
-                }
+                (arg, context) -> context.setSorter(switch (arg.toLowerCase(Locale.ROOT)) {
+                    case "na", "name-asc" -> Context.NAME_ASC;
+                    case "nd", "name-desc" -> Context.NAME_DESC;
+                    case "aa", "amount-asc" -> Context.AMOUNT_ASC;
+                    case "ad", "amount-desc" -> Context.AMOUNT_DESC;
+                    default -> null;
+                }),
+                arg -> Stream.of("na", "name-asc", "nd", "name-desc", "aa", "amount-asc", "ad", "amount-desc")
+                        .filter(sorter -> sorter.startsWith(arg.toLowerCase(Locale.ENGLISH)))
+                        .toList()
         ),
         PAGE("page", "p", (arg, context) -> {
             try {
