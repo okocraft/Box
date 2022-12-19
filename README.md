@@ -1,7 +1,7 @@
 # Box
 
 ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/okocraft/Box)
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/okocraft/Box/Maven%20Build)
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/okocraft/Box/gradle.yml?branch=main)
 ![GitHub](https://img.shields.io/github/license/okocraft/Box)
 
 Box はあらゆるアイテムを仮想的なインベントリへ収納できるようにする Paper プラグインです。
