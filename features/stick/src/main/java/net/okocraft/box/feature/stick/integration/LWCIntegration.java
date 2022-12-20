@@ -24,6 +24,7 @@ public class LWCIntegration {
         }
 
         return switch (protection.getType().name()) { // DISPLAY is not present in 2.1.5.
+            case "SUPPLY" -> operationType == ContainerOperation.OperationType.DEPOSIT || canAccess(player, protection); // SUPPLY is the protection type that is only available in OKOCRAFT currently.
             case "DONATION" -> operationType == ContainerOperation.OperationType.WITHDRAW || canAccess(player, protection);
             case "DISPLAY" -> canAccess(player, protection);
             default -> true; // Otherwise, the click to the chest has already been rejected.
