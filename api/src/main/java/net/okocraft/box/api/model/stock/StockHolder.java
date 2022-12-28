@@ -1,6 +1,8 @@
 package net.okocraft.box.api.model.stock;
 
+import net.okocraft.box.api.event.stockholder.stock.StockEvent;
 import net.okocraft.box.api.model.item.BoxItem;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
@@ -42,7 +44,21 @@ public interface StockHolder {
      * @param item   the item to set the stock quantity
      * @param amount the amount
      */
-    void setAmount(@NotNull BoxItem item, int amount);
+    @ApiStatus.NonExtendable
+    default void setAmount(@NotNull BoxItem item, int amount) {
+        setAmount(item, amount, StockEvent.Cause.API);
+    }
+
+    /**
+     * Sets the stock quantity of the specified item.
+     *
+     * @param item   the item to set the stock quantity
+     * @param amount the amount
+     * @param cause  the cause that indicates why this method called
+     */
+    default void setAmount(@NotNull BoxItem item, int amount, @NotNull StockEvent.Cause cause) {
+        setAmount(item, amount);
+    }
 
     /**
      * Increases the stock of the specified item by one.
@@ -50,7 +66,10 @@ public interface StockHolder {
      * @param item the item to increase the stock
      * @return the stock quantity after increasing
      */
-    int increase(@NotNull BoxItem item);
+    @ApiStatus.NonExtendable
+    default int increase(@NotNull BoxItem item) {
+        return increase(item, 1, StockEvent.Cause.API);
+    }
 
     /**
      * Increases the stock of the specified item.
@@ -59,7 +78,22 @@ public interface StockHolder {
      * @param increment the amount to increase the stock
      * @return the stock quantity after increasing
      */
-    int increase(@NotNull BoxItem item, int increment);
+    @ApiStatus.NonExtendable
+    default int increase(@NotNull BoxItem item, int increment) {
+        return increase(item, increment, StockEvent.Cause.API);
+    }
+
+    /**
+     * Increases the stock of the specified item.
+     *
+     * @param item      the item to increase the stock
+     * @param increment the amount to increase the stock
+     * @param cause     the cause that indicates why this method called
+     * @return the stock quantity after increasing
+     */
+    default int increase(@NotNull BoxItem item, int increment, @NotNull StockEvent.Cause cause) {
+        return increase(item, increment);
+    }
 
     /**
      * Decreases the stock of the specified item by one.
@@ -67,7 +101,10 @@ public interface StockHolder {
      * @param item the item to decrease the stock
      * @return the stock quantity after decreasing
      */
-    int decrease(@NotNull BoxItem item);
+    @ApiStatus.NonExtendable
+    default int decrease(@NotNull BoxItem item) {
+        return decrease(item, 1, StockEvent.Cause.API);
+    }
 
     /**
      * Decreases the stock of the specified item.
@@ -76,7 +113,22 @@ public interface StockHolder {
      * @param decrement the amount to decrease the stock
      * @return the stock quantity after decreasing
      */
-    int decrease(@NotNull BoxItem item, int decrement);
+    @ApiStatus.NonExtendable
+    default int decrease(@NotNull BoxItem item, int decrement) {
+        return decrease(item, decrement, StockEvent.Cause.API);
+    }
+
+    /**
+     * Decreases the stock of the specified item.
+     *
+     * @param item      the item to decrease the stock
+     * @param decrement the amount to decrease the stock
+     * @param cause     the cause that indicates why this method called
+     * @return the stock quantity after decreasing
+     */
+    default int decrease(@NotNull BoxItem item, int decrement, @NotNull StockEvent.Cause cause) {
+        return decrease(item, decrement);
+    }
 
     /**
      * Gets a stocked item collection.
