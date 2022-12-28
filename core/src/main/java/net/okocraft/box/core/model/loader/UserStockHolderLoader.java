@@ -1,5 +1,6 @@
 package net.okocraft.box.core.model.loader;
 
+import net.okocraft.box.api.event.stockholder.stock.StockEvent;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.model.stock.StockData;
 import net.okocraft.box.api.model.stock.UserStockHolder;
@@ -52,35 +53,21 @@ public class UserStockHolderLoader implements UserStockHolder {
     }
 
     @Override
-    public void setAmount(@NotNull BoxItem item, int amount) {
-        checkAndGetUserStockHolder().setAmount(item, amount);
+    public void setAmount(@NotNull BoxItem item, int amount, @NotNull StockEvent.Cause cause) {
+        checkAndGetUserStockHolder().setAmount(item, amount, cause);
         queue.enqueue(this);
     }
 
     @Override
-    public int increase(@NotNull BoxItem item) {
-        int current = checkAndGetUserStockHolder().increase(item);
-        queue.enqueue(this);
-        return current;
-    }
-
-    @Override
-    public int increase(@NotNull BoxItem item, int increment) {
-        int current = checkAndGetUserStockHolder().increase(item, increment);
+    public int increase(@NotNull BoxItem item, int increment, @NotNull StockEvent.Cause cause) {
+        int current = checkAndGetUserStockHolder().increase(item, increment, cause);
         queue.enqueue(this);
         return current;
     }
 
     @Override
-    public int decrease(@NotNull BoxItem item) {
-        int current = checkAndGetUserStockHolder().decrease(item);
-        queue.enqueue(this);
-        return current;
-    }
-
-    @Override
-    public int decrease(@NotNull BoxItem item, int decrement) {
-        int current = checkAndGetUserStockHolder().decrease(item, decrement);
+    public int decrease(@NotNull BoxItem item, int decrement, @NotNull StockEvent.Cause cause) {
+        int current = checkAndGetUserStockHolder().decrease(item, decrement, cause);
         queue.enqueue(this);
         return current;
     }

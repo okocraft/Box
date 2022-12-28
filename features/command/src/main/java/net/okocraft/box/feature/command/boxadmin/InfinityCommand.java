@@ -3,6 +3,7 @@ package net.okocraft.box.feature.command.boxadmin;
 import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.command.AbstractCommand;
+import net.okocraft.box.api.event.stockholder.stock.StockEvent;
 import net.okocraft.box.api.message.GeneralMessage;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.model.stock.StockData;
@@ -109,26 +110,16 @@ public class InfinityCommand extends AbstractCommand {
         }
 
         @Override
-        public void setAmount(@NotNull BoxItem item, int amount) {
+        public void setAmount(@NotNull BoxItem item, int amount, @NotNull StockEvent.Cause cause) {
         }
 
         @Override
-        public int increase(@NotNull BoxItem item) {
+        public int increase(@NotNull BoxItem item, int increment, @NotNull StockEvent.Cause cause) {
             return Integer.MAX_VALUE;
         }
 
         @Override
-        public int increase(@NotNull BoxItem item, int increment) {
-            return Integer.MAX_VALUE;
-        }
-
-        @Override
-        public int decrease(@NotNull BoxItem item) {
-            return Integer.MAX_VALUE;
-        }
-
-        @Override
-        public int decrease(@NotNull BoxItem item, int decrement) {
+        public int decrease(@NotNull BoxItem item, int decrement, @NotNull StockEvent.Cause cause) {
             return Integer.MAX_VALUE;
         }
 

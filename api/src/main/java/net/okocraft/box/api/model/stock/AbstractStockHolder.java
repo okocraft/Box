@@ -3,6 +3,7 @@ package net.okocraft.box.api.model.stock;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.event.stockholder.StockHolderResetEvent;
 import net.okocraft.box.api.event.stockholder.stock.StockDecreaseEvent;
+import net.okocraft.box.api.event.stockholder.stock.StockEvent;
 import net.okocraft.box.api.event.stockholder.stock.StockIncreaseEvent;
 import net.okocraft.box.api.event.stockholder.stock.StockSetEvent;
 import net.okocraft.box.api.model.item.BoxItem;
@@ -62,7 +63,7 @@ public abstract class AbstractStockHolder implements StockHolder {
      * @param amount the amount
      */
     @Override
-    public void setAmount(@NotNull BoxItem item, int amount) {
+    public void setAmount(@NotNull BoxItem item, int amount, @NotNull StockEvent.Cause cause) {
         if (amount < 0 && !allowMinus) {
             amount = 0;
         }
@@ -72,20 +73,7 @@ public abstract class AbstractStockHolder implements StockHolder {
         var previous = stock.get();
         stock.set(amount);
 
-        BoxProvider.get().getEventBus().callEventAsync(new StockSetEvent(this, item, amount, previous));
-    }
-
-    /**
-     * {@inheritDoc}
-     * <p>
-     * This method calls {@link StockIncreaseEvent} asynchronous.
-     *
-     * @param item the item to set the stock quantity
-     * @return the stock quantity after increasing
-     */
-    @Override
-    public int increase(@NotNull BoxItem item) {
-        return increase(item, 1);
+        BoxProvider.get().getEventBus().callEventAsync(new StockSetEvent(this, item, amount, previous, cause));
     }
 
     /**
@@ -98,11 +86,11 @@ public abstract class AbstractStockHolder implements StockHolder {
      * @return the stock quantity after increasing
      */
     @Override
-    public int increase(@NotNull BoxItem item, int increment) {
+    public int increase(@NotNull BoxItem item, int increment, @NotNull StockEvent.Cause cause) {
         var stock = getStock(item);
         var amount = stock.addAndGet(increment);
 
-        BoxProvider.get().getEventBus().callEventAsync(new StockIncreaseEvent(this, item, increment, amount));
+        BoxProvider.get().getEventBus().callEventAsync(new StockIncreaseEvent(this, item, increment, amount, cause));
 
         if (amount < 0) {
             var logger = BoxProvider.get().getLogger();
@@ -123,25 +111,12 @@ public abstract class AbstractStockHolder implements StockHolder {
      * <p>
      * This method calls {@link StockDecreaseEvent} asynchronous.
      *
-     * @param item the item to decrease the stock
-     * @return the stock quantity after decreasing
-     */
-    @Override
-    public int decrease(@NotNull BoxItem item) {
-        return decrease(item, 1);
-    }
-
-    /**
-     * {@inheritDoc}
-     * <p>
-     * This method calls {@link StockDecreaseEvent} asynchronous.
-     *
      * @param item      the item to decrease the stock
      * @param decrement the amount to decrease the stock
      * @return the stock quantity after decreasing
      */
     @Override
-    public int decrease(@NotNull BoxItem item, int decrement) {
+    public int decrease(@NotNull BoxItem item, int decrement, @NotNull StockEvent.Cause cause) {
         var stock = getStock(item);
         int decreased = stock.get() - decrement;
 
@@ -152,7 +127,7 @@ public abstract class AbstractStockHolder implements StockHolder {
             decreased = 0;
         }
 
-        BoxProvider.get().getEventBus().callEventAsync(new StockDecreaseEvent(this, item, decrement, decreased));
+        BoxProvider.get().getEventBus().callEventAsync(new StockDecreaseEvent(this, item, decrement, decreased, cause));
 
         return decreased;
     }
