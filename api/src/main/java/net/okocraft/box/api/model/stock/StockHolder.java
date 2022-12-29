@@ -40,6 +40,8 @@ public interface StockHolder {
 
     /**
      * Sets the stock quantity of the specified item.
+     * <p>
+     * This method calls {@link #setAmount(BoxItem, int, StockEvent.Cause)} with {@link StockEvent.Cause#API}.
      *
      * @param item   the item to set the stock quantity
      * @param amount the amount
@@ -62,6 +64,8 @@ public interface StockHolder {
 
     /**
      * Increases the stock of the specified item by one.
+     * <p>
+     * This method calls {@link #increase(BoxItem, int, StockEvent.Cause)} with {@link StockEvent.Cause#API}.
      *
      * @param item the item to increase the stock
      * @return the stock quantity after increasing
@@ -73,6 +77,8 @@ public interface StockHolder {
 
     /**
      * Increases the stock of the specified item.
+     * <p>
+     * This method calls {@link #increase(BoxItem, int, StockEvent.Cause)} with {@link StockEvent.Cause#API}.
      *
      * @param item      the item to increase the stock
      * @param increment the amount to increase the stock
@@ -97,6 +103,8 @@ public interface StockHolder {
 
     /**
      * Decreases the stock of the specified item by one.
+     * <p>
+     * This method calls {@link #decrease(BoxItem, int, StockEvent.Cause)} with {@link StockEvent.Cause#API}.
      *
      * @param item the item to decrease the stock
      * @return the stock quantity after decreasing
@@ -108,6 +116,8 @@ public interface StockHolder {
 
     /**
      * Decreases the stock of the specified item.
+     * <p>
+     * This method calls {@link #decrease(BoxItem, int, StockEvent.Cause)} with {@link StockEvent.Cause#API}.
      *
      * @param item      the item to decrease the stock
      * @param decrement the amount to decrease the stock

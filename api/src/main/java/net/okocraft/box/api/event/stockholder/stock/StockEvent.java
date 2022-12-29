@@ -72,13 +72,18 @@ public class StockEvent extends StockHolderEvent implements AsyncEvent {
      * Gets the cause that indicates why this event was called.
      *
      * @return the cause that indicates why this event was called
+     * @see Cause
      */
     public @NotNull Cause getCause() {
         return cause;
     }
 
     /**
-     * An interface that indicates why the {@link StockEvent} was called
+     * An interface that indicates why the {@link StockEvent} was called.
+     * <p>
+     * By implementing this interface, {@link Cause} can have additional information.
+     * <p>
+     * If no additional information is needed, an instance can be created via {@link #create(String)}.
      */
     public interface Cause {
 
@@ -93,14 +98,18 @@ public class StockEvent extends StockHolderEvent implements AsyncEvent {
         }
 
         /**
-         * TODO
+         * This is synonymous with "unknown" and is used when no {@link Cause} is passed when changing stock.
          */
         Cause API = create("api");
 
         /**
          * Gets the string that indicates the cause.
+         * <p>
+         * This method returns a string that is a concise representation of the "cause".
+         * <p>
+         * For example, an API call is "api", and a player's stock deposit/withdrawal is "deposit" or "withdraw".
          *
-         * @return TODO
+         * @return the string that indicates the cause
          */
         @NotNull String name();
     }
