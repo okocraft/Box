@@ -64,6 +64,8 @@ public abstract class AbstractStockHolder implements StockHolder {
      */
     @Override
     public void setAmount(@NotNull BoxItem item, int amount, @NotNull StockEvent.Cause cause) {
+        Objects.requireNonNull(cause);
+
         if (amount < 0 && !allowMinus) {
             amount = 0;
         }
@@ -87,6 +89,8 @@ public abstract class AbstractStockHolder implements StockHolder {
      */
     @Override
     public int increase(@NotNull BoxItem item, int increment, @NotNull StockEvent.Cause cause) {
+        Objects.requireNonNull(cause);
+
         var stock = getStock(item);
         var amount = stock.addAndGet(increment);
 
@@ -117,6 +121,8 @@ public abstract class AbstractStockHolder implements StockHolder {
      */
     @Override
     public int decrease(@NotNull BoxItem item, int decrement, @NotNull StockEvent.Cause cause) {
+        Objects.requireNonNull(cause);
+
         var stock = getStock(item);
         int decreased = stock.get() - decrement;
 

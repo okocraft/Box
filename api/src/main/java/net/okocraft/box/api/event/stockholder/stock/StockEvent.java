@@ -47,7 +47,7 @@ public class StockEvent extends StockHolderEvent implements AsyncEvent {
         super(stockHolder);
         this.item = Objects.requireNonNull(item);
         this.amount = amount;
-        this.cause = cause;
+        this.cause = Objects.requireNonNull(cause);
     }
 
     /**
