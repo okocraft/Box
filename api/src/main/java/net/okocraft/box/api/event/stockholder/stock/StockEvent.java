@@ -108,8 +108,8 @@ public class StockEvent extends StockHolderEvent implements AsyncEvent {
     private record CauseImpl(@NotNull String name) implements Cause {
 
         public CauseImpl {
-            if (name.isEmpty()) { // implicit null check of "cause"
-                throw new IllegalStateException();
+            if (name.isEmpty()) { // implicit null check of "name"
+                throw new IllegalArgumentException("name cannot be empty");
             }
         }
 
