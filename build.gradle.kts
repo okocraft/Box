@@ -11,6 +11,7 @@ tasks {
             "feature/autostore/model/**",
             "feature/category/api/**",
             "feature/command/event/stock/**",
+            "feature/craft/event/**",
             "feature/gui/api/**",
             "feature/stick/StickFeature.java",
             "feature/stick/package-info.java",

@@ -8,6 +8,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
+/**
+ * An event that called when the {@link Player} is crafting items in Box.
+ */
 public class BoxCraftEvent extends BoxEvent implements Cancellable {
 
     private final Player crafter;
@@ -15,6 +18,13 @@ public class BoxCraftEvent extends BoxEvent implements Cancellable {
     private final int times;
     private boolean cancelled;
 
+    /**
+     * The constructor of {@link BoxCraftEvent}.
+     *
+     * @param crafter the {@link Player} who craft items
+     * @param selectedRecipe the {@link SelectedRecipe} used to craft items
+     * @param times the number of times crafted
+     */
     public BoxCraftEvent(@NotNull Player crafter, @NotNull SelectedRecipe selectedRecipe, int times) {
         this.crafter = Objects.requireNonNull(crafter);
         this.selectedRecipe = Objects.requireNonNull(selectedRecipe);
