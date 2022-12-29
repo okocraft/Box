@@ -20,7 +20,7 @@ tasks {
             "feature/stick/item/package-info.java",
         ).forEach { include("net/okocraft/box/$it") }
 
-        (options as StandardJavadocDocletOptions).docTitle("Box-$version")
+        (options as StandardJavadocDocletOptions).docTitle("Box $version").windowTitle("Box $version")
 
         val release = findProperty("box.release")?.toString()?.toBoolean()
 
