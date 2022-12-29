@@ -5,6 +5,7 @@ import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.model.stock.StockHolder;
 import net.okocraft.box.api.transaction.InventoryTransaction;
 import net.okocraft.box.feature.craft.event.BoxCraftEvent;
+import net.okocraft.box.feature.craft.event.stock.CraftCause;
 import net.okocraft.box.feature.craft.model.SelectedRecipe;
 import net.okocraft.box.feature.gui.api.session.PlayerSession;
 import org.bukkit.entity.Player;
@@ -52,8 +53,10 @@ public class ItemCrafter {
             return false;
         }
 
+        var cause = new CraftCause(crafter, recipe);
+
         for (var ingredient : recipe.ingredients()) {
-            stockHolder.decrease(ingredient.item(), ingredient.amount() * times);
+            stockHolder.decrease(ingredient.item(), ingredient.amount() * times, cause);
         }
 
         int resultAmount = recipe.amount() * times;
@@ -71,7 +74,7 @@ public class ItemCrafter {
         }
 
         if (storeAmount != 0) {
-            stockHolder.increase(recipe.result(), storeAmount);
+            stockHolder.increase(recipe.result(), storeAmount, cause);
         }
 
         return true;

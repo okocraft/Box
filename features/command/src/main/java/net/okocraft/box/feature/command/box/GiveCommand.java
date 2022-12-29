@@ -5,8 +5,9 @@ import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.command.AbstractCommand;
 import net.okocraft.box.api.message.GeneralMessage;
 import net.okocraft.box.api.model.item.BoxItem;
-import net.okocraft.box.feature.command.message.BoxMessage;
 import net.okocraft.box.api.util.TabCompleter;
+import net.okocraft.box.feature.command.message.BoxMessage;
+import net.okocraft.box.feature.command.event.stock.CommandCauses;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -68,7 +69,10 @@ public class GiveCommand extends AbstractCommand {
 
         var boxItem = optionalBoxItem.get();
 
-        var stockHolder = BoxProvider.get().getBoxPlayerMap().get(player).getCurrentStockHolder();
+        var playerMap = BoxProvider.get().getBoxPlayerMap();
+
+        var senderBoxPlayer = playerMap.get(player);
+        var stockHolder = senderBoxPlayer.getCurrentStockHolder();
         var currentStock = stockHolder.getAmount(boxItem);
 
         if (currentStock < 1) {
@@ -89,15 +93,15 @@ public class GiveCommand extends AbstractCommand {
             amount = 1;
         }
 
-        var playerMap = BoxProvider.get().getBoxPlayerMap();
-
         if (!playerMap.isLoaded(target)) {
             sender.sendMessage(GeneralMessage.ERROR_TARGET_PLAYER_NOT_LOADED.apply(target));
             return;
         }
 
-        var senderCurrent = stockHolder.decrease(boxItem, amount);
-        var targetCurrent = playerMap.get(target).getCurrentStockHolder().increase(boxItem, amount);
+        var targetBoxPlayer = playerMap.get(target);
+
+        var senderCurrent = stockHolder.decrease(boxItem, amount, new CommandCauses.Give(targetBoxPlayer));
+        var targetCurrent = targetBoxPlayer.getCurrentStockHolder().increase(boxItem, amount, new CommandCauses.Receive(senderBoxPlayer));
 
         player.sendMessage(BoxMessage.GIVE_SUCCESS_SENDER.apply(target.getName(), boxItem, amount, senderCurrent));
         target.sendMessage(BoxMessage.GIVE_SUCCESS_TARGET.apply(player.getName(), boxItem, amount, targetCurrent));

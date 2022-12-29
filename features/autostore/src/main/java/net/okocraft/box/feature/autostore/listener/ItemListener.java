@@ -2,6 +2,7 @@ package net.okocraft.box.feature.autostore.listener;
 
 import io.papermc.paper.event.block.PlayerShearBlockEvent;
 import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.api.event.stockholder.stock.StockEvent;
 import net.okocraft.box.feature.autostore.model.AutoStoreSettingContainer;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
@@ -21,6 +22,8 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 public class ItemListener implements Listener {
+
+    private static final StockEvent.Cause AUTOSTORE_CAUSE = StockEvent.Cause.create("autostore");
 
     public void register() {
         var plugin = BoxProvider.get().getPluginInstance();
@@ -118,7 +121,7 @@ public class ItemListener implements Listener {
         }
 
         if (setting.shouldAutoStore(boxItem.get())) {
-            playerMap.get(player).getCurrentStockHolder().increase(boxItem.get(), item.getAmount());
+            playerMap.get(player).getCurrentStockHolder().increase(boxItem.get(), item.getAmount(), AUTOSTORE_CAUSE);
             if (!direct) {
                 player.playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, 0.2f, (float) Math.random() + 1.0f);
             }

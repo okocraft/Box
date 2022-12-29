@@ -8,6 +8,7 @@ import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.transaction.InventoryTransaction;
 import net.okocraft.box.api.transaction.TransactionResultType;
 import net.okocraft.box.feature.command.message.BoxMessage;
+import net.okocraft.box.feature.command.event.stock.CommandCauses;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -76,7 +77,7 @@ public class WithdrawCommand extends AbstractCommand {
         var resultType = result.getType();
 
         if (resultType.isModified()) {
-            var current = stockHolder.decrease(result.getItem(), result.getAmount());
+            var current = stockHolder.decrease(result.getItem(), result.getAmount(), CommandCauses.WITHDRAW);
 
             if (resultType == TransactionResultType.WITHDREW) {
                 player.sendMessage(BoxMessage.WITHDRAW_SUCCESS.apply(boxItem, result.getAmount(), current));

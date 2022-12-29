@@ -10,6 +10,7 @@ import net.okocraft.box.api.model.stock.StockHolder;
 import net.okocraft.box.api.util.TabCompleter;
 import net.okocraft.box.api.util.UserStockHolderOperator;
 import net.okocraft.box.feature.command.message.BoxAdminMessage;
+import net.okocraft.box.feature.command.event.stock.CommandCauses;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -26,8 +27,8 @@ class StockModifyCommands {
         return new ModifyCommand("give", Set.of("g"), false) {
 
             @Override
-            int modifyStock(@NotNull StockHolder stockHolder, @NotNull BoxItem item, int amount) {
-                return stockHolder.increase(item, amount);
+            int modifyStock(@NotNull CommandSender sender, @NotNull StockHolder stockHolder, @NotNull BoxItem item, int amount) {
+                return stockHolder.increase(item, amount, new CommandCauses.AdminGive(sender));
             }
 
             @Override
@@ -53,8 +54,8 @@ class StockModifyCommands {
         return new ModifyCommand("set", Set.of("s"), true) {
 
             @Override
-            int modifyStock(@NotNull StockHolder stockHolder, @NotNull BoxItem item, int amount) {
-                stockHolder.setAmount(item, amount);
+            int modifyStock(@NotNull CommandSender sender, @NotNull StockHolder stockHolder, @NotNull BoxItem item, int amount) {
+                stockHolder.setAmount(item, amount, new CommandCauses.AdminSet(sender));
                 return amount;
             }
 
@@ -81,8 +82,8 @@ class StockModifyCommands {
         return new ModifyCommand("take", Set.of("t"), false) {
 
             @Override
-            int modifyStock(@NotNull StockHolder stockHolder, @NotNull BoxItem item, int amount) {
-                return stockHolder.decrease(item, amount);
+            int modifyStock(@NotNull CommandSender sender, @NotNull StockHolder stockHolder, @NotNull BoxItem item, int amount) {
+                return stockHolder.decrease(item, amount, new CommandCauses.AdminTake(sender));
             }
 
             @Override
@@ -147,14 +148,14 @@ class StockModifyCommands {
             UserStockHolderOperator.create(args[2])
                     .supportOffline(true)
                     .stockHolderOperator(target -> {
-                        int current = modifyStock(target, item.get(), amount);
+                        int current = modifyStock(sender, target, item.get(), amount);
                         sendMessage(sender, Bukkit.getPlayer(target.getUUID()), target.getName(), item.get(), amount, current);
                     })
                     .onNotFound(name -> sender.sendMessage(GeneralMessage.ERROR_COMMAND_PLAYER_NOT_FOUND.apply(name)))
                     .run();
         }
 
-        abstract int modifyStock(@NotNull StockHolder stockHolder, @NotNull BoxItem item, int amount);
+        abstract int modifyStock(@NotNull CommandSender sender, @NotNull StockHolder stockHolder, @NotNull BoxItem item, int amount);
 
         abstract void sendMessage(@NotNull CommandSender sender, @Nullable Player targetPlayer,
                                   @NotNull String targetName, BoxItem item, int amount, int current);

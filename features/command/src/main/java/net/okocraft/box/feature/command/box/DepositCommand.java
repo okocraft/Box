@@ -10,6 +10,7 @@ import net.okocraft.box.api.transaction.InventoryTransaction;
 import net.okocraft.box.api.transaction.TransactionResultList;
 import net.okocraft.box.api.transaction.TransactionResultType;
 import net.okocraft.box.feature.command.message.BoxMessage;
+import net.okocraft.box.feature.command.event.stock.CommandCauses;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -104,7 +105,7 @@ public class DepositCommand extends AbstractCommand {
             var item = result.getItem();
             var deposited = result.getAmount();
 
-            var current = BoxProvider.get().getBoxPlayerMap().get(player).getCurrentStockHolder().increase(item, deposited);
+            var current = BoxProvider.get().getBoxPlayerMap().get(player).getCurrentStockHolder().increase(item, deposited, CommandCauses.DEPOSIT);
 
             player.sendMessage(BoxMessage.DEPOSIT_SUCCESS.apply(item, deposited, current));
         } else {
@@ -168,7 +169,7 @@ public class DepositCommand extends AbstractCommand {
                 .stream()
                 .filter(result -> result.getType().isModified())
                 .forEach(result -> {
-                    stockHolder.increase(result.getItem(), result.getAmount());
+                    stockHolder.increase(result.getItem(), result.getAmount(), CommandCauses.DEPOSIT);
                     counter.addAndGet(result.getAmount());
                 });
 

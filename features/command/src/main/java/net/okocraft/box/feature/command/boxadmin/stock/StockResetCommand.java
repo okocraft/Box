@@ -8,6 +8,7 @@ import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.util.TabCompleter;
 import net.okocraft.box.api.util.UserStockHolderOperator;
 import net.okocraft.box.feature.command.message.BoxAdminMessage;
+import net.okocraft.box.feature.command.event.stock.CommandCauses;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -47,7 +48,7 @@ class StockResetCommand extends AbstractCommand {
         UserStockHolderOperator.create(args[2])
                 .supportOffline(true)
                 .stockHolderOperator(target -> {
-                    target.setAmount(item.get(), 0);
+                    target.setAmount(item.get(), 0, new CommandCauses.AdminReset(sender));
                     sendMessage(sender, Bukkit.getPlayer(target.getUUID()), target.getName(), item.get());
                 })
                 .onNotFound(name -> sender.sendMessage(GeneralMessage.ERROR_COMMAND_PLAYER_NOT_FOUND.apply(name)))

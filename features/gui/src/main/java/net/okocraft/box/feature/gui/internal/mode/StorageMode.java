@@ -4,6 +4,7 @@ import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.transaction.InventoryTransaction;
+import net.okocraft.box.feature.gui.api.event.stock.GuiCauses;
 import net.okocraft.box.feature.gui.api.menu.Menu;
 import net.okocraft.box.feature.gui.api.mode.AdditionalButton;
 import net.okocraft.box.feature.gui.api.mode.BoxItemClickMode;
@@ -114,7 +115,7 @@ public class StorageMode implements BoxItemClickMode {
         resultList.getResultList()
                 .stream()
                 .filter(result -> result.getType().isModified())
-                .forEach(result -> stockHolder.increase(result.getItem(), result.getAmount()));
+                .forEach(result -> stockHolder.increase(result.getItem(), result.getAmount(), new GuiCauses.Deposit(player)));
 
         player.playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, 100f, 1.0f);
     }
@@ -141,7 +142,7 @@ public class StorageMode implements BoxItemClickMode {
                         .join();
 
         if (result.getType().isModified()) {
-            stockHolder.decrease(result.getItem(), result.getAmount());
+            stockHolder.decrease(result.getItem(), result.getAmount(), new GuiCauses.Withdraw(player));
             player.playSound(player.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 100f, 1.0f);
         } else {
             player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 100f, 1.5f);
@@ -196,7 +197,7 @@ public class StorageMode implements BoxItemClickMode {
             resultList.getResultList()
                     .stream()
                     .filter(result -> result.getType().isModified())
-                    .forEach(result -> stockHolder.increase(result.getItem(), result.getAmount()));
+                    .forEach(result -> stockHolder.increase(result.getItem(), result.getAmount(), new GuiCauses.Deposit(clicker)));
 
             clicker.playSound(clicker.getLocation(), Sound.BLOCK_NOTE_BLOCK_HARP, 100f, 2.0f);
         }

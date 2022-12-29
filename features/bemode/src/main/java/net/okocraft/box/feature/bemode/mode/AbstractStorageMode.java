@@ -7,6 +7,7 @@ import net.okocraft.box.api.transaction.InventoryTransaction;
 import net.okocraft.box.feature.bemode.lang.Displays;
 import net.okocraft.box.feature.bemode.util.BEPlayerChecker;
 import net.okocraft.box.feature.gui.api.button.RefreshableButton;
+import net.okocraft.box.feature.gui.api.event.stock.GuiCauses;
 import net.okocraft.box.feature.gui.api.menu.Menu;
 import net.okocraft.box.feature.gui.api.mode.AdditionalButton;
 import net.okocraft.box.feature.gui.api.mode.BoxItemClickMode;
@@ -126,7 +127,7 @@ public abstract class AbstractStorageMode implements BoxItemClickMode {
             resultList.getResultList()
                     .stream()
                     .filter(result -> result.getType().isModified())
-                    .forEach(result -> stockHolder.increase(result.getItem(), result.getAmount()));
+                    .forEach(result -> stockHolder.increase(result.getItem(), result.getAmount(), new GuiCauses.Deposit(clicker)));
 
             clicked = false;
 
