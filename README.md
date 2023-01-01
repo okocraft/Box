@@ -145,3 +145,9 @@ shadowJar {
   relocate("com.github.siroshun09.event4j", "net.okocraft.box.lib.event4j")
 }
 ```
+
+## License
+
+This project is under the GPL-3.0 license. Please see [LICENSE](LICENSE) for more info.
+
+Copyright © 2019-2023, OKOCRAFT
