@@ -11,7 +11,7 @@ import java.sql.SQLException;
 import java.util.Optional;
 import java.util.UUID;
 
-// | uuid | item |
+// | uuid | username |
 public class UserTable extends AbstractTable implements UserStorage {
 
     public UserTable(@NotNull Database database) {
