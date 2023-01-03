@@ -1,12 +1,12 @@
 package net.okocraft.box.storage.implementation.yaml;
 
-import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.model.stock.StockData;
 import net.okocraft.box.api.model.stock.UserStockHolder;
 import net.okocraft.box.api.model.user.BoxUser;
 import net.okocraft.box.storage.api.factory.stock.UserStockHolderFactory;
 import net.okocraft.box.storage.api.holder.LoggerHolder;
 import net.okocraft.box.storage.api.model.stock.StockStorage;
+import net.okocraft.box.storage.api.util.item.BoxItemSupplier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -112,7 +112,7 @@ class YamlStockStorage implements StockStorage {
             return null;
         }
 
-        var item = BoxProvider.get().getItemManager().getBoxItem(itemId);
+        var item = BoxItemSupplier.getItem(itemId);
 
         if (item.isEmpty()) {
             LoggerHolder.get().warning("Unknown id: " + itemId + " (" + uuid + ")");
