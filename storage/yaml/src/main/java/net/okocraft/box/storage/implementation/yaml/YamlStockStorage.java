@@ -5,6 +5,7 @@ import net.okocraft.box.api.model.stock.StockData;
 import net.okocraft.box.api.model.stock.UserStockHolder;
 import net.okocraft.box.api.model.user.BoxUser;
 import net.okocraft.box.storage.api.factory.stock.UserStockHolderFactory;
+import net.okocraft.box.storage.api.holder.LoggerHolder;
 import net.okocraft.box.storage.api.model.stock.StockStorage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -107,14 +108,14 @@ class YamlStockStorage implements StockStorage {
             int end = start == 1 ? line.indexOf('\'', start) : line.indexOf(":");
             itemId = Integer.parseInt(line.substring(start, end));
         } catch (Exception e) {
-            BoxProvider.get().getLogger().warning("Could not parse stock data: " + line + " (" + uuid + ")");
+            LoggerHolder.get().warning("Could not parse stock data: " + line + " (" + uuid + ")");
             return null;
         }
 
         var item = BoxProvider.get().getItemManager().getBoxItem(itemId);
 
         if (item.isEmpty()) {
-            BoxProvider.get().getLogger().warning("Unknown id: " + itemId + " (" + uuid + ")");
+            LoggerHolder.get().warning("Unknown id: " + itemId + " (" + uuid + ")");
             return null;
         }
 
@@ -123,7 +124,7 @@ class YamlStockStorage implements StockStorage {
         try {
             amount = Integer.parseInt(line.substring(line.lastIndexOf(":") + 2));
         } catch (Exception e) {
-            BoxProvider.get().getLogger().warning("Could not parse stock data: " + line + " (" + uuid + ")");
+            LoggerHolder.get().warning("Could not parse stock data: " + line + " (" + uuid + ")");
             return null;
         }
 

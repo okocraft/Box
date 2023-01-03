@@ -2,7 +2,7 @@ package net.okocraft.box.storage.implementation.database.table;
 
 import com.github.siroshun09.configapi.api.Configuration;
 import com.github.siroshun09.configapi.api.MappedConfiguration;
-import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.storage.api.holder.LoggerHolder;
 import net.okocraft.box.storage.api.model.data.CustomDataStorage;
 import net.okocraft.box.storage.implementation.database.database.Database;
 import org.jetbrains.annotations.NotNull;
@@ -89,7 +89,7 @@ public class CustomDataTable extends AbstractTable implements CustomDataStorage 
                 var map = yamlThreadLocal.get().loadAs(reader, LinkedHashMap.class);
                 return MappedConfiguration.create(map);
         } catch (IOException e) {
-            BoxProvider.get().getLogger().log(Level.SEVERE, "Could not deserialize data", e);
+            LoggerHolder.get().log(Level.SEVERE, "Could not deserialize data", e);
             return MappedConfiguration.create();
         }
     }
@@ -115,7 +115,7 @@ public class CustomDataTable extends AbstractTable implements CustomDataStorage 
 
             return byteOut.toByteArray();
         } catch (IOException e) {
-            BoxProvider.get().getLogger().log(Level.SEVERE, "Could not serialize config", e);
+            LoggerHolder.get().log(Level.SEVERE, "Could not serialize config", e);
             return new byte[0];
         }
     }
