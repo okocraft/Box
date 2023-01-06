@@ -5,7 +5,6 @@ import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.player.BoxPlayer;
 import net.okocraft.box.api.transaction.InventoryTransaction;
-import net.okocraft.box.feature.stick.event.stock.StickCause;
 import net.okocraft.box.feature.stick.integration.LWCIntegration;
 import net.okocraft.box.feature.stick.item.BoxStickItem;
 import org.bukkit.Bukkit;
@@ -295,7 +294,7 @@ public class StickListener implements Listener {
         var stockHolder = boxPlayer.getCurrentStockHolder();
 
         if (0 < stockHolder.getAmount(boxItem.get())) {
-            stockHolder.decrease(boxItem.get(), 1, new StickCause(boxPlayer));
+            stockHolder.decrease(boxItem.get(), 1);
             return true;
         } else {
             return false;
@@ -333,7 +332,7 @@ public class StickListener implements Listener {
         var boxItem = BoxProvider.get().getItemManager().getBoxItem(result);
 
         if (boxItem.isPresent()) {
-            player.getCurrentStockHolder().increase(boxItem.get(), result.getAmount(), new StickCause(player));
+            player.getCurrentStockHolder().increase(boxItem.get(), result.getAmount());
             inventory.setResult(null);
             playDepositOrWithdrawalSound(player.getPlayer(), true);
             return true;
@@ -385,7 +384,7 @@ public class StickListener implements Listener {
         int consumption = newAmount - currentAmount;
 
         if (0 < consumption) {
-            player.getCurrentStockHolder().decrease(boxItem.get(), consumption, new StickCause(player));
+            player.getCurrentStockHolder().decrease(boxItem.get(), consumption);
             itemSetter.accept(item.asQuantity(newAmount));
             playDepositOrWithdrawalSound(player.getPlayer(), false);
             return true;
@@ -409,7 +408,7 @@ public class StickListener implements Listener {
             var boxItem = BoxProvider.get().getItemManager().getBoxItem(potion);
 
             if (boxItem.isPresent()) {
-                player.getCurrentStockHolder().increase(boxItem.get(), potion.getAmount(), new StickCause(player));
+                player.getCurrentStockHolder().increase(boxItem.get(), potion.getAmount());
                 inventory.setItem(i, null);
                 result = true;
             }
@@ -458,7 +457,7 @@ public class StickListener implements Listener {
             }
 
             if (0 < stockHolder.getAmount(item)) {
-                stockHolder.decrease(item, 1, new StickCause(player));
+                stockHolder.decrease(item, 1);
                 inventory.setItem(i, item.getClonedItem());
                 result = true;
             }
@@ -478,7 +477,7 @@ public class StickListener implements Listener {
             resultList.getResultList()
                     .stream()
                     .filter(result -> result.getType().isModified())
-                    .forEach(result -> player.getCurrentStockHolder().increase(result.getItem(), result.getAmount(), new StickCause(player)));
+                    .forEach(result -> player.getCurrentStockHolder().increase(result.getItem(), result.getAmount()));
             playDepositOrWithdrawalSound(player.getPlayer(), true);
             return true;
         } else {
@@ -493,7 +492,7 @@ public class StickListener implements Listener {
         var result = InventoryTransaction.withdraw(inventoryView, item, amount);
 
         if (result.getType().isModified()) {
-            stockHolder.decrease(result.getItem(), result.getAmount(), new StickCause(player));
+            stockHolder.decrease(result.getItem(), result.getAmount());
             playDepositOrWithdrawalSound(player.getPlayer(), false);
             return true;
         } else {
