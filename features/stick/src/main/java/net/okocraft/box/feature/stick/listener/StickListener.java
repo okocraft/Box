@@ -4,8 +4,7 @@ import com.github.siroshun09.configapi.api.value.ConfigValue;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.player.BoxPlayer;
-import net.okocraft.box.api.transaction.InventoryTransaction;
-import net.okocraft.box.feature.stick.integration.LWCIntegration;
+import net.okocraft.box.api.transaction.InventoryTransaction;import net.okocraft.box.feature.stick.integration.LWCIntegration;
 import net.okocraft.box.feature.stick.item.BoxStickItem;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -61,11 +60,15 @@ public class StickListener implements Listener {
             return;
         }
 
-        var mainHand = player.getInventory().getItemInMainHand();
-        var offHand = player.getInventory().getItemInOffHand();
+        boolean shouldOpen;
 
-        if ((event.getHand() == EquipmentSlot.HAND && boxStickItem.check(mainHand)) ||
-                (event.getHand() == EquipmentSlot.OFF_HAND && mainHand.getType().isAir() && boxStickItem.check(offHand))) {
+        if (event.getHand() == EquipmentSlot.HAND) {
+            shouldOpen = boxStickItem.check(player.getInventory().getItemInMainHand());
+        } else { // OFF_HAND
+            shouldOpen = player.getInventory().getItemInMainHand().getType().isAir() && boxStickItem.check(player.getInventory().getItemInOffHand());
+        }
+
+        if (shouldOpen) {
             var command = BoxProvider.get().getConfiguration().get(MENU_COMMAND_SETTING);
 
             if (!command.isEmpty()) {
