@@ -2,6 +2,8 @@ package net.okocraft.box.feature.stick.listener;
 
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.player.BoxPlayer;
+import net.okocraft.box.feature.stick.event.stock.StickCause;
+import net.okocraft.box.feature.stick.event.stock.StickCauses;
 import net.okocraft.box.feature.stick.function.container.BrewerOperator;
 import net.okocraft.box.feature.stick.function.container.ChestAccessChecker;
 import net.okocraft.box.feature.stick.function.container.ContainerOperation;
@@ -117,8 +119,10 @@ public class StickListener implements Listener {
             return;
         }
 
+        var block = event.getBlockPlaced();
+
         // ignore POWDER_SNOW because it cannot be replenished
-        if (event.getBlockPlaced().getType() == Material.POWDER_SNOW) {
+        if (block.getType() == Material.POWDER_SNOW) {
             return;
         }
 
@@ -136,7 +140,8 @@ public class StickListener implements Listener {
 
         var mainHandItem = player.getInventory().getItemInMainHand();
 
-        if (event.getItemInHand().equals(mainHandItem) && tryConsumingStock(boxPlayer, mainHandItem)) {
+        if (event.getItemInHand().equals(mainHandItem) &&
+                tryConsumingStock(boxPlayer, mainHandItem, new StickCauses.BlockPlace(boxPlayer, block.getLocation().clone()))) {
             player.getInventory().setItemInMainHand(mainHandItem.clone());
         }
     }
@@ -151,8 +156,9 @@ public class StickListener implements Listener {
         }
 
         var mainHandItem = player.getInventory().getItemInMainHand();
+        var cause = new StickCauses.ItemConsume(boxPlayer);
 
-        if (!event.getItem().equals(mainHandItem) || !tryConsumingStock(boxPlayer, mainHandItem)) {
+        if (!event.getItem().equals(mainHandItem) || !tryConsumingStock(boxPlayer, mainHandItem, cause)) {
             return;
         }
 
@@ -172,7 +178,7 @@ public class StickListener implements Listener {
 
             BoxProvider.get().getItemManager()
                     .getBoxItem(defaultReplacementMaterialName)
-                    .ifPresent(defaultReplacementItem -> boxPlayer.getCurrentStockHolder().increase(defaultReplacementItem, 1));
+                    .ifPresent(defaultReplacementItem -> boxPlayer.getCurrentStockHolder().increase(defaultReplacementItem, 1, cause));
         }
     }
 
@@ -190,7 +196,7 @@ public class StickListener implements Listener {
 
         copied.editMeta(Damageable.class, meta -> meta.setDamage(0));
 
-        if (tryConsumingStock(boxPlayer, copied)) {
+        if (tryConsumingStock(boxPlayer, copied, new StickCauses.ItemBreak(boxPlayer))) {
             original.setAmount(2);
         }
     }
@@ -201,8 +207,9 @@ public class StickListener implements Listener {
             return;
         }
 
+        var entityType = event.getEntity().getType();
         var permissionNodeSuffix =
-                switch (event.getEntity().getType()) {
+                switch (entityType) {
                     case EGG -> "egg";
                     case ENDER_PEARL -> "enderpearl";
                     case FIREWORK -> "firework";
@@ -220,7 +227,7 @@ public class StickListener implements Listener {
 
         var mainHandItem = player.getInventory().getItemInMainHand();
 
-        if (tryConsumingStock(boxPlayer, mainHandItem)) {
+        if (tryConsumingStock(boxPlayer, mainHandItem, new StickCauses.ProjectileLaunch(boxPlayer, entityType))) {
             mainHandItem.setAmount(mainHandItem.getAmount() + 1);
             player.updateInventory();
         }
@@ -243,7 +250,7 @@ public class StickListener implements Listener {
 
         var arrowItem = event.getConsumable();
 
-        if (arrowItem != null && tryConsumingStock(boxPlayer, arrowItem)) {
+        if (arrowItem != null && tryConsumingStock(boxPlayer, arrowItem, new StickCauses.ShootBow(boxPlayer))) {
             event.setConsumeItem(false);
             player.updateInventory();
 
@@ -261,7 +268,7 @@ public class StickListener implements Listener {
         return playerMap.isLoaded(player) ? playerMap.get(player) : null;
     }
 
-    private boolean tryConsumingStock(@NotNull BoxPlayer boxPlayer, @NotNull ItemStack item) {
+    private boolean tryConsumingStock(@NotNull BoxPlayer boxPlayer, @NotNull ItemStack item, @NotNull StickCause cause) {
         var boxItem = BoxProvider.get().getItemManager().getBoxItem(item);
 
         if (boxItem.isEmpty()) {
@@ -271,7 +278,7 @@ public class StickListener implements Listener {
         var stockHolder = boxPlayer.getCurrentStockHolder();
 
         if (0 < stockHolder.getAmount(boxItem.get())) {
-            stockHolder.decrease(boxItem.get(), 1);
+            stockHolder.decrease(boxItem.get(), 1, cause);
             return true;
         } else {
             return false;
