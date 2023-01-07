@@ -4,6 +4,7 @@ import com.griefcraft.integration.IPermissions;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Permission;
 import com.griefcraft.model.Protection;
+import net.okocraft.box.feature.stick.function.container.ContainerOperation;
 import org.bukkit.Bukkit;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
@@ -11,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class LWCIntegration {
 
-    public static boolean canModifyInventory(@NotNull Player player, @NotNull BlockState state, boolean deposit) {
+    public static boolean canModifyInventory(@NotNull Player player, @NotNull BlockState state, @NotNull ContainerOperation.OperationType operationType) {
         if (Bukkit.getPluginManager().getPlugin("LWC") == null) {
             return true;
         }
@@ -23,7 +24,7 @@ public class LWCIntegration {
         }
 
         return switch (protection.getType().name()) { // DISPLAY is not present in 2.1.5.
-            case "DONATION" -> !deposit || canAccess(player, protection);
+            case "DONATION" -> operationType == ContainerOperation.OperationType.WITHDRAW || canAccess(player, protection);
             case "DISPLAY" -> canAccess(player, protection);
             default -> true; // Otherwise, the click to the chest has already been rejected.
         };

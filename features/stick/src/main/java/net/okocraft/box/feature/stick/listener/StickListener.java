@@ -1,19 +1,21 @@
 package net.okocraft.box.feature.stick.listener;
 
-import com.github.siroshun09.configapi.api.value.ConfigValue;
 import net.okocraft.box.api.BoxProvider;
-import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.player.BoxPlayer;
-import net.okocraft.box.api.transaction.InventoryTransaction;import net.okocraft.box.feature.stick.integration.LWCIntegration;
+import net.okocraft.box.feature.stick.function.container.BrewerOperator;
+import net.okocraft.box.feature.stick.function.container.ChestAccessChecker;
+import net.okocraft.box.feature.stick.function.container.ContainerOperation;
+import net.okocraft.box.feature.stick.function.container.ContainerOperator;
+import net.okocraft.box.feature.stick.function.container.FurnaceOperator;
+import net.okocraft.box.feature.stick.function.menu.MenuOpener;
 import net.okocraft.box.feature.stick.item.BoxStickItem;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.block.Container;
 import org.bukkit.entity.AbstractArrow;
 import org.bukkit.entity.Arrow;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
@@ -23,27 +25,18 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
-import org.bukkit.event.inventory.InventoryOpenEvent;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemBreakEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.BrewerInventory;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.FurnaceInventory;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Objects;
-import java.util.function.Consumer;
+import org.jetbrains.annotations.Nullable;
 
 public class StickListener implements Listener {
-
-    private static final ConfigValue<String> MENU_COMMAND_SETTING =
-            config -> config.getString("stick.menu-command", "box gui");
 
     private final BoxStickItem boxStickItem;
 
@@ -55,106 +48,65 @@ public class StickListener implements Listener {
     public void onInteract(@NotNull PlayerInteractEvent event) {
         var player = event.getPlayer();
 
-        if (event.getAction() == Action.PHYSICAL || event.getAction().isLeftClick() ||
-                BoxProvider.get().isDisabledWorld(player) || !player.hasPermission("box.stick.menu")) {
+        if (event.getAction() == Action.PHYSICAL || isDisabledWorld(player)) {
             return;
         }
 
-        boolean shouldOpen;
-
-        if (event.getHand() == EquipmentSlot.HAND) {
-            shouldOpen = boxStickItem.check(player.getInventory().getItemInMainHand());
-        } else { // OFF_HAND
-            shouldOpen = player.getInventory().getItemInMainHand().getType().isAir() && boxStickItem.check(player.getInventory().getItemInOffHand());
-        }
-
-        if (shouldOpen) {
-            var command = BoxProvider.get().getConfiguration().get(MENU_COMMAND_SETTING);
-
-            if (!command.isEmpty()) {
-                Bukkit.dispatchCommand(player, command);
-            }
+        if (event.getAction().isRightClick()) {
+            MenuOpener.openMenu(event, boxStickItem);
+        } else {
+            clickBlock(event);
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-    public void onInteractBlock(@NotNull PlayerInteractEvent event) {
-        var player = event.getPlayer();
-
-        if (event.getAction() == Action.PHYSICAL || !event.getAction().isLeftClick() ||
-                BoxProvider.get().isDisabledWorld(player) || !player.hasPermission("box.stick.container")) {
+    private void clickBlock(@NotNull PlayerInteractEvent event) {
+        if (event.useInteractedBlock() == Event.Result.DENY || event.useItemInHand() == Event.Result.DENY || event.getHand() != EquipmentSlot.HAND) {
             return;
         }
 
-        var mainHand = player.getInventory().getItemInMainHand();
-        var offHand = player.getInventory().getItemInOffHand();
+        var player = event.getPlayer();
+        var boxPlayer = getBoxPlayerOrNull(player);
 
-        if (event.useInteractedBlock() == Event.Result.DENY || event.useItemInHand() == Event.Result.DENY ||
-                !event.getPlayer().isSneaking() || event.getHand() != EquipmentSlot.HAND || !boxStickItem.check(offHand)) {
+        if (boxPlayer == null || !player.isSneaking() || !boxStickItem.check(player.getInventory().getItemInOffHand())) {
             return;
         }
 
         var block = event.getClickedBlock();
 
-        // current containers: Barrel, BlastFurnace, BrewingStand, Chest, Dispenser, Dropper, Furnace, Hopper, ShulkerBox, and Smoker
-        if (block == null || !(block.getState() instanceof Container container) || container.isLocked()) {
+        if (block == null) {
             return;
         }
 
-        var view = new DummyInventoryView(player, container.getInventory());
+        if (block.getState() instanceof Container container) {
+            clickContainer(event, boxPlayer, container, block.getLocation().clone());
+        }
+    }
 
-        // for WorldGuard (flag: chest-access)
-        if (!checkChestAccess(view)) {
+    private void clickContainer(@NotNull PlayerInteractEvent event, @NotNull BoxPlayer boxPlayer, @NotNull Container container, @NotNull Location clickedBlockLocation) {
+        if (container.isLocked()) {
             return;
         }
 
-        var deposit = mainHand.getType().isAir();
+        var player = boxPlayer.getPlayer();
 
-        if (!LWCIntegration.canModifyInventory(player, container, deposit)) {
-            return;
-        }
+        var operationType = player.getInventory().getItemInMainHand().getType().isAir() ? ContainerOperation.OperationType.DEPOSIT : ContainerOperation.OperationType.WITHDRAW;
+        var inventory = container.getInventory();
+        ContainerOperation<?> operation;
 
-        var playerMap = BoxProvider.get().getBoxPlayerMap();
-
-        if (!playerMap.isLoaded(player)) {
-            return;
-        }
-
-        var boxPlayer = playerMap.get(player);
-
-        if (player.getGameMode() == GameMode.CREATIVE) {
-            event.setCancelled(true); // This prevents the instant breaking of blocks in creative mode.
-        }
-
-        boolean modified = false;
-
-        if (view.getTopInventory() instanceof FurnaceInventory furnaceInventory) { // BlastFurnace, Furnace, and Smoker
-            if (deposit) {
-                modified = takeResultItem(boxPlayer, furnaceInventory);
-            } else {
-                modified = putIngredient(boxPlayer, furnaceInventory, mainHand) || putFuel(boxPlayer, furnaceInventory, mainHand);
-            }
-        } else if (view.getTopInventory() instanceof BrewerInventory brewerInventory) { // BrewingStand
-            if (deposit) {
-                modified = takeResultPotions(boxPlayer, brewerInventory);
-            } else if (isPotion(mainHand.getType())) {
-                modified = putPotions(boxPlayer, brewerInventory, mainHand);
-            } else if (mainHand.getType() == Material.BLAZE_POWDER) {
-                modified = putBlazePowder(boxPlayer, brewerInventory);
-            }
+        if (inventory instanceof FurnaceInventory furnaceInventory) { // BlastFurnace, Furnace, and Smoker
+            operation = new ContainerOperation<>(boxPlayer, "furnace", operationType, furnaceInventory, FurnaceOperator::process, clickedBlockLocation);
+        } else if (inventory instanceof BrewerInventory brewerInventory) { // BrewingStand
+            operation = new ContainerOperation<>(boxPlayer, "brewer", operationType, brewerInventory, BrewerOperator::process, clickedBlockLocation);
         } else { // other containers (Barrel, Chest, Dispenser, Dropper, Hopper, and ShulkerBox)
-            if (deposit) {
-                modified = depositItemsInInventory(boxPlayer, view);
-            } else {
-                var boxItem = BoxProvider.get().getItemManager().getBoxItem(mainHand);
-
-                if (boxItem.isPresent()) {
-                    modified = withdrawToInventory(boxPlayer, view, boxItem.get());
-                }
-            }
+            operation = new ContainerOperation<>(boxPlayer, "container", operationType, inventory, ContainerOperator::process, clickedBlockLocation);
         }
 
-        if (modified) {
+        if (!player.hasPermission("box.stick." + operation.permissionSuffix()) ||
+                !ChestAccessChecker.canAccess(player, container, operationType)) {
+            return;
+        }
+
+        if (operation.run() || player.getGameMode() == GameMode.CREATIVE) { // This prevents the instant breaking of blocks in creative mode.
             event.setCancelled(true);
         }
     }
@@ -170,20 +122,21 @@ public class StickListener implements Listener {
             return;
         }
 
+        // ignore tools (flint and steel, axes, hoes, and shovels)
+        if (0 < event.getItemInHand().getType().getMaxDurability()) {
+            return;
+        }
+
         var player = event.getPlayer();
+        var boxPlayer = checkPlayerAndGetBoxPlayer(player, "box.stick.block");
+
+        if (boxPlayer == null) {
+            return;
+        }
+
         var mainHandItem = player.getInventory().getItemInMainHand();
 
-        // ignore tools (flint and steel, axes, hoes, and shovels)
-        if (0 < mainHandItem.getType().getMaxDurability()) {
-            return;
-        }
-
-        if (!checkPlayerCondition(player, "box.stick.block")) {
-            return;
-        }
-
-        if (event.getItemInHand().equals(mainHandItem) &&
-                tryConsumingStock(player, mainHandItem)) {
+        if (event.getItemInHand().equals(mainHandItem) && tryConsumingStock(boxPlayer, mainHandItem)) {
             player.getInventory().setItemInMainHand(mainHandItem.clone());
         }
     }
@@ -191,23 +144,44 @@ public class StickListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onItemConsume(@NotNull PlayerItemConsumeEvent event) {
         var player = event.getPlayer();
+        var boxPlayer = checkPlayerAndGetBoxPlayer(player, "box.stick.food");
 
-        if (!checkPlayerCondition(player, "box.stick.food")) {
+        if (boxPlayer == null) {
             return;
         }
 
         var mainHandItem = player.getInventory().getItemInMainHand();
 
-        if (event.getItem().equals(mainHandItem) && tryConsumingStock(player, mainHandItem)) {
-            event.setReplacement(mainHandItem.clone());
+        if (!event.getItem().equals(mainHandItem) || !tryConsumingStock(boxPlayer, mainHandItem)) {
+            return;
+        }
+
+        event.setReplacement(mainHandItem.clone());
+
+        if (mainHandItem.getAmount() == 1) {
+            var defaultReplacementMaterialName = switch (event.getItem().getType()) {
+                case MUSHROOM_STEW, RABBIT_STEW, BEETROOT_SOUP, SUSPICIOUS_STEW -> Material.BOWL.name();
+                case HONEY_BOTTLE, POTION -> Material.GLASS_BOTTLE.name();
+                case MILK_BUCKET -> Material.BUCKET.name();
+                default -> null;
+            };
+
+            if (defaultReplacementMaterialName == null) {
+                return;
+            }
+
+            BoxProvider.get().getItemManager()
+                    .getBoxItem(defaultReplacementMaterialName)
+                    .ifPresent(defaultReplacementItem -> boxPlayer.getCurrentStockHolder().increase(defaultReplacementItem, 1));
         }
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onItemBreak(@NotNull PlayerItemBreakEvent event) {
         var player = event.getPlayer();
+        var boxPlayer = checkPlayerAndGetBoxPlayer(player, "box.stick.tool");
 
-        if (!checkPlayerCondition(player, "box.stick.tool")) {
+        if (boxPlayer == null) {
             return;
         }
 
@@ -216,7 +190,7 @@ public class StickListener implements Listener {
 
         copied.editMeta(Damageable.class, meta -> meta.setDamage(0));
 
-        if (tryConsumingStock(player, copied)) {
+        if (tryConsumingStock(boxPlayer, copied)) {
             original.setAmount(2);
         }
     }
@@ -238,14 +212,16 @@ public class StickListener implements Listener {
                     default -> null;
                 };
 
-        if (permissionNodeSuffix == null || !checkPlayerCondition(player, "box.stick." + permissionNodeSuffix)) {
+        var boxPlayer = permissionNodeSuffix != null ? checkPlayerAndGetBoxPlayer(player, permissionNodeSuffix) : null;
+
+        if (boxPlayer == null) {
             return;
         }
 
-        var mainHand = player.getInventory().getItemInMainHand();
+        var mainHandItem = player.getInventory().getItemInMainHand();
 
-        if (tryConsumingStock(player, mainHand)) {
-            mainHand.setAmount(mainHand.getAmount() + 1);
+        if (tryConsumingStock(boxPlayer, mainHandItem)) {
+            mainHandItem.setAmount(mainHandItem.getAmount() + 1);
             player.updateInventory();
         }
     }
@@ -253,21 +229,21 @@ public class StickListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onShoot(@NotNull EntityShootBowEvent event) {
         if (event.getHand() != EquipmentSlot.HAND ||
-                !(event.getEntity() instanceof Player player) ||
-                !checkPlayerCondition(player, "box.stick.arrow") ||
-                !(event.getProjectile() instanceof Arrow arrow)) {
+                !(event.getEntity() instanceof Player player) || !(event.getProjectile() instanceof Arrow arrow) ||
+                event.getBow() == null || event.getBow().getType() != Material.BOW ||
+                !event.shouldConsumeItem()) {
             return;
         }
 
-        var bow = event.getBow();
+        var boxPlayer = checkPlayerAndGetBoxPlayer(player, "box.stick.arrow");
 
-        if (bow == null || bow.getType() != Material.BOW || !event.shouldConsumeItem()) {
+        if (boxPlayer == null) {
             return;
         }
 
         var arrowItem = event.getConsumable();
 
-        if (arrowItem != null && tryConsumingStock(player, arrowItem)) {
+        if (arrowItem != null && tryConsumingStock(boxPlayer, arrowItem)) {
             event.setConsumeItem(false);
             player.updateInventory();
 
@@ -280,20 +256,18 @@ public class StickListener implements Listener {
         }
     }
 
-    private boolean tryConsumingStock(@NotNull Player player, @NotNull ItemStack item) {
+    private @Nullable BoxPlayer getBoxPlayerOrNull(@NotNull Player player) {
+        var playerMap = BoxProvider.get().getBoxPlayerMap();
+        return playerMap.isLoaded(player) ? playerMap.get(player) : null;
+    }
+
+    private boolean tryConsumingStock(@NotNull BoxPlayer boxPlayer, @NotNull ItemStack item) {
         var boxItem = BoxProvider.get().getItemManager().getBoxItem(item);
 
         if (boxItem.isEmpty()) {
             return false;
         }
 
-        var playerMap = BoxProvider.get().getBoxPlayerMap();
-
-        if (!playerMap.isLoaded(player)) {
-            return false;
-        }
-
-        var boxPlayer = playerMap.get(player);
         var stockHolder = boxPlayer.getCurrentStockHolder();
 
         if (0 < stockHolder.getAmount(boxItem.get())) {
@@ -304,242 +278,24 @@ public class StickListener implements Listener {
         }
     }
 
-    private boolean checkPlayerCondition(@NotNull Player player, @NotNull String permissionNode) {
-        if (player.getGameMode() != GameMode.ADVENTURE &&
-                player.getGameMode() != GameMode.SURVIVAL) {
-            return false;
+    private @Nullable BoxPlayer checkPlayerAndGetBoxPlayer(@NotNull Player player, @NotNull String permissionNode) {
+        if (isSurvivalOrAdventure(player) && !isDisabledWorld(player) &&
+                player.hasPermission(permissionNode) && hasBoxStickInOffHand(player)) {
+            return getBoxPlayerOrNull(player);
+        } else {
+            return null;
         }
+    }
 
-        if (BoxProvider.get().isDisabledWorld(player)) {
-            return false;
-        }
+    private boolean isDisabledWorld(@NotNull Player player) {
+        return BoxProvider.get().isDisabledWorld(player);
+    }
 
-        if (!player.hasPermission(permissionNode)) {
-            return false;
-        }
+    private boolean isSurvivalOrAdventure(@NotNull Player player) {
+        return player.getGameMode() == GameMode.SURVIVAL || player.getGameMode() == GameMode.ADVENTURE;
+    }
 
+    private boolean hasBoxStickInOffHand(@NotNull Player player) {
         return boxStickItem.check(player.getInventory().getItemInOffHand());
-    }
-
-    private boolean checkChestAccess(@NotNull InventoryView inventoryView) {
-        return new InventoryOpenEvent(inventoryView).callEvent();
-    }
-
-    private boolean takeResultItem(@NotNull BoxPlayer player, @NotNull FurnaceInventory inventory) {
-        var result = inventory.getResult();
-
-        if (result == null) {
-            return false;
-        }
-
-        var boxItem = BoxProvider.get().getItemManager().getBoxItem(result);
-
-        if (boxItem.isPresent()) {
-            player.getCurrentStockHolder().increase(boxItem.get(), result.getAmount());
-            inventory.setResult(null);
-            playDepositOrWithdrawalSound(player.getPlayer(), true);
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    private boolean putIngredient(@NotNull BoxPlayer player, @NotNull FurnaceInventory inventory, @NotNull ItemStack mainHand) {
-        var currentInput = inventory.getItem(0);
-
-        if ((currentInput != null && !currentInput.isSimilar(mainHand)) || !inventory.canSmelt(mainHand)) {
-            return false;
-        }
-
-        return putItem(
-                player,
-                Objects.requireNonNullElse(currentInput, mainHand),
-                currentInput != null ? currentInput.getAmount() : 0,
-                item -> inventory.setItem(0, item)
-        );
-    }
-
-    private boolean putFuel(@NotNull BoxPlayer player, @NotNull FurnaceInventory inventory, @NotNull ItemStack mainHand) {
-        var currentFuel = inventory.getFuel();
-
-        if ((currentFuel != null && !currentFuel.isSimilar(mainHand)) || !inventory.isFuel(mainHand)) {
-            return false;
-        }
-
-        return putItem(
-                player,
-                Objects.requireNonNullElse(currentFuel, mainHand),
-                currentFuel != null ? currentFuel.getAmount() : 0,
-                inventory::setFuel
-        );
-    }
-
-    private boolean putItem(@NotNull BoxPlayer player, @NotNull ItemStack item, int currentAmount, @NotNull Consumer<ItemStack> itemSetter) {
-        var boxItem = BoxProvider.get().getItemManager().getBoxItem(item);
-
-        if (boxItem.isEmpty()) {
-            return false;
-        }
-
-        int maxStackSize = item.getType().getMaxStackSize();
-        int fuelStock = player.getCurrentStockHolder().getAmount(boxItem.get());
-        int newAmount = fuelStock < maxStackSize - currentAmount ? fuelStock + currentAmount : maxStackSize; // This has the same **meaning** as Math.min(fuelStock + currentAmount, 64), but when fuelStock + currentAmount overflows, the way using Math.min causes a bug.
-        int consumption = newAmount - currentAmount;
-
-        if (0 < consumption) {
-            player.getCurrentStockHolder().decrease(boxItem.get(), consumption);
-            itemSetter.accept(item.asQuantity(newAmount));
-            playDepositOrWithdrawalSound(player.getPlayer(), false);
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    private boolean takeResultPotions(@NotNull BoxPlayer player, @NotNull BrewerInventory inventory) {
-        boolean result = false;
-
-        // Brewer Inventory (see BrewingStandMenu.java in NMS)
-        // 0~2: potion slot | 3: ingredients slot | 4: fuel slot
-        for (int i = 0; i < 3; i++) {
-            var potion = inventory.getItem(i);
-
-            if (potion == null) {
-                continue;
-            }
-
-            var boxItem = BoxProvider.get().getItemManager().getBoxItem(potion);
-
-            if (boxItem.isPresent()) {
-                player.getCurrentStockHolder().increase(boxItem.get(), potion.getAmount());
-                inventory.setItem(i, null);
-                result = true;
-            }
-        }
-
-        if (result) {
-            playDepositOrWithdrawalSound(player.getPlayer(), true);
-        }
-
-        return result;
-    }
-
-    private boolean putBlazePowder(@NotNull BoxPlayer player, @NotNull BrewerInventory inventory) {
-        return putItem(
-                player,
-                Objects.requireNonNullElseGet(inventory.getFuel(), () -> new ItemStack(Material.BLAZE_POWDER)),
-                inventory.getFuel() != null ? inventory.getFuel().getAmount() : 0,
-                inventory::setFuel
-        );
-    }
-
-    private boolean isPotion(@NotNull Material material) {
-        // see BrewingStandMenu.PotionSlot#mayPlaceItem
-        return material == Material.POTION || material == Material.SPLASH_POTION ||
-                material == Material.LINGERING_POTION || material == Material.GLASS_BOTTLE;
-    }
-
-    private boolean putPotions(@NotNull BoxPlayer player, @NotNull BrewerInventory inventory, @NotNull ItemStack mainHand) {
-        var optionalBoxItem = BoxProvider.get().getItemManager().getBoxItem(mainHand);
-
-        if (optionalBoxItem.isEmpty()) {
-            return false;
-        }
-
-        boolean result = false;
-        var stockHolder = player.getCurrentStockHolder();
-        var item = optionalBoxItem.get();
-
-        // Brewer Inventory (see BrewingStandMenu.java in NMS)
-        // 0~2: potion slot | 3: ingredients slot | 4: fuel slot
-        for (int i = 0; i < 3; i++) {
-            var potion = inventory.getItem(i);
-
-            if (potion != null) { // if the slot is not empty, ignore it.
-                continue;
-            }
-
-            if (0 < stockHolder.getAmount(item)) {
-                stockHolder.decrease(item, 1);
-                inventory.setItem(i, item.getClonedItem());
-                result = true;
-            }
-        }
-
-        if (result) {
-            playDepositOrWithdrawalSound(player.getPlayer(), false);
-        }
-
-        return result;
-    }
-
-    private boolean depositItemsInInventory(@NotNull BoxPlayer player, @NotNull InventoryView inventoryView) {
-        var resultList = InventoryTransaction.depositItemsInTopInventory(inventoryView);
-
-        if (resultList.getType().isModified()) {
-            resultList.getResultList()
-                    .stream()
-                    .filter(result -> result.getType().isModified())
-                    .forEach(result -> player.getCurrentStockHolder().increase(result.getItem(), result.getAmount()));
-            playDepositOrWithdrawalSound(player.getPlayer(), true);
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    private boolean withdrawToInventory(@NotNull BoxPlayer player, @NotNull InventoryView inventoryView, @NotNull BoxItem item) {
-        var stockHolder = player.getCurrentStockHolder();
-        var amount = stockHolder.getAmount(item);
-
-        var result = InventoryTransaction.withdraw(inventoryView, item, amount);
-
-        if (result.getType().isModified()) {
-            stockHolder.decrease(result.getItem(), result.getAmount());
-            playDepositOrWithdrawalSound(player.getPlayer(), false);
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    private void playDepositOrWithdrawalSound(@NotNull Player player, boolean deposit) {
-        player.playSound(player.getLocation(), Sound.ENTITY_PIG_SADDLE, 100f, deposit ? 2.0f : 1.5f);
-    }
-
-    private static class DummyInventoryView extends InventoryView {
-
-        private final Player player;
-        private final Inventory inventory;
-
-        private DummyInventoryView(@NotNull Player player, @NotNull Inventory inventory) {
-            this.player = player;
-            this.inventory = inventory;
-        }
-
-        @Override
-        public @NotNull Inventory getTopInventory() {
-            return inventory;
-        }
-
-        @Override
-        public @NotNull Inventory getBottomInventory() {
-            return player.getInventory();
-        }
-
-        @Override
-        public @NotNull HumanEntity getPlayer() {
-            return player;
-        }
-
-        @Override
-        public @NotNull InventoryType getType() {
-            return inventory.getType();
-        }
-
-        @Override
-        public @NotNull String getTitle() {
-            return "";
-        }
     }
 }
