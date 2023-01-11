@@ -3,6 +3,7 @@ package net.okocraft.box.storage.implementation.database.table;
 import net.okocraft.box.api.model.user.BoxUser;
 import net.okocraft.box.storage.api.factory.user.BoxUserFactory;
 import net.okocraft.box.storage.api.model.user.UserStorage;
+import net.okocraft.box.storage.api.util.uuid.UUIDParser;
 import net.okocraft.box.storage.implementation.database.database.Database;
 import org.jetbrains.annotations.NotNull;
 
@@ -59,13 +60,16 @@ public class UserTable extends AbstractTable implements UserStorage {
     @Override
     public @NotNull Optional<BoxUser> search(@NotNull String name) throws Exception {
         try (var connection = database.getConnection();
-             var statement = prepareStatement(connection, "SELECT uuid FROM `%table%` WHERE username LIKE ?")) {
+             var statement = prepareStatement(connection, "SELECT * FROM `%table%` WHERE username LIKE ?")) {
             statement.setString(1, name);
 
             try (var result = statement.executeQuery()) {
                 if (result.next()) {
-                    var rawUuid = result.getString("uuid");
-                    return Optional.of(BoxUserFactory.create(UUID.fromString(rawUuid), name));
+                    var uuid = UUIDParser.parseOrWarn(result.getString("uuid"));
+                    var username = result.getString("username");
+                    return uuid != null ?
+                            Optional.of(BoxUserFactory.create(uuid, username.isEmpty() ? null : username)) :
+                            Optional.empty();
                 }
             }
         }
