@@ -47,6 +47,7 @@ import net.okocraft.box.storage.api.model.Storage;
 import net.okocraft.box.storage.api.registry.StorageRegistry;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
@@ -488,8 +489,17 @@ public class BoxPlugin implements BoxAPI {
 
     @Override
     public boolean isDisabledWorld(@NotNull Player player) {
-        return configuration.get(Settings.DISABLED_WORLDS).contains(player.getWorld().getName()) &&
-                !player.hasPermission("box.admin.ignore-disabled-world");
+        return isDisabledWorld(player.getWorld()) && !player.hasPermission("box.admin.ignore-disabled-world");
+    }
+
+    @Override
+    public boolean isDisabledWorld(@NotNull World world) {
+        return isDisabledWorld(world.getName());
+    }
+
+    @Override
+    public boolean isDisabledWorld(@NotNull String worldName) {
+        return configuration.get(Settings.DISABLED_WORLDS).contains(worldName);
     }
 
     @Override

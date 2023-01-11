@@ -13,6 +13,7 @@ import net.okocraft.box.api.model.manager.UserManager;
 import net.okocraft.box.api.player.BoxPlayerMap;
 import net.okocraft.box.api.taskfactory.TaskFactory;
 import org.bukkit.NamespacedKey;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -172,14 +173,30 @@ public interface BoxAPI {
     void reload(@NotNull CommandSender sender);
 
     /**
-     * Checks if Box is not available in the world.
+     * Checks if Box is not available in the world where the {@link Player} is located.
      * <p>
      * Returns false if the player has the {@code box.admin.ignore-disabled-world} permission.
      *
      * @param player the player to check
-     * @return if Box is disabled in that world, returns {@code true}, otherwise {@code false}
+     * @return if Box is disabled in the world, returns {@code true}, otherwise {@code false}
      */
     boolean isDisabledWorld(@NotNull Player player);
+
+    /**
+     * Checks if Box is not available in the specified world.
+     *
+     * @param world the world to check
+     * @return if Box is disabled in the specified world, returns {@code true}, otherwise {@code false}
+     */
+    boolean isDisabledWorld(@NotNull World world);
+
+    /**
+     * Checks if Box is not available in the specified world name.
+     *
+     * @param worldName the world name to check
+     * @return if Box is disabled in the specified world, returns {@code true}, otherwise {@code false}
+     */
+    boolean isDisabledWorld(@NotNull String worldName);
 
     /**
      * Creates a {@link NamespacedKey}.
