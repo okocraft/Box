@@ -165,9 +165,9 @@ public class StickListener implements Listener {
         event.setReplacement(mainHandItem.clone());
 
         var defaultReplacementMaterialName = switch (event.getItem().getType()) {
-            case MUSHROOM_STEW, RABBIT_STEW, BEETROOT_SOUP, SUSPICIOUS_STEW -> Material.BOWL.name();
-            case HONEY_BOTTLE, POTION -> Material.GLASS_BOTTLE.name();
-            case MILK_BUCKET -> Material.BUCKET.name();
+            case MUSHROOM_STEW, RABBIT_STEW, BEETROOT_SOUP, SUSPICIOUS_STEW -> Material.BOWL.name(); // BowlFoodItem#finishUsingItem L15 / SuspiciousStewItem#finishUsingItem L75
+            case HONEY_BOTTLE, POTION -> Material.GLASS_BOTTLE.name(); // HoneyBottleItem#finishUsingItem L35 / PotionItem#finishUsingItem L89
+            case MILK_BUCKET -> Material.BUCKET.name(); // MilkBucketItem#finishUsingItem L37
             default -> null;
         };
 
