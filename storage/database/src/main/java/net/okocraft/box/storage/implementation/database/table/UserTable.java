@@ -9,6 +9,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -75,6 +77,27 @@ public class UserTable extends AbstractTable implements UserStorage {
         }
 
         return Optional.empty();
+    }
+
+    @Override
+    public @NotNull Collection<BoxUser> getAllUsers() throws Exception {
+        var result = new ArrayList<BoxUser>();
+
+        try (var connection = database.getConnection();
+             var statement = prepareStatement(connection, "SELECT * FROM `%table%`")) {
+            try (var resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    var uuid = UUIDParser.parseOrWarn(resultSet.getString("uuid"));
+                    var username = resultSet.getString("username");
+
+                    if (uuid != null) {
+                        result.add(BoxUserFactory.create(uuid, username.isEmpty() ? null : username));
+                    }
+                }
+            }
+        }
+
+        return result;
     }
 
     private boolean isExistingUser(@NotNull Connection connection, @NotNull BoxUser user) throws SQLException {

@@ -8,6 +8,8 @@ import net.okocraft.box.storage.api.util.uuid.UUIDParser;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -71,5 +73,21 @@ class YamlUserStorage implements UserStorage {
         var savedName = userData.getString(strUuid);
 
         return Optional.of(BoxUserFactory.create(uuid, savedName));
+    }
+
+    @Override
+    public @NotNull Collection<BoxUser> getAllUsers() {
+        var result = new ArrayList<BoxUser>();
+
+        for (var key : userData.getKeyList()) {
+            var uuid = UUIDParser.parseOrWarn(key);
+
+            if (uuid != null) {
+                var name = userData.getString(key);
+                result.add(BoxUserFactory.create(uuid, name.isEmpty() ? null : name));
+            }
+        }
+
+        return result;
     }
 }
