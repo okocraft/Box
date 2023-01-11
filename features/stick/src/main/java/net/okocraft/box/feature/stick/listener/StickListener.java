@@ -217,7 +217,7 @@ public class StickListener implements Listener {
                     default -> null;
                 };
 
-        var boxPlayer = permissionNodeSuffix != null ? checkPlayerAndGetBoxPlayer(player, permissionNodeSuffix) : null;
+        var boxPlayer = permissionNodeSuffix != null ? checkPlayerAndGetBoxPlayer(player, "box.stick." + permissionNodeSuffix) : null;
 
         if (boxPlayer == null) {
             return;
