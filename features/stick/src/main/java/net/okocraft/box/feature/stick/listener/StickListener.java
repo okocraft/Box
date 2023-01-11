@@ -140,7 +140,7 @@ public class StickListener implements Listener {
 
         var mainHandItem = player.getInventory().getItemInMainHand();
 
-        if (event.getItemInHand().equals(mainHandItem) &&
+        if (!isIllegalStack(mainHandItem) && event.getItemInHand().equals(mainHandItem) &&
                 tryConsumingStock(boxPlayer, mainHandItem, new StickCauses.BlockPlace(boxPlayer, block.getLocation().clone()))) {
             player.getInventory().setItemInMainHand(mainHandItem.clone());
         }
@@ -158,40 +158,38 @@ public class StickListener implements Listener {
         var mainHandItem = player.getInventory().getItemInMainHand();
         var cause = new StickCauses.ItemConsume(boxPlayer);
 
-        if (!event.getItem().equals(mainHandItem) || !tryConsumingStock(boxPlayer, mainHandItem, cause)) {
+        if (isIllegalStack(mainHandItem) || !event.getItem().equals(mainHandItem) || !tryConsumingStock(boxPlayer, mainHandItem, cause)) {
             return;
         }
 
         event.setReplacement(mainHandItem.clone());
 
-        if (mainHandItem.getAmount() == 1) {
-            var defaultReplacementMaterialName = switch (event.getItem().getType()) {
-                case MUSHROOM_STEW, RABBIT_STEW, BEETROOT_SOUP, SUSPICIOUS_STEW -> Material.BOWL.name();
-                case HONEY_BOTTLE, POTION -> Material.GLASS_BOTTLE.name();
-                case MILK_BUCKET -> Material.BUCKET.name();
-                default -> null;
-            };
+        var defaultReplacementMaterialName = switch (event.getItem().getType()) {
+            case MUSHROOM_STEW, RABBIT_STEW, BEETROOT_SOUP, SUSPICIOUS_STEW -> Material.BOWL.name();
+            case HONEY_BOTTLE, POTION -> Material.GLASS_BOTTLE.name();
+            case MILK_BUCKET -> Material.BUCKET.name();
+            default -> null;
+        };
 
-            if (defaultReplacementMaterialName == null) {
-                return;
-            }
-
-            BoxProvider.get().getItemManager()
-                    .getBoxItem(defaultReplacementMaterialName)
-                    .ifPresent(defaultReplacementItem -> boxPlayer.getCurrentStockHolder().increase(defaultReplacementItem, 1, cause));
+        if (defaultReplacementMaterialName == null) {
+            return;
         }
+
+        BoxProvider.get().getItemManager()
+                .getBoxItem(defaultReplacementMaterialName)
+                .ifPresent(defaultReplacementItem -> boxPlayer.getCurrentStockHolder().increase(defaultReplacementItem, 1, cause));
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onItemBreak(@NotNull PlayerItemBreakEvent event) {
         var player = event.getPlayer();
         var boxPlayer = checkPlayerAndGetBoxPlayer(player, "box.stick.tool");
+        var original = event.getBrokenItem();
 
-        if (boxPlayer == null) {
+        if (boxPlayer == null || isIllegalStack(original)) {
             return;
         }
 
-        var original = event.getBrokenItem();
         var copied = original.clone();
 
         copied.editMeta(Damageable.class, meta -> meta.setDamage(0));
@@ -227,7 +225,7 @@ public class StickListener implements Listener {
 
         var mainHandItem = player.getInventory().getItemInMainHand();
 
-        if (tryConsumingStock(boxPlayer, mainHandItem, new StickCauses.ProjectileLaunch(boxPlayer, entityType))) {
+        if (!isIllegalStack(mainHandItem) && tryConsumingStock(boxPlayer, mainHandItem, new StickCauses.ProjectileLaunch(boxPlayer, entityType))) {
             mainHandItem.setAmount(mainHandItem.getAmount() + 1);
             player.updateInventory();
         }
@@ -250,7 +248,7 @@ public class StickListener implements Listener {
 
         var arrowItem = event.getConsumable();
 
-        if (arrowItem != null && tryConsumingStock(boxPlayer, arrowItem, new StickCauses.ShootBow(boxPlayer))) {
+        if (arrowItem != null && !isIllegalStack(arrowItem) && tryConsumingStock(boxPlayer, arrowItem, new StickCauses.ShootBow(boxPlayer))) {
             event.setConsumeItem(false);
             player.updateInventory();
 
@@ -304,5 +302,9 @@ public class StickListener implements Listener {
 
     private boolean hasBoxStickInOffHand(@NotNull Player player) {
         return boxStickItem.check(player.getInventory().getItemInOffHand());
+    }
+
+    private boolean isIllegalStack(@NotNull ItemStack itemStack) {
+        return itemStack.getMaxStackSize() < itemStack.getAmount();
     }
 }
