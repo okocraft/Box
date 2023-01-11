@@ -5,13 +5,15 @@ import net.okocraft.box.api.player.BoxPlayer;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * A {@link net.okocraft.box.api.event.stockholder.stock.StockEvent.Cause} implementation indicating that the amount of stock has been modified by Box Stick.
- *
- * @param player the {@link BoxPlayer} who use the Box Stick
+ * An interface that represents Box Stick related {@link net.okocraft.box.api.event.stockholder.stock.StockEvent.Cause}.
  */
-public record StickCause(@NotNull BoxPlayer player) implements StockEvent.Cause {
-    @Override
-    public @NotNull String name() {
-        return "stick";
-    }
+public interface StickCause extends StockEvent.Cause {
+
+    /**
+     * Returns the {@link BoxPlayer} that used the Box Stick.
+     *
+     * @return the {@link BoxPlayer} that used the Box Stick
+     */
+    @NotNull BoxPlayer player();
+
 }
