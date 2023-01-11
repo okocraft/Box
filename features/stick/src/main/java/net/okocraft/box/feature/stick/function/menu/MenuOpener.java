@@ -15,10 +15,6 @@ public final class MenuOpener {
     public static void openMenu(@NotNull PlayerInteractEvent event, @NotNull BoxStickItem boxStickItem) {
         var player = event.getPlayer();
 
-        if (!player.hasPermission("box.stick.menu")) {
-            return;
-        }
-
         boolean shouldOpen;
 
         if (event.getHand() == EquipmentSlot.HAND) {
@@ -27,7 +23,7 @@ public final class MenuOpener {
             shouldOpen = player.getInventory().getItemInMainHand().getType().isAir() && boxStickItem.check(player.getInventory().getItemInOffHand());
         }
 
-        if (shouldOpen) {
+        if (shouldOpen && player.hasPermission("box.stick.menu")) {
             var command = BoxProvider.get().getConfiguration().get(MENU_COMMAND_SETTING);
 
             if (!command.isEmpty()) {
