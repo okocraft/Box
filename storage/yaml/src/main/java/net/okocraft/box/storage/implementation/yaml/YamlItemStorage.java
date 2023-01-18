@@ -196,8 +196,13 @@ class YamlItemStorage implements ItemStorage {
 
     @Override
     public @NotNull BoxCustomItem saveNewCustomItem(@NotNull ItemStack item) throws Exception {
+        return saveNewCustomItem(item, null);
+    }
+
+    @Override
+    public @NotNull BoxCustomItem saveNewCustomItem(@NotNull ItemStack item, @Nullable String itemName) throws Exception {
         int id = lastUsedItemId.incrementAndGet();
-        var plainName = ItemNameGenerator.generate(item.getType().name(), item.serializeAsBytes());
+        var plainName = itemName != null ? itemName : ItemNameGenerator.generate(item.getType().name(), item.serializeAsBytes());
         var boxItem = BoxItemFactory.createCustomItem(item, plainName, id);
 
         try (var target = customItemData.copy()) {

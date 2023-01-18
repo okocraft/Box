@@ -6,9 +6,13 @@ import net.okocraft.box.storage.api.model.stock.StockStorage;
 import net.okocraft.box.storage.api.model.user.UserStorage;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 public interface Storage {
 
     @NotNull String getName();
+
+    @NotNull List<Property> getInfo();
 
     void init() throws Exception;
 
@@ -21,4 +25,15 @@ public interface Storage {
     @NotNull StockStorage getStockStorage();
 
     @NotNull CustomDataStorage getCustomDataStorage();
+
+    record Property(@NotNull String key, @NotNull String value) {
+
+        public static @NotNull Property of(@NotNull String key, @NotNull String value) {
+            return new Property(key, value);
+        }
+
+        public @NotNull String asString() {
+            return key + ": " + value;
+        }
+    }
 }

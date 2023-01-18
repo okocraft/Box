@@ -2,6 +2,7 @@ package net.okocraft.box.storage.implementation.database.database.sqlite;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import net.okocraft.box.storage.api.model.Storage;
 import net.okocraft.box.storage.implementation.database.database.Database;
 import net.okocraft.box.storage.implementation.database.schema.SchemaSet;
 import org.jetbrains.annotations.NotNull;
@@ -11,14 +12,17 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 
 public class SQLiteDatabase implements Database {
 
+    private final String tablePrefix;
     private final SchemaSet schemaSet;
     private final Path databasePath;
     private HikariDataSource hikariDataSource;
 
     public SQLiteDatabase(@NotNull Path databasePath, @NotNull String tablePrefix) {
+        this.tablePrefix = tablePrefix;
         this.schemaSet = SQLiteTableSchema.create(tablePrefix);
         this.databasePath = databasePath;
     }
@@ -55,6 +59,14 @@ public class SQLiteDatabase implements Database {
     @Override
     public @NotNull Type getType() {
         return Type.SQLITE;
+    }
+
+    @Override
+    public @NotNull List<Storage.Property> getInfo() {
+        return List.of(
+                Storage.Property.of("table-prefix", tablePrefix),
+                Storage.Property.of("database-filename", databasePath.getFileName().toString())
+        );
     }
 
     @Override

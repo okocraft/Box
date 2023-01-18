@@ -5,11 +5,11 @@ import net.okocraft.box.api.model.item.BoxItem;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
-import java.util.function.Function;
+import java.util.function.IntFunction;
 
 public final class BoxItemSupplier {
 
-    public static Function<Integer, BoxItem> ITEM_FUNCTION;
+    public static IntFunction<BoxItem> ITEM_FUNCTION;
 
     public static @NotNull Optional<BoxItem> getItem(int internalId) {
         if (ITEM_FUNCTION == null) {

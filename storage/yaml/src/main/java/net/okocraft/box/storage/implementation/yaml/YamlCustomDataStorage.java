@@ -5,8 +5,11 @@ import com.github.siroshun09.configapi.yaml.YamlConfiguration;
 import net.okocraft.box.storage.api.model.data.CustomDataStorage;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collection;
+import java.util.function.Predicate;
 
 public class YamlCustomDataStorage implements CustomDataStorage {
 
@@ -38,6 +41,33 @@ public class YamlCustomDataStorage implements CustomDataStorage {
 
         try (var yaml = YamlConfiguration.create(file, configuration)) {
             yaml.save();
+        }
+    }
+
+    @Override
+    public @NotNull Collection<Key> getKeys() throws Exception {
+        try (var listStream = Files.list(customDataDirectory)) {
+            return listStream
+                    .filter(Files::isDirectory)
+                    .map(this::processDir)
+                    .flatMap(Collection::stream)
+                    .toList();
+        }
+    }
+
+    private @NotNull Collection<Key> processDir(@NotNull Path dir) {
+        try (var listStream = Files.list(dir)) {
+            var dirName = dir.getFileName().toString();
+            return listStream.filter(Files::isReadable)
+                    .map(Path::getFileName)
+                    .map(Path::toString)
+                    .filter(file -> file.endsWith(".yml"))
+                    .map(file -> file.substring(0, file.length() - 4))
+                    .filter(Predicate.not(String::isEmpty))
+                    .map(key -> new Key(dirName, key))
+                    .toList();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }

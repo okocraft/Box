@@ -5,6 +5,7 @@ import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.storage.api.util.item.DefaultItem;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.List;
@@ -28,7 +29,9 @@ public interface ItemStorage {
 
     void updateCustomItems(@NotNull Collection<BoxCustomItem> items) throws Exception;
 
-    @NotNull BoxCustomItem saveNewCustomItem(@NotNull ItemStack item) throws Exception ;
+    @NotNull BoxCustomItem saveNewCustomItem(@NotNull ItemStack item) throws Exception;
+
+    @NotNull BoxCustomItem saveNewCustomItem(@NotNull ItemStack item, @Nullable String itemName) throws Exception ;
 
     @NotNull BoxCustomItem rename(@NotNull BoxCustomItem item, @NotNull String newName) throws Exception;
 

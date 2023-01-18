@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
 public class YamlStorage implements Storage {
 
@@ -31,6 +32,13 @@ public class YamlStorage implements Storage {
     @Override
     public @NotNull String getName() {
         return STORAGE_NAME;
+    }
+
+    @Override
+    public @NotNull List<Property> getInfo() {
+        return List.of(
+                Property.of("directory-name", rootDirectory.getFileName().toString())
+        );
     }
 
     @Override

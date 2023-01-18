@@ -17,6 +17,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -82,12 +84,38 @@ public class CustomDataTable extends AbstractTable implements CustomDataStorage 
         }
     }
 
+    @Override
+    public @NotNull Collection<Key> getKeys() throws Exception {
+        var result = new ArrayList<Key>();
+
+        try (var connection = database.getConnection();
+             var statement = prepareStatement(connection, "SELECT key FROM `%table%`")) {
+
+            try (var resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    var namespacedKey = resultSet.getString("key");
+                    int index = namespacedKey != null ? namespacedKey.indexOf(':') : -1;
+
+                    if (index == -1 || index == namespacedKey.length() - 1) {
+                        continue;
+                    }
+
+                    var namespace = namespacedKey.substring(0, index);
+                    var key = namespacedKey.substring(index + 1);
+                    result.add(new Key(namespace, key));
+                }
+            }
+        }
+
+        return result;
+    }
+
     @SuppressWarnings("unchecked")
     private @NotNull Configuration deserializeConfiguration(byte[] bytes) {
         try (var input = new ByteArrayInputStream(bytes);
              var reader = new InputStreamReader(input)) {
-                var map = yamlThreadLocal.get().loadAs(reader, LinkedHashMap.class);
-                return MappedConfiguration.create(map);
+            var map = yamlThreadLocal.get().loadAs(reader, LinkedHashMap.class);
+            return MappedConfiguration.create(map);
         } catch (IOException e) {
             LoggerHolder.get().log(Level.SEVERE, "Could not deserialize data", e);
             return MappedConfiguration.create();
