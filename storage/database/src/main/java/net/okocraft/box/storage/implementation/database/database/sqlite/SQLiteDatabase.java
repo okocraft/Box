@@ -45,7 +45,6 @@ public class SQLiteDatabase implements Database {
         hikariDataSource = new HikariDataSource(config);
     }
 
-    @SuppressWarnings("SqlDialectInspection")
     @Override
     public void shutdown() throws Exception {
         try (var connection = getConnection();
