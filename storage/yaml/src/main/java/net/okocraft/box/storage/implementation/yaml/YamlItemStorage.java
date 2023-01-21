@@ -89,12 +89,14 @@ class YamlItemStorage implements ItemStorage {
             return migrateV4DefaultItems();
         }
 
-        var result = new ArrayList<BoxItem>();
+        List<BoxItem> result;
 
         try (var source = defaultItemData.copy()) {
             source.load();
+            var keyList = source.getKeyList();
+            result = new ArrayList<>(keyList.size());
 
-            for (var key : source.getKeyList()) {
+            for (var key : keyList) {
                 var id = parseIntOrNull(key);
                 var name = getPlainNameFromConfiguration(key, source);
 
@@ -113,7 +115,7 @@ class YamlItemStorage implements ItemStorage {
 
     @Override
     public @NotNull List<BoxItem> updateDefaultItems(@NotNull Map<BoxItem, DefaultItem> itemMap) throws Exception {
-        var result = new ArrayList<BoxItem>();
+        var result = new ArrayList<BoxItem>(itemMap.size());
 
         try (var target = defaultItemData.copy()) {
             target.load();
@@ -135,7 +137,7 @@ class YamlItemStorage implements ItemStorage {
 
     @Override
     public @NotNull List<BoxItem> saveNewDefaultItems(@NotNull List<DefaultItem> newItems) throws Exception {
-        var result = new ArrayList<BoxItem>();
+        var result = new ArrayList<BoxItem>(newItems.size());
 
         try (var target = defaultItemData.copy()) {
             target.load();
@@ -161,12 +163,15 @@ class YamlItemStorage implements ItemStorage {
             return migrateV4CustomItems();
         }
 
-        var result = new ArrayList<BoxCustomItem>();
+        List<BoxCustomItem> result;
 
         try (var source = customItemData.copy()) {
             source.load();
 
-            for (var key : source.getKeyList()) {
+            var keyList = source.getKeyList();
+            result = new ArrayList<>(keyList.size());
+
+            for (var key : keyList) {
                 var id = parseIntOrNull(key);
                 var name = getPlainNameFromConfiguration(key, source);
 

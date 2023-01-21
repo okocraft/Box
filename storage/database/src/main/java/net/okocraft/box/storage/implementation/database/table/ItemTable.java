@@ -48,7 +48,7 @@ public class ItemTable extends AbstractTable implements ItemStorage {
 
     @Override
     public @NotNull List<BoxItem> loadAllDefaultItems() throws Exception {
-        var result = new ArrayList<BoxItem>();
+        var result = new ArrayList<BoxItem>(1000); // The number of default items is currently around 1400, so this should only need to be expanded once.
 
         try (var connection = database.getConnection();
              var statement = prepareStatement(connection, "SELECT id, name, item_data FROM `%table%` WHERE is_default_item=TRUE")) {
@@ -64,7 +64,7 @@ public class ItemTable extends AbstractTable implements ItemStorage {
 
     @Override
     public @NotNull List<BoxItem> updateDefaultItems(@NotNull Map<BoxItem, DefaultItem> itemMap) throws Exception {
-        var result = new ArrayList<BoxItem>();
+        var result = new ArrayList<BoxItem>(itemMap.size());
 
         try (var connection = database.getConnection();
              var statement = prepareStatement(connection, "UPDATE `%table%` SET name=?, item_data=? WHERE id=?")) {
@@ -89,8 +89,8 @@ public class ItemTable extends AbstractTable implements ItemStorage {
 
     @Override
     public @NotNull List<BoxItem> saveNewDefaultItems(@NotNull List<DefaultItem> newItems) throws Exception {
-        var result = new ArrayList<BoxItem>();
-        var map = new HashMap<String, DefaultItem>();
+        var result = new ArrayList<BoxItem>(newItems.size());
+        var map = new HashMap<String, DefaultItem>(newItems.size(), 2.0f);
 
         try (var connection = database.getConnection()) {
             try (var statement = prepareStatement(connection, "INSERT INTO `%table%` (name, item_data, is_default_item) VALUES(?,?,?)")) {
