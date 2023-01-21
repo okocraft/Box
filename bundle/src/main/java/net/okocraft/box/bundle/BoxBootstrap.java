@@ -2,11 +2,15 @@ package net.okocraft.box.bundle;
 
 import net.okocraft.box.core.BoxPlugin;
 import net.okocraft.box.storage.api.registry.StorageRegistry;
+import net.okocraft.box.storage.migrator.StorageMigrator;
+import net.okocraft.box.storage.migrator.config.MigrationConfigLoader;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.logging.Level;
 
 public final class BoxBootstrap extends JavaPlugin {
 
@@ -54,6 +58,25 @@ public final class BoxBootstrap extends JavaPlugin {
             return;
         }
 
+        StorageMigrator migrator = null;
+
+        try (var migrationYaml = MigrationConfigLoader.load(boxPlugin.getPluginDirectory().resolve("migration.yml"), getLogger())) {
+            if (MigrationConfigLoader.isMigrationRequested(migrationYaml, getLogger())) {
+                migrator = MigrationConfigLoader.prepare(migrationYaml, getLogger());
+            }
+        }
+
+        if (migrator != null) {
+            try {
+                runMigration(migrator);
+                getLogger().info("Migration is complete.");
+            } catch (Exception e) {
+                getLogger().log(Level.SEVERE, "An exception occurred while migrating data.", e);
+                disablePlugin();
+                return;
+            }
+        }
+
         var startTime = Instant.now();
 
         if (!boxPlugin.enable()) {
@@ -78,5 +101,16 @@ public final class BoxBootstrap extends JavaPlugin {
 
     private void disablePlugin() {
         getServer().getPluginManager().disablePlugin(this);
+    }
+
+    private void runMigration(@NotNull StorageMigrator migrator) throws Exception {
+        getLogger().info("Initializing storages...");
+        migrator.init();
+
+        getLogger().info("Migrating data...");
+        migrator.run();
+
+        getLogger().info("Shutting down storages...");
+        migrator.close();
     }
 }

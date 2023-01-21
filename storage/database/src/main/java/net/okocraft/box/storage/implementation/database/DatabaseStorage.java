@@ -13,6 +13,10 @@ import net.okocraft.box.storage.implementation.database.table.StockTable;
 import net.okocraft.box.storage.implementation.database.table.UserTable;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public class DatabaseStorage implements Storage {
 
     private final Database database;
@@ -34,6 +38,14 @@ public class DatabaseStorage implements Storage {
     @Override
     public @NotNull String getName() {
         return database.getType().getName();
+    }
+
+    @Override
+    public @NotNull List<Property> getInfo() {
+        var result = new ArrayList<Property>();
+        result.add(Property.of("database-type", database.getType().getName()));
+        result.addAll(database.getInfo());
+        return Collections.unmodifiableList(result);
     }
 
     @Override

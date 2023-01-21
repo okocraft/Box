@@ -42,13 +42,14 @@ final class Bundled {
     }
 
     private static @NotNull Storage createYamlStorage(@NotNull Configuration config) {
-        return new YamlStorage(BoxProvider.get().getPluginDirectory().resolve("data"));
+        var dirName = config.getString("yaml.directory-name", "data");
+        return new YamlStorage(BoxProvider.get().getPluginDirectory().resolve(dirName));
     }
 
     private static @NotNull Storage createSQLiteStorage(@NotNull Configuration config) {
         return new DatabaseStorage(
                 new SQLiteDatabase(
-                        BoxProvider.get().getPluginDirectory().resolve("box-sqlite.db"),
+                        BoxProvider.get().getPluginDirectory().resolve(config.getString("sqlite.filename", "box-sqlite.db")),
                         config.getString("database.table-prefix", "box_")
                 )
         );

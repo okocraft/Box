@@ -2,10 +2,10 @@ package net.okocraft.box.storage.implementation.yaml;
 
 import com.github.siroshun09.configapi.api.Configuration;
 import com.github.siroshun09.configapi.yaml.YamlConfiguration;
-import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.model.item.BoxCustomItem;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.storage.api.factory.item.BoxItemFactory;
+import net.okocraft.box.storage.api.holder.LoggerHolder;
 import net.okocraft.box.storage.api.model.item.ItemStorage;
 import net.okocraft.box.storage.api.util.item.DefaultItem;
 import net.okocraft.box.storage.api.util.item.DefaultItemProvider;
@@ -99,7 +99,7 @@ class YamlItemStorage implements ItemStorage {
                 var name = getPlainNameFromConfiguration(key, source);
 
                 if (id == null) {
-                    BoxProvider.get().getLogger().warning("Invalid id: " + key + " (name: " + name + ")");
+                    LoggerHolder.get().warning("Invalid id: " + key + " (name: " + name + ")");
                     continue;
                 }
 
@@ -171,7 +171,7 @@ class YamlItemStorage implements ItemStorage {
                 var name = getPlainNameFromConfiguration(key, source);
 
                 if (id == null) {
-                    BoxProvider.get().getLogger().warning("Invalid id: " + key + " (name: " + name + ")");
+                    LoggerHolder.get().warning("Invalid id: " + key + " (name: " + name + ")");
                     continue;
                 }
 
@@ -196,8 +196,13 @@ class YamlItemStorage implements ItemStorage {
 
     @Override
     public @NotNull BoxCustomItem saveNewCustomItem(@NotNull ItemStack item) throws Exception {
+        return saveNewCustomItem(item, null);
+    }
+
+    @Override
+    public @NotNull BoxCustomItem saveNewCustomItem(@NotNull ItemStack item, @Nullable String itemName) throws Exception {
         int id = lastUsedItemId.incrementAndGet();
-        var plainName = ItemNameGenerator.generate(item.getType().name(), item.serializeAsBytes());
+        var plainName = itemName != null ? itemName : ItemNameGenerator.generate(item.getType().name(), item.serializeAsBytes());
         var boxItem = BoxItemFactory.createCustomItem(item, plainName, id);
 
         try (var target = customItemData.copy()) {
@@ -296,7 +301,7 @@ class YamlItemStorage implements ItemStorage {
                 var name = getPlainNameFromConfiguration(key, source);
 
                 if (id == null) {
-                    BoxProvider.get().getLogger().warning("Invalid id: " + key + " (name: " + name + ")");
+                    LoggerHolder.get().warning("Invalid id: " + key + " (name: " + name + ")");
                     continue;
                 }
 

@@ -10,6 +10,7 @@ import net.okocraft.box.storage.implementation.database.database.Database;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -159,9 +160,14 @@ public class ItemTable extends AbstractTable implements ItemStorage {
 
     @Override
     public @NotNull BoxCustomItem saveNewCustomItem(@NotNull ItemStack item) throws Exception {
+        return saveNewCustomItem(item, null);
+    }
+
+    @Override
+    public @NotNull BoxCustomItem saveNewCustomItem(@NotNull ItemStack item, @Nullable String itemName) throws Exception {
         try (var connection = database.getConnection()) {
             var itemBytes = item.serializeAsBytes();
-            var itemName = ItemNameGenerator.generate(item.getType().name(), itemBytes);
+            itemName = itemName != null ? itemName : ItemNameGenerator.generate(item.getType().name(), itemBytes);
 
             try (var statement = prepareStatement(connection, "INSERT INTO `%table%` (name, item_data, is_default_item) VALUES(?,?,?)")) {
                 statement.setString(1, itemName);

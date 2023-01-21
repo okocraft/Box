@@ -2,7 +2,7 @@ package net.okocraft.box.storage.implementation.database.table;
 
 import com.github.siroshun09.configapi.api.Configuration;
 import com.github.siroshun09.configapi.api.MappedConfiguration;
-import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.storage.api.holder.LoggerHolder;
 import net.okocraft.box.storage.api.model.data.CustomDataStorage;
 import net.okocraft.box.storage.implementation.database.database.Database;
 import org.jetbrains.annotations.NotNull;
@@ -17,6 +17,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -82,14 +84,40 @@ public class CustomDataTable extends AbstractTable implements CustomDataStorage 
         }
     }
 
+    @Override
+    public @NotNull Collection<Key> getKeys() throws Exception {
+        var result = new ArrayList<Key>();
+
+        try (var connection = database.getConnection();
+             var statement = prepareStatement(connection, "SELECT key FROM `%table%`")) {
+
+            try (var resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    var namespacedKey = resultSet.getString("key");
+                    int index = namespacedKey != null ? namespacedKey.indexOf(':') : -1;
+
+                    if (index == -1 || index == namespacedKey.length() - 1) {
+                        continue;
+                    }
+
+                    var namespace = namespacedKey.substring(0, index);
+                    var key = namespacedKey.substring(index + 1);
+                    result.add(new Key(namespace, key));
+                }
+            }
+        }
+
+        return result;
+    }
+
     @SuppressWarnings("unchecked")
     private @NotNull Configuration deserializeConfiguration(byte[] bytes) {
         try (var input = new ByteArrayInputStream(bytes);
              var reader = new InputStreamReader(input)) {
-                var map = yamlThreadLocal.get().loadAs(reader, LinkedHashMap.class);
-                return MappedConfiguration.create(map);
+            var map = yamlThreadLocal.get().loadAs(reader, LinkedHashMap.class);
+            return MappedConfiguration.create(map);
         } catch (IOException e) {
-            BoxProvider.get().getLogger().log(Level.SEVERE, "Could not deserialize data", e);
+            LoggerHolder.get().log(Level.SEVERE, "Could not deserialize data", e);
             return MappedConfiguration.create();
         }
     }
@@ -115,7 +143,7 @@ public class CustomDataTable extends AbstractTable implements CustomDataStorage 
 
             return byteOut.toByteArray();
         } catch (IOException e) {
-            BoxProvider.get().getLogger().log(Level.SEVERE, "Could not serialize config", e);
+            LoggerHolder.get().log(Level.SEVERE, "Could not serialize config", e);
             return new byte[0];
         }
     }

@@ -1,11 +1,12 @@
 package net.okocraft.box.storage.implementation.database.table;
 
-import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.model.stock.StockData;
 import net.okocraft.box.api.model.stock.UserStockHolder;
 import net.okocraft.box.api.model.user.BoxUser;
 import net.okocraft.box.storage.api.factory.stock.UserStockHolderFactory;
+import net.okocraft.box.storage.api.holder.LoggerHolder;
 import net.okocraft.box.storage.api.model.stock.StockStorage;
+import net.okocraft.box.storage.api.util.item.BoxItemSupplier;
 import net.okocraft.box.storage.implementation.database.database.Database;
 import org.jetbrains.annotations.NotNull;
 
@@ -40,12 +41,12 @@ public class StockTable extends AbstractTable implements StockStorage {
                     int itemId = resultSet.getInt("item_id");
                     int amount = resultSet.getInt("amount");
 
-                    var item = BoxProvider.get().getItemManager().getBoxItem(itemId);
+                    var item = BoxItemSupplier.getItem(itemId);
 
                     if (item.isPresent()) {
                         stock.add(new StockData(item.get(), amount));
                     } else {
-                        BoxProvider.get().getLogger().warning("Unknown item id: " + itemId + " (" + strUuid + ")");
+                        LoggerHolder.get().warning("Unknown item id: " + itemId + " (" + strUuid + ")");
                     }
                 }
             }

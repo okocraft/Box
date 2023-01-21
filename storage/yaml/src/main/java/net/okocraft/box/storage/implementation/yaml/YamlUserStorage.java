@@ -4,9 +4,12 @@ import com.github.siroshun09.configapi.yaml.YamlConfiguration;
 import net.okocraft.box.api.model.user.BoxUser;
 import net.okocraft.box.storage.api.factory.user.BoxUserFactory;
 import net.okocraft.box.storage.api.model.user.UserStorage;
+import net.okocraft.box.storage.api.util.uuid.UUIDParser;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -59,13 +62,10 @@ class YamlUserStorage implements UserStorage {
             return Optional.empty();
         }
 
-        UUID uuid;
+        var uuid = UUIDParser.parseOrWarn(strUuid);
 
-        try {
-            uuid = UUID.fromString(strUuid);
-        } catch (IllegalArgumentException e) {
-            // remove invalid uuid
-            userData.set(strUuid, null);
+        if (uuid == null) {
+            userData.set(strUuid, null); // remove invalid uuid
             userData.save();
             return Optional.empty();
         }
@@ -73,5 +73,21 @@ class YamlUserStorage implements UserStorage {
         var savedName = userData.getString(strUuid);
 
         return Optional.of(BoxUserFactory.create(uuid, savedName));
+    }
+
+    @Override
+    public @NotNull Collection<BoxUser> getAllUsers() {
+        var result = new ArrayList<BoxUser>();
+
+        for (var key : userData.getKeyList()) {
+            var uuid = UUIDParser.parseOrWarn(key);
+
+            if (uuid != null) {
+                var name = userData.getString(key);
+                result.add(BoxUserFactory.create(uuid, name.isEmpty() ? null : name));
+            }
+        }
+
+        return result;
     }
 }
