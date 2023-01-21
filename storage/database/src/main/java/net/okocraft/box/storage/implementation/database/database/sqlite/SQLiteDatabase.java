@@ -39,7 +39,6 @@ public class SQLiteDatabase implements Database {
         config.setJdbcUrl("jdbc:sqlite:" + databasePath.toAbsolutePath());
         config.setConnectionTestQuery("SELECT 1");
         config.setMaxLifetime(60000);
-        config.setIdleTimeout(45000);
         config.setMaximumPoolSize(50);
 
         hikariDataSource = new HikariDataSource(config);
