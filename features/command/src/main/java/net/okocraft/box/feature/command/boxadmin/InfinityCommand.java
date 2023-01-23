@@ -55,10 +55,16 @@ public class InfinityCommand extends AbstractCommand {
         var playerMap = BoxProvider.get().getBoxPlayerMap();
 
         if (!playerMap.isLoaded(target)) {
-            sender.sendMessage(self ?
-                    GeneralMessage.ERROR_PLAYER_NOT_LOADED :
-                    GeneralMessage.ERROR_TARGET_PLAYER_NOT_LOADED.apply(target)
-            );
+            Component message;
+
+            if (playerMap.isScheduledLoading(target)) {
+                message = self ? GeneralMessage.ERROR_PLAYER_LOADING : GeneralMessage.ERROR_TARGET_PLAYER_LOADING.apply(target);
+            } else {
+                message = self ? GeneralMessage.ERROR_PLAYER_NOT_LOADED : GeneralMessage.ERROR_TARGET_PLAYER_NOT_LOADED.apply(target);
+            }
+
+            sender.sendMessage(message);
+            return;
         }
 
         var boxPlayer = playerMap.get(target);

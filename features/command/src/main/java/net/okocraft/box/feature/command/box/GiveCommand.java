@@ -6,8 +6,8 @@ import net.okocraft.box.api.command.AbstractCommand;
 import net.okocraft.box.api.message.GeneralMessage;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.util.TabCompleter;
-import net.okocraft.box.feature.command.message.BoxMessage;
 import net.okocraft.box.feature.command.event.stock.CommandCauses;
+import net.okocraft.box.feature.command.message.BoxMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -94,7 +94,11 @@ public class GiveCommand extends AbstractCommand {
         }
 
         if (!playerMap.isLoaded(target)) {
-            sender.sendMessage(GeneralMessage.ERROR_TARGET_PLAYER_NOT_LOADED.apply(target));
+            if (playerMap.isScheduledLoading(player)) {
+                sender.sendMessage(GeneralMessage.ERROR_TARGET_PLAYER_LOADING.apply(target));
+            } else {
+                sender.sendMessage(GeneralMessage.ERROR_TARGET_PLAYER_NOT_LOADED.apply(target));
+            }
             return;
         }
 
