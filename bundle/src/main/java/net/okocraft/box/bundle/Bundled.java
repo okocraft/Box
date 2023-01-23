@@ -50,7 +50,7 @@ final class Bundled {
         return new DatabaseStorage(
                 new SQLiteDatabase(
                         BoxProvider.get().getPluginDirectory().resolve(config.getString("sqlite.filename", "box-sqlite.db")),
-                        config.getString("database.table-prefix", "box_")
+                        config.getString("sqlite.table-prefix", config.getString("database.table_prefix", "box_")) // Refer to the old configuration key.
                 )
         );
     }
