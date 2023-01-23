@@ -23,8 +23,8 @@ public interface Database {
     @NotNull Connection getConnection() throws SQLException;
 
     enum Type {
-        SQLITE("sqlite")
-        ;
+        MYSQL("mysql"),
+        SQLITE("sqlite");
 
         private final String name;
 

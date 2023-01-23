@@ -14,6 +14,8 @@ import net.okocraft.box.feature.stick.StickFeature;
 import net.okocraft.box.storage.api.model.Storage;
 import net.okocraft.box.storage.implementation.database.DatabaseStorage;
 import net.okocraft.box.storage.implementation.database.database.Database;
+import net.okocraft.box.storage.implementation.database.database.mysql.MySQLConfig;
+import net.okocraft.box.storage.implementation.database.database.mysql.MySQLDatabase;
 import net.okocraft.box.storage.implementation.database.database.sqlite.SQLiteDatabase;
 import net.okocraft.box.storage.implementation.yaml.YamlStorage;
 import org.jetbrains.annotations.NotNull;
@@ -37,7 +39,8 @@ final class Bundled {
     static @NotNull @Unmodifiable Map<String, Function<Configuration, Storage>> storageMap() {
         return Map.of(
                 YamlStorage.STORAGE_NAME, Bundled::createYamlStorage,
-                Database.Type.SQLITE.getName(), Bundled::createSQLiteStorage
+                Database.Type.SQLITE.getName(), Bundled::createSQLiteStorage,
+                Database.Type.MYSQL.getName(), Bundled::createMySQLStorage
         );
     }
 
@@ -52,6 +55,12 @@ final class Bundled {
                         BoxProvider.get().getPluginDirectory().resolve(config.getString("sqlite.filename", "box-sqlite.db")),
                         config.getString("sqlite.table-prefix", config.getString("database.table_prefix", "box_")) // Refer to the old configuration key.
                 )
+        );
+    }
+
+    private static @NotNull Storage createMySQLStorage(@NotNull Configuration config) {
+        return new DatabaseStorage(
+                new MySQLDatabase(new MySQLConfig(config.getOrCreateSection("mysql")))
         );
     }
 }
