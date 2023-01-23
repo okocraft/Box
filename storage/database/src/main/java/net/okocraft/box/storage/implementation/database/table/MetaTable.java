@@ -22,7 +22,7 @@ public class MetaTable extends AbstractTable {
 
     public int getItemDataVersion() throws SQLException {
         try (var connection = database.getConnection();
-             var statement = prepareStatement(connection, "SELECT value FROM `%table%` WHERE key=? LIMIT 1")) {
+             var statement = prepareStatement(connection, "SELECT `value` FROM `%table%` WHERE `key`=? LIMIT 1")) {
             statement.setString(1, ITEM_DATA_VERSION_KEY);
 
             try (var resultSet = statement.executeQuery()) {
@@ -38,8 +38,8 @@ public class MetaTable extends AbstractTable {
 
     public void saveItemDataVersion(int dataVersion) throws SQLException {
         var sql = hasItemDataVersion ?
-                "UPDATE `%table%` SET value=? WHERE key=?" :
-                "INSERT INTO `%table%` (key, value) VALUES(?,?)";
+                "UPDATE `%table%` SET value=? WHERE `key`=?" :
+                "INSERT INTO `%table%` (`key`, `value`) VALUES(?,?)";
 
         try (var connection = database.getConnection();
              var statement = prepareStatement(connection, sql)) {

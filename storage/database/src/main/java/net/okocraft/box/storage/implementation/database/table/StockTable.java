@@ -32,7 +32,7 @@ public class StockTable extends AbstractTable implements StockStorage {
         var stock = new ArrayList<StockData>();
 
         try (var connection = database.getConnection();
-             var statement = prepareStatement(connection, "SELECT item_id, amount FROM `%table%` WHERE uuid=?")) {
+             var statement = prepareStatement(connection, "SELECT `item_id`, `amount` FROM `%table%` WHERE `uuid`=?")) {
             var strUuid = user.getUUID().toString();
             statement.setString(1, strUuid);
 
@@ -64,7 +64,7 @@ public class StockTable extends AbstractTable implements StockStorage {
     }
 
     private void deleteUserData(@NotNull Connection connection, @NotNull BoxUser user) throws SQLException {
-        try (var statement = prepareStatement(connection, "DELETE FROM `%table%` WHERE uuid=?")) {
+        try (var statement = prepareStatement(connection, "DELETE FROM `%table%` WHERE `uuid`=?")) {
             statement.setString(1, user.getUUID().toString());
             statement.execute();
         }
@@ -72,7 +72,7 @@ public class StockTable extends AbstractTable implements StockStorage {
 
     private void insertUserData(@NotNull Connection connection, @NotNull BoxUser user,
                                 @NotNull Collection<StockData> stockDataCollection) throws SQLException {
-        try (var statement = prepareStatement(connection, "INSERT INTO `%table%` (uuid, item_id, amount) VALUES(?,?,?)")) {
+        try (var statement = prepareStatement(connection, "INSERT INTO `%table%` (`uuid`, `item_id`, `amount`) VALUES(?,?,?)")) {
             var strUuid = user.getUUID().toString();
 
             for (var data : stockDataCollection) {

@@ -56,7 +56,7 @@ public class CustomDataTable extends AbstractTable implements CustomDataStorage 
         var namespacedKey = namespace + ":" + key;
 
         try (var connection = database.getConnection();
-             var statement = prepareStatement(connection, "SELECT data FROM `%table%` WHERE key=? LIMIT 1")) {
+             var statement = prepareStatement(connection, "SELECT `data` FROM `%table%` WHERE `key`=? LIMIT 1")) {
             statement.setString(1, namespacedKey);
 
             try (var resultSet = statement.executeQuery()) {
@@ -89,7 +89,7 @@ public class CustomDataTable extends AbstractTable implements CustomDataStorage 
         var result = new ArrayList<Key>();
 
         try (var connection = database.getConnection();
-             var statement = prepareStatement(connection, "SELECT key FROM `%table%`")) {
+             var statement = prepareStatement(connection, "SELECT `key` FROM `%table%`")) {
 
             try (var resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
@@ -123,7 +123,7 @@ public class CustomDataTable extends AbstractTable implements CustomDataStorage 
     }
 
     private boolean isExistingKey(@NotNull Connection connection, @NotNull String namespacedKey) throws SQLException {
-        try (var statement = prepareStatement(connection, "SELECT key FROM `%table%` WHERE key=? LIMIT 1")) {
+        try (var statement = prepareStatement(connection, "SELECT `key` FROM `%table%` WHERE `key`=? LIMIT 1")) {
             statement.setString(1, namespacedKey);
 
             try (var result = statement.executeQuery()) {
@@ -167,7 +167,7 @@ public class CustomDataTable extends AbstractTable implements CustomDataStorage 
     }
 
     private void insertData(@NotNull Connection connection, @NotNull String namespacedKey, byte[] data) throws SQLException {
-        try (var statement = prepareStatement(connection, "INSERT INTO `%table%` (key, data) VALUES(?,?)")) {
+        try (var statement = prepareStatement(connection, "INSERT INTO `%table%` (`key`, `data`) VALUES(?,?)")) {
             statement.setString(1, namespacedKey);
             writeBytesToStatement(statement, 2, data);
 
@@ -176,7 +176,7 @@ public class CustomDataTable extends AbstractTable implements CustomDataStorage 
     }
 
     private void updateData(@NotNull Connection connection, @NotNull String namespacedKey, byte[] data) throws SQLException {
-        try (var statement = prepareStatement(connection, "UPDATE `%table%` SET data=? where key=?")) {
+        try (var statement = prepareStatement(connection, "UPDATE `%table%` SET `data`=? WHERE `key`=?")) {
             writeBytesToStatement(statement, 1, data);
             statement.setString(2, namespacedKey);
 
