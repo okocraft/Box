@@ -1,6 +1,7 @@
 plugins {
     id("box.common-conventions")
-    // I wrote it as in the example, and it seems to work normally, but it shows an error on idea.
+    // This will show as an error on the IDE, but can be compiled successfully.
+    // See https://github.com/gradle/gradle/issues/22797
     alias(libs.plugins.shadow)
 }
 
