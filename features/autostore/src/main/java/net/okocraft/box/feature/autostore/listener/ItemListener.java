@@ -3,6 +3,7 @@ package net.okocraft.box.feature.autostore.listener;
 import io.papermc.paper.event.block.PlayerShearBlockEvent;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.event.stockholder.stock.StockEvent;
+import net.okocraft.box.feature.autostore.integration.CoreProtectIntegration;
 import net.okocraft.box.feature.autostore.model.AutoStoreSettingContainer;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
@@ -125,6 +126,9 @@ public class ItemListener implements Listener {
             if (!direct) {
                 player.playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, 0.2f, (float) Math.random() + 1.0f);
             }
+
+            CoreProtectIntegration.logItemPickup(player, item);
+
             return true;
         } else {
             return false;
