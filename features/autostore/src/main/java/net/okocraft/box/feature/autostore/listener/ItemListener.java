@@ -6,6 +6,7 @@ import net.okocraft.box.api.event.stockholder.stock.StockEvent;
 import net.okocraft.box.feature.autostore.integration.CoreProtectIntegration;
 import net.okocraft.box.feature.autostore.model.AutoStoreSettingContainer;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Boss;
 import org.bukkit.entity.Mob;
@@ -41,7 +42,7 @@ public class ItemListener implements Listener {
             return;
         }
 
-        if (processEvent(player, event.getItem().getItemStack(), false)) {
+        if (processEvent(player, event.getItem().getLocation(), event.getItem().getItemStack(), false)) {
             event.setCancelled(true);
             event.getItem().remove();
         }
@@ -49,7 +50,8 @@ public class ItemListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onBlockDropItem(@NotNull BlockDropItemEvent event) {
-        event.getItems().removeIf(item -> processEvent(event.getPlayer(), item.getItemStack(), true));
+        var location = event.getBlock().getLocation();
+        event.getItems().removeIf(item -> processEvent(event.getPlayer(), location, item.getItemStack(), true));
     }
 
     /**
@@ -61,7 +63,8 @@ public class ItemListener implements Listener {
     public void onEntityDeath(@NotNull EntityDeathEvent event) {
         var killed = event.getEntity();
         if (killed instanceof Mob && !(killed instanceof Boss) && killed.getKiller() != null) {
-            event.getDrops().removeIf(item -> processEvent(killed.getKiller(), item, true));
+            var location = killed.getLocation();
+            event.getDrops().removeIf(item -> processEvent(killed.getKiller(), location, item, true));
         }
     }
 
@@ -72,7 +75,8 @@ public class ItemListener implements Listener {
      */
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onHarvestBlock(@NotNull PlayerHarvestBlockEvent event) {
-        event.getItemsHarvested().removeIf(item -> processEvent(event.getPlayer(), item, true));
+        var location = event.getHarvestedBlock().getLocation();
+        event.getItemsHarvested().removeIf(item -> processEvent(event.getPlayer(), location, item, true));
     }
 
     /**
@@ -82,18 +86,19 @@ public class ItemListener implements Listener {
      */
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onShearBlock(@NotNull PlayerShearBlockEvent event) {
-        event.getDrops().removeIf(item -> processEvent(event.getPlayer(), item, true));
+        var location = event.getBlock().getLocation();
+        event.getDrops().removeIf(item -> processEvent(event.getPlayer(), location, item, true));
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onArrowPickup(@NotNull PlayerPickupArrowEvent event) {
-        if (processEvent(event.getPlayer(), event.getArrow().getItemStack(), false)) {
+        if (processEvent(event.getPlayer(), event.getArrow().getLocation(), event.getArrow().getItemStack(), false)) {
             event.setCancelled(true);
             event.getArrow().remove();
         }
     }
 
-    private boolean processEvent(@NotNull Player player, @NotNull ItemStack item, boolean direct) {
+    private boolean processEvent(@NotNull Player player, @NotNull Location location, @NotNull ItemStack item, boolean direct) {
         if (BoxProvider.get().isDisabledWorld(player)) {
             return false;
         }
@@ -127,7 +132,7 @@ public class ItemListener implements Listener {
                 player.playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, 0.2f, (float) Math.random() + 1.0f);
             }
 
-            CoreProtectIntegration.logItemPickup(player, item);
+            CoreProtectIntegration.logItemPickup(player, location, item);
 
             return true;
         } else {
