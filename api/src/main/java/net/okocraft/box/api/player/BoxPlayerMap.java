@@ -17,6 +17,14 @@ public interface BoxPlayerMap {
     boolean isLoaded(@NotNull Player player);
 
     /**
+     * Checks if loading of data for the specified player is scheduled.
+     *
+     * @param player the {@link Player} to check
+     * @return {@code true} indicates that it will be loaded a little later, {@code false} indicates that it has already been loaded or failed.
+     */
+    boolean isScheduledLoading(@NotNull Player player);
+
+    /**
      * Gets the {@link BoxPlayer}.
      *
      * @param player the {@link Player}

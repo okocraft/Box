@@ -75,6 +75,17 @@ public final class GeneralMessage {
             target -> redTranslatable("box.error.player-data.not-loaded.other", aquaText(target.getName()));
 
     /**
+     * A message sent when the player is currently loading.
+     */
+    public static final Component ERROR_PLAYER_LOADING = redTranslatable("box.error.player-data.loading.self");
+
+    /**
+     * A message sent when the targeted player is currently loading.
+     */
+    public static final SingleArgument<Player> ERROR_TARGET_PLAYER_LOADING =
+            target -> redTranslatable("box.error.player-data.loading.other", aquaText(target.getName()));
+
+    /**
      * A component to use to hover text (click to copy).
      */
     public static final Component HOVER_TEXT_CLICK_TO_COPY = whiteTranslatable("box.mics.hover-text.click-to-copy");

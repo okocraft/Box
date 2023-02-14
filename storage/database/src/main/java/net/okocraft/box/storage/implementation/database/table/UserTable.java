@@ -29,7 +29,7 @@ public class UserTable extends AbstractTable implements UserStorage {
     @Override
     public @NotNull BoxUser getUser(@NotNull UUID uuid) throws Exception {
         try (var connection = database.getConnection();
-             var statement = prepareStatement(connection, "SELECT username FROM `%table%` WHERE uuid=? LIMIT 1")) {
+             var statement = prepareStatement(connection, "SELECT `username` FROM `%table%` WHERE `uuid`=? LIMIT 1")) {
             statement.setString(1, uuid.toString());
 
             try (var result = statement.executeQuery()) {
@@ -62,7 +62,7 @@ public class UserTable extends AbstractTable implements UserStorage {
     @Override
     public @NotNull Optional<BoxUser> search(@NotNull String name) throws Exception {
         try (var connection = database.getConnection();
-             var statement = prepareStatement(connection, "SELECT * FROM `%table%` WHERE username LIKE ?")) {
+             var statement = prepareStatement(connection, "SELECT * FROM `%table%` WHERE `username` LIKE ?")) {
             statement.setString(1, name);
 
             try (var result = statement.executeQuery()) {
@@ -101,7 +101,7 @@ public class UserTable extends AbstractTable implements UserStorage {
     }
 
     private boolean isExistingUser(@NotNull Connection connection, @NotNull BoxUser user) throws SQLException {
-        try (var statement = prepareStatement(connection, "SELECT username FROM `%table%` WHERE uuid=? LIMIT 1")) {
+        try (var statement = prepareStatement(connection, "SELECT `username` FROM `%table%` WHERE `uuid`=? LIMIT 1")) {
             statement.setString(1, user.getUUID().toString());
 
             try (var result = statement.executeQuery()) {
@@ -111,7 +111,7 @@ public class UserTable extends AbstractTable implements UserStorage {
     }
 
     private void insertUser(@NotNull Connection connection, @NotNull BoxUser user) throws SQLException {
-        try (var statement = prepareStatement(connection, "INSERT INTO `%table%` (uuid, username) VALUES(?,?)")) {
+        try (var statement = prepareStatement(connection, "INSERT INTO `%table%` (`uuid`, `username`) VALUES(?,?)")) {
             statement.setString(1, user.getUUID().toString());
             statement.setString(2, user.getName().orElse(""));
 
@@ -120,7 +120,7 @@ public class UserTable extends AbstractTable implements UserStorage {
     }
 
     private void updateUsername(@NotNull Connection connection, @NotNull BoxUser user) throws SQLException {
-        try (var statement = prepareStatement(connection, "UPDATE `%table%` SET username=? where uuid=?")) {
+        try (var statement = prepareStatement(connection, "UPDATE `%table%` SET `username`=? where `uuid`=?")) {
             statement.setString(1, user.getName().orElse(""));
             statement.setString(2, user.getUUID().toString());
 

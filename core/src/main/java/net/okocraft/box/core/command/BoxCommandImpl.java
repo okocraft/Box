@@ -36,11 +36,13 @@ public class BoxCommandImpl extends BaseCommand implements BoxCommand {
 
     @Override
     public void onCommand(@NotNull CommandSender sender, @NotNull String[] args) {
-        if (sender instanceof Player player) {
-            if (!BoxProvider.get().getBoxPlayerMap().isLoaded(player)) {
+        if (sender instanceof Player player && !BoxProvider.get().getBoxPlayerMap().isLoaded(player)) {
+            if (BoxProvider.get().getBoxPlayerMap().isScheduledLoading(player)) {
+                sender.sendMessage(GeneralMessage.ERROR_PLAYER_LOADING);
+            } else {
                 sender.sendMessage(GeneralMessage.ERROR_PLAYER_NOT_LOADED);
-                return;
             }
+            return;
         }
 
         super.onCommand(sender, args);

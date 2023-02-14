@@ -1,11 +1,17 @@
 storage:
-  type: "yaml" # or sqlite
-  database:
-    table_prefix: "box_"
-  sqlite:
-    filename: "box-sqlite.db"
+  type: "yaml" # yaml, sqlite, or mysql
   yaml:
     directory-name: "data"
+  sqlite:
+    table-prefix: "box_"
+    filename: "box-sqlite.db"
+  mysql:
+    table-prefix: "box_"
+    address: "localhost"
+    port: 3306
+    database-name: "box"
+    username: ""
+    password: ""
 
 stock-data-save-interval: 180 # seconds
 

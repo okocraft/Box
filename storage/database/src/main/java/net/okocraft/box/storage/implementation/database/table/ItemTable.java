@@ -51,7 +51,7 @@ public class ItemTable extends AbstractTable implements ItemStorage {
         var result = new ArrayList<BoxItem>(1000); // The number of default items is currently around 1400, so this should only need to be expanded once.
 
         try (var connection = database.getConnection();
-             var statement = prepareStatement(connection, "SELECT id, name, item_data FROM `%table%` WHERE is_default_item=TRUE")) {
+             var statement = prepareStatement(connection, "SELECT `id`, `name`, `item_data` FROM `%table%` WHERE `is_default_item`=TRUE")) {
             try (var rs = statement.executeQuery()) {
                 while (rs.next()) {
                     result.add(readResultSet(rs, true));
@@ -67,7 +67,7 @@ public class ItemTable extends AbstractTable implements ItemStorage {
         var result = new ArrayList<BoxItem>(itemMap.size());
 
         try (var connection = database.getConnection();
-             var statement = prepareStatement(connection, "UPDATE `%table%` SET name=?, item_data=? WHERE id=?")) {
+             var statement = prepareStatement(connection, "UPDATE `%table%` SET `name`=?, `item_data`=? WHERE `id`=?")) {
 
             for (var entry : itemMap.entrySet()) {
                 var boxItem = entry.getKey();
@@ -93,7 +93,7 @@ public class ItemTable extends AbstractTable implements ItemStorage {
         var map = new HashMap<String, DefaultItem>(newItems.size(), 2.0f);
 
         try (var connection = database.getConnection()) {
-            try (var statement = prepareStatement(connection, "INSERT INTO `%table%` (name, item_data, is_default_item) VALUES(?,?,?)")) {
+            try (var statement = prepareStatement(connection, "INSERT INTO `%table%` (`name`, `item_data`, `is_default_item`) VALUES(?,?,?)")) {
                 for (var defaultItem : newItems) {
                     map.put(defaultItem.plainName(), defaultItem);
 
@@ -108,7 +108,7 @@ public class ItemTable extends AbstractTable implements ItemStorage {
                 statement.executeBatch();
             }
 
-            try (var statement = prepareStatement(connection, "SELECT id, name FROM `%table%` WHERE is_default_item=?")) {
+            try (var statement = prepareStatement(connection, "SELECT `id`, `name` FROM `%table%` WHERE `is_default_item`=?")) {
                 statement.setBoolean(1, true);
 
                 try (var resultSet = statement.executeQuery()) {
@@ -130,7 +130,7 @@ public class ItemTable extends AbstractTable implements ItemStorage {
         var result = new ArrayList<BoxCustomItem>();
 
         try (var connection = database.getConnection();
-             var statement = prepareStatement(connection, "SELECT id, name, item_data FROM `%table%` WHERE is_default_item=FALSE")) {
+             var statement = prepareStatement(connection, "SELECT `id`, `name`, `item_data` FROM `%table%` WHERE `is_default_item`=FALSE")) {
             try (var rs = statement.executeQuery()) {
                 while (rs.next()) {
                     result.add((BoxCustomItem) readResultSet(rs, false));
@@ -144,7 +144,7 @@ public class ItemTable extends AbstractTable implements ItemStorage {
     @Override
     public void updateCustomItems(@NotNull Collection<BoxCustomItem> items) throws Exception {
         try (var connection = database.getConnection();
-             var statement = prepareStatement(connection, "UPDATE `%table%` SET name=?, item_data=? WHERE id=?")) {
+             var statement = prepareStatement(connection, "UPDATE `%table%` SET `name`=?, `item_data`=? WHERE `id`=?")) {
 
             for (var item : items) {
                 statement.setString(1, item.getPlainName());
@@ -169,7 +169,7 @@ public class ItemTable extends AbstractTable implements ItemStorage {
             var itemBytes = item.serializeAsBytes();
             itemName = itemName != null ? itemName : ItemNameGenerator.generate(item.getType().name(), itemBytes);
 
-            try (var statement = prepareStatement(connection, "INSERT INTO `%table%` (name, item_data, is_default_item) VALUES(?,?,?)")) {
+            try (var statement = prepareStatement(connection, "INSERT INTO `%table%` (`name`, `item_data`, `is_default_item`) VALUES(?,?,?)")) {
                 statement.setString(1, itemName);
                 writeBytesToStatement(statement, 2, itemBytes);
                 statement.setBoolean(3, false);
@@ -177,7 +177,7 @@ public class ItemTable extends AbstractTable implements ItemStorage {
                 statement.execute();
             }
 
-            try (var statement = prepareStatement(connection, "SELECT id FROM `%table%` WHERE name=? LIMIT 1")) {
+            try (var statement = prepareStatement(connection, "SELECT `id` FROM `%table%` WHERE `name`=? LIMIT 1")) {
                 statement.setString(1, itemName);
 
                 try (var resultSet = statement.executeQuery()) {
@@ -195,7 +195,7 @@ public class ItemTable extends AbstractTable implements ItemStorage {
     @Override
     public @NotNull BoxCustomItem rename(@NotNull BoxCustomItem item, @NotNull String newName) throws Exception {
         try (var connection = database.getConnection();
-             var statement = prepareStatement(connection, "UPDATE `%table%` SET name=? WHERE id=?")) {
+             var statement = prepareStatement(connection, "UPDATE `%table%` SET `name`=? WHERE `id`=?")) {
 
             statement.setString(1, newName);
             statement.setInt(2, item.getInternalId());
