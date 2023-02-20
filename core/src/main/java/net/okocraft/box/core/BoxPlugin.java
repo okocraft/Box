@@ -110,7 +110,7 @@ public class BoxPlugin implements BoxAPI {
                         .setKey(Key.key("box", "language"))
                         .setDefaultLocale(Locale.ENGLISH)
                         .onDirectoryCreated(this::saveDefaultLanguages)
-                        .setVersion(getPluginInstance().getDescription().getVersion())
+                        .setVersion(getPluginVersion())
                         .setTranslationLoaderCreator(this::getBundledTranslation)
                         .build();
 
@@ -505,5 +505,10 @@ public class BoxPlugin implements BoxAPI {
     @Override
     public @NotNull NamespacedKey createNamespacedKey(@NotNull String value) {
         return new NamespacedKey(plugin, value);
+    }
+
+    @SuppressWarnings("deprecation")
+    private @NotNull String getPluginVersion() { // Preparation for future Paper Plugin support.
+        return plugin.getDescription().getVersion();
     }
 }
