@@ -125,7 +125,10 @@ public class BoxPlayerMapImpl implements BoxPlayerMap {
     }
 
     public void loadAll() {
-        Bukkit.getOnlinePlayers().forEach(this::load);
+        Bukkit.getOnlinePlayers().forEach(player -> {
+            playerMap.put(player, NOT_LOADED_YET);
+            load(player);
+        });
     }
 
     public void unloadAll() {
