@@ -9,7 +9,6 @@ import net.okocraft.box.api.message.argument.SingleArgument;
 import net.okocraft.box.api.message.argument.TripleArgument;
 import net.okocraft.box.api.model.item.BoxCustomItem;
 import net.okocraft.box.api.model.item.BoxItem;
-import net.okocraft.box.api.model.stock.StockData;
 import net.okocraft.box.api.model.stock.UserStockHolder;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -20,9 +19,7 @@ import static net.kyori.adventure.text.Component.space;
 import static net.kyori.adventure.text.Component.text;
 import static net.okocraft.box.api.message.Components.aquaItemName;
 import static net.okocraft.box.api.message.Components.aquaText;
-import static net.okocraft.box.api.message.Components.aquaTranslatable;
 import static net.okocraft.box.api.message.Components.commandHelp;
-import static net.okocraft.box.api.message.Components.grayText;
 import static net.okocraft.box.api.message.Components.grayTranslatable;
 import static net.okocraft.box.api.message.Components.greenTranslatable;
 import static net.okocraft.box.api.message.Components.redTranslatable;
@@ -166,32 +163,12 @@ public final class BoxAdminMessage {
     public static final Component STOCK_LIST_HELP =
             text().append(commandHelp("box.command.boxadmin.stock.list"))
                     .append(newline()).append(space())
-                    .append(stockListArgumentHelp("sorter", "s"))
+                    .append(SharedMessage.stockListArgumentHelp("sorter", "s"))
                     .append(newline()).append(space())
-                    .append(stockListArgumentHelp("page", "p"))
+                    .append(SharedMessage.stockListArgumentHelp("page", "p"))
                     .append(newline()).append(space())
-                    .append(stockListArgumentHelp("filter", "f"))
+                    .append(SharedMessage.stockListArgumentHelp("filter", "f"))
                     .build();
-
-    private static Component stockListArgumentHelp(String arg, String shortArg) {
-        var keyPrefix = "box.command.boxadmin.stock.list.help.argument." + arg;
-        return grayTranslatable(
-                keyPrefix + ".format",
-                aquaText("-" + shortArg), aquaText("--" + arg), aquaTranslatable(keyPrefix + ".value")
-        );
-    }
-
-    public static final TripleArgument<UserStockHolder, Integer, Integer> STOCK_LIST_HEADER =
-            (target, page, maxPage) -> grayTranslatable(
-                    "box.command.boxadmin.stock.list.header",
-                    aquaText(target.getName()), aquaText(page), aquaText(maxPage)
-            );
-
-    public static final DoubleArgument<Integer, StockData> STOCK_LIST_ITEM_AMOUNT =
-            (num, stockData) -> grayTranslatable(
-                    "box.command.boxadmin.stock.list.amount",
-                    grayText(num), aquaItemName(stockData.item()), aquaText(stockData.amount())
-            );
 
     public static final DoubleArgument<String, BoxItem> STOCK_RESET_SUCCESS_SENDER =
             (targetName, item) ->

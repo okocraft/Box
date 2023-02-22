@@ -218,21 +218,9 @@ box:
             command-line: "/boxadmin stock info <プレイヤー名> <アイテム名>"
             description: "在庫数を表示する"
         list:
-          header: "プレイヤー {0} の在庫リスト ({1}/{2}ページ)"
-          amount: "{0}. {1} - {2} 個"
           help:
             command-line: "/boxadmin stock list <プレイヤー名> [引数]"
             description: "在庫リストを表示する"
-            argument:
-              sorter:
-                format: "{0} ({1}) {2} - 表示順を指定する"
-                value: "<ソート方法>"
-              page:
-                format: "{0} ({1}) {2} - ページを指定する"
-                value: "<ページ数>"
-              filter:
-                format: "{0} ({1}) {2} - アイテムを絞り込む"
-                value: "<アイテム名>"
         reset:
           success:
             sender: "プレイヤー {0} のアイテム {1} の在庫をリセットしました。"
@@ -259,6 +247,22 @@ box:
         help:
           command-line: "/boxadmin version"
           description: "現在の Box のバージョンを表示する"
+    shared:
+      stock-list:
+        header: "プレイヤー {0} の在庫リスト ({1}/{2}ページ)"
+        amount: "{0}. {1} - {2} 個"
+        no-stock-found: "指定されたパターンに一致するアイテムの在庫はありませんでした。"
+        help:
+          argument:
+            sorter:
+              format: "{0} ({1}) {2} - 表示順を指定する"
+              value: "<ソート方法>"
+            page:
+              format: "{0} ({1}) {2} - ページを指定する"
+              value: "<ページ数>"
+            filter:
+              format: "{0} ({1}) {2} - アイテムを絞り込む"
+              value: "<アイテム名>"
   craft:
     command:
       recipe-not-found: "アイテム {0} の利用可能なレシピはありません。"
