@@ -12,6 +12,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import static net.kyori.adventure.text.Component.newline;
+import static net.kyori.adventure.text.Component.space;
 import static net.kyori.adventure.text.Component.text;
 import static net.okocraft.box.api.message.Components.aquaItemName;
 import static net.okocraft.box.api.message.Components.aquaText;
@@ -113,6 +114,16 @@ public final class BoxMessage {
             stock -> grayTranslatable("box.command.box.iteminfo.stock", aquaText(stock));
 
     public static final Component ITEM_INFO_HELP = commandHelp("box.command.box.iteminfo");
+
+    public static final Component LIST_HELP =
+            text().append(commandHelp("box.command.box.stocklist"))
+                    .append(newline()).append(space())
+                    .append(SharedMessage.stockListArgumentHelp("sorter", "s"))
+                    .append(newline()).append(space())
+                    .append(SharedMessage.stockListArgumentHelp("page", "p"))
+                    .append(newline()).append(space())
+                    .append(SharedMessage.stockListArgumentHelp("filter", "f"))
+                    .build();
 
     private BoxMessage() {
         throw new UnsupportedOperationException();
