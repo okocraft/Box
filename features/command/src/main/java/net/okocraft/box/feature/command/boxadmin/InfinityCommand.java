@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 public class InfinityCommand extends AbstractCommand {
 
@@ -137,6 +138,11 @@ public class InfinityCommand extends AbstractCommand {
         @Override
         public @NotNull @Unmodifiable Collection<StockData> toStockDataCollection() {
             return Collections.emptyList();
+        }
+
+        @Override
+        public @NotNull Stream<StockData> stockDataStream() {
+            return Stream.empty();
         }
 
         @Override

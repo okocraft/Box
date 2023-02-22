@@ -14,6 +14,7 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 public class UserStockHolderLoader implements UserStockHolder {
 
@@ -80,6 +81,11 @@ public class UserStockHolderLoader implements UserStockHolder {
     @Override
     public @NotNull @Unmodifiable Collection<StockData> toStockDataCollection() {
         return checkAndGetUserStockHolder().toStockDataCollection();
+    }
+
+    @Override
+    public @NotNull Stream<StockData> stockDataStream() {
+        return checkAndGetUserStockHolder().stockDataStream();
     }
 
     @Override
