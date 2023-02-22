@@ -19,6 +19,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * An abstract implementation of {@link StockHolder}.
@@ -149,10 +150,14 @@ public abstract class AbstractStockHolder implements StockHolder {
 
     @Override
     public @NotNull @Unmodifiable Collection<StockData> toStockDataCollection() {
+        return stockDataStream().toList();
+    }
+
+    @Override
+    public @NotNull Stream<StockData> stockDataStream() {
         return stockData.entrySet()
                 .stream()
-                .map(entry -> new StockData(entry.getKey(), entry.getValue().get()))
-                .toList();
+                .map(entry -> new StockData(entry.getKey(), entry.getValue().get()));
     }
 
     /**

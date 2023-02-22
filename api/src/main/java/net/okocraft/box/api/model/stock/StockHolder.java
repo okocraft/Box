@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.Collection;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 /**
  * An interface that holds stock.
@@ -153,6 +154,15 @@ public interface StockHolder {
      * @return the collection of {@link StockData}
      */
     @NotNull @Unmodifiable Collection<StockData> toStockDataCollection();
+
+    /**
+     * Gets the {@link StockData} stream.
+     *
+     * @return the stream of {@link StockData}.
+     */
+    default @NotNull Stream<StockData> stockDataStream() {
+        return toStockDataCollection().stream();
+    }
 
     /**
      * Resets all stock.
