@@ -59,21 +59,20 @@ public class SharedStockListCommand {
         var sorter = context.getSorter();
         var filter = context.getFilter();
 
-        var stockDataCollection = stockHolder.toStockDataCollection();
+        var stockDataStream = stockHolder.stockDataStream();
 
         if (sorter != null || (filter != null && !filter.isEmpty())) {
-            var stream = stockDataCollection.stream();
 
             if (sorter != null) {
-                stream = stream.sorted(sorter);
+                stockDataStream = stockDataStream.sorted(sorter);
             }
 
             if (filter != null && !filter.isEmpty()) {
-                stream = stream.filter(createFilter(filter));
+                stockDataStream = stockDataStream.filter(createFilter(filter));
             }
-
-            stockDataCollection = stream.toList();
         }
+
+        var stockDataCollection = stockDataStream.toList();
 
         if (stockDataCollection.isEmpty()) {
             return SharedMessage.NO_STOCK_FOUND;
