@@ -15,6 +15,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.function.Predicate;
 
 import static net.okocraft.box.api.transaction.TransactionResultType.DEPOSITED;
 import static net.okocraft.box.api.transaction.TransactionResultType.IS_AIR;
@@ -76,6 +77,17 @@ public final class InventoryTransaction {
      * @return the {@link TransactionResultList}
      */
     public static @NotNull TransactionResultList depositItemsInInventory(@NotNull Inventory inventory) {
+        return depositItemsInInventory(inventory, item -> true);
+    }
+
+    /**
+     * Deposits items in an inventory.
+     *
+     * @param inventory the target inventory
+     * @param filter the {@link Predicate} deciding which items to deposit
+     * @return the {@link TransactionResultList}
+     */
+    public static @NotNull TransactionResultList depositItemsInInventory(@NotNull Inventory inventory, @NotNull Predicate<BoxItem> filter) {
         Objects.requireNonNull(inventory);
 
         var result = new ArrayList<TransactionResult>();
@@ -90,7 +102,7 @@ public final class InventoryTransaction {
 
             var boxItem = BoxProvider.get().getItemManager().getBoxItem(item);
 
-            if (boxItem.isPresent()) {
+            if (boxItem.isPresent() && filter.test(boxItem.get())) {
                 result.add(TransactionResult.create(DEPOSITED, boxItem.get(), item.getAmount()));
                 contents[i] = null;
             }
