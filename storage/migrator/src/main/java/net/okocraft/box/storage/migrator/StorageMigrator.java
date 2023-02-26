@@ -7,8 +7,10 @@ import net.okocraft.box.storage.migrator.data.DataMigrator;
 import net.okocraft.box.storage.migrator.data.ItemMigrator;
 import net.okocraft.box.storage.migrator.data.StockMigrator;
 import net.okocraft.box.storage.migrator.data.UserMigrator;
+import net.okocraft.box.storage.migrator.util.LoggerWrapper;
 import net.okocraft.box.storage.migrator.util.MigratedBoxUsers;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
@@ -20,7 +22,7 @@ public class StorageMigrator {
 
     private final Storage sourceStorage;
     private final Storage targetStorage;
-    private final Logger logger;
+    private final LoggerWrapper logger;
 
     private final List<DataMigrator<?>> migratorList = List.of(
             new UserMigrator(),
@@ -29,10 +31,10 @@ public class StorageMigrator {
             new CustomDataMigrator()
     );
 
-    public StorageMigrator(@NotNull Storage source, @NotNull Storage target, @NotNull Logger logger) {
+    public StorageMigrator(@NotNull Storage source, @NotNull Storage target, @Nullable Logger logger) {
         this.sourceStorage = source;
         this.targetStorage = target;
-        this.logger = logger;
+        this.logger = new LoggerWrapper(logger);
     }
 
     public void init() throws Exception {

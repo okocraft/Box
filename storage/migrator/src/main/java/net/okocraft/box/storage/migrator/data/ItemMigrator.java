@@ -8,6 +8,7 @@ import net.okocraft.box.storage.api.util.item.BoxItemSupplier;
 import net.okocraft.box.storage.api.util.item.DefaultItem;
 import net.okocraft.box.storage.api.util.item.DefaultItemProvider;
 import net.okocraft.box.storage.migrator.StorageMigrator;
+import net.okocraft.box.storage.migrator.util.LoggerWrapper;
 import net.okocraft.box.storage.migrator.util.MigratedBoxItemSupplier;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
@@ -17,7 +18,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.function.Function;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public class ItemMigrator implements DataMigrator<ItemStorage> {
@@ -28,7 +28,7 @@ public class ItemMigrator implements DataMigrator<ItemStorage> {
     }
 
     @Override
-    public void migrate(@NotNull ItemStorage source, @NotNull ItemStorage target, @NotNull Logger logger) throws Exception {
+    public void migrate(@NotNull ItemStorage source, @NotNull ItemStorage target, @NotNull LoggerWrapper logger) throws Exception {
         var oldIdToItemNameMap = new HashMap<Integer, String>(300, 0.95f);
         var newItemNameToItemMap = new HashMap<String, BoxItem>(300, 0.95f);
 

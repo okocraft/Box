@@ -4,12 +4,12 @@ import net.okocraft.box.api.model.user.BoxUser;
 import net.okocraft.box.storage.api.model.Storage;
 import net.okocraft.box.storage.api.model.user.UserStorage;
 import net.okocraft.box.storage.migrator.StorageMigrator;
+import net.okocraft.box.storage.migrator.util.LoggerWrapper;
 import net.okocraft.box.storage.migrator.util.MigratedBoxUsers;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.logging.Logger;
 
 public class UserMigrator implements DataMigrator<UserStorage> {
 
@@ -20,7 +20,7 @@ public class UserMigrator implements DataMigrator<UserStorage> {
     }
 
     @Override
-    public void migrate(@NotNull UserStorage source, @NotNull UserStorage target, @NotNull Logger logger) throws Exception {
+    public void migrate(@NotNull UserStorage source, @NotNull UserStorage target, @NotNull LoggerWrapper logger) throws Exception {
         var users = source.getAllUsers();
         var migratedUsers = new ArrayList<BoxUser>(users.size());
 

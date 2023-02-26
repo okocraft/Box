@@ -3,10 +3,9 @@ package net.okocraft.box.storage.migrator.data;
 import net.okocraft.box.storage.api.model.Storage;
 import net.okocraft.box.storage.api.model.stock.StockStorage;
 import net.okocraft.box.storage.migrator.StorageMigrator;
+import net.okocraft.box.storage.migrator.util.LoggerWrapper;
 import net.okocraft.box.storage.migrator.util.MigratedBoxUsers;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.logging.Logger;
 
 public class StockMigrator implements DataMigrator<StockStorage> {
 
@@ -16,7 +15,7 @@ public class StockMigrator implements DataMigrator<StockStorage> {
     }
 
     @Override
-    public void migrate(@NotNull StockStorage source, @NotNull StockStorage target, @NotNull Logger logger) throws Exception {
+    public void migrate(@NotNull StockStorage source, @NotNull StockStorage target, @NotNull LoggerWrapper logger) throws Exception {
         for (var user : MigratedBoxUsers.LIST) {
             var userStockHolder = source.loadUserStockHolder(user);
             target.saveUserStockHolder(userStockHolder);
