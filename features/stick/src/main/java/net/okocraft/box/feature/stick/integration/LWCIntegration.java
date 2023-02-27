@@ -24,15 +24,11 @@ public class LWCIntegration {
         }
 
         return switch (protection.getType()) {
+            case PUBLIC, PASSWORD, PRIVATE -> true; // the click to the chest has already been rejected
             case DONATION -> operationType == ContainerOperation.OperationType.WITHDRAW  || canAccess(player, protection);
+            case SUPPLY -> operationType == ContainerOperation.OperationType.DEPOSIT || canAccess(player, protection);
             case DISPLAY -> canAccess(player, protection);
-            default -> {
-                if (protection.getType().name().equals("SUPPLY")) { // SUPPLY is the protection type that is only available in OKOCRAFT currently.
-                    yield operationType == ContainerOperation.OperationType.DEPOSIT || canAccess(player, protection);
-                } else {
-                    yield true; // Otherwise, the click to the chest has already been rejected.
-                }
-            }
+            default -> false; // unknown protection type?
         };
     }
 
