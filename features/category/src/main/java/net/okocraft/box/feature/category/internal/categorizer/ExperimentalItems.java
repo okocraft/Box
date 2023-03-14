@@ -3,6 +3,7 @@ package net.okocraft.box.feature.category.internal.categorizer;
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Set;
 
@@ -28,5 +29,9 @@ public final class ExperimentalItems {
                 Material.MANGROVE_HANGING_SIGN, Material.OAK_HANGING_SIGN, Material.PIGLIN_HEAD,
                 Material.SPRUCE_HANGING_SIGN, Material.STRIPPED_BAMBOO_BLOCK, Material.WARPED_HANGING_SIGN
         );
+    }
+
+    public static @NotNull Set<Material> mc1_19_4() {
+        return Collections.emptySet(); // todo: 1.19.4
     }
 }
