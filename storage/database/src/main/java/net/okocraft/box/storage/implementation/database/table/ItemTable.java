@@ -116,7 +116,9 @@ public class ItemTable extends AbstractTable implements ItemStorage {
                         int id = resultSet.getInt("id");
                         var name = resultSet.getString("name");
 
-                        result.add(BoxItemFactory.createDefaultItem(map.get(name), id));
+                        if (map.containsKey(name)) {
+                            result.add(BoxItemFactory.createDefaultItem(map.get(name), id));
+                        }
                     }
                 }
             }
