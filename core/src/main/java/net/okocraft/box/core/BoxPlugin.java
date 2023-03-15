@@ -66,6 +66,7 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import java.util.jar.JarFile;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -336,7 +337,8 @@ public class BoxPlugin implements BoxAPI {
 
         Configuration source;
 
-        try (var input = ResourceUtils.getInputStreamFromJar(getJar(), strLocale + ".yml")) {
+        try (var jar = new JarFile(getJar().toFile(), false);
+             var input = ResourceUtils.getInputStreamFromJar(jar, strLocale + ".yml")) {
             source = YamlConfiguration.loadFromInputStream(input);
         }
 
