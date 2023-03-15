@@ -4,13 +4,13 @@ import com.github.siroshun09.configapi.api.Configuration;
 import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.model.item.BoxItem;
+import net.okocraft.box.api.util.MCDataVersion;
 import net.okocraft.box.feature.category.api.category.Category;
 import net.okocraft.box.feature.category.api.registry.CategoryRegistry;
 import net.okocraft.box.feature.category.internal.categorizer.Categorizer;
 import net.okocraft.box.feature.category.internal.categorizer.ExperimentalItems;
 import net.okocraft.box.feature.category.internal.category.CommonDefaultCategory;
 import net.okocraft.box.feature.category.internal.category.DefaultCategory;
-import net.okocraft.box.api.util.MCDataVersion;
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,6 +29,8 @@ public final class CategoryLoader {
     static {
         if (MCDataVersion.MC_1_19_3.isSame(MCDataVersion.CURRENT)) {
             EXPERIMENTAL_ITEMS = ExperimentalItems.mc1_19_3();
+        } else if (MCDataVersion.MC_1_19_4.isSame(MCDataVersion.CURRENT)) {
+            EXPERIMENTAL_ITEMS = ExperimentalItems.mc1_19_4();
         } else {
             EXPERIMENTAL_ITEMS = Collections.emptySet();
         }

@@ -63,6 +63,11 @@ public record MCDataVersion(int dataVersion) {
     public static final MCDataVersion MC_1_19_3 = new MCDataVersion(3218);
 
     /**
+     * A {@link MCDataVersion} that represents Minecraft 1.19.4
+     */
+    public static final MCDataVersion MC_1_19_4 = new MCDataVersion(3337);
+
+    /**
      * Checks if this {@link MCDataVersion} is before the given {@link MCDataVersion}.
      *
      * @param other the {@link MCDataVersion} to compare
