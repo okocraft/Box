@@ -245,13 +245,6 @@ public class BoxPlugin implements BoxAPI {
 
         debugListener.unregister();
 
-        getLogger().info("Closing the storage...");
-        try {
-            storage.close();
-        } catch (Exception e) {
-            getLogger().log(Level.SEVERE, "Could not close the storage", e);
-        }
-
         getLogger().info("Shutting down executors...");
 
         try {
@@ -259,6 +252,13 @@ public class BoxPlugin implements BoxAPI {
             InternalExecutors.shutdownAll();
         } catch (InterruptedException e) {
             getLogger().log(Level.SEVERE, "Could not shutdown executors", e);
+        }
+
+        getLogger().info("Closing the storage...");
+        try {
+            storage.close();
+        } catch (Exception e) {
+            getLogger().log(Level.SEVERE, "Could not close the storage", e);
         }
 
         getLogger().info("Unloading translations...");
