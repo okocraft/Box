@@ -1,40 +1,43 @@
 package net.okocraft.box.feature.stick.function.container;
 
 import net.okocraft.box.api.BoxProvider;
-import net.okocraft.box.api.player.BoxPlayer;
 import net.okocraft.box.feature.stick.event.stock.StickCause;
 import net.okocraft.box.feature.stick.event.stock.StickCauses;
-import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.inventory.InventoryAction;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.BrewerInventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 public final class BrewerOperator {
 
-    public static boolean process(@NotNull BoxPlayer boxPlayer, @NotNull ContainerOperation.OperationType type,
-                                  @NotNull BrewerInventory inventory, @NotNull Location brewerLocation) {
-        var mainHand = boxPlayer.getPlayer().getInventory().getItemInMainHand();
+    public static boolean process(@NotNull ContainerOperation.Context<BrewerInventory> context) {
+        if (context.operationType() == ContainerOperation.OperationType.DEPOSIT) {
+            return takeResultPotions(context);
+        }
 
-        if (type == ContainerOperation.OperationType.DEPOSIT) {
-            return takeResultPotions(boxPlayer, inventory, brewerLocation);
-        } else if (isPotion(mainHand.getType())) {
-            return putPotions(boxPlayer, inventory, mainHand, brewerLocation);
+        var mainHand = context.player().getPlayer().getInventory().getItemInMainHand();
+
+        if (isPotion(mainHand.getType())) {
+            return putPotions(context, mainHand);
         } else if (mainHand.getType() == Material.BLAZE_POWDER) {
-            return putBlazePowder(boxPlayer, inventory, brewerLocation);
+            return putBlazePowder(context);
         }
 
         return false;
     }
 
-    private static boolean takeResultPotions(@NotNull BoxPlayer player, @NotNull BrewerInventory inventory, @NotNull Location brewerLocation) {
+    private static boolean takeResultPotions(@NotNull ContainerOperation.Context<BrewerInventory> context) {
         boolean result = false;
         StickCause cause = null;
 
         // Brewer Inventory (see BrewingStandMenu.java in NMS)
         // 0~2: potion slot | 3: ingredients slot | 4: fuel slot
         for (int i = 0; i < 3; i++) {
-            var potion = inventory.getItem(i);
+            var potion = context.inventory().getItem(i);
 
             if (potion == null) {
                 continue;
@@ -42,26 +45,34 @@ public final class BrewerOperator {
 
             var boxItem = BoxProvider.get().getItemManager().getBoxItem(potion);
 
-            if (boxItem.isPresent()) {
-                if (cause == null) { // Initialize here and cache it.
-                    cause = new StickCauses.Brewer(player, brewerLocation, StickCauses.Brewer.Type.TAKE_POTION);
-                }
-
-                player.getCurrentStockHolder().increase(boxItem.get(), potion.getAmount(), cause);
-                inventory.setItem(i, null);
-                result = true;
+            if (boxItem.isEmpty()) {
+                continue;
             }
+
+            var clickEvent = new InventoryClickEvent(context.view(), InventoryType.SlotType.CRAFTING, i, ClickType.LEFT, InventoryAction.PICKUP_ALL);
+            boolean cancelled = !clickEvent.callEvent();
+
+            if (cancelled) {
+                continue;
+            }
+
+            if (cause == null) { // Initialize here and cache it.
+                cause = new StickCauses.Brewer(context.player(), context.blockLocation(), StickCauses.Brewer.Type.TAKE_POTION);
+            }
+
+            context.player().getCurrentStockHolder().increase(boxItem.get(), potion.getAmount(), cause);
+            context.inventory().setItem(i, null);
+            result = true;
         }
 
         if (result) {
-            SoundPlayer.playDepositSound(player.getPlayer());
+            SoundPlayer.playDepositSound(context.player().getPlayer());
         }
 
         return result;
     }
 
-    private static boolean putPotions(@NotNull BoxPlayer player, @NotNull BrewerInventory inventory,
-                                      @NotNull ItemStack mainHand, @NotNull Location brewerLocation) {
+    private static boolean putPotions(@NotNull ContainerOperation.Context<BrewerInventory> context, @NotNull ItemStack mainHand) {
         var optionalBoxItem = BoxProvider.get().getItemManager().getBoxItem(mainHand);
 
         if (optionalBoxItem.isEmpty()) {
@@ -69,44 +80,52 @@ public final class BrewerOperator {
         }
 
         boolean result = false;
-        var stockHolder = player.getCurrentStockHolder();
+        var stockHolder = context.player().getCurrentStockHolder();
         var item = optionalBoxItem.get();
         StickCause cause = null;
 
         // Brewer Inventory (see BrewingStandMenu.java in NMS)
         // 0~2: potion slot | 3: ingredients slot | 4: fuel slot
         for (int i = 0; i < 3; i++) {
-            var potion = inventory.getItem(i);
+            var potion = context.inventory().getItem(i);
 
             if (potion != null) { // if the slot is not empty, ignore it.
                 continue;
             }
 
             if (0 < stockHolder.getAmount(item)) {
+                var clickEvent = new InventoryClickEvent(context.view(), InventoryType.SlotType.CRAFTING, i, ClickType.LEFT, InventoryAction.PLACE_ALL);
+                boolean cancelled = !clickEvent.callEvent();
+
+                if (cancelled) {
+                    continue;
+                }
+
                 if (cause == null) { // Initialize here and cache it.
-                    cause = new StickCauses.Brewer(player, brewerLocation, StickCauses.Brewer.Type.PUT_POTION);
+                    cause = new StickCauses.Brewer(context.player(), context.blockLocation(), StickCauses.Brewer.Type.PUT_POTION);
                 }
 
                 stockHolder.decrease(item, 1, cause);
-                inventory.setItem(i, item.getClonedItem());
+                context.inventory().setItem(i, item.getClonedItem());
                 result = true;
             }
         }
 
         if (result) {
-            SoundPlayer.playWithdrawalSound(player.getPlayer());
+            SoundPlayer.playWithdrawalSound(context.player().getPlayer());
         }
 
         return result;
     }
 
-    private static boolean putBlazePowder(@NotNull BoxPlayer player, @NotNull BrewerInventory inventory, @NotNull Location brewerLocation) {
+    private static boolean putBlazePowder(@NotNull ContainerOperation.Context<BrewerInventory> context) {
         return ItemPutter.putItem(
-                player,
-                inventory.getFuel(),
+                context.player(),
+                context.inventory().getFuel(),
                 item -> item.getType() == Material.BLAZE_POWDER,
-                inventory::setFuel,
-                () -> new StickCauses.Brewer(player, brewerLocation, StickCauses.Brewer.Type.PUT_BLAZE_POWDER)
+                () -> new InventoryClickEvent(context.view(), InventoryType.SlotType.CRAFTING, 4, ClickType.LEFT, InventoryAction.PLACE_ALL),
+                context.inventory()::setFuel,
+                () -> new StickCauses.Brewer(context.player(), context.blockLocation(), StickCauses.Brewer.Type.PUT_BLAZE_POWDER)
         );
     }
 

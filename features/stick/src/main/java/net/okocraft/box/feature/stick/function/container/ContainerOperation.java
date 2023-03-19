@@ -3,23 +3,35 @@ package net.okocraft.box.feature.stick.function.container;
 import net.okocraft.box.api.player.BoxPlayer;
 import org.bukkit.Location;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryView;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-public record ContainerOperation<I extends Inventory>(@NotNull BoxPlayer boxPlayer, @NotNull String permissionSuffix,
-                                                      @NotNull OperationType type,
-                                                      @NotNull I inventory, @NotNull Operator<I> operator,
-                                                      @NotNull Location clickedBlockLocation) {
+public record ContainerOperation<I extends Inventory>(@NotNull ContainerOperation.Context<I> context,
+                                                      @NotNull Operator<I> operator,
+                                                      @NotNull String permissionSuffix) {
+
+    @Contract("_, _, _, _ -> new")
+    public static <I extends Inventory> @NotNull Context<I> createContext(@NotNull BoxPlayer viewer, @NotNull ContainerOperation.OperationType operationType, @NotNull I inventory, @NotNull Location blockLocation) {
+        return new Context<>(viewer, new BoxStickInventoryView(viewer.getPlayer(), inventory), operationType, inventory, blockLocation);
+    }
 
     public boolean run() {
-        return operator.process(boxPlayer, type, inventory, clickedBlockLocation);
+        return operator.process(context);
     }
 
     public interface Operator<I extends Inventory> {
-        boolean process(@NotNull BoxPlayer boxPlayer, @NotNull OperationType type, @NotNull I inventory, @NotNull Location clickedLocation);
+        boolean process(@NotNull ContainerOperation.Context<I> context);
     }
 
     public enum OperationType {
         DEPOSIT,
         WITHDRAW
+    }
+
+    public record Context<I extends Inventory>(@NotNull BoxPlayer player, @NotNull InventoryView view,
+                                               @NotNull ContainerOperation.OperationType operationType,
+                                               @NotNull I inventory,
+                                               @NotNull Location blockLocation) {
     }
 }

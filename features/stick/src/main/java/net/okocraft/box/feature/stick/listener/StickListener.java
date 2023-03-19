@@ -96,11 +96,23 @@ public class StickListener implements Listener {
         ContainerOperation<?> operation;
 
         if (inventory instanceof FurnaceInventory furnaceInventory) { // BlastFurnace, Furnace, and Smoker
-            operation = new ContainerOperation<>(boxPlayer, "furnace", operationType, furnaceInventory, FurnaceOperator::process, clickedBlockLocation);
+            operation = new ContainerOperation<>(
+                    ContainerOperation.createContext(boxPlayer, operationType, furnaceInventory, clickedBlockLocation),
+                    FurnaceOperator::process,
+                    "furnace"
+            );
         } else if (inventory instanceof BrewerInventory brewerInventory) { // BrewingStand
-            operation = new ContainerOperation<>(boxPlayer, "brewer", operationType, brewerInventory, BrewerOperator::process, clickedBlockLocation);
+            operation = new ContainerOperation<>(
+                    ContainerOperation.createContext(boxPlayer, operationType, brewerInventory, clickedBlockLocation),
+                    BrewerOperator::process,
+                    "brewer"
+            );
         } else { // other containers (Barrel, Chest, Dispenser, Dropper, Hopper, and ShulkerBox)
-            operation = new ContainerOperation<>(boxPlayer, "container", operationType, inventory, ContainerOperator::process, clickedBlockLocation);
+            operation = new ContainerOperation<>(
+                    ContainerOperation.createContext(boxPlayer, operationType, inventory, clickedBlockLocation),
+                    ContainerOperator::process,
+                    "container"
+            );
         }
 
         if (!player.hasPermission("box.stick." + operation.permissionSuffix()) ||

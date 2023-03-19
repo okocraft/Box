@@ -3,6 +3,7 @@ package net.okocraft.box.feature.stick.function.container;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.event.stockholder.stock.StockEvent;
 import net.okocraft.box.api.player.BoxPlayer;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -16,6 +17,7 @@ final class ItemPutter {
     static boolean putItem(@NotNull BoxPlayer boxPlayer,
                            @Nullable ItemStack currentItem,
                            @NotNull Predicate<ItemStack> itemChecker,
+                           @NotNull Supplier<InventoryClickEvent> clickEventSupplier,
                            @NotNull Consumer<ItemStack> itemSetter,
                            @NotNull Supplier<StockEvent.Cause> causeSupplier) {
         var mainHandItem = boxPlayer.getPlayer().getInventory().getItemInMainHand();
@@ -36,13 +38,20 @@ final class ItemPutter {
         int newAmount = fuelStock < maxStackSize - currentAmount ? fuelStock + currentAmount : maxStackSize; // This has the same **meaning** as Math.min(fuelStock + currentAmount, 64), but when fuelStock + currentAmount overflows, the way using Math.min causes a bug.
         int consumption = newAmount - currentAmount;
 
-        if (0 < consumption) {
-            boxPlayer.getCurrentStockHolder().decrease(boxItem, consumption, causeSupplier.get());
-            itemSetter.accept(boxItem.getOriginal().asQuantity(newAmount));
-            SoundPlayer.playWithdrawalSound(boxPlayer.getPlayer());
-            return true;
-        } else {
+        if (consumption <= 0) {
             return false;
         }
+
+        var clickEvent = clickEventSupplier.get();
+        boolean cancelled = !clickEvent.callEvent();
+
+        if (cancelled) {
+            return false;
+        }
+
+        boxPlayer.getCurrentStockHolder().decrease(boxItem, consumption, causeSupplier.get());
+        itemSetter.accept(boxItem.getOriginal().asQuantity(newAmount));
+        SoundPlayer.playWithdrawalSound(boxPlayer.getPlayer());
+        return true;
     }
 }
