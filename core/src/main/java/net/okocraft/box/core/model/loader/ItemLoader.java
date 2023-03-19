@@ -31,8 +31,11 @@ public class ItemLoader {
 
         var logger = BoxProvider.get().getLogger();
 
-        logger.info(defaultItems.size() + " default items is loaded!");
-        logger.info(customItems.size() + " custom items is loaded!");
+        logger.info(defaultItems.size() + " default items are loaded!");
+
+        if (0 < customItems.size()) {
+            logger.info(customItems.size() + " custom items are loaded!");
+        }
 
         var itemManger = new BoxItemManager(itemStorage);
 
