@@ -2,6 +2,7 @@ package net.okocraft.box.feature.stick.listener;
 
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.player.BoxPlayer;
+import net.okocraft.box.api.util.MCDataVersion;
 import net.okocraft.box.feature.stick.event.stock.StickCause;
 import net.okocraft.box.feature.stick.event.stock.StickCauses;
 import net.okocraft.box.feature.stick.function.container.BrewerOperator;
@@ -68,20 +69,57 @@ public class StickListener implements Listener {
 
         var player = event.getPlayer();
         var boxPlayer = getBoxPlayerOrNull(player);
-
-        if (boxPlayer == null || !player.isSneaking() || !boxStickItem.check(player.getInventory().getItemInOffHand())) {
-            return;
-        }
-
         var block = event.getClickedBlock();
 
-        if (block == null) {
+        if (boxPlayer == null || !player.isSneaking() || block == null) {
             return;
         }
 
-        if (block.getState() instanceof Container container) {
+        var inv = player.getInventory();
+        var offHand = inv.getItemInOffHand();
+
+        boolean isStickInOffhand = boxStickItem.check(offHand);
+
+        if (isStickInOffhand && block.getState() instanceof Container container) {
             clickContainer(event, boxPlayer, container, block.getLocation().clone());
+            return;
         }
+
+        if (MCDataVersion.CURRENT.isBefore(MCDataVersion.MC_1_19_4) || // BlockData#getPlacementMaterial was added in Minecraft 1.19.4
+                !player.hasPermission("box.stick.blockitem")) {
+            return;
+        }
+
+        var boxItem = BoxProvider.get().getItemManager().getBoxItem(block.getBlockData().getPlacementMaterial().name());
+
+        if (boxItem.isEmpty() || boxPlayer.getCurrentStockHolder().getAmount(boxItem.get()) < 1) {
+            return;
+        }
+
+        var mainHand = inv.getItemInMainHand();
+        var cause = new StickCauses.BlockItem(boxPlayer, block.getLocation().clone());
+
+        if (boxStickItem.check(mainHand)) {
+            if (!offHand.getType().isAir()) {
+                var offHandBoxItem = BoxProvider.get().getItemManager().getBoxItem(offHand);
+
+                if (offHandBoxItem.isEmpty()) {
+                    return;
+                }
+
+                boxPlayer.getCurrentStockHolder().increase(offHandBoxItem.get(), offHand.getAmount(), cause);
+            }
+
+            inv.setItemInOffHand(mainHand.clone()); // Move Box Stick to player's off-hand
+        } else if (!isStickInOffhand || !mainHand.getType().isAir()) {
+            // The item in player's off-hand is not Box Stick or the main-hand is not empty.
+            return;
+        }
+
+        boxPlayer.getCurrentStockHolder().decrease(boxItem.get(), 1, cause);
+        inv.setItemInMainHand(boxItem.get().getOriginal().asOne());
+
+        event.setCancelled(true);
     }
 
     private void clickContainer(@NotNull PlayerInteractEvent event, @NotNull BoxPlayer boxPlayer, @NotNull Container container, @NotNull Location clickedBlockLocation) {

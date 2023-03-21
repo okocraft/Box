@@ -11,6 +11,19 @@ import org.jetbrains.annotations.NotNull;
 public final class StickCauses {
 
     /**
+     * A record of {@link StickCause} indicating that a Box Stick was used for getting the item of the block.
+     *
+     * @param player          the player that used the Box Stick
+     * @param blockLocation the {@link Location} of the block where the Box Stick was used
+     */
+    public record BlockItem(@NotNull BoxPlayer player, @NotNull Location blockLocation) implements StickCause {
+        @Override
+        public @NotNull String name() {
+            return "stick_block_item";
+        }
+    }
+
+    /**
      * A record of {@link StickCause} indicating that a Box Stick was used for the furnace.
      *
      * @param player          the player that used the Box Stick
