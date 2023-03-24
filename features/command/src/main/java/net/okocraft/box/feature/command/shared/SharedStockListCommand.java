@@ -1,7 +1,6 @@
 package net.okocraft.box.feature.command.shared;
 
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.JoinConfiguration;
 import net.okocraft.box.api.model.stock.StockData;
 import net.okocraft.box.api.model.stock.StockHolder;
 import net.okocraft.box.api.util.TabCompleter;
@@ -84,17 +83,15 @@ public class SharedStockListCommand {
         int start = (page - 1) * 8;
         var counter = new AtomicInteger(start);
 
-        var stockList =
-                stockDataCollection.stream()
-                        .skip(start)
-                        .limit(8)
-                        .map(stock -> SharedMessage.STOCK_LIST_ITEM_AMOUNT.apply(counter.incrementAndGet(), stock))
-                        .toList();
+        var result = Component.text().append(SharedMessage.STOCK_LIST_HEADER.apply(stockHolder.getName(), page, maxPage));
 
-        return SharedMessage.STOCK_LIST_HEADER
-                .apply(stockHolder.getName(), page, maxPage)
-                .append(Component.newline())
-                .append(Component.join(JoinConfiguration.separator(Component.newline()), stockList));
+        stockDataCollection.stream()
+                .skip(start)
+                .limit(8)
+                .map(stock -> SharedMessage.STOCK_LIST_ITEM_AMOUNT.apply(counter.incrementAndGet(), stock))
+                .forEachOrdered(element -> result.append(Component.newline()).append(element));
+
+        return result.build();
     }
 
     public static @NotNull List<String> getArgumentTypes() {
@@ -117,7 +114,7 @@ public class SharedStockListCommand {
 
         if (startsWith && endsWith) {
             var filter = arg.substring(1, arg.length() - 1).toUpperCase(Locale.ROOT);
-            return stockData -> startsWithOrEndsWith(stockData, filter);
+            return stockData -> contains(stockData, filter);
         }
 
         if (startsWith) {
@@ -132,11 +129,6 @@ public class SharedStockListCommand {
 
         var filter = arg.toUpperCase(Locale.ROOT);
         return stockData -> contains(stockData, filter);
-    }
-
-    private static boolean startsWithOrEndsWith(@NotNull StockData stockData, @NotNull String filter) {
-        var itemName = stockData.item().getPlainName();
-        return itemName.startsWith(filter) || itemName.endsWith(filter);
     }
 
     private static boolean startsWith(@NotNull StockData stockData, @NotNull String filter) {
