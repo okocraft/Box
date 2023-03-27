@@ -1,0 +1,99 @@
+package net.okocraft.box.bootstrap;
+
+import io.papermc.paper.plugin.bootstrap.PluginProviderContext;
+import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
+import net.okocraft.box.api.feature.BoxFeature;
+import net.okocraft.box.core.event.EventBusHolder;
+import net.okocraft.box.core.util.executor.ExecutorProvider;
+import net.okocraft.box.storage.api.registry.StorageRegistry;
+import net.okocraft.box.util.TranslationDirectoryUtil;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+public class BootstrapContext {
+
+    @Contract("_ -> new")
+    @SuppressWarnings("UnstableApiUsage")
+    public static @NotNull BootstrapContext create(@NotNull PluginProviderContext context) {
+        return new BootstrapContext(
+                context.getDataDirectory(),
+                context.getLogger(),
+                context.getPluginSource(),
+                context.getConfiguration().getVersion()
+        );
+    }
+
+    private final Path dataDirectory;
+    private final ComponentLogger logger;
+    private final Path jarFile;
+    private final String version;
+    private final StorageRegistry storageRegistry;
+    private final ExecutorProvider executorProvider;
+    private final EventBusHolder eventBusHolder;
+    private final List<BoxFeature> boxFeatureList = new ArrayList<>();
+    private final TranslationDirectoryUtil.PathConsumerWrapper onLanguageDirectoryCreated;
+    private final TranslationDirectoryUtil.TranslationLoaderCreatorHolder translationLoaderCreators;
+
+    private BootstrapContext(@NotNull Path pluginDirectory, @NotNull ComponentLogger logger, @NotNull Path jarFile, @NotNull String version) {
+        this.dataDirectory = pluginDirectory;
+        this.logger = logger;
+        this.jarFile = jarFile;
+        this.version = version;
+        this.storageRegistry = new StorageRegistry();
+        this.executorProvider = new ExecutorProvider(logger);
+        this.eventBusHolder = EventBusHolder.initialize(executorProvider);
+        this.onLanguageDirectoryCreated = TranslationDirectoryUtil.createPathConsumer();
+        this.translationLoaderCreators = TranslationDirectoryUtil.createCreatorHolder();
+    }
+
+    public @NotNull Path getPluginDirectory() {
+        return dataDirectory;
+    }
+
+    public @NotNull ComponentLogger getLogger() {
+        return logger;
+    }
+
+    public @NotNull Path getJarFile() {
+        return jarFile;
+    }
+
+    public @NotNull String getVersion() {
+        return version;
+    }
+
+    public @NotNull StorageRegistry getStorageRegistry() {
+        return storageRegistry;
+    }
+
+    public @NotNull ExecutorProvider getExecutorProvider() {
+        return executorProvider;
+    }
+
+    public @NotNull EventBusHolder getEventBusHolder() {
+        return eventBusHolder;
+    }
+
+    public @NotNull Collection<BoxFeature> getBoxFeatureList() {
+        return boxFeatureList;
+    }
+
+    @Contract("_ -> this")
+    public @NotNull BootstrapContext addFeature(@NotNull BoxFeature feature) {
+        boxFeatureList.add(feature);
+        return this;
+    }
+
+    public @NotNull TranslationDirectoryUtil.PathConsumerWrapper onLanguageDirectoryCreated() {
+        return onLanguageDirectoryCreated;
+    }
+
+    public @NotNull TranslationDirectoryUtil.TranslationLoaderCreatorHolder getTranslationLoaderCreators() {
+        return translationLoaderCreators;
+    }
+}

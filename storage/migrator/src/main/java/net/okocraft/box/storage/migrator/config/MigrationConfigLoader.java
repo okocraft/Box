@@ -3,7 +3,7 @@ package net.okocraft.box.storage.migrator.config;
 import com.github.siroshun09.configapi.api.Configuration;
 import com.github.siroshun09.configapi.yaml.YamlConfiguration;
 import net.okocraft.box.storage.api.model.Storage;
-import net.okocraft.box.storage.api.registry.StorageRegistry;
+import net.okocraft.box.storage.api.registry.StaticStorageRegistry;
 import net.okocraft.box.storage.migrator.StorageMigrator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -49,8 +49,8 @@ public final class MigrationConfigLoader {
         var sourceStorageSetting = config.getOrCreateSection("source-storage");
         var targetStorageSetting = config.getOrCreateSection("target-storage");
 
-        var sourceStorageFunction = StorageRegistry.getStorageFunction(sourceStorageSetting.getString("type"));
-        var targetStorageFunction = StorageRegistry.getStorageFunction(targetStorageSetting.getString("type"));
+        var sourceStorageFunction = StaticStorageRegistry.getStorageFunction(sourceStorageSetting.getString("type"));
+        var targetStorageFunction = StaticStorageRegistry.getStorageFunction(targetStorageSetting.getString("type"));
 
         if (sourceStorageFunction == null) {
             logger.warning("Invalid storage type (source): " + sourceStorageSetting.getString("type", "not set"));

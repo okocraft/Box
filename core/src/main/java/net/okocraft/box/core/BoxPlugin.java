@@ -41,7 +41,7 @@ import net.okocraft.box.core.scheduler.FoliaSchedulerWrapper;
 import net.okocraft.box.core.util.executor.InternalExecutors;
 import net.okocraft.box.storage.api.holder.StorageHolder;
 import net.okocraft.box.storage.api.model.Storage;
-import net.okocraft.box.storage.api.registry.StorageRegistry;
+import net.okocraft.box.storage.api.registry.StaticStorageRegistry;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
@@ -146,7 +146,7 @@ public class BoxPlugin implements BoxAPI {
         var storageSection = configuration.getOrCreateSection("storage");
 
         var storageType = storageSection.getString("type");
-        var storageFunction = StorageRegistry.getStorageFunction(storageType);
+        var storageFunction = StaticStorageRegistry.getStorageFunction(storageType);
 
         if (storageFunction == null) {
             if (!storageType.isEmpty()) {
@@ -154,7 +154,7 @@ public class BoxPlugin implements BoxAPI {
                 getLogger().warning("Using Yaml storage...");
             }
 
-            storageFunction = StorageRegistry.getYamlStorageSupplier();
+            storageFunction = StaticStorageRegistry.getYamlStorageSupplier();
         }
 
         storage = storageFunction.apply(storageSection);
