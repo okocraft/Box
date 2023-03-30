@@ -1,5 +1,6 @@
 package net.okocraft.box.api.taskfactory;
 
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CompletableFuture;
@@ -15,7 +16,10 @@ public interface TaskFactory {
      *
      * @param task the task to run
      * @return the new {@link CompletableFuture}
+     * @deprecated not working on Folia
      */
+    @Deprecated(since = "5.3.1", forRemoval = true)
+    @ApiStatus.ScheduledForRemoval(inVersion = "5.4.0")
     @NotNull CompletableFuture<Void> run(@NotNull Runnable task);
 
     /**
@@ -24,7 +28,10 @@ public interface TaskFactory {
      * @param supplier the supplier
      * @param <T>      the value type
      * @return the new {@link CompletableFuture}
+     * @deprecated not working on Folia
      */
+    @Deprecated(since = "5.3.1", forRemoval = true)
+    @ApiStatus.ScheduledForRemoval(inVersion = "5.4.0")
     <T> @NotNull CompletableFuture<T> supply(@NotNull Supplier<T> supplier);
 
     /**
