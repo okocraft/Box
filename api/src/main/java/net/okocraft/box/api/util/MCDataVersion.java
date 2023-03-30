@@ -1,6 +1,7 @@
 package net.okocraft.box.api.util;
 
 import org.bukkit.Bukkit;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -67,6 +68,11 @@ public record MCDataVersion(int dataVersion) {
      */
     public static final MCDataVersion MC_1_19_4 = new MCDataVersion(3337);
 
+    @Contract("_ -> new")
+    public static @NotNull MCDataVersion of(int dataVersion) {
+        return new MCDataVersion(dataVersion);
+    }
+
     /**
      * Checks if this {@link MCDataVersion} is before the given {@link MCDataVersion}.
      *
@@ -119,5 +125,16 @@ public record MCDataVersion(int dataVersion) {
      */
     public boolean isAfterOrSame(@NotNull MCDataVersion other) {
         return isAfter(other) || isSame(other);
+    }
+
+    /**
+     * Checks if this {@link MCDataVersion} is contained between the specified {@link MCDataVersion}s.
+     *
+     * @param startInclusive beginning of included {@link MCDataVersion}
+     * @param endInclusive end of included {@link MCDataVersion}
+     * @return {@code true} if this {@link MCDataVersion} is contained between the specified {@link MCDataVersion}s, otherwise {@code false}
+     */
+    public boolean isBetween(@NotNull MCDataVersion startInclusive, @NotNull MCDataVersion endInclusive) {
+        return isAfterOrSame(startInclusive) && isBeforeOrSame(endInclusive);
     }
 }

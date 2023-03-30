@@ -4,13 +4,13 @@ import com.github.siroshun09.configapi.api.Configuration;
 import com.github.siroshun09.configapi.yaml.YamlConfiguration;
 import net.okocraft.box.api.model.item.BoxCustomItem;
 import net.okocraft.box.api.model.item.BoxItem;
+import net.okocraft.box.api.util.MCDataVersion;
 import net.okocraft.box.storage.api.factory.item.BoxItemFactory;
 import net.okocraft.box.storage.api.holder.LoggerHolder;
 import net.okocraft.box.storage.api.model.item.ItemStorage;
 import net.okocraft.box.storage.api.util.item.DefaultItem;
 import net.okocraft.box.storage.api.util.item.DefaultItemProvider;
 import net.okocraft.box.storage.api.util.item.ItemNameGenerator;
-import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -33,7 +33,6 @@ class YamlItemStorage implements ItemStorage {
     private final YamlConfiguration customItemData;
     private final AtomicInteger lastUsedItemId = new AtomicInteger();
 
-    private int dataVersion = 0;
     private boolean migrationMode = false;
 
     YamlItemStorage(@NotNull Path rootDirectory) {
@@ -61,25 +60,34 @@ class YamlItemStorage implements ItemStorage {
         } else {
             itemStorageMeta.load();
             lastUsedItemId.set(itemStorageMeta.getInteger("last-used-item-id"));
-            dataVersion = itemStorageMeta.getInteger("data-version");
         }
     }
 
-    @SuppressWarnings("deprecation")
     @Override
-    public int getDataVersion() {
+    public @Nullable MCDataVersion getDataVersion() {
         if (migrationMode) {
-            return Bukkit.getUnsafe().getDataVersion(); // to call #loadAllDefaultItems and #loadAllCustomItems
+            return MCDataVersion.CURRENT; // to call #loadAllDefaultItems and #loadAllCustomItems
+        } else if (itemStorageMeta.get("data-version") == null) {
+            return null;
         } else {
-            return dataVersion;
+            return MCDataVersion.of(itemStorageMeta.getInteger("data-version"));
         }
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public void saveCurrentDataVersion() throws Exception {
-        dataVersion = Bukkit.getUnsafe().getDataVersion();
-        itemStorageMeta.set("data-version", dataVersion);
+        itemStorageMeta.set("data-version", MCDataVersion.CURRENT.dataVersion());
+        itemStorageMeta.save();
+    }
+
+    @Override
+    public int getDefaultItemVersion() {
+        return itemStorageMeta.getInteger("default-item-version");
+    }
+
+    @Override
+    public void saveCurrentDefaultItemVersion() throws Exception {
+        itemStorageMeta.set("default-item-version", DefaultItemProvider.version());
         itemStorageMeta.save();
     }
 

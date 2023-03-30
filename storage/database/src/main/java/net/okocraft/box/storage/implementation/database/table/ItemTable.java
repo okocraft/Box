@@ -2,12 +2,13 @@ package net.okocraft.box.storage.implementation.database.table;
 
 import net.okocraft.box.api.model.item.BoxCustomItem;
 import net.okocraft.box.api.model.item.BoxItem;
+import net.okocraft.box.api.util.MCDataVersion;
 import net.okocraft.box.storage.api.factory.item.BoxItemFactory;
 import net.okocraft.box.storage.api.model.item.ItemStorage;
 import net.okocraft.box.storage.api.util.item.DefaultItem;
+import net.okocraft.box.storage.api.util.item.DefaultItemProvider;
 import net.okocraft.box.storage.api.util.item.ItemNameGenerator;
 import net.okocraft.box.storage.implementation.database.database.Database;
-import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -36,14 +37,23 @@ public class ItemTable extends AbstractTable implements ItemStorage {
     }
 
     @Override
-    public int getDataVersion() throws Exception {
+    public MCDataVersion getDataVersion() throws Exception {
         return metaTable.getItemDataVersion();
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public void saveCurrentDataVersion() throws Exception {
-        metaTable.saveItemDataVersion(Bukkit.getUnsafe().getDataVersion());
+        metaTable.saveItemDataVersion(MCDataVersion.CURRENT.dataVersion());
+    }
+
+    @Override
+    public int getDefaultItemVersion() throws Exception {
+        return metaTable.getDefaultItemVersion();
+    }
+
+    @Override
+    public void saveCurrentDefaultItemVersion() throws Exception {
+        metaTable.saveDefaultItemVersion(DefaultItemProvider.version());
     }
 
     @Override
