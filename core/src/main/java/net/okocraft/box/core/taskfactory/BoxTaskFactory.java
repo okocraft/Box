@@ -3,6 +3,7 @@ package net.okocraft.box.core.taskfactory;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.taskfactory.TaskFactory;
+import net.okocraft.box.api.util.Folia;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
@@ -70,6 +71,9 @@ public class BoxTaskFactory implements TaskFactory {
     }
 
     public @NotNull Executor getMainThread() {
+        if (Folia.check()) {
+            throw new UnsupportedOperationException();
+        }
         return Bukkit.getScheduler().getMainThreadExecutor(BoxProvider.get().getPluginInstance());
     }
 }
