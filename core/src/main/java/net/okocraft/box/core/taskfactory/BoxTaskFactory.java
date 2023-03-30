@@ -16,6 +16,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 
@@ -50,6 +51,18 @@ public class BoxTaskFactory implements TaskFactory {
     public @NotNull <T> CompletableFuture<T> supply(@NotNull Supplier<T> supplier) {
         Objects.requireNonNull(supplier);
         return CompletableFuture.supplyAsync(supplier, getMainThread());
+    }
+
+    @Override
+    public @NotNull <T> CompletableFuture<T> supplyFromPlayer(@NotNull Player player, @NotNull Function<Player, T> function) {
+        Objects.requireNonNull(player);
+        Objects.requireNonNull(function);
+
+        if (Folia.check()) {
+            return CompletableFuture.supplyAsync(() -> function.apply(player), createExecutorFromEntityScheduler(player.getScheduler()));
+        } else {
+            return CompletableFuture.supplyAsync(() -> function.apply(player), getMainThread());
+        }
     }
 
     @Override

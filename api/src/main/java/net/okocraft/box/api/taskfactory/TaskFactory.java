@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
@@ -37,6 +38,8 @@ public interface TaskFactory {
     @Deprecated(since = "5.3.1", forRemoval = true)
     @ApiStatus.ScheduledForRemoval(inVersion = "5.4.0")
     <T> @NotNull CompletableFuture<T> supply(@NotNull Supplier<T> supplier);
+
+    <T> @NotNull CompletableFuture<T> supplyFromPlayer(@NotNull Player player, @NotNull Function<Player, T> function);
 
     /**
      * Creates a {@link CompletableFuture} to run the task asynchronously.

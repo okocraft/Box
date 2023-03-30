@@ -98,7 +98,7 @@ public class DepositCommand extends AbstractCommand {
     private void depositItemInMainHand(@NotNull Player player, int amount) {
         var result =
                 BoxProvider.get().getTaskFactory()
-                        .supply(() -> InventoryTransaction.depositItemInMainHand(player, amount))
+                        .supplyFromPlayer(player, $player -> InventoryTransaction.depositItemInMainHand($player, amount))
                         .join();
 
         if (result.getType().isModified()) {
@@ -122,7 +122,7 @@ public class DepositCommand extends AbstractCommand {
     private void depositAll(@NotNull Player player) {
         var resultList =
                 BoxProvider.get().getTaskFactory()
-                        .supply(() -> InventoryTransaction.depositItemsInInventory(player.getInventory()))
+                        .supplyFromPlayer(player, $player -> InventoryTransaction.depositItemsInInventory($player.getInventory()))
                         .join();
 
         var stockHolder = BoxProvider.get().getBoxPlayerMap().get(player).getCurrentStockHolder();
@@ -137,7 +137,7 @@ public class DepositCommand extends AbstractCommand {
     private void depositItem(@NotNull Player player, @NotNull BoxItem boxItem, int amount) {
         var resultList =
                 BoxProvider.get().getTaskFactory()
-                        .supply(() -> InventoryTransaction.depositItem(player.getInventory(), boxItem, amount))
+                        .supplyFromPlayer(player, $player -> InventoryTransaction.depositItem($player.getInventory(), boxItem, amount))
                         .join();
 
         var stockHolder = BoxProvider.get().getBoxPlayerMap().get(player).getCurrentStockHolder();
