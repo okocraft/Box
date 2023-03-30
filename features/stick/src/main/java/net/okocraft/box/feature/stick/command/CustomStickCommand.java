@@ -34,7 +34,7 @@ public class CustomStickCommand extends AbstractCommand {
             return;
         }
 
-        BoxProvider.get().getTaskFactory().run(() -> makeStick(player)).join();
+        BoxProvider.get().getTaskFactory().runTaskForPlayer(player, this::makeStick).join();
     }
 
     private void makeStick(@NotNull Player player) {

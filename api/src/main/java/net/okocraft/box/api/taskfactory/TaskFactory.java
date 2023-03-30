@@ -1,9 +1,11 @@
 package net.okocraft.box.api.taskfactory;
 
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
@@ -21,6 +23,8 @@ public interface TaskFactory {
     @Deprecated(since = "5.3.1", forRemoval = true)
     @ApiStatus.ScheduledForRemoval(inVersion = "5.4.0")
     @NotNull CompletableFuture<Void> run(@NotNull Runnable task);
+
+    @NotNull CompletableFuture<Void> runTaskForPlayer(@NotNull Player target, @NotNull Consumer<Player> task);
 
     /**
      * Creates a {@link CompletableFuture} to supply values on main thread.

@@ -17,7 +17,7 @@ public final class MenuOpener {
         holder.applyContents();
 
         BoxProvider.get().getTaskFactory()
-                .run(() -> viewer.openInventory(holder.getInventory()))
+                .runTaskForPlayer(viewer, player -> player.openInventory(holder.getInventory()))
                 .join();
 
         if (XmasChecker.isXmas()) {

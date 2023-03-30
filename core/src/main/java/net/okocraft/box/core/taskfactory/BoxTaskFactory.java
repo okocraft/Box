@@ -1,10 +1,12 @@
 package net.okocraft.box.core.taskfactory;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import io.papermc.paper.threadedregions.scheduler.EntityScheduler;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.taskfactory.TaskFactory;
 import net.okocraft.box.api.util.Folia;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -13,6 +15,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 
@@ -31,6 +34,16 @@ public class BoxTaskFactory implements TaskFactory {
     public @NotNull CompletableFuture<Void> run(@NotNull Runnable task) {
         Objects.requireNonNull(task);
         return CompletableFuture.runAsync(task, getMainThread());
+    }
+
+    @Override
+    public @NotNull CompletableFuture<Void> runTaskForPlayer(@NotNull Player target, @NotNull Consumer<Player> task) {
+        Objects.requireNonNull(task);
+        if (Folia.check()) {
+            return CompletableFuture.runAsync(() -> task.accept(target), createExecutorFromEntityScheduler(target.getScheduler()));
+        } else {
+            return CompletableFuture.runAsync(() -> task.accept(target), getMainThread());
+        }
     }
 
     @Override
@@ -75,5 +88,9 @@ public class BoxTaskFactory implements TaskFactory {
             throw new UnsupportedOperationException();
         }
         return Bukkit.getScheduler().getMainThreadExecutor(BoxProvider.get().getPluginInstance());
+    }
+
+    private @NotNull Executor createExecutorFromEntityScheduler(@NotNull EntityScheduler scheduler) {
+        return command -> scheduler.run(BoxProvider.get().getPluginInstance(), $ -> command.run(), null);
     }
 }

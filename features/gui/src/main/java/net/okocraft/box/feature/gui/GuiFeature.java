@@ -6,6 +6,7 @@ import net.okocraft.box.api.feature.BoxFeature;
 import net.okocraft.box.api.feature.Disableable;
 import net.okocraft.box.api.feature.Reloadable;
 import net.okocraft.box.api.message.Components;
+import net.okocraft.box.api.util.Folia;
 import net.okocraft.box.feature.category.CategoryFeature;
 import net.okocraft.box.feature.gui.internal.command.MenuOpenCommand;
 import net.okocraft.box.feature.gui.internal.holder.BoxInventoryHolder;
@@ -18,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 
 public class GuiFeature extends AbstractBoxFeature implements Disableable, Reloadable {
 
@@ -45,20 +47,20 @@ public class GuiFeature extends AbstractBoxFeature implements Disableable, Reloa
         boxCommand.changeNoArgumentCommand(null);
         boxCommand.getSubCommandHolder().unregister(command);
 
-        if (Bukkit.isPrimaryThread()) {
-            closeMenus();
-        } else {
-            BoxProvider.get().getTaskFactory().run(this::closeMenus).join();
-        }
+        closeMenus();
 
         HandlerList.unregisterAll(listener);
     }
 
     private void closeMenus() {
-        Bukkit.getOnlinePlayers()
-                .stream()
-                .filter(p -> p.getOpenInventory().getTopInventory().getHolder() instanceof BoxInventoryHolder)
-                .forEach(HumanEntity::closeInventory);
+        var stream = Bukkit.getOnlinePlayers().stream().filter(p -> p.getOpenInventory().getTopInventory().getHolder() instanceof BoxInventoryHolder);
+
+        if (!Folia.check() && Bukkit.isPrimaryThread()) {
+            stream.forEach(HumanEntity::closeInventory);
+            return;
+        }
+
+        stream.map(player -> BoxProvider.get().getTaskFactory().runTaskForPlayer(player, HumanEntity::closeInventory)).forEach(CompletableFuture::join);
     }
 
     @Override
