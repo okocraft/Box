@@ -34,6 +34,11 @@ public class BoxTaskFactory implements TaskFactory {
     @Override
     public @NotNull CompletableFuture<Void> run(@NotNull Runnable task) {
         Objects.requireNonNull(task);
+
+        if (Folia.check()) {
+            throw new UnsupportedOperationException("This method is not supported on Folia.");
+        }
+
         return CompletableFuture.runAsync(task, getMainThread());
     }
 
@@ -50,6 +55,11 @@ public class BoxTaskFactory implements TaskFactory {
     @Override
     public @NotNull <T> CompletableFuture<T> supply(@NotNull Supplier<T> supplier) {
         Objects.requireNonNull(supplier);
+
+        if (Folia.check()) {
+            throw new UnsupportedOperationException("This method is not supported on Folia.");
+        }
+
         return CompletableFuture.supplyAsync(supplier, getMainThread());
     }
 
@@ -97,9 +107,6 @@ public class BoxTaskFactory implements TaskFactory {
     }
 
     public @NotNull Executor getMainThread() {
-        if (Folia.check()) {
-            throw new UnsupportedOperationException();
-        }
         return Bukkit.getScheduler().getMainThreadExecutor(BoxProvider.get().getPluginInstance());
     }
 
