@@ -1,11 +1,14 @@
 package net.okocraft.box.storage.api.util.item;
 
+import net.okocraft.box.api.util.MCDataVersion;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.MusicInstrument;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.FireworkMeta;
+import org.bukkit.inventory.meta.MusicInstrumentMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionType;
@@ -21,6 +24,20 @@ import java.util.stream.Stream;
 
 public final class DefaultItemProvider {
 
+    /**
+     * Returns the version of the {@link DefaultItemProvider}.
+     *
+     * @return the version of the {@link DefaultItemProvider}
+     */
+    public static int version() {
+        if (MCDataVersion.CURRENT.isBetween(MCDataVersion.MC_1_19, MCDataVersion.MC_1_19_4)) {
+            // Version 1: Added Goat horns
+            return 1;
+        }
+
+        return 0; // 0 means no changes
+    }
+
     public static @NotNull List<DefaultItem> all() {
         var result = new ArrayList<DefaultItem>();
 
@@ -28,6 +45,10 @@ public final class DefaultItemProvider {
         result.addAll(potions());
         result.addAll(enchantedBooks());
         result.addAll(fireworks());
+
+        if (MCDataVersion.CURRENT.isAfterOrSame(MCDataVersion.MC_1_19)) {
+            result.addAll(goatHorns());
+        }
 
         return result;
     }
@@ -37,6 +58,7 @@ public final class DefaultItemProvider {
                 .filter(Predicate.not(Material::isAir))
                 .filter(Material::isItem)
                 .filter(Predicate.not(material -> material.name().startsWith("LEGACY_")))
+                .filter(Predicate.not(material -> material.name().equals("GOAT_HORN")))
                 .map(material -> new DefaultItem(material.name(), new ItemStack(material, 1)))
                 .collect(Collectors.toList());
     }
@@ -133,5 +155,31 @@ public final class DefaultItemProvider {
         firework.setItemMeta(fireworkMeta);
 
         return new DefaultItem(Material.FIREWORK_ROCKET + "_" + power, firework);
+    }
+
+    private static @NotNull List<DefaultItem> goatHorns() {
+        return MusicInstrument.values().stream()
+                .filter(instrument -> instrument.getKey().value().endsWith("_goat_horn"))
+                .map(DefaultItemProvider::createGoatHorn)
+                .toList();
+    }
+
+    public static @NotNull DefaultItem createPonderGoatHorn() {
+        return createGoatHorn(MusicInstrument.PONDER);
+    }
+
+    private static @NotNull DefaultItem createGoatHorn(@NotNull MusicInstrument instrument) {
+        var meta = Bukkit.getItemFactory().getItemMeta(Material.GOAT_HORN);
+
+        if (!(meta instanceof MusicInstrumentMeta musicInstrumentMeta)) {
+            throw new IllegalStateException("Where has MusicInstrumentMeta gone!?");
+        }
+
+        musicInstrumentMeta.setInstrument(instrument);
+
+        var goatHorn = new ItemStack(Material.GOAT_HORN);
+        goatHorn.setItemMeta(musicInstrumentMeta);
+
+        return new DefaultItem(instrument.getKey().value().toUpperCase(Locale.ENGLISH), goatHorn);
     }
 }

@@ -2,6 +2,7 @@ package net.okocraft.box.storage.api.model.item;
 
 import net.okocraft.box.api.model.item.BoxCustomItem;
 import net.okocraft.box.api.model.item.BoxItem;
+import net.okocraft.box.api.util.MCDataVersion;
 import net.okocraft.box.storage.api.util.item.DefaultItem;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -15,9 +16,13 @@ public interface ItemStorage {
 
     void init() throws Exception;
 
-    int getDataVersion() throws Exception;
+    @Nullable MCDataVersion getDataVersion() throws Exception;
 
     void saveCurrentDataVersion() throws Exception;
+
+    int getDefaultItemVersion() throws Exception;
+
+    void saveCurrentDefaultItemVersion() throws Exception;
 
     @NotNull List<BoxItem> loadAllDefaultItems() throws Exception;
 
