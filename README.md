@@ -4,8 +4,9 @@
 ![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/okocraft/Box/gradle.yml?branch=main)
 ![GitHub](https://img.shields.io/github/license/okocraft/Box)
 
-Box はあらゆるアイテムを仮想的なインベントリへ収納できるようにする Paper プラグインです。
+Box is a plugin for Paper that allows users to store any items in a virtual inventory.
 
+<!--- TODO English
 ## 特徴
 
 Box には以下のような特徴があります。
@@ -16,36 +17,20 @@ Box には以下のような特徴があります。
 * 通常アイテム、ポーション、花火、エンチャント本はデフォルトで収納できます
 * `/boxadmin register` で手に持っているアイテムを Box に登録することができます
 * 詳細な使い方は [Wiki](https://github.com/okocraft/Box/wiki) で確認することができます
+--->
 
-### v3 → v4 の移行
+## Requirements
 
-移行前に必ず `Box` ディレクトリをバックアップしてください。
+- Java 17+
+- Paper 1.17+
 
-- データベースストレージ (SQLite, MySQL) は未実装で、現在は Yaml への保存になります
-  - v3 まで使用していたデータベースは、BoxMigrator を利用することでデータ移行できます
-  - 詳しくは [v3 からの移行方法](https://github.com/okocraft/Box/wiki/migration-from-v3) 参照してください
-- 売買・自動植え替え機能は実装していません
-- GUI を全面的に実装し直し、コマンドも一部構文変更しています
-- その他、多くの変更点があります。v4 のすべての機能は [Wiki](https://github.com/okocraft/Box/wiki) に記載されています
+## Installation
 
-## インストール
-
-**v4.0.0 から [Paper](https://papermc.io) (Spigot の軽量フォーク) が必須** になっています。Spigot では動作しません。
-
-[リリース](https://github.com/okocraft/Box/releases) から `Box-x.x.x.jar` をダウンロードし、
-そのファイルをサーバーの `plugins/` ディレクトリに配置しサーバーを再起動します。
-
-再起動後に
-
-* `config.yml`
-* `categories.yml`
-* `languages/ja_JP.yml`
-
-が生成されます。起動後、何も設定しなくても使い始めることができます。
+Please read [Installation and Setup](https://github.com/okocraft/Box/wiki/Installation-and-Setup) page on GitHub Wiki.
 
 ## Compiling from source
 
-```
+```shell
 git clone https://github.com/okocraft/Box.git
 cd Box/
 ./gradlew build
@@ -96,20 +81,20 @@ For snapshot version, use https://okocraft.github.io/Box/maven-snapshot/
 <dependency>
     <groupId>net.okocraft.box</groupId>
     <artifactId>box-api</artifactId>
-    <version>5.0.0-SNAPSHOT</version>
+    <version>5.3.0</version>
     <scope>provided</scope>
 </dependency>
 ```
 
 ```groovy
 dependencies {
-    compileOnly 'net.okocraft.box:box-api:5.0.0-SNAPSHOT'
+    compileOnly 'net.okocraft.box:box-api:5.3.0'
 }
 ```
 
 ```kotlin
 dependencies {
-    compileOnly("net.okocraft.box:box-api:5.0.0-SNAPSHOT")
+    compileOnly("net.okocraft.box:box-api:5.3.0")
 }
 ```
 
