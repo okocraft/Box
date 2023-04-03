@@ -283,7 +283,7 @@ public final class InventoryTransaction {
 
                 var remaining = maxStackSize - item.getAmount();
 
-                if (remaining != 0) {
+                if (0 < remaining) {
                     if (toStore < remaining) {
                         item.setAmount(item.getAmount() + toStore);
                         toStore = 0;
