@@ -132,7 +132,11 @@ public class BoxPlayerMapImpl implements BoxPlayerMap {
     }
 
     public void unloadAll() {
-        List.copyOf(playerMap.keySet()).forEach(this::unload);
+        List.copyOf(playerMap.keySet())
+                .stream()
+                .map(playerMap::remove)
+                .filter(Objects::nonNull)
+                .forEach(this::unload0);
     }
 
     private void updateUserName(@NotNull BoxUser user) {
