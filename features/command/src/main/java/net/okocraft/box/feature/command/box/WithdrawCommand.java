@@ -71,7 +71,7 @@ public class WithdrawCommand extends AbstractCommand {
 
         var result =
                 BoxProvider.get().getTaskFactory()
-                        .supply(() -> InventoryTransaction.withdraw(player.getInventory(), boxItem, amount))
+                        .supplyFromPlayer(player, $player -> InventoryTransaction.withdraw($player.getInventory(), boxItem, amount))
                         .join();
 
         var resultType = result.getType();

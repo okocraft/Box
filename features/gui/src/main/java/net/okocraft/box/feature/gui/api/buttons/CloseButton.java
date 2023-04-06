@@ -38,7 +38,7 @@ public class CloseButton implements Button {
 
     @Override
     public void onClick(@NotNull Player clicker, @NotNull ClickType clickType) {
-        BoxProvider.get().getTaskFactory().run(clicker::closeInventory);
+        BoxProvider.get().getTaskFactory().runTaskForPlayer(clicker, Player::closeInventory);
         clicker.playSound(clicker.getLocation(), Sound.BLOCK_CHEST_CLOSE, SoundCategory.MASTER, 100f, 1.5f);
     }
 }

@@ -73,7 +73,7 @@ public class InventoryListener implements Listener {
         holder.processClick(clicker, slot, type);
 
         if (holder.updateMenu(clicker)) {
-            BoxProvider.get().getTaskFactory().run(() -> holder.updateInventory(clicker)).join();
+            BoxProvider.get().getTaskFactory().runTaskForPlayer(clicker, holder::updateInventory).join();
         }
     }
 

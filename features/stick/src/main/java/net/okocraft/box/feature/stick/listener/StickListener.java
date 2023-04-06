@@ -2,6 +2,7 @@ package net.okocraft.box.feature.stick.listener;
 
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.player.BoxPlayer;
+import net.okocraft.box.api.util.Folia;
 import net.okocraft.box.api.util.MCDataVersion;
 import net.okocraft.box.feature.stick.event.stock.StickCause;
 import net.okocraft.box.feature.stick.event.stock.StickCauses;
@@ -304,10 +305,14 @@ public class StickListener implements Listener {
 
             // If setConsumeItem is set to false, the arrow will not be picked up.
             // This task overwrites it after 1 tick.
-            Bukkit.getScheduler().runTask(
-                    BoxProvider.get().getPluginInstance(),
-                    () -> arrow.setPickupStatus(AbstractArrow.PickupStatus.ALLOWED)
-            );
+            if (Folia.check()) {
+                arrow.getScheduler().runDelayed(BoxProvider.get().getPluginInstance(), $ -> arrow.setPickupStatus(AbstractArrow.PickupStatus.ALLOWED), null, 1);
+            } else {
+                Bukkit.getScheduler().runTask(
+                        BoxProvider.get().getPluginInstance(),
+                        () -> arrow.setPickupStatus(AbstractArrow.PickupStatus.ALLOWED)
+                );
+            }
         }
     }
 

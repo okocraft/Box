@@ -101,9 +101,9 @@ public class StorageMode implements BoxItemClickMode {
         int transactionAmount = session.getCustomNumberHolder(TRANSACTION_AMOUNT_NAME).getAmount();
 
         var resultList =
-                BoxProvider.get().getTaskFactory().supply(
-                        () -> InventoryTransaction.depositItem(player.getInventory(), context.item(), transactionAmount)
-                ).join();
+                BoxProvider.get().getTaskFactory()
+                        .supplyFromPlayer(player, $player -> InventoryTransaction.depositItem($player.getInventory(), context.item(), transactionAmount))
+                        .join();
 
         if (!resultList.getType().isModified()) {
             player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 100f, 1.5f);
@@ -138,7 +138,7 @@ public class StorageMode implements BoxItemClickMode {
 
         var result =
                 BoxProvider.get().getTaskFactory()
-                        .supply(() -> InventoryTransaction.withdraw(player.getInventory(), context.item(), amount))
+                        .supplyFromPlayer(player, $player -> InventoryTransaction.withdraw($player.getInventory(), context.item(), amount))
                         .join();
 
         if (result.getType().isModified()) {
@@ -184,7 +184,7 @@ public class StorageMode implements BoxItemClickMode {
 
             var resultList =
                     BoxProvider.get().getTaskFactory()
-                            .supply(() -> InventoryTransaction.depositItemsInInventory(clicker.getInventory()))
+                            .supplyFromPlayer(clicker, player -> InventoryTransaction.depositItemsInInventory(player.getInventory()))
                             .join();
 
             if (!resultList.getType().isModified()) {
