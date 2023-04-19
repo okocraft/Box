@@ -32,6 +32,7 @@ public class BoxTaskFactory implements TaskFactory {
     );
 
     @Override
+    @Deprecated
     public @NotNull CompletableFuture<Void> run(@NotNull Runnable task) {
         Objects.requireNonNull(task);
 
@@ -54,6 +55,7 @@ public class BoxTaskFactory implements TaskFactory {
     }
 
     @Override
+    @Deprecated
     public @NotNull <T> CompletableFuture<T> supply(@NotNull Supplier<T> supplier) {
         Objects.requireNonNull(supplier);
 
@@ -103,11 +105,7 @@ public class BoxTaskFactory implements TaskFactory {
         );
     }
 
-    public @NotNull Executor getExecutor() {
-        return executor;
-    }
-
-    public @NotNull Executor getMainThread() {
+    private @NotNull Executor getMainThread() {
         return Bukkit.getScheduler().getMainThreadExecutor(BoxProvider.get().getPluginInstance());
     }
 
