@@ -2,7 +2,6 @@ package net.okocraft.box.feature.stick.listener;
 
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.player.BoxPlayer;
-import net.okocraft.box.api.util.Folia;
 import net.okocraft.box.api.util.MCDataVersion;
 import net.okocraft.box.feature.stick.event.stock.StickCause;
 import net.okocraft.box.feature.stick.event.stock.StickCauses;
@@ -13,7 +12,6 @@ import net.okocraft.box.feature.stick.function.container.ContainerOperator;
 import net.okocraft.box.feature.stick.function.container.FurnaceOperator;
 import net.okocraft.box.feature.stick.function.menu.MenuOpener;
 import net.okocraft.box.feature.stick.item.BoxStickItem;
-import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -216,8 +214,10 @@ public class StickListener implements Listener {
         event.setReplacement(mainHandItem.clone());
 
         var defaultReplacementMaterialName = switch (event.getItem().getType()) {
-            case MUSHROOM_STEW, RABBIT_STEW, BEETROOT_SOUP, SUSPICIOUS_STEW -> Material.BOWL.name(); // BowlFoodItem#finishUsingItem L15 / SuspiciousStewItem#finishUsingItem L75
-            case HONEY_BOTTLE, POTION -> Material.GLASS_BOTTLE.name(); // HoneyBottleItem#finishUsingItem L35 / PotionItem#finishUsingItem L89
+            case MUSHROOM_STEW, RABBIT_STEW, BEETROOT_SOUP, SUSPICIOUS_STEW ->
+                    Material.BOWL.name(); // BowlFoodItem#finishUsingItem L15 / SuspiciousStewItem#finishUsingItem L75
+            case HONEY_BOTTLE, POTION ->
+                    Material.GLASS_BOTTLE.name(); // HoneyBottleItem#finishUsingItem L35 / PotionItem#finishUsingItem L89
             case MILK_BUCKET -> Material.BUCKET.name(); // MilkBucketItem#finishUsingItem L37
             default -> null;
         };
@@ -305,14 +305,7 @@ public class StickListener implements Listener {
 
             // If setConsumeItem is set to false, the arrow will not be picked up.
             // This task overwrites it after 1 tick.
-            if (Folia.check()) {
-                arrow.getScheduler().runDelayed(BoxProvider.get().getPluginInstance(), $ -> arrow.setPickupStatus(AbstractArrow.PickupStatus.ALLOWED), null, 1);
-            } else {
-                Bukkit.getScheduler().runTask(
-                        BoxProvider.get().getPluginInstance(),
-                        () -> arrow.setPickupStatus(AbstractArrow.PickupStatus.ALLOWED)
-                );
-            }
+            BoxProvider.get().getTaskFactory().runEntityTask(arrow, target -> target.setPickupStatus(AbstractArrow.PickupStatus.ALLOWED));
         }
     }
 
