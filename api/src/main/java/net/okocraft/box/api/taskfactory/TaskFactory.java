@@ -14,7 +14,7 @@ import java.util.function.Supplier;
 public interface TaskFactory {
 
     /**
-     * Creates a {@link CompletableFuture} to run the task on main thread.
+     * Creates a {@link CompletableFuture} to run the task on the main thread.
      *
      * @param task the task to run
      * @return the new {@link CompletableFuture}
@@ -23,10 +23,21 @@ public interface TaskFactory {
     @Deprecated(since = "5.3.1")
     @NotNull CompletableFuture<Void> run(@NotNull Runnable task);
 
+    /**
+     * Creates a {@link CompletableFuture} to run the task on the main thread or entity's thread.
+     * <p>
+     * This task will be executed on the next tick.
+     *
+     * @param target the entity for which a task is performed
+     * @param task   the task
+     * @param <E>    the entity type
+     * @return the {@link CompletableFuture}
+     * @since 5.3.1
+     */
     <E extends Entity> @NotNull CompletableFuture<Void> runEntityTask(@NotNull E target, @NotNull Consumer<E> task);
 
     /**
-     * Creates a {@link CompletableFuture} to supply values on main thread.
+     * Creates a {@link CompletableFuture} to supply values on the main thread.
      *
      * @param supplier the supplier
      * @param <T>      the value type
@@ -36,6 +47,16 @@ public interface TaskFactory {
     @Deprecated(since = "5.3.1")
     <T> @NotNull CompletableFuture<T> supply(@NotNull Supplier<T> supplier);
 
+    /**
+     * Creates a {@link CompletableFuture} to supply values on the main thread or entity's thread.
+     *
+     * @param entity   the entity to get value from
+     * @param function the {@link Function} to get the value from the entity
+     * @param <E>      the entity type
+     * @param <T>      the value type
+     * @return the new {@link CompletableFuture}
+     * @since 5.3.1
+     */
     <E extends Entity, T> @NotNull CompletableFuture<T> supplyFromEntity(@NotNull E entity, @NotNull Function<E, T> function);
 
     /**
