@@ -102,7 +102,7 @@ public class StorageMode implements BoxItemClickMode {
 
         var resultList =
                 BoxProvider.get().getTaskFactory()
-                        .supplyFromPlayer(player, $player -> InventoryTransaction.depositItem($player.getInventory(), context.item(), transactionAmount))
+                        .supplyFromEntity(player, $player -> InventoryTransaction.depositItem($player.getInventory(), context.item(), transactionAmount))
                         .join();
 
         if (!resultList.getType().isModified()) {
@@ -138,7 +138,7 @@ public class StorageMode implements BoxItemClickMode {
 
         var result =
                 BoxProvider.get().getTaskFactory()
-                        .supplyFromPlayer(player, $player -> InventoryTransaction.withdraw($player.getInventory(), context.item(), amount))
+                        .supplyFromEntity(player, $player -> InventoryTransaction.withdraw($player.getInventory(), context.item(), amount))
                         .join();
 
         if (result.getType().isModified()) {
@@ -184,7 +184,7 @@ public class StorageMode implements BoxItemClickMode {
 
             var resultList =
                     BoxProvider.get().getTaskFactory()
-                            .supplyFromPlayer(clicker, player -> InventoryTransaction.depositItemsInInventory(player.getInventory()))
+                            .supplyFromEntity(clicker, player -> InventoryTransaction.depositItemsInInventory(player.getInventory()))
                             .join();
 
             if (!resultList.getType().isModified()) {

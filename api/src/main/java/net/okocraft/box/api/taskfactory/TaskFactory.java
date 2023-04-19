@@ -1,6 +1,6 @@
 package net.okocraft.box.api.taskfactory;
 
-import org.bukkit.entity.Player;
+import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CompletableFuture;
@@ -23,7 +23,7 @@ public interface TaskFactory {
     @Deprecated(since = "5.3.1")
     @NotNull CompletableFuture<Void> run(@NotNull Runnable task);
 
-    @NotNull CompletableFuture<Void> runTaskForPlayer(@NotNull Player target, @NotNull Consumer<Player> task);
+    <E extends Entity> @NotNull CompletableFuture<Void> runEntityTask(@NotNull E target, @NotNull Consumer<E> task);
 
     /**
      * Creates a {@link CompletableFuture} to supply values on main thread.
@@ -36,7 +36,7 @@ public interface TaskFactory {
     @Deprecated(since = "5.3.1")
     <T> @NotNull CompletableFuture<T> supply(@NotNull Supplier<T> supplier);
 
-    <T> @NotNull CompletableFuture<T> supplyFromPlayer(@NotNull Player player, @NotNull Function<Player, T> function);
+    <E extends Entity, T> @NotNull CompletableFuture<T> supplyFromEntity(@NotNull E entity, @NotNull Function<E, T> function);
 
     /**
      * Creates a {@link CompletableFuture} to run the task asynchronously.

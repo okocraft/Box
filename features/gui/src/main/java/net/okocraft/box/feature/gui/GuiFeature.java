@@ -60,7 +60,7 @@ public class GuiFeature extends AbstractBoxFeature implements Disableable, Reloa
             return;
         }
 
-        stream.map(player -> BoxProvider.get().getTaskFactory().runTaskForPlayer(player, HumanEntity::closeInventory)).forEach(CompletableFuture::join);
+        stream.map(player -> BoxProvider.get().getTaskFactory().runEntityTask(player, HumanEntity::closeInventory)).forEach(CompletableFuture::join);
     }
 
     @Override

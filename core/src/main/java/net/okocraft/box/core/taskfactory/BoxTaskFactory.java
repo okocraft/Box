@@ -6,7 +6,7 @@ import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.taskfactory.TaskFactory;
 import net.okocraft.box.api.util.Folia;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -43,8 +43,9 @@ public class BoxTaskFactory implements TaskFactory {
     }
 
     @Override
-    public @NotNull CompletableFuture<Void> runTaskForPlayer(@NotNull Player target, @NotNull Consumer<Player> task) {
+    public <E extends Entity> @NotNull CompletableFuture<Void> runEntityTask(@NotNull E target, @NotNull Consumer<E> task) {
         Objects.requireNonNull(task);
+
         if (Folia.check()) {
             return CompletableFuture.runAsync(() -> task.accept(target), createExecutorFromEntityScheduler(target.getScheduler()));
         } else {
@@ -64,14 +65,14 @@ public class BoxTaskFactory implements TaskFactory {
     }
 
     @Override
-    public @NotNull <T> CompletableFuture<T> supplyFromPlayer(@NotNull Player player, @NotNull Function<Player, T> function) {
-        Objects.requireNonNull(player);
+    public <E extends Entity, T> @NotNull CompletableFuture<T> supplyFromEntity(@NotNull E entity, @NotNull Function<E, T> function) {
+        Objects.requireNonNull(entity);
         Objects.requireNonNull(function);
 
         if (Folia.check()) {
-            return CompletableFuture.supplyAsync(() -> function.apply(player), createExecutorFromEntityScheduler(player.getScheduler()));
+            return CompletableFuture.supplyAsync(() -> function.apply(entity), createExecutorFromEntityScheduler(entity.getScheduler()));
         } else {
-            return CompletableFuture.supplyAsync(() -> function.apply(player), getMainThread());
+            return CompletableFuture.supplyAsync(() -> function.apply(entity), getMainThread());
         }
     }
 

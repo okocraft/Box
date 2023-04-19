@@ -114,7 +114,7 @@ public abstract class AbstractStorageMode implements BoxItemClickMode {
 
             var resultList =
                     BoxProvider.get().getTaskFactory()
-                            .supplyFromPlayer(clicker, player -> InventoryTransaction.depositItemsInInventory(player.getInventory()))
+                            .supplyFromEntity(clicker, player -> InventoryTransaction.depositItemsInInventory(player.getInventory()))
                             .join();
 
             if (!resultList.getType().isModified()) {

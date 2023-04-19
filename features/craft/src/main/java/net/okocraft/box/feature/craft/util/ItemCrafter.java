@@ -65,7 +65,7 @@ public class ItemCrafter {
         if (Distribution.toInventory(crafter)) {
             var result =
                     BoxProvider.get().getTaskFactory()
-                            .supplyFromPlayer(crafter, player -> InventoryTransaction.withdraw(player.getInventory(), recipe.result(), resultAmount))
+                            .supplyFromEntity(crafter, player -> InventoryTransaction.withdraw(player.getInventory(), recipe.result(), resultAmount))
                             .join();
 
             if (result.getType().isModified()) {
