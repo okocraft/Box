@@ -81,20 +81,20 @@ For snapshot version, use https://okocraft.github.io/Box/maven-snapshot/
 <dependency>
     <groupId>net.okocraft.box</groupId>
     <artifactId>box-api</artifactId>
-    <version>5.3.0</version>
+    <version>5.3.1</version>
     <scope>provided</scope>
 </dependency>
 ```
 
 ```groovy
 dependencies {
-    compileOnly 'net.okocraft.box:box-api:5.3.0'
+    compileOnly 'net.okocraft.box:box-api:5.3.1'
 }
 ```
 
 ```kotlin
 dependencies {
-    compileOnly("net.okocraft.box:box-api:5.3.0")
+    compileOnly("net.okocraft.box:box-api:5.3.1")
 }
 ```
 
