@@ -4,7 +4,6 @@ import net.okocraft.box.api.event.AsyncEvent;
 import net.okocraft.box.api.event.stockholder.StockHolderEvent;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.model.stock.StockHolder;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -20,20 +19,6 @@ public class StockEvent extends StockHolderEvent implements AsyncEvent {
     private final BoxItem item;
     private final int amount;
     private final Cause cause;
-
-    /**
-     * The constructor of {@link StockEvent}.
-     *
-     * @param stockHolder the stockholder of the event
-     * @param item        the item of the stock
-     * @param amount      the current amount of the stock
-     * @deprecated use {@link #StockEvent(StockHolder, BoxItem, int, Cause)}}
-     */
-    @Deprecated(forRemoval = true, since = "5.2.0")
-    @ApiStatus.ScheduledForRemoval(inVersion = "5.3.0")
-    public StockEvent(@NotNull StockHolder stockHolder, @NotNull BoxItem item, int amount) {
-        this(stockHolder, item, amount, Cause.API);
-    }
 
     /**
      * The constructor of {@link StockEvent}.

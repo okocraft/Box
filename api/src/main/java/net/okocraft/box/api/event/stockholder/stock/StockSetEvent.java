@@ -2,7 +2,6 @@ package net.okocraft.box.api.event.stockholder.stock;
 
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.model.stock.StockHolder;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -11,21 +10,6 @@ import org.jetbrains.annotations.NotNull;
 public class StockSetEvent extends StockEvent {
 
     private final int previousAmount;
-
-    /**
-     * The constructor of {@link StockSetEvent}.
-     *
-     * @param stockHolder    the stockholder of the event
-     * @param item           the item of the stock
-     * @param amount         the current amount of the stock
-     * @param previousAmount the amount of stock before set
-     * @deprecated use {@link #StockSetEvent(StockHolder, BoxItem, int, int, Cause)}
-     */
-    @Deprecated(forRemoval = true, since = "5.2.0")
-    @ApiStatus.ScheduledForRemoval(inVersion = "5.3.0")
-    public StockSetEvent(@NotNull StockHolder stockHolder, @NotNull BoxItem item, int amount, int previousAmount) {
-        this(stockHolder, item, amount, previousAmount, Cause.API);
-    }
 
     /**
      * The constructor of {@link StockSetEvent}.
