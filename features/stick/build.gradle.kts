@@ -11,4 +11,6 @@ repositories {
 dependencies {
     compileOnly(project(":box-api"))
     compileOnly(libs.lwc)
+    compileOnly(libs.bolt.bukkit)
+    compileOnly(libs.bolt.common)
 }
