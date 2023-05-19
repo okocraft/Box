@@ -2,8 +2,8 @@ package net.okocraft.box.feature.category.internal.categorizer;
 
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Unmodifiable;
 
-import java.util.EnumSet;
 import java.util.Set;
 
 public final class ExperimentalItems {
@@ -15,8 +15,8 @@ public final class ExperimentalItems {
      * NOTE: Material#Bundle has existed since 1.17, so it is not included here.
      */
     @SuppressWarnings("UnstableApiUsage")
-    public static @NotNull Set<Material> mc1_19_3() {
-        return EnumSet.of(
+    public static @NotNull @Unmodifiable Set<Material> mc1_19_3() {
+        return Set.of(
                 Material.ACACIA_HANGING_SIGN, Material.BAMBOO_BLOCK, Material.BAMBOO_BUTTON,
                 Material.BAMBOO_CHEST_RAFT, Material.BAMBOO_DOOR, Material.BAMBOO_FENCE,
                 Material.BAMBOO_FENCE_GATE, Material.BAMBOO_HANGING_SIGN, Material.BAMBOO_MOSAIC,
@@ -37,8 +37,8 @@ public final class ExperimentalItems {
      * NOTE: Material#Bundle has existed since 1.17, so it is not included here.
      */
     @SuppressWarnings("UnstableApiUsage")
-    public static @NotNull Set<Material> mc1_19_4() {
-        return EnumSet.of(
+    public static @NotNull @Unmodifiable Set<Material> mc1_19_4() {
+        return Set.of(
                 Material.CHERRY_PLANKS, Material.BAMBOO_PLANKS, Material.BAMBOO_MOSAIC,
                 Material.CHERRY_SAPLING, Material.SUSPICIOUS_SAND, Material.CHERRY_LOG, Material.BAMBOO_BLOCK,
                 Material.STRIPPED_CHERRY_LOG, Material.STRIPPED_CHERRY_WOOD, Material.STRIPPED_BAMBOO_BLOCK,
