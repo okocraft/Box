@@ -68,6 +68,11 @@ public record MCDataVersion(int dataVersion) {
      */
     public static final MCDataVersion MC_1_19_4 = new MCDataVersion(3337);
 
+    /**
+     * A {@link MCDataVersion} that represents Minecraft 1.20
+     */
+    public static final MCDataVersion MC_1_20 = new MCDataVersion(3457); // FIXME: This is 1.20-pre4; define correct data version after Minecraft 1.20 released
+
     @Contract("_ -> new")
     public static @NotNull MCDataVersion of(int dataVersion) {
         return new MCDataVersion(dataVersion);
