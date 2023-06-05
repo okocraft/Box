@@ -3,6 +3,7 @@ package net.okocraft.box.feature.command.box;
 import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.command.AbstractCommand;
+import net.okocraft.box.api.event.player.PlayerCollectItemInfoEvent;
 import net.okocraft.box.api.message.GeneralMessage;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.util.TabCompleter;
@@ -57,11 +58,19 @@ public class ItemInfoCommand extends AbstractCommand {
             }
         }
 
-        int stock = BoxProvider.get().getBoxPlayerMap().get(player).getCurrentStockHolder().getAmount(boxItem);
+        var boxPlayer = BoxProvider.get().getBoxPlayerMap().get(player);
 
-        player.sendMessage(BoxMessage.ITEM_INFO_NAME.apply(boxItem));
-        player.sendMessage(BoxMessage.ITEM_INFO_ID.apply(boxItem.getPlainName()));
-        player.sendMessage(BoxMessage.ITEM_INFO_STOCK.apply(stock));
+        var event = new PlayerCollectItemInfoEvent(boxPlayer, boxItem);
+
+        event.addInfo(BoxMessage.ITEM_INFO_NAME.apply(boxItem));
+        event.addInfo(BoxMessage.ITEM_INFO_ID.apply(boxItem.getPlainName()));
+        event.addInfo(BoxMessage.ITEM_INFO_STOCK.apply(boxPlayer.getCurrentStockHolder().getAmount(boxItem)));
+
+        BoxProvider.get().getEventBus().callEvent(event);
+
+        for (var info : event.getInfo()) {
+            player.sendMessage(info);
+        }
     }
 
     @Override
