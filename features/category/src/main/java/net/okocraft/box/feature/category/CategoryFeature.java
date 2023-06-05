@@ -11,6 +11,7 @@ import net.okocraft.box.feature.category.internal.file.BundledCategoryFile;
 import net.okocraft.box.feature.category.internal.file.CategoryDumper;
 import net.okocraft.box.feature.category.internal.file.CategoryLoader;
 import net.okocraft.box.feature.category.internal.listener.CustomItemListener;
+import net.okocraft.box.feature.category.internal.listener.ItemInfoEventListener;
 import net.okocraft.box.feature.category.internal.registry.CategoryRegistryImpl;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
@@ -22,6 +23,7 @@ public class CategoryFeature extends AbstractBoxFeature implements Disableable, 
 
     private final CategoryRegistry categoryRegistry = new CategoryRegistryImpl();
     private final CustomItemListener customItemListener = new CustomItemListener(categoryRegistry);
+    private final ItemInfoEventListener itemInfoEventListener = new ItemInfoEventListener(categoryRegistry);
 
     public CategoryFeature() {
         super("category");
@@ -48,11 +50,13 @@ public class CategoryFeature extends AbstractBoxFeature implements Disableable, 
         }
 
         customItemListener.register(getListenerKey());
+        itemInfoEventListener.register(getListenerKey());
     }
 
     @Override
     public void disable() {
         customItemListener.unregister(getListenerKey());
+        itemInfoEventListener.unregister(getListenerKey());
         categoryRegistry.unregisterAll();
     }
 

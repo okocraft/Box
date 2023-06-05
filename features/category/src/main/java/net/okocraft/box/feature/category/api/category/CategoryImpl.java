@@ -1,5 +1,7 @@
 package net.okocraft.box.feature.category.api.category;
 
+import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
+import it.unimi.dsi.fastutil.ints.IntSet;
 import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.model.item.BoxItem;
 import org.bukkit.Material;
@@ -7,7 +9,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 class CategoryImpl implements Category {
@@ -15,9 +16,11 @@ class CategoryImpl implements Category {
     private final Component displayName;
     private final Material iconMaterial;
     private final boolean shouldSave;
+    private final List<BoxItem> items = new ArrayList<>();
+    private final Object lock = new Object();
 
-    private final List<BoxItem> items = Collections.synchronizedList(new ArrayList<>());
-    private List<BoxItem> snapshot = null;
+    private volatile List<BoxItem> snapshot = null;
+    private volatile IntSet itemIds;
 
     CategoryImpl(@NotNull Component displayName, @NotNull Material iconMaterial, boolean shouldSave) {
         this.displayName = displayName;
@@ -38,7 +41,9 @@ class CategoryImpl implements Category {
     @Override
     public @NotNull @Unmodifiable List<BoxItem> getItems() {
         if (snapshot == null) {
-            snapshot = List.copyOf(items);
+            synchronized (lock) {
+                snapshot = List.copyOf(items);
+            }
         }
 
         return snapshot;
@@ -46,14 +51,28 @@ class CategoryImpl implements Category {
 
     @Override
     public void addItem(@NotNull BoxItem item) {
-        items.add(item);
-        updateSnapshot();
+        synchronized (lock) {
+            items.add(item);
+            updateSnapshot();
+        }
     }
 
     @Override
     public void removeItem(@NotNull BoxItem item) {
-        items.remove(item);
-        updateSnapshot();
+        synchronized (lock) {
+            items.remove(item);
+            updateSnapshot();
+        }
+    }
+
+    @Override
+    public boolean containsItem(@NotNull BoxItem item) {
+        if (itemIds == null) {
+            synchronized (lock) {
+                itemIds = collectItemIds(new IntOpenHashSet());
+            }
+        }
+        return itemIds.contains(item.getInternalId());
     }
 
     @Override
@@ -66,5 +85,17 @@ class CategoryImpl implements Category {
         if (snapshot != null) {
             snapshot = List.copyOf(items);
         }
+
+        if (itemIds != null) {
+            itemIds.clear();
+            collectItemIds(itemIds);
+        }
+    }
+
+    private @NotNull IntSet collectItemIds(@NotNull IntSet set) {
+        for (var item : items) {
+            set.add(item.getInternalId());
+        }
+        return set;
     }
 }

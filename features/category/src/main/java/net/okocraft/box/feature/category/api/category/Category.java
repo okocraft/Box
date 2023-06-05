@@ -75,6 +75,13 @@ public interface Category {
     void removeItem(@NotNull BoxItem item);
 
     /**
+     * Checks if the {@link BoxItem} is contained in this {@link Category}.
+     *
+     * @return whether the {@link BoxItem} is contained in this {@link Category}
+     */
+    boolean containsItem(@NotNull BoxItem item);
+
+    /**
      * Returns whether the category should be saved to {@code categories.yml}.
      *
      * @return whether the category should be saved to {@code categories.yml}.
