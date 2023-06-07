@@ -2,6 +2,8 @@ package net.okocraft.box.feature.category.internal.listener;
 
 import com.github.siroshun09.event4j.key.Key;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.event.player.PlayerCollectItemInfoEvent;
@@ -17,6 +19,9 @@ public class ItemInfoEventListener {
                     .append(Component.text(":"))
                     .color(NamedTextColor.GRAY)
                     .build();
+
+    private static final HoverEvent<Component> CLICK_TO_OPEN_MENU =
+            HoverEvent.showText(Component.translatable("box.category.item-info.click-to-open"));
 
     private final CategoryRegistry registry;
 
@@ -50,13 +55,14 @@ public class ItemInfoEventListener {
     }
 
     private @NotNull Component formatCategory(@NotNull Category category) {
-        var displayName =
+        return Component.space().append(
                 Component.text()
                         .append(Component.text("["))
                         .append(category.getDisplayName())
                         .append(Component.text("]"))
-                        .color(NamedTextColor.AQUA);
-
-        return Component.space().append(displayName);
+                        .color(NamedTextColor.AQUA)
+                        .hoverEvent(CLICK_TO_OPEN_MENU)
+                        .clickEvent(ClickEvent.runCommand("/box gui --category " + registry.getRegisteredName(category)))
+        );
     }
 }
