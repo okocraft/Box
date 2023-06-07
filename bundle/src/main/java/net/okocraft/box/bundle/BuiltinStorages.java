@@ -16,11 +16,13 @@ public final class BuiltinStorages {
 
     public static void addToRegistry(@NotNull StorageRegistry registry) {
         registry.register(YamlStorage.STORAGE_NAME, BuiltinStorages::createYamlStorage);
+        registry.setDefaultStorageName(YamlStorage.STORAGE_NAME);
+
         registry.register(Database.Type.SQLITE.getName(), BuiltinStorages::createSQLiteStorage);
         registry.register(Database.Type.MYSQL.getName(), BuiltinStorages::createMySQLStorage);
     }
 
-    private static @NotNull Storage createYamlStorage(@NotNull Configuration config) {
+    public static @NotNull Storage createYamlStorage(@NotNull Configuration config) {
         var dirName = config.getString("yaml.directory-name", "data");
         return new YamlStorage(BoxProvider.get().getPluginDirectory().resolve(dirName));
     }

@@ -4,9 +4,10 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -17,7 +18,7 @@ public class ExecutorProvider {
 
     private static final String EXECUTOR_PREFIX = "Box ";
 
-    private final Map<String, ExecutorService> registeredExecutors = new ConcurrentHashMap<>();
+    private final Map<String, ExecutorService> registeredExecutors = Collections.synchronizedMap(new LinkedHashMap<>());
     private final Logger logger;
     private final AtomicBoolean closed = new AtomicBoolean();
 
@@ -53,14 +54,24 @@ public class ExecutorProvider {
         return scheduler;
     }
 
-    @SuppressWarnings("ResultOfMethodCallIgnored")
-    public void shutdownExecutor(@NotNull String name) {
-        checkClosed();
+    public void close() {
+        if (closed.getAndSet(true)) {
+            throw new IllegalStateException("ExecutorProvider is already closed.");
+        }
 
+        var executorNames = new ArrayList<>(registeredExecutors.keySet());
+
+        Collections.reverse(executorNames);
+
+        executorNames.forEach(this::shutdownExecutor);
+    }
+
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    private void shutdownExecutor(@NotNull String name) {
         var executor = registeredExecutors.remove(name);
 
         if (executor == null) {
-            throw new IllegalArgumentException(name + " is not registered or already shutdown.");
+            throw new IllegalArgumentException(name + " is not registered.");
         }
 
         executor.shutdown();
@@ -70,12 +81,6 @@ public class ExecutorProvider {
         } catch (InterruptedException e) {
             logger.error("An exception occurred while shutting down executor.", e);
         }
-    }
-
-    public void close() {
-        checkClosed();
-        closed.set(true);
-        Set.copyOf(registeredExecutors.keySet()).forEach(this::shutdownExecutor);
     }
 
     private @NotNull ThreadFactoryBuilder createThreadFactoryBuilder() {
@@ -88,7 +93,7 @@ public class ExecutorProvider {
 
     private void checkClosed() {
         if (closed.get()) {
-            throw new IllegalStateException("InternalExecutors was shutdown");
+            throw new IllegalStateException("ExecutorProvider is already closed.");
         }
     }
 }

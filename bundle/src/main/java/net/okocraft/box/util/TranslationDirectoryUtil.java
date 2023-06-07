@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class TranslationDirectoryUtil {
+public final class TranslationDirectoryUtil {
 
     public static @NotNull PathConsumerWrapper createPathConsumer() {
         return new PathConsumerWrapper();
@@ -80,5 +80,9 @@ public class TranslationDirectoryUtil {
         public void addCreator(@NotNull TranslationLoaderCreator creator) {
             creators.add(creator);
         }
+    }
+
+    private TranslationDirectoryUtil() {
+        throw new UnsupportedOperationException();
     }
 }

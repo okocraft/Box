@@ -1,13 +1,9 @@
 package net.okocraft.box.core;
 
-import com.github.siroshun09.configapi.api.Configuration;
 import com.github.siroshun09.configapi.api.util.ResourceUtils;
 import com.github.siroshun09.configapi.yaml.YamlConfiguration;
 import com.github.siroshun09.event4j.bus.EventBus;
-import com.github.siroshun09.translationloader.ConfigurationLoader;
-import com.github.siroshun09.translationloader.TranslationLoader;
 import com.github.siroshun09.translationloader.directory.TranslationDirectory;
-import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.BoxProvider;
@@ -36,12 +32,16 @@ import net.okocraft.box.core.model.loader.ItemLoader;
 import net.okocraft.box.core.model.manager.item.BoxItemManager;
 import net.okocraft.box.core.model.manager.stock.BoxStockManager;
 import net.okocraft.box.core.model.manager.user.BoxUserManager;
+import net.okocraft.box.core.model.manager.BoxItemManager;
+import net.okocraft.box.core.model.manager.BoxStockManager;
+import net.okocraft.box.core.model.manager.BoxUserManager;
 import net.okocraft.box.core.player.BoxPlayerMapImpl;
 import net.okocraft.box.core.scheduler.FoliaSchedulerWrapper;
 import net.okocraft.box.core.util.executor.InternalExecutors;
+import net.okocraft.box.core.task.AutoSaveTask;
+import net.okocraft.box.core.taskfactory.BoxTaskFactory;
 import net.okocraft.box.storage.api.holder.StorageHolder;
 import net.okocraft.box.storage.api.model.Storage;
-import net.okocraft.box.storage.api.registry.StaticStorageRegistry;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
@@ -50,34 +50,30 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-import java.util.jar.JarFile;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class BoxPlugin implements BoxAPI {
+public class BoxCore implements BoxAPI {
 
-    private final JavaPlugin plugin;
-    private final Path pluginDirectory;
-    private final Path jarFile;
+    private final PluginContext context;
 
     private final YamlConfiguration configuration;
     private final TranslationDirectory translationDirectory;
-    private final DebugListener debugListener = new DebugListener();
 
-    private final EventBus<BoxEvent> eventBus = EventBus.create(BoxEvent.class, InternalExecutors.getEventExecutor());
     private final FoliaSchedulerWrapper scheduler = new FoliaSchedulerWrapper();
 
     private final BoxCommandImpl boxCommand = new BoxCommandImpl();
@@ -92,22 +88,11 @@ public class BoxPlugin implements BoxAPI {
     private BoxCustomDataContainer customDataContainer;
     private BoxPlayerMapImpl playerMap;
 
-    public BoxPlugin(@NotNull JavaPlugin plugin, @NotNull Path jarFile) {
-        this.plugin = plugin;
-        this.pluginDirectory = plugin.getDataFolder().toPath();
-        this.jarFile = jarFile;
+    public BoxCore(@NotNull PluginContext context) {
+        this.context = context;
 
-        this.configuration =
-                YamlConfiguration.create(pluginDirectory.resolve("config.yml"));
-        this.translationDirectory =
-                TranslationDirectory.newBuilder()
-                        .setDirectory(pluginDirectory.resolve("languages"))
-                        .setKey(Key.key("box", "language"))
-                        .setDefaultLocale(Locale.ENGLISH)
-                        .onDirectoryCreated(this::saveDefaultLanguages)
-                        .setVersion(getPluginVersion())
-                        .setTranslationLoaderCreator(this::getBundledTranslation)
-                        .build();
+        this.configuration = context.configuration();
+        this.translationDirectory = context.translationDirectory();
 
         BoxProvider.set(this);
     }
@@ -116,7 +101,7 @@ public class BoxPlugin implements BoxAPI {
         getLogger().info("Loading config.yml...");
 
         try {
-            ResourceUtils.copyFromJarIfNotExists(jarFile, "config.yml", configuration.getPath());
+            ResourceUtils.copyFromJarIfNotExists(context.jarFile(), "config.yml", configuration.getPath());
             configuration.load();
         } catch (IOException e) {
             getLogger().log(Level.SEVERE, "Could not load config.yml", e);
@@ -133,7 +118,7 @@ public class BoxPlugin implements BoxAPI {
         }
 
         if (configuration.get(Settings.DEBUG)) {
-            debugListener.register();
+            DebugListener.register(getEventBus());
             getLogger().info("Debug mode is ENABLED");
         }
 
@@ -146,18 +131,18 @@ public class BoxPlugin implements BoxAPI {
         var storageSection = configuration.getOrCreateSection("storage");
 
         var storageType = storageSection.getString("type");
-        var storageFunction = StaticStorageRegistry.getStorageFunction(storageType);
+        var storageFunction = context.storageRegistry().getStorageFunction(storageType);
 
         if (storageFunction == null) {
             if (!storageType.isEmpty()) {
                 getLogger().warning(storageType + " is not found!");
-                getLogger().warning("Using Yaml storage...");
+                getLogger().warning("Using " + context.storageRegistry().getDefaultStorageName() + " storage...");
             }
 
-            storageFunction = StaticStorageRegistry.getYamlStorageSupplier();
+            storage = context.storageRegistry().createDefaultStorage(storageSection);
+        } else {
+            storage = storageFunction.apply(storageSection);
         }
-
-        storage = storageFunction.apply(storageSection);
 
         getLogger().info("Initializing " + storage.getName() + " storage...");
 
@@ -172,6 +157,8 @@ public class BoxPlugin implements BoxAPI {
 
         getLogger().info("Initializing managers...");
 
+        userManager = new BoxUserManager(storage.getUserStorage());
+
         try {
             itemManager = ItemLoader.load(storage.getItemStorage());
         } catch (Exception e) {
@@ -180,20 +167,19 @@ public class BoxPlugin implements BoxAPI {
         }
 
         stockManager = new BoxStockManager(storage.getStockStorage(), uuid -> Bukkit.getPlayer(uuid) != null);
-        userManager = new BoxUserManager(storage.getUserStorage());
 
-        customDataContainer = new BoxCustomDataContainer(storage.getCustomDataStorage());
+        customDataContainer = new BoxCustomDataContainer(storage.getCustomDataStorage(), createSingleThread("Custom Data"));
 
-        playerMap = new BoxPlayerMapImpl(userManager, stockManager);
+        playerMap = new BoxPlayerMapImpl(userManager, stockManager, createScheduler("Player Loader"));
         playerMap.loadAll();
 
-        Bukkit.getPluginManager().registerEvents(new PlayerConnectionListener(playerMap), plugin);
+        Bukkit.getPluginManager().registerEvents(new PlayerConnectionListener(playerMap), context.plugin());
 
         stockManager.schedulerAutoSaveTask(scheduler);
 
         getLogger().info("Registering commands...");
 
-        Optional.ofNullable(plugin.getCommand("box"))
+        Optional.ofNullable(context.plugin().getCommand("box"))
                 .ifPresentOrElse(
                         boxCommand::register,
                         () -> {
@@ -201,7 +187,7 @@ public class BoxPlugin implements BoxAPI {
                         }
                 );
 
-        Optional.ofNullable(plugin.getCommand("boxadmin"))
+        Optional.ofNullable(context.plugin().getCommand("boxadmin"))
                 .ifPresentOrElse(
                         boxAdminCommand::register,
                         () -> {
@@ -211,8 +197,8 @@ public class BoxPlugin implements BoxAPI {
 
         getLogger().info("Registering async-tab-completion listener...");
 
-        Bukkit.getPluginManager().registerEvents(boxCommand, plugin);
-        Bukkit.getPluginManager().registerEvents(boxAdminCommand, plugin);
+        Bukkit.getPluginManager().registerEvents(boxCommand, context.plugin());
+        Bukkit.getPluginManager().registerEvents(boxAdminCommand, context.plugin());
 
         return true;
     }
@@ -234,17 +220,20 @@ public class BoxPlugin implements BoxAPI {
 
         stockManager.close();
 
-        debugListener.unregister();
+        DebugListener.unregister(getEventBus());
+
+        context.eventBus().close();
 
         getLogger().info("Shutting down executors...");
 
         try {
-            InternalExecutors.shutdownAll();
+            context.executorProvider().close();
         } catch (InterruptedException e) {
             getLogger().log(Level.SEVERE, "Could not shutdown executors", e);
         }
 
         getLogger().info("Closing the storage...");
+
         try {
             storage.close();
         } catch (Exception e) {
@@ -266,7 +255,7 @@ public class BoxPlugin implements BoxAPI {
             }
         };
 
-        debugListener.unregister();
+        DebugListener.unregister(getEventBus());
 
         if (!(sender instanceof ConsoleCommandSender)) {
             getLogger().info("Reloading box...");
@@ -281,7 +270,7 @@ public class BoxPlugin implements BoxAPI {
         }
 
         if (configuration.get(Settings.DEBUG)) {
-            debugListener.register();
+            DebugListener.register(getEventBus());
             getLogger().info("Debug mode is ENABLED");
         }
 
@@ -297,7 +286,7 @@ public class BoxPlugin implements BoxAPI {
             if (feature instanceof Reloadable reloadable) {
                 try {
                     reloadable.reload(sender);
-                    eventBus.callEvent(new FeatureEvent(feature, FeatureEvent.Type.RELOAD));
+                    getEventBus().callEvent(new FeatureEvent(feature, FeatureEvent.Type.RELOAD));
                 } catch (Throwable e) {
                     playerMessenger.accept(() -> ErrorMessages.ERROR_RELOAD_FAILURE.apply(feature.getName(), e));
                     getLogger().log(Level.SEVERE, "Could not reload " + feature.getName(), e);
@@ -310,52 +299,24 @@ public class BoxPlugin implements BoxAPI {
         }
     }
 
-    private void saveDefaultLanguages(@NotNull Path directory) throws IOException {
-        var english = "en.yml";
-        ResourceUtils.copyFromJarIfNotExists(jarFile, english, directory.resolve(english));
-
-        var japanese = "ja_JP.yml";
-        ResourceUtils.copyFromJarIfNotExists(jarFile, japanese, directory.resolve(japanese));
-    }
-
-    private @Nullable TranslationLoader getBundledTranslation(@NotNull Locale locale) throws IOException {
-        var strLocale = locale.toString();
-
-        if (!(strLocale.equals("en") || strLocale.equals("ja_JP"))) {
-            return null;
-        }
-
-        Configuration source;
-
-        try (var jar = new JarFile(getJar().toFile(), false);
-             var input = ResourceUtils.getInputStreamFromJar(jar, strLocale + ".yml")) {
-            source = YamlConfiguration.loadFromInputStream(input);
-        }
-
-        var loader = ConfigurationLoader.create(locale, source);
-        loader.load();
-
-        return loader;
-    }
-
     @Override
     public @NotNull Plugin getPluginInstance() {
-        return plugin;
+        return context.plugin();
     }
 
     @Override
     public @NotNull Path getPluginDirectory() {
-        return pluginDirectory;
+        return context.dataDirectory();
     }
 
     @Override
     public @NotNull Path getJar() {
-        return jarFile;
+        return context.jarFile();
     }
 
     @Override
     public @NotNull Logger getLogger() {
-        return plugin.getLogger();
+        return context.plugin().getLogger();
     }
 
     @Override
@@ -395,7 +356,7 @@ public class BoxPlugin implements BoxAPI {
 
     @Override
     public @NotNull EventBus<BoxEvent> getEventBus() {
-        return eventBus;
+        return context.eventBus();
     }
 
     @Override
@@ -409,7 +370,8 @@ public class BoxPlugin implements BoxAPI {
     }
 
     @Override
-    public @NotNull @Unmodifiable List<BoxFeature> getFeatures() {
+    public @NotNull
+    @Unmodifiable List<BoxFeature> getFeatures() {
         return List.copyOf(features);
     }
 
@@ -456,7 +418,7 @@ public class BoxPlugin implements BoxAPI {
 
         features.add(boxFeature);
 
-        eventBus.callEvent(new FeatureEvent(boxFeature, FeatureEvent.Type.REGISTER));
+        getEventBus().callEvent(new FeatureEvent(boxFeature, FeatureEvent.Type.REGISTER));
 
         getLogger().info("The " + boxFeature.getName() + " feature has been enabled.");
     }
@@ -476,7 +438,7 @@ public class BoxPlugin implements BoxAPI {
             );
         }
 
-        eventBus.callEvent(new FeatureEvent(boxFeature, FeatureEvent.Type.UNREGISTER));
+        context.eventBus().callEvent(new FeatureEvent(boxFeature, FeatureEvent.Type.UNREGISTER));
     }
 
     @Override
@@ -496,7 +458,7 @@ public class BoxPlugin implements BoxAPI {
 
     @Override
     public @NotNull NamespacedKey createNamespacedKey(@NotNull String value) {
-        return new NamespacedKey(plugin, value);
+        return new NamespacedKey(context.plugin(), value);
     }
 
     @SuppressWarnings("deprecation")

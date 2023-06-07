@@ -1,9 +1,10 @@
 package net.okocraft.box.bootstrap;
 
+import com.github.siroshun09.event4j.bus.EventBus;
 import io.papermc.paper.plugin.bootstrap.PluginProviderContext;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
+import net.okocraft.box.api.event.BoxEvent;
 import net.okocraft.box.api.feature.BoxFeature;
-import net.okocraft.box.core.event.EventBusHolder;
 import net.okocraft.box.core.util.executor.ExecutorProvider;
 import net.okocraft.box.storage.api.registry.StorageRegistry;
 import net.okocraft.box.util.TranslationDirectoryUtil;
@@ -12,10 +13,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
-public class BootstrapContext {
+public final class BootstrapContext {
 
     @Contract("_ -> new")
     @SuppressWarnings("UnstableApiUsage")
@@ -34,7 +34,7 @@ public class BootstrapContext {
     private final String version;
     private final StorageRegistry storageRegistry;
     private final ExecutorProvider executorProvider;
-    private final EventBusHolder eventBusHolder;
+    private final EventBus<BoxEvent> eventBus;
     private final List<BoxFeature> boxFeatureList = new ArrayList<>();
     private final TranslationDirectoryUtil.PathConsumerWrapper onLanguageDirectoryCreated;
     private final TranslationDirectoryUtil.TranslationLoaderCreatorHolder translationLoaderCreators;
@@ -46,7 +46,7 @@ public class BootstrapContext {
         this.version = version;
         this.storageRegistry = new StorageRegistry();
         this.executorProvider = new ExecutorProvider(logger);
-        this.eventBusHolder = EventBusHolder.initialize(executorProvider);
+        this.eventBus = EventBus.create(BoxEvent.class, executorProvider.newSingleThreadExecutor("Event"));
         this.onLanguageDirectoryCreated = TranslationDirectoryUtil.createPathConsumer();
         this.translationLoaderCreators = TranslationDirectoryUtil.createCreatorHolder();
     }
@@ -75,11 +75,11 @@ public class BootstrapContext {
         return executorProvider;
     }
 
-    public @NotNull EventBusHolder getEventBusHolder() {
-        return eventBusHolder;
+    public @NotNull EventBus<BoxEvent> getEventBus() {
+        return eventBus;
     }
 
-    public @NotNull Collection<BoxFeature> getBoxFeatureList() {
+    public @NotNull List<BoxFeature> getBoxFeatureList() {
         return boxFeatureList;
     }
 

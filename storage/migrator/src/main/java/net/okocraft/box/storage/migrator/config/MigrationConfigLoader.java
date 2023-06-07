@@ -3,7 +3,7 @@ package net.okocraft.box.storage.migrator.config;
 import com.github.siroshun09.configapi.api.Configuration;
 import com.github.siroshun09.configapi.yaml.YamlConfiguration;
 import net.okocraft.box.storage.api.model.Storage;
-import net.okocraft.box.storage.api.registry.StaticStorageRegistry;
+import net.okocraft.box.storage.api.registry.StorageRegistry;
 import net.okocraft.box.storage.migrator.StorageMigrator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -45,12 +45,12 @@ public final class MigrationConfigLoader {
         return true;
     }
 
-    public static @Nullable StorageMigrator prepare(@NotNull Configuration config, @NotNull Logger logger) {
+    public static @Nullable StorageMigrator prepare(@NotNull Configuration config, @NotNull StorageRegistry storageRegistry, @NotNull Logger logger) {
         var sourceStorageSetting = config.getOrCreateSection("source-storage");
         var targetStorageSetting = config.getOrCreateSection("target-storage");
 
-        var sourceStorageFunction = StaticStorageRegistry.getStorageFunction(sourceStorageSetting.getString("type"));
-        var targetStorageFunction = StaticStorageRegistry.getStorageFunction(targetStorageSetting.getString("type"));
+        var sourceStorageFunction = storageRegistry.getStorageFunction(sourceStorageSetting.getString("type"));
+        var targetStorageFunction = storageRegistry.getStorageFunction(targetStorageSetting.getString("type"));
 
         if (sourceStorageFunction == null) {
             logger.warning("Invalid storage type (source): " + sourceStorageSetting.getString("type", "not set"));

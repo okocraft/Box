@@ -13,7 +13,7 @@ import java.nio.file.Path;
 import java.util.Locale;
 import java.util.jar.JarFile;
 
-public class BuiltinTranslations {
+public final class BuiltinTranslations {
 
     public static void saveDefaultTranslationFiles(@NotNull Path jarFile, @NotNull Path directory) throws IOException {
         var english = "en.yml";
@@ -42,5 +42,9 @@ public class BuiltinTranslations {
         loader.load();
 
         return loader;
+    }
+
+    private BuiltinTranslations() {
+        throw new UnsupportedOperationException();
     }
 }

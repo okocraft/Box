@@ -11,7 +11,7 @@ import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings({"UnstableApiUsage", "unused"})
-public class BoxBootstrap implements PluginBootstrap {
+public final class BoxBootstrap implements PluginBootstrap {
 
     private static BoxBootstrap instance = null;
 

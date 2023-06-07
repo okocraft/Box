@@ -1,95 +1,136 @@
 package net.okocraft.box.plugin;
 
-import com.github.siroshun09.configapi.api.util.ResourceUtils;
 import com.github.siroshun09.configapi.yaml.YamlConfiguration;
-import com.github.siroshun09.translationloader.directory.TranslationDirectory;
-import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
-import net.okocraft.box.api.model.stock.AbstractStockHolder;
+import net.okocraft.box.api.feature.BoxFeature;
 import net.okocraft.box.bootstrap.BootstrapContext;
-import net.okocraft.box.core.config.Settings;
-import net.okocraft.box.core.event.EventBusHolder;
-import net.okocraft.box.core.listener.DebugListener;
-import net.okocraft.box.core.util.executor.ExecutorProvider;
-import net.okocraft.box.storage.api.registry.StorageRegistry;
+import net.okocraft.box.core.BoxCore;
+import net.okocraft.box.core.PluginContext;
+import net.okocraft.box.storage.migrator.StorageMigrator;
+import net.okocraft.box.storage.migrator.config.MigrationConfigLoader;
 import net.okocraft.box.util.TranslationDirectoryUtil;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
-import java.nio.file.Path;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.List;
 import java.util.logging.Level;
 
-public class BoxPlugin extends JavaPlugin {
+public final class BoxPlugin extends JavaPlugin {
 
-    private final Path dataDirectory;
-    private final Path jarFile;
-    private final String version;
-    private final StorageRegistry storageRegistry;
-    private final ExecutorProvider executorProvider;
-    private final YamlConfiguration configuration;
-    private final TranslationDirectory translationDirectory;
-    private final EventBusHolder eventBusHolder;
+    private final PluginContext pluginContext;
+    private final BoxCore boxCore;
+    private final List<BoxFeature> preregisteredFeatures;
 
-    private boolean isLoaded = false;
+    private Status status = Status.NOT_LOADED;
 
-    public BoxPlugin(@NotNull BootstrapContext context) {
-        this.dataDirectory = context.getPluginDirectory();
-        this.jarFile = context.getJarFile();
-        this.version = context.getVersion();
-        this.storageRegistry = context.getStorageRegistry();
-        this.executorProvider = context.getExecutorProvider();
-        this.configuration = YamlConfiguration.create(context.getPluginDirectory().resolve("config.yml"));
-        this.translationDirectory = TranslationDirectoryUtil.fromContext(context);
-        this.eventBusHolder = context.getEventBusHolder();
+    public BoxPlugin(@NotNull BootstrapContext bootstrapContext) {
+        this.pluginContext = new PluginContext(
+                this,
+                bootstrapContext.getVersion(),
+                bootstrapContext.getPluginDirectory(),
+                bootstrapContext.getJarFile(),
+                bootstrapContext.getExecutorProvider(),
+                bootstrapContext.getEventBus(),
+                YamlConfiguration.create(bootstrapContext.getPluginDirectory().resolve("config.yml")),
+                TranslationDirectoryUtil.fromContext(bootstrapContext),
+                bootstrapContext.getStorageRegistry()
+        );
+        this.boxCore = new BoxCore(pluginContext);
+        this.preregisteredFeatures = bootstrapContext.getBoxFeatureList();
     }
 
     @Override
     public void onLoad() {
-        getLogger().info("Loading config.yml...");
-
-        try {
-            ResourceUtils.copyFromJarIfNotExists(jarFile, "config.yml", configuration.getPath());
-            configuration.load();
-        } catch (IOException e) {
-            getLogger().log(Level.SEVERE, "Could not load config.yml", e);
+        if (status != Status.NOT_LOADED) {
             return;
         }
 
-        getLogger().info("Loading languages...");
+        var start = Instant.now();
 
-        try {
-            translationDirectory.load();
-        } catch (IOException e) {
-            getLogger().log(Level.SEVERE, "Could not load languages", e);
+        if (boxCore.load()) {
+            status = Status.LOADED;
+        } else {
+            status = Status.EXCEPTION_OCCURRED;
             return;
         }
 
-        if (configuration.get(Settings.DEBUG)) {
-            DebugListener.register(eventBusHolder.getEventBus());
-            getLogger().info("Debug mode is ENABLED");
-        }
-
-        if (configuration.get(Settings.ALLOW_MINUS_STOCK)) {
-            AbstractStockHolder.allowMinus = true;
-            getLogger().info("Negative numbers are allowed in the stock");
-        }
-
-        isLoaded = true;
-        getLogger().info("Successfully loaded!");
+        var finish = Instant.now();
+        getLogger().info("Successfully loaded! (" + Duration.between(start, finish).toMillis() + "ms)");
     }
 
     @Override
     public void onEnable() {
-        if (!isLoaded) {
-            disablePlugin();
+        if (status != Status.LOADED) {
+            getServer().getPluginManager().disablePlugin(this);
+            return;
         }
+
+        try {
+            runMigratorIfNeeded();
+        } catch (Exception e) {
+            getLogger().log(Level.SEVERE, "An exception occurred while migrating data.", e);
+            status = Status.EXCEPTION_OCCURRED;
+            return;
+        }
+
+        var start = Instant.now();
+
+        if (boxCore.enable()) {
+            status = Status.ENABLED;
+        } else {
+            status = Status.EXCEPTION_OCCURRED;
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+
+        preregisteredFeatures.forEach(boxCore::register);
+
+        var finish = Instant.now();
+        getLogger().info("Successfully enabled! (" + Duration.between(start, finish).toMillis() + "ms)");
     }
 
     @Override
     public void onDisable() {
+        if (status == Status.ENABLED) {
+            boxCore.disable();
+            status = Status.DISABLED;
+        }
+
+        getLogger().info("Successfully disabled. Goodbye!");
     }
 
-    private void disablePlugin() {
-        getServer().getPluginManager().disablePlugin(this);
+    private void runMigratorIfNeeded() throws Exception {
+        StorageMigrator migrator = null;
+
+        try (var migrationYaml = MigrationConfigLoader.load(boxCore.getPluginDirectory().resolve("migration.yml"), getLogger())) {
+            if (MigrationConfigLoader.isMigrationRequested(migrationYaml, getLogger())) {
+                migrator = MigrationConfigLoader.prepare(migrationYaml, pluginContext.storageRegistry(), getLogger());
+            }
+        }
+
+        if (migrator != null) {
+             var start = Instant.now();
+
+            getLogger().info("Initializing storages...");
+            migrator.init();
+
+            getLogger().info("Migrating data...");
+            migrator.run();
+
+            getLogger().info("Shutting down storages...");
+            migrator.close();
+
+            var finish = Instant.now();
+            getLogger().info("Migration is completed. (" + Duration.between(start, finish).toMillis() + "ms)");
+        }
+    }
+
+    public enum Status {
+        NOT_LOADED,
+        LOADED,
+        ENABLED,
+        DISABLED,
+        EXCEPTION_OCCURRED
     }
 }
