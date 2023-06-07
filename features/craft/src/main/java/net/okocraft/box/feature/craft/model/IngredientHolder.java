@@ -31,11 +31,11 @@ public class IngredientHolder {
     IngredientHolder(int slot, @NotNull List<ItemStack> patterns) {
         this.slot = slot;
 
-        var tempPattern = new ArrayList<BoxIngredientItem>();
+        var tempPattern = new ArrayList<BoxIngredientItem>(patterns.size());
 
         for (var item : patterns) {
-            var boxItem = BoxProvider.get().getItemManager().getBoxItem(item);
-            boxItem.ifPresent(value -> tempPattern.add(ModelCache.getIngredientItem(value, item.getAmount())));
+            BoxProvider.get().getItemManager().getBoxItem(item)
+                    .ifPresent(value -> tempPattern.add(ModelCache.getIngredientItem(value, item.getAmount())));
         }
 
         this.patterns = Collections.unmodifiableList(tempPattern);
