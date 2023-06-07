@@ -1,7 +1,6 @@
 package net.okocraft.box.core.taskfactory;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import io.papermc.paper.threadedregions.scheduler.EntityScheduler;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.taskfactory.TaskFactory;
 import net.okocraft.box.api.util.Folia;
@@ -48,7 +47,7 @@ public class BoxTaskFactory implements TaskFactory {
         Objects.requireNonNull(task);
 
         if (Folia.check()) {
-            return CompletableFuture.runAsync(() -> task.accept(target), createExecutorFromEntityScheduler(target.getScheduler()));
+            throw new UnsupportedOperationException(); // return CompletableFuture.runAsync(() -> task.accept(target), createExecutorFromEntityScheduler(target.getScheduler()));
         } else {
             return CompletableFuture.runAsync(() -> task.accept(target), getMainThread());
         }
@@ -72,7 +71,7 @@ public class BoxTaskFactory implements TaskFactory {
         Objects.requireNonNull(function);
 
         if (Folia.check()) {
-            return CompletableFuture.supplyAsync(() -> function.apply(entity), createExecutorFromEntityScheduler(entity.getScheduler()));
+            throw new UnsupportedOperationException(); // return CompletableFuture.supplyAsync(() -> function.apply(entity), createExecutorFromEntityScheduler(entity.getScheduler()));
         } else {
             return CompletableFuture.supplyAsync(() -> function.apply(entity), getMainThread());
         }
@@ -108,8 +107,9 @@ public class BoxTaskFactory implements TaskFactory {
     private @NotNull Executor getMainThread() {
         return Bukkit.getScheduler().getMainThreadExecutor(BoxProvider.get().getPluginInstance());
     }
-
+    /*
     private @NotNull Executor createExecutorFromEntityScheduler(@NotNull EntityScheduler scheduler) {
         return command -> scheduler.run(BoxProvider.get().getPluginInstance(), $ -> command.run(), null);
     }
+    */
 }
