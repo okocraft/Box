@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
+import java.util.Optional;
 
 public class ItemCrafter {
 
@@ -56,7 +57,14 @@ public class ItemCrafter {
         var cause = new CraftCause(crafter, recipe);
 
         for (var ingredient : recipe.ingredients()) {
-            stockHolder.decrease(ingredient.item(), ingredient.amount() * times, cause);
+            int amount = ingredient.amount() * times;
+
+            stockHolder.decrease(ingredient.item(), amount, cause);
+
+            Optional.ofNullable(ingredient.item().getOriginal().getType().getCraftingRemainingItem())
+                    .map(Enum::name)
+                    .flatMap(BoxProvider.get().getItemManager()::getBoxItem)
+                    .ifPresent(boxItem -> stockHolder.increase(boxItem, amount, cause));
         }
 
         int resultAmount = recipe.amount() * times;
