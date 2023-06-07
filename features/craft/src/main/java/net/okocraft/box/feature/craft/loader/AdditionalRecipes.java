@@ -17,7 +17,7 @@ final class AdditionalRecipes {
     }
 
     private static @NotNull Recipe fireworkRocket(int power) {
-        var namespace = BoxProvider.get().createNamespacedKey("recipe_firework_rocket_1");
+        var namespace = BoxProvider.get().createNamespacedKey("recipe_firework_rocket_" + power);
         var firework = new ItemStack(Material.FIREWORK_ROCKET, 3);
 
         if (firework.getItemMeta() instanceof FireworkMeta meta) {
