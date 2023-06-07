@@ -1,6 +1,8 @@
-package net.okocraft.box.feature.craft.model;
+package net.okocraft.box.feature.craft.util;
 
 import net.okocraft.box.api.model.item.BoxItem;
+import net.okocraft.box.feature.craft.model.BoxIngredientItem;
+import net.okocraft.box.feature.craft.model.IngredientHolder;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,13 +26,13 @@ public final class ModelCache {
         INGREDIENT_HOLDER_CACHE = null;
     }
 
-    static @NotNull BoxIngredientItem getIngredientItem(@NotNull BoxItem item, int amount) {
+    public static @NotNull BoxIngredientItem getIngredientItem(@NotNull BoxItem item, int amount) {
         return GENERATED_INGREDIENT_ITEMS != null && amount == 1 ?
                 GENERATED_INGREDIENT_ITEMS.computeIfAbsent(item, ModelCache::createIngredientItem) :
                 new BoxIngredientItem(item, amount);
     }
 
-    static @NotNull IngredientHolder getIngredientHolder(int slot, @NotNull List<ItemStack> patterns) {
+    public static @NotNull IngredientHolder getIngredientHolder(int slot, @NotNull List<ItemStack> patterns) {
         var holder = new IngredientHolder(slot, patterns);
         return INGREDIENT_HOLDER_CACHE != null ?
                 INGREDIENT_HOLDER_CACHE.computeIfAbsent(holder, Function.identity()) :

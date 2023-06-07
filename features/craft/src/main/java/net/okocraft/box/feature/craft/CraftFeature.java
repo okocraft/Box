@@ -11,7 +11,7 @@ import net.okocraft.box.api.message.Components;
 import net.okocraft.box.feature.craft.command.CraftCommand;
 import net.okocraft.box.feature.craft.loader.RecipeLoader;
 import net.okocraft.box.feature.craft.mode.CraftMode;
-import net.okocraft.box.feature.craft.model.ModelCache;
+import net.okocraft.box.feature.craft.util.ModelCache;
 import net.okocraft.box.feature.gui.GuiFeature;
 import net.okocraft.box.feature.gui.api.mode.ClickModeRegistry;
 import org.bukkit.command.CommandSender;

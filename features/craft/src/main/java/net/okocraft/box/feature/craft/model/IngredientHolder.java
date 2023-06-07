@@ -1,6 +1,7 @@
 package net.okocraft.box.feature.craft.model;
 
 import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.feature.craft.util.ModelCache;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.RecipeChoice;
 import org.jetbrains.annotations.NotNull;
