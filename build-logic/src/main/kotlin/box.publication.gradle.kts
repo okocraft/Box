@@ -43,7 +43,7 @@ publishing {
 
             pom {
                 name.set(project.name)
-                description.set("A Paper plugin that provide virtual chests.")
+                description.set("A Paper plugin to provide virtual containers that can store 2.1 billion items per item.")
                 url.set("https://github.com/okocraft/Box")
 
                 licenses {

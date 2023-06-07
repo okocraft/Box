@@ -4,7 +4,7 @@
 ![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/okocraft/Box/gradle.yml?branch=main)
 ![GitHub](https://img.shields.io/github/license/okocraft/Box)
 
-Box is a plugin for Paper that allows users to store any items in a virtual inventory.
+A Paper plugin to provide virtual containers that can store 2.1 billion items per item.
 
 <!--- TODO English
 ## 特徴
