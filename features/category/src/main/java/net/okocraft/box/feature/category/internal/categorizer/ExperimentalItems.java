@@ -13,9 +13,8 @@ public final class ExperimentalItems {
      * This is extracted Materials that marked as @ApiStatus.Experimental.
      * Let's hope that an appropriate API will be provided in the future.
      *
-     * NOTE: Material#Bundle has existed since 1.17, so it is not included here.
+     * NOTE: Material#BUNDLE has existed since 1.17, so it is not included here.
      */
-    @SuppressWarnings("UnstableApiUsage")
     public static @NotNull @Unmodifiable Set<Material> mc1_19_3() {
         return EnumSet.of(
                 Material.ACACIA_HANGING_SIGN, Material.BAMBOO_BLOCK, Material.BAMBOO_BUTTON,
@@ -35,9 +34,8 @@ public final class ExperimentalItems {
      * This is extracted Materials that marked as @ApiStatus.Experimental.
      * Let's hope that an appropriate API will be provided in the future.
      *
-     * NOTE: Material#Bundle has existed since 1.17, so it is not included here.
+     * NOTE: Material#BUNDLE has existed since 1.17, so it is not included here.
      */
-    @SuppressWarnings("UnstableApiUsage")
     public static @NotNull @Unmodifiable Set<Material> mc1_19_4() {
         return EnumSet.of(
                 Material.CHERRY_PLANKS, Material.BAMBOO_PLANKS, Material.BAMBOO_MOSAIC,
@@ -62,8 +60,12 @@ public final class ExperimentalItems {
                 Material.WARD_ARMOR_TRIM_SMITHING_TEMPLATE, Material.EYE_ARMOR_TRIM_SMITHING_TEMPLATE,
                 Material.VEX_ARMOR_TRIM_SMITHING_TEMPLATE, Material.TIDE_ARMOR_TRIM_SMITHING_TEMPLATE,
                 Material.SNOUT_ARMOR_TRIM_SMITHING_TEMPLATE, Material.RIB_ARMOR_TRIM_SMITHING_TEMPLATE,
-                Material.SPIRE_ARMOR_TRIM_SMITHING_TEMPLATE, Material.POTTERY_SHARD_ARCHER,
-                Material.POTTERY_SHARD_PRIZE, Material.POTTERY_SHARD_ARMS_UP, Material.POTTERY_SHARD_SKULL
+                Material.SPIRE_ARMOR_TRIM_SMITHING_TEMPLATE,
+                // POTTERY_SHARD_* have been renamed in 1.20
+                Material.valueOf("POTTERY_SHARD_ARCHER"),
+                Material.valueOf("POTTERY_SHARD_PRIZE"),
+                Material.valueOf("POTTERY_SHARD_ARMS_UP"),
+                Material.valueOf("POTTERY_SHARD_SKULL")
         );
     }
 }
