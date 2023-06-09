@@ -42,6 +42,8 @@ public final class BundledCategoryFile {
 
             if (category != null) {
                 result.put(Set.copyOf(source.getStringList(key)), category);
+            } else {
+                BoxProvider.get().getLogger().warning("Unknown default category: " + key);
             }
         }
 
