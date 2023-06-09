@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 public final class DefaultItemUpdater {
 
-    public static @NotNull List<BoxItem> update(@NotNull ItemStorage storage, @NotNull MCDataVersion dataVersion, int defaultItemVersion) throws Exception {
+    public static @NotNull List<BoxItem> update(@NotNull ItemStorage storage, @NotNull MCDataVersion dataVersion) throws Exception {
         var oldItemMap = storage.loadAllDefaultItems().stream().collect(Collectors.toMap(BoxItem::getOriginal, Function.identity()));
         var oldToNewItemMap = new HashMap<BoxItem, DefaultItem>();
         var newItems = new ArrayList<DefaultItem>();
@@ -29,7 +29,7 @@ public final class DefaultItemUpdater {
             }
         }
 
-        if (dataVersion.isBetween(MCDataVersion.MC_1_19, MCDataVersion.MC_1_19_4) && defaultItemVersion == 0) {
+        if (dataVersion.isAfterOrSame(MCDataVersion.MC_1_19)) {
             var oldGoatHorn = oldItemMap.get(new ItemStack(Material.GOAT_HORN));
 
             if (oldGoatHorn != null) {

@@ -94,7 +94,7 @@ public class ItemMigrator implements DataMigrator<ItemStorage> {
         } else if (dataVersion.isSame(MCDataVersion.CURRENT) && defaultItemVersion == DefaultItemProvider.version()) {
             return storage.loadAllDefaultItems();
         } else {
-            return DefaultItemUpdater.update(storage, dataVersion, defaultItemVersion);
+            return DefaultItemUpdater.update(storage, dataVersion);
         }
     }
 

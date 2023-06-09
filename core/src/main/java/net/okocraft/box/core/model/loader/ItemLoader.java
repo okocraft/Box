@@ -57,7 +57,7 @@ public class ItemLoader {
             return storage.loadAllDefaultItems();
         } else {
             logger.warning("Version upgrade detected. Updating default item data...");
-            return DefaultItemUpdater.update(storage, dataVersion, defaultItemVersion);
+            return DefaultItemUpdater.update(storage, dataVersion);
         }
     }
 
