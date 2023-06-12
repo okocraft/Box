@@ -20,7 +20,7 @@ public class ItemLoader {
         var dataVersion = itemStorage.getDataVersion();
         int defaultItemVersion = itemStorage.getDefaultItemVersion();
 
-        if ((dataVersion != null && dataVersion.isAfter(MCDataVersion.CURRENT)) || DefaultItemProvider.version() < defaultItemVersion) {
+        if (dataVersion != null && isTryingDowngrade(dataVersion, defaultItemVersion)) {
             throw new IllegalStateException("Downgrading version is not supported.");
         }
 
@@ -57,7 +57,7 @@ public class ItemLoader {
             return storage.loadAllDefaultItems();
         } else {
             logger.warning("Version upgrade detected. Updating default item data...");
-            return DefaultItemUpdater.update(storage, dataVersion, defaultItemVersion);
+            return DefaultItemUpdater.update(storage, dataVersion);
         }
     }
 
@@ -75,5 +75,10 @@ public class ItemLoader {
             storage.updateCustomItems(items);
             return items;
         }
+    }
+
+    private static boolean isTryingDowngrade(@NotNull MCDataVersion dataVersion, int defaultItemVersion) {
+        return dataVersion.isAfter(MCDataVersion.CURRENT) ||
+                (dataVersion.isSame(MCDataVersion.CURRENT) && DefaultItemProvider.version() < defaultItemVersion);
     }
 }

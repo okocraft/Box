@@ -91,10 +91,10 @@ public class ItemMigrator implements DataMigrator<ItemStorage> {
     private static @NotNull List<BoxItem> loadDefaultItems(@NotNull ItemStorage storage, @Nullable MCDataVersion dataVersion, int defaultItemVersion) throws Exception {
         if (dataVersion == null) {
             return storage.saveNewDefaultItems(DefaultItemProvider.all());
-        } else if (dataVersion.isSame(MCDataVersion.CURRENT)) {
+        } else if (dataVersion.isSame(MCDataVersion.CURRENT) && defaultItemVersion == DefaultItemProvider.version()) {
             return storage.loadAllDefaultItems();
         } else {
-            return DefaultItemUpdater.update(storage, dataVersion, defaultItemVersion);
+            return DefaultItemUpdater.update(storage, dataVersion);
         }
     }
 

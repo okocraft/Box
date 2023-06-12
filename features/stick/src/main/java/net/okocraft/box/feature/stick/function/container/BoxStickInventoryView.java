@@ -41,4 +41,13 @@ class BoxStickInventoryView extends InventoryView {
     public @NotNull String getTitle() {
         return "";
     }
+
+    @Override
+    public @NotNull String getOriginalTitle() {
+        return "";
+    }
+
+    @Override
+    public void setTitle(@NotNull String title) {
+    }
 }

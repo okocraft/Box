@@ -7,34 +7,23 @@ import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.util.MCDataVersion;
 import net.okocraft.box.feature.category.api.category.Category;
 import net.okocraft.box.feature.category.api.registry.CategoryRegistry;
-import net.okocraft.box.feature.category.internal.categorizer.Categorizer;
 import net.okocraft.box.feature.category.internal.categorizer.ExperimentalItems;
 import net.okocraft.box.feature.category.internal.category.CommonDefaultCategory;
 import net.okocraft.box.feature.category.internal.category.DefaultCategory;
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public final class CategoryLoader {
-
-    private static final Set<Material> EXPERIMENTAL_ITEMS;
-
-    static {
-        if (MCDataVersion.MC_1_19_3.isSame(MCDataVersion.CURRENT)) {
-            EXPERIMENTAL_ITEMS = ExperimentalItems.mc1_19_3();
-        } else if (MCDataVersion.MC_1_19_4.isSame(MCDataVersion.CURRENT)) {
-            EXPERIMENTAL_ITEMS = ExperimentalItems.mc1_19_4();
-        } else {
-            EXPERIMENTAL_ITEMS = Collections.emptySet();
-        }
-    }
 
     public static void load(@NotNull CategoryRegistry registry, @NotNull Configuration source) {
         var itemManager = BoxProvider.get().getItemManager();
@@ -72,17 +61,38 @@ public final class CategoryLoader {
             }
         }
 
+        var experimentalItems = getExperimentalItems();
+
         uncategorizedItems.stream()
                 .filter(Predicate.not(itemManager::isCustomItem))
-                .filter(item -> EXPERIMENTAL_ITEMS.contains(item.getOriginal().getType()))
+                .filter(item -> experimentalItems.contains(item.getOriginal().getType()))
                 .sorted(Comparator.comparing(item -> item.getOriginal().getType()))
                 .forEach(item -> {
                     getOrCreateCategory(registry, "experimental", Material.CHAIN_COMMAND_BLOCK, false).addItem(item);
                     uncategorizedItems.remove(item);
                 });
 
+        if (uncategorizedItems.isEmpty()) {
+            return;
+        }
+
+        Map<Set<String>, CommonDefaultCategory> defaultCategoryMap;
+
+        try {
+            defaultCategoryMap = BundledCategoryFile.loadDefaultCategoryMap();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
         for (var item : uncategorizedItems.stream().sorted(Comparator.comparing(BoxItem::getPlainName)).toList()) {
-            var defaultCategory = Categorizer.categorize(item.getOriginal());
+            CommonDefaultCategory defaultCategory = null;
+
+            for (var entry : defaultCategoryMap.entrySet()) {
+                if (entry.getKey().contains(item.getPlainName())) {
+                    defaultCategory = entry.getValue();
+                    break;
+                }
+            }
 
             if (defaultCategory == null) {
                 defaultCategory = itemManager.isCustomItem(item) ?
@@ -91,9 +101,20 @@ public final class CategoryLoader {
             }
 
             var category = getOrCreateCategory(registry, defaultCategory);
+
             category.addItem(item);
 
             BoxProvider.get().getLogger().info("Added uncategorized item '" + item.getPlainName() + "' to category " + defaultCategory.getName());
+        }
+    }
+
+    private static @NotNull Set<Material> getExperimentalItems() {
+        if (MCDataVersion.MC_1_19_3.isSame(MCDataVersion.CURRENT)) {
+            return ExperimentalItems.mc1_19_3();
+        } else if (MCDataVersion.MC_1_19_4.isSame(MCDataVersion.CURRENT)) {
+            return ExperimentalItems.mc1_19_4();
+        } else {
+            return Collections.emptySet();
         }
     }
 
