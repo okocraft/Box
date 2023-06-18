@@ -32,14 +32,8 @@ public class BoxTaskFactory implements TaskFactory {
     );
 
     @Override
-    @Deprecated
     public @NotNull CompletableFuture<Void> run(@NotNull Runnable task) {
         Objects.requireNonNull(task);
-
-        if (Folia.check()) {
-            throw new UnsupportedOperationException("This method is not supported on Folia.");
-        }
-
         return CompletableFuture.runAsync(task, getGlobalExecutor());
     }
 
@@ -50,14 +44,8 @@ public class BoxTaskFactory implements TaskFactory {
     }
 
     @Override
-    @Deprecated
     public @NotNull <T> CompletableFuture<T> supply(@NotNull Supplier<T> supplier) {
         Objects.requireNonNull(supplier);
-
-        if (Folia.check()) {
-            throw new UnsupportedOperationException("This method is not supported on Folia.");
-        }
-
         return CompletableFuture.supplyAsync(supplier, getGlobalExecutor());
     }
 

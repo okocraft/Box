@@ -15,12 +15,12 @@ public interface TaskFactory {
 
     /**
      * Creates a {@link CompletableFuture} to run the task on the main thread.
+     * <p>
+     * In Folia, the {@link Runnable} will be executed on {@link org.bukkit.Bukkit#getGlobalRegionScheduler()}.
      *
      * @param task the task to run
      * @return the new {@link CompletableFuture}
-     * @deprecated not working on Folia
      */
-    @Deprecated(since = "5.3.1")
     @NotNull CompletableFuture<Void> run(@NotNull Runnable task);
 
     /**
@@ -38,13 +38,13 @@ public interface TaskFactory {
 
     /**
      * Creates a {@link CompletableFuture} to supply values on the main thread.
+     * <p>
+     * In Folia, the {@link Supplier} will be executed on {@link org.bukkit.Bukkit#getGlobalRegionScheduler()}.
      *
      * @param supplier the supplier
      * @param <T>      the value type
      * @return the new {@link CompletableFuture}
-     * @deprecated not working on Folia
      */
-    @Deprecated(since = "5.3.1")
     <T> @NotNull CompletableFuture<T> supply(@NotNull Supplier<T> supplier);
 
     /**
