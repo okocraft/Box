@@ -4,6 +4,7 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.taskfactory.TaskFactory;
 import net.okocraft.box.api.util.Folia;
+import net.okocraft.box.api.util.MCDataVersion;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
@@ -39,18 +40,13 @@ public class BoxTaskFactory implements TaskFactory {
             throw new UnsupportedOperationException("This method is not supported on Folia.");
         }
 
-        return CompletableFuture.runAsync(task, getMainThread());
+        return CompletableFuture.runAsync(task, getGlobalExecutor());
     }
 
     @Override
     public <E extends Entity> @NotNull CompletableFuture<Void> runEntityTask(@NotNull E target, @NotNull Consumer<E> task) {
         Objects.requireNonNull(task);
-
-        if (Folia.check()) {
-            throw new UnsupportedOperationException(); // return CompletableFuture.runAsync(() -> task.accept(target), createExecutorFromEntityScheduler(target.getScheduler()));
-        } else {
-            return CompletableFuture.runAsync(() -> task.accept(target), getMainThread());
-        }
+        return CompletableFuture.runAsync(() -> task.accept(target), getExecutorForEntity(target));
     }
 
     @Override
@@ -62,7 +58,7 @@ public class BoxTaskFactory implements TaskFactory {
             throw new UnsupportedOperationException("This method is not supported on Folia.");
         }
 
-        return CompletableFuture.supplyAsync(supplier, getMainThread());
+        return CompletableFuture.supplyAsync(supplier, getGlobalExecutor());
     }
 
     @Override
@@ -70,11 +66,7 @@ public class BoxTaskFactory implements TaskFactory {
         Objects.requireNonNull(entity);
         Objects.requireNonNull(function);
 
-        if (Folia.check()) {
-            throw new UnsupportedOperationException(); // return CompletableFuture.supplyAsync(() -> function.apply(entity), createExecutorFromEntityScheduler(entity.getScheduler()));
-        } else {
-            return CompletableFuture.supplyAsync(() -> function.apply(entity), getMainThread());
-        }
+        return CompletableFuture.supplyAsync(() -> function.apply(entity), getExecutorForEntity(entity));
     }
 
     @Override
@@ -104,12 +96,31 @@ public class BoxTaskFactory implements TaskFactory {
         );
     }
 
+    private @NotNull Executor getGlobalExecutor() {
+        return useModernExecutor() ?
+                command -> Bukkit.getGlobalRegionScheduler().execute(BoxProvider.get().getPluginInstance(), command) :
+                getMainThread();
+    }
+
+    private @NotNull Executor getExecutorForEntity(@NotNull Entity entity) {
+        if (useModernExecutor()) {
+            return command -> {
+                if (entity.isValid()) {
+                    entity.getScheduler().run(BoxProvider.get().getPluginInstance(), $ -> command.run(), null);
+                }
+            };
+        } else {
+            return getMainThread();
+        }
+    }
+
     private @NotNull Executor getMainThread() {
         return Bukkit.getScheduler().getMainThreadExecutor(BoxProvider.get().getPluginInstance());
     }
-    /*
-    private @NotNull Executor createExecutorFromEntityScheduler(@NotNull EntityScheduler scheduler) {
-        return command -> scheduler.run(BoxProvider.get().getPluginInstance(), $ -> command.run(), null);
+
+    private boolean useModernExecutor() {
+        // In Paper 1.20.1 Build 40, Folia's new scheduler APIs have been moved to Paper
+        // Or, Box is running on Folia
+        return MCDataVersion.CURRENT.isAfterOrSame(MCDataVersion.MC_1_20_1) || Folia.check();
     }
-    */
 }
