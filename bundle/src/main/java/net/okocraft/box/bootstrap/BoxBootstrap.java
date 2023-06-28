@@ -1,5 +1,6 @@
 package net.okocraft.box.bootstrap;
 
+import io.papermc.paper.plugin.bootstrap.BootstrapContext;
 import io.papermc.paper.plugin.bootstrap.PluginBootstrap;
 import io.papermc.paper.plugin.bootstrap.PluginProviderContext;
 import net.okocraft.box.bundle.BuiltinFeatures;
@@ -24,27 +25,27 @@ public final class BoxBootstrap implements PluginBootstrap {
     }
 
     @MonotonicNonNull
-    private BootstrapContext bootstrapContext;
+    private BoxBootstrapContext boxBootstrapContext;
 
     @Override
-    public void bootstrap(@NotNull PluginProviderContext context) {
+    public void bootstrap(@NotNull BootstrapContext context) {
         BoxBootstrap.instance = this;
-        bootstrapContext = BootstrapContext.create(context);
+        boxBootstrapContext = BoxBootstrapContext.create(context);
 
-        BuiltinFeatures.addToContext(bootstrapContext);
-        BuiltinStorages.addToRegistry(bootstrapContext.getStorageRegistry());
+        BuiltinFeatures.addToContext(boxBootstrapContext);
+        BuiltinStorages.addToRegistry(boxBootstrapContext.getStorageRegistry());
 
-        bootstrapContext.onLanguageDirectoryCreated().add(directory -> BuiltinTranslations.saveDefaultTranslationFiles(bootstrapContext.getJarFile(), directory));
-        bootstrapContext.getTranslationLoaderCreators().addCreator(locale -> BuiltinTranslations.loadDefaultTranslation(bootstrapContext.getJarFile(), locale));
+        boxBootstrapContext.onLanguageDirectoryCreated().add(directory -> BuiltinTranslations.saveDefaultTranslationFiles(boxBootstrapContext.getJarFile(), directory));
+        boxBootstrapContext.getTranslationLoaderCreators().addCreator(locale -> BuiltinTranslations.loadDefaultTranslation(boxBootstrapContext.getJarFile(), locale));
     }
 
     @Override
     public @NotNull JavaPlugin createPlugin(@NotNull PluginProviderContext context) { // PluginProviderContext is immutable, so this argument can be ignored.
         BoxBootstrap.instance = null;
-        return new BoxPlugin(bootstrapContext);
+        return new BoxPlugin(boxBootstrapContext);
     }
 
-    public @NotNull BootstrapContext getBootstrapContext() { // This method exists for external access.
-        return bootstrapContext;
+    public @NotNull BoxBootstrapContext getBootstrapContext() { // This method exists for external access.
+        return boxBootstrapContext;
     }
 }

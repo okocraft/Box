@@ -2,7 +2,7 @@ package net.okocraft.box.plugin;
 
 import com.github.siroshun09.configapi.yaml.YamlConfiguration;
 import net.okocraft.box.api.feature.BoxFeature;
-import net.okocraft.box.bootstrap.BootstrapContext;
+import net.okocraft.box.bootstrap.BoxBootstrapContext;
 import net.okocraft.box.core.BoxCore;
 import net.okocraft.box.core.PluginContext;
 import net.okocraft.box.storage.migrator.StorageMigrator;
@@ -24,20 +24,20 @@ public final class BoxPlugin extends JavaPlugin {
 
     private Status status = Status.NOT_LOADED;
 
-    public BoxPlugin(@NotNull BootstrapContext bootstrapContext) {
+    public BoxPlugin(@NotNull BoxBootstrapContext boxBootstrapContext) {
         this.pluginContext = new PluginContext(
                 this,
-                bootstrapContext.getVersion(),
-                bootstrapContext.getPluginDirectory(),
-                bootstrapContext.getJarFile(),
-                bootstrapContext.getExecutorProvider(),
-                bootstrapContext.getEventBus(),
-                YamlConfiguration.create(bootstrapContext.getPluginDirectory().resolve("config.yml")),
-                TranslationDirectoryUtil.fromContext(bootstrapContext),
-                bootstrapContext.getStorageRegistry()
+                boxBootstrapContext.getVersion(),
+                boxBootstrapContext.getPluginDirectory(),
+                boxBootstrapContext.getJarFile(),
+                boxBootstrapContext.getExecutorProvider(),
+                boxBootstrapContext.getEventBus(),
+                YamlConfiguration.create(boxBootstrapContext.getPluginDirectory().resolve("config.yml")),
+                TranslationDirectoryUtil.fromContext(boxBootstrapContext),
+                boxBootstrapContext.getStorageRegistry()
         );
         this.boxCore = new BoxCore(pluginContext);
-        this.preregisteredFeatures = bootstrapContext.getBoxFeatureList();
+        this.preregisteredFeatures = boxBootstrapContext.getBoxFeatureList();
     }
 
     @Override

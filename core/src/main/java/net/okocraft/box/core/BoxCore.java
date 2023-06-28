@@ -32,14 +32,8 @@ import net.okocraft.box.core.model.loader.ItemLoader;
 import net.okocraft.box.core.model.manager.item.BoxItemManager;
 import net.okocraft.box.core.model.manager.stock.BoxStockManager;
 import net.okocraft.box.core.model.manager.user.BoxUserManager;
-import net.okocraft.box.core.model.manager.BoxItemManager;
-import net.okocraft.box.core.model.manager.BoxStockManager;
-import net.okocraft.box.core.model.manager.BoxUserManager;
 import net.okocraft.box.core.player.BoxPlayerMapImpl;
 import net.okocraft.box.core.scheduler.FoliaSchedulerWrapper;
-import net.okocraft.box.core.util.executor.InternalExecutors;
-import net.okocraft.box.core.task.AutoSaveTask;
-import net.okocraft.box.core.taskfactory.BoxTaskFactory;
 import net.okocraft.box.storage.api.holder.StorageHolder;
 import net.okocraft.box.storage.api.model.Storage;
 import org.bukkit.Bukkit;
@@ -58,10 +52,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.logging.Level;
@@ -168,9 +158,9 @@ public class BoxCore implements BoxAPI {
 
         stockManager = new BoxStockManager(storage.getStockStorage(), uuid -> Bukkit.getPlayer(uuid) != null);
 
-        customDataContainer = new BoxCustomDataContainer(storage.getCustomDataStorage(), createSingleThread("Custom Data"));
+        customDataContainer = new BoxCustomDataContainer(storage.getCustomDataStorage(), context.executorProvider().newSingleThreadExecutor("Custom Data"));
 
-        playerMap = new BoxPlayerMapImpl(userManager, stockManager, createScheduler("Player Loader"));
+        playerMap = new BoxPlayerMapImpl(userManager, stockManager, context.executorProvider().newSingleThreadScheduler("Player Loader"));
         playerMap.loadAll();
 
         Bukkit.getPluginManager().registerEvents(new PlayerConnectionListener(playerMap), context.plugin());
@@ -226,11 +216,7 @@ public class BoxCore implements BoxAPI {
 
         getLogger().info("Shutting down executors...");
 
-        try {
-            context.executorProvider().close();
-        } catch (InterruptedException e) {
-            getLogger().log(Level.SEVERE, "Could not shutdown executors", e);
-        }
+        context.executorProvider().close(context.plugin());
 
         getLogger().info("Closing the storage...");
 
@@ -459,10 +445,5 @@ public class BoxCore implements BoxAPI {
     @Override
     public @NotNull NamespacedKey createNamespacedKey(@NotNull String value) {
         return new NamespacedKey(context.plugin(), value);
-    }
-
-    @SuppressWarnings("deprecation")
-    private @NotNull String getPluginVersion() { // Preparation for future Paper Plugin support.
-        return plugin.getDescription().getVersion();
     }
 }

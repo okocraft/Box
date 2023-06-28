@@ -8,7 +8,6 @@ import net.okocraft.box.api.player.BoxPlayerMap;
 import net.okocraft.box.core.message.ErrorMessages;
 import net.okocraft.box.core.model.manager.stock.BoxStockManager;
 import net.okocraft.box.core.model.manager.user.BoxUserManager;
-import net.okocraft.box.core.util.executor.InternalExecutors;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -31,10 +30,11 @@ public class BoxPlayerMapImpl implements BoxPlayerMap {
     private final BoxUserManager userManager;
     private final ScheduledExecutorService scheduler;
 
-    public BoxPlayerMapImpl(@NotNull BoxUserManager userManager, @NotNull BoxStockManager stockManager) {
+    public BoxPlayerMapImpl(@NotNull BoxUserManager userManager, @NotNull BoxStockManager stockManager,
+                            @NotNull ScheduledExecutorService scheduler) {
         this.userManager = userManager;
         this.stockManager = stockManager;
-        this.scheduler = InternalExecutors.newSingleThreadScheduler("Player Loader");
+        this.scheduler = scheduler;
     }
 
     @Override

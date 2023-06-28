@@ -1,6 +1,8 @@
 package net.okocraft.box.core.util.executor;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import org.bukkit.entity.Entity;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
@@ -8,22 +10,37 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class ExecutorProvider {
+public abstract class ExecutorProvider {
 
     private static final String EXECUTOR_PREFIX = "Box ";
 
     private final Map<String, ExecutorService> registeredExecutors = Collections.synchronizedMap(new LinkedHashMap<>());
+
+    private final ExecutorService worker = Executors.newFixedThreadPool(
+            Math.min(Runtime.getRuntime().availableProcessors(), 4),
+            new ThreadFactoryBuilder()
+                    .setDaemon(true)
+                    .setNameFormat("Box Worker - #%d")
+                    .setUncaughtExceptionHandler(this::catchException)
+                    .build()
+    );
+
     private final Logger logger;
     private final AtomicBoolean closed = new AtomicBoolean();
 
     public ExecutorProvider(@NotNull Logger logger) {
         this.logger = logger;
+    }
+
+    public @NotNull ExecutorService getWorker() {
+        return worker;
     }
 
     public @NotNull ExecutorService newSingleThreadExecutor(@NotNull String name) {
@@ -54,10 +71,14 @@ public class ExecutorProvider {
         return scheduler;
     }
 
-    public void close() {
+    public void close(@NotNull Plugin pluginInstance) {
         if (closed.getAndSet(true)) {
             throw new IllegalStateException("ExecutorProvider is already closed.");
         }
+
+        cancelAllTasks(pluginInstance);
+
+        worker.shutdownNow();
 
         var executorNames = new ArrayList<>(registeredExecutors.keySet());
 
@@ -96,4 +117,12 @@ public class ExecutorProvider {
             throw new IllegalStateException("ExecutorProvider is already closed.");
         }
     }
+
+    /* Platform implementation */
+
+    public abstract @NotNull Executor getGlobalExecutor();
+
+    public abstract @NotNull Executor getEntityScheduler(@NotNull Entity entity, @NotNull Plugin plugin);
+
+    public abstract void cancelAllTasks(@NotNull Plugin plugin);
 }

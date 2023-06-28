@@ -1,6 +1,6 @@
 package net.okocraft.box.bundle;
 
-import net.okocraft.box.bootstrap.BootstrapContext;
+import net.okocraft.box.bootstrap.BoxBootstrapContext;
 import net.okocraft.box.feature.autostore.AutoStoreFeature;
 import net.okocraft.box.feature.bemode.BEModeFeature;
 import net.okocraft.box.feature.category.CategoryFeature;
@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 public final class BuiltinFeatures {
 
-    public static void addToContext(@NotNull BootstrapContext context) {
+    public static void addToContext(@NotNull BoxBootstrapContext context) {
         context.addFeature(new CommandFeature())
                 .addFeature(new CategoryFeature())
                 .addFeature(new GuiFeature())

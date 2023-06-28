@@ -5,7 +5,7 @@ import com.github.siroshun09.translationloader.directory.TranslationDirectory;
 import com.github.siroshun09.translationloader.directory.TranslationLoaderCreator;
 import com.github.siroshun09.translationloader.util.PathConsumer;
 import net.kyori.adventure.key.Key;
-import net.okocraft.box.bootstrap.BootstrapContext;
+import net.okocraft.box.bootstrap.BoxBootstrapContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,7 +25,7 @@ public final class TranslationDirectoryUtil {
         return new TranslationLoaderCreatorHolder();
     }
 
-    public static @NotNull TranslationDirectory fromContext(@NotNull BootstrapContext context) {
+    public static @NotNull TranslationDirectory fromContext(@NotNull BoxBootstrapContext context) {
         return TranslationDirectory.newBuilder()
                 .setDirectory(context.getPluginDirectory().resolve("languages"))
                 .setKey(Key.key("box", "language"))
