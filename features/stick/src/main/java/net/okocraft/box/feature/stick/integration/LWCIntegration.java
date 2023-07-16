@@ -5,18 +5,13 @@ import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Permission;
 import com.griefcraft.model.Protection;
 import net.okocraft.box.feature.stick.function.container.ContainerOperation;
-import org.bukkit.Bukkit;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class LWCIntegration {
+final class LWCIntegration {
 
-    public static boolean canModifyInventory(@NotNull Player player, @NotNull BlockState state, @NotNull ContainerOperation.OperationType operationType) {
-        if (Bukkit.getPluginManager().getPlugin("LWC") == null) {
-            return true;
-        }
-
+    static boolean canModify(@NotNull Player player, @NotNull BlockState state, @NotNull ContainerOperation.OperationType operationType) {
         var protection = LWC.getInstance().findProtection(state);
 
         if (protection == null) {
@@ -25,7 +20,7 @@ public class LWCIntegration {
 
         return switch (protection.getType()) {
             case PUBLIC, PASSWORD, PRIVATE -> true; // the click to the chest has already been rejected
-            case DONATION -> operationType == ContainerOperation.OperationType.WITHDRAW  || canAccess(player, protection);
+            case DONATION -> operationType == ContainerOperation.OperationType.WITHDRAW || canAccess(player, protection);
             case SUPPLY -> operationType == ContainerOperation.OperationType.DEPOSIT || canAccess(player, protection);
             case DISPLAY -> canAccess(player, protection);
             default -> false; // unknown protection type?
@@ -55,5 +50,9 @@ public class LWCIntegration {
         }
 
         return canAccess;
+    }
+
+    private LWCIntegration() {
+        throw new UnsupportedOperationException();
     }
 }
