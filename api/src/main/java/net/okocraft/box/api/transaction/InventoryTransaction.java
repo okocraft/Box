@@ -141,7 +141,7 @@ public final class InventoryTransaction {
 
             var boxItem = BoxProvider.get().getItemManager().getBoxItem(item);
 
-            if (boxItem.isPresent() && checkClickEvent(inventoryView, i)) {
+            if (boxItem.isPresent() && checkClickEvent(inventoryView, InventoryAction.PICKUP_ALL, i)) {
                 result.add(TransactionResult.create(DEPOSITED, boxItem.get(), item.getAmount()));
                 contents[i] = null;
             }
@@ -261,7 +261,7 @@ public final class InventoryTransaction {
             var item = contents[i];
 
             if (item == null) {
-                if (view != null && !checkClickEvent(view, i)) {
+                if (view != null && !checkClickEvent(view, InventoryAction.PLACE_ALL, i)) {
                     continue;
                 }
 
@@ -277,7 +277,7 @@ public final class InventoryTransaction {
 
                 contents[i] = cloned;
             } else if (item.isSimilar(boxItem.getOriginal())) {
-                if (view != null && !checkClickEvent(view, i)) {
+                if (view != null && !checkClickEvent(view, InventoryAction.PLACE_ALL, i)) {
                     continue;
                 }
 
@@ -308,9 +308,7 @@ public final class InventoryTransaction {
         }
     }
 
-    private static boolean checkClickEvent(@NotNull InventoryView view, int slot) {
-        return new InventoryClickEvent(
-                view, InventoryType.SlotType.CONTAINER, slot,
-                ClickType.LEFT, InventoryAction.PLACE_ALL).callEvent();
+    private static boolean checkClickEvent(@NotNull InventoryView view, InventoryAction action, int slot) {
+        return new InventoryClickEvent(view, InventoryType.SlotType.CONTAINER, slot, ClickType.LEFT, action).callEvent();
     }
 }
