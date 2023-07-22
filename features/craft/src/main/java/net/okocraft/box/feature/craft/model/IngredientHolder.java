@@ -185,8 +185,6 @@ public class IngredientHolder {
             if (patterns.size() <= selected) {
                 selected = 0;
             }
-
-            getSelected();
         }
 
         /**
