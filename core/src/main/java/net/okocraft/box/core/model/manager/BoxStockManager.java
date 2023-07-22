@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 
 public class BoxStockManager implements StockManager {
@@ -25,7 +26,7 @@ public class BoxStockManager implements StockManager {
     private final ExecutorService executor;
 
     private final Map<BoxUser, UserStockHolderLoader> loaderMap = new HashMap<>();
-    private final Map<BoxUser, Object> lockMap = new HashMap<>();
+    private final Map<BoxUser, Object> lockMap = new ConcurrentHashMap<>();
 
     public BoxStockManager(@NotNull StockStorage stockStorage, @NotNull AutoSaveQueue queue) {
         this.stockStorage = stockStorage;

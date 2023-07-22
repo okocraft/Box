@@ -8,21 +8,25 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class PlayerSession {
 
-    private static final Map<UUID, PlayerSession> SESSION_MAP = new HashMap<>();
+    private static final Map<UUID, PlayerSession> SESSION_MAP = new ConcurrentHashMap<>();
 
     public static @NotNull PlayerSession get(@NotNull Player player) {
         return SESSION_MAP.computeIfAbsent(player.getUniqueId(), uuid -> new PlayerSession());
     }
 
-    private final Map<String, CustomNumberHolder> customNumberMap = new HashMap<>();
+    public static void unload(@NotNull Player player) {
+        SESSION_MAP.remove(player.getUniqueId());
+    }
+
+    private final Map<String, CustomNumberHolder> customNumberMap = new ConcurrentHashMap<>();
     private List<BoxItemClickMode> availableClickModes;
     private @Nullable BoxItemClickMode currentClickMode;
     private @Nullable StockHolder stockHolder;

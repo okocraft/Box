@@ -14,17 +14,17 @@ import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ResetAllCommand extends AbstractCommand {
 
     private static final String CONFIRM = "confirm";
     private static final String CANCEL = "cancel";
 
-    private final Map<CommandSender, UserStockHolder> confirmationMap = new HashMap<>();
+    private final Map<CommandSender, UserStockHolder> confirmationMap = new ConcurrentHashMap<>();
 
     public ResetAllCommand() {
         super("resetall", "box.admin.command.resetall");

@@ -1,6 +1,7 @@
 package net.okocraft.box.feature.gui.internal.listener;
 
 import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.feature.gui.api.session.PlayerSession;
 import net.okocraft.box.feature.gui.internal.holder.BoxInventoryHolder;
 import net.okocraft.box.feature.gui.internal.lang.Displays;
 import org.bukkit.Bukkit;
@@ -10,19 +11,25 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
 public class InventoryListener implements Listener {
 
-    private final Map<UUID, CompletableFuture<?>> clickTaskMap = new HashMap<>();
-    private final Map<UUID, Long> lastClickTime = new HashMap<>();
+    private final Map<UUID, CompletableFuture<?>> clickTaskMap = new ConcurrentHashMap<>();
+    private final Map<UUID, Long> lastClickTime = new ConcurrentHashMap<>();
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onQuit(@NotNull PlayerQuitEvent event) {
+        PlayerSession.unload(event.getPlayer());
+    }
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onClick(@NotNull InventoryClickEvent event) {
