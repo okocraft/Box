@@ -92,11 +92,7 @@ public class BoxTaskFactory implements TaskFactory {
 
     private @NotNull Executor getExecutorForEntity(@NotNull Entity entity) {
         if (useModernExecutor()) {
-            return command -> {
-                if (entity.isValid()) {
-                    entity.getScheduler().run(BoxProvider.get().getPluginInstance(), $ -> command.run(), null);
-                }
-            };
+            return command -> entity.getScheduler().run(BoxProvider.get().getPluginInstance(), $ -> command.run(), null);
         } else {
             return getMainThread();
         }
