@@ -27,7 +27,7 @@ public final class CategoryLoader {
 
     public static void load(@NotNull CategoryRegistry registry, @NotNull Configuration source) {
         var itemManager = BoxProvider.get().getItemManager();
-        var uncategorizedItems = new HashSet<>(itemManager.getBoxItemSet());
+        var uncategorizedItems = new HashSet<>(itemManager.getItemList());
 
         for (var key : source.getKeyList()) {
             if (key.equals("icons") ||

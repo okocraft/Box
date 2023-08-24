@@ -25,7 +25,7 @@ public final class TabCompleter {
         var itemNameFilter = filter.toUpperCase(Locale.ENGLISH);
         return BoxProvider.get()
                 .getItemManager()
-                .getItemNameSet()
+                .getItemNameList()
                 .stream()
                 .filter(itemName -> itemName.startsWith(itemNameFilter))
                 .collect(Collectors.toList());

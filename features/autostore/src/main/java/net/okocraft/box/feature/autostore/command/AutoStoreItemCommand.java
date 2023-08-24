@@ -52,7 +52,7 @@ class AutoStoreItemCommand extends AutoStoreSubCommand {
             AutoStoreCommandUtil.enableAutoStore(setting, sender);
             changeToPerItemMode(setting, sender);
 
-            perItemModeSetting.setEnabledItems(bool ? itemManager.getBoxItemSet() : Collections.emptyList());
+            perItemModeSetting.setEnabledItems(bool ? itemManager.getItemList() : Collections.emptyList());
             sender.sendMessage(AutoStoreMessage.COMMAND_PER_ITEM_ALL_TOGGLED.apply(bool));
 
             AutoStoreCommandUtil.callEvent(setting);

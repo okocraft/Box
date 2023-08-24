@@ -4,6 +4,7 @@ import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.command.AbstractCommand;
 import net.okocraft.box.api.message.GeneralMessage;
+import net.okocraft.box.api.util.TabCompleter;
 import net.okocraft.box.feature.craft.RecipeRegistry;
 import net.okocraft.box.feature.craft.lang.Displays;
 import net.okocraft.box.feature.craft.menu.CraftMenu;
@@ -17,9 +18,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class CraftCommand extends AbstractCommand {
 
@@ -72,17 +71,11 @@ public class CraftCommand extends AbstractCommand {
 
     @Override
     public @NotNull List<String> onTabComplete(@NotNull CommandSender sender, @NotNull String[] args) {
-        if (!(sender instanceof Player) || args.length != 2) {
+        if (sender instanceof Player && args.length == 2) {
+            return TabCompleter.itemNames(args[1]);
+        } else {
             return Collections.emptyList();
         }
-
-        var itemNameFilter = args[1].toUpperCase(Locale.ROOT);
-        return BoxProvider.get()
-                .getItemManager()
-                .getItemNameSet()
-                .stream()
-                .filter(itemName -> itemName.startsWith(itemNameFilter))
-                .collect(Collectors.toList());
     }
 
     @Override
