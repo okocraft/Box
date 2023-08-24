@@ -41,8 +41,10 @@ class StockListCommand extends AbstractCommand {
             return;
         }
 
-        var context = 3 < args.length ? SharedStockListCommand.createContextFromArguments(Arrays.copyOfRange(args, 3, args.length)) : new SharedStockListCommand.Context();
-        sender.sendMessage(SharedStockListCommand.createStockList(targetStockHolder, context));
+        sender.sendMessage(SharedStockListCommand.createStockList(
+                targetStockHolder,
+                3 < args.length ? Arrays.copyOfRange(args, 3, args.length) : null
+        ));
     }
 
     @Override

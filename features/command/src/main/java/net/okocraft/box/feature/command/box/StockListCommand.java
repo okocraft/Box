@@ -47,8 +47,10 @@ public class StockListCommand extends AbstractCommand {
 
         var boxPlayer = playerMap.get(player);
 
-        var context = 1 < args.length ? SharedStockListCommand.createContextFromArguments(Arrays.copyOfRange(args, 1, args.length)) : new SharedStockListCommand.Context();
-        sender.sendMessage(SharedStockListCommand.createStockList(boxPlayer.getCurrentStockHolder(), context));
+        sender.sendMessage(SharedStockListCommand.createStockList(
+                boxPlayer.getCurrentStockHolder(),
+                1 < args.length ? Arrays.copyOfRange(args, 1, args.length) : null
+        ));
     }
 
     @Override
