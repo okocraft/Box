@@ -10,6 +10,20 @@ import org.jetbrains.annotations.NotNull;
 public interface BoxItem {
 
     /**
+     * Gets the internal id of this item.
+     *
+     * @return the internal id of this id
+     */
+    int getInternalId();
+
+    /**
+     * Gets the plain name of this item.
+     *
+     * @return the plain name of this item
+     */
+    @NotNull String getPlainName();
+
+    /**
      * Gets the original {@link ItemStack}.
      * <p>
      * The item returned by this method must not be modified.
@@ -28,23 +42,9 @@ public interface BoxItem {
     @NotNull ItemStack getClonedItem();
 
     /**
-     * Gets the plain name of this item.
-     *
-     * @return the plain name of this item
-     */
-    @NotNull String getPlainName();
-
-    /**
      * Gets the display name of this item as a {@link Component}.
      *
      * @return the display name of this item as a {@link Component}
      */
     @NotNull Component getDisplayName();
-
-    /**
-     * Gets the internal id of this item.
-     *
-     * @return the internal id of this id
-     */
-    int getInternalId();
 }
