@@ -132,7 +132,7 @@ public class InfinityCommand extends AbstractCommand {
 
         @Override
         public @NotNull @Unmodifiable Collection<BoxItem> getStockedItems() {
-            return BoxProvider.get().getItemManager().getBoxItemSet();
+            return BoxProvider.get().getItemManager().getItemList();
         }
 
         @Override
