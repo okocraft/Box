@@ -46,8 +46,11 @@ public interface StockHolder {
      *
      * @param item   the item to set the stock quantity
      * @param amount the amount
+     * @deprecated use {@link #setAmount(BoxItem, int, StockEvent.Cause)}
      */
     @ApiStatus.NonExtendable
+    @Deprecated(since = "5.5.0", forRemoval = true)
+    @ApiStatus.ScheduledForRemoval(inVersion = "6.0.0")
     default void setAmount(@NotNull BoxItem item, int amount) {
         setAmount(item, amount, StockEvent.Cause.API);
     }
@@ -70,8 +73,10 @@ public interface StockHolder {
      *
      * @param item the item to increase the stock
      * @return the stock quantity after increasing
+     * @deprecated use {@link #increase(BoxItem, int, StockEvent.Cause)}
      */
-    @ApiStatus.NonExtendable
+    @Deprecated(since = "5.5.0", forRemoval = true)
+    @ApiStatus.ScheduledForRemoval(inVersion = "6.0.0")
     default int increase(@NotNull BoxItem item) {
         return increase(item, 1, StockEvent.Cause.API);
     }
@@ -84,8 +89,10 @@ public interface StockHolder {
      * @param item      the item to increase the stock
      * @param increment the amount to increase the stock
      * @return the stock quantity after increasing
+     * @deprecated use {@link #increase(BoxItem, int, StockEvent.Cause)}
      */
-    @ApiStatus.NonExtendable
+    @Deprecated(since = "5.5.0", forRemoval = true)
+    @ApiStatus.ScheduledForRemoval(inVersion = "6.0.0")
     default int increase(@NotNull BoxItem item, int increment) {
         return increase(item, increment, StockEvent.Cause.API);
     }
@@ -109,8 +116,10 @@ public interface StockHolder {
      *
      * @param item the item to decrease the stock
      * @return the stock quantity after decreasing
+     * @deprecated use {@link #decrease(BoxItem, int, StockEvent.Cause)}
      */
-    @ApiStatus.NonExtendable
+    @Deprecated(since = "5.5.0", forRemoval = true)
+    @ApiStatus.ScheduledForRemoval(inVersion = "6.0.0")
     default int decrease(@NotNull BoxItem item) {
         return decrease(item, 1, StockEvent.Cause.API);
     }
@@ -123,8 +132,10 @@ public interface StockHolder {
      * @param item      the item to decrease the stock
      * @param decrement the amount to decrease the stock
      * @return the stock quantity after decreasing
+     * @deprecated use {@link #decrease(BoxItem, int, StockEvent.Cause)}
      */
-    @ApiStatus.NonExtendable
+    @Deprecated(since = "5.5.0", forRemoval = true)
+    @ApiStatus.ScheduledForRemoval(inVersion = "6.0.0")
     default int decrease(@NotNull BoxItem item, int decrement) {
         return decrease(item, decrement, StockEvent.Cause.API);
     }
@@ -159,7 +170,10 @@ public interface StockHolder {
      * Gets the {@link StockData} stream.
      *
      * @return the stream of {@link StockData}.
+     * @deprecated use {@link #toStockDataCollection()}
      */
+    @Deprecated(since = "5.5.0", forRemoval = true)
+    @ApiStatus.ScheduledForRemoval(inVersion = "6.0.0")
     default @NotNull Stream<StockData> stockDataStream() {
         return toStockDataCollection().stream();
     }
