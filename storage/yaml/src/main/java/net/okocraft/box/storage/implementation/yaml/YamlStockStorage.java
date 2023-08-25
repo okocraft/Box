@@ -82,7 +82,7 @@ class YamlStockStorage implements StockStorage {
             for (var stock : stockHolder.toStockDataCollection()) {
                 if (0 != stock.amount()) {
                     builder.append('\'')
-                            .append(stock.itemInternalId())
+                            .append(stock.itemId())
                             .append('\'')
                             .append(':')
                             .append(' ')

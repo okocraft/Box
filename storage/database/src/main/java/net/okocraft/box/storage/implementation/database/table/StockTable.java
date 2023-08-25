@@ -75,7 +75,7 @@ public class StockTable extends AbstractTable implements StockStorage {
                 }
 
                 statement.setString(1, strUuid);
-                statement.setInt(2, data.itemInternalId());
+                statement.setInt(2, data.itemId());
                 statement.setInt(3, data.amount());
                 statement.addBatch();
             }

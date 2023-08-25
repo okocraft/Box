@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * A record of the stock.
  */
-public record StockData(int itemInternalId, int amount) {
+public record StockData(int itemId, int amount) {
 
     /**
      * The constructor to check arguments.
@@ -30,6 +30,6 @@ public record StockData(int itemInternalId, int amount) {
     @Deprecated(since = "5.5.0", forRemoval = true)
     @ApiStatus.ScheduledForRemoval(inVersion = "6.0.0")
     public @NotNull BoxItem item() {
-        return BoxProvider.get().getItemManager().getBoxItem(itemInternalId).orElseThrow();
+        return BoxProvider.get().getItemManager().getBoxItem(itemId).orElseThrow();
     }
 }
