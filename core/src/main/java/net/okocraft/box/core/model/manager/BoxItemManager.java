@@ -149,6 +149,8 @@ public class BoxItemManager implements ItemManager {
                 return;
             }
 
+            addItem(item);
+
             BoxProvider.get().getEventBus().callEventAsync(new CustomItemRenameEvent(result, previousName));
             resultConsumer.accept(new ItemRegistrationResult.Success(result));
         });
