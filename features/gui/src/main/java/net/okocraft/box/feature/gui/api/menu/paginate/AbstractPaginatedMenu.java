@@ -84,6 +84,11 @@ public abstract class AbstractPaginatedMenu<T> extends AbstractMenu implements P
     }
 
     @Override
+    public int getMaxPage() {
+        return maxPage;
+    }
+
+    @Override
     public int getIconsPerPage() {
         return iconsPerPage;
     }
