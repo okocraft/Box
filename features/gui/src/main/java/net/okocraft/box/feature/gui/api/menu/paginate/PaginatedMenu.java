@@ -14,4 +14,8 @@ public interface PaginatedMenu extends Menu {
 
     void next();
 
+    void setPage(int page);
+
+    int getIconsPerPage();
+
 }

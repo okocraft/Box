@@ -102,4 +102,8 @@ public class CategoryMenu extends AbstractPaginatedMenu<BoxItem> {
             buttons.add(additionalButton);
         }
     }
+
+    public @NotNull Category getCategory() {
+        return category;
+    }
 }
