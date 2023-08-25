@@ -98,7 +98,7 @@ class AutoStoreItemCommand extends AutoStoreSubCommand {
     @Override
     @NotNull List<String> runTabComplete(@NotNull CommandSender sender, @NotNull String[] args) {
         if (args.length == 3) {
-            var result = TabCompleter.itemNames(args[2].toUpperCase(Locale.ROOT));
+            var result = TabCompleter.itemNames(args[2]);
 
             if ("all".startsWith(args[2].toLowerCase(Locale.ROOT))) {
                 result.add("all");

@@ -95,7 +95,7 @@ public class WithdrawCommand extends AbstractCommand {
             return Collections.emptyList();
         }
 
-        var itemNameFilter = args[1].toUpperCase(Locale.ROOT);
+        var itemNameFilter = args[1].toLowerCase(Locale.ENGLISH);
         var stockHolder = BoxProvider.get().getBoxPlayerMap().get(player).getCurrentStockHolder();
 
         return stockHolder.getStockedItems().stream()

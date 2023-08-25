@@ -129,34 +129,34 @@ public class SharedStockListCommand {
         boolean endsWith = arg.startsWith("*");
 
         if (startsWith && endsWith) {
-            var filter = arg.substring(1, arg.length() - 1).toUpperCase(Locale.ROOT);
+            var filter = arg.substring(1, arg.length() - 1).toLowerCase(Locale.ENGLISH);
             return item -> contains(item, filter);
         }
 
         if (startsWith) {
-            var filter = arg.substring(0, arg.length() - 1).toUpperCase(Locale.ROOT);
+            var filter = arg.substring(0, arg.length() - 1).toLowerCase(Locale.ENGLISH);
             return item -> startsWith(item, filter);
         }
 
         if (endsWith) {
-            var filter = arg.substring(1).toUpperCase(Locale.ROOT);
+            var filter = arg.substring(1).toLowerCase(Locale.ENGLISH);
             return item -> endsWith(item, filter);
         }
 
-        var filter = arg.toUpperCase(Locale.ROOT);
+        var filter = arg.toLowerCase(Locale.ENGLISH);
         return item -> contains(item, filter);
     }
 
     private static boolean startsWith(@NotNull BoxItem item, @NotNull String filter) {
-        return item.getPlainName().startsWith(filter);
+        return item.getPlainName().toLowerCase(Locale.ENGLISH).startsWith(filter);
     }
 
     private static boolean endsWith(@NotNull BoxItem item, @NotNull String filter) {
-        return item.getPlainName().endsWith(filter);
+        return item.getPlainName().toLowerCase(Locale.ENGLISH).endsWith(filter);
     }
 
     private static boolean contains(@NotNull BoxItem item, @NotNull String filter) {
-        return item.getPlainName().contains(filter);
+        return item.getPlainName().toLowerCase(Locale.ENGLISH).contains(filter);
     }
 
     private static final class Context {

@@ -122,12 +122,12 @@ public class GiveCommand extends AbstractCommand {
         }
 
         if (args.length == 3) {
-            var itemNameFilter = args[2].toUpperCase(Locale.ROOT);
+            var itemNameFilter = args[2].toLowerCase(Locale.ENGLISH);
             var stockHolder = BoxProvider.get().getBoxPlayerMap().get(player).getCurrentStockHolder();
 
             return stockHolder.getStockedItems().stream()
                     .map(BoxItem::getPlainName)
-                    .filter(itemName -> itemName.startsWith(itemNameFilter))
+                    .filter(itemName -> itemName.toLowerCase(Locale.ENGLISH).startsWith(itemNameFilter))
                     .collect(Collectors.toList());
         }
 

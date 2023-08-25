@@ -22,12 +22,12 @@ public final class TabCompleter {
      * @return the list of item names that match the filter
      */
     public static @NotNull List<String> itemNames(@NotNull String filter) {
-        var itemNameFilter = filter.toUpperCase(Locale.ENGLISH);
+        var itemNameFilter = filter.toLowerCase(Locale.ENGLISH);
         return BoxProvider.get()
                 .getItemManager()
                 .getItemNameList()
                 .stream()
-                .filter(itemName -> itemName.startsWith(itemNameFilter))
+                .filter(itemName -> itemName.toLowerCase(Locale.ENGLISH).startsWith(itemNameFilter))
                 .collect(Collectors.toList());
     }
 
