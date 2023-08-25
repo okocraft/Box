@@ -7,6 +7,7 @@ import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.event.player.PlayerCollectItemInfoEvent;
+import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.feature.category.api.category.Category;
 import net.okocraft.box.feature.category.api.registry.CategoryRegistry;
 import org.jetbrains.annotations.NotNull;
@@ -48,13 +49,13 @@ public class ItemInfoEventListener {
 
         registry.values().stream()
                 .filter(category -> category.containsItem(event.getItem()))
-                .map(this::formatCategory)
+                .map(category -> formatCategory(category, event.getItem()))
                 .forEach(info::append);
 
         event.addInfo(info.build());
     }
 
-    private @NotNull Component formatCategory(@NotNull Category category) {
+    private @NotNull Component formatCategory(@NotNull Category category, @NotNull BoxItem item) {
         return Component.space().append(
                 Component.text()
                         .append(Component.text("["))
@@ -62,7 +63,12 @@ public class ItemInfoEventListener {
                         .append(Component.text("]"))
                         .color(NamedTextColor.AQUA)
                         .hoverEvent(CLICK_TO_OPEN_MENU)
-                        .clickEvent(ClickEvent.runCommand("/box gui --category " + registry.getRegisteredName(category)))
+                        .clickEvent(ClickEvent.runCommand(createCommand(category, item)))
         );
+    }
+
+    private @NotNull String createCommand(@NotNull Category category, @NotNull BoxItem item) {
+        int page = category.getItems().indexOf(item) / 45 + 1;
+        return "/box gui --category " + registry.getRegisteredName(category) + " --page " + page;
     }
 }
