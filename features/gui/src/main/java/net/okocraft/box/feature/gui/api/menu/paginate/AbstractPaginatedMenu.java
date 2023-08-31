@@ -76,6 +76,24 @@ public abstract class AbstractPaginatedMenu<T> extends AbstractMenu implements P
     }
 
     @Override
+    public void setPage(int page) {
+        if (this.currentPage != page && 1 <= page && page <= maxPage) {
+            this.currentPage = page;
+            moved = true;
+        }
+    }
+
+    @Override
+    public int getMaxPage() {
+        return maxPage;
+    }
+
+    @Override
+    public int getIconsPerPage() {
+        return iconsPerPage;
+    }
+
+    @Override
     public void updateMenu(@NotNull Player viewer) {
         renderPage(viewer);
         moved = false;

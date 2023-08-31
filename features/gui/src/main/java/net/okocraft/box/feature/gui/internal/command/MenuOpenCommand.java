@@ -10,8 +10,10 @@ import net.okocraft.box.api.model.stock.StockHolder;
 import net.okocraft.box.api.util.TabCompleter;
 import net.okocraft.box.api.util.UserStockHolderOperator;
 import net.okocraft.box.feature.category.api.registry.CategoryRegistry;
+import net.okocraft.box.feature.category.internal.listener.ItemInfoEventListener;
 import net.okocraft.box.feature.gui.api.event.MenuOpenEvent;
 import net.okocraft.box.feature.gui.api.menu.Menu;
+import net.okocraft.box.feature.gui.api.menu.paginate.PaginatedMenu;
 import net.okocraft.box.feature.gui.api.mode.ClickModeRegistry;
 import net.okocraft.box.feature.gui.api.session.PlayerSession;
 import net.okocraft.box.feature.gui.api.util.MenuOpener;
@@ -26,6 +28,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.IntStream;
 
 public class MenuOpenCommand extends AbstractCommand {
 
@@ -36,6 +39,12 @@ public class MenuOpenCommand extends AbstractCommand {
 
     public MenuOpenCommand() {
         super("gui", "box.command.gui", Set.of("g", "menu", "m"));
+
+        ItemInfoEventListener.setCommandCreator(((category, item) -> {
+            var name = CategoryRegistry.get().getRegisteredName(category);
+            int page = category.getItems().indexOf(item) / 45 + 1;
+            return "/box gui --category " + name + " --page " + page;
+        }));
     }
 
     @Override
@@ -57,6 +66,7 @@ public class MenuOpenCommand extends AbstractCommand {
 
         StockHolder source = null;
         Menu menu = null;
+        int page = 0;
 
         for (int i = 1; i + 1 < args.length; i = i + 2) {
             var arg = args[i].toLowerCase(Locale.ENGLISH);
@@ -82,13 +92,29 @@ public class MenuOpenCommand extends AbstractCommand {
                 }
 
                 menu = new CategoryMenu(category.get());
+            } else if (arg.equalsIgnoreCase("-pa") || arg.equalsIgnoreCase("--page")) {
+                try {
+                    page = Integer.parseInt(args[i + 1]);
+                } catch (NumberFormatException ignored) {
+                    player.sendMessage(GeneralMessage.ERROR_COMMAND_INVALID_NUMBER.apply(args[i + 1]));
+                    return;
+                }
             }
+        }
+
+        if (menu == null) {
+            menu = new CategorySelectorMenu();
+        }
+
+        //noinspection ConstantValue
+        if (1 <= page && menu instanceof PaginatedMenu paginatedMenu) {
+            paginatedMenu.setPage(Math.min(page, paginatedMenu.getMaxPage()));
         }
 
         openMenu(
                 player,
                 Objects.requireNonNullElseGet(source, () -> getCurrentStockHolder(player)),
-                Objects.requireNonNullElseGet(menu, CategorySelectorMenu::new)
+                menu
         );
     }
 
@@ -118,11 +144,15 @@ public class MenuOpenCommand extends AbstractCommand {
                         .filter(name -> name.startsWith(args[args.length - 1]))
                         .toList();
             }
+
+            if (arg.equalsIgnoreCase("-pa") || arg.equalsIgnoreCase("--page")) {
+                return IntStream.rangeClosed(1, 10).mapToObj(Integer::toString).toList();
+            }
         }
 
         return sender.hasPermission(OTHER_PLAYERS_GUI_PERMISSION) ?
-                List.of("--player", "--category", "-p", "-c") :
-                List.of("--category", "-c");
+                List.of("--player", "--category", "--page", "-p", "-c", "-pa") :
+                List.of("--category", "-c", "--page", "-pa");
     }
 
     private void legacyBehavior(@NotNull Player player, @NotNull String[] args) {

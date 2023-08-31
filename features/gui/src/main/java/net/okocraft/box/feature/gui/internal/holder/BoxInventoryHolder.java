@@ -76,4 +76,8 @@ public class BoxInventoryHolder implements InventoryHolder {
             viewer.updateInventory();
         }
     }
+
+    public @NotNull Menu getMenu() {
+        return menu;
+    }
 }
