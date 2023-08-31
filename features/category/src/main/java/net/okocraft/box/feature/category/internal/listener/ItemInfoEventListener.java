@@ -12,6 +12,9 @@ import net.okocraft.box.feature.category.api.category.Category;
 import net.okocraft.box.feature.category.api.registry.CategoryRegistry;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+import java.util.function.BiFunction;
+
 public class ItemInfoEventListener {
 
     private static final Component ITEM_INFO_PREFIX =
@@ -23,6 +26,12 @@ public class ItemInfoEventListener {
 
     private static final HoverEvent<Component> CLICK_TO_OPEN_MENU =
             HoverEvent.showText(Component.translatable("box.category.item-info.click-to-open"));
+
+    private static BiFunction<Category, BoxItem, String> commandCreator;
+
+    public static void setCommandCreator(@NotNull BiFunction<Category, BoxItem, String> commandCreator) {
+        ItemInfoEventListener.commandCreator = Objects.requireNonNull(commandCreator);
+    }
 
     private final CategoryRegistry registry;
 
@@ -63,12 +72,7 @@ public class ItemInfoEventListener {
                         .append(Component.text("]"))
                         .color(NamedTextColor.AQUA)
                         .hoverEvent(CLICK_TO_OPEN_MENU)
-                        .clickEvent(ClickEvent.runCommand(createCommand(category, item)))
+                        .clickEvent(commandCreator != null ? ClickEvent.runCommand(commandCreator.apply(category, item)) : null)
         );
-    }
-
-    private @NotNull String createCommand(@NotNull Category category, @NotNull BoxItem item) {
-        int page = category.getItems().indexOf(item) / 45 + 1;
-        return "/box gui --category " + registry.getRegisteredName(category) + " --page " + page;
     }
 }

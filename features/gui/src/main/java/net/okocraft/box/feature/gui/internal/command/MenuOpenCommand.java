@@ -10,6 +10,7 @@ import net.okocraft.box.api.model.stock.StockHolder;
 import net.okocraft.box.api.util.TabCompleter;
 import net.okocraft.box.api.util.UserStockHolderOperator;
 import net.okocraft.box.feature.category.api.registry.CategoryRegistry;
+import net.okocraft.box.feature.category.internal.listener.ItemInfoEventListener;
 import net.okocraft.box.feature.gui.api.event.MenuOpenEvent;
 import net.okocraft.box.feature.gui.api.menu.Menu;
 import net.okocraft.box.feature.gui.api.menu.paginate.PaginatedMenu;
@@ -38,6 +39,12 @@ public class MenuOpenCommand extends AbstractCommand {
 
     public MenuOpenCommand() {
         super("gui", "box.command.gui", Set.of("g", "menu", "m"));
+
+        ItemInfoEventListener.setCommandCreator(((category, item) -> {
+            var name = CategoryRegistry.get().getRegisteredName(category);
+            int page = category.getItems().indexOf(item) / 45 + 1;
+            return "/box gui --category " + name + " --page " + page;
+        }));
     }
 
     @Override
