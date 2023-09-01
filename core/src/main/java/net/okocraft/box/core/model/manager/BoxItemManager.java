@@ -1,29 +1,31 @@
 package net.okocraft.box.core.model.manager;
 
+import it.unimi.dsi.fastutil.ints.IntImmutableList;
+import it.unimi.dsi.fastutil.objects.ObjectImmutableList;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.event.item.CustomItemRegisterEvent;
 import net.okocraft.box.api.event.item.CustomItemRenameEvent;
 import net.okocraft.box.api.model.item.BoxCustomItem;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.model.manager.ItemManager;
+import net.okocraft.box.api.model.result.item.ItemRegistrationResult;
 import net.okocraft.box.core.util.executor.InternalExecutors;
 import net.okocraft.box.storage.api.factory.item.BoxItemFactory;
 import net.okocraft.box.storage.api.model.item.ItemStorage;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
+import java.util.function.Consumer;
 
 public class BoxItemManager implements ItemManager {
 
@@ -46,13 +48,32 @@ public class BoxItemManager implements ItemManager {
 
     @Override
     public @NotNull Optional<BoxItem> getBoxItem(@NotNull String name) {
-        name = Objects.requireNonNull(name).toUpperCase(Locale.ROOT);
-        return Optional.ofNullable(itemNameMap.get(name));
+        return Optional.ofNullable(itemNameMap.get(Objects.requireNonNull(name)));
     }
 
     @Override
     public @NotNull Optional<BoxItem> getBoxItem(int id) {
         return Optional.ofNullable(itemIdMap.get(id));
+    }
+
+    @Override
+    public @Nullable BoxItem getBoxItemOrNull(int id) {
+        return itemIdMap.get(id);
+    }
+
+    @Override
+    public @NotNull IntImmutableList getItemIdList() {
+        return new IntImmutableList(itemIdMap.keySet());
+    }
+
+    @Override
+    public @NotNull ObjectImmutableList<String> getItemNameList() {
+        return new ObjectImmutableList<>(itemNameMap.keySet());
+    }
+
+    @Override
+    public @NotNull ObjectImmutableList<BoxItem> getItemList() {
+        return new ObjectImmutableList<>(itemIdMap.values());
     }
 
     @Override
@@ -73,45 +94,47 @@ public class BoxItemManager implements ItemManager {
     }
 
     @Override
-    public @NotNull CompletableFuture<@NotNull BoxCustomItem> registerCustomItem(@NotNull ItemStack original) {
-        Objects.requireNonNull(original);
+    public void registerCustomItem(@NotNull ItemStack original, @Nullable String plainName, @NotNull Consumer<ItemRegistrationResult> resultConsumer) {
+        var one = original.asOne();
+        Objects.requireNonNull(resultConsumer);
 
-        return CompletableFuture.supplyAsync(() -> {
-            var copied = original.asOne();
+        executor.execute(() -> {
+            if (isRegistered(one)) {
+                resultConsumer.accept(new ItemRegistrationResult.DuplicateItem(one));
+                return;
+            }
 
-            if (isRegistered(copied)) {
-                throw new IllegalStateException("The item is already registered (item: " + copied + ")");
+            if (plainName != null && isUsedName(plainName)) {
+                resultConsumer.accept(new ItemRegistrationResult.DuplicateName(plainName));
+                return;
             }
 
             BoxCustomItem customItem;
 
             try {
-                customItem = itemStorage.saveNewCustomItem(copied);
+                customItem = itemStorage.saveNewCustomItem(one, plainName);
             } catch (Exception e) {
-                throw new RuntimeException("Could not register a new item (item: " + copied + ")", e);
+                resultConsumer.accept(new ItemRegistrationResult.ExceptionOccurred(e));
+                return;
             }
 
             addItem(customItem);
 
             BoxProvider.get().getEventBus().callEventAsync(new CustomItemRegisterEvent(customItem));
-
-            return customItem;
-        }, executor);
+            resultConsumer.accept(new ItemRegistrationResult.Success(customItem));
+        });
     }
 
     @Override
-    public @NotNull CompletableFuture<@NotNull BoxCustomItem> renameCustomItem(@NotNull BoxCustomItem item,
-                                                                               @NotNull String newName) {
-        Objects.requireNonNull(item);
-        Objects.requireNonNull(newName);
+    public void renameCustomItem(@NotNull BoxCustomItem item, @NotNull String newName, @NotNull Consumer<ItemRegistrationResult> resultConsumer) {
+        if (!BoxItemFactory.checkCustomItem(item)) {
+            throw new IllegalArgumentException("Could not rename item because the item is not created by box.");
+        }
 
-        return CompletableFuture.supplyAsync(() -> {
-            if (!BoxItemFactory.checkCustomItem(item)) {
-                throw new IllegalStateException("Could not rename item because the item is created by box.");
-            }
-
+        executor.execute(() -> {
             if (itemNameMap.containsKey(newName)) {
-                throw new IllegalStateException("The same name is already used (" + newName + ")");
+                resultConsumer.accept(new ItemRegistrationResult.DuplicateName(newName));
+                return;
             }
 
             removeItem(item);
@@ -122,13 +145,15 @@ public class BoxItemManager implements ItemManager {
             try {
                 result = itemStorage.rename(item, newName);
             } catch (Exception e) {
-                throw new RuntimeException("Could not save the custom item", e);
+                resultConsumer.accept(new ItemRegistrationResult.ExceptionOccurred(e));
+                return;
             }
 
-            BoxProvider.get().getEventBus().callEventAsync(new CustomItemRenameEvent(result, previousName));
+            addItem(item);
 
-            return result;
-        }, executor);
+            BoxProvider.get().getEventBus().callEventAsync(new CustomItemRenameEvent(result, previousName));
+            resultConsumer.accept(new ItemRegistrationResult.Success(result));
+        });
     }
 
     @Override
@@ -138,7 +163,7 @@ public class BoxItemManager implements ItemManager {
 
     @Override
     public @NotNull @Unmodifiable Collection<BoxItem> getBoxItemSet() {
-        return List.copyOf(itemMap.values());
+        return getItemList();
     }
 
     public void storeItems(@NotNull Collection<? extends BoxItem> items) {

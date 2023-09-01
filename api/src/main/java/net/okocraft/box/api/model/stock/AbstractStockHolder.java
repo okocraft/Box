@@ -8,6 +8,7 @@ import net.okocraft.box.api.event.stockholder.stock.StockIncreaseEvent;
 import net.okocraft.box.api.event.stockholder.stock.StockSetEvent;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.model.user.BoxUser;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
@@ -28,7 +29,10 @@ import java.util.stream.Stream;
  * {@link net.okocraft.box.api.model.manager.StockManager#loadUserStock(BoxUser)} or
  * {@link net.okocraft.box.api.player.BoxPlayer#getUserStockHolder()}
  * extends this abstract class.
+ * @deprecated This class will be removed in Box 6.0.0
  */
+@Deprecated(since = "5.5.0", forRemoval = true)
+@ApiStatus.ScheduledForRemoval(inVersion = "6.0.0")
 public abstract class AbstractStockHolder implements StockHolder {
 
     public static boolean allowMinus = false;

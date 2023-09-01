@@ -2,9 +2,9 @@ package net.okocraft.box.storage.api.util.item;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.HexFormat;
 
 public final class ItemNameGenerator {
 
@@ -12,7 +12,7 @@ public final class ItemNameGenerator {
         var sha1 = getSha1();
         sha1.reset();
         var result = sha1.digest(itemBytes);
-        return itemType + "_" + String.format("%040x", new BigInteger(0, result)).substring(0, 8);
+        return itemType + "_" + HexFormat.of().withLowerCase().formatHex(result).substring(0, 8);
     }
 
     private static @NotNull MessageDigest getSha1() {

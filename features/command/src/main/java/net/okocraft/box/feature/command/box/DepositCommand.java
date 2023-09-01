@@ -183,7 +183,7 @@ public class DepositCommand extends AbstractCommand {
         }
 
         if (args.length == 2) {
-            var itemNameFilter = args[1].toUpperCase(Locale.ROOT);
+            var itemNameFilter = args[1].toLowerCase(Locale.ENGLISH);
 
             //noinspection ConstantConditions
             var result =
@@ -193,10 +193,10 @@ public class DepositCommand extends AbstractCommand {
                             .filter(Optional::isPresent)
                             .map(Optional::get)
                             .map(BoxItem::getPlainName)
-                            .filter(itemName -> itemName.startsWith(itemNameFilter))
+                            .filter(itemName -> itemName.toLowerCase(Locale.ENGLISH).startsWith(itemNameFilter))
                             .collect(Collectors.toList());
 
-            if ("all".startsWith(args[1].toLowerCase(Locale.ROOT))) {
+            if ("all".startsWith(args[1].toLowerCase(Locale.ENGLISH))) {
                 result.add("all");
             }
 

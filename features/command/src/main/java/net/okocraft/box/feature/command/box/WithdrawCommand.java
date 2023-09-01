@@ -7,8 +7,8 @@ import net.okocraft.box.api.message.GeneralMessage;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.transaction.InventoryTransaction;
 import net.okocraft.box.api.transaction.TransactionResultType;
-import net.okocraft.box.feature.command.message.BoxMessage;
 import net.okocraft.box.feature.command.event.stock.CommandCauses;
+import net.okocraft.box.feature.command.message.BoxMessage;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -17,7 +17,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class WithdrawCommand extends AbstractCommand {
 
@@ -95,13 +94,13 @@ public class WithdrawCommand extends AbstractCommand {
             return Collections.emptyList();
         }
 
-        var itemNameFilter = args[1].toUpperCase(Locale.ROOT);
+        var itemNameFilter = args[1].toLowerCase(Locale.ENGLISH);
         var stockHolder = BoxProvider.get().getBoxPlayerMap().get(player).getCurrentStockHolder();
 
         return stockHolder.getStockedItems().stream()
                 .map(BoxItem::getPlainName)
-                .filter(itemName -> itemName.startsWith(itemNameFilter))
-                .collect(Collectors.toList());
+                .filter(itemName -> itemName.toLowerCase(Locale.ENGLISH).startsWith(itemNameFilter))
+                .toList();
     }
 
     @Override

@@ -61,7 +61,7 @@ public class BulkEditingButton extends AbstractAutoStoreSettingButton {
         Sound sound;
 
         if (recent == null || !recent) {
-            perItemSetting.setEnabledItems(BoxProvider.get().getItemManager().getBoxItemSet());
+            perItemSetting.setEnabledItems(BoxProvider.get().getItemManager().getItemList());
             sound = Sound.BLOCK_WOODEN_DOOR_OPEN;
             recent = true;
         } else {

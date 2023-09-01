@@ -52,7 +52,7 @@ class AutoStoreItemCommand extends AutoStoreSubCommand {
             AutoStoreCommandUtil.enableAutoStore(setting, sender);
             changeToPerItemMode(setting, sender);
 
-            perItemModeSetting.setEnabledItems(bool ? itemManager.getBoxItemSet() : Collections.emptyList());
+            perItemModeSetting.setEnabledItems(bool ? itemManager.getItemList() : Collections.emptyList());
             sender.sendMessage(AutoStoreMessage.COMMAND_PER_ITEM_ALL_TOGGLED.apply(bool));
 
             AutoStoreCommandUtil.callEvent(setting);
@@ -98,7 +98,7 @@ class AutoStoreItemCommand extends AutoStoreSubCommand {
     @Override
     @NotNull List<String> runTabComplete(@NotNull CommandSender sender, @NotNull String[] args) {
         if (args.length == 3) {
-            var result = TabCompleter.itemNames(args[2].toUpperCase(Locale.ROOT));
+            var result = TabCompleter.itemNames(args[2]);
 
             if ("all".startsWith(args[2].toLowerCase(Locale.ROOT))) {
                 result.add("all");

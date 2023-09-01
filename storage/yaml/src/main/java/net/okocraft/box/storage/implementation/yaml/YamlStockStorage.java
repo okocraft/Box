@@ -6,7 +6,6 @@ import net.okocraft.box.api.model.user.BoxUser;
 import net.okocraft.box.storage.api.factory.stock.UserStockHolderFactory;
 import net.okocraft.box.storage.api.holder.LoggerHolder;
 import net.okocraft.box.storage.api.model.stock.StockStorage;
-import net.okocraft.box.storage.api.util.item.BoxItemSupplier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -83,7 +82,7 @@ class YamlStockStorage implements StockStorage {
             for (var stock : stockHolder.toStockDataCollection()) {
                 if (0 != stock.amount()) {
                     builder.append('\'')
-                            .append(stock.item().getInternalId())
+                            .append(stock.itemId())
                             .append('\'')
                             .append(':')
                             .append(' ')
@@ -112,13 +111,6 @@ class YamlStockStorage implements StockStorage {
             return null;
         }
 
-        var item = BoxItemSupplier.getItem(itemId);
-
-        if (item.isEmpty()) {
-            LoggerHolder.get().warning("Unknown id: " + itemId + " (" + uuid + ")");
-            return null;
-        }
-
         int amount;
 
         try {
@@ -128,6 +120,6 @@ class YamlStockStorage implements StockStorage {
             return null;
         }
 
-        return new StockData(item.get(), amount);
+        return new StockData(itemId, amount);
     }
 }
