@@ -22,7 +22,6 @@ import net.okocraft.box.api.model.data.CustomDataContainer;
 import net.okocraft.box.api.model.manager.ItemManager;
 import net.okocraft.box.api.model.manager.StockManager;
 import net.okocraft.box.api.model.manager.UserManager;
-import net.okocraft.box.api.model.stock.AbstractStockHolder;
 import net.okocraft.box.api.player.BoxPlayerMap;
 import net.okocraft.box.api.scheduler.BoxScheduler;
 import net.okocraft.box.api.taskfactory.TaskFactory;
@@ -35,13 +34,11 @@ import net.okocraft.box.core.message.ErrorMessages;
 import net.okocraft.box.core.message.MicsMessages;
 import net.okocraft.box.core.model.data.BoxCustomDataContainer;
 import net.okocraft.box.core.model.loader.ItemLoader;
+import net.okocraft.box.core.model.manager.stock.BoxStockManager;
 import net.okocraft.box.core.model.manager.item.BoxItemManager;
-import net.okocraft.box.core.model.manager.BoxStockManager;
 import net.okocraft.box.core.model.manager.user.BoxUserManager;
-import net.okocraft.box.core.model.queue.AutoSaveQueue;
 import net.okocraft.box.core.player.BoxPlayerMapImpl;
 import net.okocraft.box.core.scheduler.FoliaSchedulerWrapper;
-import net.okocraft.box.core.task.AutoSaveTask;
 import net.okocraft.box.core.taskfactory.BoxTaskFactory;
 import net.okocraft.box.core.util.executor.InternalExecutors;
 import net.okocraft.box.storage.api.holder.StorageHolder;
@@ -90,9 +87,6 @@ public class BoxPlugin implements BoxAPI {
     private final BoxAdminCommandImpl boxAdminCommand = new BoxAdminCommandImpl();
 
     private final List<BoxFeature> features = new ArrayList<>();
-
-    private final AutoSaveQueue autoSaveQueue = new AutoSaveQueue();
-    private final AutoSaveTask autoSaveTask = new AutoSaveTask(autoSaveQueue);
 
     private Storage storage;
     private BoxItemManager itemManager;
@@ -146,11 +140,6 @@ public class BoxPlugin implements BoxAPI {
             getLogger().info("Debug mode is ENABLED");
         }
 
-        if (configuration.get(Settings.ALLOW_MINUS_STOCK)) {
-            AbstractStockHolder.allowMinus = true;
-            getLogger().info("Negative numbers are allowed in the stock");
-        }
-
         getLogger().info("Successfully loaded!");
 
         return true;
@@ -193,7 +182,7 @@ public class BoxPlugin implements BoxAPI {
             return false;
         }
 
-        stockManager = new BoxStockManager(storage.getStockStorage(), autoSaveQueue);
+        stockManager = new BoxStockManager(storage.getStockStorage(), uuid -> Bukkit.getPlayer(uuid) != null);
         userManager = new BoxUserManager(storage.getUserStorage());
 
         customDataContainer = new BoxCustomDataContainer(storage.getCustomDataStorage());
@@ -203,7 +192,7 @@ public class BoxPlugin implements BoxAPI {
 
         Bukkit.getPluginManager().registerEvents(new PlayerConnectionListener(playerMap), plugin);
 
-        autoSaveTask.start();
+        stockManager.schedulerAutoSaveTask((FoliaSchedulerWrapper) scheduler); // FIXME: pass scheduler without casting
 
         getLogger().info("Registering commands...");
 
@@ -240,11 +229,13 @@ public class BoxPlugin implements BoxAPI {
             List.copyOf(features).forEach(this::unregister);
         }
 
-        autoSaveTask.stop();
+        BoxProvider.unset();
 
         if (playerMap != null) {
             playerMap.unloadAll();
         }
+
+        stockManager.close();
 
         debugListener.unregister();
 

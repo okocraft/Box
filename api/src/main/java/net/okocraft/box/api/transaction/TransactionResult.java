@@ -122,4 +122,12 @@ public class TransactionResult {
     public int getAmount() {
         return amount;
     }
+
+    public @NotNull BoxItem item() { // TODO: record
+        return this.item;
+    }
+
+    public int amount() { // TODO: record
+        return amount;
+    }
 }

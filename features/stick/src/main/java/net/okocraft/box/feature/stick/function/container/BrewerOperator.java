@@ -93,21 +93,17 @@ public final class BrewerOperator {
                 continue;
             }
 
+            if (cause == null) { // Initialize here and cache it.
+                cause = new StickCauses.Brewer(context.player(), context.blockLocation(), StickCauses.Brewer.Type.PUT_POTION);
+            }
+
             if (0 < stockHolder.getAmount(item)) {
                 var clickEvent = new InventoryClickEvent(context.view(), InventoryType.SlotType.CRAFTING, i, ClickType.LEFT, InventoryAction.PLACE_ALL);
-                boolean cancelled = !clickEvent.callEvent();
 
-                if (cancelled) {
-                    continue;
+                if (clickEvent.callEvent() && stockHolder.decreaseIfPossible(item, 1, cause) != -1) {
+                    context.inventory().setItem(i, item.getClonedItem());
+                    result = true;
                 }
-
-                if (cause == null) { // Initialize here and cache it.
-                    cause = new StickCauses.Brewer(context.player(), context.blockLocation(), StickCauses.Brewer.Type.PUT_POTION);
-                }
-
-                stockHolder.decrease(item, 1, cause);
-                context.inventory().setItem(i, item.getClonedItem());
-                result = true;
             }
         }
 

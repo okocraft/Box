@@ -80,7 +80,7 @@ public class MenuOpenCommand extends AbstractCommand {
                 var user = UserSearcher.search(args[i + 1]);
 
                 if (user != null) {
-                    source = BoxProvider.get().getStockManager().getPersonalStockHolderLoader(user);
+                    source = BoxProvider.get().getStockManager().getPersonalStockHolder(user);
                 } else {
                     player.sendMessage(GeneralMessage.ERROR_COMMAND_PLAYER_NOT_FOUND.apply(args[i + 1]));
                     return;
@@ -168,7 +168,7 @@ public class MenuOpenCommand extends AbstractCommand {
         if (user != null) {
             openMenu(
                     player,
-                    BoxProvider.get().getStockManager().getPersonalStockHolderLoader(user),
+                    BoxProvider.get().getStockManager().getPersonalStockHolder(user),
                     new CategorySelectorMenu()
             );
         } else {

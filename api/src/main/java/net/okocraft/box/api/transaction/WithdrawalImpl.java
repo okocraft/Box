@@ -44,8 +44,7 @@ record WithdrawalImpl(@NotNull StockHolder stockHolder, @NotNull BoxItem boxItem
                     continue;
                 }
 
-                int current = stockHolder.getAmount(boxItem);
-                int withdrawn = current - stockHolder.decrease(boxItem, Math.min(limit - withdrawnAmount, maxStackSize), cause);
+                int withdrawn = stockHolder.decreaseToZero(boxItem, Math.min(limit - withdrawnAmount, maxStackSize), cause);
 
                 if (withdrawn < 1) {
                     break;
@@ -61,8 +60,7 @@ record WithdrawalImpl(@NotNull StockHolder stockHolder, @NotNull BoxItem boxItem
                 int remaining = maxStackSize - item.getAmount();
 
                 if (0 < remaining) {
-                    int current = stockHolder.getAmount(boxItem);
-                    int withdrawn = current - stockHolder.decrease(boxItem, Math.min(limit - withdrawnAmount, remaining), cause);
+                    int withdrawn = stockHolder.decreaseToZero(boxItem, Math.min(limit - withdrawnAmount, remaining), cause);
 
                     if (withdrawn < 1) {
                         break;

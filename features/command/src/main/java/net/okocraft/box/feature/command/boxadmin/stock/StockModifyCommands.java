@@ -150,7 +150,7 @@ class StockModifyCommands {
             var target = UserSearcher.search(args[2]);
 
             if (target != null) {
-                var stockHolder = BoxProvider.get().getStockManager().getPersonalStockHolderLoader(target);
+                var stockHolder = BoxProvider.get().getStockManager().getPersonalStockHolder(target);
                 int current = modifyStock(sender, stockHolder, item.get(), amount);
                 sendMessage(sender, target, item.get(), amount, current);
             } else {

@@ -47,7 +47,7 @@ class StockResetCommand extends AbstractCommand {
         var target = UserSearcher.search(args[2]);
 
         if (target != null) {
-            var stockHolder = BoxProvider.get().getStockManager().getPersonalStockHolderLoader(target);
+            var stockHolder = BoxProvider.get().getStockManager().getPersonalStockHolder(target);
             stockHolder.setAmount(item.get(), 0, new CommandCauses.AdminReset(sender));
             sendMessage(sender, target, item.get());
         } else {

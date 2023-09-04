@@ -39,7 +39,7 @@ class StockListCommand extends AbstractCommand {
 
         if (target != null) {
             sender.sendMessage(SharedStockListCommand.createStockList(
-                    BoxProvider.get().getStockManager().getPersonalStockHolderLoader(target),
+                    BoxProvider.get().getStockManager().getPersonalStockHolder(target),
                     3 < args.length ? Arrays.copyOfRange(args, 3, args.length) : null
             ));
         } else {

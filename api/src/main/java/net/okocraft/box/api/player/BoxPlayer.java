@@ -1,10 +1,8 @@
 package net.okocraft.box.api.player;
 
 import net.okocraft.box.api.model.stock.StockHolder;
-import net.okocraft.box.api.model.stock.UserStockHolder;
 import net.okocraft.box.api.model.user.BoxUser;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
@@ -48,16 +46,6 @@ public interface BoxPlayer {
      * @return the personal {@link StockHolder} of this player
      */
     @NotNull StockHolder getPersonalStockHolder();
-
-    /**
-     * Gets the {@link UserStockHolder} of this user.
-     *
-     * @return the {@link UserStockHolder} of this user
-     * @deprecated use {@link #getPersonalStockHolder()}
-     */
-    @Deprecated(since = "5.5.0", forRemoval = true)
-    @ApiStatus.ScheduledForRemoval(inVersion = "6.0.0")
-    @NotNull UserStockHolder getUserStockHolder();
 
     /**
      * Gets the current {@link StockHolder} to deposit or withdraw.

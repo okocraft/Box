@@ -38,4 +38,17 @@ public final class BoxProvider {
             throw new IllegalStateException("BoxAPI is already set.");
         }
     }
+
+    /**
+     * Unsets a {@link BoxAPI}.
+     *
+     * @throws IllegalStateException if {@link BoxAPI} is not set
+     */
+    public static void unset() {
+        if (API != null) {
+            API = null;
+        } else {
+            throw new IllegalStateException("BoxAPI is not set.");
+        }
+    }
 }

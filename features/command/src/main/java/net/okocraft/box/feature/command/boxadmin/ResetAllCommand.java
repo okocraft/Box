@@ -46,7 +46,7 @@ public class ResetAllCommand extends AbstractCommand {
         if (CONFIRM.equalsIgnoreCase(args[1]) && confirmationMap.containsKey(sender)) {
             var target = confirmationMap.remove(sender);
 
-            BoxProvider.get().getStockManager().getPersonalStockHolderLoader(target).reset();
+            BoxProvider.get().getStockManager().getPersonalStockHolder(target).reset();
 
             BoxProvider.get().getEventBus().callEvent(new UserDataResetEvent(target));
 

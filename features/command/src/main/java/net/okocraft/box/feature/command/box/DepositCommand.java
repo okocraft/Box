@@ -5,12 +5,10 @@ import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.command.AbstractCommand;
 import net.okocraft.box.api.message.GeneralMessage;
 import net.okocraft.box.api.model.item.BoxItem;
-import net.okocraft.box.api.model.stock.StockHolder;
-import net.okocraft.box.api.transaction.InventoryTransaction;
-import net.okocraft.box.api.transaction.TransactionResultList;
-import net.okocraft.box.api.transaction.TransactionResultType;
-import net.okocraft.box.feature.command.message.BoxMessage;
+import net.okocraft.box.api.transaction.StockHolderTransaction;
+import net.okocraft.box.api.transaction.TransactionResult;
 import net.okocraft.box.feature.command.event.stock.CommandCauses;
+import net.okocraft.box.feature.command.message.BoxMessage;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -22,7 +20,6 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public class DepositCommand extends AbstractCommand {
@@ -95,85 +92,68 @@ public class DepositCommand extends AbstractCommand {
         }
     }
 
-    private void depositItemInMainHand(@NotNull Player player, int amount) {
-        var result =
-                BoxProvider.get().getTaskFactory()
-                        .supplyFromEntity(player, $player -> InventoryTransaction.depositItemInMainHand($player, amount))
-                        .join();
+    private void depositItemInMainHand(@NotNull Player player, int limit) {
+        BoxProvider.get().getScheduler().runEntityTask(player, () -> {
+            if (limit < 1) {
+                player.sendMessage(BoxMessage.DEPOSIT_NOT_DEPOSITED);
+                return;
+            }
 
-        if (result.getType().isModified()) {
-            var item = result.getItem();
-            var deposited = result.getAmount();
+            var mainHand = player.getInventory().getItemInMainHand();
 
-            var current = BoxProvider.get().getBoxPlayerMap().get(player).getCurrentStockHolder().increase(item, deposited, CommandCauses.DEPOSIT);
+            if (mainHand.getType().isAir()) {
+                player.sendMessage(BoxMessage.DEPOSIT_IS_AIR);
+                return;
+            }
 
-            player.sendMessage(BoxMessage.DEPOSIT_SUCCESS.apply(item, deposited, current));
-        } else {
-            player.sendMessage(
-                    switch (result.getType()) {
-                        case IS_AIR -> BoxMessage.DEPOSIT_IS_AIR;
-                        case ITEM_NOT_REGISTERED -> BoxMessage.DEPOSIT_ITEM_NOT_REGISTERED;
-                        default -> BoxMessage.DEPOSIT_NOT_DEPOSITED;
-                    }
-            );
-        }
+            var boxItem = BoxProvider.get().getItemManager().getBoxItem(mainHand).orElse(null);
+
+            if (boxItem == null) {
+                player.sendMessage(BoxMessage.DEPOSIT_ITEM_NOT_REGISTERED);
+                return;
+            }
+
+            int amount = Math.min(limit, mainHand.getAmount());
+            int remaining = mainHand.getAmount() - amount;
+
+            int current = BoxProvider.get().getBoxPlayerMap().get(player).getCurrentStockHolder().increase(boxItem, amount, CommandCauses.DEPOSIT);
+
+            if (0 < remaining) {
+                player.getInventory().setItemInMainHand(mainHand.asQuantity(remaining));
+            } else {
+                player.getInventory().setItemInMainHand(null);
+            }
+
+            player.sendMessage(BoxMessage.DEPOSIT_SUCCESS.apply(boxItem, amount, current));
+        });
     }
 
     private void depositAll(@NotNull Player player) {
-        var resultList =
-                BoxProvider.get().getTaskFactory()
-                        .supplyFromEntity(player, $player -> InventoryTransaction.depositItemsInInventory($player.getInventory()))
-                        .join();
+        BoxProvider.get().getScheduler().runEntityTask(player, () -> {
+            var resultList =
+                    StockHolderTransaction.create(BoxProvider.get().getBoxPlayerMap().get(player).getCurrentStockHolder())
+                            .depositAll()
+                            .fromInventory(player.getInventory(), CommandCauses.DEPOSIT);
 
-        var stockHolder = BoxProvider.get().getBoxPlayerMap().get(player).getCurrentStockHolder();
-
-        var deposited = processTransactionResultList(player, resultList, stockHolder);
-
-        if (0 < deposited) {
-            player.sendMessage(BoxMessage.DEPOSIT_ALL_SUCCESS.apply(deposited));
-        }
+            int deposited = calculateDepositedAmount(resultList);
+            player.sendMessage(0 < deposited ? BoxMessage.DEPOSIT_ALL_SUCCESS.apply(deposited) : BoxMessage.DEPOSIT_NOT_DEPOSITED);
+        });
     }
 
     private void depositItem(@NotNull Player player, @NotNull BoxItem boxItem, int amount) {
-        var resultList =
-                BoxProvider.get().getTaskFactory()
-                        .supplyFromEntity(player, $player -> InventoryTransaction.depositItem($player.getInventory(), boxItem, amount))
-                        .join();
+        BoxProvider.get().getScheduler().runEntityTask(player, () -> {
+            var resultList =
+                    StockHolderTransaction.create(BoxProvider.get().getBoxPlayerMap().get(player).getCurrentStockHolder())
+                            .deposit(boxItem, amount)
+                            .fromInventory(player.getInventory(), CommandCauses.DEPOSIT);
 
-        var stockHolder = BoxProvider.get().getBoxPlayerMap().get(player).getCurrentStockHolder();
-
-        var deposited = processTransactionResultList(player, resultList, stockHolder);
-
-        if (0 < deposited) {
-            player.sendMessage(BoxMessage.DEPOSIT_SUCCESS.apply(boxItem, deposited, stockHolder.getAmount(boxItem)));
-        }
+            int deposited = calculateDepositedAmount(resultList);
+            player.sendMessage(0 < deposited ? BoxMessage.DEPOSIT_ALL_SUCCESS.apply(deposited) : BoxMessage.DEPOSIT_NOT_FOUND);
+        });
     }
 
-    private int processTransactionResultList(@NotNull Player player, @NotNull TransactionResultList resultList,
-                                             @NotNull StockHolder stockHolder) {
-        var resultListType = resultList.getType();
-
-        if (!resultListType.isModified()) {
-            player.sendMessage(
-                    resultListType == TransactionResultType.NOT_FOUND ?
-                            BoxMessage.DEPOSIT_NOT_FOUND :
-                            BoxMessage.DEPOSIT_NOT_DEPOSITED
-            );
-
-            return 0;
-        }
-
-        var counter = new AtomicInteger();
-
-        resultList.getResultList()
-                .stream()
-                .filter(result -> result.getType().isModified())
-                .forEach(result -> {
-                    stockHolder.increase(result.getItem(), result.getAmount(), CommandCauses.DEPOSIT);
-                    counter.addAndGet(result.getAmount());
-                });
-
-        return counter.get();
+    private int calculateDepositedAmount(@NotNull List<TransactionResult> resultList) {
+        return resultList.isEmpty() ? 0 : resultList.stream().mapToInt(TransactionResult::amount).sum();
     }
 
     @Override

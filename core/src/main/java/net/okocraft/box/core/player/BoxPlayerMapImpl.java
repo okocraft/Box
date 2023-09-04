@@ -3,21 +3,18 @@ package net.okocraft.box.core.player;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.event.player.PlayerLoadEvent;
 import net.okocraft.box.api.event.player.PlayerUnloadEvent;
-import net.okocraft.box.api.model.manager.StockManager;
 import net.okocraft.box.api.player.BoxPlayer;
 import net.okocraft.box.api.player.BoxPlayerMap;
 import net.okocraft.box.core.message.ErrorMessages;
-import net.okocraft.box.core.model.loader.UserStockHolderLoader;
+import net.okocraft.box.core.model.manager.stock.BoxStockManager;
 import net.okocraft.box.core.model.manager.user.BoxUserManager;
 import net.okocraft.box.core.util.executor.InternalExecutors;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -30,11 +27,11 @@ public class BoxPlayerMapImpl implements BoxPlayerMap {
     private static final BoxPlayer NOT_LOADED_YET = new NotLoadedPlayer();
 
     private final Map<Player, BoxPlayer> playerMap = new ConcurrentHashMap<>();
+    private final BoxStockManager stockManager;
     private final BoxUserManager userManager;
-    private final StockManager stockManager;
     private final ScheduledExecutorService scheduler;
 
-    public BoxPlayerMapImpl(@NotNull BoxUserManager userManager, @NotNull StockManager stockManager) {
+    public BoxPlayerMapImpl(@NotNull BoxUserManager userManager, @NotNull BoxStockManager stockManager) {
         this.userManager = userManager;
         this.stockManager = stockManager;
         this.scheduler = InternalExecutors.newSingleThreadScheduler("Player Loader");
@@ -92,9 +89,11 @@ public class BoxPlayerMapImpl implements BoxPlayerMap {
 
         this.userManager.saveUsername(boxUser);
 
-        var userStock = stockManager.loadUserStock(boxUser).join();
+        var personal = stockManager.getPersonalStockHolder(boxUser);
 
-        var boxPlayer = new BoxPlayerImpl(boxUser, player, userStock);
+        personal.load();
+
+        var boxPlayer = new BoxPlayerImpl(boxUser, player, personal);
 
         playerMap.put(player, boxPlayer);
 
@@ -106,19 +105,7 @@ public class BoxPlayerMapImpl implements BoxPlayerMap {
         var boxPlayer = playerMap.remove(player);
 
         if (boxPlayer != null && boxPlayer != NOT_LOADED_YET) {
-            scheduler.execute(() -> unload0(boxPlayer));
-        }
-    }
-
-    private void unload0(@NotNull BoxPlayer boxPlayer) {
-        try {
-            unloadAndSave(boxPlayer).join();
-        } catch (Exception e) {
-            if (boxPlayer.getPlayer().isOnline()) {
-                boxPlayer.getPlayer().sendMessage(ErrorMessages.ERROR_SAVE_PLAYER_DATA);
-            }
-
-            BoxProvider.get().getLogger().log(Level.SEVERE, "Could not save player data (" + boxPlayer.getName() + ")", e);
+            BoxProvider.get().getEventBus().callEvent(new PlayerUnloadEvent(boxPlayer));
         }
     }
 
@@ -130,27 +117,6 @@ public class BoxPlayerMapImpl implements BoxPlayerMap {
     }
 
     public void unloadAll() {
-        List.copyOf(playerMap.keySet())
-                .stream()
-                .map(playerMap::remove)
-                .filter(Objects::nonNull)
-                .forEach(this::unload0);
-    }
-
-    private @NotNull CompletableFuture<Void> unloadAndSave(@NotNull BoxPlayer boxPlayer) {
-        BoxProvider.get().getEventBus().callEvent(new PlayerUnloadEvent(boxPlayer));
-
-        var stockHolder = boxPlayer.getUserStockHolder();
-
-        if (stockHolder instanceof UserStockHolderLoader loader) {
-            if (!loader.isLoaded()) {
-                return CompletableFuture.completedFuture(null);
-            }
-
-            stockHolder = loader.getSource();
-            loader.unload();
-        }
-
-        return stockManager.saveUserStock(stockHolder);
+        playerMap.clear();
     }
 }

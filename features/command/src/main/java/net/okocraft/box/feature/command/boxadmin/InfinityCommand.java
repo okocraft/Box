@@ -1,5 +1,6 @@
 package net.okocraft.box.feature.command.boxadmin;
 
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.command.AbstractCommand;
@@ -19,7 +20,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Stream;
 
 public class InfinityCommand extends AbstractCommand {
 
@@ -112,7 +112,7 @@ public class InfinityCommand extends AbstractCommand {
         }
 
         @Override
-        public int getAmount(@NotNull BoxItem item) {
+        public int getAmount(int itemId) {
             return Integer.MAX_VALUE;
         }
 
@@ -131,6 +131,21 @@ public class InfinityCommand extends AbstractCommand {
         }
 
         @Override
+        public int decreaseToZero(@NotNull BoxItem item, int limit, @NotNull StockEvent.Cause cause) {
+            return limit;
+        }
+
+        @Override
+        public int decreaseIfPossible(@NotNull BoxItem item, int decrement, @NotNull StockEvent.Cause cause) {
+            return Integer.MAX_VALUE;
+        }
+
+        @Override
+        public boolean decreaseIfPossible(@NotNull Object2IntMap<BoxItem> decrementMap, @NotNull StockEvent.Cause cause) {
+            return true;
+        }
+
+        @Override
         public @NotNull @Unmodifiable Collection<BoxItem> getStockedItems() {
             return BoxProvider.get().getItemManager().getItemList();
         }
@@ -138,11 +153,6 @@ public class InfinityCommand extends AbstractCommand {
         @Override
         public @NotNull @Unmodifiable Collection<StockData> toStockDataCollection() {
             return Collections.emptyList();
-        }
-
-        @Override
-        public @NotNull Stream<StockData> stockDataStream() {
-            return Stream.empty();
         }
 
         @Override

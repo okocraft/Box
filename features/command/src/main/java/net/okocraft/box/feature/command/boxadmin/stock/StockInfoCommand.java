@@ -43,7 +43,7 @@ class StockInfoCommand extends AbstractCommand {
         var target = UserSearcher.search(args[2]);
 
         if (target != null) {
-            var stockHolder = BoxProvider.get().getStockManager().getPersonalStockHolderLoader(target);
+            var stockHolder = BoxProvider.get().getStockManager().getPersonalStockHolder(target);
             var message = BoxAdminMessage.STOCK_INFO_AMOUNT.apply(target, boxItem.get(), stockHolder.getAmount(boxItem.get()));
             sender.sendMessage(message);
         } else {
