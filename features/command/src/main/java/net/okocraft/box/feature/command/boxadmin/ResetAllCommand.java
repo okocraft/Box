@@ -5,9 +5,9 @@ import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.command.AbstractCommand;
 import net.okocraft.box.api.event.user.UserDataResetEvent;
 import net.okocraft.box.api.message.GeneralMessage;
-import net.okocraft.box.api.model.stock.UserStockHolder;
+import net.okocraft.box.api.model.user.BoxUser;
 import net.okocraft.box.api.util.TabCompleter;
-import net.okocraft.box.api.util.UserStockHolderOperator;
+import net.okocraft.box.api.util.UserSearcher;
 import net.okocraft.box.feature.command.message.BoxAdminMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -24,7 +24,7 @@ public class ResetAllCommand extends AbstractCommand {
     private static final String CONFIRM = "confirm";
     private static final String CANCEL = "cancel";
 
-    private final Map<CommandSender, UserStockHolder> confirmationMap = new ConcurrentHashMap<>();
+    private final Map<CommandSender, BoxUser> confirmationMap = new ConcurrentHashMap<>();
 
     public ResetAllCommand() {
         super("resetall", "box.admin.command.resetall");
@@ -46,9 +46,9 @@ public class ResetAllCommand extends AbstractCommand {
         if (CONFIRM.equalsIgnoreCase(args[1]) && confirmationMap.containsKey(sender)) {
             var target = confirmationMap.remove(sender);
 
-            target.reset();
+            BoxProvider.get().getStockManager().getPersonalStockHolderLoader(target).reset();
 
-            BoxProvider.get().getEventBus().callEvent(new UserDataResetEvent(target.getUser()));
+            BoxProvider.get().getEventBus().callEvent(new UserDataResetEvent(target));
 
             sender.sendMessage(BoxAdminMessage.RESET_ALL_SUCCESS_SENDER.apply(target));
 
@@ -66,14 +66,14 @@ public class ResetAllCommand extends AbstractCommand {
             return;
         }
 
-        UserStockHolderOperator.create(args[1])
-                .supportOffline(true)
-                .stockHolderOperator(targetStockHolder -> {
-                    confirmationMap.put(sender, targetStockHolder);
-                    sender.sendMessage(BoxAdminMessage.RESET_ALL_CONFIRMATION.apply(targetStockHolder));
-                })
-                .onNotFound(name -> sender.sendMessage(GeneralMessage.ERROR_COMMAND_PLAYER_NOT_FOUND.apply(name)))
-                .run();
+        var target = UserSearcher.search(args[1]);
+
+        if (target != null) {
+            confirmationMap.put(sender, target);
+            sender.sendMessage(BoxAdminMessage.RESET_ALL_CONFIRMATION.apply(target));
+        } else {
+            sender.sendMessage(GeneralMessage.ERROR_COMMAND_PLAYER_NOT_FOUND.apply(args[1]));
+        }
     }
 
     @Override

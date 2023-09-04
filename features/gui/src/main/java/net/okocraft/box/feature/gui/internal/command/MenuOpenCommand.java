@@ -8,7 +8,7 @@ import net.okocraft.box.api.message.GeneralMessage;
 import net.okocraft.box.api.message.argument.SingleArgument;
 import net.okocraft.box.api.model.stock.StockHolder;
 import net.okocraft.box.api.util.TabCompleter;
-import net.okocraft.box.api.util.UserStockHolderOperator;
+import net.okocraft.box.api.util.UserSearcher;
 import net.okocraft.box.feature.category.api.registry.CategoryRegistry;
 import net.okocraft.box.feature.category.internal.listener.ItemInfoEventListener;
 import net.okocraft.box.feature.gui.api.event.MenuOpenEvent;
@@ -77,9 +77,11 @@ public class MenuOpenCommand extends AbstractCommand {
                     return;
                 }
 
-                source = UserStockHolderOperator.create(args[i + 1]).supportOffline(true).getUserStockHolder();
+                var user = UserSearcher.search(args[i + 1]);
 
-                if (source == null) {
+                if (user != null) {
+                    source = BoxProvider.get().getStockManager().getPersonalStockHolderLoader(user);
+                } else {
                     player.sendMessage(GeneralMessage.ERROR_COMMAND_PLAYER_NOT_FOUND.apply(args[i + 1]));
                     return;
                 }
@@ -161,14 +163,17 @@ public class MenuOpenCommand extends AbstractCommand {
             return;
         }
 
-        var stockHolder = UserStockHolderOperator.create(args[1]).supportOffline(true).getUserStockHolder();
+        var user = UserSearcher.search(args[1]);
 
-        if (stockHolder == null) {
+        if (user != null) {
+            openMenu(
+                    player,
+                    BoxProvider.get().getStockManager().getPersonalStockHolderLoader(user),
+                    new CategorySelectorMenu()
+            );
+        } else {
             player.sendMessage(GeneralMessage.ERROR_COMMAND_PLAYER_NOT_FOUND.apply(args[1]));
-            return;
         }
-
-        openMenu(player, stockHolder, new CategorySelectorMenu());
     }
 
     private void openMenu(@NotNull Player player, @NotNull StockHolder source, @NotNull Menu menu) {

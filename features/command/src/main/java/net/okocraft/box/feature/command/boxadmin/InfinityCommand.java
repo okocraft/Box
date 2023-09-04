@@ -73,7 +73,7 @@ public class InfinityCommand extends AbstractCommand {
         boolean enabled;
 
         if (boxPlayer.getCurrentStockHolder() instanceof InfinityStockHolder) {
-            boxPlayer.setCurrentStockHolder(boxPlayer.getUserStockHolder());
+            boxPlayer.setCurrentStockHolder(boxPlayer.getPersonalStockHolder());
             enabled = false;
         } else {
             boxPlayer.setCurrentStockHolder(new InfinityStockHolder());

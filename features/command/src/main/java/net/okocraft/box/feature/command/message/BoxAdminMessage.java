@@ -9,7 +9,7 @@ import net.okocraft.box.api.message.argument.SingleArgument;
 import net.okocraft.box.api.message.argument.TripleArgument;
 import net.okocraft.box.api.model.item.BoxCustomItem;
 import net.okocraft.box.api.model.item.BoxItem;
-import net.okocraft.box.api.model.stock.UserStockHolder;
+import net.okocraft.box.api.model.user.BoxUser;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -17,6 +17,7 @@ import org.bukkit.inventory.ItemStack;
 import static net.kyori.adventure.text.Component.newline;
 import static net.kyori.adventure.text.Component.space;
 import static net.kyori.adventure.text.Component.text;
+import static net.okocraft.box.api.message.Components.aquaBoxUser;
 import static net.okocraft.box.api.message.Components.aquaItemName;
 import static net.okocraft.box.api.message.Components.aquaText;
 import static net.okocraft.box.api.message.Components.commandHelp;
@@ -103,19 +104,18 @@ public final class BoxAdminMessage {
 
     public static final Component INFINITY_HELP = commandHelp("box.command.boxadmin.infinity");
 
-    public static final SingleArgument<UserStockHolder> RESET_ALL_SUCCESS_SENDER =
-            target -> grayTranslatable("box.command.boxadmin.resetall.success.sender", aquaText(target.getName()));
+    public static final SingleArgument<BoxUser> RESET_ALL_SUCCESS_SENDER =
+            target -> grayTranslatable("box.command.boxadmin.resetall.success.sender", aquaBoxUser(target));
 
     public static final SingleArgument<CommandSender> RESET_ALL_SUCCESS_TARGET =
             sender -> grayTranslatable("box.command.boxadmin.resetall.success.target", aquaText(sender.getName()));
 
     public static final Component RESET_ALL_CANCEL = grayTranslatable("box.command.boxadmin.resetall.cancel");
 
-    public static final SingleArgument<UserStockHolder> RESET_ALL_CONFIRMATION =
+    public static final SingleArgument<BoxUser> RESET_ALL_CONFIRMATION =
             target ->
-                    text().append(grayTranslatable(
-                                    "box.command.boxadmin.resetall.confirmation.info", aquaText(target.getName())
-                            )).append(newline())
+                    text().append(grayTranslatable("box.command.boxadmin.resetall.confirmation.info", aquaBoxUser(target)))
+                            .append(newline())
                             .append(grayTranslatable("box.command.boxadmin.resetall.confirmation.warning"))
                             .append(newline())
                             .append(confirmationCommand("confirm"))
@@ -134,11 +134,11 @@ public final class BoxAdminMessage {
 
     public static final Component STOCK_HELP = commandHelp("box.command.boxadmin.stock");
 
-    public static final QuadArgument<String, BoxItem, Integer, Integer> STOCK_GIVE_SUCCESS_SENDER =
-            (targetName, item, increments, currentAmount) ->
+    public static final QuadArgument<BoxUser, BoxItem, Integer, Integer> STOCK_GIVE_SUCCESS_SENDER =
+            (target, item, increments, currentAmount) ->
                     grayTranslatable(
                             "box.command.boxadmin.stock.give.success.sender",
-                            aquaText(targetName), aquaItemName(item),
+                            aquaBoxUser(target), aquaItemName(item),
                             aquaText(increments), aquaText(currentAmount)
                     );
 
@@ -154,10 +154,10 @@ public final class BoxAdminMessage {
 
     public static final Component STOCK_INFO_HELP = commandHelp("box.command.boxadmin.stock.info");
 
-    public static final TripleArgument<String, BoxItem, Integer> STOCK_INFO_AMOUNT =
-            (targetName, item, amount) -> grayTranslatable(
+    public static final TripleArgument<BoxUser, BoxItem, Integer> STOCK_INFO_AMOUNT =
+            (target, item, amount) -> grayTranslatable(
                     "box.command.boxadmin.stock.info.amount",
-                    aquaText(targetName), aquaItemName(item), aquaText(amount)
+                    aquaBoxUser(target), aquaItemName(item), aquaText(amount)
             );
 
     public static final Component STOCK_LIST_HELP =
@@ -170,11 +170,11 @@ public final class BoxAdminMessage {
                     .append(SharedMessage.stockListArgumentHelp("filter", "f"))
                     .build();
 
-    public static final DoubleArgument<String, BoxItem> STOCK_RESET_SUCCESS_SENDER =
-            (targetName, item) ->
+    public static final DoubleArgument<BoxUser, BoxItem> STOCK_RESET_SUCCESS_SENDER =
+            (target, item) ->
                     grayTranslatable(
                             "box.command.boxadmin.stock.reset.success.sender",
-                            aquaText(targetName), aquaItemName(item)
+                            aquaBoxUser(target), aquaItemName(item)
                     );
 
     public static final DoubleArgument<String, BoxItem> STOCK_RESET_SUCCESS_TARGET =
@@ -186,11 +186,11 @@ public final class BoxAdminMessage {
 
     public static final Component STOCK_RESET_HELP = commandHelp("box.command.boxadmin.stock.reset");
 
-    public static final TripleArgument<String, BoxItem, Integer> STOCK_SET_SUCCESS_SENDER =
-            (targetName, item, currentAmount) ->
+    public static final TripleArgument<BoxUser, BoxItem, Integer> STOCK_SET_SUCCESS_SENDER =
+            (target, item, currentAmount) ->
                     grayTranslatable(
                             "box.command.boxadmin.stock.set.success.sender",
-                            aquaText(targetName), aquaItemName(item), aquaText(currentAmount)
+                            aquaBoxUser(target), aquaItemName(item), aquaText(currentAmount)
                     );
 
     public static final TripleArgument<String, BoxItem, Integer> STOCK_SET_SUCCESS_TARGET =
@@ -202,11 +202,11 @@ public final class BoxAdminMessage {
 
     public static final Component STOCK_SET_HELP = commandHelp("box.command.boxadmin.stock.set");
 
-    public static final QuadArgument<String, BoxItem, Integer, Integer> STOCK_TAKE_SUCCESS_SENDER =
-            (targetName, item, increments, currentAmount) ->
+    public static final QuadArgument<BoxUser, BoxItem, Integer, Integer> STOCK_TAKE_SUCCESS_SENDER =
+            (target, item, increments, currentAmount) ->
                     grayTranslatable(
                             "box.command.boxadmin.stock.take.success.sender",
-                            aquaText(targetName), aquaItemName(item),
+                            aquaBoxUser(target), aquaItemName(item),
                             aquaText(increments), aquaText(currentAmount)
                     );
 

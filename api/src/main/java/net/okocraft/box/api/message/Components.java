@@ -2,6 +2,7 @@ package net.okocraft.box.api.message;
 
 import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.model.item.BoxItem;
+import net.okocraft.box.api.model.user.BoxUser;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -222,6 +223,17 @@ public final class Components {
     @Contract(value = "_, _ -> new", pure = true)
     public static @NotNull Component blackTranslatable(@NotNull String key, @NotNull Component... args) {
         return translatable().key(key).args(args).color(BLACK).build();
+    }
+
+    /**
+     * Creates an aqua {@link Component} from the {@link BoxUser}.
+     *
+     * @param user the user to create {@link Component}
+     * @return the created {@link Component}
+     */
+    @Contract(value = "_ -> new", pure = true)
+    public static @NotNull Component aquaBoxUser(@NotNull BoxUser user) {
+        return aquaText(user.getName().orElseGet(() -> user.getUUID().toString()));
     }
 
     /**
