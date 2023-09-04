@@ -34,4 +34,6 @@ public interface StockManager {
     @Deprecated(since = "5.5.0", forRemoval = true)
     @ApiStatus.ScheduledForRemoval(inVersion = "6.0.0")
     @NotNull CompletableFuture<Void> saveUserStock(@NotNull UserStockHolder userStockHolder);
+
+    @NotNull StockHolder getPersonalStockHolderLoader(@NotNull BoxUser user);
 }
