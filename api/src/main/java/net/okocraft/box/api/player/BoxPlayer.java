@@ -38,6 +38,8 @@ public interface BoxPlayer {
      *
      * @return the {@link UserStockHolder} of this user
      */
+    @Deprecated(since = "5.5.0", forRemoval = true)
+    @ApiStatus.ScheduledForRemoval(inVersion = "6.0.0")
     @NotNull UserStockHolder getUserStockHolder();
 
     /**
