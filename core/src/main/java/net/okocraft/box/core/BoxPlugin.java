@@ -24,6 +24,7 @@ import net.okocraft.box.api.model.manager.StockManager;
 import net.okocraft.box.api.model.manager.UserManager;
 import net.okocraft.box.api.model.stock.AbstractStockHolder;
 import net.okocraft.box.api.player.BoxPlayerMap;
+import net.okocraft.box.api.scheduler.BoxScheduler;
 import net.okocraft.box.api.taskfactory.TaskFactory;
 import net.okocraft.box.core.command.BoxAdminCommandImpl;
 import net.okocraft.box.core.command.BoxCommandImpl;
@@ -39,6 +40,7 @@ import net.okocraft.box.core.model.manager.BoxStockManager;
 import net.okocraft.box.core.model.manager.BoxUserManager;
 import net.okocraft.box.core.model.queue.AutoSaveQueue;
 import net.okocraft.box.core.player.BoxPlayerMapImpl;
+import net.okocraft.box.core.scheduler.FoliaSchedulerWrapper;
 import net.okocraft.box.core.task.AutoSaveTask;
 import net.okocraft.box.core.taskfactory.BoxTaskFactory;
 import net.okocraft.box.core.util.executor.InternalExecutors;
@@ -82,6 +84,7 @@ public class BoxPlugin implements BoxAPI {
 
     private final EventBus<BoxEvent> eventBus = EventBus.create(BoxEvent.class, InternalExecutors.getEventExecutor());
     private final BoxTaskFactory taskFactory = new BoxTaskFactory();
+    private final BoxScheduler scheduler = BoxTaskFactory.useModernExecutor() ? new FoliaSchedulerWrapper() : taskFactory;
 
     private final BoxCommandImpl boxCommand = new BoxCommandImpl();
     private final BoxAdminCommandImpl boxAdminCommand = new BoxAdminCommandImpl();
@@ -396,6 +399,11 @@ public class BoxPlugin implements BoxAPI {
     @Override
     public @NotNull TaskFactory getTaskFactory() {
         return taskFactory;
+    }
+
+    @Override
+    public @NotNull BoxScheduler getScheduler() {
+        return scheduler;
     }
 
     @Override
