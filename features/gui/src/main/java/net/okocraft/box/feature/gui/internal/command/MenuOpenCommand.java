@@ -6,7 +6,6 @@ import net.okocraft.box.api.command.AbstractCommand;
 import net.okocraft.box.api.message.Components;
 import net.okocraft.box.api.message.GeneralMessage;
 import net.okocraft.box.api.message.argument.SingleArgument;
-import net.okocraft.box.api.model.stock.StockHolder;
 import net.okocraft.box.api.util.TabCompleter;
 import net.okocraft.box.api.util.UserSearcher;
 import net.okocraft.box.feature.category.api.registry.CategoryRegistry;
@@ -14,11 +13,11 @@ import net.okocraft.box.feature.category.internal.listener.ItemInfoEventListener
 import net.okocraft.box.feature.gui.api.event.MenuOpenEvent;
 import net.okocraft.box.feature.gui.api.menu.Menu;
 import net.okocraft.box.feature.gui.api.menu.paginate.PaginatedMenu;
-import net.okocraft.box.feature.gui.api.mode.ClickModeRegistry;
 import net.okocraft.box.feature.gui.api.session.PlayerSession;
 import net.okocraft.box.feature.gui.api.util.MenuOpener;
 import net.okocraft.box.feature.gui.internal.menu.CategoryMenu;
 import net.okocraft.box.feature.gui.internal.menu.CategorySelectorMenu;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -26,7 +25,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.IntStream;
 
@@ -55,7 +53,7 @@ public class MenuOpenCommand extends AbstractCommand {
         }
 
         if (args.length < 2) {
-            openMenu(player, getCurrentStockHolder(player), new CategorySelectorMenu());
+            openMenu(PlayerSession.newSession(player), new CategorySelectorMenu());
             return;
         }
 
@@ -64,26 +62,34 @@ public class MenuOpenCommand extends AbstractCommand {
             return;
         }
 
-        StockHolder source = null;
+        PlayerSession session = null;
         Menu menu = null;
         int page = 0;
 
         for (int i = 1; i + 1 < args.length; i = i + 2) {
             var arg = args[i].toLowerCase(Locale.ENGLISH);
 
-            if (source == null && (arg.equalsIgnoreCase("-p") || arg.equalsIgnoreCase("--player"))) {
+            if (session == null && (arg.equalsIgnoreCase("-p") || arg.equalsIgnoreCase("--player"))) {
                 if (!player.hasPermission(OTHER_PLAYERS_GUI_PERMISSION)) {
                     player.sendMessage(GeneralMessage.ERROR_NO_PERMISSION.apply(OTHER_PLAYERS_GUI_PERMISSION));
                     return;
                 }
 
-                var user = UserSearcher.search(args[i + 1]);
+                var onlinePlayer = Bukkit.getPlayer(args[i + 1]);
+                var playerMap = BoxProvider.get().getBoxPlayerMap();
 
-                if (user != null) {
-                    source = BoxProvider.get().getStockManager().getPersonalStockHolder(user);
+                if (onlinePlayer != null && playerMap.isLoaded(onlinePlayer)) {
+                    session = PlayerSession.newSession(player, playerMap.get(onlinePlayer));
                 } else {
-                    player.sendMessage(GeneralMessage.ERROR_COMMAND_PLAYER_NOT_FOUND.apply(args[i + 1]));
-                    return;
+                    var offlineUser = UserSearcher.search(args[i + 1]);
+
+                    if (offlineUser != null) {
+                        session = PlayerSession.newSession(player);
+                        session.setStockHolder(BoxProvider.get().getStockManager().getPersonalStockHolder(offlineUser));
+                    } else {
+                        player.sendMessage(GeneralMessage.ERROR_COMMAND_PLAYER_NOT_FOUND.apply(args[i + 1]));
+                        return;
+                    }
                 }
             } else if (menu == null && (arg.equalsIgnoreCase("-c") || arg.equalsIgnoreCase("--category"))) {
                 var category = CategoryRegistry.get().getByName(args[i + 1]);
@@ -104,20 +110,22 @@ public class MenuOpenCommand extends AbstractCommand {
             }
         }
 
+        if (session == null) {
+            session = PlayerSession.newSession(player);
+        }
+
         if (menu == null) {
             menu = new CategorySelectorMenu();
+        } else {
+            session.rememberMenu(new CategorySelectorMenu()); // for back button
         }
 
         //noinspection ConstantValue
         if (1 <= page && menu instanceof PaginatedMenu paginatedMenu) {
-            paginatedMenu.setPage(Math.min(page, paginatedMenu.getMaxPage()));
+            session.putData(PaginatedMenu.CURRENT_PAGE_KEY, Math.min(page, paginatedMenu.getMaxPage()));
         }
 
-        openMenu(
-                player,
-                Objects.requireNonNullElseGet(source, () -> getCurrentStockHolder(player)),
-                menu
-        );
+        openMenu(session, menu);
     }
 
     @Override
@@ -165,38 +173,23 @@ public class MenuOpenCommand extends AbstractCommand {
 
         var user = UserSearcher.search(args[1]);
 
-        if (user != null) {
-            openMenu(
-                    player,
-                    BoxProvider.get().getStockManager().getPersonalStockHolder(user),
-                    new CategorySelectorMenu()
-            );
-        } else {
+        if (user == null) {
             player.sendMessage(GeneralMessage.ERROR_COMMAND_PLAYER_NOT_FOUND.apply(args[1]));
-        }
-    }
-
-    private void openMenu(@NotNull Player player, @NotNull StockHolder source, @NotNull Menu menu) {
-        var session = PlayerSession.get(player);
-
-        session.setBoxItemClickMode(null);
-        session.resetCustomNumbers();
-        session.setStockHolder(source);
-
-        var modes = ClickModeRegistry.getModes().stream().filter(mode -> mode.canUse(player)).toList();
-        session.setAvailableClickModes(modes);
-
-        var event = new MenuOpenEvent(player, menu);
-
-        if (BoxProvider.get().getEventBus().callEvent(event).isCancelled()) {
-            player.sendMessage(CANNOT_OPEN_MENU);
             return;
         }
 
-        MenuOpener.open(menu, player);
+        var session = PlayerSession.newSession(player);
+        session.setStockHolder(BoxProvider.get().getStockManager().getPersonalStockHolder(user));
+
+        openMenu(session, new CategorySelectorMenu());
     }
 
-    private @NotNull StockHolder getCurrentStockHolder(@NotNull Player player) { // Helper method
-        return BoxProvider.get().getBoxPlayerMap().get(player).getCurrentStockHolder();
+    private void openMenu(@NotNull PlayerSession session, @NotNull Menu menu) {
+        if (BoxProvider.get().getEventBus().callEvent(new MenuOpenEvent(menu, session)).isCancelled()) {
+            session.getViewer().sendMessage(CANNOT_OPEN_MENU);
+            return;
+        }
+
+        MenuOpener.open(menu, session);
     }
 }

@@ -1,10 +1,9 @@
 package net.okocraft.box.feature.gui.api.event;
 
 import com.github.siroshun09.event4j.event.Cancellable;
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import net.okocraft.box.feature.gui.api.button.Button;
 import net.okocraft.box.feature.gui.api.menu.Menu;
-import net.okocraft.box.feature.gui.api.menu.RenderedButton;
-import org.bukkit.entity.Player;
+import net.okocraft.box.feature.gui.api.session.PlayerSession;
 import org.bukkit.event.inventory.ClickType;
 import org.jetbrains.annotations.NotNull;
 
@@ -12,13 +11,13 @@ import java.util.Objects;
 
 public class MenuClickEvent extends MenuEvent implements Cancellable {
 
-    private final RenderedButton clickedButton;
+    private final Button clickedButton;
     private final ClickType clickType;
     private boolean cancelled;
 
-    public MenuClickEvent(@NotNull Player viewer, @NotNull Menu menu,
-                          @NotNull RenderedButton clickedButton, @NotNull ClickType clickType) {
-        super(viewer, menu);
+    public MenuClickEvent(@NotNull Menu menu, @NotNull PlayerSession session,
+                          @NotNull Button clickedButton, @NotNull ClickType clickType) {
+        super(menu, session);
         this.clickedButton = Objects.requireNonNull(clickedButton);
         this.clickType = Objects.requireNonNull(clickType);
     }
@@ -33,7 +32,7 @@ public class MenuClickEvent extends MenuEvent implements Cancellable {
         this.cancelled = cancel;
     }
 
-    public @NotNull RenderedButton getClickedButton() {
+    public @NotNull Button getClickedButton() {
         return clickedButton;
     }
 
@@ -47,7 +46,6 @@ public class MenuClickEvent extends MenuEvent implements Cancellable {
                 "viewerUuid=" + getViewer().getUniqueId() +
                 ", viewerName=" + getViewer().getName() +
                 ", menuClass=" + getMenu().getClass().getSimpleName() +
-                ", menuTitle=" + PlainTextComponentSerializer.plainText().serialize(getMenu().getTitle()) +
                 ", buttonClass=" + getClickedButton().getClass().getSimpleName() +
                 ", clickType=" + getClickType() +
                 ", cancelled=" + isCancelled() +

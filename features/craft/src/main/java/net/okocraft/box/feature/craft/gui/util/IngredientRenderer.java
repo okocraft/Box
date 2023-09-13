@@ -1,14 +1,14 @@
-package net.okocraft.box.feature.craft.util;
+package net.okocraft.box.feature.craft.gui.util;
 
 import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.model.item.BoxItem;
+import net.okocraft.box.api.model.stock.StockHolder;
 import net.okocraft.box.feature.craft.lang.Displays;
 import net.okocraft.box.feature.craft.model.BoxIngredientItem;
 import net.okocraft.box.feature.craft.model.BoxItemRecipe;
 import net.okocraft.box.feature.craft.model.IngredientHolder;
 import net.okocraft.box.feature.craft.model.SelectedRecipe;
 import net.okocraft.box.feature.gui.api.lang.Styles;
-import net.okocraft.box.feature.gui.api.session.PlayerSession;
 import net.okocraft.box.feature.gui.api.util.TranslationUtil;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -24,10 +24,8 @@ import static net.kyori.adventure.text.Component.translatable;
 
 public final class IngredientRenderer {
 
-    public static void render(@NotNull List<Component> target, @NotNull SelectedRecipe recipe,
-                              @NotNull Player viewer, int times) {
-        var stockHolder = PlayerSession.get(viewer).getStockHolder();
-
+    public static void render(@NotNull List<Component> target, @NotNull Player viewer,
+                              @NotNull SelectedRecipe recipe, int times, @NotNull StockHolder stockHolder) {
         target.add(TranslationUtil.render(Displays.CRAFT_BUTTON_INGREDIENTS.append(text(":")), viewer));
 
         var ingredientMap = new HashMap<BoxItem, Integer>();
@@ -58,8 +56,9 @@ public final class IngredientRenderer {
         }
     }
 
-    public static void render(@NotNull List<Component> target, @NotNull BoxItemRecipe recipe,
-                              @NotNull Player viewer, int times, boolean simple) {
+    public static void render(@NotNull List<Component> target, @NotNull Player viewer,
+                              @NotNull BoxItemRecipe recipe, int times, boolean simple,
+                              @NotNull StockHolder stockHolder) {
         if (simple) {
             var ingredients =
                     recipe.ingredients()
@@ -67,7 +66,7 @@ public final class IngredientRenderer {
                             .map(holder -> holder.getPatterns().get(0))
                             .toList();
 
-            render(target, new SelectedRecipe(ingredients, recipe.result(), recipe.amount()), viewer, times);
+            render(target, viewer, new SelectedRecipe(ingredients, recipe.result(), recipe.amount()), times, stockHolder);
             return;
         }
 

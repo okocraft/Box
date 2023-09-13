@@ -6,18 +6,40 @@ import net.okocraft.box.feature.category.api.registry.CategoryRegistry;
 import net.okocraft.box.feature.gui.api.button.Button;
 import net.okocraft.box.feature.gui.api.buttons.CloseButton;
 import net.okocraft.box.feature.gui.api.menu.paginate.AbstractPaginatedMenu;
+import net.okocraft.box.feature.gui.api.session.PlayerSession;
 import net.okocraft.box.feature.gui.internal.button.CategoryButton;
 import net.okocraft.box.feature.gui.internal.lang.Displays;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.stream.Stream;
 
 public class CategorySelectorMenu extends AbstractPaginatedMenu<Category> {
 
+    private static final List<Button> FOOTER;
+
+    static {
+        var footer = new ArrayList<Button>(9);
+
+        footer.add(new CloseButton(49));
+
+        for (int slot = 45; slot < 54; slot++) {
+            if (slot != 49) {
+                footer.add(Button.glassPane(slot));
+            }
+        }
+
+        FOOTER = Collections.unmodifiableList(footer);
+    }
+
     public CategorySelectorMenu() {
-        super(CategoryRegistry.get().values());
+        super(6, CategoryRegistry.get().values());
+    }
+
+    @Override
+    public @NotNull Component getTitle(@NotNull PlayerSession session) {
+        return Displays.CATEGORY_SELECTOR_MENU; // TODO: stockholder name
     }
 
     @Override
@@ -26,21 +48,7 @@ public class CategorySelectorMenu extends AbstractPaginatedMenu<Category> {
     }
 
     @Override
-    protected void addAdditionalButtons(@NotNull Player viewer, @NotNull List<Button> buttons) {
-        buttons.add(new CloseButton());
-
-        Stream.of(45, 46, 47, 48, 50, 51, 52, 53)
-                .map(Button::glassPane)
-                .forEach(buttons::add);
-    }
-
-    @Override
-    public int getRows() {
-        return 6;
-    }
-
-    @Override
-    public @NotNull Component getTitle() {
-        return Displays.CATEGORY_SELECTOR_MENU;
+    protected void addAdditionalButtons(@NotNull PlayerSession session, @NotNull List<Button> buttons) {
+        buttons.addAll(FOOTER);
     }
 }

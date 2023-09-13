@@ -1,189 +1,122 @@
 package net.okocraft.box.feature.gui.api.menu.paginate;
 
 import net.okocraft.box.feature.gui.api.button.Button;
-import net.okocraft.box.feature.gui.api.menu.AbstractMenu;
-import net.okocraft.box.feature.gui.api.menu.RenderedButton;
+import net.okocraft.box.feature.gui.api.button.ClickResult;
+import net.okocraft.box.feature.gui.api.session.PlayerSession;
 import net.okocraft.box.feature.gui.api.util.TranslationUtil;
 import net.okocraft.box.feature.gui.internal.lang.Displays;
 import org.bukkit.Material;
 import org.bukkit.Sound;
-import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
-import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractPaginatedMenu<T> extends AbstractMenu implements PaginatedMenu {
+public abstract class AbstractPaginatedMenu<T> implements PaginatedMenu {
+
+    private final int rows;
+    private final List<T> list;
 
     private final int iconsPerPage;
     private final int maxPage;
 
-    private final List<T> list;
-    private int currentPage = 1;
-
-    private boolean moved = true;
-
-    protected AbstractPaginatedMenu(@NotNull List<T> list) {
+    protected AbstractPaginatedMenu(int rows, @NotNull List<T> list) {
+        this.rows = rows;
         this.list = list;
-
-        int page = 1;
-        int size = list.size();
         this.iconsPerPage = (getRows() - 1) * 9;
-
-        while (page * iconsPerPage < size) {
-            page++;
-        }
-
-        this.maxPage = page;
+        this.maxPage = (list.size() + iconsPerPage - 1) / iconsPerPage;
     }
 
     @Override
-    public int getCurrentPage() {
-        return currentPage;
+    public final int getRows() {
+        return rows;
     }
 
     @Override
-    public boolean hasNext() {
-        return currentPage < maxPage;
-    }
-
-    @Override
-    public boolean hasPrevious() {
-        return 1 < currentPage;
-    }
-
-    @Override
-    public void previous() {
-        if (!hasPrevious()) {
-            throw new IllegalStateException();
-        }
-
-        currentPage--;
-        moved = true;
-    }
-
-    @Override
-    public void next() {
-        if (!hasNext()) {
-            throw new IllegalStateException();
-        }
-
-        currentPage++;
-        moved = true;
-    }
-
-    @Override
-    public void setPage(int page) {
-        if (this.currentPage != page && 1 <= page && page <= maxPage) {
-            this.currentPage = page;
-            moved = true;
-        }
-    }
-
-    @Override
-    public int getMaxPage() {
+    public final int getMaxPage() {
         return maxPage;
     }
 
     @Override
-    public int getIconsPerPage() {
+    public final int getIconsPerPage() {
         return iconsPerPage;
     }
 
     @Override
-    public void updateMenu(@NotNull Player viewer) {
-        renderPage(viewer);
-        moved = false;
-    }
+    public @NotNull List<? extends Button> getButtons(@NotNull PlayerSession session) {
+        var buttons = new ArrayList<Button>();
+        int currentPage = PaginatedMenu.getCurrentPage(session);
 
-    @Override
-    public boolean shouldUpdate() {
-        return moved;
-    }
-
-    private void renderPage(@NotNull Player viewer) {
         int start = (currentPage - 1) * iconsPerPage;
         int end = start + iconsPerPage;
 
-        var newButtons = new ArrayList<Button>(getRows() * 9);
-
         for (int i = start, limit = list.size(), slot = 0; i < limit && i < end; i++, slot++) {
-            newButtons.add(createButton(list.get(i), slot));
+            buttons.add(createButton(list.get(i), slot));
         }
 
-        if (hasNext()) {
-            newButtons.add(new PageSwitchButton(true));
+        if (currentPage < maxPage) {
+            buttons.add(new PageSwitchButton(rows, maxPage, true));
         }
 
-        if (hasPrevious()) {
-            newButtons.add(new PageSwitchButton(false));
+        if (1 < currentPage) {
+            buttons.add(new PageSwitchButton(rows, maxPage, false));
         }
 
-        addAdditionalButtons(viewer, newButtons);
+        addAdditionalButtons(session, buttons);
 
-        buttonMap.clear();
-
-        for (var button : newButtons) {
-            buttonMap.put(button.getSlot(), RenderedButton.create(button));
-        }
-
-        buttonMap.values().forEach(button -> button.updateIcon(viewer));
-
-        updated = true;
+        return buttons;
     }
 
     protected abstract @NotNull Button createButton(@NotNull T instance, int slot);
 
-    protected abstract void addAdditionalButtons(@NotNull Player viewer, @NotNull List<Button> buttons);
+    protected abstract void addAdditionalButtons(@NotNull PlayerSession session, @NotNull List<Button> buttons);
 
-    private class PageSwitchButton implements Button {
-
-        private final boolean next;
-
-        private PageSwitchButton(boolean next) {
-            this.next = next;
-        }
-
-        @Override
-        public @NotNull Material getIconMaterial() {
-            return Material.ARROW;
-        }
-
-        @Override
-        public int getIconAmount() {
-            return Math.min(currentPage + (next ? 1 : -1), 64);
-        }
-
-        @Override
-        public @Nullable ItemMeta applyIconMeta(@NotNull Player viewer, @NotNull ItemMeta target) {
-            var name = next ? Displays.PAGE_SWITCH_BUTTON_NEXT : Displays.PAGE_SWITCH_BUTTON_PREVIOUS;
-
-            target.displayName(TranslationUtil.render(name, viewer));
-
-            return target;
-        }
+    protected record PageSwitchButton(int rows, int maxPage, boolean next) implements Button {
 
         @Override
         public int getSlot() {
-            return next ? getRows() * 9 - 1 : (getRows() - 1) * 9;
+            return next ? rows * 9 - 1 : (rows - 1) * 9;
         }
 
         @Override
-        public void onClick(@NotNull Player clicker, @NotNull ClickType clickType) {
+        public @NotNull ItemStack createIcon(@NotNull PlayerSession session) {
+            int amount = Math.min(PaginatedMenu.getCurrentPage(session) + (next ? 1 : -1), 64);
+
+            var icon = new ItemStack(Material.ARROW, amount);
+
+            var displayName = next ? Displays.PAGE_SWITCH_BUTTON_NEXT : Displays.PAGE_SWITCH_BUTTON_PREVIOUS;
+            icon.editMeta(meta -> meta.displayName(TranslationUtil.render(displayName, session.getViewer())));
+
+            return icon;
+        }
+
+        @Override
+        public @NotNull ClickResult onClick(@NotNull PlayerSession session, @NotNull ClickType clickType) {
+            int currentPage = PaginatedMenu.getCurrentPage(session);
+            int newPage = 0;
+
             if (next) {
-                if (hasNext()) {
-                    next();
+                if (currentPage < maxPage) {
+                    newPage = currentPage + 1;
                 }
             } else {
-                if (hasPrevious()) {
-                    previous();
+                if (1 < currentPage) {
+                    newPage = currentPage - 1;
                 }
             }
 
-            clicker.playSound(clicker.getLocation(), Sound.BLOCK_LEVER_CLICK, 100f, 1.5f);
+            if (currentPage != newPage) {
+                session.putData(PaginatedMenu.CURRENT_PAGE_KEY, newPage);
+
+                var clicker = session.getViewer();
+                clicker.playSound(clicker.getLocation(), Sound.BLOCK_LEVER_CLICK, 100f, 1.5f);
+
+                return ClickResult.UPDATE_ICONS;
+            } else {
+                return ClickResult.NO_UPDATE_NEEDED;
+            }
         }
     }
 }

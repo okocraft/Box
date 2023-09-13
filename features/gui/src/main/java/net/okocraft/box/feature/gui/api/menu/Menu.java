@@ -1,24 +1,17 @@
 package net.okocraft.box.feature.gui.api.menu;
 
 import net.kyori.adventure.text.Component;
-import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.ClickType;
-import org.bukkit.inventory.ItemStack;
+import net.okocraft.box.feature.gui.api.button.Button;
+import net.okocraft.box.feature.gui.api.session.PlayerSession;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public interface Menu {
 
     int getRows();
 
-    @NotNull Component getTitle();
+    @NotNull Component getTitle(@NotNull PlayerSession session);
 
-    void applyIcons(@NotNull ItemStack[] target);
-
-    void clickMenu(@NotNull Player clicker, int slot, @NotNull ClickType clickType);
-
-    boolean shouldUpdate();
-
-    boolean isUpdated();
-
-    void updateMenu(@NotNull Player viewer);
+    @NotNull List<? extends Button> getButtons(@NotNull PlayerSession session);
 }

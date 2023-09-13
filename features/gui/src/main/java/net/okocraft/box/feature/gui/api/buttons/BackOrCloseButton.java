@@ -13,7 +13,7 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-public record CloseButton(int slot) implements Button {
+public record BackOrCloseButton(int slot) implements Button {
 
     @Override
     public int getSlot() {
@@ -24,7 +24,8 @@ public record CloseButton(int slot) implements Button {
     public @NotNull ItemStack createIcon(@NotNull PlayerSession session) {
         var icon = new ItemStack(Material.OAK_DOOR);
 
-        icon.editMeta(meta -> meta.displayName(TranslationUtil.render(Displays.CLOSE_BUTTON, session.getViewer())));
+        var display = session.hasPreviousMenu() ? Displays.BACK_BUTTON : Displays.CLOSE_BUTTON;
+        icon.editMeta(meta -> meta.displayName(TranslationUtil.render(display, session.getViewer())));
 
         return icon;
     }
@@ -32,14 +33,20 @@ public record CloseButton(int slot) implements Button {
     @Override
     public @NotNull ClickResult onClick(@NotNull PlayerSession session, @NotNull ClickType clickType) {
         var clicker = session.getViewer();
-        var result = ClickResult.waitingTask();
 
-        BoxProvider.get().getScheduler().runEntityTask(clicker, () -> {
-            clicker.closeInventory();
-            clicker.playSound(clicker.getLocation(), Sound.BLOCK_CHEST_CLOSE, SoundCategory.MASTER, 100f, 1.5f);
-            result.completeAsync(ClickResult.NO_UPDATE_NEEDED);
-        });
+        clicker.playSound(clicker.getLocation(), Sound.BLOCK_CHEST_CLOSE, SoundCategory.MASTER, 100f, 1.5f);
 
-        return result;
+        if (session.hasPreviousMenu()) {
+            return ClickResult.changeMenu(session.backMenu());
+        } else {
+            var result = ClickResult.waitingTask();
+
+            BoxProvider.get().getScheduler().runEntityTask(clicker, () -> {
+                clicker.closeInventory();
+                result.completeAsync(ClickResult.NO_UPDATE_NEEDED);
+            });
+
+            return result;
+        }
     }
 }

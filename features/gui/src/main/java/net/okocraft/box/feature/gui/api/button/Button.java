@@ -1,12 +1,11 @@
 package net.okocraft.box.feature.gui.api.button;
 
+import net.okocraft.box.feature.gui.api.session.PlayerSession;
 import net.okocraft.box.feature.gui.internal.util.XmasChecker;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
-import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public interface Button {
 
@@ -21,21 +20,13 @@ public interface Button {
             material = Material.GRAY_STAINED_GLASS_PANE;
         }
 
-        return empty(material, slot);
-    }
-
-    static @NotNull Button empty(@NotNull Material material, int slot) {
         return new EmptyButton(material, slot);
     }
 
-    @NotNull Material getIconMaterial();
-
-    int getIconAmount();
-
-    @Nullable ItemMeta applyIconMeta(@NotNull Player viewer, @NotNull ItemMeta target);
-
     int getSlot();
 
-    void onClick(@NotNull Player clicker, @NotNull ClickType clickType);
+    @NotNull ItemStack createIcon(@NotNull PlayerSession session);
+
+    @NotNull ClickResult onClick(@NotNull PlayerSession session, @NotNull ClickType clickType);
 
 }

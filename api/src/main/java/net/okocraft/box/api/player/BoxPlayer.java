@@ -1,5 +1,6 @@
 package net.okocraft.box.api.player;
 
+import net.okocraft.box.api.model.stock.PersonalStockHolder;
 import net.okocraft.box.api.model.stock.StockHolder;
 import net.okocraft.box.api.model.user.BoxUser;
 import org.bukkit.entity.Player;
@@ -45,7 +46,7 @@ public interface BoxPlayer {
      *
      * @return the personal {@link StockHolder} of this player
      */
-    @NotNull StockHolder getPersonalStockHolder();
+    @NotNull PersonalStockHolder getPersonalStockHolder();
 
     /**
      * Gets the current {@link StockHolder} to deposit or withdraw.

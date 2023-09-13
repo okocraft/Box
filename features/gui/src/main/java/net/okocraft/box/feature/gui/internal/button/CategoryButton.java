@@ -1,49 +1,50 @@
 package net.okocraft.box.feature.gui.internal.button;
 
+import net.kyori.adventure.text.Component;
 import net.okocraft.box.feature.category.api.category.Category;
-import net.okocraft.box.feature.gui.api.buttons.MenuButton;
+import net.okocraft.box.feature.gui.api.button.Button;
+import net.okocraft.box.feature.gui.api.button.ClickResult;
 import net.okocraft.box.feature.gui.api.lang.Styles;
+import net.okocraft.box.feature.gui.api.session.PlayerSession;
 import net.okocraft.box.feature.gui.api.util.TranslationUtil;
 import net.okocraft.box.feature.gui.internal.menu.CategoryMenu;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.event.inventory.ClickType;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-public class CategoryButton extends MenuButton {
+public class CategoryButton implements Button {
 
     private final Category category;
+    private final CategoryMenu menu;
     private final int slot;
 
     public CategoryButton(@NotNull Category category, int slot) {
-        super(() -> new CategoryMenu(category));
         this.category = category;
+        this.menu = new CategoryMenu(category);
         this.slot = slot;
-    }
-
-    @Override
-    public @NotNull Material getIconMaterial() {
-        return category.getIconMaterial();
-    }
-
-    @Override
-    public int getIconAmount() {
-        return 1;
-    }
-
-    @Override
-    public @Nullable ItemMeta applyIconMeta(@NotNull Player viewer, @NotNull ItemMeta target) {
-        var displayName =
-                TranslationUtil.render(category.getDisplayName(), viewer).style(Styles.NO_DECORATION_GOLD);
-
-        target.displayName(displayName);
-
-        return target;
     }
 
     @Override
     public int getSlot() {
         return slot;
+    }
+
+    @Override
+    public @NotNull ItemStack createIcon(@NotNull PlayerSession session) {
+        var icon = new ItemStack(category.getIconMaterial());
+
+        icon.editMeta(meta -> meta.displayName(renderCategoryDisplayName(session.getViewer()).style(Styles.NO_DECORATION_GOLD)));
+
+        return icon;
+    }
+
+    @Override
+    public @NotNull ClickResult onClick(@NotNull PlayerSession session, @NotNull ClickType clickType) {
+        return ClickResult.changeMenu(menu);
+    }
+
+    private @NotNull Component renderCategoryDisplayName(@NotNull Player viewer) {
+        return TranslationUtil.render(category.getDisplayName(), viewer);
     }
 }

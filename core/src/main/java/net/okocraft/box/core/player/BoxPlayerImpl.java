@@ -2,8 +2,8 @@ package net.okocraft.box.core.player;
 
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.event.player.PlayerStockHolderChangeEvent;
+import net.okocraft.box.api.model.stock.PersonalStockHolder;
 import net.okocraft.box.api.model.stock.StockHolder;
-import net.okocraft.box.api.model.stock.StockHolderWrapper;
 import net.okocraft.box.api.model.user.BoxUser;
 import net.okocraft.box.api.player.BoxPlayer;
 import net.okocraft.box.core.model.loader.LoadingPersonalStockHolder;
@@ -17,7 +17,7 @@ public class BoxPlayerImpl implements BoxPlayer {
 
     private final BoxUser user;
     private final Player player;
-    private final StockHolderWrapper personalStockHolder;
+    private final PersonalStockHolder personalStockHolder;
 
     private StockHolder currentHolder;
 
@@ -39,7 +39,7 @@ public class BoxPlayerImpl implements BoxPlayer {
     }
 
     @Override
-    public @NotNull StockHolder getPersonalStockHolder() {
+    public @NotNull PersonalStockHolder getPersonalStockHolder() {
         return personalStockHolder;
     }
 
