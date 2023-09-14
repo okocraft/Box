@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 public class ItemLoader {
@@ -36,10 +37,7 @@ public class ItemLoader {
             logger.info(customItems.size() + " custom items are loaded!");
         }
 
-        var itemManger = new BoxItemManager(itemStorage);
-
-        itemManger.storeItems(defaultItems);
-        itemManger.storeItems(customItems);
+        var itemManger = new BoxItemManager(itemStorage, new InitialBoxItemIterator(defaultItems, customItems));
 
         itemStorage.saveCurrentDataVersion();
         itemStorage.saveCurrentDefaultItemVersion();
@@ -84,5 +82,38 @@ public class ItemLoader {
     private static boolean isTryingDowngrade(@NotNull MCDataVersion dataVersion, int defaultItemVersion) {
         return dataVersion.isAfter(MCDataVersion.CURRENT) ||
                 (dataVersion.isSame(MCDataVersion.CURRENT) && DefaultItemProvider.version() < defaultItemVersion);
+    }
+
+    private static class InitialBoxItemIterator implements Iterator<BoxItem> {
+
+        private final Iterator<BoxItem> defaultItemIterator;
+        private final Iterator<BoxCustomItem> customItemIterator;
+
+        private boolean firstIterator = true;
+
+        private InitialBoxItemIterator(@NotNull List<BoxItem> defaultItems, @NotNull List<BoxCustomItem> customItems) {
+            this.defaultItemIterator = defaultItems.listIterator();
+            this.customItemIterator = customItems.listIterator();
+        }
+
+        @Override
+        public boolean hasNext() {
+            if (firstIterator) {
+                if (defaultItemIterator.hasNext()) {
+                    return true;
+                }
+                firstIterator = false;
+            }
+            return customItemIterator.hasNext();
+        }
+
+        @Override
+        public BoxItem next() {
+            if (firstIterator) {
+                return defaultItemIterator.next();
+            } else {
+                return customItemIterator.next();
+            }
+        }
     }
 }
