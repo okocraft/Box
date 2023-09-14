@@ -1,8 +1,14 @@
 package net.okocraft.box.api.transaction;
 
+import org.jetbrains.annotations.ApiStatus;
+
 /**
  * An enum of transaction result types.
+ *
+ * @deprecated no replacements
  */
+@Deprecated(since = "5.5.0", forRemoval = true)
+@ApiStatus.ScheduledForRemoval(inVersion = "6.0.0")
 public enum TransactionResultType {
     /**
      * A result type when the item in the player's main hand is air.
@@ -58,7 +64,19 @@ public enum TransactionResultType {
      * <p>
      * {@link #isModified()} of this type is {@code true}.
      */
-    WITHDREW_PARTIAL(true);
+    WITHDREW_PARTIAL(true),
+
+    /**
+     * A result type for compatibility
+     */
+    @ApiStatus.Internal
+    NOT_SPECIFIED_TRUE(true),
+
+    /**
+     * A result type for compatibility
+     */
+    @ApiStatus.Internal
+    NOT_SPECIFIED_FALSE(false);
 
     private final boolean modified;
 
