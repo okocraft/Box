@@ -10,6 +10,7 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,7 +29,10 @@ import static net.okocraft.box.api.transaction.TransactionResultType.WITHDREW;
  * A class for transacting with inventory.
  * <p>
  * All methods of this class must be called in the server main thread.
+ * @deprecated use {@link StockHolderTransaction} or {@link net.okocraft.box.api.util.InventoryUtil}
  */
+@Deprecated(since = "5.5.0", forRemoval = true)
+@ApiStatus.ScheduledForRemoval(inVersion = "6.0.0")
 public final class InventoryTransaction {
 
     /**

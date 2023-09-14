@@ -1,5 +1,6 @@
 package net.okocraft.box.api.transaction;
 
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -10,7 +11,11 @@ import java.util.Objects;
 
 /**
  * A class to indicate a list of transaction results.
+ *
+ * @deprecated no replacement, use List&lt;TransactionResult&gt;
  */
+@Deprecated(since = "5.5.0", forRemoval = true)
+@ApiStatus.ScheduledForRemoval(inVersion = "6.0.0")
 public class TransactionResultList {
 
     /**
