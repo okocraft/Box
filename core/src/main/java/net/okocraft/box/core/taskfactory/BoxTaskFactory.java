@@ -2,6 +2,7 @@ package net.okocraft.box.core.taskfactory;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.api.scheduler.BoxScheduler;
 import net.okocraft.box.api.taskfactory.TaskFactory;
 import net.okocraft.box.api.util.Folia;
 import net.okocraft.box.api.util.MCDataVersion;
@@ -20,7 +21,13 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 
-public class BoxTaskFactory implements TaskFactory {
+public class BoxTaskFactory implements TaskFactory, BoxScheduler {
+
+    public static boolean useModernExecutor() {
+        // In Paper 1.20.1 Build 40, Folia's new scheduler APIs have been moved to Paper
+        // Or, Box is running on Folia
+        return MCDataVersion.CURRENT.isAfterOrSame(MCDataVersion.MC_1_20_1) || Folia.check();
+    }
 
     private final ExecutorService executor = Executors.newFixedThreadPool(
             Math.min(Runtime.getRuntime().availableProcessors(), 4),
@@ -102,9 +109,17 @@ public class BoxTaskFactory implements TaskFactory {
         return Bukkit.getScheduler().getMainThreadExecutor(BoxProvider.get().getPluginInstance());
     }
 
-    private boolean useModernExecutor() {
-        // In Paper 1.20.1 Build 40, Folia's new scheduler APIs have been moved to Paper
-        // Or, Box is running on Folia
-        return MCDataVersion.CURRENT.isAfterOrSame(MCDataVersion.MC_1_20_1) || Folia.check();
+    @Override
+    public void runAsyncTask(@NotNull Runnable task) {
+        executor.execute(task);
+    }
+
+    @Override
+    public void runEntityTask(@NotNull Entity entity, @NotNull Runnable task) {
+        if (useModernExecutor()) {
+            entity.getScheduler().run(BoxProvider.get().getPluginInstance(), ignored -> task.run(), null);
+        } else {
+            Bukkit.getScheduler().runTask(BoxProvider.get().getPluginInstance(), task);
+        }
     }
 }

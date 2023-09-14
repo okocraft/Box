@@ -1,6 +1,7 @@
 package net.okocraft.box.api.taskfactory;
 
 import org.bukkit.entity.Entity;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CompletableFuture;
@@ -10,7 +11,11 @@ import java.util.function.Supplier;
 
 /**
  * An interface to create {@link CompletableFuture}s.
+ *
+ * @deprecated use {@link net.okocraft.box.api.scheduler.BoxScheduler}
  */
+@Deprecated(since = "5.5.0", forRemoval = true)
+@ApiStatus.ScheduledForRemoval(inVersion = "6.0.0")
 public interface TaskFactory {
 
     /**

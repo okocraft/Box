@@ -11,12 +11,14 @@ import net.okocraft.box.api.model.manager.ItemManager;
 import net.okocraft.box.api.model.manager.StockManager;
 import net.okocraft.box.api.model.manager.UserManager;
 import net.okocraft.box.api.player.BoxPlayerMap;
+import net.okocraft.box.api.scheduler.BoxScheduler;
 import net.okocraft.box.api.taskfactory.TaskFactory;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
@@ -113,8 +115,18 @@ public interface BoxAPI {
      * Gets the {@link TaskFactory}.
      *
      * @return the {@link TaskFactory}
+     * @deprecated use {@link net.okocraft.box.api.scheduler.BoxScheduler}
      */
+    @Deprecated(since = "5.5.0", forRemoval = true)
+    @ApiStatus.ScheduledForRemoval(inVersion = "6.0.0")
     @NotNull TaskFactory getTaskFactory();
+
+    /**
+     * Gets the {@link BoxScheduler}.
+     *
+     * @return the {@link BoxScheduler}
+     */
+    @NotNull BoxScheduler getScheduler();
 
     /**
      * Gets the {@link BoxCommand}.
