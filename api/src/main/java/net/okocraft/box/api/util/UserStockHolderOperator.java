@@ -3,6 +3,7 @@ package net.okocraft.box.api.util;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.model.stock.UserStockHolder;
 import org.bukkit.Bukkit;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -12,7 +13,11 @@ import java.util.function.Consumer;
 
 /**
  * A utility class to get the {@link UserStockHolder}. and do something with it.
+ *
+ * @deprecated {@link UserStockHolder} will be removed in Box 6.0.0
  */
+@Deprecated(since = "5.5.0", forRemoval = true)
+@ApiStatus.ScheduledForRemoval(inVersion = "6.0.0")
 public final class UserStockHolderOperator {
 
     private final String argument;

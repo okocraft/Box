@@ -7,15 +7,14 @@ import net.okocraft.box.api.command.Command;
 import net.okocraft.box.api.message.GeneralMessage;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.model.stock.StockHolder;
+import net.okocraft.box.api.model.user.BoxUser;
 import net.okocraft.box.api.util.TabCompleter;
-import net.okocraft.box.api.util.UserStockHolderOperator;
-import net.okocraft.box.feature.command.message.BoxAdminMessage;
+import net.okocraft.box.api.util.UserSearcher;
 import net.okocraft.box.feature.command.event.stock.CommandCauses;
+import net.okocraft.box.feature.command.message.BoxAdminMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
@@ -32,11 +31,12 @@ class StockModifyCommands {
             }
 
             @Override
-            void sendMessage(@NotNull CommandSender sender, @Nullable Player targetPlayer,
-                             @NotNull String targetName, BoxItem item, int amount, int current) {
-                sender.sendMessage(BoxAdminMessage.STOCK_GIVE_SUCCESS_SENDER.apply(targetName, item, amount, current));
+            void sendMessage(@NotNull CommandSender sender, @NotNull BoxUser target, BoxItem item, int amount, int current) {
+                sender.sendMessage(BoxAdminMessage.STOCK_GIVE_SUCCESS_SENDER.apply(target, item, amount, current));
 
-                if (targetPlayer != null && !sender.getName().equals(targetName)) {
+                var targetPlayer = Bukkit.getPlayer(target.getUUID());
+
+                if (targetPlayer != null && sender != targetPlayer) {
                     targetPlayer.sendMessage(
                             BoxAdminMessage.STOCK_GIVE_SUCCESS_TARGET.apply(sender.getName(), item, amount, current)
                     );
@@ -60,11 +60,12 @@ class StockModifyCommands {
             }
 
             @Override
-            void sendMessage(@NotNull CommandSender sender, @Nullable Player targetPlayer,
-                             @NotNull String targetName, BoxItem item, int amount, int current) {
-                sender.sendMessage(BoxAdminMessage.STOCK_SET_SUCCESS_SENDER.apply(targetName, item, current));
+            void sendMessage(@NotNull CommandSender sender, @NotNull BoxUser target, BoxItem item, int amount, int current) {
+                sender.sendMessage(BoxAdminMessage.STOCK_SET_SUCCESS_SENDER.apply(target, item, current));
 
-                if (targetPlayer != null && !sender.getName().equals(targetName)) {
+                var targetPlayer = Bukkit.getPlayer(target.getUUID());
+
+                if (targetPlayer != null && sender != targetPlayer) {
                     targetPlayer.sendMessage(
                             BoxAdminMessage.STOCK_SET_SUCCESS_TARGET.apply(sender.getName(), item, current)
                     );
@@ -87,11 +88,12 @@ class StockModifyCommands {
             }
 
             @Override
-            void sendMessage(@NotNull CommandSender sender, @Nullable Player targetPlayer,
-                             @NotNull String targetName, BoxItem item, int amount, int current) {
-                sender.sendMessage(BoxAdminMessage.STOCK_TAKE_SUCCESS_SENDER.apply(targetName, item, amount, current));
+            void sendMessage(@NotNull CommandSender sender, @NotNull BoxUser target, BoxItem item, int amount, int current) {
+                sender.sendMessage(BoxAdminMessage.STOCK_TAKE_SUCCESS_SENDER.apply(target, item, amount, current));
 
-                if (targetPlayer != null && !sender.getName().equals(targetName)) {
+                var targetPlayer = Bukkit.getPlayer(target.getUUID());
+
+                if (targetPlayer != null && sender != targetPlayer) {
                     targetPlayer.sendMessage(
                             BoxAdminMessage.STOCK_TAKE_SUCCESS_TARGET.apply(sender.getName(), item, amount, current)
                     );
@@ -145,20 +147,20 @@ class StockModifyCommands {
                 }
             }
 
-            UserStockHolderOperator.create(args[2])
-                    .supportOffline(true)
-                    .stockHolderOperator(target -> {
-                        int current = modifyStock(sender, target, item.get(), amount);
-                        sendMessage(sender, Bukkit.getPlayer(target.getUUID()), target.getName(), item.get(), amount, current);
-                    })
-                    .onNotFound(name -> sender.sendMessage(GeneralMessage.ERROR_COMMAND_PLAYER_NOT_FOUND.apply(name)))
-                    .run();
+            var target = UserSearcher.search(args[2]);
+
+            if (target != null) {
+                var stockHolder = BoxProvider.get().getStockManager().getPersonalStockHolderLoader(target);
+                int current = modifyStock(sender, stockHolder, item.get(), amount);
+                sendMessage(sender, target, item.get(), amount, current);
+            } else {
+                sender.sendMessage(GeneralMessage.ERROR_COMMAND_PLAYER_NOT_FOUND.apply(args[2]));
+            }
         }
 
         abstract int modifyStock(@NotNull CommandSender sender, @NotNull StockHolder stockHolder, @NotNull BoxItem item, int amount);
 
-        abstract void sendMessage(@NotNull CommandSender sender, @Nullable Player targetPlayer,
-                                  @NotNull String targetName, BoxItem item, int amount, int current);
+        abstract void sendMessage(@NotNull CommandSender sender, @NotNull BoxUser user, BoxItem item, int amount, int current);
 
         @Override
         public @NotNull List<String> onTabComplete(@NotNull CommandSender sender, @NotNull String[] args) {

@@ -5,7 +5,7 @@ import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.command.AbstractCommand;
 import net.okocraft.box.api.message.GeneralMessage;
 import net.okocraft.box.api.util.TabCompleter;
-import net.okocraft.box.api.util.UserStockHolderOperator;
+import net.okocraft.box.api.util.UserSearcher;
 import net.okocraft.box.feature.command.message.BoxAdminMessage;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
@@ -40,15 +40,15 @@ class StockInfoCommand extends AbstractCommand {
             return;
         }
 
-        UserStockHolderOperator.create(args[2])
-                .supportOffline(true)
-                .stockHolderOperator(target -> {
-                    var message =
-                            BoxAdminMessage.STOCK_INFO_AMOUNT.apply(target.getName(), boxItem.get(), target.getAmount(boxItem.get()));
-                    sender.sendMessage(message);
-                })
-                .onNotFound(name -> sender.sendMessage(GeneralMessage.ERROR_COMMAND_PLAYER_NOT_FOUND.apply(name)))
-                .run();
+        var target = UserSearcher.search(args[2]);
+
+        if (target != null) {
+            var stockHolder = BoxProvider.get().getStockManager().getPersonalStockHolderLoader(target);
+            var message = BoxAdminMessage.STOCK_INFO_AMOUNT.apply(target, boxItem.get(), stockHolder.getAmount(boxItem.get()));
+            sender.sendMessage(message);
+        } else {
+            sender.sendMessage(GeneralMessage.ERROR_COMMAND_PLAYER_NOT_FOUND.apply(args[2]));
+        }
     }
 
     @Override

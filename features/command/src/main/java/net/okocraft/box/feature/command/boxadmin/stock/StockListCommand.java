@@ -1,10 +1,11 @@
 package net.okocraft.box.feature.command.boxadmin.stock;
 
 import net.kyori.adventure.text.Component;
+import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.command.AbstractCommand;
 import net.okocraft.box.api.message.GeneralMessage;
 import net.okocraft.box.api.util.TabCompleter;
-import net.okocraft.box.api.util.UserStockHolderOperator;
+import net.okocraft.box.api.util.UserSearcher;
 import net.okocraft.box.feature.command.message.BoxAdminMessage;
 import net.okocraft.box.feature.command.shared.SharedStockListCommand;
 import org.bukkit.command.CommandSender;
@@ -34,17 +35,16 @@ class StockListCommand extends AbstractCommand {
             return;
         }
 
-        var targetStockHolder = UserStockHolderOperator.create(args[2]).supportOffline(true).getUserStockHolder();
+        var target = UserSearcher.search(args[2]);
 
-        if (targetStockHolder == null) {
+        if (target != null) {
+            sender.sendMessage(SharedStockListCommand.createStockList(
+                    BoxProvider.get().getStockManager().getPersonalStockHolderLoader(target),
+                    3 < args.length ? Arrays.copyOfRange(args, 3, args.length) : null
+            ));
+        } else {
             sender.sendMessage(GeneralMessage.ERROR_COMMAND_PLAYER_NOT_FOUND.apply(args[2]));
-            return;
         }
-
-        sender.sendMessage(SharedStockListCommand.createStockList(
-                targetStockHolder,
-                3 < args.length ? Arrays.copyOfRange(args, 3, args.length) : null
-        ));
     }
 
     @Override

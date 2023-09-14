@@ -96,7 +96,7 @@ public class BoxPlayerMapImpl implements BoxPlayerMap {
 
         var userStock = stockManager.loadUserStock(boxUser).join();
 
-        var boxPlayer = new BoxPlayerImpl(player, userStock);
+        var boxPlayer = new BoxPlayerImpl(boxUser, player, userStock);
 
         playerMap.put(player, boxPlayer);
 

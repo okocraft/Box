@@ -5,15 +5,14 @@ import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.command.AbstractCommand;
 import net.okocraft.box.api.message.GeneralMessage;
 import net.okocraft.box.api.model.item.BoxItem;
+import net.okocraft.box.api.model.user.BoxUser;
 import net.okocraft.box.api.util.TabCompleter;
-import net.okocraft.box.api.util.UserStockHolderOperator;
-import net.okocraft.box.feature.command.message.BoxAdminMessage;
+import net.okocraft.box.api.util.UserSearcher;
 import net.okocraft.box.feature.command.event.stock.CommandCauses;
+import net.okocraft.box.feature.command.message.BoxAdminMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
@@ -45,14 +44,15 @@ class StockResetCommand extends AbstractCommand {
             return;
         }
 
-        UserStockHolderOperator.create(args[2])
-                .supportOffline(true)
-                .stockHolderOperator(target -> {
-                    target.setAmount(item.get(), 0, new CommandCauses.AdminReset(sender));
-                    sendMessage(sender, Bukkit.getPlayer(target.getUUID()), target.getName(), item.get());
-                })
-                .onNotFound(name -> sender.sendMessage(GeneralMessage.ERROR_COMMAND_PLAYER_NOT_FOUND.apply(name)))
-                .run();
+        var target = UserSearcher.search(args[2]);
+
+        if (target != null) {
+            var stockHolder = BoxProvider.get().getStockManager().getPersonalStockHolderLoader(target);
+            stockHolder.setAmount(item.get(), 0, new CommandCauses.AdminReset(sender));
+            sendMessage(sender, target, item.get());
+        } else {
+            sender.sendMessage(GeneralMessage.ERROR_COMMAND_PLAYER_NOT_FOUND.apply(args[2]));
+        }
     }
 
     @Override
@@ -68,10 +68,12 @@ class StockResetCommand extends AbstractCommand {
         return Collections.emptyList();
     }
 
-    private void sendMessage(@NotNull CommandSender sender, @Nullable Player targetPlayer, @NotNull String targetName, BoxItem item) {
-        sender.sendMessage(BoxAdminMessage.STOCK_RESET_SUCCESS_SENDER.apply(targetName, item));
+    private void sendMessage(@NotNull CommandSender sender, @NotNull BoxUser target, BoxItem item) {
+        sender.sendMessage(BoxAdminMessage.STOCK_RESET_SUCCESS_SENDER.apply(target, item));
 
-        if (targetPlayer != null && !sender.getName().equals(targetName)) {
+        var targetPlayer = Bukkit.getPlayer(target.getUUID());
+
+        if (targetPlayer != null && sender != targetPlayer) {
             targetPlayer.sendMessage(BoxAdminMessage.STOCK_RESET_SUCCESS_TARGET.apply(sender.getName(), item));
         }
     }
