@@ -78,6 +78,12 @@ public record MCDataVersion(int dataVersion) {
      */
     public static final MCDataVersion MC_1_20_1 = new MCDataVersion(3465);
 
+    /**
+     * Creates a {@link MCDataVersion} from the specified data version
+     *
+     * @param dataVersion the data version
+     * @return a {@link MCDataVersion}
+     */
     @Contract("_ -> new")
     public static @NotNull MCDataVersion of(int dataVersion) {
         return new MCDataVersion(dataVersion);

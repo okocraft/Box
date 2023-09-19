@@ -42,6 +42,11 @@ public interface BoxPlayer {
      */
     @NotNull Player getPlayer();
 
+    /**
+     * Gets the personal {@link StockHolder} of this player.
+     *
+     * @return the personal {@link StockHolder} of this player
+     */
     @NotNull StockHolder getPersonalStockHolder();
 
     /**

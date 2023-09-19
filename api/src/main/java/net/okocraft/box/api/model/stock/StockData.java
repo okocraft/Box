@@ -7,6 +7,9 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * A record of the stock.
+ *
+ * @param itemId {@link BoxItem#getInternalId()}
+ * @param amount amount of the stock
  */
 public record StockData(int itemId, int amount) {
 

@@ -105,6 +105,9 @@ public interface ItemManager {
 
     /**
      * Registers a new item.
+     * <p>
+     * The registration process will be executed on different thread, and this method does not wait for that process to complete.
+     * The {@link Consumer} of {@link ItemRegistrationResult} will be called on that thread.
      *
      * @param original       the item to register
      * @param plainName      the name of the item
@@ -114,10 +117,13 @@ public interface ItemManager {
 
     /**
      * Renames a {@link BoxCustomItem}.
+     * <p>
+     * The rename process will be executed on different thread, and this method does not wait for that process to complete.
+     * The {@link Consumer} of {@link ItemRegistrationResult} will be called on that thread.
      *
      * @param item           a {@link BoxCustomItem} to rename
      * @param newName        a new name
-     * @param resultConsumer a {@link Consumer}, which will be called when completed registration process
+     * @param resultConsumer a {@link Consumer}, which will be called when completed rename process
      * @throws IllegalArgumentException {@link BoxCustomItem} is not created by Box ({@link #isCustomItem(BoxItem)} returns {@code false})
      */
     void renameCustomItem(@NotNull BoxCustomItem item, @NotNull String newName, @NotNull Consumer<ItemRegistrationResult> resultConsumer);

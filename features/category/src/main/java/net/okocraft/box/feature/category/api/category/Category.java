@@ -77,6 +77,7 @@ public interface Category {
     /**
      * Checks if the {@link BoxItem} is contained in this {@link Category}.
      *
+     * @param item the {@link BoxItem} to check
      * @return whether the {@link BoxItem} is contained in this {@link Category}
      */
     boolean containsItem(@NotNull BoxItem item);

@@ -35,5 +35,11 @@ public interface StockManager {
     @ApiStatus.ScheduledForRemoval(inVersion = "6.0.0")
     @NotNull CompletableFuture<Void> saveUserStock(@NotNull UserStockHolder userStockHolder);
 
+    /**
+     * Gets the {@link BoxUser}'s {@link StockHolder}.
+     *
+     * @param user the {@link BoxUser} to get {@link StockHolder}
+     * @return the {@link BoxUser}'s {@link StockHolder}
+     */
     @NotNull StockHolder getPersonalStockHolderLoader(@NotNull BoxUser user);
 }

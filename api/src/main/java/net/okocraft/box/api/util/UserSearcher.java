@@ -8,8 +8,17 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
+/**
+ * A utility class for searching for {@link BoxUser} from UUID or name.
+ */
 public final class UserSearcher {
 
+    /**
+     * Searches for {@link BoxUser} from UUID or name.
+     *
+     * @param uuidOrName UUID or username of the user
+     * @return a search result
+     */
     public static @Nullable BoxUser search(@NotNull String uuidOrName) {
         var uuid = toUuidOrNull(uuidOrName);
 
