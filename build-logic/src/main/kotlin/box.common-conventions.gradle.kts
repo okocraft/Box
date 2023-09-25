@@ -17,7 +17,7 @@ java {
 tasks {
     build {
         if (toUpload) {
-            buildDir = rootProject.buildDir.resolve(project.name)
+            layout.buildDirectory = rootProject.layout.buildDirectory.dir(project.name)
         }
     }
 
