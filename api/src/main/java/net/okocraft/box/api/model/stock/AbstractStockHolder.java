@@ -44,7 +44,7 @@ public abstract class AbstractStockHolder implements StockHolder {
             var item = BoxProvider.get().getItemManager().getBoxItemOrNull(data.itemId());
 
             if (item == null) {
-                BoxProvider.get().getLogger().warning("Unknown item id: " + data.itemId() + "(amount: " + data.amount() + ")");
+                BoxProvider.get().getLogger().warning("Unknown item id: " + data.itemId() + " (amount: " + data.amount() + ")");
                 continue;
             }
 
