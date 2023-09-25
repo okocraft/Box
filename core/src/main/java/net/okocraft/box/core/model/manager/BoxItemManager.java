@@ -51,7 +51,7 @@ public class BoxItemManager implements ItemManager {
     public @NotNull Optional<BoxItem> getBoxItem(@NotNull String name) {
         Objects.requireNonNull(name);
         BoxItem result = itemNameMap.get(name);
-        return result != null ? Optional.of(result) : Optional.of(itemNameMap.get(name.toUpperCase(Locale.ENGLISH))); // backward compatibility
+        return result != null ? Optional.of(result) : Optional.ofNullable(itemNameMap.get(name.toUpperCase(Locale.ENGLISH))); // backward compatibility
     }
 
     @Override
