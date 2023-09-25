@@ -69,7 +69,7 @@ public final class BoxAdminMessage {
             name -> redTranslatable("box.command.boxadmin.rename.already-used-name", aquaText(name));
 
     public static final SingleArgument<BoxItem> RENAME_SUCCESS =
-            item -> grayTranslatable("box.command.boxadmin.rename.success", aquaItemName(item));
+            item -> grayTranslatable("box.command.boxadmin.rename.success", aquaText(item.getPlainName()));
 
     public static final SingleArgument<Throwable> RENAME_FAILURE =
             throwable -> redTranslatable("box.command.boxadmin.rename.failure", whiteText(throwable.getMessage()));
