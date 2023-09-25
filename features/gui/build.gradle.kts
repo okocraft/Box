@@ -3,6 +3,6 @@ plugins {
 }
 
 dependencies {
-    compileOnly(project(":box-api"))
-    compileOnly(project(":box-category-feature"))
+    compileOnly(projects.boxApi)
+    compileOnly(projects.boxCategoryFeature)
 }

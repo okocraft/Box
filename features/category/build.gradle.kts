@@ -3,5 +3,5 @@ plugins {
 }
 
 dependencies {
-    compileOnly(project(":box-api"))
+    compileOnly(projects.boxApi)
 }

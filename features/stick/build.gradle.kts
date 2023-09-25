@@ -9,7 +9,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly(project(":box-api"))
+    compileOnly(projects.boxApi)
     compileOnly(libs.lwc)
     compileOnly(libs.bolt.bukkit)
     compileOnly(libs.bolt.common)

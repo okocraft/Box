@@ -9,7 +9,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly(project(":box-api"))
-    compileOnly(project(":box-gui-feature"))
+    compileOnly(projects.boxApi)
+    compileOnly(projects.boxGuiFeature)
     compileOnly(libs.coreprotect)
 }

@@ -3,5 +3,5 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":box-api"))
+    implementation(projects.boxApi)
 }
