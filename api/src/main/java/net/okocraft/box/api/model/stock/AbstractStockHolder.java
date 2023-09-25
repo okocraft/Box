@@ -16,10 +16,9 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -38,8 +37,22 @@ public abstract class AbstractStockHolder implements StockHolder {
     public static boolean allowMinus = false;
     private static boolean firstOverflowed = true;
 
-    private static final Collector<StockData, ?, ConcurrentMap<BoxItem, AtomicInteger>> TO_MAP =
-            Collectors.toConcurrentMap(StockData::item, data -> new AtomicInteger(data.amount()));
+    private static @NotNull ConcurrentMap<BoxItem, AtomicInteger> toStockMap(@NotNull Collection<StockData> stockData) {
+        var map = new ConcurrentHashMap<BoxItem, AtomicInteger>(stockData.size());
+
+        for (var data : stockData) {
+            var item = BoxProvider.get().getItemManager().getBoxItemOrNull(data.itemId());
+
+            if (item == null) {
+                BoxProvider.get().getLogger().warning("Unknown item id: " + data.itemId() + "(amount: " + data.amount() + ")");
+                continue;
+            }
+
+            map.put(item, new AtomicInteger(data.amount()));
+        }
+
+        return map;
+    }
 
     private final ConcurrentMap<BoxItem, AtomicInteger> stockData;
 
@@ -49,8 +62,7 @@ public abstract class AbstractStockHolder implements StockHolder {
      * @param stockData the collection of {@link StockData} to restore stock
      */
     protected AbstractStockHolder(@NotNull Collection<StockData> stockData) {
-        Objects.requireNonNull(stockData);
-        this.stockData = stockData.stream().collect(TO_MAP);
+        this.stockData = toStockMap(stockData);
     }
 
     @Override
