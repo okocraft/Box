@@ -4,12 +4,16 @@ adventure = "4.14.0"
 annotations = "24.0.1"
 configapi = "4.6.4"
 event4j = "3.2.1"
+fastutil = "8.5.12"
 hikaricp = "5.0.1"
 translationloader = "2.0.2"
 
 # gradle plugins
 shadow = "8.1.1"
 aggregate-javadoc = "8.3"
+
+# testing library
+junit = "5.10.0"
 
 # platform api
 paper = "1.20.1-R0.1-SNAPSHOT"
@@ -27,8 +31,13 @@ adventure = { module = "net.kyori:adventure-api", version.ref = "adventure" }
 annotations = { module = "org.jetbrains:annotations", version.ref = "annotations" }
 configapi-yaml = { module = "com.github.siroshun09.configapi:configapi-yaml", version.ref = "configapi" }
 event4j = { module = "com.github.siroshun09.event4j:event4j", version.ref = "event4j" }
+fastutil = { module = "it.unimi.dsi:fastutil", version.ref = "fastutil" }
 hikaricp = { module = "com.zaxxer:HikariCP", version.ref = "hikaricp" }
 translationloader = { module = "com.github.siroshun09.translationloader:translationloader", version.ref = "translationloader" }
+
+# testing library
+junit-bom = { module = "org.junit:junit-bom", version.ref = "junit" }
+junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit" }
 
 # platform api
 paper = { module = "io.papermc.paper:paper-api", version.ref = "paper" }

@@ -19,4 +19,10 @@ dependencies {
 
     compileOnly(libs.paper)
     compileOnly(libs.annotations)
+
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter)
+    testCompileOnly(libs.paper)
+    testImplementation(libs.annotations)
+    testImplementation(libs.fastutil)
 }
