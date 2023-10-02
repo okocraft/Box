@@ -24,7 +24,7 @@ public interface ItemStorage {
 
     void saveCurrentDefaultItemVersion() throws Exception;
 
-    @NotNull List<BoxItem> loadAllDefaultItems() throws Exception;
+    @NotNull List<ItemData> loadAllDefaultItems() throws Exception;
 
     @NotNull List<BoxItem> updateDefaultItems(@NotNull Map<BoxItem, DefaultItem> itemMap) throws Exception ;
 

@@ -4,6 +4,7 @@ import net.okocraft.box.api.model.item.BoxCustomItem;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.util.MCDataVersion;
 import net.okocraft.box.storage.api.factory.item.BoxItemFactory;
+import net.okocraft.box.storage.api.model.item.ItemData;
 import net.okocraft.box.storage.api.model.item.ItemStorage;
 import net.okocraft.box.storage.api.util.item.DefaultItem;
 import net.okocraft.box.storage.api.util.item.DefaultItemProvider;
@@ -57,14 +58,14 @@ public class ItemTable extends AbstractTable implements ItemStorage {
     }
 
     @Override
-    public @NotNull List<BoxItem> loadAllDefaultItems() throws Exception {
-        var result = new ArrayList<BoxItem>(1000); // The number of default items is currently around 1400, so this should only need to be expanded once.
+    public @NotNull List<ItemData> loadAllDefaultItems() throws Exception {
+        var result = new ArrayList<ItemData>(1000); // The number of default items is currently around 1400, so this should only need to be expanded once.
 
         try (var connection = database.getConnection();
              var statement = prepareStatement(connection, "SELECT `id`, `name`, `item_data` FROM `%table%` WHERE `is_default_item`=TRUE")) {
             try (var rs = statement.executeQuery()) {
                 while (rs.next()) {
-                    result.add(readResultSet(rs, true));
+                    result.add(readAsDefaultItem(rs));
                 }
             }
         }
@@ -145,7 +146,7 @@ public class ItemTable extends AbstractTable implements ItemStorage {
              var statement = prepareStatement(connection, "SELECT `id`, `name`, `item_data` FROM `%table%` WHERE `is_default_item`=FALSE")) {
             try (var rs = statement.executeQuery()) {
                 while (rs.next()) {
-                    result.add((BoxCustomItem) readResultSet(rs, false));
+                    result.add(readAsCustomItem(rs));
                 }
             }
         }
@@ -219,15 +220,21 @@ public class ItemTable extends AbstractTable implements ItemStorage {
         return item;
     }
 
-    private @NotNull BoxItem readResultSet(@NotNull ResultSet resultSet, boolean isDefaultItem) throws SQLException {
+    private @NotNull ItemData readAsDefaultItem(@NotNull ResultSet resultSet) throws SQLException {
+        int id = resultSet.getInt("id");
+        var name = resultSet.getString("name");
+        var itemData = readBytesFromResultSet(resultSet, "item_data");
+
+        return new ItemData(id, name, itemData);
+    }
+
+    private @NotNull BoxCustomItem readAsCustomItem(@NotNull ResultSet resultSet) throws SQLException {
         int id = resultSet.getInt("id");
         var name = resultSet.getString("name");
         var itemData = readBytesFromResultSet(resultSet, "item_data");
 
         var item = ItemStack.deserializeBytes(itemData);
 
-        return isDefaultItem ?
-                BoxItemFactory.createDefaultItem(item, name, id) :
-                BoxItemFactory.createCustomItem(item, name, id);
+        return BoxItemFactory.createCustomItem(item, name, id);
     }
 }

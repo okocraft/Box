@@ -14,6 +14,7 @@ import net.okocraft.box.storage.migrator.util.MigratedBoxItemSupplier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -40,9 +41,9 @@ public class ItemMigrator implements DataMigrator<ItemStorage> {
 
         logger.info("Loading default items from the source storage...");
 
-        for (var defaultItem : source.loadAllDefaultItems()) {
-            var currentName = renameIfNeeded(defaultItem.getPlainName(), source.getDataVersion());
-            oldIdToItemNameMap.put(defaultItem.getInternalId(), currentName);
+        for (var itemData : source.loadAllDefaultItems()) {
+            var currentName = renameIfNeeded(itemData.plainName(), source.getDataVersion());
+            oldIdToItemNameMap.put(itemData.internalId(), currentName);
 
             if (!newItemNameToItemMap.containsKey(currentName)) {
                 logger.warning(currentName + " is not found in current default items. (Renamed or removed in newer version?)");
@@ -92,7 +93,10 @@ public class ItemMigrator implements DataMigrator<ItemStorage> {
         if (dataVersion == null) {
             return storage.saveNewDefaultItems(DefaultItemProvider.all());
         } else if (dataVersion.isSame(MCDataVersion.CURRENT) && defaultItemVersion == DefaultItemProvider.version()) {
-            return storage.loadAllDefaultItems();
+            var data = storage.loadAllDefaultItems();
+            var items = new ArrayList<BoxItem>(data.size());
+            data.forEach(itemData -> items.add(itemData.toDefaultItem()));
+            return items;
         } else {
             return DefaultItemUpdater.update(storage, dataVersion);
         }

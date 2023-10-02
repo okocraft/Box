@@ -11,6 +11,7 @@ import net.okocraft.box.storage.api.util.item.DefaultItemUpdater;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -54,7 +55,10 @@ public class ItemLoader {
             logger.warning("No item data found. It takes time to save default items...");
             return storage.saveNewDefaultItems(DefaultItemProvider.all());
         } else if (dataVersion.isSame(MCDataVersion.CURRENT) && defaultItemVersion == DefaultItemProvider.version()) {
-            return storage.loadAllDefaultItems();
+            var data = storage.loadAllDefaultItems();
+            var items = new ArrayList<BoxItem>(data.size());
+            data.forEach(itemData -> items.add(itemData.toDefaultItem()));
+            return items;
         } else {
             logger.warning("Version upgrade detected. Updating default item data...");
             return DefaultItemUpdater.update(storage, dataVersion);

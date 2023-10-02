@@ -7,6 +7,7 @@ import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.util.MCDataVersion;
 import net.okocraft.box.storage.api.factory.item.BoxItemFactory;
 import net.okocraft.box.storage.api.holder.LoggerHolder;
+import net.okocraft.box.storage.api.model.item.ItemData;
 import net.okocraft.box.storage.api.model.item.ItemStorage;
 import net.okocraft.box.storage.api.util.item.DefaultItem;
 import net.okocraft.box.storage.api.util.item.DefaultItemProvider;
@@ -92,12 +93,12 @@ class YamlItemStorage implements ItemStorage {
     }
 
     @Override
-    public @NotNull List<BoxItem> loadAllDefaultItems() throws Exception {
+    public @NotNull List<ItemData> loadAllDefaultItems() throws Exception {
         if (migrationMode) {
             return migrateV4DefaultItems();
         }
 
-        List<BoxItem> result;
+        List<ItemData> result;
 
         try (var source = defaultItemData.copy()) {
             source.load();
@@ -113,8 +114,7 @@ class YamlItemStorage implements ItemStorage {
                     continue;
                 }
 
-                var item = getItemStackFromConfiguration(key, source);
-                result.add(BoxItemFactory.createDefaultItem(item, name, id));
+                result.add(new ItemData(id, name, source.getBytes(key + ".data")));
             }
         }
 
@@ -277,8 +277,8 @@ class YamlItemStorage implements ItemStorage {
         target.setBytes(id + ".data", defaultItem.itemStack().serializeAsBytes());
     }
 
-    private @NotNull List<BoxItem> migrateV4DefaultItems() throws Exception {
-        var result = new ArrayList<BoxItem>();
+    private @NotNull List<ItemData> migrateV4DefaultItems() throws Exception {
+        var result = new ArrayList<ItemData>();
 
         try (var source = defaultItemData.copy();
              var target = defaultItemData.copy()) {
@@ -291,7 +291,7 @@ class YamlItemStorage implements ItemStorage {
                     id = lastUsedItemId.incrementAndGet();
                 }
 
-                result.add(BoxItemFactory.createDefaultItem(defaultItem, id));
+                result.add(new ItemData(id, defaultItem.plainName(), defaultItem.itemStack().serializeAsBytes()));
                 saveDefaultItemToConfiguration(defaultItem, id, target);
             }
 
