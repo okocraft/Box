@@ -9,86 +9,74 @@ import net.okocraft.box.api.model.item.BoxCustomItem;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.model.manager.ItemManager;
 import net.okocraft.box.api.model.result.item.ItemRegistrationResult;
-import net.okocraft.box.core.util.executor.InternalExecutors;
+import net.okocraft.box.core.model.manager.item.BukkitBoxItemMap;
 import net.okocraft.box.storage.api.factory.item.BoxItemFactory;
 import net.okocraft.box.storage.api.model.item.ItemStorage;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.Unmodifiable;
 
-import java.util.Collection;
-import java.util.Collections;
+import java.util.Iterator;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
 import java.util.function.Consumer;
 
 public class BoxItemManager implements ItemManager {
 
     private final ItemStorage itemStorage;
-    private final ExecutorService executor;
+    private final BukkitBoxItemMap boxItemMap;
 
-    private final Map<ItemStack, BoxItem> itemMap = createMap();
-    private final Map<String, BoxItem> itemNameMap = createMap();
-    private final Map<Integer, BoxItem> itemIdMap = createMap();
-
-    public BoxItemManager(@NotNull ItemStorage itemStorage) {
+    public BoxItemManager(@NotNull ItemStorage itemStorage, @NotNull Iterator<BoxItem> initialBoxItemIterator) {
         this.itemStorage = itemStorage;
-        this.executor = InternalExecutors.newSingleThreadExecutor("Item Manager");
+        this.boxItemMap = BukkitBoxItemMap.withItems(initialBoxItemIterator);
     }
 
     @Override
     public @NotNull Optional<BoxItem> getBoxItem(@NotNull ItemStack itemStack) {
-        return Optional.ofNullable(itemMap.get(itemStack.asOne()));
+        return Optional.ofNullable(this.boxItemMap.getByItemStack(itemStack));
     }
 
     @Override
     public @NotNull Optional<BoxItem> getBoxItem(@NotNull String name) {
         Objects.requireNonNull(name);
-        BoxItem result = itemNameMap.get(name);
-        return result != null ? Optional.of(result) : Optional.ofNullable(itemNameMap.get(name.toUpperCase(Locale.ENGLISH))); // backward compatibility
+        BoxItem result = this.boxItemMap.getByItemName(name);
+        return result != null ? Optional.of(result) : Optional.ofNullable(this.boxItemMap.getByItemName(name.toUpperCase(Locale.ENGLISH))); // backward compatibility
     }
 
     @Override
     public @NotNull Optional<BoxItem> getBoxItem(int id) {
-        return Optional.ofNullable(itemIdMap.get(id));
+        return Optional.ofNullable(this.boxItemMap.getById(id));
     }
 
     @Override
     public @Nullable BoxItem getBoxItemOrNull(int id) {
-        return itemIdMap.get(id);
+        return this.boxItemMap.getById(id);
     }
 
     @Override
     public @NotNull IntImmutableList getItemIdList() {
-        return new IntImmutableList(itemIdMap.keySet());
+        return this.boxItemMap.getItemIdList();
     }
 
     @Override
     public @NotNull ObjectImmutableList<String> getItemNameList() {
-        return new ObjectImmutableList<>(itemNameMap.keySet());
+        return this.boxItemMap.getItemNameList();
     }
 
     @Override
     public @NotNull ObjectImmutableList<BoxItem> getItemList() {
-        return new ObjectImmutableList<>(itemIdMap.values());
+        return this.boxItemMap.getItemList();
     }
 
     @Override
     public boolean isRegistered(@NotNull ItemStack itemStack) {
-        return itemMap.containsKey(itemStack.asOne());
+        return this.boxItemMap.isRegistered(itemStack);
     }
 
     @Override
     public boolean isUsedName(@NotNull String name) {
-        Objects.requireNonNull(name);
-
-        return itemNameMap.containsKey(name);
+        return this.boxItemMap.isRegistered(name);
     }
 
     @Override
@@ -101,91 +89,89 @@ public class BoxItemManager implements ItemManager {
         var one = original.asOne();
         Objects.requireNonNull(resultConsumer);
 
-        executor.execute(() -> {
-            if (isRegistered(one)) {
-                resultConsumer.accept(new ItemRegistrationResult.DuplicateItem(one));
-                return;
-            }
-
-            if (plainName != null && isUsedName(plainName)) {
-                resultConsumer.accept(new ItemRegistrationResult.DuplicateName(plainName));
-                return;
-            }
-
-            BoxCustomItem customItem;
+        BoxProvider.get().getScheduler().runAsyncTask(() -> {
+            this.boxItemMap.acquireWriteLock();
+            ItemRegistrationResult result;
 
             try {
-                customItem = itemStorage.saveNewCustomItem(one, plainName);
+                result = registerNewCustomItem(one, plainName);
             } catch (Exception e) {
-                resultConsumer.accept(new ItemRegistrationResult.ExceptionOccurred(e));
-                return;
+                result = new ItemRegistrationResult.ExceptionOccurred(e);
+            } finally {
+                this.boxItemMap.releaseWriteLock();
             }
 
-            addItem(customItem);
+            if (result instanceof ItemRegistrationResult.Success success) {
+                BoxProvider.get().getEventBus().callEventAsync(new CustomItemRegisterEvent(success.customItem()));
+            }
 
-            BoxProvider.get().getEventBus().callEventAsync(new CustomItemRegisterEvent(customItem));
-            resultConsumer.accept(new ItemRegistrationResult.Success(customItem));
+            resultConsumer.accept(result);
         });
+    }
+
+    // Note: Update BoxItemMapTest#testRegisterItem when this method modified.
+    private @NotNull ItemRegistrationResult registerNewCustomItem(@NotNull ItemStack original, @Nullable String plainName) throws Exception {
+        if (plainName != null && this.boxItemMap.checkItemNameAtUnsynchronized(plainName)) {
+            return new ItemRegistrationResult.DuplicateName(plainName);
+        }
+
+        if (this.boxItemMap.checkItemAtUnsynchronized(original)) {
+            return new ItemRegistrationResult.DuplicateItem(original);
+        }
+
+        var customItem = this.itemStorage.saveNewCustomItem(original, plainName);
+
+        this.boxItemMap.addItemAtUnsynchronized(customItem);
+        this.boxItemMap.rebuildCache();
+
+        return new ItemRegistrationResult.Success(customItem);
     }
 
     @Override
     public void renameCustomItem(@NotNull BoxCustomItem item, @NotNull String newName, @NotNull Consumer<ItemRegistrationResult> resultConsumer) {
+        Objects.requireNonNull(item);
+        Objects.requireNonNull(newName);
+        Objects.requireNonNull(resultConsumer);
+
         if (!BoxItemFactory.checkCustomItem(item)) {
-            throw new IllegalArgumentException("Could not rename item because the item is not created by box.");
+            throw new IllegalStateException("Could not rename item because the item is not created by box.");
         }
 
-        executor.execute(() -> {
-            if (itemNameMap.containsKey(newName)) {
-                resultConsumer.accept(new ItemRegistrationResult.DuplicateName(newName));
-                return;
-            }
+        String previousName = item.getPlainName();
 
-            removeItem(item);
-
-            var previousName = item.getPlainName();
-            BoxCustomItem result;
+        BoxProvider.get().getScheduler().runAsyncTask(() -> {
+            this.boxItemMap.acquireWriteLock();
+            ItemRegistrationResult result;
 
             try {
-                result = itemStorage.rename(item, newName);
+                result = renameItem(item, newName);
             } catch (Exception e) {
-                resultConsumer.accept(new ItemRegistrationResult.ExceptionOccurred(e));
-                return;
+                result = new ItemRegistrationResult.ExceptionOccurred(e);
+            } finally {
+                this.boxItemMap.releaseWriteLock();
             }
 
-            addItem(item);
+            if (result instanceof ItemRegistrationResult.Success success) {
+                BoxProvider.get().getEventBus().callEventAsync(new CustomItemRenameEvent(success.customItem(), previousName));
+            }
 
-            BoxProvider.get().getEventBus().callEventAsync(new CustomItemRenameEvent(result, previousName));
-            resultConsumer.accept(new ItemRegistrationResult.Success(result));
+            resultConsumer.accept(result);
         });
     }
 
-    @Override
-    public @NotNull @Unmodifiable Set<String> getItemNameSet() {
-        return Collections.unmodifiableSet(itemNameMap.keySet());
-    }
+    // Note: Update BoxItemMapTest#testRenameItem when this method modified.
+    private @NotNull ItemRegistrationResult renameItem(@NotNull BoxCustomItem item, @NotNull String newName) throws Exception {
+        if (this.boxItemMap.checkItemNameAtUnsynchronized(newName)) {
+            return new ItemRegistrationResult.DuplicateName(newName);
+        }
 
-    @Override
-    public @NotNull @Unmodifiable Collection<BoxItem> getBoxItemSet() {
-        return getItemList();
-    }
+        this.boxItemMap.removeItemAtUnsynchronized(item);
 
-    public void storeItems(@NotNull Collection<? extends BoxItem> items) {
-        items.forEach(this::addItem);
-    }
+        var customItem = this.itemStorage.rename(item, newName);
 
-    private void addItem(@NotNull BoxItem item) {
-        itemMap.put(item.getOriginal(), item);
-        itemNameMap.put(item.getPlainName(), item);
-        itemIdMap.put(item.getInternalId(), item);
-    }
+        this.boxItemMap.addItemAtUnsynchronized(customItem);
+        this.boxItemMap.rebuildCache();
 
-    private void removeItem(@NotNull BoxItem item) {
-        itemMap.remove(item.getOriginal());
-        itemNameMap.remove(item.getPlainName());
-        itemIdMap.remove(item.getInternalId());
-    }
-
-    private <K> @NotNull Map<K, BoxItem> createMap() {
-        return new ConcurrentHashMap<>(300, 0.95f);
+        return new ItemRegistrationResult.Success(customItem);
     }
 }

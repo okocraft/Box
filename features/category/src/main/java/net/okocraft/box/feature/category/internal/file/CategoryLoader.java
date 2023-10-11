@@ -1,6 +1,7 @@
 package net.okocraft.box.feature.category.internal.file;
 
 import com.github.siroshun09.configapi.api.Configuration;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.model.item.BoxItem;
@@ -16,7 +17,6 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -27,7 +27,7 @@ public final class CategoryLoader {
 
     public static void load(@NotNull CategoryRegistry registry, @NotNull Configuration source) {
         var itemManager = BoxProvider.get().getItemManager();
-        var uncategorizedItems = new HashSet<>(itemManager.getItemList());
+        var uncategorizedItems = new ObjectOpenHashSet<>(itemManager.getItemList());
 
         for (var key : source.getKeyList()) {
             if (key.equals("icons") ||

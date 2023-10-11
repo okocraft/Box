@@ -6,15 +6,10 @@ import net.okocraft.box.api.model.item.BoxCustomItem;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.model.result.item.ItemRegistrationResult;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.Unmodifiable;
 
-import java.util.Collection;
 import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 /**
@@ -127,93 +122,4 @@ public interface ItemManager {
      * @throws IllegalArgumentException {@link BoxCustomItem} is not created by Box ({@link #isCustomItem(BoxItem)} returns {@code false})
      */
     void renameCustomItem(@NotNull BoxCustomItem item, @NotNull String newName, @NotNull Consumer<ItemRegistrationResult> resultConsumer);
-
-    /**
-     * Registers item.
-     * <p>
-     * It will throw an exception in {@link CompletableFuture}
-     * if the item is already registered or fails to save to a file or database.
-     *
-     * @param original the item to register
-     * @return the {@link CompletableFuture} to register item
-     * @deprecated use {@link #registerCustomItem(ItemStack, String, Consumer)}
-     */
-    @Deprecated(forRemoval = true, since = "5.5.0")
-    @ApiStatus.ScheduledForRemoval(inVersion = "6.0.0")
-    default @NotNull CompletableFuture<@NotNull BoxCustomItem> registerCustomItem(@NotNull ItemStack original) {
-        var future = new CompletableFuture<BoxCustomItem>();
-
-        registerCustomItem(
-                original,
-                null,
-                result -> {
-                    if (result instanceof ItemRegistrationResult.Success success) {
-                        future.complete(success.customItem());
-                    } else if (result instanceof ItemRegistrationResult.DuplicateItem duplicateItem) {
-                        future.completeExceptionally(new IllegalStateException("The item is already registered (item: " + duplicateItem.item() + ")"));
-                    } else if (result instanceof ItemRegistrationResult.ExceptionOccurred exceptionOccurred) {
-                        future.completeExceptionally(exceptionOccurred.exception());
-                    }
-                }
-        );
-
-        return future;
-    }
-
-    /**
-     * Rename the custom item.
-     *
-     * @param item    the custom item to rename
-     * @param newName the new name
-     * @return the {@link CompletableFuture} to rename an item
-     * @deprecated use {@link #renameCustomItem(BoxCustomItem, String, Consumer)}
-     */
-    @Deprecated(forRemoval = true, since = "5.5.0")
-    @ApiStatus.ScheduledForRemoval(inVersion = "6.0.0")
-    default @NotNull CompletableFuture<@NotNull BoxCustomItem> renameCustomItem(@NotNull BoxCustomItem item, @NotNull String newName) {
-        var future = new CompletableFuture<BoxCustomItem>();
-
-        if (!isCustomItem(item)) {
-            future.completeExceptionally(new IllegalStateException("Could not rename item because the item is created by box."));
-            return future;
-        }
-
-        renameCustomItem(
-                item,
-                newName,
-                result -> {
-                    if (result instanceof ItemRegistrationResult.Success success) {
-                        future.complete(success.customItem());
-                    } else if (result instanceof ItemRegistrationResult.DuplicateName duplicateName) {
-                        future.completeExceptionally(new IllegalStateException("The name is already used (name: " + duplicateName.name() + ")"));
-                    } else if (result instanceof ItemRegistrationResult.ExceptionOccurred exceptionOccurred) {
-                        future.completeExceptionally(exceptionOccurred.exception());
-                    }
-                }
-        );
-
-        return future;
-    }
-
-    /**
-     * Gets the item name set.
-     * <p>
-     * Returns set is a collection of {@link BoxItem#getPlainName()}.
-     *
-     * @return the set of {@link BoxItem#getPlainName()}
-     * @deprecated use {@link #getItemNameList()}
-     */
-    @Deprecated(forRemoval = true, since = "5.5.0")
-    @ApiStatus.ScheduledForRemoval(inVersion = "6.0.0")
-    @NotNull @Unmodifiable Set<String> getItemNameSet();
-
-    /**
-     * Gets all {@link BoxItem}s.
-     *
-     * @return the set of all {@link BoxItem}s
-     * @deprecated use {@link #getItemList()}
-     */
-    @Deprecated(forRemoval = true, since = "5.5.0")
-    @ApiStatus.ScheduledForRemoval(inVersion = "6.0.0")
-    @NotNull @Unmodifiable Collection<BoxItem> getBoxItemSet();
 }
