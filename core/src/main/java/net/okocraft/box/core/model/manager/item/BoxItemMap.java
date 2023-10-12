@@ -13,9 +13,9 @@ import java.util.Iterator;
 import java.util.Objects;
 import java.util.concurrent.locks.StampedLock;
 
-public class BoxItemMap {
+class BoxItemMap {
 
-    public static final int UNKNOWN_ID = Integer.MIN_VALUE;
+    static final int UNKNOWN_ID = Integer.MIN_VALUE;
 
     private final Object2IntMap<String> itemNameToId = new Object2IntOpenHashMap<>();
     private final Int2ObjectOpenHashMap<BoxItem> idToBoxItem = new Int2ObjectOpenHashMap<>();
@@ -27,13 +27,13 @@ public class BoxItemMap {
     protected final StampedLock lock = new StampedLock();
     private Thread writeLockOwner;
 
-    public BoxItemMap() {
+    BoxItemMap() {
         this.itemNameToId.defaultReturnValue(UNKNOWN_ID);
     }
 
     /* Thread-Safe methods */
 
-    public final void acquireWriteLock() {
+    final void acquireWriteLock() {
         final Thread currentThread = Thread.currentThread();
         if (this.writeLockOwner == currentThread) {
             throw new IllegalStateException("Cannot lock twice from the same thread.");
@@ -42,12 +42,12 @@ public class BoxItemMap {
         this.writeLockOwner = currentThread;
     }
 
-    public final void releaseWriteLock() {
+    final void releaseWriteLock() {
         this.writeLockOwner = null;
         this.lock.tryUnlockWrite();
     }
 
-    public boolean isRegistered(@NotNull String itemName) {
+    boolean isRegistered(@NotNull String itemName) {
         Objects.requireNonNull(itemName);
         {
             long readAttempt = this.lock.tryOptimisticRead();
@@ -67,7 +67,7 @@ public class BoxItemMap {
         }
     }
 
-    public @Nullable BoxItem getByItemName(@NotNull String itemName) {
+    @Nullable BoxItem getByItemName(@NotNull String itemName) {
         Objects.requireNonNull(itemName);
         {
             long readAttempt = this.lock.tryOptimisticRead();
@@ -87,7 +87,7 @@ public class BoxItemMap {
         }
     }
 
-    public @Nullable BoxItem getById(int id) {
+    @Nullable BoxItem getById(int id) {
         if (id == UNKNOWN_ID) {
             return null;
         }
@@ -110,7 +110,7 @@ public class BoxItemMap {
         }
     }
 
-    public @NotNull IntImmutableList getItemIdList() {
+    @NotNull IntImmutableList getItemIdList() {
         {
             long readAttempt = this.lock.tryOptimisticRead();
             var list = getItemIdListAtUnsynchronized();
@@ -129,7 +129,7 @@ public class BoxItemMap {
         }
     }
 
-    public @NotNull ObjectImmutableList<String> getItemNameList() {
+    @NotNull ObjectImmutableList<String> getItemNameList() {
         {
             long readAttempt = this.lock.tryOptimisticRead();
             var list = getItemNameListAtUnsynchronized();
@@ -148,7 +148,7 @@ public class BoxItemMap {
         }
     }
 
-    public @NotNull ObjectImmutableList<BoxItem> getItemList() {
+    @NotNull ObjectImmutableList<BoxItem> getItemList() {
         {
             long readAttempt = this.lock.tryOptimisticRead();
             var list = getBoxItemListAtUnsynchronized();
@@ -178,11 +178,11 @@ public class BoxItemMap {
         return id != UNKNOWN_ID ? this.idToBoxItem.get(id) : null;
     }
 
-    public boolean checkItemNameAtUnsynchronized(@NotNull String itemName) {
+    boolean checkItemNameAtUnsynchronized(@NotNull String itemName) {
         return this.itemNameToId.containsKey(itemName);
     }
 
-    public void addItemAtUnsynchronized(@NotNull BoxItem item) {
+    void addItemAtUnsynchronized(@NotNull BoxItem item) {
         if (item.getInternalId() == UNKNOWN_ID) {
             throw new IllegalArgumentException("Cannot use " + item.getInternalId() + " as internal id, because this value used for indicating UNKNOWN_ID.");
         }
@@ -191,7 +191,7 @@ public class BoxItemMap {
         this.idToBoxItem.put(item.getInternalId(), item);
     }
 
-    public void removeItemAtUnsynchronized(@NotNull BoxItem item) {
+    void removeItemAtUnsynchronized(@NotNull BoxItem item) {
         if (item.getInternalId() == UNKNOWN_ID) {
             return;
         }
@@ -200,7 +200,7 @@ public class BoxItemMap {
         this.idToBoxItem.remove(item.getInternalId());
     }
 
-    public void rebuildCache() {
+    void rebuildCache() {
         this.copiedItemIdListCache = IntImmutableList.of(itemNameToId.values().toIntArray());
         this.copiedItemNameListCache = ObjectImmutableList.of(itemNameToId.keySet().toArray(String[]::new));
         this.copiedBoxItemListCache = ObjectImmutableList.of(idToBoxItem.values().toArray(BoxItem[]::new));

@@ -35,7 +35,7 @@ import net.okocraft.box.core.message.ErrorMessages;
 import net.okocraft.box.core.message.MicsMessages;
 import net.okocraft.box.core.model.data.BoxCustomDataContainer;
 import net.okocraft.box.core.model.loader.ItemLoader;
-import net.okocraft.box.core.model.manager.BoxItemManager;
+import net.okocraft.box.core.model.manager.item.BoxItemManager;
 import net.okocraft.box.core.model.manager.BoxStockManager;
 import net.okocraft.box.core.model.manager.BoxUserManager;
 import net.okocraft.box.core.model.queue.AutoSaveQueue;

@@ -1,4 +1,4 @@
-package net.okocraft.box.core.model.manager;
+package net.okocraft.box.core.model.manager.item;
 
 import it.unimi.dsi.fastutil.ints.IntImmutableList;
 import it.unimi.dsi.fastutil.objects.ObjectImmutableList;
@@ -9,7 +9,6 @@ import net.okocraft.box.api.model.item.BoxCustomItem;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.model.manager.ItemManager;
 import net.okocraft.box.api.model.result.item.ItemRegistrationResult;
-import net.okocraft.box.core.model.manager.item.BukkitBoxItemMap;
 import net.okocraft.box.storage.api.factory.item.BoxItemFactory;
 import net.okocraft.box.storage.api.model.item.ItemStorage;
 import org.bukkit.inventory.ItemStack;

@@ -10,9 +10,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Iterator;
 import java.util.Objects;
 
-public class BukkitBoxItemMap extends BoxItemMap {
+class BukkitBoxItemMap extends BoxItemMap {
 
-    public static @NotNull BukkitBoxItemMap withItems(@NotNull Iterator<BoxItem> initialBoxItemIterator) {
+    static @NotNull BukkitBoxItemMap withItems(@NotNull Iterator<BoxItem> initialBoxItemIterator) {
         var itemMap = new BukkitBoxItemMap();
         itemMap.initialize(initialBoxItemIterator);
         return itemMap;
@@ -25,7 +25,7 @@ public class BukkitBoxItemMap extends BoxItemMap {
         this.itemToId.defaultReturnValue(UNKNOWN_ID);
     }
 
-    public boolean isRegistered(@NotNull ItemStack itemStack) {
+    boolean isRegistered(@NotNull ItemStack itemStack) {
         Objects.requireNonNull(itemStack);
 
         {
@@ -46,7 +46,7 @@ public class BukkitBoxItemMap extends BoxItemMap {
         }
     }
 
-    public @Nullable BoxItem getByItemStack(@NotNull ItemStack item) {
+    @Nullable BoxItem getByItemStack(@NotNull ItemStack item) {
         Objects.requireNonNull(item);
 
         if (!item.hasItemMeta()) {
@@ -73,18 +73,18 @@ public class BukkitBoxItemMap extends BoxItemMap {
         }
     }
 
-    public boolean checkItemAtUnsynchronized(@NotNull ItemStack itemStack) {
+    boolean checkItemAtUnsynchronized(@NotNull ItemStack itemStack) {
         return this.itemToId.containsKey(itemStack);
     }
 
     @Override
-    public void addItemAtUnsynchronized(@NotNull BoxItem item) {
+    void addItemAtUnsynchronized(@NotNull BoxItem item) {
         super.addItemAtUnsynchronized(item);
         this.itemToId.put(item.getOriginal(), item.getInternalId());
     }
 
     @Override
-    public void removeItemAtUnsynchronized(@NotNull BoxItem item) {
+    void removeItemAtUnsynchronized(@NotNull BoxItem item) {
         super.removeItemAtUnsynchronized(item);
         this.itemToId.removeInt(item.getOriginal());
     }

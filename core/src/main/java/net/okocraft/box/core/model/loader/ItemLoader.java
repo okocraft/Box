@@ -4,7 +4,7 @@ import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.model.item.BoxCustomItem;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.util.MCDataVersion;
-import net.okocraft.box.core.model.manager.BoxItemManager;
+import net.okocraft.box.core.model.manager.item.BoxItemManager;
 import net.okocraft.box.storage.api.model.item.ItemStorage;
 import net.okocraft.box.storage.api.util.item.DefaultItemProvider;
 import net.okocraft.box.storage.api.util.item.DefaultItemUpdater;
