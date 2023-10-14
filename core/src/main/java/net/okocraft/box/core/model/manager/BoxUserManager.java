@@ -2,9 +2,11 @@ package net.okocraft.box.core.model.manager;
 
 import net.okocraft.box.api.model.manager.UserManager;
 import net.okocraft.box.api.model.user.BoxUser;
+import net.okocraft.box.storage.api.factory.user.BoxUserFactory;
 import net.okocraft.box.storage.api.model.user.UserStorage;
 import net.okocraft.box.core.util.executor.InternalExecutors;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -20,6 +22,26 @@ public class BoxUserManager implements UserManager {
     public BoxUserManager(@NotNull UserStorage userStorage) {
         this.userStorage = userStorage;
         this.executor = InternalExecutors.newSingleThreadExecutor("User Manager");
+    }
+
+    @Override
+    public @NotNull BoxUser createBoxUser(@NotNull UUID uuid) {
+        return BoxUserFactory.create(uuid);
+    }
+
+    @Override
+    public @NotNull BoxUser createBoxUser(@NotNull UUID uuid, @NotNull String name) {
+        return BoxUserFactory.create(uuid, name);
+    }
+
+    @Override
+    public @NotNull BoxUser loadBoxUser(@NotNull UUID uuid) {
+        return loadUser(uuid).join();
+    }
+
+    @Override
+    public @Nullable BoxUser searchByName(@NotNull String name) {
+        return search(name).join().orElse(null);
     }
 
     @Override
