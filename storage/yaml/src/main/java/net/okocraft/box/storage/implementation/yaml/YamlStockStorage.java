@@ -1,9 +1,6 @@
 package net.okocraft.box.storage.implementation.yaml;
 
 import net.okocraft.box.api.model.stock.StockData;
-import net.okocraft.box.api.model.stock.UserStockHolder;
-import net.okocraft.box.api.model.user.BoxUser;
-import net.okocraft.box.storage.api.factory.stock.UserStockHolderFactory;
 import net.okocraft.box.storage.api.holder.LoggerHolder;
 import net.okocraft.box.storage.api.model.stock.StockStorage;
 import org.jetbrains.annotations.NotNull;
@@ -16,6 +13,8 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -51,35 +50,35 @@ class YamlStockStorage implements StockStorage {
     }
 
     @Override
-    public @NotNull UserStockHolder loadUserStockHolder(@NotNull BoxUser user) throws Exception {
-        var filePath = stockDirectory.resolve(user.getUUID() + ".yml");
+    public @NotNull Collection<StockData> loadStockData(@NotNull UUID uuid) throws Exception {
+        var filePath = stockDirectory.resolve(uuid + ".yml");
 
         if (!Files.exists(filePath)) {
-            return UserStockHolderFactory.create(user);
+            return Collections.emptyList();
         }
 
         var loadedData = new ArrayList<StockData>(50);
 
         try (var reader = Files.newBufferedReader(filePath, StandardCharsets.UTF_8)) {
             reader.lines()
-                    .map(line -> readLine(user.getUUID(), line))
+                    .map(line -> readLine(uuid, line))
                     .filter(Objects::nonNull)
                     .forEach(loadedData::add);
         }
 
-        return UserStockHolderFactory.create(user, loadedData);
+        return loadedData;
     }
 
     @Override
-    public void saveUserStockHolder(@NotNull UserStockHolder stockHolder) throws Exception {
-        var file = stockDirectory.resolve(stockHolder.getUser().getUUID() + ".yml");
+    public void saveStockData(@NotNull UUID uuid, @NotNull Collection<StockData> stockData) throws Exception {
+        var file = stockDirectory.resolve(uuid + ".yml");
 
         var builder = new StringBuilder(20);
 
         try (var writer =
                      Files.newBufferedWriter(file, StandardCharsets.UTF_8, StandardOpenOption.CREATE,
                              StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING)) {
-            for (var stock : stockHolder.toStockDataCollection()) {
+            for (var stock : stockData) {
                 if (0 != stock.amount()) {
                     builder.append('\'')
                             .append(stock.itemId())

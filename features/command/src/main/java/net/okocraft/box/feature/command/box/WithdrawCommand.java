@@ -5,8 +5,7 @@ import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.command.AbstractCommand;
 import net.okocraft.box.api.message.GeneralMessage;
 import net.okocraft.box.api.model.item.BoxItem;
-import net.okocraft.box.api.transaction.InventoryTransaction;
-import net.okocraft.box.api.transaction.TransactionResultType;
+import net.okocraft.box.api.transaction.StockHolderTransaction;
 import net.okocraft.box.feature.command.event.stock.CommandCauses;
 import net.okocraft.box.feature.command.message.BoxMessage;
 import org.bukkit.command.CommandSender;
@@ -68,24 +67,20 @@ public class WithdrawCommand extends AbstractCommand {
             amount = 1;
         }
 
-        var result =
-                BoxProvider.get().getTaskFactory()
-                        .supplyFromEntity(player, $player -> InventoryTransaction.withdraw($player.getInventory(), boxItem, amount))
-                        .join();
+        BoxProvider.get().getScheduler().runEntityTask(player, () -> {
+            int withdrawnAmount =
+                    StockHolderTransaction.create(stockHolder)
+                            .withdraw(boxItem, amount)
+                            .toInventory(player.getInventory(), CommandCauses.WITHDRAW).amount();
 
-        var resultType = result.getType();
-
-        if (resultType.isModified()) {
-            var current = stockHolder.decrease(result.getItem(), result.getAmount(), CommandCauses.WITHDRAW);
-
-            if (resultType == TransactionResultType.WITHDREW) {
-                player.sendMessage(BoxMessage.WITHDRAW_SUCCESS.apply(boxItem, result.getAmount(), current));
-            } else {
-                player.sendMessage(BoxMessage.WITHDRAW_PARTIAL_SUCCESS.apply(boxItem, result.getAmount(), current));
+            if (withdrawnAmount == 0) {
+                player.sendMessage(BoxMessage.WITHDRAW_INVENTORY_IS_FULL);
+                return;
             }
-        } else {
-            player.sendMessage(BoxMessage.WITHDRAW_INVENTORY_IS_FULL);
-        }
+
+            var message = withdrawnAmount == amount ? BoxMessage.WITHDRAW_SUCCESS : BoxMessage.WITHDRAW_PARTIAL_SUCCESS;
+            player.sendMessage(message.apply(boxItem, withdrawnAmount, stockHolder.getAmount(boxItem)));
+        });
     }
 
     @Override

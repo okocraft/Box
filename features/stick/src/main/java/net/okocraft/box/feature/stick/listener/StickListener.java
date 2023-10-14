@@ -1,6 +1,7 @@
 package net.okocraft.box.feature.stick.listener;
 
 import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.player.BoxPlayer;
 import net.okocraft.box.api.util.MCDataVersion;
 import net.okocraft.box.feature.stick.event.stock.StickCause;
@@ -91,33 +92,50 @@ public class StickListener implements Listener {
 
         var boxItem = BoxProvider.get().getItemManager().getBoxItem(block.getBlockData().getPlacementMaterial().name());
 
-        if (boxItem.isEmpty() || boxPlayer.getCurrentStockHolder().getAmount(boxItem.get()) < 1) {
+        if (boxItem.isEmpty()) {
             return;
         }
 
         var mainHand = inv.getItemInMainHand();
-        var cause = new StickCauses.BlockItem(boxPlayer, block.getLocation().clone());
+        BoxItem offHandBoxItem;
+        boolean moveStickToOffHand;
 
         if (boxStickItem.check(mainHand)) {
             if (!offHand.getType().isAir()) {
-                var offHandBoxItem = BoxProvider.get().getItemManager().getBoxItem(offHand);
+                var optionalOffHandBoxItem = BoxProvider.get().getItemManager().getBoxItem(offHand);
 
-                if (offHandBoxItem.isEmpty()) {
+                if (optionalOffHandBoxItem.isEmpty()) {
                     return;
                 }
 
-                boxPlayer.getCurrentStockHolder().increase(offHandBoxItem.get(), offHand.getAmount(), cause);
+                offHandBoxItem = optionalOffHandBoxItem.get();
+            } else {
+                offHandBoxItem = null;
             }
 
-            inv.setItemInOffHand(mainHand.clone()); // Move Box Stick to player's off-hand
+            moveStickToOffHand = true;
         } else if (!isStickInOffhand || !mainHand.getType().isAir()) {
             // The item in player's off-hand is not Box Stick or the main-hand is not empty.
             return;
+        } else {
+            offHandBoxItem = null;
+            moveStickToOffHand = false;
         }
 
-        boxPlayer.getCurrentStockHolder().decrease(boxItem.get(), 1, cause);
-        inv.setItemInMainHand(boxItem.get().getOriginal().asOne());
+        var cause = new StickCauses.BlockItem(boxPlayer, block.getLocation().clone());
 
+        if (boxPlayer.getCurrentStockHolder().decreaseIfPossible(boxItem.get(), 1, cause) == -1) {
+            return;
+        }
+
+        if (moveStickToOffHand) {
+            if (offHandBoxItem != null) {
+                boxPlayer.getCurrentStockHolder().increase(offHandBoxItem, offHand.getAmount(), cause);
+            }
+            inv.setItemInOffHand(mainHand.clone());
+        }
+
+        inv.setItemInMainHand(boxItem.get().getOriginal().asOne());
         event.setCancelled(true);
     }
 
@@ -316,19 +334,7 @@ public class StickListener implements Listener {
 
     private boolean tryConsumingStock(@NotNull BoxPlayer boxPlayer, @NotNull ItemStack item, @NotNull StickCause cause) {
         var boxItem = BoxProvider.get().getItemManager().getBoxItem(item);
-
-        if (boxItem.isEmpty()) {
-            return false;
-        }
-
-        var stockHolder = boxPlayer.getCurrentStockHolder();
-
-        if (0 < stockHolder.getAmount(boxItem.get())) {
-            stockHolder.decrease(boxItem.get(), 1, cause);
-            return true;
-        } else {
-            return false;
-        }
+        return boxItem.isPresent() && boxPlayer.getCurrentStockHolder().decreaseIfPossible(boxItem.get(), 1, cause) != -1;
     }
 
     private @Nullable BoxPlayer checkPlayerAndGetBoxPlayer(@NotNull Player player, @NotNull String permissionNode) {

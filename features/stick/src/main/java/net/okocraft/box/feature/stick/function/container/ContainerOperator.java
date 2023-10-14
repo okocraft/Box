@@ -1,7 +1,7 @@
 package net.okocraft.box.feature.stick.function.container;
 
 import net.okocraft.box.api.BoxProvider;
-import net.okocraft.box.api.transaction.InventoryTransaction;
+import net.okocraft.box.api.transaction.StockHolderTransaction;
 import net.okocraft.box.feature.stick.event.stock.StickCauses;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
@@ -17,14 +17,12 @@ public final class ContainerOperator {
     }
 
     private static boolean depositItemsInInventory(@NotNull ContainerOperation.Context<Inventory> context) {
-        var resultList = InventoryTransaction.depositItemsInTopInventory(context.view());
+        var resultList =
+                StockHolderTransaction.create(context.player().getCurrentStockHolder())
+                        .depositAll()
+                        .fromTopInventory(context.view(), new StickCauses.Container(context.player(), context.blockLocation()));
 
-        if (resultList.getType().isModified()) {
-            var cause = new StickCauses.Container(context.player(), context.blockLocation());
-            resultList.getResultList()
-                    .stream()
-                    .filter(result -> result.getType().isModified())
-                    .forEach(result -> context.player().getCurrentStockHolder().increase(result.getItem(), result.getAmount(), cause));
+        if (!resultList.isEmpty()) {
             SoundPlayer.playDepositSound(context.player().getPlayer());
             return true;
         } else {
@@ -40,10 +38,12 @@ public final class ContainerOperator {
         }
 
         var stockHolder = context.player().getCurrentStockHolder();
-        var result = InventoryTransaction.withdraw(context.view(), boxItem, stockHolder.getAmount(boxItem));
+        var result =
+                StockHolderTransaction.create(stockHolder)
+                        .withdraw(boxItem, Integer.MAX_VALUE)
+                        .toTopInventory(context.view(), new StickCauses.Container(context.player(), context.blockLocation()));
 
-        if (result.getType().isModified()) {
-            stockHolder.decrease(result.getItem(), result.getAmount(), new StickCauses.Container(context.player(), context.blockLocation()));
+        if (0 < result.amount()) {
             SoundPlayer.playWithdrawalSound(context.player().getPlayer());
             return true;
         } else {

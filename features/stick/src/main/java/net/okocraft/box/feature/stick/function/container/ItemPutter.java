@@ -49,9 +49,11 @@ final class ItemPutter {
             return false;
         }
 
-        boxPlayer.getCurrentStockHolder().decrease(boxItem, consumption, causeSupplier.get());
-        itemSetter.accept(boxItem.getOriginal().asQuantity(newAmount));
-        SoundPlayer.playWithdrawalSound(boxPlayer.getPlayer());
+        if (boxPlayer.getCurrentStockHolder().decreaseIfPossible(boxItem, consumption, causeSupplier.get()) != -1) {
+            itemSetter.accept(boxItem.getOriginal().asQuantity(newAmount));
+            SoundPlayer.playWithdrawalSound(boxPlayer.getPlayer());
+        }
+
         return true;
     }
 }

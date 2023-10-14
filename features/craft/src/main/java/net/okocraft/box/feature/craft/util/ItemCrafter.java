@@ -1,5 +1,7 @@
 package net.okocraft.box.feature.craft.util;
 
+import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.model.stock.StockHolder;
@@ -12,7 +14,6 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
-import java.util.Optional;
 
 public class ItemCrafter {
 
@@ -56,15 +57,36 @@ public class ItemCrafter {
 
         var cause = new CraftCause(crafter, recipe);
 
+        Object2IntMap<BoxItem> ingredientMap = new Object2IntArrayMap<>(recipe.ingredients().size());
+        Object2IntMap<BoxItem> craftRemainingItemMap = null;
+
         for (var ingredient : recipe.ingredients()) {
             int amount = ingredient.amount() * times;
 
-            stockHolder.decrease(ingredient.item(), amount, cause);
+            ingredientMap.mergeInt(ingredient.item(), amount, Integer::sum);
 
-            Optional.ofNullable(ingredient.item().getOriginal().getType().getCraftingRemainingItem())
-                    .map(Enum::name)
-                    .flatMap(BoxProvider.get().getItemManager()::getBoxItem)
-                    .ifPresent(boxItem -> stockHolder.increase(boxItem, amount, cause));
+            var remainingItem = ingredient.item().getOriginal().getType().getCraftingRemainingItem();
+
+            if (remainingItem != null) {
+                var remainingBoxItem = BoxProvider.get().getItemManager().getBoxItem(remainingItem.name());
+
+                if (remainingBoxItem.isPresent()) {
+                    if (craftRemainingItemMap == null) {
+                        craftRemainingItemMap = new Object2IntArrayMap<>(recipe.ingredients().size());
+                    }
+                    craftRemainingItemMap.mergeInt(remainingBoxItem.get(), amount, Integer::sum);
+                }
+            }
+        }
+
+        if (!stockHolder.decreaseIfPossible(ingredientMap, cause)) {
+            return false;
+        }
+
+        if (craftRemainingItemMap != null) {
+            for (var entry : craftRemainingItemMap.object2IntEntrySet()) {
+                stockHolder.increase(entry.getKey(), entry.getIntValue(), cause);
+            }
         }
 
         int resultAmount = recipe.amount() * times;

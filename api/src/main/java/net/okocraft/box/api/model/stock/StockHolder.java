@@ -1,14 +1,17 @@
 package net.okocraft.box.api.model.stock;
 
+import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.okocraft.box.api.event.stockholder.stock.StockEvent;
 import net.okocraft.box.api.model.item.BoxItem;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Range;
 import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Stream;
 
 /**
  * An interface that holds stock.
@@ -36,24 +39,20 @@ public interface StockHolder {
      *
      * @param item the item to get the stock
      * @return the current stock quantity
+     * @throws NullPointerException if {@code item} is {@code null}
      */
-    int getAmount(@NotNull BoxItem item);
+    default int getAmount(@NotNull BoxItem item) {
+        return getAmount(item.getInternalId());
+    }
 
     /**
-     * Sets the stock quantity of the specified item.
-     * <p>
-     * This method calls {@link #setAmount(BoxItem, int, StockEvent.Cause)} with {@link StockEvent.Cause#API}.
+     * Gets the stock quantity of the specified item.
      *
-     * @param item   the item to set the stock quantity
-     * @param amount the amount
-     * @deprecated use {@link #setAmount(BoxItem, int, StockEvent.Cause)}
+     * @param itemId the id of the {@link BoxItem} to get the stock
+     * @return the current stock quantity
+     * @throws NullPointerException if {@code item} is {@code null}
      */
-    @ApiStatus.NonExtendable
-    @Deprecated(since = "5.5.0", forRemoval = true)
-    @ApiStatus.ScheduledForRemoval(inVersion = "6.0.0")
-    default void setAmount(@NotNull BoxItem item, int amount) {
-        setAmount(item, amount, StockEvent.Cause.API);
-    }
+    int getAmount(int itemId);
 
     /**
      * Sets the stock quantity of the specified item.
@@ -61,96 +60,122 @@ public interface StockHolder {
      * @param item   the item to set the stock quantity
      * @param amount the amount
      * @param cause  the cause that indicates why this method called
+     * @throws IllegalArgumentException if {@code amount} is negative
+     * @throws NullPointerException     if {@code item} or {@code cause} is {@code null}
      */
-    default void setAmount(@NotNull BoxItem item, int amount, @NotNull StockEvent.Cause cause) {
-        setAmount(item, amount);
-    }
-
-    /**
-     * Increases the stock of the specified item by one.
-     * <p>
-     * This method calls {@link #increase(BoxItem, int, StockEvent.Cause)} with {@link StockEvent.Cause#API}.
-     *
-     * @param item the item to increase the stock
-     * @return the stock quantity after increasing
-     * @deprecated use {@link #increase(BoxItem, int, StockEvent.Cause)}
-     */
-    @Deprecated(since = "5.5.0", forRemoval = true)
-    @ApiStatus.ScheduledForRemoval(inVersion = "6.0.0")
-    default int increase(@NotNull BoxItem item) {
-        return increase(item, 1, StockEvent.Cause.API);
-    }
+    void setAmount(@NotNull BoxItem item, @Range(from = 0, to = Integer.MAX_VALUE) int amount, @NotNull StockEvent.Cause cause);
 
     /**
      * Increases the stock of the specified item.
      * <p>
-     * This method calls {@link #increase(BoxItem, int, StockEvent.Cause)} with {@link StockEvent.Cause#API}.
-     *
-     * @param item      the item to increase the stock
-     * @param increment the amount to increase the stock
-     * @return the stock quantity after increasing
-     * @deprecated use {@link #increase(BoxItem, int, StockEvent.Cause)}
-     */
-    @Deprecated(since = "5.5.0", forRemoval = true)
-    @ApiStatus.ScheduledForRemoval(inVersion = "6.0.0")
-    default int increase(@NotNull BoxItem item, int increment) {
-        return increase(item, increment, StockEvent.Cause.API);
-    }
-
-    /**
-     * Increases the stock of the specified item.
+     * If {@code increment} is zero, this method returns {@link #getAmount(BoxItem)}.
+     * <p>
+     * The behavior when the stock has overflowed depends on the implementation.
      *
      * @param item      the item to increase the stock
      * @param increment the amount to increase the stock
      * @param cause     the cause that indicates why this method called
      * @return the stock quantity after increasing
+     * @throws IllegalArgumentException if {@code increment} is negative
+     * @throws NullPointerException     if {@code item} or {@code cause} is {@code null}
      */
-    default int increase(@NotNull BoxItem item, int increment, @NotNull StockEvent.Cause cause) {
-        return increase(item, increment);
-    }
-
-    /**
-     * Decreases the stock of the specified item by one.
-     * <p>
-     * This method calls {@link #decrease(BoxItem, int, StockEvent.Cause)} with {@link StockEvent.Cause#API}.
-     *
-     * @param item the item to decrease the stock
-     * @return the stock quantity after decreasing
-     * @deprecated use {@link #decrease(BoxItem, int, StockEvent.Cause)}
-     */
-    @Deprecated(since = "5.5.0", forRemoval = true)
-    @ApiStatus.ScheduledForRemoval(inVersion = "6.0.0")
-    default int decrease(@NotNull BoxItem item) {
-        return decrease(item, 1, StockEvent.Cause.API);
-    }
+    int increase(@NotNull BoxItem item, @Range(from = 0, to = Integer.MAX_VALUE) int increment, @NotNull StockEvent.Cause cause);
 
     /**
      * Decreases the stock of the specified item.
      * <p>
-     * This method calls {@link #decrease(BoxItem, int, StockEvent.Cause)} with {@link StockEvent.Cause#API}.
-     *
-     * @param item      the item to decrease the stock
-     * @param decrement the amount to decrease the stock
-     * @return the stock quantity after decreasing
-     * @deprecated use {@link #decrease(BoxItem, int, StockEvent.Cause)}
-     */
-    @Deprecated(since = "5.5.0", forRemoval = true)
-    @ApiStatus.ScheduledForRemoval(inVersion = "6.0.0")
-    default int decrease(@NotNull BoxItem item, int decrement) {
-        return decrease(item, decrement, StockEvent.Cause.API);
-    }
-
-    /**
-     * Decreases the stock of the specified item.
+     * If {@code decrement} is zero, this method returns {@link #getAmount(BoxItem)}.
+     * <p>
+     * If the current stock is less than {@code decrement}, this method sets the stock to zero.
+     * In other words, this method does not guarantee that the stock is always decreased by {@code decrement}.
+     * <p>
+     * If you want to decrease the stock when it is sufficient, use {@link #decreaseIfPossible(BoxItem, int, StockEvent.Cause)}.
      *
      * @param item      the item to decrease the stock
      * @param decrement the amount to decrease the stock
      * @param cause     the cause that indicates why this method called
      * @return the stock quantity after decreasing
+     * @throws IllegalArgumentException if {@code decrement} is negative
+     * @throws NullPointerException     if {@code item} or {@code cause} is {@code null}
      */
-    default int decrease(@NotNull BoxItem item, int decrement, @NotNull StockEvent.Cause cause) {
-        return decrease(item, decrement);
+    int decrease(@NotNull BoxItem item, @Range(from = 0, to = Integer.MAX_VALUE) int decrement, @NotNull StockEvent.Cause cause);
+
+    /**
+     * Decreases the stock of the specified item.
+     * <p>
+     * This method has the following specification:
+     * <p>
+     * <ui>
+     * <li>If the stock is less than {@code limit}, this method sets the stock to zero and returns the stock before set to zero</li>
+     * <li>Otherwise, this method decreases the stock by {@code limit} and returns {@code limit}</li>
+     * </ui>
+     * <p>
+     * This method is useful when you want to decrease the stock as much as possible, with {@code limit} as the maximum decrement.
+     *
+     * @param item  the item to decrease the stock
+     * @param limit the maximum decrement
+     * @param cause the cause that indicates why this method called
+     * @return the amount of decrement
+     * @throws IllegalArgumentException if {@code limit} is negative
+     * @throws NullPointerException     if {@code item} or {@code cause} is {@code null}
+     */
+    int decreaseToZero(@NotNull BoxItem item, @Range(from = 0, to = Integer.MAX_VALUE) int limit, @NotNull StockEvent.Cause cause);
+
+    /**
+     * Decreases the stock of the specified item.
+     * <p>
+     * If the stock is less than the {@code decrement}, this method does not actually decrease it, and returns {@code -1}.
+     *
+     * @param item      the item to decrease the stock
+     * @param decrement the amount to decrease the stock
+     * @param cause     the cause that indicates why this method called
+     * @return the stock quantity after decreasing or {@code -1} when the stock is less than the {@code decrement}
+     * @throws IllegalArgumentException if {@code decrement} is negative
+     * @throws NullPointerException     if {@code item} or {@code cause} is {@code null}
+     */
+    int decreaseIfPossible(@NotNull BoxItem item, @Range(from = 0, to = Integer.MAX_VALUE) int decrement, @NotNull StockEvent.Cause cause);
+
+    /**
+     * Decreases the stock of the specified items.
+     *
+     * @param decrementMap the map (key: {@link BoxItem}, value: decrement)
+     * @param cause        the cause that indicates why this method called
+     * @return {@code true} if stock of all specified items is decreased, otherwise {@code false}
+     * @throws IllegalArgumentException if the negative value is contained in {@code decrementMap}
+     * @throws NullPointerException     if {@code decrementMap} or {@code cause} is {@code null}
+     * @see #decreaseIfPossible(Object2IntMap, StockEvent.Cause)
+     */
+    @ApiStatus.NonExtendable
+    default boolean decreaseIfPossible(@NotNull Map<BoxItem, Integer> decrementMap, @NotNull StockEvent.Cause cause) {
+        var map = new Object2IntArrayMap<BoxItem>(decrementMap.size());
+
+        for (var entry : decrementMap.entrySet()) {
+            map.put(entry.getKey(), entry.getValue().intValue());
+        }
+
+        return decreaseIfPossible(map, cause);
     }
+
+    /**
+     * Decreases the stock of the specified items.
+     * <p>
+     * This method is implemented as follows:
+     *
+     * <ul>
+     *     <li>If all items in the {@code decrementMap} are greater than the decrement (the value keyed by {@link BoxItem}), this method will actually decrease them and return {@code true}.</li>
+     *     <li>If even one item is lacking, it returns {@code false} without any stock modification.</li>
+     *     <li>If {@code decrementMap} is empty, this method returns {@code true}.</li>
+     *     <li>When the negative value is contained in {@code decrementMap}, this method throws {@link IllegalArgumentException}</li>
+     *     <li>When the decrement value is zero, this method ignores it.</li>
+     * </ul>
+     *
+     * @param decrementMap the map (key: {@link BoxItem}, value: decrement)
+     * @param cause        the cause that indicates why this method called
+     * @return {@code true} if stock of all specified items is decreased, otherwise {@code false}
+     * @throws IllegalArgumentException if the negative value is contained in {@code decrementMap}
+     * @throws NullPointerException     if {@code decrementMap} or {@code cause} is {@code null}
+     */
+    boolean decreaseIfPossible(@NotNull Object2IntMap<BoxItem> decrementMap, @NotNull StockEvent.Cause cause);
 
     /**
      * Gets a stocked item collection.
@@ -167,20 +192,7 @@ public interface StockHolder {
     @NotNull @Unmodifiable Collection<StockData> toStockDataCollection();
 
     /**
-     * Gets the {@link StockData} stream.
-     *
-     * @return the stream of {@link StockData}.
-     * @deprecated use {@link #toStockDataCollection()}
-     */
-    @Deprecated(since = "5.5.0", forRemoval = true)
-    @ApiStatus.ScheduledForRemoval(inVersion = "6.0.0")
-    default @NotNull Stream<StockData> stockDataStream() {
-        return toStockDataCollection().stream();
-    }
-
-    /**
      * Resets all stock.
      */
     void reset();
-
 }

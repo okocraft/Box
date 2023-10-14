@@ -6,6 +6,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.Duration;
+import java.util.concurrent.TimeUnit;
+import java.util.function.BooleanSupplier;
+
 public class FoliaSchedulerWrapper implements BoxScheduler {
 
     @Override
@@ -18,4 +22,19 @@ public class FoliaSchedulerWrapper implements BoxScheduler {
         entity.getScheduler().run(BoxProvider.get().getPluginInstance(), ignored -> task.run(), null);
     }
 
+    public void scheduleRepeatingAsyncTask(@NotNull Runnable task, @NotNull Duration interval, @NotNull BooleanSupplier condition) {
+        Bukkit.getAsyncScheduler().runAtFixedRate(
+                BoxProvider.get().getPluginInstance(),
+                scheduledTask -> {
+                    if (condition.getAsBoolean()) {
+                        task.run();
+                    } else {
+                        scheduledTask.cancel();
+                    }
+                },
+                interval.toMillis(),
+                interval.toMillis(),
+                TimeUnit.MILLISECONDS
+        );
+    }
 }

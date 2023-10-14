@@ -17,11 +17,11 @@ public class StockMigrator implements DataMigrator<StockStorage> {
     @Override
     public void migrate(@NotNull StockStorage source, @NotNull StockStorage target, @NotNull LoggerWrapper logger) throws Exception {
         for (var user : MigratedBoxUsers.LIST) {
-            var userStockHolder = source.loadUserStockHolder(user);
-            target.saveUserStockHolder(userStockHolder);
+            var stockData = source.loadStockData(user.getUUID());
+            target.saveStockData(user.getUUID(), stockData);
 
             if (StorageMigrator.debug) {
-                logger.info("Migrated stock data: " + userStockHolder);
+                logger.info("Migrated stock data: " + stockData);
             }
         }
 

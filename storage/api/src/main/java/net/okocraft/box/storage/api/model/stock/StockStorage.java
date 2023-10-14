@@ -1,14 +1,16 @@
 package net.okocraft.box.storage.api.model.stock;
 
-import net.okocraft.box.api.model.stock.UserStockHolder;
-import net.okocraft.box.api.model.user.BoxUser;
+import net.okocraft.box.api.model.stock.StockData;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Collection;
+import java.util.UUID;
 
 public interface StockStorage {
 
     void init() throws Exception;
 
-    @NotNull UserStockHolder loadUserStockHolder(@NotNull BoxUser user) throws Exception;
+    @NotNull Collection<StockData> loadStockData(@NotNull UUID uuid) throws Exception;
 
-    void saveUserStockHolder(@NotNull UserStockHolder stockHolder) throws Exception;
+    void saveStockData(@NotNull UUID uuid, @NotNull Collection<StockData> stockData) throws Exception;
 }

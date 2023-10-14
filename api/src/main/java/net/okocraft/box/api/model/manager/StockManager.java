@@ -1,45 +1,49 @@
 package net.okocraft.box.api.model.manager;
 
+import net.okocraft.box.api.model.stock.PersonalStockHolder;
+import net.okocraft.box.api.model.stock.StockData;
+import net.okocraft.box.api.model.stock.StockEventCaller;
 import net.okocraft.box.api.model.stock.StockHolder;
-import net.okocraft.box.api.model.stock.UserStockHolder;
 import net.okocraft.box.api.model.user.BoxUser;
-import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.concurrent.CompletableFuture;
+import java.util.Collection;
+import java.util.UUID;
 
 /**
- * An interface to manage {@link net.okocraft.box.api.model.stock.StockHolder}s.
+ * An interface to manage {@link StockHolder}s.
  */
 public interface StockManager {
 
     /**
-     * Loads an {@link UserStockHolder}.
+     * Gets the {@link PersonalStockHolder} of the specified {@link BoxUser}.
      *
-     * @param user the {@link BoxUser}
-     * @return the {@link CompletableFuture} to load user's {@link net.okocraft.box.api.model.stock.StockHolder}.
-     * @deprecated {@link UserStockHolder} will be removed in Box 6.0.0
+     * @param user the {@link BoxUser} to get {@link PersonalStockHolder}
+     * @return the {@link PersonalStockHolder} of the specified {@link BoxUser}
      */
-    @Deprecated(since = "5.5.0", forRemoval = true)
-    @ApiStatus.ScheduledForRemoval(inVersion = "6.0.0")
-    @NotNull CompletableFuture<@NotNull UserStockHolder> loadUserStock(@NotNull BoxUser user);
+    @NotNull PersonalStockHolder getPersonalStockHolder(@NotNull BoxUser user);
 
     /**
-     * Saves an {@link UserStockHolder}.
+     * Creates an implementation of {@link StockHolder}.
      *
-     * @param userStockHolder {@link UserStockHolder} to save
-     * @return the {@link CompletableFuture} to save user's {@link net.okocraft.box.api.model.stock.StockHolder}.
-     * @deprecated {@link UserStockHolder} will be removed in Box 6.0.0
+     * @param uuid        the {@link UUID} of the {@link StockHolder}
+     * @param name        the name of the {@link StockHolder}
+     * @param eventCaller the {@link StockEventCaller} to call {@link net.okocraft.box.api.event.stockholder.stock.StockEvent}s
+     * @return a new {@link StockHolder} instance
      */
-    @Deprecated(since = "5.5.0", forRemoval = true)
-    @ApiStatus.ScheduledForRemoval(inVersion = "6.0.0")
-    @NotNull CompletableFuture<Void> saveUserStock(@NotNull UserStockHolder userStockHolder);
+    @Contract("_, _, _ -> new")
+    @NotNull StockHolder createStockHolder(@NotNull UUID uuid, @NotNull String name, @NotNull StockEventCaller eventCaller);
 
     /**
-     * Gets the {@link BoxUser}'s {@link StockHolder}.
+     * Creates an implementation of {@link StockHolder} with a collection of {@link StockData}.
      *
-     * @param user the {@link BoxUser} to get {@link StockHolder}
-     * @return the {@link BoxUser}'s {@link StockHolder}
+     * @param uuid        the {@link UUID} of the {@link StockHolder}
+     * @param name        the name of the {@link StockHolder}
+     * @param eventCaller the {@link StockEventCaller} to call {@link net.okocraft.box.api.event.stockholder.stock.StockEvent}s
+     * @param stockData   a collection of {@link StockData}
+     * @return a new {@link StockHolder} instance
      */
-    @NotNull StockHolder getPersonalStockHolderLoader(@NotNull BoxUser user);
+    @Contract("_, _, _, _ -> new")
+    @NotNull StockHolder createStockHolder(@NotNull UUID uuid, @NotNull String name, @NotNull StockEventCaller eventCaller, @NotNull Collection<StockData> stockData);
 }
