@@ -6,12 +6,13 @@ import net.okocraft.box.storage.api.model.user.UserStorage;
 import net.okocraft.box.storage.api.util.uuid.UUIDParser;
 import net.okocraft.box.storage.implementation.database.database.Database;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Optional;
+import java.util.Objects;
 import java.util.UUID;
 
 // | uuid | username |
@@ -40,27 +41,19 @@ public class UserTable extends AbstractTable implements UserStorage {
     }
 
     @Override
-    public void saveBoxUser(@NotNull BoxUser user) throws Exception {
+    public void saveBoxUser(@NotNull UUID uuid, @Nullable String name) throws Exception {
         try (var connection = database.getConnection()) {
-            if (isExistingUser(connection, user)) {
-                updateUsername(connection, user);
+            var strUUID = uuid.toString();
+            if (isExistingUser(connection, strUUID)) {
+                updateUsername(connection, strUUID, Objects.requireNonNullElse(name, ""));
             } else {
-                insertUser(connection, user);
+                insertUser(connection, strUUID, Objects.requireNonNullElse(name, ""));
             }
         }
     }
 
     @Override
-    public void saveBoxUserIfNotExists(@NotNull BoxUser user) throws Exception {
-        try (var connection = database.getConnection()) {
-            if (!isExistingUser(connection, user)) {
-                insertUser(connection, user);
-            }
-        }
-    }
-
-    @Override
-    public @NotNull Optional<BoxUser> search(@NotNull String name) throws Exception {
+    public @Nullable BoxUser searchByName(@NotNull String name) throws Exception {
         try (var connection = database.getConnection();
              var statement = prepareStatement(connection, "SELECT * FROM `%table%` WHERE `username` LIKE ?")) {
             statement.setString(1, name);
@@ -69,14 +62,15 @@ public class UserTable extends AbstractTable implements UserStorage {
                 if (result.next()) {
                     var uuid = UUIDParser.parseOrWarn(result.getString("uuid"));
                     var username = result.getString("username");
-                    return uuid != null ?
-                            Optional.of(BoxUserFactory.create(uuid, username.isEmpty() ? null : username)) :
-                            Optional.empty();
+
+                    if (uuid != null) {
+                        return BoxUserFactory.create(uuid, username.isEmpty() ? null : username);
+                    }
                 }
             }
         }
 
-        return Optional.empty();
+        return null;
     }
 
     @Override
@@ -100,9 +94,9 @@ public class UserTable extends AbstractTable implements UserStorage {
         return result;
     }
 
-    private boolean isExistingUser(@NotNull Connection connection, @NotNull BoxUser user) throws SQLException {
+    private boolean isExistingUser(@NotNull Connection connection, @NotNull String strUUID) throws SQLException {
         try (var statement = prepareStatement(connection, "SELECT `username` FROM `%table%` WHERE `uuid`=? LIMIT 1")) {
-            statement.setString(1, user.getUUID().toString());
+            statement.setString(1, strUUID);
 
             try (var result = statement.executeQuery()) {
                 return result.next();
@@ -110,19 +104,19 @@ public class UserTable extends AbstractTable implements UserStorage {
         }
     }
 
-    private void insertUser(@NotNull Connection connection, @NotNull BoxUser user) throws SQLException {
+    private void insertUser(@NotNull Connection connection, @NotNull String strUUID, @NotNull String name) throws SQLException {
         try (var statement = prepareStatement(connection, "INSERT INTO `%table%` (`uuid`, `username`) VALUES(?,?)")) {
-            statement.setString(1, user.getUUID().toString());
-            statement.setString(2, user.getName().orElse(""));
+            statement.setString(1, strUUID);
+            statement.setString(2, name);
 
             statement.execute();
         }
     }
 
-    private void updateUsername(@NotNull Connection connection, @NotNull BoxUser user) throws SQLException {
+    private void updateUsername(@NotNull Connection connection, @NotNull String strUUID, @NotNull String name) throws SQLException {
         try (var statement = prepareStatement(connection, "UPDATE `%table%` SET `username`=? where `uuid`=?")) {
-            statement.setString(1, user.getName().orElse(""));
-            statement.setString(2, user.getUUID().toString());
+            statement.setString(1, strUUID);
+            statement.setString(2, name);
 
             statement.execute();
         }

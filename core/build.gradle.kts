@@ -8,4 +8,5 @@ dependencies {
     compileOnly(projects.boxStorageApi)
 
     testImplementation(projects.boxApi)
+    testImplementation(projects.boxStorageApi)
 }

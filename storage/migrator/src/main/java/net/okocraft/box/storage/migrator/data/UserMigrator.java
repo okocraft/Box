@@ -26,7 +26,7 @@ public class UserMigrator implements DataMigrator<UserStorage> {
 
         for (var user : users) {
             try {
-                target.saveBoxUser(user);
+                target.saveBoxUser(user.getUUID(), user.getName().orElse(null));
             } catch (Exception e) {
                 logger.warning("Failed to migrate the user: " + users + " (message: " + e.getMessage() + ")");
                 continue;

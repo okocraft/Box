@@ -4,14 +4,12 @@ import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.event.player.PlayerLoadEvent;
 import net.okocraft.box.api.event.player.PlayerUnloadEvent;
 import net.okocraft.box.api.model.manager.StockManager;
-import net.okocraft.box.api.model.manager.UserManager;
-import net.okocraft.box.api.model.user.BoxUser;
 import net.okocraft.box.api.player.BoxPlayer;
 import net.okocraft.box.api.player.BoxPlayerMap;
 import net.okocraft.box.core.message.ErrorMessages;
 import net.okocraft.box.core.model.loader.UserStockHolderLoader;
+import net.okocraft.box.core.model.manager.user.BoxUserManager;
 import net.okocraft.box.core.util.executor.InternalExecutors;
-import net.okocraft.box.storage.api.factory.user.BoxUserFactory;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -32,11 +30,11 @@ public class BoxPlayerMapImpl implements BoxPlayerMap {
     private static final BoxPlayer NOT_LOADED_YET = new NotLoadedPlayer();
 
     private final Map<Player, BoxPlayer> playerMap = new ConcurrentHashMap<>();
-    private final UserManager userManager;
+    private final BoxUserManager userManager;
     private final StockManager stockManager;
     private final ScheduledExecutorService scheduler;
 
-    public BoxPlayerMapImpl(@NotNull UserManager userManager, @NotNull StockManager stockManager) {
+    public BoxPlayerMapImpl(@NotNull BoxUserManager userManager, @NotNull StockManager stockManager) {
         this.userManager = userManager;
         this.stockManager = stockManager;
         this.scheduler = InternalExecutors.newSingleThreadScheduler("Player Loader");
@@ -90,9 +88,9 @@ public class BoxPlayerMapImpl implements BoxPlayerMap {
             return;
         }
 
-        var boxUser = BoxUserFactory.create(player.getUniqueId(), player.getName());
+        var boxUser = this.userManager.createBoxUser(player.getUniqueId(), player.getName());
 
-        updateUserName(boxUser);
+        this.userManager.saveUsername(boxUser);
 
         var userStock = stockManager.loadUserStock(boxUser).join();
 
@@ -137,14 +135,6 @@ public class BoxPlayerMapImpl implements BoxPlayerMap {
                 .map(playerMap::remove)
                 .filter(Objects::nonNull)
                 .forEach(this::unload0);
-    }
-
-    private void updateUserName(@NotNull BoxUser user) {
-        userManager.saveUser(user)
-                .exceptionallyAsync(e -> {
-                    BoxProvider.get().getLogger().log(Level.SEVERE, "Could not save the uuid and name of player (" + user.getName() + ")", e);
-                    return null;
-                });
     }
 
     private @NotNull CompletableFuture<Void> unloadAndSave(@NotNull BoxPlayer boxPlayer) {
