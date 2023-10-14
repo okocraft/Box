@@ -6,11 +6,11 @@ import net.okocraft.box.storage.api.factory.user.BoxUserFactory;
 import net.okocraft.box.storage.api.model.user.UserStorage;
 import net.okocraft.box.storage.api.util.uuid.UUIDParser;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Optional;
 import java.util.UUID;
 
 class YamlUserStorage implements UserStorage {
@@ -33,23 +33,17 @@ class YamlUserStorage implements UserStorage {
     }
 
     @Override
-    public void saveBoxUser(@NotNull BoxUser user) throws Exception {
-        if (user.getName().isPresent()) {
-            userData.set(user.getUUID().toString(), user.getName().get());
-            userData.save();
+    public void saveBoxUser(@NotNull UUID uuid, @Nullable String name) throws Exception {
+        var strUUID = uuid.toString();
+
+        if (name != null || (this.userData.get(strUUID) == null)) {
+            this.userData.set(strUUID, name != null ? name : "");
+            this.userData.save();
         }
     }
 
     @Override
-    public void saveBoxUserIfNotExists(@NotNull BoxUser user) throws Exception {
-        if (user.getName().isPresent() && userData.get(user.getUUID().toString()) == null) {
-            userData.set(user.getUUID().toString(), user.getName().get());
-            userData.save();
-        }
-    }
-
-    @Override
-    public @NotNull Optional<BoxUser> search(@NotNull String name) throws Exception {
+    public @Nullable BoxUser searchByName(@NotNull String name) throws Exception {
         String strUuid = null;
 
         for (var key : userData.getKeyList()) {
@@ -59,7 +53,7 @@ class YamlUserStorage implements UserStorage {
         }
 
         if (strUuid == null) {
-            return Optional.empty();
+            return null;
         }
 
         var uuid = UUIDParser.parseOrWarn(strUuid);
@@ -67,12 +61,12 @@ class YamlUserStorage implements UserStorage {
         if (uuid == null) {
             userData.set(strUuid, null); // remove invalid uuid
             userData.save();
-            return Optional.empty();
+            return null;
         }
 
         var savedName = userData.getString(strUuid);
 
-        return Optional.of(BoxUserFactory.create(uuid, savedName));
+        return BoxUserFactory.create(uuid, savedName);
     }
 
     @Override

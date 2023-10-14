@@ -23,14 +23,13 @@ public final class UserSearcher {
         var uuid = toUuidOrNull(uuidOrName);
 
         var onlinePlayer = uuid != null ? Bukkit.getPlayer(uuid) : Bukkit.getPlayer(uuidOrName);
-        var playerMap = BoxProvider.get().getBoxPlayerMap();
-
-        if (onlinePlayer != null && playerMap.isLoaded(onlinePlayer)) {
-            return playerMap.get(onlinePlayer).asUser();
-        }
-
         var userManager = BoxProvider.get().getUserManager();
-        return uuid != null ? userManager.loadUser(uuid).join() : userManager.search(uuidOrName).join().orElse(null);
+
+        if (onlinePlayer != null) {
+            return userManager.createBoxUser(onlinePlayer.getUniqueId(), onlinePlayer.getName());
+        } else {
+            return uuid != null ? userManager.loadBoxUser(uuid) : userManager.searchByName(uuidOrName);
+        }
     }
 
     private static @Nullable UUID toUuidOrNull(@NotNull String strUuid) {
