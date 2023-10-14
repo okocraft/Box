@@ -105,10 +105,10 @@ public interface StockHolder {
      * <p>
      * This method has the following specification:
      * <p>
-     * <ui>
+     * <ul>
      * <li>If the stock is less than {@code limit}, this method sets the stock to zero and returns the stock before set to zero</li>
      * <li>Otherwise, this method decreases the stock by {@code limit} and returns {@code limit}</li>
-     * </ui>
+     * </ul>
      * <p>
      * This method is useful when you want to decrease the stock as much as possible, with {@code limit} as the maximum decrement.
      *
