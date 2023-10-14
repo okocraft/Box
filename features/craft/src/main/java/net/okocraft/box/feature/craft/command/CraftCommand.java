@@ -3,12 +3,14 @@ package net.okocraft.box.feature.craft.command;
 import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.command.AbstractCommand;
+import net.okocraft.box.api.message.Components;
 import net.okocraft.box.api.message.GeneralMessage;
 import net.okocraft.box.api.util.TabCompleter;
 import net.okocraft.box.feature.craft.RecipeRegistry;
 import net.okocraft.box.feature.craft.lang.Displays;
-import net.okocraft.box.feature.craft.menu.CraftMenu;
-import net.okocraft.box.feature.craft.menu.RecipeSelector;
+import net.okocraft.box.feature.craft.gui.menu.CraftMenu;
+import net.okocraft.box.feature.craft.gui.menu.RecipeSelectorMenu;
+import net.okocraft.box.feature.gui.api.event.MenuOpenEvent;
 import net.okocraft.box.feature.gui.api.menu.Menu;
 import net.okocraft.box.feature.gui.api.session.PlayerSession;
 import net.okocraft.box.feature.gui.api.util.MenuOpener;
@@ -54,19 +56,20 @@ public class CraftCommand extends AbstractCommand {
         }
 
         Menu menu;
-
-        var session = PlayerSession.get(player);
-
-        session.resetCustomNumbers();
-        session.setStockHolder(BoxProvider.get().getBoxPlayerMap().get(player).getCurrentStockHolder());
+        var session = PlayerSession.newSession(player);
 
         if (recipeHolder.getRecipeList().size() == 1) {
-            menu = new CraftMenu(recipeHolder.getRecipeList().get(0), null);
+            menu = CraftMenu.prepare(session, recipeHolder.getRecipeList().get(0));
         } else {
-            menu = new RecipeSelector(item.get(), recipeHolder, null);
+            menu = new RecipeSelectorMenu(item.get(), recipeHolder);
         }
 
-        MenuOpener.open(menu, player);
+        if (BoxProvider.get().getEventBus().callEvent(new MenuOpenEvent(menu, session)).isCancelled()) {
+            session.getViewer().sendMessage(Components.redTranslatable("box.gui.cannot-open-menu"));
+            return;
+        }
+
+        MenuOpener.open(menu, session);
     }
 
     @Override

@@ -1,21 +1,27 @@
-package net.okocraft.box.feature.craft.util;
+package net.okocraft.box.feature.craft.gui.util;
 
 import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.model.stock.StockHolder;
-import net.okocraft.box.api.transaction.InventoryTransaction;
+import net.okocraft.box.api.util.InventoryUtil;
 import net.okocraft.box.feature.craft.event.BoxCraftEvent;
 import net.okocraft.box.feature.craft.event.stock.CraftCause;
+import net.okocraft.box.feature.craft.gui.CurrentRecipe;
 import net.okocraft.box.feature.craft.model.SelectedRecipe;
+import net.okocraft.box.feature.gui.api.button.ClickResult;
 import net.okocraft.box.feature.gui.api.session.PlayerSession;
+import net.okocraft.box.feature.gui.api.session.TypedKey;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 
 public class ItemCrafter {
+
+    public static final TypedKey<Boolean> PUT_CRAFTED_ITEMS_INTO_INVENTORY = TypedKey.of(Boolean.class, "put_crafted_items_into_inventory");
 
     public static boolean canCraft(@NotNull StockHolder stockHolder, @NotNull SelectedRecipe recipe, int times) {
         var ingredientMap = new HashMap<BoxItem, Integer>();
@@ -41,18 +47,18 @@ public class ItemCrafter {
         return true;
     }
 
-    public static boolean craft(@NotNull Player crafter, @NotNull SelectedRecipe recipe, int times) {
-        var stockHolder = PlayerSession.get(crafter).getStockHolder();
-
-        if (!canCraft(stockHolder, recipe, times)) {
-            return false;
-        }
+    public static void craft(@NotNull PlayerSession session, int times, @NotNull ClickResult.WaitingTask waitingTask) {
+        var crafter = session.getViewer();
+        var recipe = session.getDataOrThrow(CurrentRecipe.DATA_KEY).getSelectedRecipe();
+        var stockHolder = session.getStockHolder();
 
         var event = new BoxCraftEvent(crafter, recipe, times);
         BoxProvider.get().getEventBus().callEvent(event);
 
         if (event.isCancelled()) {
-            return false;
+            playNotCraftedSound(session.getViewer());
+            waitingTask.complete(ClickResult.NO_UPDATE_NEEDED);
+            return;
         }
 
         var cause = new CraftCause(crafter, recipe);
@@ -80,7 +86,9 @@ public class ItemCrafter {
         }
 
         if (!stockHolder.decreaseIfPossible(ingredientMap, cause)) {
-            return false;
+            playNotCraftedSound(session.getViewer());
+            waitingTask.complete(ClickResult.NO_UPDATE_NEEDED);
+            return;
         }
 
         if (craftRemainingItemMap != null) {
@@ -90,23 +98,31 @@ public class ItemCrafter {
         }
 
         int resultAmount = recipe.amount() * times;
-        int storeAmount = resultAmount;
 
-        if (Distribution.toInventory(crafter)) {
-            var result =
-                    BoxProvider.get().getTaskFactory()
-                            .supplyFromEntity(crafter, player -> InventoryTransaction.withdraw(player.getInventory(), recipe.result(), resultAmount))
-                            .join();
+        if (session.getData(PUT_CRAFTED_ITEMS_INTO_INVENTORY) != null) {
+            BoxProvider.get().getScheduler().runEntityTask(crafter, () -> {
+                int remaining = InventoryUtil.putItems(crafter.getInventory(), recipe.result().getOriginal(), resultAmount);
 
-            if (result.getType().isModified()) {
-                storeAmount = resultAmount - result.getAmount();
-            }
+                if (0 < remaining) {
+                    stockHolder.increase(recipe.result(), remaining, cause);
+                }
+
+                playCraftSound(crafter);
+
+                waitingTask.completeAsync(ClickResult.UPDATE_ICONS);
+            });
+        } else {
+            waitingTask.complete(ClickResult.UPDATE_ICONS);
+            stockHolder.increase(recipe.result(), resultAmount, cause);
+            playCraftSound(crafter);
         }
+    }
 
-        if (storeAmount != 0) {
-            stockHolder.increase(recipe.result(), storeAmount, cause);
-        }
+    private static void playCraftSound(@NotNull Player viewer) {
+        viewer.playSound(viewer.getLocation(), Sound.BLOCK_LEVER_CLICK, 100f, 1.0f);
+    }
 
-        return true;
+    private static void playNotCraftedSound(@NotNull Player viewer) {
+        viewer.playSound(viewer.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 100f, 1.5f);
     }
 }

@@ -1,17 +1,16 @@
 package net.okocraft.box.feature.gui.api.event;
 
 import com.github.siroshun09.event4j.event.Cancellable;
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.okocraft.box.feature.gui.api.menu.Menu;
-import org.bukkit.entity.Player;
+import net.okocraft.box.feature.gui.api.session.PlayerSession;
 import org.jetbrains.annotations.NotNull;
 
 public class MenuOpenEvent extends MenuEvent implements Cancellable {
 
     private boolean cancelled;
 
-    public MenuOpenEvent(@NotNull Player viewer, @NotNull Menu menu) {
-        super(viewer, menu);
+    public MenuOpenEvent(@NotNull Menu menu, @NotNull PlayerSession session) {
+        super(menu, session);
     }
 
     @Override
@@ -30,7 +29,6 @@ public class MenuOpenEvent extends MenuEvent implements Cancellable {
                 "viewerUuid=" + getViewer().getUniqueId() +
                 ", viewerName=" + getViewer().getName() +
                 ", menuClass=" + getMenu().getClass().getSimpleName() +
-                ", menuTitle=" + PlainTextComponentSerializer.plainText().serialize(getMenu().getTitle()) +
                 ", cancelled=" + isCancelled() +
                 '}';
     }

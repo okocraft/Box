@@ -1,7 +1,6 @@
 package net.okocraft.box.feature.craft.model;
 
 import net.okocraft.box.api.BoxProvider;
-import net.okocraft.box.feature.craft.util.ModelCache;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.RecipeChoice;
 import org.jetbrains.annotations.ApiStatus;
@@ -17,6 +16,14 @@ import java.util.Objects;
  * A class that holds multiple {@link BoxIngredientItem}s.
  */
 public class IngredientHolder {
+
+    public static void enableCache() {
+        ModelCache.createCache();
+    }
+
+    public static void disableCache() {
+        ModelCache.clearCache();
+    }
 
     /**
      * Creates a {@link IngredientHolder} from {@link org.bukkit.inventory.RecipeChoice.MaterialChoice}.

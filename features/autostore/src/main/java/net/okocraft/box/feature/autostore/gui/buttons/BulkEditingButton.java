@@ -3,37 +3,41 @@ package net.okocraft.box.feature.autostore.gui.buttons;
 import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.feature.autostore.gui.AutoStoreMenuDisplays;
-import net.okocraft.box.feature.autostore.model.setting.AutoStoreSetting;
+import net.okocraft.box.feature.autostore.gui.AutoStoreSettingKey;
+import net.okocraft.box.feature.gui.api.button.ClickResult;
+import net.okocraft.box.feature.gui.api.session.PlayerSession;
+import net.okocraft.box.feature.gui.api.session.TypedKey;
 import net.okocraft.box.feature.gui.api.util.TranslationUtil;
 import org.bukkit.Material;
 import org.bukkit.Sound;
-import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
 public class BulkEditingButton extends AbstractAutoStoreSettingButton {
 
-    private Boolean recent = null;
+    private static final TypedKey<Boolean> RECENT_OPERATION_KEY = TypedKey.of(Boolean.class, "autostore_bulk_editing_recent");
 
-    public BulkEditingButton(@NotNull AutoStoreSetting setting) {
-        super(11, setting);
+    public BulkEditingButton() {
+        super(11);
     }
 
     @Override
-    public @NotNull Material getIconMaterial() {
-        return Material.TRIPWIRE_HOOK;
+    public @NotNull ItemStack createIcon(@NotNull PlayerSession session) {
+        var item = new ItemStack(Material.TRIPWIRE_HOOK);
+        item.editMeta(meta -> editIconMeta(session, meta));
+        return item;
     }
 
-
-    @Override
-    public @Nullable ItemMeta applyIconMeta(@NotNull Player viewer, @NotNull ItemMeta target) {
+    private void editIconMeta(@NotNull PlayerSession session, @NotNull ItemMeta target) {
         var displayName = AutoStoreMenuDisplays.AUTOSTORE_MODE_SETTING_MENU_BULK_EDITING_TITLE;
-        target.displayName(TranslationUtil.render(displayName, viewer));
+        target.displayName(TranslationUtil.render(displayName, session.getViewer()));
+
+        Boolean recent = session.getData(RECENT_OPERATION_KEY);
 
         var lore = new ArrayList<Component>();
 
@@ -50,15 +54,21 @@ public class BulkEditingButton extends AbstractAutoStoreSettingButton {
             lore.add(Component.empty());
         }
 
-        target.lore(TranslationUtil.render(lore, viewer));
-
-        return target;
+        target.lore(TranslationUtil.render(lore, session.getViewer()));
     }
 
     @Override
-    public void onClick(@NotNull Player clicker, @NotNull ClickType clickType) {
+    public @NotNull ClickResult onClick(@NotNull PlayerSession session, @NotNull ClickType clickType) {
+        var setting = session.getData(AutoStoreSettingKey.KEY);
+
+        if (setting == null) {
+            return ClickResult.NO_UPDATE_NEEDED;
+        }
+
         var perItemSetting = setting.getPerItemModeSetting();
         Sound sound;
+
+        Boolean recent = session.getData(RECENT_OPERATION_KEY);
 
         if (recent == null || !recent) {
             perItemSetting.setEnabledItems(BoxProvider.get().getItemManager().getItemList());
@@ -70,15 +80,23 @@ public class BulkEditingButton extends AbstractAutoStoreSettingButton {
             recent = false;
         }
 
+        session.putData(RECENT_OPERATION_KEY, recent);
+        var result = ClickResult.UPDATE_BUTTON;
+
         if (!setting.isEnabled()) {
             setting.setEnabled(true);
+            result = ClickResult.UPDATE_ICONS;
         }
 
         if (setting.isAllMode()) {
             setting.setAllMode(false);
+            result = ClickResult.UPDATE_ICONS;
         }
 
+        var clicker = session.getViewer();
         clicker.playSound(clicker.getLocation(), sound, 100f, 1.5f);
-        callAutoStoreSettingChangeEvent();
+        callAutoStoreSettingChangeEvent(setting);
+
+        return result;
     }
 }

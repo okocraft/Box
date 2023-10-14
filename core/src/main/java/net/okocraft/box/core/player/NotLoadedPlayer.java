@@ -1,5 +1,6 @@
 package net.okocraft.box.core.player;
 
+import net.okocraft.box.api.model.stock.PersonalStockHolder;
 import net.okocraft.box.api.model.stock.StockHolder;
 import net.okocraft.box.api.model.user.BoxUser;
 import net.okocraft.box.api.player.BoxPlayer;
@@ -31,7 +32,7 @@ final class NotLoadedPlayer implements BoxPlayer {
     }
 
     @Override
-    public @NotNull StockHolder getPersonalStockHolder() {
+    public @NotNull PersonalStockHolder getPersonalStockHolder() {
         throw new IllegalStateException();
     }
 
