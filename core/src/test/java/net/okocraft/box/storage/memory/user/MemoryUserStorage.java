@@ -22,7 +22,7 @@ public class MemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public @NotNull BoxUser getUser(@NotNull UUID uuid) {
+    public @NotNull BoxUser loadBoxUser(@NotNull UUID uuid) {
         return BoxUserFactory.create(uuid, this.uuidToNameMap.get(uuid));
     }
 
@@ -42,7 +42,7 @@ public class MemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public @NotNull Collection<BoxUser> getAllUsers() {
+    public @NotNull Collection<BoxUser> loadAllBoxUsers() {
         var list = new ArrayList<BoxUser>(this.uuidToNameMap.size());
 
         for (var entry : this.uuidToNameMap.entrySet()) {
@@ -50,5 +50,12 @@ public class MemoryUserStorage implements UserStorage {
         }
 
         return list;
+    }
+
+    @Override
+    public void saveBoxUsers(@NotNull Collection<BoxUser> users) {
+        for (var user : users) {
+            saveBoxUser(user.getUUID(), user.getName().orElse(null));
+        }
     }
 }

@@ -34,7 +34,7 @@ public class BoxUserManager implements UserManager {
         BoxUser user;
 
         try {
-            user = this.userStorage.getUser(uuid);
+            user = this.userStorage.loadBoxUser(uuid);
         } catch (Exception e) {
             this.logException("load the user (" + uuid + ")", e);
             return this.createBoxUser(uuid); // create a BoxUser without name

@@ -11,11 +11,14 @@ public interface UserStorage {
 
     void init() throws Exception;
 
-    @NotNull BoxUser getUser(@NotNull UUID uuid) throws Exception;
+    @NotNull BoxUser loadBoxUser(@NotNull UUID uuid) throws Exception;
 
     void saveBoxUser(@NotNull UUID uuid, @Nullable String name) throws Exception;
 
     @Nullable BoxUser searchByName(@NotNull String name) throws Exception;
 
-    @NotNull Collection<BoxUser> getAllUsers() throws Exception;
+    @NotNull Collection<BoxUser> loadAllBoxUsers() throws Exception;
+
+    void saveBoxUsers(@NotNull Collection<BoxUser> users) throws Exception;
+
 }

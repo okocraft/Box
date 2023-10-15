@@ -17,8 +17,8 @@ class UserManagerTest {
         var user = BoxUserFactory.create(UUID.randomUUID(), "test_user");
         manager.saveUsername(user);
 
-        Assertions.assertEquals(user, storage.getUser(user.getUUID()));
-        Assertions.assertEquals("test_user", storage.getUser(user.getUUID()).getName().orElseThrow());
+        Assertions.assertEquals(user, storage.loadBoxUser(user.getUUID()));
+        Assertions.assertEquals("test_user", storage.loadBoxUser(user.getUUID()).getName().orElseThrow());
 
         var loadedUser = manager.loadBoxUser(user.getUUID());
 

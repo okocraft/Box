@@ -5,14 +5,13 @@ import net.okocraft.box.storage.api.factory.user.BoxUserFactory;
 import net.okocraft.box.storage.api.model.user.UserStorage;
 import net.okocraft.box.storage.api.util.uuid.UUIDParser;
 import net.okocraft.box.storage.implementation.database.database.Database;
+import net.okocraft.box.storage.implementation.database.database.mysql.MySQLDatabase;
+import net.okocraft.box.storage.implementation.database.database.sqlite.SQLiteDatabase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Objects;
 import java.util.UUID;
 
 // | uuid | username |
@@ -28,7 +27,7 @@ public class UserTable extends AbstractTable implements UserStorage {
     }
 
     @Override
-    public @NotNull BoxUser getUser(@NotNull UUID uuid) throws Exception {
+    public @NotNull BoxUser loadBoxUser(@NotNull UUID uuid) throws Exception {
         try (var connection = database.getConnection();
              var statement = prepareStatement(connection, "SELECT `username` FROM `%table%` WHERE `uuid`=? LIMIT 1")) {
             statement.setString(1, uuid.toString());
@@ -42,13 +41,11 @@ public class UserTable extends AbstractTable implements UserStorage {
 
     @Override
     public void saveBoxUser(@NotNull UUID uuid, @Nullable String name) throws Exception {
-        try (var connection = database.getConnection()) {
-            var strUUID = uuid.toString();
-            if (isExistingUser(connection, strUUID)) {
-                updateUsername(connection, strUUID, Objects.requireNonNullElse(name, ""));
-            } else {
-                insertUser(connection, strUUID, Objects.requireNonNullElse(name, ""));
-            }
+        try (var connection = database.getConnection();
+             var statement = connection.prepareStatement(insertOrUpdateUsernameStatement())) {
+            statement.setString(1, uuid.toString());
+            statement.setString(2, name != null ? name : "");
+            statement.execute();
         }
     }
 
@@ -74,7 +71,7 @@ public class UserTable extends AbstractTable implements UserStorage {
     }
 
     @Override
-    public @NotNull Collection<BoxUser> getAllUsers() throws Exception {
+    public @NotNull Collection<BoxUser> loadAllBoxUsers() throws Exception {
         var result = new ArrayList<BoxUser>();
 
         try (var connection = database.getConnection();
@@ -94,31 +91,27 @@ public class UserTable extends AbstractTable implements UserStorage {
         return result;
     }
 
-    private boolean isExistingUser(@NotNull Connection connection, @NotNull String strUUID) throws SQLException {
-        try (var statement = prepareStatement(connection, "SELECT `username` FROM `%table%` WHERE `uuid`=? LIMIT 1")) {
-            statement.setString(1, strUUID);
-
-            try (var result = statement.executeQuery()) {
-                return result.next();
+    @Override
+    public void saveBoxUsers(@NotNull Collection<BoxUser> users) throws Exception {
+        try (var connection = database.getConnection();
+             var statement = prepareStatement(connection, insertOrUpdateUsernameStatement())) {
+            for (var user : users) {
+                statement.setString(1, user.getUUID().toString());
+                statement.setString(2, user.getName().orElse(""));
+                statement.addBatch();
             }
+
+            statement.executeBatch();
         }
     }
 
-    private void insertUser(@NotNull Connection connection, @NotNull String strUUID, @NotNull String name) throws SQLException {
-        try (var statement = prepareStatement(connection, "INSERT INTO `%table%` (`uuid`, `username`) VALUES(?,?)")) {
-            statement.setString(1, strUUID);
-            statement.setString(2, name);
-
-            statement.execute();
-        }
-    }
-
-    private void updateUsername(@NotNull Connection connection, @NotNull String strUUID, @NotNull String name) throws SQLException {
-        try (var statement = prepareStatement(connection, "UPDATE `%table%` SET `username`=? where `uuid`=?")) {
-            statement.setString(1, strUUID);
-            statement.setString(2, name);
-
-            statement.execute();
+    private @NotNull String insertOrUpdateUsernameStatement() {
+        if (database instanceof MySQLDatabase) {
+            return "INSERT INTO `%table%` (`uuid`, `username`) VALUES (?, ?, ?) AS new ON DUPLICATE KEY UPDATE `username` = new.username";
+        } else if (database instanceof SQLiteDatabase) {
+            return "INSERT INTO `%table%` (`uuid`, `username`) VALUES (?, ?, ?) ON CONFLICT (`uuid`) DO UPDATE SET `username` = excluded.username";
+        } else {
+            throw new UnsupportedOperationException();
         }
     }
 }
