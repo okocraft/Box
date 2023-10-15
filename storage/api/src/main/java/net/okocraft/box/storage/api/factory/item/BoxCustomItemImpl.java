@@ -10,9 +10,8 @@ class BoxCustomItemImpl extends BoxItemImpl implements BoxCustomItem {
 
     private String plainName;
 
-    BoxCustomItemImpl(@NotNull ItemStack original, @NotNull String plainName, int internalId) {
-        super(original, plainName, internalId);
-
+    BoxCustomItemImpl(int internalId, @NotNull String plainName, @NotNull ItemStack original) {
+        super(internalId, plainName, original);
         this.plainName = plainName;
     }
 

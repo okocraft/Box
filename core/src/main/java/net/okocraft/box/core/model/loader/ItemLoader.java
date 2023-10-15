@@ -1,5 +1,6 @@
 package net.okocraft.box.core.model.loader;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.model.item.BoxCustomItem;
 import net.okocraft.box.api.model.item.BoxItem;
@@ -29,20 +30,17 @@ public class ItemLoader {
         var defaultItems = loadDefaultItems(itemStorage, dataVersion, defaultItemVersion);
         var customItems = loadCustomItems(itemStorage, dataVersion);
 
+        itemStorage.saveItemVersion(MCDataVersion.CURRENT, DefaultItemProvider.version());
+
         var logger = BoxProvider.get().getLogger();
 
         logger.info(defaultItems.size() + " default items are loaded!");
 
-        if (0 < customItems.size()) {
+        if (!customItems.isEmpty()) {
             logger.info(customItems.size() + " custom items are loaded!");
         }
 
-        var itemManger = new BoxItemManager(itemStorage, new InitialBoxItemIterator(defaultItems, customItems));
-
-        itemStorage.saveCurrentDataVersion();
-        itemStorage.saveCurrentDefaultItemVersion();
-
-        return itemManger;
+        return new BoxItemManager(itemStorage, new InitialBoxItemIterator(defaultItems, customItems));
     }
 
     private static @NotNull List<BoxItem> loadDefaultItems(@NotNull ItemStorage storage, @Nullable MCDataVersion dataVersion, int defaultItemVersion) throws Exception {
@@ -51,7 +49,7 @@ public class ItemLoader {
 
         if (dataVersion == null) {
             logger.warning("No item data found. It takes time to save default items...");
-            return storage.saveNewDefaultItems(DefaultItemProvider.all());
+            return storage.saveDefaultItems(DefaultItemProvider.all(), Int2ObjectMaps.emptyMap());
         } else if (dataVersion.isSame(MCDataVersion.CURRENT) && defaultItemVersion == DefaultItemProvider.version()) {
             var data = storage.loadAllDefaultItems();
             var items = new ArrayList<BoxItem>(data.size());

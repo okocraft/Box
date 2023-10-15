@@ -9,14 +9,14 @@ import java.util.Objects;
 
 class BoxItemImpl implements BoxItem {
 
-    private final ItemStack original;
-    private final String plainName;
     private final int internalId;
+    private final String plainName;
+    private final ItemStack original;
 
-    public BoxItemImpl(@NotNull ItemStack original, @NotNull String plainName, int internalId) {
-        this.original = Objects.requireNonNull(original);
-        this.plainName = Objects.requireNonNull(plainName);
+    BoxItemImpl(int internalId, @NotNull String plainName, @NotNull ItemStack original) {
         this.internalId = internalId;
+        this.plainName = Objects.requireNonNull(plainName);
+        this.original = Objects.requireNonNull(original);
     }
 
     @Override

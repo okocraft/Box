@@ -10,20 +10,18 @@ import org.jetbrains.annotations.NotNull;
 public final class BoxItemFactory {
 
     @Contract("_,_ -> new")
-    public static @NotNull BoxItem createDefaultItem(@NotNull DefaultItem defaultItem, int internalId) {
-        return new BoxItemImpl(defaultItem.itemStack(), defaultItem.plainName(), internalId);
+    public static @NotNull BoxItem createDefaultItem(int internalId, @NotNull DefaultItem defaultItem) {
+        return createDefaultItem(internalId, defaultItem.plainName(), defaultItem.itemStack());
     }
 
     @Contract("_, _, _ -> new")
-    public static @NotNull BoxItem createDefaultItem(@NotNull ItemStack original,
-                                                     @NotNull String plainName, int internalId) {
-        return new BoxItemImpl(original, plainName, internalId);
+    public static @NotNull BoxItem createDefaultItem(int internalId, @NotNull String plainName, @NotNull ItemStack original) {
+        return new BoxItemImpl(internalId, plainName, original);
     }
 
     @Contract("_, _, _ -> new")
-    public static @NotNull BoxCustomItem createCustomItem(@NotNull ItemStack original,
-                                                          @NotNull String plainName, int internalId) {
-        return new BoxCustomItemImpl(original, plainName, internalId);
+    public static @NotNull BoxCustomItem createCustomItem(int internalId, @NotNull String plainName, @NotNull ItemStack original) {
+        return new BoxCustomItemImpl(internalId, plainName, original);
     }
 
     public static void renameCustomItem(@NotNull BoxCustomItem customItem, @NotNull String newName) {

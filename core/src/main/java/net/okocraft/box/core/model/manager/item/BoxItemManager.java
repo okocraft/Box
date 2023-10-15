@@ -166,7 +166,7 @@ public class BoxItemManager implements ItemManager {
 
         this.boxItemMap.removeItemAtUnsynchronized(item);
 
-        var customItem = this.itemStorage.rename(item, newName);
+        var customItem = this.itemStorage.renameCustomItem(item, newName);
 
         this.boxItemMap.addItemAtUnsynchronized(customItem);
         this.boxItemMap.rebuildCache();

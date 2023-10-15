@@ -1,5 +1,6 @@
 package net.okocraft.box.storage.implementation.database.table;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.okocraft.box.api.model.item.BoxCustomItem;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.util.MCDataVersion;
@@ -7,7 +8,6 @@ import net.okocraft.box.storage.api.factory.item.BoxItemFactory;
 import net.okocraft.box.storage.api.model.item.ItemData;
 import net.okocraft.box.storage.api.model.item.ItemStorage;
 import net.okocraft.box.storage.api.util.item.DefaultItem;
-import net.okocraft.box.storage.api.util.item.DefaultItemProvider;
 import net.okocraft.box.storage.api.util.item.ItemNameGenerator;
 import net.okocraft.box.storage.implementation.database.database.Database;
 import org.bukkit.inventory.ItemStack;
@@ -16,11 +16,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 // | id | name | item_data | is_default_item
 public class ItemTable extends AbstractTable implements ItemStorage {
@@ -34,34 +33,30 @@ public class ItemTable extends AbstractTable implements ItemStorage {
 
     @Override
     public void init() throws Exception {
-        createTableAndIndex();
+        this.createTableAndIndex();
     }
 
     @Override
     public MCDataVersion getDataVersion() throws Exception {
-        return metaTable.getItemDataVersion();
-    }
-
-    @Override
-    public void saveCurrentDataVersion() throws Exception {
-        metaTable.saveItemDataVersion(MCDataVersion.CURRENT.dataVersion());
+        return this.metaTable.getItemDataVersion();
     }
 
     @Override
     public int getDefaultItemVersion() throws Exception {
-        return metaTable.getDefaultItemVersion();
+        return this.metaTable.getDefaultItemVersion();
     }
 
     @Override
-    public void saveCurrentDefaultItemVersion() throws Exception {
-        metaTable.saveDefaultItemVersion(DefaultItemProvider.version());
+    public void saveItemVersion(@NotNull MCDataVersion dataVersion, int defaultItemVersion) throws Exception {
+        this.metaTable.saveItemDataVersion(dataVersion.dataVersion());
+        this.metaTable.saveDefaultItemVersion(defaultItemVersion);
     }
 
     @Override
     public @NotNull List<ItemData> loadAllDefaultItems() throws Exception {
         var result = new ArrayList<ItemData>(1000); // The number of default items is currently around 1400, so this should only need to be expanded once.
 
-        try (var connection = database.getConnection();
+        try (var connection = this.database.getConnection();
              var statement = prepareStatement(connection, "SELECT `id`, `name`, `item_data` FROM `%table%` WHERE `is_default_item`=TRUE")) {
             try (var rs = statement.executeQuery()) {
                 while (rs.next()) {
@@ -74,61 +69,41 @@ public class ItemTable extends AbstractTable implements ItemStorage {
     }
 
     @Override
-    public @NotNull List<BoxItem> updateDefaultItems(@NotNull Map<BoxItem, DefaultItem> itemMap) throws Exception {
-        var result = new ArrayList<BoxItem>(itemMap.size());
+    public @NotNull List<BoxItem> saveDefaultItems(@NotNull List<DefaultItem> newItems, @NotNull Int2ObjectMap<DefaultItem> updatedItemMap) throws Exception {
+        var result = new ArrayList<BoxItem>(newItems.size() + updatedItemMap.size());
 
-        try (var connection = database.getConnection();
-             var statement = prepareStatement(connection, "UPDATE `%table%` SET `name`=?, `item_data`=? WHERE `id`=?")) {
+        try (var connection = this.database.getConnection()) {
+            try (var statement = prepareStatement(connection, "UPDATE `%table%` SET `name`=?, `item_data`=? WHERE `id`=?")) {
+                for (var entry : updatedItemMap.int2ObjectEntrySet()) {
+                    int internalId = entry.getIntKey();
+                    var item = entry.getValue();
 
-            for (var entry : itemMap.entrySet()) {
-                var boxItem = entry.getKey();
-                var defaultItem = entry.getValue();
-
-                statement.setString(1, defaultItem.plainName());
-                writeBytesToStatement(statement, 2, defaultItem.itemStack().serializeAsBytes());
-                statement.setInt(3, boxItem.getInternalId());
-
-                statement.addBatch();
-                result.add(BoxItemFactory.createDefaultItem(defaultItem, boxItem.getInternalId()));
-            }
-
-            statement.executeBatch();
-        }
-
-        return result;
-    }
-
-    @Override
-    public @NotNull List<BoxItem> saveNewDefaultItems(@NotNull List<DefaultItem> newItems) throws Exception {
-        var result = new ArrayList<BoxItem>(newItems.size());
-        var map = new HashMap<String, DefaultItem>(newItems.size(), 2.0f);
-
-        try (var connection = database.getConnection()) {
-            try (var statement = prepareStatement(connection, "INSERT INTO `%table%` (`name`, `item_data`, `is_default_item`) VALUES(?,?,?)")) {
-                for (var defaultItem : newItems) {
-                    map.put(defaultItem.plainName(), defaultItem);
-
-                    statement.setString(1, defaultItem.plainName());
-
-                    writeBytesToStatement(statement, 2, defaultItem.itemStack().serializeAsBytes());
-                    statement.setBoolean(3, true);
+                    statement.setString(1, item.plainName());
+                    writeBytesToStatement(statement, 2, item.itemStack().serializeAsBytes());
+                    statement.setInt(3, internalId);
 
                     statement.addBatch();
+                    result.add(BoxItemFactory.createDefaultItem(internalId, item));
                 }
 
                 statement.executeBatch();
             }
 
-            try (var statement = prepareStatement(connection, "SELECT `id`, `name` FROM `%table%` WHERE `is_default_item`=?")) {
-                statement.setBoolean(1, true);
+            try (var statement = prepareStatement(connection, "INSERT INTO `%table%` (`name`, `item_data`, `is_default_item`) VALUES(?,?,?)")) {
+                for (var item : newItems) {
+                    statement.setString(1, item.plainName());
+                    writeBytesToStatement(statement, 2, item.itemStack().serializeAsBytes());
+                    statement.setBoolean(3, true);
 
-                try (var resultSet = statement.executeQuery()) {
-                    while (resultSet.next()) {
-                        int id = resultSet.getInt("id");
-                        var name = resultSet.getString("name");
+                    statement.addBatch();
+                }
 
-                        if (map.containsKey(name)) {
-                            result.add(BoxItemFactory.createDefaultItem(map.get(name), id));
+                int[] updateCounts = statement.executeBatch();
+
+                try (var generatedKeys = statement.getGeneratedKeys()) {
+                    for (int i = 0; i < updateCounts.length; i++) {
+                        if (updateCounts[i] == Statement.RETURN_GENERATED_KEYS) {
+                            result.add(BoxItemFactory.createDefaultItem(generatedKeys.getInt(1), newItems.get(i)));
                         }
                     }
                 }
@@ -142,7 +117,7 @@ public class ItemTable extends AbstractTable implements ItemStorage {
     public @NotNull List<BoxCustomItem> loadAllCustomItems() throws Exception {
         var result = new ArrayList<BoxCustomItem>();
 
-        try (var connection = database.getConnection();
+        try (var connection = this.database.getConnection();
              var statement = prepareStatement(connection, "SELECT `id`, `name`, `item_data` FROM `%table%` WHERE `is_default_item`=FALSE")) {
             try (var rs = statement.executeQuery()) {
                 while (rs.next()) {
@@ -156,7 +131,7 @@ public class ItemTable extends AbstractTable implements ItemStorage {
 
     @Override
     public void updateCustomItems(@NotNull Collection<BoxCustomItem> items) throws Exception {
-        try (var connection = database.getConnection();
+        try (var connection = this.database.getConnection();
              var statement = prepareStatement(connection, "UPDATE `%table%` SET `name`=?, `item_data`=? WHERE `id`=?")) {
 
             for (var item : items) {
@@ -172,42 +147,32 @@ public class ItemTable extends AbstractTable implements ItemStorage {
     }
 
     @Override
-    public @NotNull BoxCustomItem saveNewCustomItem(@NotNull ItemStack item) throws Exception {
-        return saveNewCustomItem(item, null);
-    }
-
-    @Override
     public @NotNull BoxCustomItem saveNewCustomItem(@NotNull ItemStack item, @Nullable String itemName) throws Exception {
-        try (var connection = database.getConnection()) {
+        try (var connection = this.database.getConnection()) {
             var itemBytes = item.serializeAsBytes();
-            itemName = itemName != null ? itemName : ItemNameGenerator.generate(item.getType().name(), itemBytes);
+            var name = itemName != null ? itemName : ItemNameGenerator.generate(item.getType().name(), itemBytes);
 
             try (var statement = prepareStatement(connection, "INSERT INTO `%table%` (`name`, `item_data`, `is_default_item`) VALUES(?,?,?)")) {
-                statement.setString(1, itemName);
+                statement.setString(1, name);
                 writeBytesToStatement(statement, 2, itemBytes);
                 statement.setBoolean(3, false);
 
-                statement.execute();
-            }
+                statement.executeUpdate();
 
-            try (var statement = prepareStatement(connection, "SELECT `id` FROM `%table%` WHERE `name`=? LIMIT 1")) {
-                statement.setString(1, itemName);
-
-                try (var resultSet = statement.executeQuery()) {
-                    if (resultSet.next()) {
-                        int id = resultSet.getInt("id");
-                        return BoxItemFactory.createCustomItem(item, itemName, id);
+                try (var generatedKeys = statement.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        return BoxItemFactory.createCustomItem(generatedKeys.getInt(1), name, item);
+                    } else {
+                        throw new Exception("Could not get an item id.");
                     }
                 }
             }
         }
-
-        throw new IllegalStateException("Could not create BoxCustomItem");
     }
 
     @Override
-    public @NotNull BoxCustomItem rename(@NotNull BoxCustomItem item, @NotNull String newName) throws Exception {
-        try (var connection = database.getConnection();
+    public @NotNull BoxCustomItem renameCustomItem(@NotNull BoxCustomItem item, @NotNull String newName) throws Exception {
+        try (var connection = this.database.getConnection();
              var statement = prepareStatement(connection, "UPDATE `%table%` SET `name`=? WHERE `id`=?")) {
 
             statement.setString(1, newName);
@@ -235,6 +200,6 @@ public class ItemTable extends AbstractTable implements ItemStorage {
 
         var item = ItemStack.deserializeBytes(itemData);
 
-        return BoxItemFactory.createCustomItem(item, name, id);
+        return BoxItemFactory.createCustomItem(id, name, item);
     }
 }

@@ -1,5 +1,6 @@
 package net.okocraft.box.storage.migrator.data;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
 import net.okocraft.box.api.model.item.BoxCustomItem;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.util.MCDataVersion;
@@ -68,7 +69,7 @@ public class ItemMigrator implements DataMigrator<ItemStorage> {
             }
         }
 
-        target.saveCurrentDataVersion();
+        target.saveItemVersion(MCDataVersion.CURRENT, DefaultItemProvider.version());
 
         if (StorageMigrator.debug) {
             boolean first = false;
@@ -91,7 +92,7 @@ public class ItemMigrator implements DataMigrator<ItemStorage> {
 
     private static @NotNull List<BoxItem> loadDefaultItems(@NotNull ItemStorage storage, @Nullable MCDataVersion dataVersion, int defaultItemVersion) throws Exception {
         if (dataVersion == null) {
-            return storage.saveNewDefaultItems(DefaultItemProvider.all());
+            return storage.saveDefaultItems(DefaultItemProvider.all(), Int2ObjectMaps.emptyMap());
         } else if (dataVersion.isSame(MCDataVersion.CURRENT) && defaultItemVersion == DefaultItemProvider.version()) {
             var data = storage.loadAllDefaultItems();
             var items = new ArrayList<BoxItem>(data.size());
