@@ -23,6 +23,7 @@ import net.okocraft.box.core.model.loader.LoadingPersonalStockHolder;
 import net.okocraft.box.core.model.manager.stock.autosave.ChangeQueue;
 import net.okocraft.box.core.model.stock.StockHolderImpl;
 import net.okocraft.box.core.scheduler.FoliaSchedulerWrapper;
+import net.okocraft.box.storage.api.model.stock.PartialSavingStockStorage;
 import net.okocraft.box.storage.api.model.stock.StockStorage;
 import org.jetbrains.annotations.NotNull;
 
@@ -112,6 +113,14 @@ public class BoxStockManager implements StockManager {
 
             if (removedLoader != null) {
                 removedLoader.unload();
+            }
+        }
+
+        if (this.stockStorage instanceof PartialSavingStockStorage partialSavingStockStorage) {
+            try {
+                partialSavingStockStorage.cleanupZeroStockData();
+            } catch (Exception e) {
+                BoxProvider.get().getLogger().log(Level.SEVERE, "Could not cleanup stock data", e);
             }
         }
 

@@ -6,12 +6,9 @@ import net.okocraft.box.storage.api.model.stock.StockStorage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
-import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -28,32 +25,16 @@ class YamlStockStorage implements StockStorage {
 
     @Override
     public void init() throws Exception {
-        if (Files.exists(stockDirectory)) {
-            return;
+        if (!Files.isDirectory(this.stockDirectory)) {
+            Files.createDirectories(this.stockDirectory);
         }
-
-        var parent = stockDirectory.getParent();
-
-        if (parent != null) {
-            var oldStockDirectory = parent.resolve("stocks");
-
-            if (Files.exists(oldStockDirectory)) {
-                try {
-                    Files.move(oldStockDirectory, stockDirectory, StandardCopyOption.REPLACE_EXISTING);
-                    return;
-                } catch (IOException ignored) {
-                }
-            }
-        }
-
-        Files.createDirectories(stockDirectory);
     }
 
     @Override
     public @NotNull Collection<StockData> loadStockData(@NotNull UUID uuid) throws Exception {
-        var filePath = stockDirectory.resolve(uuid + ".yml");
+        var filePath = this.stockDirectory.resolve(uuid + ".yml");
 
-        if (!Files.exists(filePath)) {
+        if (!Files.isRegularFile(filePath)) {
             return Collections.emptyList();
         }
 
@@ -71,30 +52,22 @@ class YamlStockStorage implements StockStorage {
 
     @Override
     public void saveStockData(@NotNull UUID uuid, @NotNull Collection<StockData> stockData) throws Exception {
-        var file = stockDirectory.resolve(uuid + ".yml");
+        var file = this.stockDirectory.resolve(uuid + ".yml");
 
-        var builder = new StringBuilder(20);
-
-        try (var writer =
-                     Files.newBufferedWriter(file, StandardCharsets.UTF_8, StandardOpenOption.CREATE,
-                             StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING)) {
+        try (var writer = Files.newBufferedWriter(file, StandardCharsets.UTF_8, YamlFileOptions.WRITE)) {
             for (var stock : stockData) {
                 if (0 != stock.amount()) {
-                    builder.append('\'')
-                            .append(stock.itemId())
-                            .append('\'')
-                            .append(':')
-                            .append(' ')
-                            .append(stock.amount())
-                            .append(System.lineSeparator());
-                    writer.write(builder.toString());
-                    builder.setLength(0);
+                    writer.write('\'');
+                    writer.write(stock.itemId());
+                    writer.write("': ");
+                    writer.write(stock.amount());
+                    writer.newLine();
                 }
             }
         }
     }
 
-    private @Nullable StockData readLine(@NotNull UUID uuid, @NotNull String line) {
+    private static @Nullable StockData readLine(@NotNull UUID uuid, @NotNull String line) {
         if (line.isEmpty() || line.equals("{}")) {
             return null;
         }
@@ -119,6 +92,6 @@ class YamlStockStorage implements StockStorage {
             return null;
         }
 
-        return new StockData(itemId, amount);
+        return 0 < amount ? new StockData(itemId, amount) : null;
     }
 }

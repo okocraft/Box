@@ -10,4 +10,6 @@ public interface PartialSavingStockStorage extends StockStorage {
 
     void savePartialStockData(@NotNull UUID uuid, @NotNull Collection<StockData> stockData) throws Exception;
 
+    void cleanupZeroStockData() throws Exception;
+
 }

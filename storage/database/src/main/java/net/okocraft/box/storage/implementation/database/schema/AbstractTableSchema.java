@@ -2,6 +2,9 @@ package net.okocraft.box.storage.implementation.database.schema;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
+import java.util.List;
+
 public abstract class AbstractTableSchema implements TableSchema {
 
     private final String tableName;
@@ -16,7 +19,7 @@ public abstract class AbstractTableSchema implements TableSchema {
     }
 
     @Override
-    public @NotNull String createIndexStatement() {
-        return "";
+    public @NotNull List<String> createIndexStatements() {
+        return Collections.emptyList();
     }
 }

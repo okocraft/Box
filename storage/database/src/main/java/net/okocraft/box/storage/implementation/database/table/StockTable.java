@@ -7,6 +7,8 @@ import net.okocraft.box.storage.implementation.database.database.mysql.MySQLData
 import net.okocraft.box.storage.implementation.database.database.sqlite.SQLiteDatabase;
 import org.jetbrains.annotations.NotNull;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.UUID;
@@ -20,15 +22,15 @@ public class StockTable extends AbstractTable implements PartialSavingStockStora
 
     @Override
     public void init() throws Exception {
-        createTableAndIndex();
+        this.createTableAndIndex();
     }
 
     @Override
     public @NotNull Collection<StockData> loadStockData(@NotNull UUID uuid) throws Exception {
         var stock = new ArrayList<StockData>();
 
-        try (var connection = database.getConnection();
-             var statement = prepareStatement(connection, "SELECT `item_id`, `amount` FROM `%table%` WHERE `uuid`=?")) {
+        try (var connection = this.database.getConnection();
+             var statement = this.prepareStatement(connection, "SELECT `item_id`, `amount` FROM `%table%` WHERE `uuid`=?")) {
             var strUuid = uuid.toString();
             statement.setString(1, strUuid);
 
@@ -49,24 +51,17 @@ public class StockTable extends AbstractTable implements PartialSavingStockStora
 
     @Override
     public void saveStockData(@NotNull UUID uuid, @NotNull Collection<StockData> stockData) throws Exception {
-        try (var connection = database.getConnection()) {
+        try (var connection = this.database.getConnection()) {
             var strUuid = uuid.toString();
 
-            try (var statement = prepareStatement(connection, "DELETE FROM `%table%` WHERE `uuid`=?")) {
+            try (var statement = this.prepareStatement(connection, "DELETE FROM `%table%` WHERE `uuid`=?")) {
                 statement.setString(1, strUuid);
                 statement.execute();
             }
 
-            try (var statement = prepareStatement(connection, "INSERT INTO `%table%` (`uuid`, `item_id`, `amount`) VALUES(?,?,?)")) {
+            try (var statement = this.prepareStatement(connection, "INSERT INTO `%table%` (`uuid`, `item_id`, `amount`) VALUES(?,?,?)")) {
                 for (var data : stockData) {
-                    if (data.amount() == 0) {
-                        continue;
-                    }
-
-                    statement.setString(1, strUuid);
-                    statement.setInt(2, data.itemId());
-                    statement.setInt(3, data.amount());
-                    statement.addBatch();
+                    this.addStockData(statement, strUuid, data);
                 }
 
                 statement.executeBatch();
@@ -76,20 +71,33 @@ public class StockTable extends AbstractTable implements PartialSavingStockStora
 
     @Override
     public void savePartialStockData(@NotNull UUID uuid, @NotNull Collection<StockData> stockData) throws Exception {
-        try (var connection = database.getConnection()) {
+        try (var connection = this.database.getConnection()) {
             var strUuid = uuid.toString();
 
-            try (var statement = prepareStatement(connection, insertOrUpdateStockDataStatement())) {
+            try (var statement = this.prepareStatement(connection, insertOrUpdateStockDataStatement())) {
                 for (var data : stockData) {
-                    statement.setString(1, strUuid);
-                    statement.setInt(2, data.itemId());
-                    statement.setInt(3, data.amount());
-                    statement.addBatch();
+                    this.addStockData(statement, strUuid, data);
                 }
 
                 statement.executeBatch();
             }
         }
+    }
+
+    @Override
+    public void cleanupZeroStockData() throws Exception {
+        try (var connection = this.database.getConnection();
+             var statement = prepareStatement(connection, "DELETE FROM `%table%` WHERE `amount`=?")) {
+            statement.setInt(1, 0);
+            statement.execute();
+        }
+    }
+
+    private void addStockData(@NotNull PreparedStatement statement, @NotNull String strUuid, @NotNull StockData data) throws SQLException {
+        statement.setString(1, strUuid);
+        statement.setInt(2, data.itemId());
+        statement.setInt(3, data.amount());
+        statement.addBatch();
     }
 
     private @NotNull String insertOrUpdateStockDataStatement() {

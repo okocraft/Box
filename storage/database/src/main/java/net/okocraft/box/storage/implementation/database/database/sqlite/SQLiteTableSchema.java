@@ -4,6 +4,8 @@ import net.okocraft.box.storage.implementation.database.schema.AbstractTableSche
 import net.okocraft.box.storage.implementation.database.schema.SchemaSet;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 public final class SQLiteTableSchema {
 
     public static @NotNull SchemaSet create(@NotNull String tablePrefix) {
@@ -22,7 +24,7 @@ public final class SQLiteTableSchema {
         @Override
         public @NotNull String createTableStatement() {
             return """
-                    CREATE TABLE `%table%` (
+                    CREATE TABLE  IF NOT EXISTS `%table%` (
                       `uuid` VARCHAR(36) PRIMARY KEY NOT NULL,
                       `username` VARCHAR(16) NOT NULL
                     )
@@ -30,8 +32,8 @@ public final class SQLiteTableSchema {
         }
 
         @Override
-        public @NotNull String createIndexStatement() {
-            return "CREATE INDEX `%table%_username` ON `%table%` (`username`)";
+        public @NotNull List<String> createIndexStatements() {
+            return List.of("CREATE INDEX IF NOT EXISTS `%table%_username` ON `%table%` (`username`)");
         }
     }
 
@@ -44,7 +46,7 @@ public final class SQLiteTableSchema {
         @Override
         public @NotNull String createTableStatement() {
             return """
-                    CREATE TABLE `%table%` (
+                    CREATE TABLE  IF NOT EXISTS `%table%` (
                       `key` VARCHAR(25) PRIMARY KEY NOT NULL,
                       `value` VARCHAR(16) NOT NULL
                     )
@@ -61,7 +63,7 @@ public final class SQLiteTableSchema {
         @Override
         public @NotNull String createTableStatement() {
             return """
-                    CREATE TABLE `%table%` (
+                    CREATE TABLE  IF NOT EXISTS `%table%` (
                       `id` INTEGER PRIMARY KEY AUTOINCREMENT,
                       `name` VARCHAR(50) NOT NULL,
                       `item_data` BLOB NOT NULL,
@@ -77,17 +79,21 @@ public final class SQLiteTableSchema {
             super(tablePrefix + "stock");
         }
 
-
         @Override
         public @NotNull String createTableStatement() {
             return """
-                    CREATE TABLE `%table%` (
+                    CREATE TABLE  IF NOT EXISTS `%table%` (
                       `uuid` VARCHAR(36) NOT NULL,
                       `item_id` INTEGER  NOT NULL,
                       `amount` INTEGER NOT NULL,
                       PRIMARY KEY (`uuid`, `item_id`)
                     )
                     """;
+        }
+
+        @Override
+        public @NotNull List<String> createIndexStatements() {
+            return List.of("CREATE INDEX IF NOT EXISTS `%table%_amount` ON `%table%` (`amount`)");
         }
     }
 
@@ -97,11 +103,10 @@ public final class SQLiteTableSchema {
             super(tablePrefix + "custom_data");
         }
 
-
         @Override
         public @NotNull String createTableStatement() {
             return """
-                    CREATE TABLE `%table%` (
+                    CREATE TABLE  IF NOT EXISTS `%table%` (
                       `key` VARCHAR(50) PRIMARY KEY NOT NULL,
                       `data` BLOB  NOT NULL
                     )

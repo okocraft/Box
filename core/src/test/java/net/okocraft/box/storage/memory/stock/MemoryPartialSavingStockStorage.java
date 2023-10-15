@@ -61,4 +61,11 @@ public class MemoryPartialSavingStockStorage implements PartialSavingStockStorag
             }
         }
     }
+
+    @Override
+    public void cleanupZeroStockData() {
+        for (var stockMap : this.stockDataMap.values()) {
+            stockMap.values().removeIf(amount -> amount == 0);
+        }
+    }
 }
