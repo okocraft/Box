@@ -24,7 +24,6 @@ import net.okocraft.box.api.model.manager.StockManager;
 import net.okocraft.box.api.model.manager.UserManager;
 import net.okocraft.box.api.player.BoxPlayerMap;
 import net.okocraft.box.api.scheduler.BoxScheduler;
-import net.okocraft.box.api.taskfactory.TaskFactory;
 import net.okocraft.box.core.command.BoxAdminCommandImpl;
 import net.okocraft.box.core.command.BoxCommandImpl;
 import net.okocraft.box.core.config.Settings;
@@ -34,12 +33,11 @@ import net.okocraft.box.core.message.ErrorMessages;
 import net.okocraft.box.core.message.MicsMessages;
 import net.okocraft.box.core.model.data.BoxCustomDataContainer;
 import net.okocraft.box.core.model.loader.ItemLoader;
-import net.okocraft.box.core.model.manager.stock.BoxStockManager;
 import net.okocraft.box.core.model.manager.item.BoxItemManager;
+import net.okocraft.box.core.model.manager.stock.BoxStockManager;
 import net.okocraft.box.core.model.manager.user.BoxUserManager;
 import net.okocraft.box.core.player.BoxPlayerMapImpl;
 import net.okocraft.box.core.scheduler.FoliaSchedulerWrapper;
-import net.okocraft.box.core.taskfactory.BoxTaskFactory;
 import net.okocraft.box.core.util.executor.InternalExecutors;
 import net.okocraft.box.storage.api.holder.StorageHolder;
 import net.okocraft.box.storage.api.model.Storage;
@@ -80,8 +78,7 @@ public class BoxPlugin implements BoxAPI {
     private final DebugListener debugListener = new DebugListener();
 
     private final EventBus<BoxEvent> eventBus = EventBus.create(BoxEvent.class, InternalExecutors.getEventExecutor());
-    private final BoxTaskFactory taskFactory = new BoxTaskFactory();
-    private final BoxScheduler scheduler = BoxTaskFactory.useModernExecutor() ? new FoliaSchedulerWrapper() : taskFactory;
+    private final FoliaSchedulerWrapper scheduler = new FoliaSchedulerWrapper();
 
     private final BoxCommandImpl boxCommand = new BoxCommandImpl();
     private final BoxAdminCommandImpl boxAdminCommand = new BoxAdminCommandImpl();
@@ -192,7 +189,7 @@ public class BoxPlugin implements BoxAPI {
 
         Bukkit.getPluginManager().registerEvents(new PlayerConnectionListener(playerMap), plugin);
 
-        stockManager.schedulerAutoSaveTask((FoliaSchedulerWrapper) scheduler); // FIXME: pass scheduler without casting
+        stockManager.schedulerAutoSaveTask(scheduler);
 
         getLogger().info("Registering commands...");
 
@@ -242,7 +239,6 @@ public class BoxPlugin implements BoxAPI {
         getLogger().info("Shutting down executors...");
 
         try {
-            taskFactory.shutdown();
             InternalExecutors.shutdownAll();
         } catch (InterruptedException e) {
             getLogger().log(Level.SEVERE, "Could not shutdown executors", e);
@@ -385,11 +381,6 @@ public class BoxPlugin implements BoxAPI {
     @Override
     public @NotNull CustomDataContainer getCustomDataContainer() {
         return customDataContainer;
-    }
-
-    @Override
-    public @NotNull TaskFactory getTaskFactory() {
-        return taskFactory;
     }
 
     @Override
