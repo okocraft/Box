@@ -323,7 +323,7 @@ public class StickListener implements Listener {
 
             // If setConsumeItem is set to false, the arrow will not be picked up.
             // This task overwrites it after 1 tick.
-            BoxProvider.get().getTaskFactory().runEntityTask(arrow, target -> target.setPickupStatus(AbstractArrow.PickupStatus.ALLOWED));
+            BoxProvider.get().getScheduler().runEntityTask(arrow, () -> arrow.setPickupStatus(AbstractArrow.PickupStatus.ALLOWED));
         }
     }
 

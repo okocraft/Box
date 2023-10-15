@@ -39,7 +39,7 @@ public class StickCommand extends AbstractCommand {
             return;
         }
 
-        BoxProvider.get().getTaskFactory().runEntityTask(player, this::runCommand).join();
+        BoxProvider.get().getScheduler().runEntityTask(player, () -> this.runCommand(player));
     }
 
     private void runCommand(@NotNull Player player) {

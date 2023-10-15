@@ -34,10 +34,10 @@ public class CustomStickCommand extends AbstractCommand {
             return;
         }
 
-        BoxProvider.get().getTaskFactory().runEntityTask(player, this::makeStick).join();
+        BoxProvider.get().getScheduler().runEntityTask(player, () -> this.giveStick(player));
     }
 
-    private void makeStick(@NotNull Player player) {
+    private void giveStick(@NotNull Player player) {
         var item = player.getInventory().getItemInMainHand();
         var meta = item.getItemMeta();
 

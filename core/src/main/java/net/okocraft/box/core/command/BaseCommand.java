@@ -20,7 +20,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.logging.Level;
 
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.DARK_GRAY;
@@ -177,22 +176,6 @@ public abstract class BaseCommand implements Command, SubCommandHoldable, Comman
     }
 
     private void runCommandAsync(@NotNull Command command, @NotNull CommandSender sender, @NotNull String[] args) {
-        BoxProvider.get().getTaskFactory()
-                .runAsync(() -> command.onCommand(sender, args))
-                .exceptionallyAsync(e -> reportError(sender, args, e));
-    }
-
-    private @Nullable Void reportError(@NotNull CommandSender sender, @NotNull String[] args, @NotNull Throwable throwable) {
-        if (sender instanceof Player) {
-            sender.sendMessage(ErrorMessages.ERROR_WHILE_EXECUTING_COMMAND.apply(throwable));
-        }
-
-        BoxProvider.get().getLogger().log(
-                Level.SEVERE,
-                "Failed to execute command (/" + getName() + " " + String.join(" ", args) + ")",
-                throwable
-        );
-
-        return null;
+        BoxProvider.get().getScheduler().runAsyncTask(() -> command.onCommand(sender, args));
     }
 }
