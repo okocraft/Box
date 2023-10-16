@@ -33,7 +33,6 @@ import net.okocraft.box.core.model.manager.item.BoxItemManager;
 import net.okocraft.box.core.model.manager.stock.BoxStockManager;
 import net.okocraft.box.core.model.manager.user.BoxUserManager;
 import net.okocraft.box.core.player.BoxPlayerMapImpl;
-import net.okocraft.box.core.scheduler.FoliaSchedulerWrapper;
 import net.okocraft.box.storage.api.holder.StorageHolder;
 import net.okocraft.box.storage.api.model.Storage;
 import org.bukkit.Bukkit;
@@ -63,8 +62,6 @@ public class BoxCore implements BoxAPI {
 
     private final YamlConfiguration configuration;
     private final TranslationDirectory translationDirectory;
-
-    private final FoliaSchedulerWrapper scheduler = new FoliaSchedulerWrapper();
 
     private final BoxCommandImpl boxCommand = new BoxCommandImpl();
     private final BoxAdminCommandImpl boxAdminCommand = new BoxAdminCommandImpl();
@@ -158,14 +155,14 @@ public class BoxCore implements BoxAPI {
 
         stockManager = new BoxStockManager(storage.getStockStorage(), uuid -> Bukkit.getPlayer(uuid) != null);
 
-        customDataContainer = new BoxCustomDataContainer(storage.getCustomDataStorage(), context.executorProvider().newSingleThreadExecutor("Custom Data"));
+        customDataContainer = new BoxCustomDataContainer(storage.getCustomDataStorage());
 
-        playerMap = new BoxPlayerMapImpl(userManager, stockManager, context.executorProvider().newSingleThreadScheduler("Player Loader"));
-        playerMap.loadAll();
+        this.playerMap = new BoxPlayerMapImpl(this.userManager, this.stockManager, this.context.scheduler());
+        this.playerMap.loadAll();
 
-        Bukkit.getPluginManager().registerEvents(new PlayerConnectionListener(playerMap), context.plugin());
+        Bukkit.getPluginManager().registerEvents(new PlayerConnectionListener(this.playerMap), context.plugin());
 
-        stockManager.schedulerAutoSaveTask(scheduler);
+        stockManager.schedulerAutoSaveTask(this.context.scheduler());
 
         getLogger().info("Registering commands...");
 
@@ -213,10 +210,6 @@ public class BoxCore implements BoxAPI {
         DebugListener.unregister(getEventBus());
 
         context.eventBus().close();
-
-        getLogger().info("Shutting down executors...");
-
-        context.executorProvider().close(context.plugin());
 
         getLogger().info("Closing the storage...");
 
@@ -332,7 +325,7 @@ public class BoxCore implements BoxAPI {
 
     @Override
     public @NotNull BoxScheduler getScheduler() {
-        return scheduler;
+        return this.context.scheduler();
     }
 
     @Override

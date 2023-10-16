@@ -8,15 +8,16 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 public class BoxCustomDataContainer implements CustomDataContainer {
 
     private final CustomDataStorage customDataStorage;
     private final Executor executor;
 
-    public BoxCustomDataContainer(@NotNull CustomDataStorage customDataStorage, @NotNull Executor executor) {
+    public BoxCustomDataContainer(@NotNull CustomDataStorage customDataStorage) {
         this.customDataStorage = customDataStorage;
-        this.executor = executor;
+        this.executor = Executors.newSingleThreadExecutor(); // TODO
     }
 
     @Override

@@ -2,12 +2,9 @@ package net.okocraft.box.bootstrap;
 
 import com.github.siroshun09.event4j.bus.EventBus;
 import io.papermc.paper.plugin.bootstrap.BootstrapContext;
-import io.papermc.paper.plugin.bootstrap.PluginProviderContext;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import net.okocraft.box.api.event.BoxEvent;
 import net.okocraft.box.api.feature.BoxFeature;
-import net.okocraft.box.compatible.PlatformDependent;
-import net.okocraft.box.core.util.executor.ExecutorProvider;
 import net.okocraft.box.storage.api.registry.StorageRegistry;
 import net.okocraft.box.util.TranslationDirectoryUtil;
 import org.jetbrains.annotations.Contract;
@@ -35,7 +32,6 @@ public final class BoxBootstrapContext {
     private final Path jarFile;
     private final String version;
     private final StorageRegistry storageRegistry;
-    private final ExecutorProvider executorProvider;
     private final EventBus<BoxEvent> eventBus;
     private final List<BoxFeature> boxFeatureList = new ArrayList<>();
     private final TranslationDirectoryUtil.PathConsumerWrapper onLanguageDirectoryCreated;
@@ -47,8 +43,7 @@ public final class BoxBootstrapContext {
         this.jarFile = jarFile;
         this.version = version;
         this.storageRegistry = new StorageRegistry();
-        this.executorProvider = PlatformDependent.createExecutorProvider(logger);
-        this.eventBus = EventBus.create(BoxEvent.class, executorProvider.newSingleThreadExecutor("Event"));
+        this.eventBus = EventBus.create(BoxEvent.class);
         this.onLanguageDirectoryCreated = TranslationDirectoryUtil.createPathConsumer();
         this.translationLoaderCreators = TranslationDirectoryUtil.createCreatorHolder();
     }
@@ -71,10 +66,6 @@ public final class BoxBootstrapContext {
 
     public @NotNull StorageRegistry getStorageRegistry() {
         return storageRegistry;
-    }
-
-    public @NotNull ExecutorProvider getExecutorProvider() {
-        return executorProvider;
     }
 
     public @NotNull EventBus<BoxEvent> getEventBus() {
