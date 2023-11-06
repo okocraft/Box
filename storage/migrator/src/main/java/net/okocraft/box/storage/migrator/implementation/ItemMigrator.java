@@ -1,0 +1,129 @@
+package net.okocraft.box.storage.migrator.implementation;
+
+import it.unimi.dsi.fastutil.Pair;
+import it.unimi.dsi.fastutil.ints.Int2IntMap;
+import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import net.okocraft.box.api.model.user.BoxUser;
+import net.okocraft.box.storage.api.model.Storage;
+import net.okocraft.box.storage.api.model.item.ItemStorage;
+import net.okocraft.box.storage.api.util.item.DefaultItemProvider;
+import net.okocraft.box.storage.migrator.util.LoggerWrapper;
+import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Collection;
+import java.util.Set;
+
+public class ItemMigrator extends AbstractDataMigrator<ItemMigrator.Result, ItemStorage> {
+
+    private final UserMigrator.Result userMigratorResult;
+    private final DefaultItemProvider defaultItemProvider;
+
+    public ItemMigrator(@NotNull UserMigrator.Result userMigratorResult, @NotNull DefaultItemProvider defaultItemProvider) {
+        this.userMigratorResult = userMigratorResult;
+        this.defaultItemProvider = defaultItemProvider;
+    }
+
+    @Override
+    protected @NotNull ItemStorage getDataStorage(@NotNull Storage storage) {
+        return storage.getItemStorage();
+    }
+
+    @Override
+    protected @NotNull ItemMigrator.Result migrateData(@NotNull ItemStorage source, @NotNull ItemStorage target, @NotNull LoggerWrapper logger) throws Exception {
+        var sourceItemIdToNameMap = this.loadSourceDefaultItemIdToNameMap(source);
+        var targetItemNameToIdMap = this.loadTargetDefaultItemIdToNameMap(target);
+
+        var itemIdMap = new Int2IntOpenHashMap();
+
+        for (var entry : sourceItemIdToNameMap.int2ObjectEntrySet()) {
+            int idInTarget = targetItemNameToIdMap.getOrDefault(entry.getValue(), Integer.MIN_VALUE);
+
+            if (idInTarget != Integer.MIN_VALUE) {
+                itemIdMap.put(entry.getIntKey(), idInTarget);
+                if (logger.debug()) {
+                    logger.info(entry.getValue() + ": " + entry.getIntKey() + " -> " + idInTarget);
+                }
+            } else {
+                logger.warning("Unknown item: " + entry.getValue() + " (id: " + entry.getIntKey() + ")");
+            }
+        }
+
+        var sourceCustomItems = source.loadAllCustomItems();
+        var targetCustomItems = this.loadTargetCustomItems(target);
+        int migrated = 0;
+
+        for (var customItem : sourceCustomItems) {
+            int idInTarget = targetCustomItems.left().getOrDefault(customItem.getOriginal(), Integer.MIN_VALUE);
+
+            if (idInTarget != Integer.MIN_VALUE) {
+                itemIdMap.put(customItem.getInternalId(), idInTarget);
+                if (logger.debug()) {
+                    logger.info(customItem.getPlainName() + ": " + customItem.getInternalId() + " -> " + idInTarget);
+                }
+            } else {
+                var itemName = customItem.getPlainName();
+                var newCustomItem = target.saveNewCustomItem(
+                        customItem.getOriginal(),
+                        targetCustomItems.right().contains(itemName) ? itemName : null
+                );
+                itemIdMap.put(customItem.getInternalId(), newCustomItem.getInternalId());
+                if (logger.debug()) {
+                    logger.info(customItem.getPlainName() + ": " + customItem.getInternalId() + " -> " + newCustomItem.getInternalId());
+                }
+                migrated++;
+            }
+        }
+
+        if (0 < migrated) {
+            logger.info(migrated + " items are migrated.");
+        }
+
+        return new Result(this.userMigratorResult.users(), itemIdMap);
+    }
+
+    private @NotNull Int2ObjectMap<String> loadSourceDefaultItemIdToNameMap(@NotNull ItemStorage storage) throws Exception {
+        var loaded = storage.loadAllDefaultItems();
+        var map = new Int2ObjectOpenHashMap<String>(loaded.size());
+        var patcher = this.defaultItemProvider.itemNamePatcher(storage.getDataVersion());
+
+        for (var data : loaded) {
+            map.put(data.internalId(), patcher.renameIfNeeded(data.plainName()));
+        }
+
+        return map;
+    }
+
+    private @NotNull Object2IntMap<String> loadTargetDefaultItemIdToNameMap(@NotNull ItemStorage storage) throws Exception {
+        var loaded = storage.loadAllDefaultItems();
+        var map = new Object2IntOpenHashMap<String>(loaded.size());
+        var patcher = this.defaultItemProvider.itemNamePatcher(storage.getDataVersion());
+
+        for (var data : loaded) {
+            map.put(patcher.renameIfNeeded(data.plainName()), data.internalId());
+        }
+
+        return map;
+    }
+
+    private @NotNull Pair<Object2IntMap<ItemStack>, Set<String>> loadTargetCustomItems(@NotNull ItemStorage storage) throws Exception {
+        var loaded = storage.loadAllCustomItems();
+        var itemStackToIdMap = new Object2IntOpenHashMap<ItemStack>(loaded.size());
+        var itemNameSet = new ObjectOpenHashSet<String>(loaded.size());
+
+        for (var item : loaded) {
+            itemStackToIdMap.put(item.getOriginal(), item.getInternalId());
+            itemNameSet.add(item.getPlainName());
+        }
+
+        return Pair.of(itemStackToIdMap, itemNameSet);
+    }
+
+    public record Result(@NotNull Collection<BoxUser> users, @NotNull Int2IntMap itemIdMap) {
+    }
+}

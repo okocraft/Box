@@ -1,5 +1,6 @@
 package net.okocraft.box.core.model.manager.stock.autosave;
 
+import it.unimi.dsi.fastutil.ints.Int2IntFunction;
 import net.okocraft.box.api.model.stock.StockData;
 import net.okocraft.box.api.model.stock.StockHolder;
 import net.okocraft.box.storage.api.model.stock.StockStorage;
@@ -44,7 +45,7 @@ class BasicChangeQueue implements ChangeQueue {
         }
 
         try {
-            this.storage.saveStockData(this.stockHolder.getUUID(), this.stockHolder.toStockDataCollection());
+            this.storage.saveStockData(this.stockHolder.getUUID(), this.stockHolder.toStockDataCollection(), Int2IntFunction.identity());
         } catch (Exception e) {
             this.reporter.report(this.stockHolder, e);
             this.hasChanges.set(true);

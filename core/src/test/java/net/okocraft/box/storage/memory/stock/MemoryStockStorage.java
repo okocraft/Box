@@ -1,5 +1,6 @@
 package net.okocraft.box.storage.memory.stock;
 
+import it.unimi.dsi.fastutil.ints.Int2IntFunction;
 import net.okocraft.box.api.model.stock.StockData;
 import net.okocraft.box.storage.api.model.stock.StockStorage;
 import org.jetbrains.annotations.NotNull;
@@ -25,7 +26,12 @@ public class MemoryStockStorage implements StockStorage {
     }
 
     @Override
-    public void saveStockData(@NotNull UUID uuid, @NotNull Collection<StockData> stockData) {
-        this.stockDataMap.put(uuid, stockData);
+    public void saveStockData(@NotNull UUID uuid, @NotNull Collection<StockData> stockData, @NotNull Int2IntFunction itemIdRemapper) {
+        this.stockDataMap.put(
+                uuid,
+                stockData.stream()
+                        .map(data -> new StockData(itemIdRemapper.applyAsInt(data.itemId()), data.amount()))
+                        .toList()
+        );
     }
 }

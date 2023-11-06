@@ -1,5 +1,6 @@
 package net.okocraft.box.storage.implementation.yaml;
 
+import it.unimi.dsi.fastutil.ints.Int2IntFunction;
 import net.okocraft.box.api.model.stock.StockData;
 import net.okocraft.box.storage.api.holder.LoggerHolder;
 import net.okocraft.box.storage.api.model.stock.StockStorage;
@@ -51,14 +52,14 @@ class YamlStockStorage implements StockStorage {
     }
 
     @Override
-    public void saveStockData(@NotNull UUID uuid, @NotNull Collection<StockData> stockData) throws Exception {
+    public void saveStockData(@NotNull UUID uuid, @NotNull Collection<StockData> stockData, @NotNull Int2IntFunction itemIdRemapper) throws Exception {
         var file = this.stockDirectory.resolve(uuid + ".yml");
 
         try (var writer = Files.newBufferedWriter(file, StandardCharsets.UTF_8, YamlFileOptions.WRITE)) {
             for (var stock : stockData) {
                 if (0 != stock.amount()) {
                     writer.write('\'');
-                    writer.write(stock.itemId());
+                    writer.write(itemIdRemapper.applyAsInt(stock.itemId()));
                     writer.write("': ");
                     writer.write(stock.amount());
                     writer.newLine();

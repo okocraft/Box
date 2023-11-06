@@ -1,5 +1,6 @@
 package net.okocraft.box.storage.memory.stock;
 
+import it.unimi.dsi.fastutil.ints.Int2IntFunction;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import net.okocraft.box.api.model.stock.StockData;
@@ -39,11 +40,11 @@ public class MemoryPartialSavingStockStorage implements PartialSavingStockStorag
     }
 
     @Override
-    public void saveStockData(@NotNull UUID uuid, @NotNull Collection<StockData> stockData) {
+    public void saveStockData(@NotNull UUID uuid, @NotNull Collection<StockData> stockData, @NotNull Int2IntFunction itemIdRemapper) {
         var map = new Int2IntOpenHashMap(stockData.size());
 
         for (var data : stockData) {
-            map.put(data.itemId(), data.amount());
+            map.put(itemIdRemapper.applyAsInt(data.itemId()), data.amount());
         }
 
         this.stockDataMap.put(uuid, map);

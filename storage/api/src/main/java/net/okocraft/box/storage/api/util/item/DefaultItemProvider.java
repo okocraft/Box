@@ -13,16 +13,28 @@ import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public final class DefaultItemProvider {
+public interface DefaultItemProvider {
+
+    @NotNull List<DefaultItem> provide();
+
+    int listVersion();
+
+    @NotNull ItemNamePatcher itemNamePatcher(@Nullable MCDataVersion dataVersion);
+
+    Map<ItemStack, ItemStack> itemPatchMap(@NotNull MCDataVersion source);
+
+    @NotNull String renameIfNeeded(@NotNull String plainName);
 
     /**
      * Returns the version of the {@link DefaultItemProvider}.

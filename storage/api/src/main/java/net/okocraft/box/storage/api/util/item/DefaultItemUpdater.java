@@ -5,7 +5,6 @@ import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.util.MCDataVersion;
 import net.okocraft.box.storage.api.model.item.ItemData;
 import net.okocraft.box.storage.api.model.item.ItemStorage;
-import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -16,29 +15,29 @@ import java.util.stream.Collectors;
 
 public final class DefaultItemUpdater {
 
-    public static @NotNull List<BoxItem> update(@NotNull ItemStorage storage, @NotNull MCDataVersion dataVersion) throws Exception {
+    public static @NotNull List<BoxItem> update(@NotNull ItemStorage storage, @NotNull MCDataVersion dataVersion, @NotNull DefaultItemProvider defaultItemProvider) throws Exception {
         var oldItemMap = storage.loadAllDefaultItems().stream().collect(Collectors.toMap(DefaultItemUpdater::toItemStack, Function.identity()));
+
+        for (var patchEntry : defaultItemProvider.itemPatchMap(dataVersion).entrySet()) {
+            var oldItemStack = patchEntry.getKey();
+            var oldItem = oldItemMap.remove(oldItemStack);
+
+            if (oldItem != null) {
+                var newItemStack = patchEntry.getValue();
+                oldItemMap.put(newItemStack, new ItemData(oldItem.internalId(), oldItem.plainName(), newItemStack.serializeAsBytes()));
+            }
+        }
 
         var newItems = new ArrayList<DefaultItem>();
         var updatedItemMap = new Int2ObjectOpenHashMap<DefaultItem>();
 
-        for (var item : DefaultItemProvider.all()) {
-            var oldItem = oldItemMap.get(item.itemStack());
+        for (var item : defaultItemProvider.provide()) {
+            var oldItem = oldItemMap.remove(item.itemStack());
 
             if (oldItem == null) {
                 newItems.add(item);
             } else {
                 updatedItemMap.put(oldItem.internalId(), item);
-            }
-        }
-
-        if (dataVersion.isAfterOrSame(MCDataVersion.MC_1_19)) {
-            var oldGoatHorn = oldItemMap.get(new ItemStack(Material.GOAT_HORN));
-
-            if (oldGoatHorn != null) {
-                var newGoatHorn = DefaultItemProvider.createPonderGoatHorn();
-                updatedItemMap.put(oldGoatHorn.internalId(), newGoatHorn);
-                newItems.remove(newGoatHorn);
             }
         }
 

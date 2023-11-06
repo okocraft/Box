@@ -28,7 +28,7 @@ import net.okocraft.box.core.listener.PlayerConnectionListener;
 import net.okocraft.box.core.message.ErrorMessages;
 import net.okocraft.box.core.message.MicsMessages;
 import net.okocraft.box.core.model.data.BoxCustomDataContainer;
-import net.okocraft.box.core.model.loader.ItemLoader;
+import net.okocraft.box.storage.api.util.item.ItemLoader;
 import net.okocraft.box.core.model.manager.item.BoxItemManager;
 import net.okocraft.box.core.model.manager.stock.BoxStockManager;
 import net.okocraft.box.core.model.manager.user.BoxUserManager;
@@ -147,7 +147,9 @@ public class BoxCore implements BoxAPI {
         userManager = new BoxUserManager(storage.getUserStorage());
 
         try {
-            itemManager = ItemLoader.load(storage.getItemStorage());
+            var itemLoadResult = ItemLoader.load(storage.getItemStorage(), this.context.defaultItemProvider());
+            itemLoadResult.logItemCount(getLogger());
+            this.itemManager = new BoxItemManager(storage.getItemStorage(), itemLoadResult.asIterator());
         } catch (Exception e) {
             getLogger().log(Level.SEVERE, "Could not import items", e);
             return false;

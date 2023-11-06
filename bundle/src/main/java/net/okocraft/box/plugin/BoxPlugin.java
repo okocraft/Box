@@ -35,7 +35,8 @@ public final class BoxPlugin extends JavaPlugin {
                 boxBootstrapContext.getEventBus(),
                 YamlConfiguration.create(boxBootstrapContext.getPluginDirectory().resolve("config.yml")),
                 TranslationDirectoryUtil.fromContext(boxBootstrapContext),
-                boxBootstrapContext.getStorageRegistry()
+                boxBootstrapContext.getStorageRegistry(),
+                null // TODO
         );
         this.boxCore = new BoxCore(pluginContext);
         this.preregisteredFeatures = boxBootstrapContext.getBoxFeatureList();
@@ -106,7 +107,7 @@ public final class BoxPlugin extends JavaPlugin {
 
         try (var migrationYaml = MigrationConfigLoader.load(boxCore.getPluginDirectory().resolve("migration.yml"), getLogger())) {
             if (MigrationConfigLoader.isMigrationRequested(migrationYaml, getLogger())) {
-                migrator = MigrationConfigLoader.prepare(migrationYaml, pluginContext.storageRegistry(), getLogger());
+                migrator = MigrationConfigLoader.prepare(migrationYaml, pluginContext.storageRegistry(), pluginContext.defaultItemProvider(), getLogger());
             }
         }
 
