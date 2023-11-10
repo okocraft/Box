@@ -1,8 +1,14 @@
 plugins {
     alias(libs.plugins.aggregate.javadoc)
+    id("box.properties")
 }
 
 tasks {
+    register<Delete>("clean") {
+        group = "build"
+        layout.buildDirectory.get().asFile.deleteRecursively()
+    }
+
     aggregateJavadoc {
         sequenceOf(
             "api/**",
@@ -24,18 +30,9 @@ tasks {
 
         (options as StandardJavadocDocletOptions).docTitle("Box $version").windowTitle("Box $version")
 
-        val release = findProperty("box.release")?.toString()?.toBoolean()
-
-        if (release != null) {
-            val stagingDir = rootDir.resolve("staging")
-
-            setDestinationDir(
-                if (release == true) {
-                    stagingDir.resolve("release")
-                } else {
-                    stagingDir.resolve("snapshot")
-                }
-            )
+        if (boxBuildProperties.isPublishing) {
+            val dirName = if (boxBuildProperties.isReleaseVersion) "release" else "snapshot"
+            setDestinationDir(rootDir.resolve("staging").resolve(dirName))
         }
     }
 }
