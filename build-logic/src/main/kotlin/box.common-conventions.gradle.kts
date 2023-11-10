@@ -1,13 +1,8 @@
-import java.io.ByteArrayOutputStream
-
 plugins {
     `java-library`
-
     id("box.dependencies")
     id("box.publication")
 }
-
-val toUpload = findProperty("box.upload")?.toString()?.toBoolean() ?: false
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
@@ -15,12 +10,6 @@ java {
 }
 
 tasks {
-    build {
-        if (toUpload) {
-            layout.buildDirectory = rootProject.layout.buildDirectory.dir(project.name)
-        }
-    }
-
     compileJava {
         options.encoding = Charsets.UTF_8.name()
         options.release.set(17)
@@ -31,33 +20,17 @@ tasks {
     }
 
     jar {
-        var version = project.version.toString()
-
-        if (toUpload) { // for GitHub Actions
-            version = "${project.version}-git-${getLatestCommitHash()}"
-        }
-
         manifest {
             attributes(
-                "Implementation-Version" to version
+                "Implementation-Version" to project.version.toString()
             )
         }
     }
 
     test {
         useJUnitPlatform()
-
         testLogging {
             events("passed", "skipped", "failed")
         }
     }
-}
-
-fun getLatestCommitHash(): String {
-    val stdout = ByteArrayOutputStream()
-    exec {
-        commandLine("git", "rev-parse", "--short=7", "HEAD")
-        standardOutput = stdout
-    }
-    return stdout.toString().trim()
 }

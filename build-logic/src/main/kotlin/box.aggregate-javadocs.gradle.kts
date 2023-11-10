@@ -2,6 +2,7 @@ import collector.JavadocAggregator
 
 tasks {
     create<Javadoc>(JavadocAggregator.AGGREGATE_JAVADOC_TASK_NAME) {
+        group = JavaBasePlugin.DOCUMENTATION_GROUP
         setDestinationDir(layout.buildDirectory.dir("docs").get().asFile)
         classpath = objects.fileCollection()
         doFirst {

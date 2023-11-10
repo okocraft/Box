@@ -12,6 +12,17 @@ dependencies {
 tasks {
     build {
         dependsOn(shadowJar)
+        doLast {
+            val filepath = getArtifactFilepath()
+            filepath.parentFile.mkdirs()
+            shadowJar.get().archiveFile.get().asFile.copyTo(getArtifactFilepath(), true)
+        }
+    }
+
+    clean {
+        doLast {
+            getArtifactFilepath().delete()
+        }
     }
 
     processResources {
@@ -22,8 +33,11 @@ tasks {
 
     shadowJar {
         minimize()
-        archiveFileName.set("Box-${project.version}.jar")
         relocate("com.github.siroshun09", "net.okocraft.box.lib")
         relocate("com.zaxxer", "net.okocraft.box.lib")
     }
+}
+
+fun getArtifactFilepath() : File {
+    return rootProject.layout.buildDirectory.dir("libs").get().file("Box-${project.version}.jar").asFile
 }

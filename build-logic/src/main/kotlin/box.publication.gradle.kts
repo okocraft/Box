@@ -6,10 +6,9 @@ plugins {
 }
 
 val libs = extensions.getByType(LibrariesForLibs::class)
-val release = findProperty("box.release")?.toString()?.toBoolean()
 
 java {
-    if (release != null) { // If null, there is no need to generate Javadoc or Sources.
+    if (isPublishing(project)) {
         withJavadocJar()
         withSourcesJar()
     }
@@ -63,13 +62,8 @@ publishing {
 
     repositories {
         maven {
-            val stagingDir = rootDir.resolve("staging")
-
-            url = if (release == true) { // Normally, null is never entered here.
-                uri(stagingDir.resolve("maven"))
-            } else {
-                uri(stagingDir.resolve("maven-snapshot"))
-            }
+            val dirName = if (isReleaseVersion(project)) "maven" else "maven-snapshot"
+            url = uri(rootDir.resolve("staging").resolve(dirName))
         }
     }
 }
