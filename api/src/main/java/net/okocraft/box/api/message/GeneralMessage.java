@@ -89,4 +89,9 @@ public final class GeneralMessage {
      * A component to use to hover text (click to copy).
      */
     public static final Component HOVER_TEXT_CLICK_TO_COPY = whiteTranslatable("box.mics.hover-text.click-to-copy");
+
+    /**
+     * A component to use to hover text (click to open url).
+     */
+    public static final Component HOVER_TEXT_CLICK_TO_OPEN_URL = whiteTranslatable("box.mics.hover-text.click-to-open-url");
 }

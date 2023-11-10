@@ -20,6 +20,7 @@ import static net.kyori.adventure.text.Component.text;
 import static net.okocraft.box.api.message.Components.aquaBoxUser;
 import static net.okocraft.box.api.message.Components.aquaItemName;
 import static net.okocraft.box.api.message.Components.aquaText;
+import static net.okocraft.box.api.message.Components.aquaTranslatable;
 import static net.okocraft.box.api.message.Components.commandHelp;
 import static net.okocraft.box.api.message.Components.grayTranslatable;
 import static net.okocraft.box.api.message.Components.greenTranslatable;
@@ -34,6 +35,15 @@ public final class BoxAdminMessage {
                             "box.command.boxadmin.version.info",
                             aquaText(version).clickEvent(ClickEvent.copyToClipboard(version)).hoverEvent(GeneralMessage.HOVER_TEXT_CLICK_TO_COPY)
                     );
+
+    public static final Component VERSION_INFO_DETAILS_TITLE = grayTranslatable("box.command.boxadmin.version.details.title");
+    public static final Component VERSION_INFO_DETAILS_VERSION = grayTranslatable("box.command.boxadmin.version.details.version");
+    public static final Component VERSION_INFO_DETAILS_RELEASE_VERSION = aquaTranslatable("box.command.boxadmin.version.details.release-version");
+    public static final Component VERSION_INFO_DETAILS_DEVELOPMENT_VERSION = aquaTranslatable("box.command.boxadmin.version.details.development-version");
+    public static final Component VERSION_INFO_DETAILS_COMMIT_HASH = grayTranslatable("box.command.boxadmin.version.details.commit-hash");
+    public static final Component VERSION_INFO_DETAILS_BUILD_DATE = grayTranslatable("box.command.boxadmin.version.details.build-date");
+    public static final Component VERSION_INFO_DETAILS_BUILD_AT = grayTranslatable("box.command.boxadmin.version.details.build-at");
+    public static final Component VERSION_INFO_DETAILS_LOCAL = aquaTranslatable("box.command.boxadmin.version.details.local");
 
     public static final Component VERSION_HELP = commandHelp("box.command.boxadmin.version");
 

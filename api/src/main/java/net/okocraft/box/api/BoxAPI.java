@@ -10,6 +10,8 @@ import net.okocraft.box.api.model.data.CustomDataContainer;
 import net.okocraft.box.api.model.manager.ItemManager;
 import net.okocraft.box.api.model.manager.StockManager;
 import net.okocraft.box.api.model.manager.UserManager;
+import net.okocraft.box.api.model.version.BuildData;
+import net.okocraft.box.api.model.version.VersionInfo;
 import net.okocraft.box.api.player.BoxPlayerMap;
 import net.okocraft.box.api.scheduler.BoxScheduler;
 import org.bukkit.NamespacedKey;
@@ -17,10 +19,12 @@ import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
 import java.nio.file.Path;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
@@ -205,4 +209,14 @@ public interface BoxAPI {
      * @return a new {@link NamespacedKey}
      */
     @NotNull NamespacedKey createNamespacedKey(@NotNull String value);
+
+    /**
+     * Gets {@link VersionInfo} of Box.
+     *
+     * @return the {@link VersionInfo}
+     */
+    @ApiStatus.Experimental
+    default @NotNull VersionInfo getVersionInfo() {
+        return new VersionInfo(VersionInfo.UNKNOWN_VALUE, false, new BuildData.Local(Instant.MIN, VersionInfo.UNKNOWN_VALUE));
+    }
 }
