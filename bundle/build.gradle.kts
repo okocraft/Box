@@ -1,5 +1,6 @@
 plugins {
     id("box.common-conventions")
+    id("box.version-info")
     alias(libs.plugins.shadow)
 }
 
@@ -26,6 +27,7 @@ tasks {
     }
 
     processResources {
+        dependsOn(createVersionInfo)
         filesMatching(listOf("plugin.yml", "en.yml", "ja_JP.yml")) {
             expand("projectVersion" to project.version)
         }
