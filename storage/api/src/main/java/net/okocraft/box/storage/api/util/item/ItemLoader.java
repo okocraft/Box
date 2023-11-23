@@ -2,45 +2,53 @@ package net.okocraft.box.storage.api.util.item;
 
 import com.google.common.collect.Lists;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.okocraft.box.api.model.item.BoxCustomItem;
 import net.okocraft.box.api.model.item.BoxItem;
-import net.okocraft.box.api.util.MCDataVersion;
 import net.okocraft.box.storage.api.model.item.ItemData;
 import net.okocraft.box.storage.api.model.item.ItemStorage;
+import net.okocraft.box.storage.api.util.item.patcher.ItemDataPatcher;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 
 public class ItemLoader {
 
-    public static @NotNull ItemLoadResult load(@NotNull ItemStorage storage, @NotNull DefaultItemProvider defaultItemProvider) throws Exception {
-        var dataVersion = storage.getDataVersion();
-        int defaultItemVersion = storage.getDefaultItemVersion();
+    public static @NotNull ItemLoadResult load(@NotNull ItemStorage storage,
+                                               @NotNull DefaultItemProvider defaultItemProvider) throws Exception {
+        var currentVersion = defaultItemProvider.version();
+        var storageItemVersion = storage.getItemVersion();
 
-        if (dataVersion != null && isTryingDowngrade(dataVersion, defaultItemVersion)) {
+        if (storageItemVersion.isPresent() && currentVersion.isTryingDowngrade(storageItemVersion.get())) {
             throw new IllegalStateException("Downgrading version is not supported.");
         }
 
         ItemLoadResult loadResult;
 
         // TODO: logging
-        if (dataVersion == null) {
-            loadResult = initializeDefaultItems(storage, defaultItemProvider);
-        } else if (dataVersion.isSame(MCDataVersion.CURRENT) && defaultItemVersion == defaultItemProvider.listVersion()) {
+        if (storageItemVersion.isEmpty()) {
+            loadResult = initializeDefaultItems(storage, currentVersion, defaultItemProvider.provide());
+        } else if (currentVersion.equals(storageItemVersion.get())) {
             loadResult = loadItems(storage);
         } else {
-            loadResult = updateItems(storage, dataVersion, defaultItemProvider);
+            loadResult = updateItems(storage, currentVersion, defaultItemProvider.itemDataPatcherFactory().create(storageItemVersion.get()), defaultItemProvider.provide());
         }
 
         return loadResult;
     }
 
-    public static @NotNull ItemLoadResult initializeDefaultItems(@NotNull ItemStorage storage, @NotNull DefaultItemProvider defaultItemProvider) throws Exception {
-        var result = new ItemLoadResult(storage.saveDefaultItems(defaultItemProvider.provide(), Int2ObjectMaps.emptyMap()), Collections.emptyList());
-        storage.saveItemVersion(MCDataVersion.CURRENT, defaultItemProvider.listVersion());
+    public static @NotNull ItemLoadResult initializeDefaultItems(@NotNull ItemStorage storage,
+                                                                 @NotNull ItemVersion currentVersion,
+                                                                 @NotNull Stream<DefaultItem> defaultItemStream) throws Exception {
+        var result = new ItemLoadResult(storage.saveDefaultItems(defaultItemStream.toList(), Int2ObjectMaps.emptyMap()), Collections.emptyList());
+        storage.saveItemVersion(currentVersion);
         return result;
     }
 
@@ -51,17 +59,42 @@ public class ItemLoader {
         );
     }
 
-    public static @NotNull ItemLoadResult updateItems(@NotNull ItemStorage storage, @NotNull MCDataVersion dataVersion, @NotNull DefaultItemProvider defaultItemProvider) throws Exception {
-        var def = DefaultItemUpdater.update(storage, dataVersion, defaultItemProvider);
-        var cus = storage.loadAllCustomItems();
-        storage.updateCustomItems(cus);
-        storage.saveItemVersion(MCDataVersion.CURRENT, defaultItemProvider.listVersion());
-        return new ItemLoadResult(def, cus);
+    public static @NotNull ItemLoadResult updateItems(@NotNull ItemStorage storage,
+                                                      @NotNull ItemVersion currentVersion,
+                                                      @NotNull ItemDataPatcher itemDataPatcher,
+                                                      @NotNull Stream<DefaultItem> defaultItemStream) throws Exception {
+        var defaultItems = updateDefaultItems(storage, itemDataPatcher, defaultItemStream);
+        var customItems = storage.loadAllCustomItems();
+        storage.updateCustomItems(customItems);
+        storage.saveItemVersion(currentVersion);
+        return new ItemLoadResult(defaultItems, customItems);
     }
 
-    private static boolean isTryingDowngrade(@NotNull MCDataVersion dataVersion, int defaultItemVersion) {
-        return dataVersion.isAfter(MCDataVersion.CURRENT) ||
-                (dataVersion.isSame(MCDataVersion.CURRENT) && DefaultItemProvider.version() < defaultItemVersion);
+    private static @NotNull List<BoxItem> updateDefaultItems(@NotNull ItemStorage storage,
+                                                             @NotNull ItemDataPatcher itemDataPatcher,
+                                                             @NotNull Stream<DefaultItem> defaultItemStream) throws Exception {
+        var loadedItemData = storage.loadAllDefaultItems();
+        var oldItemMap = new HashMap<ItemStack, ItemData>();
+
+        for (var itemData : loadedItemData) {
+            var patched = itemDataPatcher.patch(itemData);
+            oldItemMap.put(ItemStack.deserializeBytes(patched.itemData()), itemData);
+        }
+
+        var newItems = new ArrayList<DefaultItem>();
+        var updatedItemMap = new Int2ObjectOpenHashMap<DefaultItem>();
+
+        defaultItemStream.forEach(item -> {
+            var oldItem = oldItemMap.remove(item.itemStack());
+
+            if (oldItem == null) {
+                newItems.add(item);
+            } else {
+                updatedItemMap.put(oldItem.internalId(), item);
+            }
+        });
+
+        return storage.saveDefaultItems(newItems, updatedItemMap);
     }
 
     public record ItemLoadResult(@NotNull List<BoxItem> defaultItems, @NotNull List<BoxCustomItem> customItems) {

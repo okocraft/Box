@@ -12,6 +12,7 @@ import net.okocraft.box.api.model.user.BoxUser;
 import net.okocraft.box.storage.api.model.Storage;
 import net.okocraft.box.storage.api.model.item.ItemStorage;
 import net.okocraft.box.storage.api.util.item.DefaultItemProvider;
+import net.okocraft.box.storage.api.util.item.patcher.ItemNamePatcher;
 import net.okocraft.box.storage.migrator.util.LoggerWrapper;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -36,8 +37,20 @@ public class ItemMigrator extends AbstractDataMigrator<ItemMigrator.Result, Item
 
     @Override
     protected @NotNull ItemMigrator.Result migrateData(@NotNull ItemStorage source, @NotNull ItemStorage target, @NotNull LoggerWrapper logger) throws Exception {
-        var sourceItemIdToNameMap = this.loadSourceDefaultItemIdToNameMap(source);
-        var targetItemNameToIdMap = this.loadTargetDefaultItemIdToNameMap(target);
+        var sourceItemVersion = source.getItemVersion();
+        var targetItemVersion = target.getItemVersion();
+
+        if (sourceItemVersion.isEmpty()) {
+            throw new IllegalStateException("Cannot get the item version from the source storage.");
+        }
+
+        if (targetItemVersion.isEmpty()) {
+            throw new IllegalStateException("Cannot get the item version from the target storage.");
+        }
+
+        var patcherFactory =this.defaultItemProvider.itemNamePatcherFactory();
+        var sourceItemIdToNameMap = loadSourceDefaultItemIdToNameMap(source, patcherFactory.create(sourceItemVersion.get()));
+        var targetItemNameToIdMap = loadTargetDefaultItemIdToNameMap(target, patcherFactory.create(targetItemVersion.get()));
 
         var itemIdMap = new Int2IntOpenHashMap();
 
@@ -87,10 +100,9 @@ public class ItemMigrator extends AbstractDataMigrator<ItemMigrator.Result, Item
         return new Result(this.userMigratorResult.users(), itemIdMap);
     }
 
-    private @NotNull Int2ObjectMap<String> loadSourceDefaultItemIdToNameMap(@NotNull ItemStorage storage) throws Exception {
+    private static @NotNull Int2ObjectMap<String> loadSourceDefaultItemIdToNameMap(@NotNull ItemStorage storage, @NotNull ItemNamePatcher patcher) throws Exception {
         var loaded = storage.loadAllDefaultItems();
         var map = new Int2ObjectOpenHashMap<String>(loaded.size());
-        var patcher = this.defaultItemProvider.itemNamePatcher(storage.getDataVersion());
 
         for (var data : loaded) {
             map.put(data.internalId(), patcher.renameIfNeeded(data.plainName()));
@@ -99,10 +111,9 @@ public class ItemMigrator extends AbstractDataMigrator<ItemMigrator.Result, Item
         return map;
     }
 
-    private @NotNull Object2IntMap<String> loadTargetDefaultItemIdToNameMap(@NotNull ItemStorage storage) throws Exception {
+    private static @NotNull Object2IntMap<String> loadTargetDefaultItemIdToNameMap(@NotNull ItemStorage storage, @NotNull ItemNamePatcher patcher) throws Exception {
         var loaded = storage.loadAllDefaultItems();
         var map = new Object2IntOpenHashMap<String>(loaded.size());
-        var patcher = this.defaultItemProvider.itemNamePatcher(storage.getDataVersion());
 
         for (var data : loaded) {
             map.put(patcher.renameIfNeeded(data.plainName()), data.internalId());

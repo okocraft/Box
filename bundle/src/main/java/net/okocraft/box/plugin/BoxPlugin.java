@@ -36,7 +36,7 @@ public final class BoxPlugin extends JavaPlugin {
                 YamlConfiguration.create(boxBootstrapContext.getPluginDirectory().resolve("config.yml")),
                 TranslationDirectoryUtil.fromContext(boxBootstrapContext),
                 boxBootstrapContext.getStorageRegistry(),
-                null // TODO
+                PlatformDependent.createItemProvider()
         );
         this.boxCore = new BoxCore(pluginContext);
         this.preregisteredFeatures = boxBootstrapContext.getBoxFeatureList();

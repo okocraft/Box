@@ -40,7 +40,7 @@ public class MetaTable extends AbstractTable {
         saveVersion(ITEM_DATA_VERSION_KEY, dataVersion, hasItemDataVersion);
     }
 
-    public int getDefaultItemVersion() throws SQLException {
+    public int getDefaultItemProviderVersion() throws SQLException {
         var version = getVersion(DEFAULT_ITEM_VERSION_KEY);
 
         if (version != null) {
@@ -50,7 +50,7 @@ public class MetaTable extends AbstractTable {
         return Objects.requireNonNullElse(version, 0);
     }
 
-    public void saveDefaultItemVersion(int version) throws SQLException {
+    public void saveDefaultItemProviderVersion(int version) throws SQLException {
         saveVersion(DEFAULT_ITEM_VERSION_KEY, version, hasDefaultItemVersion);
     }
 

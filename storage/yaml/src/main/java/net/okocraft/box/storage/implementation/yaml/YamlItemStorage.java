@@ -12,6 +12,7 @@ import net.okocraft.box.storage.api.model.item.ItemData;
 import net.okocraft.box.storage.api.model.item.ItemStorage;
 import net.okocraft.box.storage.api.util.item.DefaultItem;
 import net.okocraft.box.storage.api.util.item.ItemNameGenerator;
+import net.okocraft.box.storage.api.util.item.ItemVersion;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,6 +24,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 class YamlItemStorage implements ItemStorage {
@@ -60,19 +62,14 @@ class YamlItemStorage implements ItemStorage {
     }
 
     @Override
-    public @Nullable MCDataVersion getDataVersion() {
-        return this.dataVersion;
+    public @NotNull Optional<ItemVersion> getItemVersion() {
+        return this.dataVersion != null ? Optional.of(new ItemVersion(this.dataVersion, this.defaultItemVersion)) : Optional.empty();
     }
 
     @Override
-    public int getDefaultItemVersion() {
-        return this.defaultItemVersion;
-    }
-
-    @Override
-    public void saveItemVersion(@NotNull MCDataVersion dataVersion, int defaultItemVersion) throws Exception {
-        this.dataVersion = dataVersion;
-        this.defaultItemVersion = defaultItemVersion;
+    public void saveItemVersion(@NotNull ItemVersion itemVersion) throws Exception {
+        this.dataVersion = itemVersion.dataVersion();
+        this.defaultItemVersion = itemVersion.defaultItemProviderVersion();
 
         this.saveItemStorageMeta();
     }
