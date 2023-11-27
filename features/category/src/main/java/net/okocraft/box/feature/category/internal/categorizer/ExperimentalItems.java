@@ -68,4 +68,14 @@ public final class ExperimentalItems {
                 Material.valueOf("POTTERY_SHARD_SKULL")
         );
     }
+
+    /*
+     * This is extracted Materials that marked as @ApiStatus.Experimental.
+     * Let's hope that an appropriate API will be provided in the future.
+     *
+     * NOTE: Material#BUNDLE has existed since 1.17, so it is not included here.
+     */
+    public static @NotNull @Unmodifiable Set<Material> mc1_20_3() {
+        return EnumSet.noneOf(Material.class); // TODO
+    }
 }
