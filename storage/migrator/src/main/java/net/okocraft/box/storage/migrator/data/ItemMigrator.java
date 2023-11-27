@@ -115,9 +115,15 @@ public class ItemMigrator implements DataMigrator<ItemStorage> {
     }
 
     private static @NotNull String renameIfNeeded(@NotNull String plainName, @Nullable MCDataVersion dataVersion) {
-        if (dataVersion != null && dataVersion.isBetween(MCDataVersion.MC_1_19, MCDataVersion.MC_1_19_4)) {
+        if (dataVersion == null) {
+            return plainName;
+        } else if (dataVersion.isBetween(MCDataVersion.MC_1_19, MCDataVersion.MC_1_19_4)) {
             if (plainName.equals("GOAT_HORN")) {
                 return "PONDER_GOAT_HORN";
+            }
+        } else if (dataVersion.isBeforeOrSame(MCDataVersion.MC_1_20_2) && MCDataVersion.MC_1_20_3.isAfterOrSame(MCDataVersion.CURRENT)) {
+            if (plainName.equals("GRASS")) {
+                return "SHORT_GRASS";
             }
         }
 
