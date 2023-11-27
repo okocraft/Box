@@ -4,9 +4,9 @@ import net.okocraft.box.storage.api.util.item.DefaultItem;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
-import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.VisibleForTesting;
 
 class DefaultPotionIterator extends DefaultItemIterator {
 
@@ -26,10 +26,14 @@ class DefaultPotionIterator extends DefaultItemIterator {
         }
     }
 
+    @VisibleForTesting
+    static @NotNull String createPotionName(String materialName, String potionTypeName) {
+        return materialName + "_" + potionTypeName;
+    }
+
     private final PotionMeta potionMeta = createItemMeta(Material.POTION, PotionMeta.class);
 
     private int potionTypeIndex = 0;
-    private int potionDataIndex = 0;
     private int itemIndex = 0;
     private boolean hasNext = true;
 
@@ -40,37 +44,25 @@ class DefaultPotionIterator extends DefaultItemIterator {
 
     @Override
     public @NotNull DefaultItem next() {
-        var potionData = new PotionData(POTION_TYPES[this.potionTypeIndex], this.potionDataIndex == 1, this.potionDataIndex == 2);
+        var potionType = POTION_TYPES[this.potionTypeIndex];
         var item = ITEMS[this.itemIndex];
 
         if (++this.itemIndex == ITEMS.length) {
-            if (++this.potionDataIndex == 3) {
-                if (++potionTypeIndex == POTION_TYPES.length) {
-                    this.hasNext = false;
-                } else {
-                    this.potionDataIndex = 0;
-                    this.itemIndex = 0;
-                }
+            if (++potionTypeIndex == POTION_TYPES.length) {
+                this.hasNext = false;
             } else {
                 this.itemIndex = 0;
             }
         }
 
-        return this.createPotion(potionData, item);
+        return this.createPotion(item, potionType);
     }
 
-    private @NotNull DefaultItem createPotion(@NotNull PotionData data, @NotNull Material material) {
-        var name = material.name() + "_" + data.getType().name();
-
-        if (data.isExtended()) {
-            name = name + "_EXTENDED";
-        } else if (data.isUpgraded()) {
-            name = name + "_UPGRADED";
-        }
-
+    private @NotNull DefaultItem createPotion(@NotNull Material material, @NotNull PotionType type) {
+        var name = createPotionName(material.name(), type.name());
         var potion = new ItemStack(material, 1);
 
-        this.potionMeta.setBasePotionData(data);
+        this.potionMeta.setBasePotionType(type);
         potion.setItemMeta(this.potionMeta);
 
         return new DefaultItem(name, potion);

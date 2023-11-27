@@ -20,6 +20,10 @@ public final class VersionAppendingPatcherFactory {
             builder.append(LegacyVersionPatches::shortGrassName);
         }
 
+        if (startingVersion.dataVersion().isBefore(MCDataVersion.CURRENT)) { // FIXME: 1.21
+            builder.append(LegacyVersionPatches::potionName);
+        }
+
         return builder.result;
     }
 
