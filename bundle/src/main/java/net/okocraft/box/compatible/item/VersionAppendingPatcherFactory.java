@@ -16,6 +16,10 @@ public final class VersionAppendingPatcherFactory {
             builder.append(LegacyVersionPatches::goatHornName);
         }
 
+        if (startingVersion.dataVersion().isBeforeOrSame(MCDataVersion.MC_1_20_2) && MCDataVersion.CURRENT.isAfter(MCDataVersion.MC_1_20_2)) {
+            builder.append(LegacyVersionPatches::shortGrassName);
+        }
+
         return builder.result;
     }
 

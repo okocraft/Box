@@ -13,6 +13,10 @@ public final class LegacyVersionPatches {
         return original.equals("GOAT_HORN") ? "PONDER_GOAT_HORN" : original;
     }
 
+    public static @NotNull String shortGrassName(@NotNull String original) {
+        return original.equals("GRASS") ? "SHORT_GRASS" : original;
+    }
+
     public static @NotNull ItemData goatHornData(@NotNull ItemData itemData) {
         var goatHorn = new ItemStack(Material.GOAT_HORN);
         goatHorn.editMeta(MusicInstrumentMeta.class, meta -> meta.setInstrument(MusicInstrument.PONDER));
