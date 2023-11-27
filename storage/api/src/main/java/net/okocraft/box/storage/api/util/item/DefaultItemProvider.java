@@ -70,7 +70,7 @@ public final class DefaultItemProvider {
                 List.of(Material.POTION, Material.SPLASH_POTION, Material.LINGERING_POTION, Material.TIPPED_ARROW);
 
         for (var type : PotionType.values()) {
-            if (type == PotionType.UNCRAFTABLE) {
+            if (type == PotionType.UNCRAFTABLE || type.name().startsWith("LONG") || type.name().startsWith("STRONG")) {
                 continue;
             }
 
