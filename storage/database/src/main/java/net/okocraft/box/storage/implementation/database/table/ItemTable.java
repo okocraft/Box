@@ -3,11 +3,11 @@ package net.okocraft.box.storage.implementation.database.table;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.okocraft.box.api.model.item.BoxCustomItem;
 import net.okocraft.box.api.model.item.BoxItem;
+import net.okocraft.box.api.util.ItemNameGenerator;
 import net.okocraft.box.storage.api.factory.item.BoxItemFactory;
 import net.okocraft.box.storage.api.model.item.ItemData;
 import net.okocraft.box.storage.api.model.item.ItemStorage;
 import net.okocraft.box.storage.api.util.item.DefaultItem;
-import net.okocraft.box.storage.api.util.item.ItemNameGenerator;
 import net.okocraft.box.storage.api.util.item.ItemVersion;
 import net.okocraft.box.storage.implementation.database.database.Database;
 import org.bukkit.inventory.ItemStack;
@@ -148,7 +148,7 @@ public class ItemTable extends AbstractTable implements ItemStorage {
     public @NotNull BoxCustomItem saveNewCustomItem(@NotNull ItemStack item, @Nullable String itemName) throws Exception {
         try (var connection = this.database.getConnection()) {
             var itemBytes = item.serializeAsBytes();
-            var name = itemName != null ? itemName : ItemNameGenerator.generate(item.getType().name(), itemBytes);
+            var name = itemName != null ? itemName : ItemNameGenerator.itemStack(item.getType(), itemBytes);
 
             try (var statement = prepareStatement(connection, "INSERT INTO `%table%` (`name`, `item_data`, `is_default_item`) VALUES(?,?,?)")) {
                 statement.setString(1, name);

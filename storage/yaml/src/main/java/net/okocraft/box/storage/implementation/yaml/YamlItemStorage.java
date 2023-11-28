@@ -11,7 +11,7 @@ import net.okocraft.box.storage.api.holder.LoggerHolder;
 import net.okocraft.box.storage.api.model.item.ItemData;
 import net.okocraft.box.storage.api.model.item.ItemStorage;
 import net.okocraft.box.storage.api.util.item.DefaultItem;
-import net.okocraft.box.storage.api.util.item.ItemNameGenerator;
+import net.okocraft.box.api.util.ItemNameGenerator;
 import net.okocraft.box.storage.api.util.item.ItemVersion;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -168,7 +168,7 @@ class YamlItemStorage implements ItemStorage {
     @Override
     public @NotNull BoxCustomItem saveNewCustomItem(@NotNull ItemStack item, @Nullable String itemName) throws Exception {
         int id = this.lastUsedItemId.incrementAndGet();
-        var name = itemName != null ? itemName : ItemNameGenerator.generate(item.getType().name(), item.serializeAsBytes());
+        var name = itemName != null ? itemName : ItemNameGenerator.itemStack(item.getType(), item.serializeAsBytes());
         var boxItem = BoxItemFactory.createCustomItem(id, name, item);
 
         try (var target = YamlConfiguration.create(this.customItemDataFile)) {
