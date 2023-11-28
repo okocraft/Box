@@ -8,6 +8,8 @@ import org.bukkit.potion.PotionType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.VisibleForTesting;
 
+import java.util.Locale;
+
 class DefaultPotionIterator extends DefaultItemIterator {
 
     private static final PotionType[] POTION_TYPES;
@@ -59,7 +61,7 @@ class DefaultPotionIterator extends DefaultItemIterator {
     }
 
     private @NotNull DefaultItem createPotion(@NotNull Material material, @NotNull PotionType type) {
-        var name = createPotionName(material.name(), type.name());
+        var name = createPotionName(material.name(), type.key().value().toUpperCase(Locale.ENGLISH));
         var potion = new ItemStack(material, 1);
 
         this.potionMeta.setBasePotionType(type);

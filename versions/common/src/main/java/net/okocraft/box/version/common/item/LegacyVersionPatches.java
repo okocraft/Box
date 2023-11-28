@@ -18,13 +18,6 @@ public final class LegacyVersionPatches {
     }
 
     public static @NotNull String potionName(@NotNull String original) {
-        boolean extended = original.endsWith("_EXTENDED");
-        boolean upgraded = original.endsWith("_UPGRADED");
-
-        if (!extended && !upgraded) {
-            return original;
-        }
-
         String material;
         String potionType;
 
@@ -44,7 +37,7 @@ public final class LegacyVersionPatches {
             return original;
         }
 
-        if (extended) {
+        if (original.endsWith("_EXTENDED")) {
             return material + switch (potionType) {
                 case "FIRE_RESISTANCE_EXTENDED" -> "LONG_FIRE_RESISTANCE";
                 case "INVISIBILITY_EXTENDED" -> "LONG_INVISIBILITY";
@@ -61,7 +54,7 @@ public final class LegacyVersionPatches {
                 case "WEAKNESS_EXTENDED" -> "LONG_WEAKNESS";
                 default -> throw new IllegalArgumentException("Unknown extended potion: " + original);
             };
-        } else { // upgraded
+        } else if (original.endsWith("_UPGRADED")){
             return material + switch (potionType) {
                 case "INSTANT_DAMAGE_UPGRADED" -> "STRONG_HARMING";
                 case "INSTANT_HEAL_UPGRADED" -> "STRONG_HEALING";
@@ -73,6 +66,15 @@ public final class LegacyVersionPatches {
                 case "SPEED_UPGRADED" -> "STRONG_SWIFTNESS";
                 case "TURTLE_MASTER_UPGRADED" -> "STRONG_TURTLE_MASTER";
                 default -> throw new IllegalArgumentException("Unknown upgraded potion: " + original);
+            };
+        } else {
+            return material + switch (potionType) {
+                case "JUMP" -> "LEAPING";
+                case "SPEED" -> "SWIFTNESS";
+                case "INSTANT_HEAL" -> "HEALING";
+                case "INSTANT_DAMAGE" -> "HARMING";
+                case "REGEN" -> "REGENERATION";
+                default -> potionType;
             };
         }
     }
