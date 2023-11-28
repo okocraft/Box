@@ -1,5 +1,6 @@
 package net.okocraft.box.version.common.item;
 
+import net.okocraft.box.api.util.ItemNameGenerator;
 import net.okocraft.box.storage.api.util.item.DefaultItem;
 import org.bukkit.Material;
 import org.bukkit.Registry;
@@ -10,7 +11,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.Locale;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.function.Predicate;
@@ -38,24 +38,26 @@ public final class ItemSources {
 
     public static @NotNull Stream<DefaultItem> fireworks() {
         return Stream.of(1, 2, 3).map(power -> {
+            var name = ItemNameGenerator.key(Material.FIREWORK_ROCKET) + "_" + power;
             var firework = new ItemStack(Material.FIREWORK_ROCKET);
             firework.editMeta(FireworkMeta.class, meta -> meta.setPower(power));
 
-            return new DefaultItem(Material.FIREWORK_ROCKET + "_" + power, firework);
+            return new DefaultItem(name, firework);
         });
     }
 
     public static @NotNull Stream<DefaultItem> goatHorns() {
         return Registry.INSTRUMENT.stream()
                 .map(instrument -> {
+                    var name = ItemNameGenerator.key(instrument);
                     var goatHorn = new ItemStack(Material.GOAT_HORN);
                     goatHorn.editMeta(MusicInstrumentMeta.class, meta -> meta.setInstrument(instrument));
-                    return new DefaultItem(instrument.getKey().value().toUpperCase(Locale.ENGLISH), goatHorn);
+                    return new DefaultItem(name, goatHorn);
                 });
     }
 
     public static @NotNull DefaultItem toDefaultItem(@NotNull Material material) {
-        return new DefaultItem(material.name(), new ItemStack(material, 1));
+        return new DefaultItem(ItemNameGenerator.key(material), new ItemStack(material, 1));
     }
 
     private static <T> @NotNull Stream<T> toStream(@NotNull Iterator<? extends T> iterator) {

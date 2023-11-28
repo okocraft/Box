@@ -1,14 +1,12 @@
 package net.okocraft.box.version.common.item;
 
+import net.okocraft.box.api.util.ItemNameGenerator;
 import net.okocraft.box.storage.api.util.item.DefaultItem;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionType;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.VisibleForTesting;
-
-import java.util.Locale;
 
 class DefaultPotionIterator extends DefaultItemIterator {
 
@@ -26,11 +24,6 @@ class DefaultPotionIterator extends DefaultItemIterator {
             }
             POTION_TYPES[index++] = potionType;
         }
-    }
-
-    @VisibleForTesting
-    static @NotNull String createPotionName(String materialName, String potionTypeName) {
-        return materialName + "_" + potionTypeName;
     }
 
     private final PotionMeta potionMeta = createItemMeta(Material.POTION, PotionMeta.class);
@@ -61,7 +54,7 @@ class DefaultPotionIterator extends DefaultItemIterator {
     }
 
     private @NotNull DefaultItem createPotion(@NotNull Material material, @NotNull PotionType type) {
-        var name = createPotionName(material.name(), type.key().value().toUpperCase(Locale.ENGLISH));
+        var name = ItemNameGenerator.keys(material, type);
         var potion = new ItemStack(material, 1);
 
         this.potionMeta.setBasePotionType(type);
