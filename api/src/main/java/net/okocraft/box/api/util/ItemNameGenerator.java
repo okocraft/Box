@@ -5,6 +5,7 @@ import net.kyori.adventure.key.Keyed;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.VisibleForTesting;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -108,8 +109,13 @@ public final class ItemNameGenerator {
      * @return the created name
      */
     public static @NotNull String itemStack(@NotNull Keyed key, byte @NotNull [] bytes) {
+        return key(key) + "_" + sha1(bytes);
+    }
+
+    @VisibleForTesting
+    static @NotNull String sha1(byte @NotNull [] bytes) {
         Objects.requireNonNull(bytes);
-        return key(key) + "_" + HexFormat.of().withLowerCase().formatHex(sha1().digest(bytes)).substring(0, 8);
+        return HexFormat.of().withLowerCase().formatHex(sha1().digest(bytes)).substring(0, 8);
     }
 
     private static @NotNull MessageDigest sha1() {
