@@ -54,9 +54,9 @@ class YamlItemStorage implements ItemStorage {
 
             if (itemStorageMetaYaml.get("data-version") != null) {
                 this.dataVersion = MCDataVersion.of(itemStorageMetaYaml.getInteger("data-version"));
+                this.defaultItemVersion = itemStorageMetaYaml.getInteger("default-item-version");
             }
 
-            this.defaultItemVersion = itemStorageMetaYaml.getInteger("default-item-version");
             this.lastUsedItemId.set(itemStorageMetaYaml.getInteger("last-used-item-id"));
         }
     }
@@ -219,13 +219,17 @@ class YamlItemStorage implements ItemStorage {
 
     private void saveItemStorageMeta() throws IOException {
         try (var writer = Files.newBufferedWriter(this.itemStorageMetaFile, StandardCharsets.UTF_8, YamlFileOptions.WRITE)) {
-            writer.write("data-version: ");
-            writer.write(this.dataVersion.dataVersion());
-            writer.newLine();
+            if (this.dataVersion != null) {
+                writer.write("data-version: ");
+                writer.write(this.dataVersion.dataVersion());
+                writer.newLine();
+            }
 
-            writer.write("default-item-version: ");
-            writer.write(this.defaultItemVersion);
-            writer.newLine();
+            if (this.defaultItemVersion != 0) {
+                writer.write("default-item-version: ");
+                writer.write(this.defaultItemVersion);
+                writer.newLine();
+            }
 
             writer.write("last-used-item-id: ");
             writer.write(this.lastUsedItemId.get());

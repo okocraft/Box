@@ -22,7 +22,7 @@ import java.util.stream.Stream;
 public final class PlatformDependent {
 
     public static @NotNull BoxScheduler createScheduler(@NotNull Plugin plugin) {
-        if (Folia.check() || MCDataVersion.MC_1_20.isAfterOrSame(MCDataVersion.CURRENT)) {
+        if (Folia.check() ||MCDataVersion.CURRENT.isAfterOrSame(MCDataVersion.MC_1_20)) {
             return new FoliaSchedulerWrapper(plugin);
         }
 

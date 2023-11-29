@@ -14,14 +14,14 @@ import org.jetbrains.annotations.NotNull;
 public final class BuiltinFeatures {
 
     public static void addToContext(@NotNull BoxBootstrapContext context) {
-        context.addFeature(new CommandFeature())
-                .addFeature(new CategoryFeature())
-                .addFeature(new GuiFeature())
-                .addFeature(new BEModeFeature())
-                .addFeature(new AutoStoreFeature())
-                .addFeature(new CraftFeature())
-                .addFeature(new StickFeature())
-                .addFeature(new NotifierFeature());
+        context.addFeature(CommandFeature::new)
+                .addFeature(CategoryFeature::new)
+                .addFeature(GuiFeature::new)
+                .addFeature(BEModeFeature::new)
+                .addFeature(AutoStoreFeature::new)
+                .addFeature(CraftFeature::new)
+                .addFeature(StickFeature::new)
+                .addFeature(NotifierFeature::new);
     }
 
     private BuiltinFeatures() {

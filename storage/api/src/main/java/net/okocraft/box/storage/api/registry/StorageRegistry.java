@@ -38,11 +38,11 @@ public final class StorageRegistry {
     }
 
     public void setDefaultStorageName(@NotNull String name) {
-        if (!storageMap.containsKey(name)) {
+        if (!storageMap.containsKey(name.toLowerCase(Locale.ENGLISH))) {
             throw new IllegalArgumentException("The storage type '" + name + "' is not registered.");
         }
 
-        this.defaultStorageName = name;
+        this.defaultStorageName = name.toLowerCase(Locale.ENGLISH);
     }
 
     public @NotNull String getDefaultStorageName() {

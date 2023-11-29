@@ -15,13 +15,14 @@ import org.jetbrains.annotations.NotNull;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
+import java.util.function.Supplier;
 import java.util.logging.Level;
 
 public final class BoxPlugin extends JavaPlugin {
 
     private final PluginContext pluginContext;
     private final BoxCore boxCore;
-    private final List<BoxFeature> preregisteredFeatures;
+    private final @NotNull List<Supplier<? extends BoxFeature>> preregisteredFeatures;
 
     private Status status = Status.NOT_LOADED;
 
@@ -86,7 +87,9 @@ public final class BoxPlugin extends JavaPlugin {
             return;
         }
 
-        preregisteredFeatures.forEach(boxCore::register);
+        for (var featureSupplier : this.preregisteredFeatures) {
+            this.boxCore.register(featureSupplier.get());
+        }
 
         var finish = Instant.now();
         getLogger().info("Successfully enabled! (" + Duration.between(start, finish).toMillis() + "ms)");

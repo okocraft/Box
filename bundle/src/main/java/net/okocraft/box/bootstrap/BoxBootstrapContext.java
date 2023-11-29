@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 public final class BoxBootstrapContext {
 
@@ -33,7 +34,7 @@ public final class BoxBootstrapContext {
     private final String version;
     private final StorageRegistry storageRegistry;
     private final EventBus<BoxEvent> eventBus;
-    private final List<BoxFeature> boxFeatureList = new ArrayList<>();
+    private final List<Supplier<? extends BoxFeature>> boxFeatureList = new ArrayList<>();
     private final TranslationDirectoryUtil.PathConsumerWrapper onLanguageDirectoryCreated;
     private final TranslationDirectoryUtil.TranslationLoaderCreatorHolder translationLoaderCreators;
 
@@ -72,13 +73,13 @@ public final class BoxBootstrapContext {
         return eventBus;
     }
 
-    public @NotNull List<BoxFeature> getBoxFeatureList() {
+    public @NotNull List<Supplier<? extends BoxFeature>> getBoxFeatureList() {
         return boxFeatureList;
     }
 
     @Contract("_ -> this")
-    public @NotNull BoxBootstrapContext addFeature(@NotNull BoxFeature feature) {
-        boxFeatureList.add(feature);
+    public @NotNull BoxBootstrapContext addFeature(@NotNull Supplier<? extends BoxFeature> featureSupplier) {
+        boxFeatureList.add(featureSupplier);
         return this;
     }
 
