@@ -24,7 +24,7 @@ import java.util.stream.Stream;
 public final class PlatformDependent {
 
     public static @NotNull BoxScheduler createScheduler(@NotNull Plugin plugin) {
-        if (Folia.check() ||MCDataVersion.CURRENT.isAfterOrSame(MCDataVersion.MC_1_20)) {
+        if (Folia.check() || MCDataVersion.CURRENT.isAfterOrSame(MCDataVersion.MC_1_20)) {
             return new FoliaSchedulerWrapper(plugin);
         }
 
@@ -32,8 +32,8 @@ public final class PlatformDependent {
     }
 
     public static @NotNull DefaultItemProvider createItemProvider() {
-        if (true) { // TODO: MCDataVersion.MC_1_21
-            return new DefaultItemProviderImpl(new ItemVersion(MCDataVersion.CURRENT, 0), Paper_1_21::defaultItems);
+        if (MCDataVersion.CURRENT.isAfterOrSame(MCDataVersion.MC_1_21)) {
+            return new DefaultItemProviderImpl(new ItemVersion(MCDataVersion.MC_1_21, 0), Paper_1_21::defaultItems);
         }
         throw new UnsupportedOperationException("Unsupported version: " + Bukkit.getVersion());
     }

@@ -1,26 +1,33 @@
 package net.okocraft.box.compatible.item;
 
-import net.okocraft.box.api.util.MCDataVersion;
+import net.okocraft.box.storage.api.util.item.ItemVersion;
 import net.okocraft.box.storage.api.util.item.patcher.ItemDataPatcher;
 import net.okocraft.box.storage.api.util.item.patcher.ItemNamePatcher;
-import net.okocraft.box.storage.api.util.item.ItemVersion;
 import net.okocraft.box.version.common.item.LegacyVersionPatches;
 import org.jetbrains.annotations.NotNull;
+
+import static net.okocraft.box.api.util.MCDataVersion.CURRENT;
+import static net.okocraft.box.api.util.MCDataVersion.MC_1_19;
+import static net.okocraft.box.api.util.MCDataVersion.MC_1_19_4;
+import static net.okocraft.box.api.util.MCDataVersion.MC_1_20_3;
+import static net.okocraft.box.api.util.MCDataVersion.MC_1_21;
 
 public final class VersionAppendingPatcherFactory {
 
     public static @NotNull ItemNamePatcher createItemNamePatcher(@NotNull ItemVersion startingVersion) {
         var builder = new ItemNamePatcherBuilder();
+        var dataVer = startingVersion.dataVersion();
+        var itemVer = startingVersion.defaultItemProviderVersion();
 
-        if (startingVersion.dataVersion().isBetween(MCDataVersion.MC_1_19, MCDataVersion.MC_1_19_4) && startingVersion.defaultItemProviderVersion() == 0) {
+        if (dataVer.isBetween(MC_1_19, MC_1_19_4) && itemVer == 0) {
             builder.append(LegacyVersionPatches::goatHornName);
         }
 
-        if (startingVersion.dataVersion().isBeforeOrSame(MCDataVersion.MC_1_20_2) && MCDataVersion.CURRENT.isAfter(MCDataVersion.MC_1_20_2)) {
+        if (dataVer.isBefore(MC_1_20_3) && CURRENT.isAfterOrSame(MC_1_20_3)) {
             builder.append(LegacyVersionPatches::shortGrassName);
         }
 
-        if (startingVersion.dataVersion().isBefore(MCDataVersion.CURRENT)) { // FIXME: 1.21
+        if (dataVer.isBefore(MC_1_21) && CURRENT.isAfterOrSame(MC_1_21)) {
             builder.append(LegacyVersionPatches::potionName);
         }
 
@@ -29,9 +36,11 @@ public final class VersionAppendingPatcherFactory {
 
     public static @NotNull ItemDataPatcher createItemDataPatcher(@NotNull ItemVersion startingVersion) {
         var builder = new ItemDataPatcherBuilder();
+        var dataVer = startingVersion.dataVersion();
+        var itemVer = startingVersion.defaultItemProviderVersion();
 
-        if (startingVersion.dataVersion().isAfterOrSame(MCDataVersion.MC_1_19)) {
-            builder.append(LegacyVersionPatches::goatHornData);
+        if (dataVer.isBetween(MC_1_19, MC_1_19_4) && itemVer == 0) {
+            builder.append(LegacyVersionPatches::goatHorn);
         }
 
         return builder.result;

@@ -79,11 +79,15 @@ public final class LegacyVersionPatches {
         }
     }
 
-    public static @NotNull ItemData goatHornData(@NotNull ItemData itemData) {
-        var goatHorn = new ItemStack(Material.GOAT_HORN);
-        goatHorn.editMeta(MusicInstrumentMeta.class, meta -> meta.setInstrument(MusicInstrument.PONDER));
+    public static @NotNull ItemData goatHorn(@NotNull ItemData itemData) {
+        if (itemData.plainName().equals("GOAT_HORN")) {
+            var goatHorn = new ItemStack(Material.GOAT_HORN);
+            goatHorn.editMeta(MusicInstrumentMeta.class, meta -> meta.setInstrument(MusicInstrument.PONDER));
 
-        return new ItemData(itemData.internalId(), "PONDER_GOAT_HORN", goatHorn.serializeAsBytes());
+            return new ItemData(itemData.internalId(), "PONDER_GOAT_HORN", goatHorn.serializeAsBytes());
+        } else {
+            return itemData;
+        }
     }
 
     private LegacyVersionPatches() {
