@@ -17,7 +17,7 @@ tasks {
     }
 
     processResources {
-        filesMatching(listOf("plugin.yml", "en.yml", "ja_JP.yml")) {
+        filesMatching(listOf("paper-plugin.yml", "plugin.yml", "en.yml", "ja_JP.yml")) {
             expand("projectVersion" to project.version)
         }
     }
