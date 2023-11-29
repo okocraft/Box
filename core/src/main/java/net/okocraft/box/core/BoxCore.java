@@ -168,21 +168,7 @@ public class BoxCore implements BoxAPI {
 
         getLogger().info("Registering commands...");
 
-        Optional.ofNullable(context.plugin().getCommand("box"))
-                .ifPresentOrElse(
-                        boxCommand::register,
-                        () -> {
-                            throw new IllegalStateException("Could not get command /box");
-                        }
-                );
-
-        Optional.ofNullable(context.plugin().getCommand("boxadmin"))
-                .ifPresentOrElse(
-                        boxAdminCommand::register,
-                        () -> {
-                            throw new IllegalStateException("Could not get command /boxadmin");
-                        }
-                );
+        this.context.commandRegisterer().register(this.boxCommand).register(this.boxAdminCommand);
 
         getLogger().info("Registering async-tab-completion listener...");
 

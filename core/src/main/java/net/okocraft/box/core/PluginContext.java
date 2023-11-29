@@ -5,6 +5,7 @@ import com.github.siroshun09.event4j.bus.EventBus;
 import com.github.siroshun09.translationloader.directory.TranslationDirectory;
 import net.okocraft.box.api.event.BoxEvent;
 import net.okocraft.box.api.scheduler.BoxScheduler;
+import net.okocraft.box.core.command.CommandRegisterer;
 import net.okocraft.box.storage.api.registry.StorageRegistry;
 import net.okocraft.box.storage.api.util.item.DefaultItemProvider;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -21,5 +22,6 @@ public record PluginContext(@NotNull JavaPlugin plugin,
                             @NotNull YamlConfiguration configuration,
                             @NotNull TranslationDirectory translationDirectory,
                             @NotNull StorageRegistry storageRegistry,
-                            @NotNull DefaultItemProvider defaultItemProvider) {
+                            @NotNull DefaultItemProvider defaultItemProvider,
+                            @NotNull CommandRegisterer commandRegisterer) {
 }

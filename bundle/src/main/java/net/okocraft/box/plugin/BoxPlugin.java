@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
+import java.util.Locale;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 
@@ -37,7 +38,8 @@ public final class BoxPlugin extends JavaPlugin {
                 YamlConfiguration.create(boxBootstrapContext.getPluginDirectory().resolve("config.yml")),
                 TranslationDirectoryUtil.fromContext(boxBootstrapContext),
                 boxBootstrapContext.getStorageRegistry(),
-                PlatformDependent.createItemProvider()
+                PlatformDependent.createItemProvider(),
+                PlatformDependent.createCommandRegisterer(this.getName().toLowerCase(Locale.ENGLISH))
         );
         this.boxCore = new BoxCore(pluginContext);
         this.preregisteredFeatures = boxBootstrapContext.getBoxFeatureList();
