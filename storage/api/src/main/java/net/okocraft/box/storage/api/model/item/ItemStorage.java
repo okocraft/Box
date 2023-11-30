@@ -3,24 +3,23 @@ package net.okocraft.box.storage.api.model.item;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.okocraft.box.api.model.item.BoxCustomItem;
 import net.okocraft.box.api.model.item.BoxItem;
-import net.okocraft.box.api.util.MCDataVersion;
 import net.okocraft.box.storage.api.util.item.DefaultItem;
+import net.okocraft.box.storage.api.util.item.ItemVersion;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 public interface ItemStorage {
 
     void init() throws Exception;
 
-    @Nullable MCDataVersion getDataVersion() throws Exception;
+    @NotNull Optional<ItemVersion> getItemVersion() throws Exception;
 
-    int getDefaultItemVersion() throws Exception;
-
-    void saveItemVersion(@NotNull MCDataVersion dataVersion, int defaultItemVersion) throws Exception;
+    void saveItemVersion(@NotNull ItemVersion itemVersion) throws Exception;
 
     @NotNull List<ItemData> loadAllDefaultItems() throws Exception;
 

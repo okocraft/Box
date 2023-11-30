@@ -3,21 +3,21 @@ package net.okocraft.box.core.model.data;
 import com.github.siroshun09.configapi.api.Configuration;
 import net.okocraft.box.api.model.data.CustomDataContainer;
 import net.okocraft.box.storage.api.model.data.CustomDataStorage;
-import net.okocraft.box.core.util.executor.InternalExecutors;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 public class BoxCustomDataContainer implements CustomDataContainer {
 
     private final CustomDataStorage customDataStorage;
-    private final ExecutorService executor;
+    private final Executor executor;
 
     public BoxCustomDataContainer(@NotNull CustomDataStorage customDataStorage) {
         this.customDataStorage = customDataStorage;
-        this.executor = InternalExecutors.newSingleThreadExecutor("Custom Data");
+        this.executor = Executors.newSingleThreadExecutor(); // TODO
     }
 
     @Override

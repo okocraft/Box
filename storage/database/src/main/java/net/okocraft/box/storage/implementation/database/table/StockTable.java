@@ -1,5 +1,6 @@
 package net.okocraft.box.storage.implementation.database.table;
 
+import it.unimi.dsi.fastutil.ints.Int2IntFunction;
 import net.okocraft.box.api.model.stock.StockData;
 import net.okocraft.box.storage.api.model.stock.PartialSavingStockStorage;
 import net.okocraft.box.storage.implementation.database.database.Database;
@@ -7,8 +8,6 @@ import net.okocraft.box.storage.implementation.database.database.mysql.MySQLData
 import net.okocraft.box.storage.implementation.database.database.sqlite.SQLiteDatabase;
 import org.jetbrains.annotations.NotNull;
 
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.UUID;
@@ -50,7 +49,7 @@ public class StockTable extends AbstractTable implements PartialSavingStockStora
     }
 
     @Override
-    public void saveStockData(@NotNull UUID uuid, @NotNull Collection<StockData> stockData) throws Exception {
+    public void saveStockData(@NotNull UUID uuid, @NotNull Collection<StockData> stockData, @NotNull Int2IntFunction itemIdRemapper) throws Exception {
         try (var connection = this.database.getConnection()) {
             var strUuid = uuid.toString();
 
@@ -61,7 +60,10 @@ public class StockTable extends AbstractTable implements PartialSavingStockStora
 
             try (var statement = this.prepareStatement(connection, "INSERT INTO `%table%` (`uuid`, `item_id`, `amount`) VALUES(?,?,?)")) {
                 for (var data : stockData) {
-                    this.addStockData(statement, strUuid, data);
+                    statement.setString(1, strUuid);
+                    statement.setInt(2, itemIdRemapper.applyAsInt(data.itemId()));
+                    statement.setInt(3, data.amount());
+                    statement.addBatch();
                 }
 
                 statement.executeBatch();
@@ -76,7 +78,10 @@ public class StockTable extends AbstractTable implements PartialSavingStockStora
 
             try (var statement = this.prepareStatement(connection, insertOrUpdateStockDataStatement())) {
                 for (var data : stockData) {
-                    this.addStockData(statement, strUuid, data);
+                    statement.setString(1, strUuid);
+                    statement.setInt(2, data.itemId());
+                    statement.setInt(3, data.amount());
+                    statement.addBatch();
                 }
 
                 statement.executeBatch();
@@ -91,13 +96,6 @@ public class StockTable extends AbstractTable implements PartialSavingStockStora
             statement.setInt(1, 0);
             statement.execute();
         }
-    }
-
-    private void addStockData(@NotNull PreparedStatement statement, @NotNull String strUuid, @NotNull StockData data) throws SQLException {
-        statement.setString(1, strUuid);
-        statement.setInt(2, data.itemId());
-        statement.setInt(3, data.amount());
-        statement.addBatch();
     }
 
     private @NotNull String insertOrUpdateStockDataStatement() {

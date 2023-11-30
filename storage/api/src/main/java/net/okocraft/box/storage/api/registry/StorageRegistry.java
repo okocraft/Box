@@ -13,30 +13,43 @@ import java.util.function.Function;
 
 public final class StorageRegistry {
 
-    private static final Map<String, Function<Configuration, Storage>> STORAGE_MAP = new HashMap<>();
+    private final Map<String, Function<Configuration, Storage>> storageMap = new HashMap<>();
+    private String defaultStorageName;
 
-    public static void register(@NotNull String name, @NotNull Function<Configuration, Storage> storageFunction) {
+    public void register(@NotNull String name, @NotNull Function<Configuration, Storage> storageFunction) {
         Objects.requireNonNull(name);
         Objects.requireNonNull(storageFunction);
-        STORAGE_MAP.put(name.toLowerCase(Locale.ENGLISH), storageFunction);
+
+        storageMap.put(name.toLowerCase(Locale.ENGLISH), storageFunction);
     }
 
-    public static void unregister(@NotNull String name) {
+    public void unregister(@NotNull String name) {
         Objects.requireNonNull(name);
-        STORAGE_MAP.remove(name.toLowerCase(Locale.ENGLISH));
-    }
 
-    public static @Nullable Function<Configuration, Storage>  getStorageFunction(@NotNull String name) {
-        return STORAGE_MAP.get(name.toLowerCase(Locale.ENGLISH));
-    }
-
-    public static @NotNull Function<Configuration, Storage>  getYamlStorageSupplier() {
-        var function = getStorageFunction("yaml");
-
-        if (function != null) {
-            return function;
-        } else {
-            throw new IllegalStateException("Where is the yaml storage!?");
+        if (defaultStorageName != null && defaultStorageName.equals(name)) {
+            throw new IllegalArgumentException("Could not unregister the default storage type.");
         }
+
+        storageMap.remove(name.toLowerCase(Locale.ENGLISH));
+    }
+
+    public @Nullable Function<Configuration, Storage> getStorageFunction(@NotNull String name) {
+        return storageMap.get(name.toLowerCase(Locale.ENGLISH));
+    }
+
+    public void setDefaultStorageName(@NotNull String name) {
+        if (!storageMap.containsKey(name.toLowerCase(Locale.ENGLISH))) {
+            throw new IllegalArgumentException("The storage type '" + name + "' is not registered.");
+        }
+
+        this.defaultStorageName = name.toLowerCase(Locale.ENGLISH);
+    }
+
+    public @NotNull String getDefaultStorageName() {
+        return defaultStorageName;
+    }
+
+    public @NotNull Storage createDefaultStorage(@NotNull Configuration config) {
+        return Objects.requireNonNull(getStorageFunction(this.defaultStorageName)).apply(config);
     }
 }

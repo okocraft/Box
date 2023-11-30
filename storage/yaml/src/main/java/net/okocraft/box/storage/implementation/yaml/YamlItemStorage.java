@@ -11,7 +11,8 @@ import net.okocraft.box.storage.api.holder.LoggerHolder;
 import net.okocraft.box.storage.api.model.item.ItemData;
 import net.okocraft.box.storage.api.model.item.ItemStorage;
 import net.okocraft.box.storage.api.util.item.DefaultItem;
-import net.okocraft.box.storage.api.util.item.ItemNameGenerator;
+import net.okocraft.box.api.util.ItemNameGenerator;
+import net.okocraft.box.storage.api.util.item.ItemVersion;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,6 +24,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 class YamlItemStorage implements ItemStorage {
@@ -52,27 +54,22 @@ class YamlItemStorage implements ItemStorage {
 
             if (itemStorageMetaYaml.get("data-version") != null) {
                 this.dataVersion = MCDataVersion.of(itemStorageMetaYaml.getInteger("data-version"));
+                this.defaultItemVersion = itemStorageMetaYaml.getInteger("default-item-version");
             }
 
-            this.defaultItemVersion = itemStorageMetaYaml.getInteger("default-item-version");
             this.lastUsedItemId.set(itemStorageMetaYaml.getInteger("last-used-item-id"));
         }
     }
 
     @Override
-    public @Nullable MCDataVersion getDataVersion() {
-        return this.dataVersion;
+    public @NotNull Optional<ItemVersion> getItemVersion() {
+        return this.dataVersion != null ? Optional.of(new ItemVersion(this.dataVersion, this.defaultItemVersion)) : Optional.empty();
     }
 
     @Override
-    public int getDefaultItemVersion() {
-        return this.defaultItemVersion;
-    }
-
-    @Override
-    public void saveItemVersion(@NotNull MCDataVersion dataVersion, int defaultItemVersion) throws Exception {
-        this.dataVersion = dataVersion;
-        this.defaultItemVersion = defaultItemVersion;
+    public void saveItemVersion(@NotNull ItemVersion itemVersion) throws Exception {
+        this.dataVersion = itemVersion.dataVersion();
+        this.defaultItemVersion = itemVersion.defaultItemProviderVersion();
 
         this.saveItemStorageMeta();
     }
@@ -171,7 +168,7 @@ class YamlItemStorage implements ItemStorage {
     @Override
     public @NotNull BoxCustomItem saveNewCustomItem(@NotNull ItemStack item, @Nullable String itemName) throws Exception {
         int id = this.lastUsedItemId.incrementAndGet();
-        var name = itemName != null ? itemName : ItemNameGenerator.generate(item.getType().name(), item.serializeAsBytes());
+        var name = itemName != null ? itemName : ItemNameGenerator.itemStack(item.getType(), item.serializeAsBytes());
         var boxItem = BoxItemFactory.createCustomItem(id, name, item);
 
         try (var target = YamlConfiguration.create(this.customItemDataFile)) {
@@ -222,13 +219,17 @@ class YamlItemStorage implements ItemStorage {
 
     private void saveItemStorageMeta() throws IOException {
         try (var writer = Files.newBufferedWriter(this.itemStorageMetaFile, StandardCharsets.UTF_8, YamlFileOptions.WRITE)) {
-            writer.write("data-version: ");
-            writer.write(this.dataVersion.dataVersion());
-            writer.newLine();
+            if (this.dataVersion != null) {
+                writer.write("data-version: ");
+                writer.write(this.dataVersion.dataVersion());
+                writer.newLine();
+            }
 
-            writer.write("default-item-version: ");
-            writer.write(this.defaultItemVersion);
-            writer.newLine();
+            if (this.defaultItemVersion != 0) {
+                writer.write("default-item-version: ");
+                writer.write(this.defaultItemVersion);
+                writer.newLine();
+            }
 
             writer.write("last-used-item-id: ");
             writer.write(this.lastUsedItemId.get());

@@ -3,12 +3,12 @@ package net.okocraft.box.storage.implementation.database.table;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.okocraft.box.api.model.item.BoxCustomItem;
 import net.okocraft.box.api.model.item.BoxItem;
-import net.okocraft.box.api.util.MCDataVersion;
+import net.okocraft.box.api.util.ItemNameGenerator;
 import net.okocraft.box.storage.api.factory.item.BoxItemFactory;
 import net.okocraft.box.storage.api.model.item.ItemData;
 import net.okocraft.box.storage.api.model.item.ItemStorage;
 import net.okocraft.box.storage.api.util.item.DefaultItem;
-import net.okocraft.box.storage.api.util.item.ItemNameGenerator;
+import net.okocraft.box.storage.api.util.item.ItemVersion;
 import net.okocraft.box.storage.implementation.database.database.Database;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -20,6 +20,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 // | id | name | item_data | is_default_item
 public class ItemTable extends AbstractTable implements ItemStorage {
@@ -37,19 +38,16 @@ public class ItemTable extends AbstractTable implements ItemStorage {
     }
 
     @Override
-    public MCDataVersion getDataVersion() throws Exception {
-        return this.metaTable.getItemDataVersion();
+    public @NotNull Optional<ItemVersion> getItemVersion() throws Exception {
+        var dataVersion = this.metaTable.getItemDataVersion();
+        int defaultItemProviderVersion = this.metaTable.getDefaultItemProviderVersion();
+        return dataVersion != null ? Optional.of(new ItemVersion(dataVersion, defaultItemProviderVersion)) : Optional.empty();
     }
 
     @Override
-    public int getDefaultItemVersion() throws Exception {
-        return this.metaTable.getDefaultItemVersion();
-    }
-
-    @Override
-    public void saveItemVersion(@NotNull MCDataVersion dataVersion, int defaultItemVersion) throws Exception {
-        this.metaTable.saveItemDataVersion(dataVersion.dataVersion());
-        this.metaTable.saveDefaultItemVersion(defaultItemVersion);
+    public void saveItemVersion(@NotNull ItemVersion itemVersion) throws Exception {
+        this.metaTable.saveItemDataVersion(itemVersion.dataVersion().dataVersion());
+        this.metaTable.saveDefaultItemProviderVersion(itemVersion.defaultItemProviderVersion());
     }
 
     @Override
@@ -150,7 +148,7 @@ public class ItemTable extends AbstractTable implements ItemStorage {
     public @NotNull BoxCustomItem saveNewCustomItem(@NotNull ItemStack item, @Nullable String itemName) throws Exception {
         try (var connection = this.database.getConnection()) {
             var itemBytes = item.serializeAsBytes();
-            var name = itemName != null ? itemName : ItemNameGenerator.generate(item.getType().name(), itemBytes);
+            var name = itemName != null ? itemName : ItemNameGenerator.itemStack(item.getType(), itemBytes);
 
             try (var statement = prepareStatement(connection, "INSERT INTO `%table%` (`name`, `item_data`, `is_default_item`) VALUES(?,?,?)")) {
                 statement.setString(1, name);

@@ -1,7 +1,6 @@
 package net.okocraft.box.storage.migrator.util;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -9,38 +8,30 @@ import java.util.logging.Logger;
 public class LoggerWrapper {
 
     private final Logger logger;
+    private final boolean debug;
 
-    public LoggerWrapper(@Nullable Logger logger) {
+    public LoggerWrapper(@NotNull Logger logger, boolean debug) {
         this.logger = logger;
+        this.debug = debug;
     }
 
     public void info(@NotNull String log) {
-        if (logger != null) {
-            logger.info(log);
-        }
+        logger.info(log);
     }
 
     public void warning(@NotNull String log) {
-        if (logger != null) {
-            logger.warning(log);
-        }
+        logger.warning(log);
     }
 
     public void severe(@NotNull String log) {
-        if (logger != null) {
-            logger.severe(log);
-        }
+        logger.severe(log);
     }
 
     public void severe(@NotNull String log, @NotNull Throwable throwable) {
-        if (logger != null) {
-            logger.log(Level.SEVERE, log, throwable);
-        }
+        logger.log(Level.SEVERE, log, throwable);
     }
 
-    public void severe(@NotNull Throwable throwable) {
-        if (logger != null) {
-            logger.log(Level.SEVERE, "", throwable);
-        }
+    public boolean debug() {
+        return debug;
     }
 }

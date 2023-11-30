@@ -4,6 +4,7 @@ import com.github.siroshun09.configapi.api.Configuration;
 import com.github.siroshun09.configapi.yaml.YamlConfiguration;
 import net.okocraft.box.storage.api.model.Storage;
 import net.okocraft.box.storage.api.registry.StorageRegistry;
+import net.okocraft.box.storage.api.util.item.DefaultItemProvider;
 import net.okocraft.box.storage.migrator.StorageMigrator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -45,12 +46,13 @@ public final class MigrationConfigLoader {
         return true;
     }
 
-    public static @Nullable StorageMigrator prepare(@NotNull Configuration config, @NotNull Logger logger) {
+    public static @Nullable StorageMigrator prepare(@NotNull Configuration config, @NotNull StorageRegistry storageRegistry,
+                                                    @NotNull DefaultItemProvider defaultItemProvider, @NotNull Logger logger) {
         var sourceStorageSetting = config.getOrCreateSection("source-storage");
         var targetStorageSetting = config.getOrCreateSection("target-storage");
 
-        var sourceStorageFunction = StorageRegistry.getStorageFunction(sourceStorageSetting.getString("type"));
-        var targetStorageFunction = StorageRegistry.getStorageFunction(targetStorageSetting.getString("type"));
+        var sourceStorageFunction = storageRegistry.getStorageFunction(sourceStorageSetting.getString("type"));
+        var targetStorageFunction = storageRegistry.getStorageFunction(targetStorageSetting.getString("type"));
 
         if (sourceStorageFunction == null) {
             logger.warning("Invalid storage type (source): " + sourceStorageSetting.getString("type", "not set"));
@@ -67,12 +69,13 @@ public final class MigrationConfigLoader {
 
         printMigrationInfo(sourceStorage, targetStorage, logger);
 
-        if (config.getBoolean("debug")) {
+        boolean debug = config.getBoolean("debug");
+
+        if (debug) {
             logger.info("Perform migration as debug mode");
-            StorageMigrator.debug = true;
         }
 
-        return new StorageMigrator(sourceStorage, targetStorage, logger);
+        return new StorageMigrator(sourceStorage, targetStorage, defaultItemProvider, logger, debug);
     }
 
     private static void printMigrationInfo(@NotNull Storage source, @NotNull Storage target, @NotNull Logger logger) {

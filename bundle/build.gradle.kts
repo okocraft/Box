@@ -7,6 +7,8 @@ dependencies {
     rootProject.childProjects.values
         .filterNot { project -> project.name == "box-bundle" }
         .forEach { project -> implementation(project) }
+
+    implementation(libs.translationloader)
 }
 
 tasks {
@@ -15,7 +17,7 @@ tasks {
     }
 
     processResources {
-        filesMatching(listOf("plugin.yml", "en.yml", "ja_JP.yml")) {
+        filesMatching(listOf("paper-plugin.yml", "plugin.yml", "en.yml", "ja_JP.yml")) {
             expand("projectVersion" to project.version)
         }
     }

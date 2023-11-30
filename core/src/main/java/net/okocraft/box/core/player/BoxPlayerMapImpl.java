@@ -5,10 +5,10 @@ import net.okocraft.box.api.event.player.PlayerLoadEvent;
 import net.okocraft.box.api.event.player.PlayerUnloadEvent;
 import net.okocraft.box.api.player.BoxPlayer;
 import net.okocraft.box.api.player.BoxPlayerMap;
+import net.okocraft.box.api.scheduler.BoxScheduler;
 import net.okocraft.box.core.message.ErrorMessages;
 import net.okocraft.box.core.model.manager.stock.BoxStockManager;
 import net.okocraft.box.core.model.manager.user.BoxUserManager;
-import net.okocraft.box.core.util.executor.InternalExecutors;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -16,7 +16,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
@@ -29,12 +28,13 @@ public class BoxPlayerMapImpl implements BoxPlayerMap {
     private final Map<Player, BoxPlayer> playerMap = new ConcurrentHashMap<>();
     private final BoxStockManager stockManager;
     private final BoxUserManager userManager;
-    private final ScheduledExecutorService scheduler;
+    private final BoxScheduler scheduler;
 
-    public BoxPlayerMapImpl(@NotNull BoxUserManager userManager, @NotNull BoxStockManager stockManager) {
+    public BoxPlayerMapImpl(@NotNull BoxUserManager userManager, @NotNull BoxStockManager stockManager,
+                            @NotNull BoxScheduler scheduler) {
         this.userManager = userManager;
         this.stockManager = stockManager;
-        this.scheduler = InternalExecutors.newSingleThreadScheduler("Player Loader");
+        this.scheduler = scheduler;
     }
 
     @Override
@@ -61,8 +61,11 @@ public class BoxPlayerMapImpl implements BoxPlayerMap {
     }
 
     public void scheduleLoadingData(@NotNull Player player) {
-        playerMap.put(player, NOT_LOADED_YET);
-        scheduler.schedule(() -> load(player), 1, TimeUnit.SECONDS);
+        if (this.playerMap.put(player, NOT_LOADED_YET) == NOT_LOADED_YET) {
+            return;
+        }
+
+        this.scheduler.scheduleAsyncTask(() -> this.load(player), 1, TimeUnit.SECONDS);
     }
 
     private void load(@NotNull Player player) {
@@ -89,13 +92,13 @@ public class BoxPlayerMapImpl implements BoxPlayerMap {
 
         this.userManager.saveUsername(boxUser);
 
-        var personal = stockManager.getPersonalStockHolder(boxUser);
+        var personal = this.stockManager.getPersonalStockHolder(boxUser);
 
         personal.load();
 
         var boxPlayer = new BoxPlayerImpl(boxUser, player, personal);
 
-        playerMap.put(player, boxPlayer);
+        this.playerMap.put(player, boxPlayer);
 
         BoxProvider.get().getEventBus().callEvent(new PlayerLoadEvent(boxPlayer));
     }
@@ -111,7 +114,7 @@ public class BoxPlayerMapImpl implements BoxPlayerMap {
 
     public void loadAll() {
         Bukkit.getOnlinePlayers().forEach(player -> {
-            playerMap.put(player, NOT_LOADED_YET);
+            this.playerMap.put(player, NOT_LOADED_YET);
             load(player);
         });
     }
