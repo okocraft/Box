@@ -3,7 +3,7 @@ package net.okocraft.box.plugin;
 import com.github.siroshun09.configapi.yaml.YamlConfiguration;
 import net.okocraft.box.api.feature.BoxFeature;
 import net.okocraft.box.bootstrap.BoxBootstrapContext;
-import net.okocraft.box.compatible.PlatformDependent;
+import net.okocraft.box.platform.PlatformDependent;
 import net.okocraft.box.core.BoxCore;
 import net.okocraft.box.core.PluginContext;
 import net.okocraft.box.storage.migrator.StorageMigrator;

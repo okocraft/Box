@@ -1,4 +1,4 @@
-package net.okocraft.box.compatible.item;
+package net.okocraft.box.platform;
 
 import net.okocraft.box.storage.api.util.item.ItemVersion;
 import net.okocraft.box.storage.api.util.item.patcher.ItemDataPatcher;
@@ -12,9 +12,9 @@ import static net.okocraft.box.api.util.MCDataVersion.MC_1_19_4;
 import static net.okocraft.box.api.util.MCDataVersion.MC_1_20_3;
 import static net.okocraft.box.api.util.MCDataVersion.MC_1_21;
 
-public final class VersionAppendingPatcherFactory {
+final class PatcherFactories {
 
-    public static @NotNull ItemNamePatcher createItemNamePatcher(@NotNull ItemVersion startingVersion) {
+    static @NotNull ItemNamePatcher createItemNamePatcher(@NotNull ItemVersion startingVersion) {
         var builder = new ItemNamePatcherBuilder();
         var dataVer = startingVersion.dataVersion();
         var itemVer = startingVersion.defaultItemProviderVersion();
@@ -34,7 +34,7 @@ public final class VersionAppendingPatcherFactory {
         return builder.result;
     }
 
-    public static @NotNull ItemDataPatcher createItemDataPatcher(@NotNull ItemVersion startingVersion) {
+    static @NotNull ItemDataPatcher createItemDataPatcher(@NotNull ItemVersion startingVersion) {
         var builder = new ItemDataPatcherBuilder();
         var dataVer = startingVersion.dataVersion();
         var itemVer = startingVersion.defaultItemProviderVersion();
@@ -56,7 +56,8 @@ public final class VersionAppendingPatcherFactory {
             if (this.result == ItemNamePatcher.NOOP) {
                 this.result = other;
             } else {
-                this.result = this.result.andThen(other);
+                var current = this.result;
+                this.result = original -> other.renameIfNeeded(current.renameIfNeeded(original));
             }
         }
     }
@@ -72,12 +73,13 @@ public final class VersionAppendingPatcherFactory {
             if (this.result == ItemDataPatcher.NOOP) {
                 this.result = other;
             } else {
-                this.result = this.result.andThen(other);
+                var current = this.result;
+                this.result = original -> other.patch(current.patch(original));
             }
         }
     }
 
-    private VersionAppendingPatcherFactory() {
+    private PatcherFactories() {
         throw new UnsupportedOperationException();
     }
 }

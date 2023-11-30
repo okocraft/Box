@@ -8,8 +8,4 @@ public interface ItemNamePatcher {
 
     @NotNull String renameIfNeeded(@NotNull String original);
 
-    default @NotNull ItemNamePatcher andThen(@NotNull ItemNamePatcher next) {
-        return original -> next.renameIfNeeded(this.renameIfNeeded(original));
-    }
-
 }

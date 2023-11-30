@@ -9,8 +9,4 @@ public interface ItemDataPatcher {
 
     @NotNull ItemData patch(@NotNull ItemData original);
 
-    default @NotNull ItemDataPatcher andThen(@NotNull ItemDataPatcher next) {
-        return original -> next.patch(this.patch(original));
-    }
-
 }
