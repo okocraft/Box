@@ -1,4 +1,4 @@
-package net.okocraft.box.compatible.paper;
+package net.okocraft.box.version.common.scheduler;
 
 import net.okocraft.box.api.scheduler.BoxScheduler;
 import org.bukkit.Bukkit;

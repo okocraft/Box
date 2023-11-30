@@ -4,7 +4,7 @@ import net.okocraft.box.api.scheduler.BoxScheduler;
 import net.okocraft.box.api.util.Folia;
 import net.okocraft.box.api.util.MCDataVersion;
 import net.okocraft.box.compatible.item.VersionAppendingPatcherFactory;
-import net.okocraft.box.compatible.paper.FoliaSchedulerWrapper;
+import net.okocraft.box.version.common.scheduler.FoliaSchedulerWrapper;
 import net.okocraft.box.core.command.CommandRegisterer;
 import net.okocraft.box.storage.api.util.item.DefaultItem;
 import net.okocraft.box.storage.api.util.item.DefaultItemProvider;
