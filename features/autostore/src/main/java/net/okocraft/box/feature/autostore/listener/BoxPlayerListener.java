@@ -35,32 +35,21 @@ public class BoxPlayerListener {
     private void onLoad(@NotNull PlayerLoadEvent event) {
         var player = event.getBoxPlayer().getPlayer();
 
-        AutoStoreSettingContainer.INSTANCE.load(player)
-                .exceptionallyAsync(throwable -> {
-                    BoxProvider.get().getLogger().log(
-                            Level.SEVERE,
-                            "Could not load autostore setting (" + player.getName() + ")",
-                            throwable
-                    );
-
-                    player.sendMessage(AutoStoreMessage.ERROR_FAILED_TO_LOAD_SETTINGS);
-
-                    return null;
-                });
+        try {
+            AutoStoreSettingContainer.INSTANCE.load(player);
+        } catch (Exception e) {
+            BoxProvider.get().getLogger().log(Level.SEVERE, "Could not load autostore setting (" + player.getName() + ")", e);
+            player.sendMessage(AutoStoreMessage.ERROR_FAILED_TO_LOAD_SETTINGS);
+        }
     }
 
     private void onUnload(@NotNull PlayerUnloadEvent event) {
         var player = event.getBoxPlayer().getPlayer();
 
-        AutoStoreSettingContainer.INSTANCE.unload(player)
-                .exceptionallyAsync(throwable -> {
-                    BoxProvider.get().getLogger().log(
-                            Level.SEVERE,
-                            "Could not unload autostore setting (" + player.getName() + ")",
-                            throwable
-                    );
-
-                    return null;
-                });
+        try {
+            AutoStoreSettingContainer.INSTANCE.unload(player);
+        } catch (Exception e) {
+            BoxProvider.get().getLogger().log(Level.SEVERE, "Could not unload autostore setting (" + player.getName() + ")", e);
+        }
     }
 }

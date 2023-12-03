@@ -1,17 +1,24 @@
 package net.okocraft.box.plugin;
 
-import com.github.siroshun09.configapi.yaml.YamlConfiguration;
+import com.github.siroshun09.configapi.core.node.MapNode;
+import com.github.siroshun09.configapi.format.yaml.YamlFormat;
 import net.okocraft.box.api.feature.BoxFeature;
 import net.okocraft.box.bootstrap.BoxBootstrapContext;
-import net.okocraft.box.platform.PlatformDependent;
 import net.okocraft.box.core.BoxCore;
 import net.okocraft.box.core.PluginContext;
-import net.okocraft.box.storage.migrator.StorageMigrator;
+import net.okocraft.box.core.config.Config;
+import net.okocraft.box.platform.PlatformDependent;
+import net.okocraft.box.storage.api.holder.StorageHolder;
+import net.okocraft.box.storage.api.registry.StorageRegistry;
+import net.okocraft.box.storage.api.registry.BaseStorageContext;
 import net.okocraft.box.storage.migrator.config.MigrationConfigLoader;
 import net.okocraft.box.util.TranslationDirectoryUtil;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
@@ -21,13 +28,20 @@ import java.util.logging.Level;
 
 public final class BoxPlugin extends JavaPlugin {
 
-    private final PluginContext pluginContext;
     private final BoxCore boxCore;
+    private final BaseStorageContext storageContext;
+    private final PluginContext pluginContext;
+    private final StorageRegistry storageRegistry;
     private final @NotNull List<Supplier<? extends BoxFeature>> preregisteredFeatures;
 
     private Status status = Status.NOT_LOADED;
 
     public BoxPlugin(@NotNull BoxBootstrapContext boxBootstrapContext) {
+        this.storageContext = new BaseStorageContext(
+                boxBootstrapContext.getPluginDirectory(),
+                this.getLogger()
+        );
+
         this.pluginContext = new PluginContext(
                 this,
                 boxBootstrapContext.getVersion(),
@@ -35,13 +49,13 @@ public final class BoxPlugin extends JavaPlugin {
                 boxBootstrapContext.getJarFile(),
                 PlatformDependent.createScheduler(this),
                 boxBootstrapContext.getEventBus(),
-                YamlConfiguration.create(boxBootstrapContext.getPluginDirectory().resolve("config.yml")),
+                new Config(boxBootstrapContext.getPluginDirectory().resolve("config.yml")),
                 TranslationDirectoryUtil.fromContext(boxBootstrapContext),
-                boxBootstrapContext.getStorageRegistry(),
                 PlatformDependent.createItemProvider(),
                 PlatformDependent.createCommandRegisterer(this.getName().toLowerCase(Locale.ENGLISH))
         );
         this.boxCore = new BoxCore(pluginContext);
+        this.storageRegistry = boxBootstrapContext.getStorageRegistry();
         this.preregisteredFeatures = boxBootstrapContext.getBoxFeatureList();
     }
 
@@ -53,14 +67,17 @@ public final class BoxPlugin extends JavaPlugin {
 
         var start = Instant.now();
 
-        if (boxCore.load()) {
-            status = Status.LOADED;
-        } else {
-            status = Status.EXCEPTION_OCCURRED;
+        try {
+            StorageHolder.init(this.pluginContext.config().loadAndCreateStorage(this.storageRegistry, this.storageContext));
+        } catch (IOException e) {
+            this.getLogger().log(Level.SEVERE, "Could not load config.yml", e);
+            this.status = Status.EXCEPTION_OCCURRED;
             return;
         }
 
+        this.status = Status.LOADED;
         var finish = Instant.now();
+
         getLogger().info("Successfully loaded! (" + Duration.between(start, finish).toMillis() + "ms)");
     }
 
@@ -81,7 +98,7 @@ public final class BoxPlugin extends JavaPlugin {
 
         var start = Instant.now();
 
-        if (boxCore.enable()) {
+        if (boxCore.enable(StorageHolder.getStorage())) {
             status = Status.ENABLED;
         } else {
             status = Status.EXCEPTION_OCCURRED;
@@ -92,6 +109,8 @@ public final class BoxPlugin extends JavaPlugin {
         for (var featureSupplier : this.preregisteredFeatures) {
             this.boxCore.register(featureSupplier.get());
         }
+
+        this.preregisteredFeatures.clear();
 
         var finish = Instant.now();
         getLogger().info("Successfully enabled! (" + Duration.between(start, finish).toMillis() + "ms)");
@@ -108,16 +127,32 @@ public final class BoxPlugin extends JavaPlugin {
     }
 
     private void runMigratorIfNeeded() throws Exception {
-        StorageMigrator migrator = null;
+        var filepath = this.pluginContext.dataDirectory().resolve("migration.yml");
 
-        try (var migrationYaml = MigrationConfigLoader.load(boxCore.getPluginDirectory().resolve("migration.yml"), getLogger())) {
-            if (MigrationConfigLoader.isMigrationRequested(migrationYaml, getLogger())) {
-                migrator = MigrationConfigLoader.prepare(migrationYaml, pluginContext.storageRegistry(), pluginContext.defaultItemProvider(), getLogger());
-            }
+        if (!Files.isRegularFile(filepath)) {
+            return;
         }
 
+        MapNode loadedMigrationSetting;
+
+        try (var reader = Files.newBufferedReader(filepath, StandardCharsets.UTF_8)) {
+            loadedMigrationSetting = YamlFormat.COMMENT_PROCESSING.load(reader);
+        }
+
+        if (loadedMigrationSetting.getBoolean("migration-mode")) {
+            loadedMigrationSetting.set("migration-mode", false);
+
+            try (var writer = Files.newBufferedWriter(filepath, StandardCharsets.UTF_8)) {
+                YamlFormat.COMMENT_PROCESSING.save(loadedMigrationSetting, writer);
+            }
+        } else {
+            return;
+        }
+
+        var migrator = MigrationConfigLoader.prepare(loadedMigrationSetting, this.storageRegistry, this.pluginContext.defaultItemProvider(), this.storageContext);
+
         if (migrator != null) {
-             var start = Instant.now();
+            var start = Instant.now();
 
             getLogger().info("Initializing storages...");
             migrator.init();

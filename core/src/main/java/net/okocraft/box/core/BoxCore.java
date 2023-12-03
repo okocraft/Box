@@ -1,7 +1,5 @@
 package net.okocraft.box.core;
 
-import com.github.siroshun09.configapi.api.util.ResourceUtils;
-import com.github.siroshun09.configapi.yaml.YamlConfiguration;
 import com.github.siroshun09.event4j.bus.EventBus;
 import com.github.siroshun09.translationloader.directory.TranslationDirectory;
 import net.kyori.adventure.text.Component;
@@ -12,9 +10,7 @@ import net.okocraft.box.api.command.base.BoxCommand;
 import net.okocraft.box.api.event.BoxEvent;
 import net.okocraft.box.api.event.feature.FeatureEvent;
 import net.okocraft.box.api.feature.BoxFeature;
-import net.okocraft.box.api.feature.Disableable;
 import net.okocraft.box.api.feature.Reloadable;
-import net.okocraft.box.api.model.data.CustomDataContainer;
 import net.okocraft.box.api.model.manager.ItemManager;
 import net.okocraft.box.api.model.manager.StockManager;
 import net.okocraft.box.api.model.manager.UserManager;
@@ -22,19 +18,17 @@ import net.okocraft.box.api.player.BoxPlayerMap;
 import net.okocraft.box.api.scheduler.BoxScheduler;
 import net.okocraft.box.core.command.BoxAdminCommandImpl;
 import net.okocraft.box.core.command.BoxCommandImpl;
-import net.okocraft.box.core.config.Settings;
 import net.okocraft.box.core.listener.DebugListener;
 import net.okocraft.box.core.listener.PlayerConnectionListener;
 import net.okocraft.box.core.message.ErrorMessages;
 import net.okocraft.box.core.message.MicsMessages;
-import net.okocraft.box.core.model.data.BoxCustomDataContainer;
-import net.okocraft.box.storage.api.util.item.ItemLoader;
+import net.okocraft.box.core.model.manager.customdata.BoxCustomDataManager;
 import net.okocraft.box.core.model.manager.item.BoxItemManager;
 import net.okocraft.box.core.model.manager.stock.BoxStockManager;
 import net.okocraft.box.core.model.manager.user.BoxUserManager;
 import net.okocraft.box.core.player.BoxPlayerMapImpl;
-import net.okocraft.box.storage.api.holder.StorageHolder;
 import net.okocraft.box.storage.api.model.Storage;
+import net.okocraft.box.storage.api.util.item.ItemLoader;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
@@ -59,8 +53,6 @@ import java.util.logging.Logger;
 public class BoxCore implements BoxAPI {
 
     private final PluginContext context;
-
-    private final YamlConfiguration configuration;
     private final TranslationDirectory translationDirectory;
 
     private final BoxCommandImpl boxCommand = new BoxCommandImpl();
@@ -72,29 +64,17 @@ public class BoxCore implements BoxAPI {
     private BoxItemManager itemManager;
     private BoxStockManager stockManager;
     private BoxUserManager userManager;
-    private BoxCustomDataContainer customDataContainer;
+    private BoxCustomDataManager customDataManager;
     private BoxPlayerMapImpl playerMap;
 
     public BoxCore(@NotNull PluginContext context) {
         this.context = context;
-
-        this.configuration = context.configuration();
         this.translationDirectory = context.translationDirectory();
 
         BoxProvider.set(this);
     }
 
     public boolean load() {
-        getLogger().info("Loading config.yml...");
-
-        try {
-            ResourceUtils.copyFromJarIfNotExists(context.jarFile(), "config.yml", configuration.getPath());
-            configuration.load();
-        } catch (IOException e) {
-            getLogger().log(Level.SEVERE, "Could not load config.yml", e);
-            return false;
-        }
-
         getLogger().info("Loading languages...");
 
         try {
@@ -104,7 +84,7 @@ public class BoxCore implements BoxAPI {
             return false;
         }
 
-        if (configuration.get(Settings.DEBUG)) {
+        if (this.context.config().coreSetting().debug()) {
             DebugListener.register(getEventBus());
             getLogger().info("Debug mode is ENABLED");
         }
@@ -114,33 +94,17 @@ public class BoxCore implements BoxAPI {
         return true;
     }
 
-    public boolean enable() {
-        var storageSection = configuration.getOrCreateSection("storage");
-
-        var storageType = storageSection.getString("type");
-        var storageFunction = context.storageRegistry().getStorageFunction(storageType);
-
-        if (storageFunction == null) {
-            if (!storageType.isEmpty()) {
-                getLogger().warning(storageType + " is not found!");
-                getLogger().warning("Using " + context.storageRegistry().getDefaultStorageName() + " storage...");
-            }
-
-            storage = context.storageRegistry().createDefaultStorage(storageSection);
-        } else {
-            storage = storageFunction.apply(storageSection);
-        }
-
+    public boolean enable(@NotNull Storage storage) {
+        this.storage = storage;
         getLogger().info("Initializing " + storage.getName() + " storage...");
 
         try {
             storage.init();
+            storage.getCustomDataStorage().updateFormatIfNeeded(); // Update data format on database
         } catch (Exception e) {
             getLogger().log(Level.SEVERE, "Could not initialize " + storage.getName() + " storage", e);
             return false;
         }
-
-        StorageHolder.init(storage); // set storage for other features/plugins that depend on Storage API
 
         getLogger().info("Initializing managers...");
 
@@ -157,7 +121,7 @@ public class BoxCore implements BoxAPI {
 
         stockManager = new BoxStockManager(storage.getStockStorage(), uuid -> Bukkit.getPlayer(uuid) != null);
 
-        customDataContainer = new BoxCustomDataContainer(storage.getCustomDataStorage());
+        this.customDataManager = new BoxCustomDataManager(storage.getCustomDataStorage());
 
         this.playerMap = new BoxPlayerMapImpl(this.userManager, this.stockManager, this.context.scheduler());
         this.playerMap.loadAll();
@@ -229,14 +193,14 @@ public class BoxCore implements BoxAPI {
         }
 
         try {
-            configuration.reload();
+            this.context.config().reload();
             sender.sendMessage(MicsMessages.CONFIG_RELOADED);
         } catch (Throwable e) {
             playerMessenger.accept(() -> ErrorMessages.ERROR_RELOAD_FAILURE.apply("config.yml", e));
             getLogger().log(Level.SEVERE, "Could not reload config.yml", e);
         }
 
-        if (configuration.get(Settings.DEBUG)) {
+        if (this.context.config().coreSetting().debug()) {
             DebugListener.register(getEventBus());
             getLogger().info("Debug mode is ENABLED");
         }
@@ -287,11 +251,6 @@ public class BoxCore implements BoxAPI {
     }
 
     @Override
-    public @NotNull YamlConfiguration getConfiguration() {
-        return configuration;
-    }
-
-    @Override
     public @NotNull UserManager getUserManager() {
         return userManager;
     }
@@ -307,8 +266,8 @@ public class BoxCore implements BoxAPI {
     }
 
     @Override
-    public @NotNull CustomDataContainer getCustomDataContainer() {
-        return customDataContainer;
+    public @NotNull BoxCustomDataManager getCustomDataManager() {
+        return this.customDataManager;
     }
 
     @Override
@@ -352,12 +311,6 @@ public class BoxCore implements BoxAPI {
 
     @Override
     public void register(@NotNull BoxFeature boxFeature) {
-        if (boxFeature instanceof Disableable &&
-                configuration.get(Settings.DISABLED_FEATURES).contains(boxFeature.getName())) {
-            getLogger().warning("The " + boxFeature.getName() + " feature is disabled in config.yml");
-            return;
-        }
-
         var dependencies = boxFeature.getDependencies();
 
         if (!dependencies.isEmpty()) {
@@ -409,8 +362,8 @@ public class BoxCore implements BoxAPI {
     }
 
     @Override
-    public boolean isDisabledWorld(@NotNull Player player) {
-        return isDisabledWorld(player.getWorld()) && !player.hasPermission("box.admin.ignore-disabled-world");
+    public boolean canUseBox(@NotNull Player player) {
+        return !isDisabledWorld(player.getWorld()) || player.hasPermission("box.admin.ignore-disabled-world");
     }
 
     @Override
@@ -420,7 +373,7 @@ public class BoxCore implements BoxAPI {
 
     @Override
     public boolean isDisabledWorld(@NotNull String worldName) {
-        return configuration.get(Settings.DISABLED_WORLDS).contains(worldName);
+        return this.context.config().coreSetting().disabledWorlds().contains(worldName);
     }
 
     @Override

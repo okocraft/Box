@@ -3,8 +3,7 @@ package net.okocraft.box.bootstrap;
 import io.papermc.paper.plugin.bootstrap.BootstrapContext;
 import io.papermc.paper.plugin.bootstrap.PluginBootstrap;
 import io.papermc.paper.plugin.bootstrap.PluginProviderContext;
-import net.okocraft.box.bundle.BuiltinFeatures;
-import net.okocraft.box.bundle.BuiltinStorages;
+import net.okocraft.box.bundle.Builtin;
 import net.okocraft.box.bundle.BuiltinTranslations;
 import net.okocraft.box.plugin.BoxPlugin;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -32,8 +31,8 @@ public final class BoxBootstrap implements PluginBootstrap {
         BoxBootstrap.instance = this;
         boxBootstrapContext = BoxBootstrapContext.create(context);
 
-        BuiltinFeatures.addToContext(boxBootstrapContext);
-        BuiltinStorages.addToRegistry(boxBootstrapContext.getStorageRegistry());
+        Builtin.features(this.boxBootstrapContext);
+        Builtin.storages(this.boxBootstrapContext.getStorageRegistry());
 
         boxBootstrapContext.onLanguageDirectoryCreated().add(directory -> BuiltinTranslations.saveDefaultTranslationFiles(boxBootstrapContext.getJarFile(), directory));
         boxBootstrapContext.getTranslationLoaderCreators().addCreator(locale -> BuiltinTranslations.loadDefaultTranslation(boxBootstrapContext.getJarFile(), locale));

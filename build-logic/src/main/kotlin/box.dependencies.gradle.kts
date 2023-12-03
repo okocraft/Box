@@ -19,7 +19,6 @@ repositories {
 
 dependencies {
     api(libs.configapi.core)
-    api(libs.configapi.yaml) // TODO: remove this
     api(libs.event4j)
 
     compileOnly(libs.paper)

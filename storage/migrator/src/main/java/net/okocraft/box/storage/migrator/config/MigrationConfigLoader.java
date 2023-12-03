@@ -1,71 +1,44 @@
 package net.okocraft.box.storage.migrator.config;
 
-import com.github.siroshun09.configapi.api.Configuration;
-import com.github.siroshun09.configapi.yaml.YamlConfiguration;
+import com.github.siroshun09.configapi.core.node.MapNode;
 import net.okocraft.box.storage.api.model.Storage;
 import net.okocraft.box.storage.api.registry.StorageRegistry;
+import net.okocraft.box.storage.api.registry.BaseStorageContext;
 import net.okocraft.box.storage.api.util.item.DefaultItemProvider;
 import net.okocraft.box.storage.migrator.StorageMigrator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.logging.Level;
+import java.util.Locale;
 import java.util.logging.Logger;
 
 public final class MigrationConfigLoader {
 
-    public static @Nullable YamlConfiguration load(@NotNull Path path, @NotNull Logger logger) {
-        if (Files.isRegularFile(path)) {
-            var yaml = YamlConfiguration.create(path);
-            try {
-                yaml.load();
-                return yaml;
-            } catch (IOException e) {
-                logger.log(Level.WARNING, "Could not load " + path.getFileName().toString(), e);
-            }
-        }
+    public static @Nullable StorageMigrator prepare(@NotNull MapNode config, @NotNull StorageRegistry storageRegistry,
+                                                    @NotNull DefaultItemProvider defaultItemProvider, @NotNull BaseStorageContext storageContext) {
+        var sourceStorageSetting = config.getMap("source-storage");
+        var targetStorageSetting = config.getMap("target-storage");
 
-        return null;
-    }
+        var sourceStorageType = sourceStorageSetting.getString("type", "not set");
+        var targetStorageType = targetStorageSetting.getString("type", "not set");
 
-    public static boolean isMigrationRequested(@Nullable YamlConfiguration config, @NotNull Logger logger) {
-        if (config == null || !config.isLoaded() || !config.getBoolean("migration-mode")) {
-            return false;
-        }
+        var sourceStorageEntry = storageRegistry.getOrNull(sourceStorageType);
+        var targetStorageEntry = storageRegistry.getOrNull(targetStorageType);
 
-        try {
-            config.set("migration-mode", false);
-            config.save();
-        } catch (IOException e) {
-            logger.log(Level.WARNING, "Could not save " + config.getPath().getFileName().toString(), e);
-        }
+        var logger = storageContext.logger();
 
-        return true;
-    }
-
-    public static @Nullable StorageMigrator prepare(@NotNull Configuration config, @NotNull StorageRegistry storageRegistry,
-                                                    @NotNull DefaultItemProvider defaultItemProvider, @NotNull Logger logger) {
-        var sourceStorageSetting = config.getOrCreateSection("source-storage");
-        var targetStorageSetting = config.getOrCreateSection("target-storage");
-
-        var sourceStorageFunction = storageRegistry.getStorageFunction(sourceStorageSetting.getString("type"));
-        var targetStorageFunction = storageRegistry.getStorageFunction(targetStorageSetting.getString("type"));
-
-        if (sourceStorageFunction == null) {
-            logger.warning("Invalid storage type (source): " + sourceStorageSetting.getString("type", "not set"));
+        if (sourceStorageEntry == null) {
+            logger.warning("Invalid storage type (source): " + sourceStorageType);
             return null;
         }
 
-        if (targetStorageFunction == null) {
-            logger.warning("Invalid storage type (target): " + targetStorageSetting.getString("type", "not set"));
+        if (targetStorageEntry == null) {
+            logger.warning("Invalid storage type (target): " + targetStorageType);
             return null;
         }
 
-        var sourceStorage = sourceStorageFunction.apply(sourceStorageSetting);
-        var targetStorage = targetStorageFunction.apply(targetStorageSetting);
+        var sourceStorage = sourceStorageEntry.create(storageContext, sourceStorageSetting.getMap(sourceStorageType.toLowerCase(Locale.ENGLISH)));
+        var targetStorage = targetStorageEntry.create(storageContext, targetStorageSetting.getMap(targetStorageType.toLowerCase(Locale.ENGLISH)));
 
         printMigrationInfo(sourceStorage, targetStorage, logger);
 

@@ -47,16 +47,11 @@ public class AutoSaveListener {
         copied.stream()
                 .filter(setting -> Bukkit.getPlayer(setting.getUuid()) != null)
                 .forEach(setting -> {
-                    var task = AutoStoreSettingContainer.INSTANCE.save(setting);
-
-                    task.exceptionallyAsync(throwable -> {
-                        BoxProvider.get().getLogger().log(
-                                Level.SEVERE,
-                                "Could not save autostore setting (" + setting.getUuid() + ")",
-                                throwable
-                        );
-                        return null;
-                    });
+                    try {
+                        AutoStoreSettingContainer.INSTANCE.save(setting);
+                    } catch (Exception e) {
+                        BoxProvider.get().getLogger().log(Level.SEVERE, "Could not save autostore setting (" + setting.getUuid() + ")", e);
+                    }
                 });
     }
 }

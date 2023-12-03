@@ -11,7 +11,7 @@ public final class SQLiteTableSchema {
     public static @NotNull SchemaSet create(@NotNull String tablePrefix) {
         return new SchemaSet(
                 new Meta(tablePrefix), new Users(tablePrefix), new Items(tablePrefix),
-                new Stock(tablePrefix), new CustomData(tablePrefix)
+                new Stock(tablePrefix), new CustomData(tablePrefix), new LegacyCustomData(tablePrefix)
         );
     }
 
@@ -100,6 +100,23 @@ public final class SQLiteTableSchema {
     private static class CustomData extends AbstractTableSchema {
 
         private CustomData(@NotNull String tablePrefix) {
+            super(tablePrefix + "custom_data_v2");
+        }
+
+        @Override
+        public @NotNull String createTableStatement() {
+            return """
+                    CREATE TABLE  IF NOT EXISTS `%table%` (
+                      `key` VARCHAR(50) PRIMARY KEY NOT NULL,
+                      `data` BLOB  NOT NULL
+                    )
+                    """;
+        }
+    }
+
+    private static class LegacyCustomData extends AbstractTableSchema {
+
+        private LegacyCustomData(@NotNull String tablePrefix) {
             super(tablePrefix + "custom_data");
         }
 

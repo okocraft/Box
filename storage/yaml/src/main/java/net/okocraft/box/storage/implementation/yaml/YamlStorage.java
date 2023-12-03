@@ -1,10 +1,12 @@
 package net.okocraft.box.storage.implementation.yaml;
 
+import com.github.siroshun09.configapi.core.serialization.annotation.DefaultString;
 import net.okocraft.box.storage.api.model.Storage;
 import net.okocraft.box.storage.api.model.data.CustomDataStorage;
 import net.okocraft.box.storage.api.model.item.ItemStorage;
 import net.okocraft.box.storage.api.model.stock.StockStorage;
 import net.okocraft.box.storage.api.model.user.UserStorage;
+import net.okocraft.box.storage.api.registry.StorageContext;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Files;
@@ -21,8 +23,8 @@ public class YamlStorage implements Storage {
     private final YamlStockStorage stockStorage;
     private final YamlCustomDataStorage customDataStorage;
 
-    public YamlStorage(@NotNull Path rootDirectory) {
-        this.rootDirectory = rootDirectory;
+    public YamlStorage(@NotNull StorageContext<Setting> context) {
+        this.rootDirectory = context.base().rootDirectory().resolve(context.setting().directoryName());
         this.userStorage = new YamlUserStorage(rootDirectory);
         this.itemStorage = new YamlItemStorage(rootDirectory);
         this.stockStorage = new YamlStockStorage(rootDirectory);
@@ -73,5 +75,8 @@ public class YamlStorage implements Storage {
     @Override
     public @NotNull CustomDataStorage getCustomDataStorage() {
         return customDataStorage;
+    }
+
+    public record Setting(@DefaultString("data") String directoryName) {
     }
 }

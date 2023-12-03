@@ -1,13 +1,13 @@
 package net.okocraft.box.feature.category.internal.listener;
 
-import com.github.siroshun09.configapi.yaml.YamlConfiguration;
+import com.github.siroshun09.configapi.format.yaml.YamlFormat;
 import com.github.siroshun09.event4j.key.Key;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.event.item.CustomItemRegisterEvent;
 import net.okocraft.box.api.event.item.CustomItemRenameEvent;
 import net.okocraft.box.feature.category.api.registry.CategoryRegistry;
 import net.okocraft.box.feature.category.internal.category.CommonDefaultCategory;
-import net.okocraft.box.feature.category.internal.file.CategoryDumper;
+import net.okocraft.box.feature.category.internal.file.CategoryFile;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.logging.Level;
@@ -55,9 +55,9 @@ public class CustomItemListener {
     }
 
     private void updateCategoriesFile() {
-        try (var yaml = YamlConfiguration.create(BoxProvider.get().getPluginDirectory().resolve("categories.yml"))) {
-            CategoryDumper.dump(registry, yaml);
-            yaml.save();
+        try {
+            var filepath = BoxProvider.get().getPluginDirectory().resolve("categories.yml");
+            YamlFormat.DEFAULT.save(CategoryFile.dump(this.registry), filepath);
         } catch (Exception e) {
             BoxProvider.get().getLogger().log(Level.SEVERE, "Could not save categories.yml", e);
         }

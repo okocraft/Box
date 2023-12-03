@@ -55,7 +55,7 @@ public class GiveCommand extends AbstractCommand {
             return;
         }
 
-        if (BoxProvider.get().isDisabledWorld(target)) {
+        if (!BoxProvider.get().canUseBox(target)) {
             sender.sendMessage(BoxMessage.GIVE_TARGET_IS_IN_DISABLED_WORLD.apply(target, target.getWorld()));
             return;
         }

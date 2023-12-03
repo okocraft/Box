@@ -3,5 +3,6 @@ plugins {
 }
 
 dependencies {
-    compileOnly(projects.boxApi)
+    implementation(projects.boxApi)
+    implementation(libs.configapi.format.yaml)
 }

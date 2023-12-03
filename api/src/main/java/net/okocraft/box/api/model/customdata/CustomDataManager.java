@@ -1,4 +1,4 @@
-package net.okocraft.box.storage.api.model.data;
+package net.okocraft.box.api.model.customdata;
 
 import com.github.siroshun09.configapi.core.node.MapNode;
 import net.kyori.adventure.key.Key;
@@ -6,12 +6,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.BiConsumer;
 
-public interface CustomDataStorage {
-
-    void init() throws Exception;
-
-    default void updateFormatIfNeeded() throws Exception {
-    }
+public interface CustomDataManager {
 
     @NotNull MapNode loadData(@NotNull Key key) throws Exception;
 
@@ -19,5 +14,4 @@ public interface CustomDataStorage {
 
     void visitData(@NotNull String namespace, @NotNull BiConsumer<Key, MapNode> consumer) throws Exception;
 
-    void visitAllData(@NotNull BiConsumer<Key, MapNode> consumer) throws Exception;
 }

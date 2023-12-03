@@ -1,44 +1,40 @@
 package net.okocraft.box.storage.api.registry;
 
-import com.github.siroshun09.configapi.api.Configuration;
 import net.okocraft.box.storage.api.model.Storage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.UnmodifiableView;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Function;
 
 public final class StorageRegistry {
 
-    private final Map<String, Function<Configuration, Storage>> storageMap = new HashMap<>();
+    private final Map<String, StorageType<?>> storageMap = new HashMap<>();
     private String defaultStorageName;
 
-    public void register(@NotNull String name, @NotNull Function<Configuration, Storage> storageFunction) {
-        Objects.requireNonNull(name);
-        Objects.requireNonNull(storageFunction);
-
-        storageMap.put(name.toLowerCase(Locale.ENGLISH), storageFunction);
+    public <R extends Record> void register(@NotNull String name, @NotNull Class<R> settingClass, @NotNull Function<StorageContext<R>, Storage> storageFunction) {
+        this.storageMap.put(name.toLowerCase(Locale.ENGLISH), new StorageType<>(name, settingClass, storageFunction));
     }
 
-    public void unregister(@NotNull String name) {
-        Objects.requireNonNull(name);
-
-        if (defaultStorageName != null && defaultStorageName.equals(name)) {
-            throw new IllegalArgumentException("Could not unregister the default storage type.");
-        }
-
-        storageMap.remove(name.toLowerCase(Locale.ENGLISH));
+    public @Nullable StorageType<?> getOrNull(@NotNull String name) {
+        return this.storageMap.get(name.toLowerCase(Locale.ENGLISH));
     }
 
-    public @Nullable Function<Configuration, Storage> getStorageFunction(@NotNull String name) {
-        return storageMap.get(name.toLowerCase(Locale.ENGLISH));
+    public @NotNull StorageType<?> getDefault() {
+        return this.storageMap.get(this.getDefaultStorageName());
+    }
+
+    public @NotNull @UnmodifiableView Collection<StorageType<?>> getEntries() {
+        return Collections.unmodifiableCollection(this.storageMap.values());
     }
 
     public void setDefaultStorageName(@NotNull String name) {
-        if (!storageMap.containsKey(name.toLowerCase(Locale.ENGLISH))) {
+        if (!this.storageMap.containsKey(name.toLowerCase(Locale.ENGLISH))) {
             throw new IllegalArgumentException("The storage type '" + name + "' is not registered.");
         }
 
@@ -46,10 +42,7 @@ public final class StorageRegistry {
     }
 
     public @NotNull String getDefaultStorageName() {
-        return defaultStorageName;
+        return this.defaultStorageName;
     }
 
-    public @NotNull Storage createDefaultStorage(@NotNull Configuration config) {
-        return Objects.requireNonNull(getStorageFunction(this.defaultStorageName)).apply(config);
-    }
 }

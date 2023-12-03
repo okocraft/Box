@@ -20,15 +20,22 @@ public class CustomDataMigrator extends AbstractDataMigrator<ItemMigrator.Result
 
     @Override
     protected @NotNull ItemMigrator.Result migrateData(@NotNull CustomDataStorage source, @NotNull CustomDataStorage target, @NotNull LoggerWrapper logger) throws Exception {
-        for (var key : source.getKeys()) {
-            var data = source.load(key.namespace(), key.key());
-            target.save(key.namespace(), key.key(), data);
+        source.visitAllData((key, mapNode) -> {
+            try {
+                target.saveData(key, mapNode);
+            } catch (Exception e) {
+                sneakyThrow(e);
+            }
 
             if (logger.debug()) {
-                logger.info("Migrated custom data (" + key + "): " + data);
+                logger.info("Migrated custom data (" + key + "): " + mapNode);
             }
-        }
-
+        });
         return this.itemMigratorResult;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T extends Throwable> void sneakyThrow(@NotNull Throwable exception) throws T {
+        throw (T) exception;
     }
 }
