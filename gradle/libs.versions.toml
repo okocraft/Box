@@ -2,7 +2,8 @@
 # common libraries
 adventure = "4.14.0"
 annotations = "24.1.0"
-configapi = "4.6.4"
+configapi-v4 = "4.6.4"
+configapi = "5.0.0-SNAPSHOT"
 event4j = "3.2.1"
 fastutil = "8.5.12"
 hikaricp = "5.1.0"
@@ -29,7 +30,9 @@ bolt = "1.0.518"
 # common libraries
 adventure = { module = "net.kyori:adventure-api", version.ref = "adventure" }
 annotations = { module = "org.jetbrains:annotations", version.ref = "annotations" }
-configapi-yaml = { module = "com.github.siroshun09.configapi:configapi-yaml", version.ref = "configapi" }
+configapi-core = { module = "com.github.siroshun09.configapi:configapi-core", version.ref = "configapi" }
+configapi-format-yaml = { module = "com.github.siroshun09.configapi:configapi-format-yaml", version.ref = "configapi" }
+configapi-yaml = { module = "com.github.siroshun09.configapi:configapi-yaml", version.ref = "configapi-v4" }
 event4j = { module = "com.github.siroshun09.event4j:event4j", version.ref = "event4j" }
 fastutil = { module = "it.unimi.dsi:fastutil", version.ref = "fastutil" }
 hikaricp = { module = "com.zaxxer:HikariCP", version.ref = "hikaricp" }

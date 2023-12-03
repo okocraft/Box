@@ -9,12 +9,17 @@ repositories {
     mavenCentral()
 
     maven {
+        url = uri("https://oss.sonatype.org/content/repositories/snapshots/")
+    }
+
+    maven {
         url = uri("https://repo.papermc.io/repository/maven-public/")
     }
 }
 
 dependencies {
-    api(libs.configapi.yaml)
+    api(libs.configapi.core)
+    api(libs.configapi.yaml) // TODO: remove this
     api(libs.event4j)
 
     compileOnly(libs.paper)
