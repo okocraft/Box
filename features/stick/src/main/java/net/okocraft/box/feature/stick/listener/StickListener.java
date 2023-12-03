@@ -11,7 +11,6 @@ import net.okocraft.box.feature.stick.function.container.ChestAccessChecker;
 import net.okocraft.box.feature.stick.function.container.ContainerOperation;
 import net.okocraft.box.feature.stick.function.container.ContainerOperator;
 import net.okocraft.box.feature.stick.function.container.FurnaceOperator;
-import net.okocraft.box.feature.stick.function.menu.MenuOpener;
 import net.okocraft.box.feature.stick.item.BoxStickItem;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -56,9 +55,25 @@ public class StickListener implements Listener {
         }
 
         if (event.getAction().isRightClick()) {
-            MenuOpener.openMenu(event, boxStickItem);
+            this.onRightClick(event);
         } else {
-            clickBlock(event);
+            this.clickBlock(event);
+        }
+    }
+
+    private void onRightClick(@NotNull PlayerInteractEvent event) {
+        var player = event.getPlayer();
+
+        boolean doAction;
+
+        if (event.getHand() == EquipmentSlot.HAND) {
+            doAction = this.boxStickItem.check(player.getInventory().getItemInMainHand());
+        } else { // OFF_HAND
+            doAction = player.getInventory().getItemInMainHand().getType().isAir() && this.boxStickItem.check(player.getInventory().getItemInOffHand());
+        }
+
+        if (doAction) {
+            this.boxStickItem.onRightClick(player);
         }
     }
 
