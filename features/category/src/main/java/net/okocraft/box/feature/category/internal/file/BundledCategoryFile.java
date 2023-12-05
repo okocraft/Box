@@ -62,11 +62,13 @@ public final class BundledCategoryFile {
             version = "1_19";
         } else if (currentVer.isBeforeOrSame(MCDataVersion.MC_1_19_4)) { // 1.19.3, 1.19.4
             version = "1_19_3";
-        } else if (currentVer.isAfterOrSame(MCDataVersion.MC_1_20)) { // 1.20
+        } else if (currentVer.isAfterOrSame(MCDataVersion.MC_1_20)) { // 1.20, 1.20.1, 1.20.2
             version = "1_20";
+        } else if (currentVer.isAfterOrSame(MCDataVersion.MC_1_20_3)) { // 1.20.3
+            version = "1_20_3";
         } else {
             // Future version? Use latest categories.yml
-            version = "1_20";
+            version = "1_20_3";
         }
 
         return "categories_" + version + ".yml";
