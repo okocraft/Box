@@ -70,12 +70,69 @@ public final class ExperimentalItems {
     }
 
     /*
-     * This is extracted Materials that marked as @ApiStatus.Experimental.
+     * This is extracted Materials that marked as @MinecraftExperimental.
      * Let's hope that an appropriate API will be provided in the future.
-     *
-     * NOTE: Material#BUNDLE has existed since 1.17, so it is not included here.
      */
     public static @NotNull @Unmodifiable Set<Material> mc1_20_3() {
-        return EnumSet.noneOf(Material.class); // TODO
+        // FIXME: remove valueOf
+        return EnumSet.of(
+                Material.valueOf("TUFF_SLAB"),
+                Material.valueOf("TUFF_STAIRS"),
+                Material.valueOf("TUFF_WALL"),
+                Material.valueOf("CHISELED_TUFF"),
+                Material.valueOf("POLISHED_TUFF"),
+                Material.valueOf("POLISHED_TUFF_SLAB"),
+                Material.valueOf("POLISHED_TUFF_STAIRS"),
+                Material.valueOf("POLISHED_TUFF_WALL"),
+                Material.valueOf("TUFF_BRICKS"),
+                Material.valueOf("TUFF_BRICK_SLAB"),
+                Material.valueOf("TUFF_BRICK_STAIRS"),
+                Material.valueOf("TUFF_BRICK_WALL"),
+                Material.valueOf("CHISELED_TUFF_BRICKS"),
+                Material.valueOf("CHISELED_COPPER"),
+                Material.valueOf("EXPOSED_CHISELED_COPPER"),
+                Material.valueOf("WEATHERED_CHISELED_COPPER"),
+                Material.valueOf("OXIDIZED_CHISELED_COPPER"),
+                Material.valueOf("WAXED_CHISELED_COPPER"),
+                Material.valueOf("WAXED_EXPOSED_CHISELED_COPPER"),
+                Material.valueOf("WAXED_WEATHERED_CHISELED_COPPER"),
+                Material.valueOf("WAXED_OXIDIZED_CHISELED_COPPER"),
+                Material.valueOf("COPPER_DOOR"),
+                Material.valueOf("EXPOSED_COPPER_DOOR"),
+                Material.valueOf("WEATHERED_COPPER_DOOR"),
+                Material.valueOf("OXIDIZED_COPPER_DOOR"),
+                Material.valueOf("WAXED_COPPER_DOOR"),
+                Material.valueOf("WAXED_EXPOSED_COPPER_DOOR"),
+                Material.valueOf("WAXED_WEATHERED_COPPER_DOOR"),
+                Material.valueOf("WAXED_OXIDIZED_COPPER_DOOR"),
+                Material.valueOf("COPPER_TRAPDOOR"),
+                Material.valueOf("EXPOSED_COPPER_TRAPDOOR"),
+                Material.valueOf("WEATHERED_COPPER_TRAPDOOR"),
+                Material.valueOf("OXIDIZED_COPPER_TRAPDOOR"),
+                Material.valueOf("WAXED_COPPER_TRAPDOOR"),
+                Material.valueOf("WAXED_EXPOSED_COPPER_TRAPDOOR"),
+                Material.valueOf("WAXED_WEATHERED_COPPER_TRAPDOOR"),
+                Material.valueOf("WAXED_OXIDIZED_COPPER_TRAPDOOR"),
+                Material.valueOf("CRAFTER"),
+                Material.valueOf("BREEZE_SPAWN_EGG"),
+                Material.valueOf("COPPER_GRATE"),
+                Material.valueOf("EXPOSED_COPPER_GRATE"),
+                Material.valueOf("WEATHERED_COPPER_GRATE"),
+                Material.valueOf("OXIDIZED_COPPER_GRATE"),
+                Material.valueOf("WAXED_COPPER_GRATE"),
+                Material.valueOf("WAXED_EXPOSED_COPPER_GRATE"),
+                Material.valueOf("WAXED_WEATHERED_COPPER_GRATE"),
+                Material.valueOf("WAXED_OXIDIZED_COPPER_GRATE"),
+                Material.valueOf("COPPER_BULB"),
+                Material.valueOf("EXPOSED_COPPER_BULB"),
+                Material.valueOf("WEATHERED_COPPER_BULB"),
+                Material.valueOf("OXIDIZED_COPPER_BULB"),
+                Material.valueOf("WAXED_COPPER_BULB"),
+                Material.valueOf("WAXED_EXPOSED_COPPER_BULB"),
+                Material.valueOf("WAXED_WEATHERED_COPPER_BULB"),
+                Material.valueOf("WAXED_OXIDIZED_COPPER_BULB"),
+                Material.valueOf("TRIAL_SPAWNER"),
+                Material.valueOf("TRIAL_KEY")
+        );
     }
 }
