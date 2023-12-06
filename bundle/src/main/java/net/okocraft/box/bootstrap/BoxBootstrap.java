@@ -5,7 +5,6 @@ import io.papermc.paper.plugin.bootstrap.PluginBootstrap;
 import io.papermc.paper.plugin.bootstrap.PluginProviderContext;
 import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.bundle.Builtin;
-import net.okocraft.box.bundle.BuiltinTranslations;
 import net.okocraft.box.plugin.BoxPlugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
@@ -36,9 +35,6 @@ public final class BoxBootstrap implements PluginBootstrap {
 
         Builtin.features(this.boxBootstrapContext);
         Builtin.storages(this.boxBootstrapContext.getStorageRegistry());
-
-        boxBootstrapContext.onLanguageDirectoryCreated().add(directory -> BuiltinTranslations.saveDefaultTranslationFiles(boxBootstrapContext.getJarFile(), directory));
-        boxBootstrapContext.getTranslationLoaderCreators().addCreator(locale -> BuiltinTranslations.loadDefaultTranslation(boxBootstrapContext.getJarFile(), locale));
     }
 
     @Override

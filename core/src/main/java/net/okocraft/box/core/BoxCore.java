@@ -1,7 +1,6 @@
 package net.okocraft.box.core;
 
 import com.github.siroshun09.event4j.bus.EventBus;
-import com.github.siroshun09.translationloader.directory.TranslationDirectory;
 import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.BoxProvider;
@@ -42,7 +41,6 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +51,6 @@ import java.util.function.Supplier;
 public class BoxCore implements BoxAPI {
 
     private final PluginContext context;
-    private final TranslationDirectory translationDirectory;
 
     private final BoxCommandImpl boxCommand = new BoxCommandImpl();
     private final BoxAdminCommandImpl boxAdminCommand = new BoxAdminCommandImpl();
@@ -69,32 +66,16 @@ public class BoxCore implements BoxAPI {
 
     public BoxCore(@NotNull PluginContext context) {
         this.context = context;
-        this.translationDirectory = context.translationDirectory();
 
         BoxProvider.set(this);
     }
 
-    public boolean load() {
-        BoxLogger.logger().info("Loading languages...");
-
-        try {
-            translationDirectory.load();
-        } catch (IOException e) {
-            BoxLogger.logger().error("Could not load languages", e);
-            return false;
-        }
-
+    public boolean enable(@NotNull Storage storage) {
         if (this.context.config().coreSetting().debug()) {
             DebugListener.register(getEventBus());
             BoxLogger.logger().info("Debug mode is ENABLED");
         }
 
-        BoxLogger.logger().info("Successfully loaded!");
-
-        return true;
-    }
-
-    public boolean enable(@NotNull Storage storage) {
         this.storage = storage;
         BoxLogger.logger().info("Initializing {} storage...", storage.getName());
 
@@ -171,8 +152,8 @@ public class BoxCore implements BoxAPI {
             BoxLogger.logger().error("Could not close the storage.", e);
         }
 
-        BoxLogger.logger().info("Unloading translations...");
-        translationDirectory.unload();
+        BoxLogger.logger().info("Unloading languages...");
+        // TODO: translationDirectory.unload();
     }
 
     @Override
@@ -206,7 +187,7 @@ public class BoxCore implements BoxAPI {
         }
 
         try {
-            translationDirectory.load();
+            // TODO: translationDirectory.load();
             sender.sendMessage(MicsMessages.LANGUAGES_RELOADED);
         } catch (Throwable e) {
             playerMessenger.accept(() -> ErrorMessages.ERROR_RELOAD_FAILURE.apply("languages", e));

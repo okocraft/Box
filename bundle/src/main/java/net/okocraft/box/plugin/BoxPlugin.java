@@ -12,7 +12,6 @@ import net.okocraft.box.platform.PlatformDependent;
 import net.okocraft.box.storage.api.holder.StorageHolder;
 import net.okocraft.box.storage.api.registry.StorageRegistry;
 import net.okocraft.box.storage.migrator.config.MigrationConfigLoader;
-import net.okocraft.box.util.TranslationDirectoryUtil;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -42,7 +41,6 @@ public final class BoxPlugin extends JavaPlugin {
                 PlatformDependent.createScheduler(this),
                 boxBootstrapContext.getEventBus(),
                 new Config(boxBootstrapContext.getPluginDirectory()),
-                TranslationDirectoryUtil.fromContext(boxBootstrapContext),
                 PlatformDependent.createItemProvider(),
                 PlatformDependent.createCommandRegisterer(this.getName().toLowerCase(Locale.ENGLISH))
         );

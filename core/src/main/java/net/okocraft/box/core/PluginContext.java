@@ -1,7 +1,6 @@
 package net.okocraft.box.core;
 
 import com.github.siroshun09.event4j.bus.EventBus;
-import com.github.siroshun09.translationloader.directory.TranslationDirectory;
 import net.okocraft.box.api.event.BoxEvent;
 import net.okocraft.box.api.scheduler.BoxScheduler;
 import net.okocraft.box.core.command.CommandRegisterer;
@@ -18,7 +17,6 @@ public record PluginContext(@NotNull JavaPlugin plugin,
                             @NotNull BoxScheduler scheduler,
                             @NotNull EventBus<BoxEvent> eventBus,
                             @NotNull Config config,
-                            @NotNull TranslationDirectory translationDirectory,
                             @NotNull DefaultItemProvider defaultItemProvider,
                             @NotNull CommandRegisterer commandRegisterer) {
 }

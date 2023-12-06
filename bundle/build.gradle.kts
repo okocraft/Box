@@ -7,10 +7,6 @@ dependencies {
     rootProject.childProjects.values
         .filterNot { project -> project.name == "box-bundle" }
         .forEach { project -> implementation(project) }
-
-    // TODO: Remove ConfigAPI v4 and TranslationLoader
-    implementation(libs.configapi.yaml)
-    implementation(libs.translationloader)
 }
 
 tasks {
