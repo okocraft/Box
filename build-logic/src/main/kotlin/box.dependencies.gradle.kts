@@ -18,7 +18,9 @@ repositories {
 }
 
 dependencies {
-    api(libs.configapi.core)
+    api(libs.configapi.format.yaml) {
+        exclude("org.yaml", "snakeyaml")
+    }
     api(libs.event4j)
 
     compileOnly(libs.paper)
@@ -29,4 +31,5 @@ dependencies {
     testImplementation(libs.paper)
     testImplementation(libs.annotations)
     testImplementation(libs.fastutil)
+    testRuntimeOnly(libs.snakeyaml)
 }
