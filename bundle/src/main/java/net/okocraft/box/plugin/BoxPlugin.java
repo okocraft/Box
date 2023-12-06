@@ -49,7 +49,7 @@ public final class BoxPlugin extends JavaPlugin {
                 boxBootstrapContext.getJarFile(),
                 PlatformDependent.createScheduler(this),
                 boxBootstrapContext.getEventBus(),
-                new Config(boxBootstrapContext.getPluginDirectory().resolve("config.yml")),
+                Config.inDirectory(boxBootstrapContext.getPluginDirectory()),
                 TranslationDirectoryUtil.fromContext(boxBootstrapContext),
                 PlatformDependent.createItemProvider(),
                 PlatformDependent.createCommandRegisterer(this.getName().toLowerCase(Locale.ENGLISH))
