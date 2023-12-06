@@ -62,7 +62,10 @@ public interface BoxAPI {
      * Gets the {@link Logger}.
      *
      * @return the {@link Logger}
+     * @deprecated Should use your own {@link Logger}. If not, there is {@link net.okocraft.box.api.util.BoxLogger}, which is marked for internal use.
      */
+    @Deprecated(since = "5.5.2", forRemoval = true)
+    @ApiStatus.ScheduledForRemoval(inVersion = "6.0.0")
     @NotNull Logger getLogger();
 
     /**

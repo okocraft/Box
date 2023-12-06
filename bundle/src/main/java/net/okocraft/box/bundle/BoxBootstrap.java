@@ -1,5 +1,6 @@
 package net.okocraft.box.bundle;
 
+import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.core.BoxPlugin;
 import net.okocraft.box.storage.api.registry.StorageRegistry;
 import net.okocraft.box.storage.migrator.StorageMigrator;
@@ -7,6 +8,7 @@ import net.okocraft.box.storage.migrator.config.MigrationConfigLoader;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.helpers.SubstituteLogger;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -29,6 +31,7 @@ public final class BoxBootstrap extends JavaPlugin {
             return;
         }
 
+        ((SubstituteLogger) BoxLogger.logger()).setDelegate(this.getComponentLogger());
         this.boxPlugin = new BoxPlugin(this, getFile().toPath());
 
         Bundled.storageMap().forEach(StorageRegistry::register);
@@ -77,7 +80,7 @@ public final class BoxBootstrap extends JavaPlugin {
             }
         }
 
-        var startTime = Instant.now();
+        var start = Instant.now();
 
         if (!boxPlugin.enable()) {
             disablePlugin();
@@ -86,8 +89,8 @@ public final class BoxBootstrap extends JavaPlugin {
 
         Bundled.features().forEach(boxPlugin::register);
 
-        var timeTaken = Duration.between(startTime, Instant.now());
-        getLogger().info("Successfully enabled! (" + timeTaken.toMillis() + "ms)");
+        var finish = Instant.now();
+        BoxLogger.logger().info("Successfully enabled! ({}ms)", Duration.between(start, finish).toMillis());
     }
 
     @Override
@@ -95,7 +98,7 @@ public final class BoxBootstrap extends JavaPlugin {
         if (isPaper && isLoaded) {
             Bundled.features().forEach(boxPlugin::unregister);
             boxPlugin.disable();
-            getLogger().info("Successfully disabled. Goodbye!");
+            BoxLogger.logger().info("Successfully disabled. Goodbye!");
         }
     }
 
