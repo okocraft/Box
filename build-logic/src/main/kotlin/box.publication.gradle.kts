@@ -26,8 +26,7 @@ tasks {
             "https://jd.advntr.dev/api/${libs.versions.adventure.get()}/",
             "https://javadoc.io/doc/org.jetbrains/annotations/${libs.versions.annotations.get()}/",
             "https://siroshun09.github.io/ConfigAPI/${libs.versions.configapi.get()}",
-            "https://siroshun09.github.io/Event4J/${libs.versions.event4j.get()}/",
-            "https://siroshun09.github.io/TranslationLoader/"
+            "https://siroshun09.github.io/Event4J/${libs.versions.event4j.get()}/"
         )
     }
 }
