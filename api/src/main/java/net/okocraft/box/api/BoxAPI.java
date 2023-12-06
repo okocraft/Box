@@ -52,7 +52,10 @@ public interface BoxAPI {
      * Gets the path of the plugin jar.
      *
      * @return tha path of the plugin jar
+     * @deprecated no replacement
      */
+    @Deprecated(since = "5.5.2", forRemoval = true)
+    @ApiStatus.ScheduledForRemoval(inVersion = "6.0.0")
     @NotNull Path getJar();
 
     /**
@@ -66,7 +69,10 @@ public interface BoxAPI {
      * Gets the {@link YamlConfiguration} that loaded from config.yml.
      *
      * @return the {@link YamlConfiguration}
+     * @deprecated no replacement
      */
+    @Deprecated(since = "5.5.2", forRemoval = true)
+    @ApiStatus.ScheduledForRemoval(inVersion = "6.0.0")
     @NotNull YamlConfiguration getConfiguration();
 
     /**
@@ -108,7 +114,10 @@ public interface BoxAPI {
      * Gets the {@link CustomDataContainer}.
      *
      * @return the {@link CustomDataContainer}
+     * @deprecated reworked in Box v6.0.0 (in v5, there is no replacement)
      */
+    @Deprecated(since = "5.5.2", forRemoval = true)
+    @ApiStatus.ScheduledForRemoval(inVersion = "6.0.0")
     @NotNull CustomDataContainer getCustomDataContainer();
 
     /**
@@ -185,13 +194,24 @@ public interface BoxAPI {
     void reload(@NotNull CommandSender sender);
 
     /**
+     * Checks if the specified {@link Player} can use Box.
+     *
+     * @param player the {@link Player} to check
+     * @return {@code true} if the {@link Player} can use Box, otherwise {@code false}
+     */
+    boolean canUseBox(@NotNull Player player);
+
+    /**
      * Checks if Box is not available in the world where the {@link Player} is located.
      * <p>
      * Returns false if the player has the {@code box.admin.ignore-disabled-world} permission.
      *
      * @param player the player to check
      * @return if Box is disabled in the world, returns {@code true}, otherwise {@code false}
+     * @deprecated use {@link #canUseBox(Player)}
      */
+    @Deprecated(since = "5.5.2", forRemoval = true)
+    @ApiStatus.ScheduledForRemoval(inVersion = "6.0.0")
     boolean isDisabledWorld(@NotNull Player player);
 
     /**

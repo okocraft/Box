@@ -498,6 +498,11 @@ public class BoxPlugin implements BoxAPI {
     }
 
     @Override
+    public boolean canUseBox(@NotNull Player player) {
+        return !isDisabledWorld(player.getWorld()) || player.hasPermission("box.admin.ignore-disabled-world");
+    }
+
+    @Override
     public boolean isDisabledWorld(@NotNull Player player) {
         return isDisabledWorld(player.getWorld()) && !player.hasPermission("box.admin.ignore-disabled-world");
     }
