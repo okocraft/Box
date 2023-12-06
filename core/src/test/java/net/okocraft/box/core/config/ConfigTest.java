@@ -72,6 +72,15 @@ class ConfigTest {
                       type: memory
                     """;
 
+    private static final String MEMORY_STORAGE_TYPE_WITH_SETTING =
+            """
+                    storage:
+                      type: memory
+                      memory:
+                        partial-saving: false
+                        example-value: -1
+                    """;
+
     @Test
     void testInitialLoad(@TempDir Path dir) throws Exception {
         Files.createDirectories(dir);
@@ -117,6 +126,12 @@ class ConfigTest {
         Files.writeString(config.filepath(), ONLY_MEMORY_STORAGE_TYPE);
 
         Assertions.assertInstanceOf(MemoryStorage.class, config.loadAndCreateStorage(registry));
+
+        Files.writeString(config.filepath(), MEMORY_STORAGE_TYPE_WITH_SETTING);
+
+        var storage = Assertions.assertInstanceOf(MemoryStorage.class, config.loadAndCreateStorage(registry));
+        Assertions.assertFalse(storage.getSetting().partialSaving());
+        Assertions.assertEquals(-1, storage.getSetting().exampleValue());
     }
 
     private static @NotNull StorageRegistry storageRegistry() {
