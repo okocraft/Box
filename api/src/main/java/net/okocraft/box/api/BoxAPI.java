@@ -79,6 +79,11 @@ public interface BoxAPI {
      */
     @NotNull EventBus<BoxEvent> getEventBus();
 
+    /**
+     * Gets the {@link CustomDataManager}.
+     *
+     * @return the {@link CustomDataManager}
+     */
     @NotNull CustomDataManager getCustomDataManager();
 
     /**
