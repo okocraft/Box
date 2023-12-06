@@ -16,8 +16,10 @@ import net.okocraft.box.api.model.manager.StockManager;
 import net.okocraft.box.api.model.manager.UserManager;
 import net.okocraft.box.api.player.BoxPlayerMap;
 import net.okocraft.box.api.scheduler.BoxScheduler;
+import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.core.command.BoxAdminCommandImpl;
 import net.okocraft.box.core.command.BoxCommandImpl;
+import net.okocraft.box.core.config.Config;
 import net.okocraft.box.core.listener.DebugListener;
 import net.okocraft.box.core.listener.PlayerConnectionListener;
 import net.okocraft.box.core.message.ErrorMessages;
@@ -47,8 +49,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class BoxCore implements BoxAPI {
 
@@ -75,47 +75,47 @@ public class BoxCore implements BoxAPI {
     }
 
     public boolean load() {
-        getLogger().info("Loading languages...");
+        BoxLogger.logger().info("Loading languages...");
 
         try {
             translationDirectory.load();
         } catch (IOException e) {
-            getLogger().log(Level.SEVERE, "Could not load languages", e);
+            BoxLogger.logger().error("Could not load languages", e);
             return false;
         }
 
         if (this.context.config().coreSetting().debug()) {
             DebugListener.register(getEventBus());
-            getLogger().info("Debug mode is ENABLED");
+            BoxLogger.logger().info("Debug mode is ENABLED");
         }
 
-        getLogger().info("Successfully loaded!");
+        BoxLogger.logger().info("Successfully loaded!");
 
         return true;
     }
 
     public boolean enable(@NotNull Storage storage) {
         this.storage = storage;
-        getLogger().info("Initializing " + storage.getName() + " storage...");
+        BoxLogger.logger().info("Initializing {} storage...", storage.getName());
 
         try {
             storage.init();
             storage.getCustomDataStorage().updateFormatIfNeeded(); // Update data format on database
         } catch (Exception e) {
-            getLogger().log(Level.SEVERE, "Could not initialize " + storage.getName() + " storage", e);
+            BoxLogger.logger().error("Could not initialize {} storage.", storage.getName(), e);
             return false;
         }
 
-        getLogger().info("Initializing managers...");
+        BoxLogger.logger().info("Initializing managers...");
 
         userManager = new BoxUserManager(storage.getUserStorage());
 
         try {
             var itemLoadResult = ItemLoader.load(storage.getItemStorage(), this.context.defaultItemProvider());
-            itemLoadResult.logItemCount(getLogger());
+            itemLoadResult.logItemCount();
             this.itemManager = new BoxItemManager(storage.getItemStorage(), itemLoadResult.asIterator());
         } catch (Exception e) {
-            getLogger().log(Level.SEVERE, "Could not import items", e);
+            BoxLogger.logger().error("Could not load default/custom items", e);
             return false;
         }
 
@@ -130,11 +130,11 @@ public class BoxCore implements BoxAPI {
 
         stockManager.schedulerAutoSaveTask(this.context.scheduler());
 
-        getLogger().info("Registering commands...");
+        BoxLogger.logger().info("Registering commands...");
 
         this.context.commandRegisterer().register(this.boxCommand).register(this.boxAdminCommand);
 
-        getLogger().info("Registering async-tab-completion listener...");
+        BoxLogger.logger().info("Registering async-tab-completion listener...");
 
         Bukkit.getPluginManager().registerEvents(boxCommand, context.plugin());
         Bukkit.getPluginManager().registerEvents(boxAdminCommand, context.plugin());
@@ -143,11 +143,11 @@ public class BoxCore implements BoxAPI {
     }
 
     public void disable() {
-        getLogger().info("Unregistering all listeners...");
+        BoxLogger.logger().info("Unregistering all listeners...");
         HandlerList.unregisterAll(getPluginInstance());
 
         if (!features.isEmpty()) {
-            getLogger().info("Disabling features...");
+            BoxLogger.logger().info("Disabling features...");
             List.copyOf(features).forEach(this::unregister);
         }
 
@@ -163,15 +163,15 @@ public class BoxCore implements BoxAPI {
 
         context.eventBus().close();
 
-        getLogger().info("Closing the storage...");
+        BoxLogger.logger().info("Closing the storage...");
 
         try {
             storage.close();
         } catch (Exception e) {
-            getLogger().log(Level.SEVERE, "Could not close the storage", e);
+            BoxLogger.logger().error("Could not close the storage.", e);
         }
 
-        getLogger().info("Unloading translations...");
+        BoxLogger.logger().info("Unloading translations...");
         translationDirectory.unload();
     }
 
@@ -189,20 +189,20 @@ public class BoxCore implements BoxAPI {
         DebugListener.unregister(getEventBus());
 
         if (!(sender instanceof ConsoleCommandSender)) {
-            getLogger().info("Reloading box...");
+            BoxLogger.logger().info("Reloading box...");
         }
 
         try {
             this.context.config().reload();
             sender.sendMessage(MicsMessages.CONFIG_RELOADED);
         } catch (Throwable e) {
-            playerMessenger.accept(() -> ErrorMessages.ERROR_RELOAD_FAILURE.apply("config.yml", e));
-            getLogger().log(Level.SEVERE, "Could not reload config.yml", e);
+            playerMessenger.accept(() -> ErrorMessages.ERROR_RELOAD_FAILURE.apply(Config.FILENAME, e));
+            BoxLogger.logger().error("Could not reload {}", Config.FILENAME, e);
         }
 
         if (this.context.config().coreSetting().debug()) {
             DebugListener.register(getEventBus());
-            getLogger().info("Debug mode is ENABLED");
+            BoxLogger.logger().info("Debug mode is ENABLED");
         }
 
         try {
@@ -210,7 +210,7 @@ public class BoxCore implements BoxAPI {
             sender.sendMessage(MicsMessages.LANGUAGES_RELOADED);
         } catch (Throwable e) {
             playerMessenger.accept(() -> ErrorMessages.ERROR_RELOAD_FAILURE.apply("languages", e));
-            getLogger().log(Level.SEVERE, "Could not reload languages", e);
+            BoxLogger.logger().error("Could not reload languages", e);
         }
 
         for (var feature : features) {
@@ -220,13 +220,13 @@ public class BoxCore implements BoxAPI {
                     getEventBus().callEvent(new FeatureEvent(feature, FeatureEvent.Type.RELOAD));
                 } catch (Throwable e) {
                     playerMessenger.accept(() -> ErrorMessages.ERROR_RELOAD_FAILURE.apply(feature.getName(), e));
-                    getLogger().log(Level.SEVERE, "Could not reload " + feature.getName(), e);
+                    BoxLogger.logger().error("Could not reload {}", feature.getName(), e);
                 }
             }
         }
 
         if (!(sender instanceof ConsoleCommandSender)) {
-            getLogger().info("Successfully reloaded!");
+            BoxLogger.logger().info("Successfully reloaded!");
         }
     }
 
@@ -238,16 +238,6 @@ public class BoxCore implements BoxAPI {
     @Override
     public @NotNull Path getPluginDirectory() {
         return context.dataDirectory();
-    }
-
-    @Override
-    public @NotNull Path getJar() {
-        return context.jarFile();
-    }
-
-    @Override
-    public @NotNull Logger getLogger() {
-        return context.plugin().getLogger();
     }
 
     @Override
@@ -316,9 +306,7 @@ public class BoxCore implements BoxAPI {
         if (!dependencies.isEmpty()) {
             for (var dependencyClass : dependencies) {
                 if (features.stream().noneMatch(feature -> dependencyClass.isAssignableFrom(feature.getClass()))) {
-                    getLogger().warning(
-                            dependencyClass.getSimpleName() + " that is the dependency of the " + boxFeature.getName() + " is not registered."
-                    );
+                    BoxLogger.logger().warn("{} that is the dependency of the {} is not registered.", dependencyClass.getSimpleName(), boxFeature.getName());
                     return;
                 }
             }
@@ -327,11 +315,7 @@ public class BoxCore implements BoxAPI {
         try {
             boxFeature.enable();
         } catch (Throwable throwable) {
-            getLogger().log(
-                    Level.SEVERE,
-                    "Could not enable the " + boxFeature.getName() + " feature",
-                    throwable
-            );
+            BoxLogger.logger().error("Could not enable the {} feature.", boxFeature.getName(), throwable);
             boxFeature.disable();
             return;
         }
@@ -340,22 +324,18 @@ public class BoxCore implements BoxAPI {
 
         getEventBus().callEvent(new FeatureEvent(boxFeature, FeatureEvent.Type.REGISTER));
 
-        getLogger().info("The " + boxFeature.getName() + " feature has been enabled.");
+        BoxLogger.logger().info("The {} feature has been enabled.", boxFeature.getName());
     }
 
     @Override
     public void unregister(@NotNull BoxFeature boxFeature) {
-        getLogger().info("Disabling the " + boxFeature.getName() + " feature...");
+        BoxLogger.logger().info("Disabling the {} feature...", boxFeature.getName());
         features.remove(boxFeature);
 
         try {
             boxFeature.disable();
         } catch (Throwable throwable) {
-            getLogger().log(
-                    Level.SEVERE,
-                    "Could not disable the " + boxFeature.getName() + " feature",
-                    throwable
-            );
+            BoxLogger.logger().error("Could not disable the {} feature.", boxFeature.getName(), throwable);
         }
 
         context.eventBus().callEvent(new FeatureEvent(boxFeature, FeatureEvent.Type.UNREGISTER));

@@ -3,8 +3,8 @@ package net.okocraft.box.core.listener;
 import com.github.siroshun09.event4j.bus.EventBus;
 import com.github.siroshun09.event4j.key.Key;
 import com.github.siroshun09.event4j.priority.Priority;
-import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.event.BoxEvent;
+import net.okocraft.box.api.util.BoxLogger;
 import org.jetbrains.annotations.NotNull;
 
 public final class DebugListener {
@@ -20,6 +20,6 @@ public final class DebugListener {
     }
 
     private static void handleEvent(@NotNull BoxEvent event) {
-        BoxProvider.get().getLogger().info("DEBUG: " + event.toDebugLog());
+        BoxLogger.logger().info("DEBUG: {}", event.toDebugLog());
     }
 }

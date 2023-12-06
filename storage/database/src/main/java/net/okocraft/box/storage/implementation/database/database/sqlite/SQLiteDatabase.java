@@ -32,7 +32,7 @@ public class SQLiteDatabase implements Database {
     public SQLiteDatabase(@NotNull StorageContext<SQLiteSetting> context) {
         this.tablePrefix = context.setting().tablePrefix();
         this.schemaSet = SQLiteTableSchema.create(tablePrefix);
-        this.databasePath = context.base().rootDirectory().resolve(context.setting().filename());
+        this.databasePath = context.pluginDirectory().resolve(context.setting().filename());
     }
 
     @Override

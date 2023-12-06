@@ -4,11 +4,10 @@ import com.github.siroshun09.event4j.key.Key;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.event.player.PlayerLoadEvent;
 import net.okocraft.box.api.event.player.PlayerUnloadEvent;
+import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.feature.autostore.message.AutoStoreMessage;
 import net.okocraft.box.feature.autostore.model.AutoStoreSettingContainer;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.logging.Level;
 
 public class BoxPlayerListener {
 
@@ -38,7 +37,7 @@ public class BoxPlayerListener {
         try {
             AutoStoreSettingContainer.INSTANCE.load(player);
         } catch (Exception e) {
-            BoxProvider.get().getLogger().log(Level.SEVERE, "Could not load autostore setting (" + player.getName() + ")", e);
+            BoxLogger.logger().error("Could not load autostore setting ({})", player.getName(), e);
             player.sendMessage(AutoStoreMessage.ERROR_FAILED_TO_LOAD_SETTINGS);
         }
     }
@@ -49,7 +48,7 @@ public class BoxPlayerListener {
         try {
             AutoStoreSettingContainer.INSTANCE.unload(player);
         } catch (Exception e) {
-            BoxProvider.get().getLogger().log(Level.SEVERE, "Could not unload autostore setting (" + player.getName() + ")", e);
+            BoxLogger.logger().error("Could not unload autostore setting ({})", player.getName(), e);
         }
     }
 }

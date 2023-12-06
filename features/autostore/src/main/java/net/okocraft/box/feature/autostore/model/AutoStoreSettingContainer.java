@@ -2,6 +2,7 @@ package net.okocraft.box.feature.autostore.model;
 
 import net.kyori.adventure.key.Key;
 import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.feature.autostore.message.AutoStoreMessage;
 import net.okocraft.box.feature.autostore.model.setting.AutoStoreSetting;
 import org.bukkit.Bukkit;
@@ -13,7 +14,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Level;
 
 /**
  * A class to manage user's {@link AutoStoreSetting}s.
@@ -120,7 +120,7 @@ public class AutoStoreSettingContainer {
             try {
                 this.load(player);
             } catch (Exception e) {
-                BoxProvider.get().getLogger().log(Level.SEVERE, "Could not load autostore setting (" + player.getName() + ")", e);
+                BoxLogger.logger().error("Could not load autostore setting ({})", player.getName(), e);
                 player.sendMessage(AutoStoreMessage.ERROR_FAILED_TO_LOAD_SETTINGS);
             }
         }
@@ -137,7 +137,7 @@ public class AutoStoreSettingContainer {
             try {
                 this.save(setting);
             } catch (Exception e) {
-                BoxProvider.get().getLogger().log(Level.SEVERE, "Could not unload autostore setting (" + setting.getUuid() + ")", e);
+                BoxLogger.logger().error("Could not unload autostore setting ({})", setting.getUuid(), e);
             }
         }
     }

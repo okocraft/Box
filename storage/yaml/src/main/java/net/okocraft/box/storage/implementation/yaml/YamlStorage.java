@@ -24,7 +24,7 @@ public class YamlStorage implements Storage {
     private final YamlCustomDataStorage customDataStorage;
 
     public YamlStorage(@NotNull StorageContext<Setting> context) {
-        this.rootDirectory = context.base().rootDirectory().resolve(context.setting().directoryName());
+        this.rootDirectory = context.pluginDirectory().resolve(context.setting().directoryName());
         this.userStorage = new YamlUserStorage(rootDirectory);
         this.itemStorage = new YamlItemStorage(rootDirectory);
         this.stockStorage = new YamlStockStorage(rootDirectory);

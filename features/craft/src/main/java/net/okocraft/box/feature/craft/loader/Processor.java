@@ -3,6 +3,7 @@ package net.okocraft.box.feature.craft.loader;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.model.manager.ItemManager;
+import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.feature.craft.config.RecipeConfig;
 import net.okocraft.box.feature.craft.event.RecipeImportEvent;
 import net.okocraft.box.feature.craft.model.BoxItemRecipe;
@@ -62,26 +63,26 @@ final class Processor {
     }
 
     void processCustomRecipes() {
-        var logger = BoxProvider.get().getLogger();
+        var logger = BoxLogger.logger();
         var itemManager = BoxProvider.get().getItemManager();
 
         for (var customRecipe : this.recipeConfig.customRecipes()) {
             var resultItem = itemManager.getBoxItem(customRecipe.result());
 
             if (resultItem.isEmpty()) {
-                logger.warning("Could not get a result item in recipes.yml (" + customRecipe.result() + ")");
+                logger.warn("Could not get a result item in recipes.yml ({})", customRecipe.result());
                 continue;
             }
 
             var ingredientsNames = customRecipe.ingredients();
 
             if (ingredientsNames.isEmpty()) {
-                logger.warning("No ingredients specified for " + customRecipe.result());
+                logger.warn("No ingredients specified for {}", customRecipe.result());
                 continue;
             }
 
             if (9 < ingredientsNames.size()) {
-                logger.warning("Too many ingredients for " + customRecipe.result());
+                logger.warn("Too many ingredients for {}", customRecipe.result());
                 continue;
             }
 
@@ -98,7 +99,7 @@ final class Processor {
                 var ingredient = itemManager.getBoxItem(ingredientName);
 
                 if (ingredient.isEmpty()) {
-                    logger.warning("Could not get an ingredient item in recipes.yml (" + ingredientName + ")");
+                    logger.warn("Could not get an ingredient item in recipes.yml ({})", ingredientName);
                     process = false;
                     break;
                 } else {

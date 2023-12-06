@@ -2,7 +2,7 @@ package net.okocraft.box.storage.implementation.yaml;
 
 import it.unimi.dsi.fastutil.ints.Int2IntFunction;
 import net.okocraft.box.api.model.stock.StockData;
-import net.okocraft.box.storage.api.holder.LoggerHolder;
+import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.storage.api.model.stock.StockStorage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -80,7 +80,7 @@ class YamlStockStorage implements StockStorage {
             int end = start == 1 ? line.indexOf('\'', start) : line.indexOf(":");
             itemId = Integer.parseInt(line.substring(start, end));
         } catch (Exception e) {
-            LoggerHolder.get().warning("Could not parse stock data: " + line + " (" + uuid + ")");
+            BoxLogger.logger().warn("Could not parse stock data: {} ({})", line, uuid);
             return null;
         }
 
@@ -89,7 +89,7 @@ class YamlStockStorage implements StockStorage {
         try {
             amount = Integer.parseInt(line.substring(line.lastIndexOf(":") + 2));
         } catch (Exception e) {
-            LoggerHolder.get().warning("Could not parse stock data: " + line + " (" + uuid + ")");
+            BoxLogger.logger().warn("Could not parse stock data: {} ({})", line, uuid);
             return null;
         }
 

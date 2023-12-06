@@ -5,6 +5,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.okocraft.box.api.model.item.BoxCustomItem;
 import net.okocraft.box.api.model.item.BoxItem;
+import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.storage.api.model.item.ItemData;
 import net.okocraft.box.storage.api.model.item.ItemStorage;
 import net.okocraft.box.storage.api.util.item.patcher.ItemDataPatcher;
@@ -16,7 +17,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 public class ItemLoader {
@@ -32,7 +32,6 @@ public class ItemLoader {
 
         ItemLoadResult loadResult;
 
-        // TODO: logging
         if (storageItemVersion.isEmpty()) {
             loadResult = initializeDefaultItems(storage, currentVersion, defaultItemProvider.provide());
         } else if (currentVersion.equals(storageItemVersion.get())) {
@@ -47,12 +46,14 @@ public class ItemLoader {
     public static @NotNull ItemLoadResult initializeDefaultItems(@NotNull ItemStorage storage,
                                                                  @NotNull ItemVersion currentVersion,
                                                                  @NotNull Stream<DefaultItem> defaultItemStream) throws Exception {
+        BoxLogger.logger().warn("No item data found. It takes time to save default items...");
         var result = new ItemLoadResult(storage.saveDefaultItems(defaultItemStream.toList(), Int2ObjectMaps.emptyMap()), Collections.emptyList());
         storage.saveItemVersion(currentVersion);
         return result;
     }
 
     public static @NotNull ItemLoadResult loadItems(@NotNull ItemStorage storage) throws Exception {
+        BoxLogger.logger().info("Loading default/custom items...");
         return new ItemLoadResult(
                 Lists.transform(storage.loadAllDefaultItems(), ItemData::toDefaultItem),
                 storage.loadAllCustomItems()
@@ -63,7 +64,10 @@ public class ItemLoader {
                                                       @NotNull ItemVersion currentVersion,
                                                       @NotNull ItemDataPatcher itemDataPatcher,
                                                       @NotNull Stream<DefaultItem> defaultItemStream) throws Exception {
+        BoxLogger.logger().warn("Version upgrade detected. Updating default item data...");
         var defaultItems = updateDefaultItems(storage, itemDataPatcher, defaultItemStream);
+
+        BoxLogger.logger().warn("Updating custom item data...");
         var customItems = storage.loadAllCustomItems();
         storage.updateCustomItems(customItems);
         storage.saveItemVersion(currentVersion);
@@ -102,13 +106,13 @@ public class ItemLoader {
             return new InitialBoxItemIterator(this.defaultItems, this.customItems);
         }
 
-        public void logItemCount(@NotNull Logger logger) {
+        public void logItemCount() {
             if (!this.defaultItems.isEmpty()) {
-                logger.info(this.defaultItems.size() + " default items are loaded!");
+                BoxLogger.logger().info("{} default items are loaded!", this.defaultItems.size());
             }
 
             if (!this.customItems.isEmpty()) {
-                logger.info(this.customItems.size() + " custom items are loaded!");
+                BoxLogger.logger().info("{} custom items are loaded!", this.customItems.size());
             }
         }
     }

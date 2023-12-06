@@ -6,6 +6,7 @@ import net.okocraft.box.api.feature.AbstractBoxFeature;
 import net.okocraft.box.api.feature.Disableable;
 import net.okocraft.box.api.feature.Reloadable;
 import net.okocraft.box.api.message.Components;
+import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.feature.category.api.registry.CategoryRegistry;
 import net.okocraft.box.feature.category.internal.file.CategoryFile;
 import net.okocraft.box.feature.category.internal.listener.CustomItemListener;
@@ -15,7 +16,6 @@ import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.util.logging.Level;
 
 public class CategoryFeature extends AbstractBoxFeature implements Disableable, Reloadable {
 
@@ -34,14 +34,14 @@ public class CategoryFeature extends AbstractBoxFeature implements Disableable, 
         try {
             CategoryFile.load(this.categoryRegistry, filepath);
         } catch (IOException e) {
-            BoxProvider.get().getLogger().log(Level.SEVERE, "Could not load categories.yml", e);
+            BoxLogger.logger().error("Could not load categories.yml", e);
             return;
         }
 
         try {
             YamlFormat.DEFAULT.save(CategoryFile.dump(this.categoryRegistry), filepath);
         } catch (IOException e) {
-            BoxProvider.get().getLogger().log(Level.SEVERE, "Could not save categories.yml", e);
+            BoxLogger.logger().error("Could not save categories.yml", e);
             return;
         }
 

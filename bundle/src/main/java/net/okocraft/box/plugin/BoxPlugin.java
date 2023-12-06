@@ -3,6 +3,7 @@ package net.okocraft.box.plugin;
 import com.github.siroshun09.configapi.core.node.MapNode;
 import com.github.siroshun09.configapi.format.yaml.YamlFormat;
 import net.okocraft.box.api.feature.BoxFeature;
+import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.bootstrap.BoxBootstrapContext;
 import net.okocraft.box.core.BoxCore;
 import net.okocraft.box.core.PluginContext;
@@ -10,7 +11,6 @@ import net.okocraft.box.core.config.Config;
 import net.okocraft.box.platform.PlatformDependent;
 import net.okocraft.box.storage.api.holder.StorageHolder;
 import net.okocraft.box.storage.api.registry.StorageRegistry;
-import net.okocraft.box.storage.api.registry.BaseStorageContext;
 import net.okocraft.box.storage.migrator.config.MigrationConfigLoader;
 import net.okocraft.box.util.TranslationDirectoryUtil;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -24,12 +24,10 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Locale;
 import java.util.function.Supplier;
-import java.util.logging.Level;
 
 public final class BoxPlugin extends JavaPlugin {
 
     private final BoxCore boxCore;
-    private final BaseStorageContext storageContext;
     private final PluginContext pluginContext;
     private final StorageRegistry storageRegistry;
     private final @NotNull List<Supplier<? extends BoxFeature>> preregisteredFeatures;
@@ -37,19 +35,13 @@ public final class BoxPlugin extends JavaPlugin {
     private Status status = Status.NOT_LOADED;
 
     public BoxPlugin(@NotNull BoxBootstrapContext boxBootstrapContext) {
-        this.storageContext = new BaseStorageContext(
-                boxBootstrapContext.getPluginDirectory(),
-                this.getLogger()
-        );
-
         this.pluginContext = new PluginContext(
                 this,
                 boxBootstrapContext.getVersion(),
                 boxBootstrapContext.getPluginDirectory(),
-                boxBootstrapContext.getJarFile(),
                 PlatformDependent.createScheduler(this),
                 boxBootstrapContext.getEventBus(),
-                Config.inDirectory(boxBootstrapContext.getPluginDirectory()),
+                new Config(boxBootstrapContext.getPluginDirectory()),
                 TranslationDirectoryUtil.fromContext(boxBootstrapContext),
                 PlatformDependent.createItemProvider(),
                 PlatformDependent.createCommandRegisterer(this.getName().toLowerCase(Locale.ENGLISH))
@@ -68,9 +60,9 @@ public final class BoxPlugin extends JavaPlugin {
         var start = Instant.now();
 
         try {
-            StorageHolder.init(this.pluginContext.config().loadAndCreateStorage(this.storageRegistry, this.storageContext));
+            StorageHolder.init(this.pluginContext.config().loadAndCreateStorage(this.storageRegistry));
         } catch (IOException e) {
-            this.getLogger().log(Level.SEVERE, "Could not load config.yml", e);
+            BoxLogger.logger().error("Could not load config.yml", e);
             this.status = Status.EXCEPTION_OCCURRED;
             return;
         }
@@ -78,7 +70,7 @@ public final class BoxPlugin extends JavaPlugin {
         this.status = Status.LOADED;
         var finish = Instant.now();
 
-        getLogger().info("Successfully loaded! (" + Duration.between(start, finish).toMillis() + "ms)");
+        BoxLogger.logger().info("Successfully loaded! ({}ms)", Duration.between(start, finish).toMillis());
     }
 
     @Override
@@ -91,7 +83,7 @@ public final class BoxPlugin extends JavaPlugin {
         try {
             runMigratorIfNeeded();
         } catch (Exception e) {
-            getLogger().log(Level.SEVERE, "An exception occurred while migrating data.", e);
+            BoxLogger.logger().error("An exception occurred while migrating data.", e);
             status = Status.EXCEPTION_OCCURRED;
             return;
         }
@@ -113,7 +105,7 @@ public final class BoxPlugin extends JavaPlugin {
         this.preregisteredFeatures.clear();
 
         var finish = Instant.now();
-        getLogger().info("Successfully enabled! (" + Duration.between(start, finish).toMillis() + "ms)");
+        BoxLogger.logger().info("Successfully enabled! ({}ms)", Duration.between(start, finish).toMillis());
     }
 
     @Override
@@ -123,7 +115,7 @@ public final class BoxPlugin extends JavaPlugin {
             status = Status.DISABLED;
         }
 
-        getLogger().info("Successfully disabled. Goodbye!");
+        BoxLogger.logger().info("Successfully disabled. Goodbye!");
     }
 
     private void runMigratorIfNeeded() throws Exception {
@@ -149,22 +141,22 @@ public final class BoxPlugin extends JavaPlugin {
             return;
         }
 
-        var migrator = MigrationConfigLoader.prepare(loadedMigrationSetting, this.storageRegistry, this.pluginContext.defaultItemProvider(), this.storageContext);
+        var migrator = MigrationConfigLoader.prepare(loadedMigrationSetting, this.storageRegistry, this.pluginContext.dataDirectory(), this.pluginContext.defaultItemProvider());
 
         if (migrator != null) {
             var start = Instant.now();
 
-            getLogger().info("Initializing storages...");
+            BoxLogger.logger().info("Initializing storages...");
             migrator.init();
 
-            getLogger().info("Migrating data...");
+            BoxLogger.logger().info("Migrating data...");
             migrator.run();
 
-            getLogger().info("Shutting down storages...");
+            BoxLogger.logger().info("Shutting down storages...");
             migrator.close();
 
             var finish = Instant.now();
-            getLogger().info("Migration is completed. (" + Duration.between(start, finish).toMillis() + "ms)");
+            BoxLogger.logger().info("Migration is completed. ({}ms)", Duration.between(start, finish).toMillis());
         }
     }
 

@@ -3,7 +3,7 @@ package net.okocraft.box.feature.category.internal.file;
 import com.github.siroshun09.configapi.core.node.ListNode;
 import com.github.siroshun09.configapi.core.node.MapNode;
 import com.github.siroshun09.configapi.format.yaml.YamlFormat;
-import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.api.util.MCDataVersion;
 import net.okocraft.box.feature.category.internal.category.CommonDefaultCategory;
 import org.jetbrains.annotations.NotNull;
@@ -43,7 +43,7 @@ final class BundledCategoryFile {
             if (category != null) {
                 result.put(Set.copyOf(listNode.asList(String.class)), category);
             } else {
-                BoxProvider.get().getLogger().warning("Unknown default category: " + key);
+                BoxLogger.logger().warn("Unknown default category: {}", key);
             }
         }
 

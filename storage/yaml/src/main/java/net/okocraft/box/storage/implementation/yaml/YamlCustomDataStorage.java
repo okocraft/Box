@@ -3,7 +3,7 @@ package net.okocraft.box.storage.implementation.yaml;
 import com.github.siroshun09.configapi.core.node.MapNode;
 import com.github.siroshun09.configapi.format.yaml.YamlFormat;
 import net.kyori.adventure.key.Key;
-import net.okocraft.box.storage.api.holder.LoggerHolder;
+import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.storage.api.model.data.CustomDataStorage;
 import org.jetbrains.annotations.NotNull;
 
@@ -123,7 +123,7 @@ public class YamlCustomDataStorage implements CustomDataStorage {
             if (Key.checkValue(value).isEmpty()) {
                 this.consumer.accept(Key.key(this.namespace, value), YamlFormat.DEFAULT.load(file));
             } else {
-                LoggerHolder.get().info("Invalid value: " + value);
+                BoxLogger.logger().warn("Invalid value: {}", value);
             }
 
             return FileVisitResult.CONTINUE;

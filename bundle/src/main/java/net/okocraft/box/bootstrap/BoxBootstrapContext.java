@@ -2,7 +2,6 @@ package net.okocraft.box.bootstrap;
 
 import com.github.siroshun09.event4j.bus.EventBus;
 import io.papermc.paper.plugin.bootstrap.BootstrapContext;
-import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import net.okocraft.box.api.event.BoxEvent;
 import net.okocraft.box.api.feature.BoxFeature;
 import net.okocraft.box.storage.api.registry.StorageRegistry;
@@ -22,14 +21,12 @@ public final class BoxBootstrapContext {
     public static @NotNull BoxBootstrapContext create(@NotNull BootstrapContext context) {
         return new BoxBootstrapContext(
                 context.getDataDirectory(),
-                context.getLogger(),
                 context.getPluginSource(),
                 context.getConfiguration().getVersion()
         );
     }
 
     private final Path dataDirectory;
-    private final ComponentLogger logger;
     private final Path jarFile;
     private final String version;
     private final StorageRegistry storageRegistry;
@@ -38,9 +35,8 @@ public final class BoxBootstrapContext {
     private final TranslationDirectoryUtil.PathConsumerWrapper onLanguageDirectoryCreated;
     private final TranslationDirectoryUtil.TranslationLoaderCreatorHolder translationLoaderCreators;
 
-    private BoxBootstrapContext(@NotNull Path pluginDirectory, @NotNull ComponentLogger logger, @NotNull Path jarFile, @NotNull String version) {
+    private BoxBootstrapContext(@NotNull Path pluginDirectory, @NotNull Path jarFile, @NotNull String version) {
         this.dataDirectory = pluginDirectory;
-        this.logger = logger;
         this.jarFile = jarFile;
         this.version = version;
         this.storageRegistry = new StorageRegistry();
@@ -51,10 +47,6 @@ public final class BoxBootstrapContext {
 
     public @NotNull Path getPluginDirectory() {
         return dataDirectory;
-    }
-
-    public @NotNull ComponentLogger getLogger() {
-        return logger;
     }
 
     public @NotNull Path getJarFile() {

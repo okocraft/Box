@@ -5,12 +5,11 @@ import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.command.AbstractCommand;
 import net.okocraft.box.api.message.GeneralMessage;
 import net.okocraft.box.api.model.result.item.ItemRegistrationResult;
+import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.feature.command.message.BoxAdminMessage;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.logging.Level;
 
 public class RegisterCommand extends AbstractCommand {
 
@@ -55,7 +54,7 @@ public class RegisterCommand extends AbstractCommand {
         } else if (result instanceof ItemRegistrationResult.ExceptionOccurred exceptionOccurred) {
             var ex = exceptionOccurred.exception();
             player.sendMessage(BoxAdminMessage.REGISTER_FAILURE.apply(ex));
-            BoxProvider.get().getLogger().log(Level.SEVERE, "Could not register a new custom item.", ex);
+            BoxLogger.logger().error("Could not register a new custom item.", ex);
         }
     }
 }

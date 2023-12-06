@@ -6,6 +6,7 @@ import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.model.item.BoxItem;
+import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.api.util.MCDataVersion;
 import net.okocraft.box.feature.category.api.category.Category;
 import net.okocraft.box.feature.category.api.registry.CategoryRegistry;
@@ -55,7 +56,7 @@ public final class CategoryFile {
             try {
                 iconMaterial = Material.valueOf(iconMaterialName);
             } catch (IllegalArgumentException e) {
-                BoxProvider.get().getLogger().warning("Unknown icon: " + iconMaterialName + " (icons." + key + ")");
+                BoxLogger.logger().warn("Unknown icon: {} (icons.{})", iconMaterialName, key);
                 iconMaterial = Material.STONE;
             }
 
@@ -110,7 +111,7 @@ public final class CategoryFile {
 
             category.addItem(item);
 
-            BoxProvider.get().getLogger().info("Added uncategorized item '" + item.getPlainName() + "' to category " + defaultCategory.getName());
+            BoxLogger.logger().info("Added uncategorized item '{}' to category '{}'", item.getPlainName(), defaultCategory.getName());
         }
     }
 

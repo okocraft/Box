@@ -8,8 +8,8 @@ import com.github.siroshun09.configapi.core.serialization.key.KeyGenerator;
 import com.github.siroshun09.configapi.core.serialization.record.RecordDeserializer;
 import com.github.siroshun09.configapi.core.serialization.record.RecordSerializer;
 import com.github.siroshun09.configapi.format.yaml.YamlFormat;
+import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.storage.api.model.Storage;
-import net.okocraft.box.storage.api.registry.BaseStorageContext;
 import net.okocraft.box.storage.api.registry.StorageRegistry;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,22 +24,20 @@ public class Config {
 
     public static final String FILENAME = "config.yml";
 
-    public static @NotNull Config inDirectory(@NotNull Path directory) {
-        return new Config(directory.resolve(FILENAME));
-    }
-
+    private final Path directory;
     private final Path filepath;
     private final AtomicReference<CoreSetting> coreSettingRef = new AtomicReference<>();
 
-    private Config(@NotNull Path filepath) {
-        this.filepath = filepath;
+    public Config(@NotNull Path directory) {
+        this.directory = directory;
+        this.filepath = directory.resolve(FILENAME);
     }
 
-    public @NotNull Storage loadAndCreateStorage(@NotNull StorageRegistry storageRegistry, @NotNull BaseStorageContext context) throws IOException {
+    public @NotNull Storage loadAndCreateStorage(@NotNull StorageRegistry storageRegistry) throws IOException {
         var loaded = YamlFormat.COMMENT_PROCESSING.load(this.filepath);
 
         this.loadCoreSetting(loaded, true);
-        var storage = this.createStorageFromSection(loaded, storageRegistry, context);
+        var storage = this.createStorageFromSection(loaded, storageRegistry);
 
         YamlFormat.COMMENT_PROCESSING.save(loaded, this.filepath);
 
@@ -74,7 +72,7 @@ public class Config {
         this.coreSettingRef.set(coreDeserializer.deserialize(coreSection));
     }
 
-    private @NotNull Storage createStorageFromSection(@NotNull MapNode source, @NotNull StorageRegistry registry, @NotNull BaseStorageContext context) {
+    private @NotNull Storage createStorageFromSection(@NotNull MapNode source, @NotNull StorageRegistry registry) {
         var storageSection = source.getOrCreateMap("storage");
 
         if (!storageSection.hasComment()) {
@@ -105,15 +103,15 @@ public class Config {
             }
 
             if (storageType.equals(name)) {
-                storage = type.create(context, section);
+                storage = type.create(this.directory, section);
             }
         }
 
         if (storage == null) {
             var defaultEntry = registry.getDefault();
-            context.logger().warning("The storage type '" + storageType + "' not found.");
-            context.logger().warning("Using the default storage type... (" + defaultEntry.name() + ")");
-            storage = defaultEntry.create(context, storageSection.getMap(defaultEntry.name().toLowerCase(Locale.ENGLISH)));
+            BoxLogger.logger().warn("The storage type '{}' not found.", storageType);
+            BoxLogger.logger().warn("Using the default storage type... ({})", defaultEntry.name());
+            storage = defaultEntry.create(this.directory, storageSection.getMap(defaultEntry.name().toLowerCase(Locale.ENGLISH)));
         }
 
         return storage;

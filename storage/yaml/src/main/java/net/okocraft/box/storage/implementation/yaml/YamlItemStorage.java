@@ -6,10 +6,10 @@ import com.github.siroshun09.configapi.format.yaml.YamlFormat;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.okocraft.box.api.model.item.BoxCustomItem;
 import net.okocraft.box.api.model.item.BoxItem;
+import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.api.util.ItemNameGenerator;
 import net.okocraft.box.api.util.MCDataVersion;
 import net.okocraft.box.storage.api.factory.item.BoxItemFactory;
-import net.okocraft.box.storage.api.holder.LoggerHolder;
 import net.okocraft.box.storage.api.model.item.ItemData;
 import net.okocraft.box.storage.api.model.item.ItemStorage;
 import net.okocraft.box.storage.api.util.item.DefaultItem;
@@ -186,7 +186,7 @@ class YamlItemStorage implements ItemStorage {
         try {
             id = key instanceof Number num ? num.intValue() : Integer.parseInt(String.valueOf(key));
         } catch (NumberFormatException e) {
-            LoggerHolder.get().warning("Invalid id: " + key + " (name: " + name + ")");
+            BoxLogger.logger().warn("Invalid id: {} (name: {})", key, name);
             return null;
         }
 

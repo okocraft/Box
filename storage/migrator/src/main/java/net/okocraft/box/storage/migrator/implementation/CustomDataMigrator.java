@@ -1,8 +1,8 @@
 package net.okocraft.box.storage.migrator.implementation;
 
+import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.storage.api.model.Storage;
 import net.okocraft.box.storage.api.model.data.CustomDataStorage;
-import net.okocraft.box.storage.migrator.util.LoggerWrapper;
 import org.jetbrains.annotations.NotNull;
 
 public class CustomDataMigrator extends AbstractDataMigrator<ItemMigrator.Result, CustomDataStorage> {
@@ -19,7 +19,7 @@ public class CustomDataMigrator extends AbstractDataMigrator<ItemMigrator.Result
     }
 
     @Override
-    protected @NotNull ItemMigrator.Result migrateData(@NotNull CustomDataStorage source, @NotNull CustomDataStorage target, @NotNull LoggerWrapper logger) throws Exception {
+    protected @NotNull ItemMigrator.Result migrateData(@NotNull CustomDataStorage source, @NotNull CustomDataStorage target, boolean debug) throws Exception {
         source.visitAllData((key, mapNode) -> {
             try {
                 target.saveData(key, mapNode);
@@ -27,8 +27,8 @@ public class CustomDataMigrator extends AbstractDataMigrator<ItemMigrator.Result
                 sneakyThrow(e);
             }
 
-            if (logger.debug()) {
-                logger.info("Migrated custom data (" + key + "): " + mapNode);
+            if (debug) {
+                BoxLogger.logger().info("Migrated custom data ({}): {}", key, mapNode);
             }
         });
         return this.itemMigratorResult;

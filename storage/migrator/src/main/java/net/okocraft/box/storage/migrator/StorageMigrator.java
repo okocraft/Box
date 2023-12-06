@@ -6,23 +6,20 @@ import net.okocraft.box.storage.migrator.implementation.CustomDataMigrator;
 import net.okocraft.box.storage.migrator.implementation.ItemMigrator;
 import net.okocraft.box.storage.migrator.implementation.StockMigrator;
 import net.okocraft.box.storage.migrator.implementation.UserMigrator;
-import net.okocraft.box.storage.migrator.util.LoggerWrapper;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.logging.Logger;
 
 public class StorageMigrator {
 
     private final Storage sourceStorage;
     private final Storage targetStorage;
     private final DefaultItemProvider defaultItemProvider;
-    private final LoggerWrapper logger;
+    private final boolean debug;
 
-    public StorageMigrator(@NotNull Storage source, @NotNull Storage target, @NotNull DefaultItemProvider defaultItemProvider, @NotNull Logger logger, boolean debug) {
+    public StorageMigrator(@NotNull Storage source, @NotNull Storage target, @NotNull DefaultItemProvider defaultItemProvider, boolean debug) {
         this.sourceStorage = source;
         this.targetStorage = target;
         this.defaultItemProvider = defaultItemProvider;
-        this.logger = new LoggerWrapper(logger, debug);
+        this.debug = debug;
     }
 
     public void init() throws Exception {
@@ -35,7 +32,7 @@ public class StorageMigrator {
                 .next(result -> new ItemMigrator(result, this.defaultItemProvider))
                 .next(StockMigrator::new)
                 .next(CustomDataMigrator::new)
-                .migrate(this.sourceStorage, this.targetStorage, this.logger);
+                .migrate(this.sourceStorage, this.targetStorage, this.debug);
     }
 
     public void close() throws Exception {

@@ -7,6 +7,7 @@ import net.okocraft.box.api.feature.Disableable;
 import net.okocraft.box.api.feature.Reloadable;
 import net.okocraft.box.api.message.Components;
 import net.okocraft.box.api.model.item.BoxItem;
+import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.feature.craft.command.CraftCommand;
 import net.okocraft.box.feature.craft.loader.RecipeLoader;
 import net.okocraft.box.feature.craft.mode.CraftMode;
@@ -21,7 +22,6 @@ import org.jetbrains.annotations.Unmodifiable;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
 
 public class CraftFeature extends AbstractBoxFeature implements Disableable, Reloadable {
 
@@ -44,7 +44,7 @@ public class CraftFeature extends AbstractBoxFeature implements Disableable, Rel
         try {
             recipeMap = RecipeLoader.load(BoxProvider.get().getPluginDirectory().resolve("recipes.yml"));
         } catch (IOException e) {
-            BoxProvider.get().getLogger().log(Level.SEVERE, "Could not load recipes.yml", e);
+            BoxLogger.logger().error("Could not load recipes.yml", e);
             return;
         }
 
@@ -52,7 +52,7 @@ public class CraftFeature extends AbstractBoxFeature implements Disableable, Rel
 
         RecipeRegistry.setRecipeMap(recipeMap);
 
-        BoxProvider.get().getLogger().info(recipeMap.size() + " recipes are imported!");
+        BoxLogger.logger().info("{} recipes are imported!", recipeMap.size());
 
         ClickModeRegistry.register(craftMode);
 

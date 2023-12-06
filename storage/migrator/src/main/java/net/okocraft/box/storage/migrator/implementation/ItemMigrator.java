@@ -9,11 +9,11 @@ import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.okocraft.box.api.model.user.BoxUser;
+import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.storage.api.model.Storage;
 import net.okocraft.box.storage.api.model.item.ItemStorage;
 import net.okocraft.box.storage.api.util.item.DefaultItemProvider;
 import net.okocraft.box.storage.api.util.item.patcher.ItemNamePatcher;
-import net.okocraft.box.storage.migrator.util.LoggerWrapper;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -36,7 +36,7 @@ public class ItemMigrator extends AbstractDataMigrator<ItemMigrator.Result, Item
     }
 
     @Override
-    protected @NotNull ItemMigrator.Result migrateData(@NotNull ItemStorage source, @NotNull ItemStorage target, @NotNull LoggerWrapper logger) throws Exception {
+    protected @NotNull ItemMigrator.Result migrateData(@NotNull ItemStorage source, @NotNull ItemStorage target, boolean debug) throws Exception {
         var sourceItemVersion = source.getItemVersion();
         var targetItemVersion = target.getItemVersion();
 
@@ -48,7 +48,7 @@ public class ItemMigrator extends AbstractDataMigrator<ItemMigrator.Result, Item
             throw new IllegalStateException("Cannot get the item version from the target storage.");
         }
 
-        var patcherFactory =this.defaultItemProvider.itemNamePatcherFactory();
+        var patcherFactory = this.defaultItemProvider.itemNamePatcherFactory();
         var sourceItemIdToNameMap = loadSourceDefaultItemIdToNameMap(source, patcherFactory.create(sourceItemVersion.get()));
         var targetItemNameToIdMap = loadTargetDefaultItemIdToNameMap(target, patcherFactory.create(targetItemVersion.get()));
 
@@ -59,11 +59,11 @@ public class ItemMigrator extends AbstractDataMigrator<ItemMigrator.Result, Item
 
             if (idInTarget != Integer.MIN_VALUE) {
                 itemIdMap.put(entry.getIntKey(), idInTarget);
-                if (logger.debug()) {
-                    logger.info(entry.getValue() + ": " + entry.getIntKey() + " -> " + idInTarget);
+                if (debug) {
+                    logMigrated(entry.getValue(), entry.getIntKey(), idInTarget);
                 }
             } else {
-                logger.warning("Unknown item: " + entry.getValue() + " (id: " + entry.getIntKey() + ")");
+                BoxLogger.logger().warn("Unknown item: {} (id: {})", entry.getValue(), entry.getIntKey());
             }
         }
 
@@ -76,8 +76,8 @@ public class ItemMigrator extends AbstractDataMigrator<ItemMigrator.Result, Item
 
             if (idInTarget != Integer.MIN_VALUE) {
                 itemIdMap.put(customItem.getInternalId(), idInTarget);
-                if (logger.debug()) {
-                    logger.info(customItem.getPlainName() + ": " + customItem.getInternalId() + " -> " + idInTarget);
+                if (debug) {
+                    logMigrated(customItem.getPlainName(), customItem.getInternalId(), idInTarget);
                 }
             } else {
                 var itemName = customItem.getPlainName();
@@ -86,15 +86,15 @@ public class ItemMigrator extends AbstractDataMigrator<ItemMigrator.Result, Item
                         targetCustomItems.right().contains(itemName) ? itemName : null
                 );
                 itemIdMap.put(customItem.getInternalId(), newCustomItem.getInternalId());
-                if (logger.debug()) {
-                    logger.info(customItem.getPlainName() + ": " + customItem.getInternalId() + " -> " + newCustomItem.getInternalId());
+                if (debug) {
+                    logMigrated(customItem.getPlainName(), customItem.getInternalId(), newCustomItem.getInternalId());
                 }
                 migrated++;
             }
         }
 
         if (0 < migrated) {
-            logger.info(migrated + " items are migrated.");
+            BoxLogger.logger().info("{} items are migrated.", migrated);
         }
 
         return new Result(this.userMigratorResult.users(), itemIdMap);
@@ -136,5 +136,9 @@ public class ItemMigrator extends AbstractDataMigrator<ItemMigrator.Result, Item
     }
 
     public record Result(@NotNull Collection<BoxUser> users, @NotNull Int2IntMap itemIdMap) {
+    }
+
+    private static void logMigrated(@NotNull String itemName, int oldId, int newId) {
+        BoxLogger.logger().info("{}: {} -> {}", itemName, oldId, newId);
     }
 }

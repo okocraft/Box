@@ -1,6 +1,6 @@
 package net.okocraft.box.storage.api.util.uuid;
 
-import net.okocraft.box.storage.api.holder.LoggerHolder;
+import net.okocraft.box.api.util.BoxLogger;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
@@ -12,7 +12,7 @@ public class UUIDParser {
             try {
                 return UUID.fromString(strUuid);
             } catch (IllegalArgumentException e) {
-                LoggerHolder.get().warning("Invalid uuid: " + strUuid);
+                BoxLogger.logger().warn("Invalid uuid: {}", strUuid);
             }
         }
 

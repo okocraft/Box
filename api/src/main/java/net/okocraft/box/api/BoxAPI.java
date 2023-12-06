@@ -22,7 +22,6 @@ import org.jetbrains.annotations.Unmodifiable;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Logger;
 
 /**
  * An API of Box.
@@ -44,20 +43,6 @@ public interface BoxAPI {
      * @return the path of the plugin directory
      */
     @NotNull Path getPluginDirectory();
-
-    /**
-     * Gets the path of the plugin jar.
-     *
-     * @return tha path of the plugin jar
-     */
-    @NotNull Path getJar();
-
-    /**
-     * Gets the {@link Logger}.
-     *
-     * @return the {@link Logger}
-     */
-    @NotNull Logger getLogger();
 
     /**
      * Gets the {@link UserManager}.

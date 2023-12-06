@@ -5,7 +5,6 @@ import net.okocraft.box.storage.api.model.data.CustomDataStorage;
 import net.okocraft.box.storage.api.model.item.ItemStorage;
 import net.okocraft.box.storage.api.model.stock.StockStorage;
 import net.okocraft.box.storage.api.model.user.UserStorage;
-import net.okocraft.box.storage.api.registry.BaseStorageContext;
 import net.okocraft.box.storage.api.registry.StorageContext;
 import net.okocraft.box.storage.api.registry.StorageRegistry;
 import net.okocraft.box.storage.memory.MemoryStorage;
@@ -20,7 +19,6 @@ import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Logger;
 
 class ConfigTest {
 
@@ -83,10 +81,8 @@ class ConfigTest {
 
         registry.setDefaultStorageName("memory");
 
-        var context = new BaseStorageContext(dir.resolve("root"), Logger.getGlobal());
-
-        var config = Config.inDirectory(dir);
-        var storage = Assertions.assertInstanceOf(MemoryStorage.class, config.loadAndCreateStorage(registry, context));
+        var config = new Config(dir);
+        var storage = Assertions.assertInstanceOf(MemoryStorage.class, config.loadAndCreateStorage(registry));
 
         Assertions.assertNotNull(config.coreSetting());
         Assertions.assertEquals(config.coreSetting(), new CoreSetting(Collections.emptySet(), false));
@@ -97,9 +93,9 @@ class ConfigTest {
 
     @Test
     void testCoreSetting(@TempDir Path dir) throws Exception {
-        var config = Config.inDirectory(dir);
+        var config = new Config(dir);
         Files.writeString(config.filepath(), CUSTOM_CORE_SETTING);
-        config.loadAndCreateStorage(storageRegistry(), new BaseStorageContext(dir.resolve("root"), Logger.getGlobal()));
+        config.loadAndCreateStorage(storageRegistry());
 
         Assertions.assertEquals(new CoreSetting(Set.of("example_world_1", "example_world_2"), true), config.coreSetting());
 
@@ -110,19 +106,17 @@ class ConfigTest {
 
     @Test
     void testCreateStorage(@TempDir Path dir) throws Exception {
-        var config = Config.inDirectory(dir);
+        var config = new Config(dir);
         Files.writeString(config.filepath(), WITH_INVALID_STORAGE_TYPE);
         var registry = storageRegistry();
 
         registry.register("memory", MemoryStorageSetting.class, MemoryStorage::new);
 
-        var context = new BaseStorageContext(dir.resolve("root"), Logger.getGlobal());
-
-        Assertions.assertInstanceOf(DummyStorage.class, config.loadAndCreateStorage(registry, context));
+        Assertions.assertInstanceOf(DummyStorage.class, config.loadAndCreateStorage(registry));
 
         Files.writeString(config.filepath(), ONLY_MEMORY_STORAGE_TYPE);
 
-        Assertions.assertInstanceOf(MemoryStorage.class, config.loadAndCreateStorage(registry, context));
+        Assertions.assertInstanceOf(MemoryStorage.class, config.loadAndCreateStorage(registry));
     }
 
     private static @NotNull StorageRegistry storageRegistry() {

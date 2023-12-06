@@ -15,7 +15,6 @@ import java.nio.file.Path;
 public record PluginContext(@NotNull JavaPlugin plugin,
                             @NotNull String version,
                             @NotNull Path dataDirectory,
-                            @NotNull Path jarFile,
                             @NotNull BoxScheduler scheduler,
                             @NotNull EventBus<BoxEvent> eventBus,
                             @NotNull Config config,
