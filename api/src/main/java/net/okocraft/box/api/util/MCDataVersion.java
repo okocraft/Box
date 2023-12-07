@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * A class to get/compare Minecraft versions based on data version.
  *
- * @param dataVersion the data version (<a href="https://minecraft.fandom.com/wiki/Data_version">Minecraft Wiki: Data version</a>)
+ * @param dataVersion the data version (<a href="https://minecraft.wiki/w/Data_version">Minecraft Wiki: Data version</a>)
  */
 @SuppressWarnings("unused")
 public record MCDataVersion(int dataVersion) {
