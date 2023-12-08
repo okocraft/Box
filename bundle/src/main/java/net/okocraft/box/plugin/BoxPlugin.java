@@ -1,6 +1,5 @@
 package net.okocraft.box.plugin;
 
-import com.github.siroshun09.configapi.core.node.MapNode;
 import com.github.siroshun09.configapi.format.yaml.YamlFormat;
 import net.okocraft.box.api.feature.BoxFeature;
 import net.okocraft.box.api.util.BoxLogger;
@@ -16,7 +15,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.time.Duration;
 import java.time.Instant;
@@ -123,18 +121,11 @@ public final class BoxPlugin extends JavaPlugin {
             return;
         }
 
-        MapNode loadedMigrationSetting;
-
-        try (var reader = Files.newBufferedReader(filepath, StandardCharsets.UTF_8)) {
-            loadedMigrationSetting = YamlFormat.COMMENT_PROCESSING.load(reader);
-        }
+        var loadedMigrationSetting = YamlFormat.COMMENT_PROCESSING.load(filepath);
 
         if (loadedMigrationSetting.getBoolean("migration-mode")) {
             loadedMigrationSetting.set("migration-mode", false);
-
-            try (var writer = Files.newBufferedWriter(filepath, StandardCharsets.UTF_8)) {
-                YamlFormat.COMMENT_PROCESSING.save(loadedMigrationSetting, writer);
-            }
+            YamlFormat.COMMENT_PROCESSING.save(loadedMigrationSetting, filepath);
         } else {
             return;
         }
