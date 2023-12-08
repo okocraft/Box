@@ -317,6 +317,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Creates an instance of a <code>BoxItemRecipe</code> record class.</div>
 </dd>
+<dt><a href="net/okocraft/box/api/util/BoxLogger.html" class="type-name-link" title="class in net.okocraft.box.api.util">BoxLogger</a> - Class in <a href="net/okocraft/box/api/util/package-summary.html">net.okocraft.box.api.util</a></dt>
+<dd>
+<div class="block">A class to get Box's logger.</div>
+</dd>
 <dt><a href="net/okocraft/box/api/player/BoxPlayer.html" class="type-name-link" title="interface in net.okocraft.box.api.player">BoxPlayer</a> - Interface in <a href="net/okocraft/box/api/player/package-summary.html">net.okocraft.box.api.player</a></dt>
 <dd>
 <div class="block">An interface of the online user.</div>
@@ -382,6 +386,10 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="net/okocraft/box/feature/gui/api/mode/BoxItemClickMode.html#canUse(org.bukkit.entity.Player,net.okocraft.box.api.player.BoxPlayer)" class="member-name-link">canUse(Player, BoxPlayer)</a> - Method in interface net.okocraft.box.feature.gui.api.mode.<a href="net/okocraft/box/feature/gui/api/mode/BoxItemClickMode.html" title="interface in net.okocraft.box.feature.gui.api.mode">BoxItemClickMode</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="net/okocraft/box/api/BoxAPI.html#canUseBox(org.bukkit.entity.Player)" class="member-name-link">canUseBox(Player)</a> - Method in interface net.okocraft.box.api.<a href="net/okocraft/box/api/BoxAPI.html" title="interface in net.okocraft.box.api">BoxAPI</a></dt>
+<dd>
+<div class="block">Checks if the specified <a href="https://jd.papermc.io/paper/1.20/org/bukkit/entity/Player.html" title="class or interface in org.bukkit.entity" class="external-link"><code>Player</code></a> can use Box.</div>
+</dd>
 <dt><a href="net/okocraft/box/feature/category/api/category/Category.html" class="type-name-link" title="interface in net.okocraft.box.feature.category.api.category">Category</a> - Interface in <a href="net/okocraft/box/feature/category/api/category/package-summary.html">net.okocraft.box.feature.category.api.category</a></dt>
 <dd>
 <div class="block">An interface that represents the category into which items are grouped.</div>
@@ -594,9 +602,9 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Custom items registered by users</div>
 </dd>
-<dt><a href="net/okocraft/box/api/model/data/CustomDataContainer.html" class="type-name-link" title="interface in net.okocraft.box.api.model.data">CustomDataContainer</a> - Interface in <a href="net/okocraft/box/api/model/data/package-summary.html">net.okocraft.box.api.model.data</a></dt>
+<dt><a href="net/okocraft/box/api/model/customdata/CustomDataManager.html" class="type-name-link" title="interface in net.okocraft.box.api.model.customdata">CustomDataManager</a> - Interface in <a href="net/okocraft/box/api/model/customdata/package-summary.html">net.okocraft.box.api.model.customdata</a></dt>
 <dd>
-<div class="block">An interface of container that holds custom data.</div>
+<div class="block">An interface to load/save custom data using <a href="https://siroshun09.github.io/ConfigAPI/5.0.0-alpha.4/com/github/siroshun09/configapi/core/node/MapNode.html" title="class or interface in com.github.siroshun09.configapi.core.node" class="external-link"><code>MapNode</code></a>.</div>
 </dd>
 <dt><a href="net/okocraft/box/api/model/result/item/ItemRegistrationResult.Success.html#customItem()" class="member-name-link">customItem()</a> - Method in record class net.okocraft.box.api.model.result.item.<a href="net/okocraft/box/api/model/result/item/ItemRegistrationResult.Success.html" title="class in net.okocraft.box.api.model.result.item">ItemRegistrationResult.Success</a></dt>
 <dd>
@@ -996,10 +1004,6 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Returns the <a href="net/okocraft/box/feature/craft/model/IngredientHolder.html#getPatterns()"><code>IngredientHolder.getPatterns()</code></a>.</div>
 </dd>
-<dt><a href="net/okocraft/box/api/model/data/CustomDataContainer.html#get(java.lang.String,java.lang.String)" class="member-name-link">get(String, String)</a> - Method in interface net.okocraft.box.api.model.data.<a href="net/okocraft/box/api/model/data/CustomDataContainer.html" title="interface in net.okocraft.box.api.model.data">CustomDataContainer</a></dt>
-<dd>
-<div class="block">Gets data from the container.</div>
-</dd>
 <dt><a href="net/okocraft/box/api/player/BoxPlayerMap.html#get(org.bukkit.entity.Player)" class="member-name-link">get(Player)</a> - Method in interface net.okocraft.box.api.player.<a href="net/okocraft/box/api/player/BoxPlayerMap.html" title="interface in net.okocraft.box.api.player">BoxPlayerMap</a></dt>
 <dd>
 <div class="block">Gets the <a href="net/okocraft/box/api/player/BoxPlayer.html" title="interface in net.okocraft.box.api.player"><code>BoxPlayer</code></a>.</div>
@@ -1094,10 +1098,6 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Gets the cloned <a href="https://jd.papermc.io/paper/1.20/org/bukkit/inventory/ItemStack.html" title="class or interface in org.bukkit.inventory" class="external-link"><code>ItemStack</code></a>.</div>
 </dd>
-<dt><a href="net/okocraft/box/api/BoxAPI.html#getConfiguration()" class="member-name-link">getConfiguration()</a> - Method in interface net.okocraft.box.api.<a href="net/okocraft/box/api/BoxAPI.html" title="interface in net.okocraft.box.api">BoxAPI</a></dt>
-<dd>
-<div class="block">Gets the <a href="https://siroshun09.github.io/ConfigAPI/4.6.4/com/github/siroshun09/configapi/yaml/YamlConfiguration.html" title="class or interface in com.github.siroshun09.configapi.yaml" class="external-link"><code>YamlConfiguration</code></a> that loaded from config.yml.</div>
-</dd>
 <dt><a href="net/okocraft/box/feature/craft/event/BoxCraftEvent.html#getCrafter()" class="member-name-link">getCrafter()</a> - Method in class net.okocraft.box.feature.craft.event.<a href="net/okocraft/box/feature/craft/event/BoxCraftEvent.html" title="class in net.okocraft.box.feature.craft.event">BoxCraftEvent</a></dt>
 <dd>
 <div class="block">Gets the player who is trying to craft.</div>
@@ -1108,9 +1108,9 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Gets the current <a href="net/okocraft/box/api/model/stock/StockHolder.html" title="interface in net.okocraft.box.api.model.stock"><code>StockHolder</code></a> to deposit or withdraw.</div>
 </dd>
-<dt><a href="net/okocraft/box/api/BoxAPI.html#getCustomDataContainer()" class="member-name-link">getCustomDataContainer()</a> - Method in interface net.okocraft.box.api.<a href="net/okocraft/box/api/BoxAPI.html" title="interface in net.okocraft.box.api">BoxAPI</a></dt>
+<dt><a href="net/okocraft/box/api/BoxAPI.html#getCustomDataManager()" class="member-name-link">getCustomDataManager()</a> - Method in interface net.okocraft.box.api.<a href="net/okocraft/box/api/BoxAPI.html" title="interface in net.okocraft.box.api">BoxAPI</a></dt>
 <dd>
-<div class="block">Gets the <a href="net/okocraft/box/api/model/data/CustomDataContainer.html" title="interface in net.okocraft.box.api.model.data"><code>CustomDataContainer</code></a>.</div>
+<div class="block">Gets the <a href="net/okocraft/box/api/model/customdata/CustomDataManager.html" title="interface in net.okocraft.box.api.model.customdata"><code>CustomDataManager</code></a>.</div>
 </dd>
 <dt><a href="net/okocraft/box/feature/gui/api/session/PlayerSession.html#getData(net.okocraft.box.feature.gui.api.session.TypedKey)" class="member-name-link">getData(TypedKey&lt;T&gt;)</a> - Method in class net.okocraft.box.feature.gui.api.session.<a href="net/okocraft/box/feature/gui/api/session/PlayerSession.html" title="class in net.okocraft.box.feature.gui.api.session">PlayerSession</a></dt>
 <dd>&nbsp;</dd>
@@ -1224,19 +1224,11 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Gets the list of items that are categorized to this <a href="net/okocraft/box/feature/category/api/category/Category.html" title="interface in net.okocraft.box.feature.category.api.category"><code>Category</code></a>.</div>
 </dd>
-<dt><a href="net/okocraft/box/api/BoxAPI.html#getJar()" class="member-name-link">getJar()</a> - Method in interface net.okocraft.box.api.<a href="net/okocraft/box/api/BoxAPI.html" title="interface in net.okocraft.box.api">BoxAPI</a></dt>
-<dd>
-<div class="block">Gets the path of the plugin jar.</div>
-</dd>
 <dt><a href="net/okocraft/box/api/feature/AbstractBoxFeature.html#getListenerKey()" class="member-name-link">getListenerKey()</a> - Method in class net.okocraft.box.api.feature.<a href="net/okocraft/box/api/feature/AbstractBoxFeature.html" title="class in net.okocraft.box.api.feature">AbstractBoxFeature</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/okocraft/box/api/feature/BoxFeature.html#getListenerKey()" class="member-name-link">getListenerKey()</a> - Method in interface net.okocraft.box.api.feature.<a href="net/okocraft/box/api/feature/BoxFeature.html" title="interface in net.okocraft.box.api.feature">BoxFeature</a></dt>
 <dd>
 <div class="block">Gets the key of listeners.</div>
-</dd>
-<dt><a href="net/okocraft/box/api/BoxAPI.html#getLogger()" class="member-name-link">getLogger()</a> - Method in interface net.okocraft.box.api.<a href="net/okocraft/box/api/BoxAPI.html" title="interface in net.okocraft.box.api">BoxAPI</a></dt>
-<dd>
-<div class="block">Gets the <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.logging/java/util/logging/Logger.html" title="class or interface in java.util.logging" class="external-link"><code>Logger</code></a>.</div>
 </dd>
 <dt><a href="net/okocraft/box/feature/gui/api/menu/paginate/AbstractPaginatedMenu.html#getMaxPage()" class="member-name-link">getMaxPage()</a> - Method in class net.okocraft.box.feature.gui.api.menu.paginate.<a href="net/okocraft/box/feature/gui/api/menu/paginate/AbstractPaginatedMenu.html" title="class in net.okocraft.box.feature.gui.api.menu.paginate">AbstractPaginatedMenu</a></dt>
 <dd>&nbsp;</dd>
@@ -1272,7 +1264,7 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Gets the name of this user.</div>
 </dd>
-<dt><a href="net/okocraft/box/feature/gui/api/buttons/amount/DecreaseAmountButton.html#getOrCreateAmount(net.okocraft.box.feature.gui.api.session.PlayerSession)" class="member-name-link">getOrCreateAmount(PlayerSession)</a> - Method in class net.okocraft.box.feature.gui.api.buttons.amount.<a href="net/okocraft/box/feature/gui/api/buttons/amount/DecreaseAmountButton.html" title="class in net.okocraft.box.feature.gui.api.buttons.amount">DecreaseAmountButton</a></dt>
+<dt><a href="net/okocraft/box/feature/gui/api/buttons/amount/IncreaseCustomNumberButton.html#getOrCreateAmount(net.okocraft.box.feature.gui.api.session.PlayerSession)" class="member-name-link">getOrCreateAmount(PlayerSession)</a> - Method in class net.okocraft.box.feature.gui.api.buttons.amount.<a href="net/okocraft/box/feature/gui/api/buttons/amount/IncreaseCustomNumberButton.html" title="class in net.okocraft.box.feature.gui.api.buttons.amount">IncreaseCustomNumberButton</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/okocraft/box/api/model/item/BoxItem.html#getOriginal()" class="member-name-link">getOriginal()</a> - Method in interface net.okocraft.box.api.model.item.<a href="net/okocraft/box/api/model/item/BoxItem.html" title="interface in net.okocraft.box.api.model.item">BoxItem</a></dt>
 <dd>
@@ -1372,7 +1364,7 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="net/okocraft/box/feature/gui/api/button/Button.html#getSlot()" class="member-name-link">getSlot()</a> - Method in interface net.okocraft.box.feature.gui.api.button.<a href="net/okocraft/box/feature/gui/api/button/Button.html" title="interface in net.okocraft.box.feature.gui.api.button">Button</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="net/okocraft/box/feature/gui/api/buttons/amount/DecreaseAmountButton.html#getSlot()" class="member-name-link">getSlot()</a> - Method in class net.okocraft.box.feature.gui.api.buttons.amount.<a href="net/okocraft/box/feature/gui/api/buttons/amount/DecreaseAmountButton.html" title="class in net.okocraft.box.feature.gui.api.buttons.amount">DecreaseAmountButton</a></dt>
+<dt><a href="net/okocraft/box/feature/gui/api/buttons/amount/IncreaseCustomNumberButton.html#getSlot()" class="member-name-link">getSlot()</a> - Method in class net.okocraft.box.feature.gui.api.buttons.amount.<a href="net/okocraft/box/feature/gui/api/buttons/amount/IncreaseCustomNumberButton.html" title="class in net.okocraft.box.feature.gui.api.buttons.amount">IncreaseCustomNumberButton</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/okocraft/box/feature/gui/api/buttons/BackOrCloseButton.html#getSlot()" class="member-name-link">getSlot()</a> - Method in record class net.okocraft.box.feature.gui.api.buttons.<a href="net/okocraft/box/feature/gui/api/buttons/BackOrCloseButton.html" title="class in net.okocraft.box.feature.gui.api.buttons">BackOrCloseButton</a></dt>
 <dd>&nbsp;</dd>
@@ -1746,10 +1738,6 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Checks if Box is not available in the specified world name.</div>
 </dd>
-<dt><a href="net/okocraft/box/api/BoxAPI.html#isDisabledWorld(org.bukkit.entity.Player)" class="member-name-link">isDisabledWorld(Player)</a> - Method in interface net.okocraft.box.api.<a href="net/okocraft/box/api/BoxAPI.html" title="interface in net.okocraft.box.api">BoxAPI</a></dt>
-<dd>
-<div class="block">Checks if Box is not available in the world where the <a href="https://jd.papermc.io/paper/1.20/org/bukkit/entity/Player.html" title="class or interface in org.bukkit.entity" class="external-link"><code>Player</code></a> is located.</div>
-</dd>
 <dt><a href="net/okocraft/box/api/BoxAPI.html#isDisabledWorld(org.bukkit.World)" class="member-name-link">isDisabledWorld(World)</a> - Method in interface net.okocraft.box.api.<a href="net/okocraft/box/api/BoxAPI.html" title="interface in net.okocraft.box.api">BoxAPI</a></dt>
 <dd>
 <div class="block">Checks if Box is not available in the specified world.</div>
@@ -1917,6 +1905,14 @@ loadScripts(document, 'script');</script>
 <dt><a href="net/okocraft/box/api/model/manager/UserManager.html#loadBoxUser(java.util.UUID)" class="member-name-link">loadBoxUser(UUID)</a> - Method in interface net.okocraft.box.api.model.manager.<a href="net/okocraft/box/api/model/manager/UserManager.html" title="interface in net.okocraft.box.api.model.manager">UserManager</a></dt>
 <dd>
 <div class="block">Loads the <a href="net/okocraft/box/api/model/user/BoxUser.html" title="interface in net.okocraft.box.api.model.user"><code>BoxUser</code></a> of specified <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link"><code>UUID</code></a>.</div>
+</dd>
+<dt><a href="net/okocraft/box/api/model/customdata/CustomDataManager.html#loadData(net.kyori.adventure.key.Key)" class="member-name-link">loadData(Key)</a> - Method in interface net.okocraft.box.api.model.customdata.<a href="net/okocraft/box/api/model/customdata/CustomDataManager.html" title="interface in net.okocraft.box.api.model.customdata">CustomDataManager</a></dt>
+<dd>
+<div class="block">Loads the <a href="https://siroshun09.github.io/ConfigAPI/5.0.0-alpha.4/com/github/siroshun09/configapi/core/node/MapNode.html" title="class or interface in com.github.siroshun09.configapi.core.node" class="external-link"><code>MapNode</code></a>.</div>
+</dd>
+<dt><a href="net/okocraft/box/api/util/BoxLogger.html#logger()" class="member-name-link">logger()</a> - Static method in class net.okocraft.box.api.util.<a href="net/okocraft/box/api/util/BoxLogger.html" title="class in net.okocraft.box.api.util">BoxLogger</a></dt>
+<dd>
+<div class="block">Gets Box's <code>Logger</code>.</div>
 </dd>
 </dl>
 <h2 class="title" id="I:M">M</h2>
@@ -2125,9 +2121,9 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">A package of interfaces to create <a href="https://jd.advntr.dev/api/4.14.0/net/kyori/adventure/text/Component.html" title="class or interface in net.kyori.adventure.text" class="external-link"><code>Component</code></a> from arguments.</div>
 </dd>
-<dt><a href="net/okocraft/box/api/model/data/package-summary.html">net.okocraft.box.api.model.data</a> - package net.okocraft.box.api.model.data</dt>
+<dt><a href="net/okocraft/box/api/model/customdata/package-summary.html">net.okocraft.box.api.model.customdata</a> - package net.okocraft.box.api.model.customdata</dt>
 <dd>
-<div class="block">A package of <a href="net/okocraft/box/api/model/data/CustomDataContainer.html" title="interface in net.okocraft.box.api.model.data"><code>CustomDataContainer</code></a>.</div>
+<div class="block">A package of <a href="net/okocraft/box/api/model/customdata/CustomDataManager.html" title="interface in net.okocraft.box.api.model.customdata"><code>CustomDataManager</code></a>.</div>
 </dd>
 <dt><a href="net/okocraft/box/api/model/item/package-summary.html">net.okocraft.box.api.model.item</a> - package net.okocraft.box.api.model.item</dt>
 <dd>
@@ -2599,6 +2595,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Saves the <a href="net/okocraft/box/feature/stick/item/BoxStickItem.html#key()"><code>BoxStickItem.key()</code></a> to <a href="https://jd.papermc.io/paper/1.20/org/bukkit/persistence/PersistentDataContainer.html" title="class or interface in org.bukkit.persistence" class="external-link"><code>PersistentDataContainer</code></a></div>
 </dd>
+<dt><a href="net/okocraft/box/api/model/customdata/CustomDataManager.html#saveData(net.kyori.adventure.key.Key,com.github.siroshun09.configapi.core.node.MapNode)" class="member-name-link">saveData(Key, MapNode)</a> - Method in interface net.okocraft.box.api.model.customdata.<a href="net/okocraft/box/api/model/customdata/CustomDataManager.html" title="interface in net.okocraft.box.api.model.customdata">CustomDataManager</a></dt>
+<dd>
+<div class="block">Saves the <a href="https://siroshun09.github.io/ConfigAPI/5.0.0-alpha.4/com/github/siroshun09/configapi/core/node/MapNode.html" title="class or interface in com.github.siroshun09.configapi.core.node" class="external-link"><code>MapNode</code></a>.</div>
+</dd>
 <dt><a href="net/okocraft/box/api/scheduler/BoxScheduler.html#scheduleAsyncTask(java.lang.Runnable,long,java.util.concurrent.TimeUnit)" class="member-name-link">scheduleAsyncTask(Runnable, long, TimeUnit)</a> - Method in interface net.okocraft.box.api.scheduler.<a href="net/okocraft/box/api/scheduler/BoxScheduler.html" title="interface in net.okocraft.box.api.scheduler">BoxScheduler</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/okocraft/box/api/scheduler/BoxScheduler.html#scheduleRepeatingAsyncTask(java.lang.Runnable,java.time.Duration,java.util.function.BooleanSupplier)" class="member-name-link">scheduleRepeatingAsyncTask(Runnable, Duration, BooleanSupplier)</a> - Method in interface net.okocraft.box.api.scheduler.<a href="net/okocraft/box/api/scheduler/BoxScheduler.html" title="interface in net.okocraft.box.api.scheduler">BoxScheduler</a></dt>
@@ -2650,10 +2650,6 @@ loadScripts(document, 'script');</script>
 <dt><a href="net/okocraft/box/feature/command/event/stock/CommandCauses.Receive.html#sender()" class="member-name-link">sender()</a> - Method in record class net.okocraft.box.feature.command.event.stock.<a href="net/okocraft/box/feature/command/event/stock/CommandCauses.Receive.html" title="class in net.okocraft.box.feature.command.event.stock">CommandCauses.Receive</a></dt>
 <dd>
 <div class="block">Returns the value of the <a href="./net/okocraft/box/feature/command/event/stock/CommandCauses.Receive.html#param-sender"><code>sender</code></a> record component.</div>
-</dd>
-<dt><a href="net/okocraft/box/api/model/data/CustomDataContainer.html#set(java.lang.String,java.lang.String,com.github.siroshun09.configapi.api.Configuration)" class="member-name-link">set(String, String, Configuration)</a> - Method in interface net.okocraft.box.api.model.data.<a href="net/okocraft/box/api/model/data/CustomDataContainer.html" title="interface in net.okocraft.box.api.model.data">CustomDataContainer</a></dt>
-<dd>
-<div class="block">Sets data to the container.</div>
 </dd>
 <dt><a href="net/okocraft/box/api/BoxProvider.html#set(net.okocraft.box.api.BoxAPI)" class="member-name-link">set(BoxAPI)</a> - Static method in class net.okocraft.box.api.<a href="net/okocraft/box/api/BoxProvider.html" title="class in net.okocraft.box.api">BoxProvider</a></dt>
 <dd>
@@ -3342,6 +3338,10 @@ the order they are declared.</div>
 <dd>
 <div class="block">Returns an array containing the constants of this enum class, in
 the order they are declared.</div>
+</dd>
+<dt><a href="net/okocraft/box/api/model/customdata/CustomDataManager.html#visitData(java.lang.String,java.util.function.BiConsumer)" class="member-name-link">visitData(String, BiConsumer&lt;Key, MapNode&gt;)</a> - Method in interface net.okocraft.box.api.model.customdata.<a href="net/okocraft/box/api/model/customdata/CustomDataManager.html" title="interface in net.okocraft.box.api.model.customdata">CustomDataManager</a></dt>
+<dd>
+<div class="block">Visits all <a href="https://siroshun09.github.io/ConfigAPI/5.0.0-alpha.4/com/github/siroshun09/configapi/core/node/MapNode.html" title="class or interface in com.github.siroshun09.configapi.core.node" class="external-link"><code>MapNode</code></a>s that are keyed with the specified namespace.</div>
 </dd>
 </dl>
 <h2 class="title" id="I:W">W</h2>
