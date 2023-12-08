@@ -18,7 +18,7 @@ public class BoxPlayerImpl implements BoxPlayer {
     private final Player player;
     private final LoadingPersonalStockHolder personalStockHolder;
 
-    private StockHolder currentHolder;
+    private volatile StockHolder currentHolder;
 
     public BoxPlayerImpl(@NotNull BoxUser user, @NotNull Player player, @NotNull LoadingPersonalStockHolder personalStockHolder) {
         this.user = user;
