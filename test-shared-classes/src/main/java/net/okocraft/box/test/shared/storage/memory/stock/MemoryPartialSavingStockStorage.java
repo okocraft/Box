@@ -1,4 +1,4 @@
-package net.okocraft.box.storage.memory.stock;
+package net.okocraft.box.test.shared.storage.memory.stock;
 
 import it.unimi.dsi.fastutil.ints.Int2IntFunction;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;

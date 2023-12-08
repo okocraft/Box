@@ -1,6 +1,6 @@
 package net.okocraft.box.core.model.manager.stock.autosave;
 
-import net.okocraft.box.storage.memory.stock.MemoryPartialSavingStockStorage;
+import net.okocraft.box.test.shared.storage.memory.stock.MemoryPartialSavingStockStorage;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -25,7 +25,7 @@ class PartialSavingQueueTest extends AbstractChangeQueueTest {
         this.checkStorageAmount(storage, stockHolder, ITEM_AMOUNT);
 
         stockHolder.reset();
-        queue.rememberReset(createStockData());
+        queue.rememberReset(STOCK_DATA);
 
         checkSize(queue, 1);
 

@@ -8,4 +8,5 @@ dependencies {
 
     testImplementation(projects.boxApi)
     testImplementation(projects.boxStorageApi)
+    testImplementation(projects.boxTestSharedClasses)
 }

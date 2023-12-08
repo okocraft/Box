@@ -1,7 +1,7 @@
 package net.okocraft.box.core.model.manager.stock.autosave;
 
-import net.okocraft.box.storage.memory.stock.MemoryPartialSavingStockStorage;
-import net.okocraft.box.storage.memory.stock.MemoryStockStorage;
+import net.okocraft.box.test.shared.storage.memory.stock.MemoryPartialSavingStockStorage;
+import net.okocraft.box.test.shared.storage.memory.stock.MemoryStockStorage;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

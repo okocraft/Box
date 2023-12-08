@@ -23,16 +23,18 @@ import net.okocraft.box.api.scheduler.BoxScheduler;
 import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.core.model.loader.LoadingPersonalStockHolder;
 import net.okocraft.box.core.model.manager.stock.autosave.ChangeQueue;
-import net.okocraft.box.core.model.stock.StockHolderImpl;
+import net.okocraft.box.core.model.stock.StockHolderFactory;
 import net.okocraft.box.storage.api.model.stock.PartialSavingStockStorage;
 import net.okocraft.box.storage.api.model.stock.StockStorage;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.IntFunction;
 import java.util.function.Predicate;
 
 public class BoxStockManager implements StockManager {
@@ -40,6 +42,7 @@ public class BoxStockManager implements StockManager {
     private static final long MILLISECONDS_TO_UNLOAD = Duration.ofMinutes(10).toMillis();
 
     private final StockStorage stockStorage;
+    private final IntFunction<BoxItem> toBoxItem;
     private final Predicate<UUID> onlineChecker;
     private final ChangeQueue.Factory queueFactory;
 
@@ -47,8 +50,9 @@ public class BoxStockManager implements StockManager {
     private final ConcurrentLinkedQueue<ChangeQueue> availableQueues = new ConcurrentLinkedQueue<>();
     private final AtomicBoolean autoSaveTaskScheduled = new AtomicBoolean(false);
 
-    public BoxStockManager(@NotNull StockStorage stockStorage, @NotNull Predicate<UUID> onlineChecker) {
+    public BoxStockManager(@NotNull StockStorage stockStorage, @NotNull IntFunction<BoxItem> toBoxItem, @NotNull Predicate<UUID> onlineChecker) {
         this.stockStorage = stockStorage;
+        this.toBoxItem = toBoxItem;
         this.onlineChecker = onlineChecker;
         this.queueFactory = ChangeQueue.createFactory(stockStorage, this::logStockStorageError);
     }
@@ -74,7 +78,7 @@ public class BoxStockManager implements StockManager {
         }
 
         var eventCaller = new QueuingStockEventCaller(loader);
-        var stockHolder = StockHolderImpl.create(user, stockData, eventCaller);
+        var stockHolder = StockHolderFactory.create(user, eventCaller, stockData, this.toBoxItem);
         var queue = this.queueFactory.createQueue(stockHolder);
 
         eventCaller.queue = queue;
@@ -88,12 +92,12 @@ public class BoxStockManager implements StockManager {
 
     @Override
     public @NotNull StockHolder createStockHolder(@NotNull UUID uuid, @NotNull String name, @NotNull StockEventCaller eventCaller) {
-        return StockHolderImpl.create(uuid, name, eventCaller);
+        return this.createStockHolder(uuid, name, eventCaller, Collections.emptyList());
     }
 
     @Override
     public @NotNull StockHolder createStockHolder(@NotNull UUID uuid, @NotNull String name, @NotNull StockEventCaller eventCaller, @NotNull Collection<StockData> stockData) {
-        return StockHolderImpl.create(uuid, name, eventCaller, stockData);
+        return StockHolderFactory.create(uuid, name, eventCaller, stockData, this.toBoxItem);
     }
 
     public void schedulerAutoSaveTask(@NotNull BoxScheduler scheduler) {

@@ -1,4 +1,4 @@
-package net.okocraft.box.storage.memory.user;
+package net.okocraft.box.test.shared.storage.memory.user;
 
 import net.okocraft.box.api.model.user.BoxUser;
 import net.okocraft.box.storage.api.factory.user.BoxUserFactory;

@@ -1,4 +1,4 @@
-package net.okocraft.box.storage.memory;
+package net.okocraft.box.test.shared.storage.memory;
 
 import com.github.siroshun09.configapi.core.serialization.annotation.Comment;
 import com.github.siroshun09.configapi.core.serialization.annotation.DefaultBoolean;

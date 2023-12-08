@@ -1,6 +1,6 @@
 package net.okocraft.box.core.model.manager.item;
 
-import net.okocraft.box.api.model.item.DummyItem;
+import net.okocraft.box.test.shared.model.item.DummyItem;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

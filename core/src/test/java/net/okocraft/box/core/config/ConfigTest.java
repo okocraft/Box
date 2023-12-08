@@ -1,14 +1,10 @@
 package net.okocraft.box.core.config;
 
-import net.okocraft.box.storage.api.model.Storage;
-import net.okocraft.box.storage.api.model.data.CustomDataStorage;
-import net.okocraft.box.storage.api.model.item.ItemStorage;
-import net.okocraft.box.storage.api.model.stock.StockStorage;
-import net.okocraft.box.storage.api.model.user.UserStorage;
-import net.okocraft.box.storage.api.registry.StorageContext;
 import net.okocraft.box.storage.api.registry.StorageRegistry;
-import net.okocraft.box.storage.memory.MemoryStorage;
-import net.okocraft.box.storage.memory.MemoryStorageSetting;
+import net.okocraft.box.test.shared.storage.memory.MemoryStorage;
+import net.okocraft.box.test.shared.storage.memory.MemoryStorageSetting;
+import net.okocraft.box.test.shared.storage.dummy.DummyStorage;
+import net.okocraft.box.test.shared.storage.dummy.DummyStorageSetting;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -17,7 +13,6 @@ import org.junit.jupiter.api.io.TempDir;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 
 class ConfigTest {
@@ -143,52 +138,4 @@ class ConfigTest {
         return registry;
     }
 
-    private record DummyStorageSetting() {
-    }
-
-    private static class DummyStorage implements Storage {
-
-        private DummyStorage(@NotNull StorageContext<DummyStorageSetting> context) {
-        }
-
-        @Override
-        public @NotNull String getName() {
-            return "dummy";
-        }
-
-        @Override
-        public @NotNull List<Property> getInfo() {
-            return Collections.emptyList();
-        }
-
-        @Override
-        public void init() {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public void close() {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public @NotNull ItemStorage getItemStorage() {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public @NotNull UserStorage getUserStorage() {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public @NotNull StockStorage getStockStorage() {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public @NotNull CustomDataStorage getCustomDataStorage() {
-            throw new UnsupportedOperationException();
-        }
-    }
 }

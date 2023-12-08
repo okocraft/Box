@@ -100,7 +100,7 @@ public class BoxCore implements BoxAPI {
             return false;
         }
 
-        stockManager = new BoxStockManager(storage.getStockStorage(), uuid -> Bukkit.getPlayer(uuid) != null);
+        stockManager = new BoxStockManager(storage.getStockStorage(), this.itemManager::getBoxItemOrNull, uuid -> Bukkit.getPlayer(uuid) != null);
 
         this.customDataManager = new BoxCustomDataManager(storage.getCustomDataStorage());
 
