@@ -1,12 +1,11 @@
 package net.okocraft.box.api;
 
-import com.github.siroshun09.configapi.yaml.YamlConfiguration;
 import com.github.siroshun09.event4j.bus.EventBus;
 import net.okocraft.box.api.command.base.BoxAdminCommand;
 import net.okocraft.box.api.command.base.BoxCommand;
 import net.okocraft.box.api.event.BoxEvent;
 import net.okocraft.box.api.feature.BoxFeature;
-import net.okocraft.box.api.model.data.CustomDataContainer;
+import net.okocraft.box.api.model.customdata.CustomDataManager;
 import net.okocraft.box.api.model.manager.ItemManager;
 import net.okocraft.box.api.model.manager.StockManager;
 import net.okocraft.box.api.model.manager.UserManager;
@@ -23,7 +22,6 @@ import org.jetbrains.annotations.Unmodifiable;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Logger;
 
 /**
  * An API of Box.
@@ -45,27 +43,6 @@ public interface BoxAPI {
      * @return the path of the plugin directory
      */
     @NotNull Path getPluginDirectory();
-
-    /**
-     * Gets the path of the plugin jar.
-     *
-     * @return tha path of the plugin jar
-     */
-    @NotNull Path getJar();
-
-    /**
-     * Gets the {@link Logger}.
-     *
-     * @return the {@link Logger}
-     */
-    @NotNull Logger getLogger();
-
-    /**
-     * Gets the {@link YamlConfiguration} that loaded from config.yml.
-     *
-     * @return the {@link YamlConfiguration}
-     */
-    @NotNull YamlConfiguration getConfiguration();
 
     /**
      * Gets the {@link UserManager}.
@@ -103,11 +80,11 @@ public interface BoxAPI {
     @NotNull EventBus<BoxEvent> getEventBus();
 
     /**
-     * Gets the {@link CustomDataContainer}.
+     * Gets the {@link CustomDataManager}.
      *
-     * @return the {@link CustomDataContainer}
+     * @return the {@link CustomDataManager}
      */
-    @NotNull CustomDataContainer getCustomDataContainer();
+    @NotNull CustomDataManager getCustomDataManager();
 
     /**
      * Gets the {@link BoxScheduler}.
@@ -173,14 +150,12 @@ public interface BoxAPI {
     void reload(@NotNull CommandSender sender);
 
     /**
-     * Checks if Box is not available in the world where the {@link Player} is located.
-     * <p>
-     * Returns false if the player has the {@code box.admin.ignore-disabled-world} permission.
+     * Checks if the specified {@link Player} can use Box.
      *
-     * @param player the player to check
-     * @return if Box is disabled in the world, returns {@code true}, otherwise {@code false}
+     * @param player the {@link Player} to check
+     * @return {@code true} if the {@link Player} can use Box, otherwise {@code false}
      */
-    boolean isDisabledWorld(@NotNull Player player);
+    boolean canUseBox(@NotNull Player player);
 
     /**
      * Checks if Box is not available in the specified world.

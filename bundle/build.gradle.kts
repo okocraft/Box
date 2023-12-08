@@ -7,8 +7,6 @@ dependencies {
     rootProject.childProjects.values
         .filterNot { project -> project.name == "box-bundle" }
         .forEach { project -> implementation(project) }
-
-    implementation(libs.translationloader)
 }
 
 tasks {

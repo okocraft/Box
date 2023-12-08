@@ -32,7 +32,7 @@ public class DatabaseStorage implements Storage {
         this.userTable = new UserTable(database);
         this.itemTable = new ItemTable(database, metaTable);
         this.stockTable = new StockTable(database);
-        this.customDataTable = new CustomDataTable(database);
+        this.customDataTable = new CustomDataTable(database, metaTable);
     }
 
     @Override

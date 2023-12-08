@@ -50,7 +50,7 @@ public class StickListener implements Listener {
     public void onInteract(@NotNull PlayerInteractEvent event) {
         var player = event.getPlayer();
 
-        if (event.getAction() == Action.PHYSICAL || isDisabledWorld(player)) {
+        if (event.getAction() == Action.PHYSICAL || !canUseBox(player)) {
             return;
         }
 
@@ -353,7 +353,7 @@ public class StickListener implements Listener {
     }
 
     private @Nullable BoxPlayer checkPlayerAndGetBoxPlayer(@NotNull Player player, @NotNull String permissionNode) {
-        if (isSurvivalOrAdventure(player) && !isDisabledWorld(player) &&
+        if (isSurvivalOrAdventure(player) && canUseBox(player) &&
                 player.hasPermission(permissionNode) && hasBoxStickInOffHand(player)) {
             return getBoxPlayerOrNull(player);
         } else {
@@ -361,8 +361,8 @@ public class StickListener implements Listener {
         }
     }
 
-    private boolean isDisabledWorld(@NotNull Player player) {
-        return BoxProvider.get().isDisabledWorld(player);
+    private boolean canUseBox(@NotNull Player player) {
+        return BoxProvider.get().canUseBox(player);
     }
 
     private boolean isSurvivalOrAdventure(@NotNull Player player) {

@@ -1,21 +1,23 @@
 package net.okocraft.box.storage.api.model.data;
 
-import com.github.siroshun09.configapi.api.Configuration;
+import com.github.siroshun09.configapi.core.node.MapNode;
+import net.kyori.adventure.key.Key;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
+import java.util.function.BiConsumer;
 
 public interface CustomDataStorage {
 
     void init() throws Exception;
 
-    @NotNull Configuration load(@NotNull String namespace, @NotNull String key) throws Exception;
-
-    void save(@NotNull String namespace, @NotNull String key, @NotNull Configuration configuration) throws Exception;
-
-    @NotNull Collection<Key> getKeys() throws Exception;
-
-    // FIXME: improve this
-    record Key(@NotNull String namespace, @NotNull String key) {
+    default void updateFormatIfNeeded() throws Exception {
     }
+
+    @NotNull MapNode loadData(@NotNull Key key) throws Exception;
+
+    void saveData(@NotNull Key key, @NotNull MapNode mapNode) throws Exception;
+
+    void visitData(@NotNull String namespace, @NotNull BiConsumer<Key, MapNode> consumer) throws Exception;
+
+    void visitAllData(@NotNull BiConsumer<Key, MapNode> consumer) throws Exception;
 }

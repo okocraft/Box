@@ -1,186 +1,111 @@
 package net.okocraft.box.storage.implementation.database.table;
 
-import com.github.siroshun09.configapi.api.Configuration;
-import com.github.siroshun09.configapi.api.MappedConfiguration;
-import net.okocraft.box.storage.api.holder.LoggerHolder;
-import net.okocraft.box.storage.api.model.data.CustomDataStorage;
+import com.github.siroshun09.configapi.core.file.java.binary.BinaryFormat;
+import com.github.siroshun09.configapi.core.node.MapNode;
+import net.kyori.adventure.key.Key;
 import net.okocraft.box.storage.implementation.database.database.Database;
 import org.jetbrains.annotations.NotNull;
-import org.yaml.snakeyaml.DumperOptions;
-import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.representer.Representer;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.function.Supplier;
-import java.util.logging.Level;
+import java.util.function.BiConsumer;
 
 // | key | data |
-public class CustomDataTable extends AbstractTable implements CustomDataStorage {
+public class CustomDataTable extends AbstractCustomDataTable {
 
-    private static final Supplier<Yaml> YAML_SUPPLIER;
+    private final MetaTable metaTable;
+    private LegacyCustomDataTable legacyCustomDataTable;
 
-    static {
-        var options = new DumperOptions();
-        options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-
-        var representer = new Representer(options);
-        representer.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-
-        YAML_SUPPLIER = () -> new Yaml(representer, options);
-    }
-
-    private final ThreadLocal<Yaml> yamlThreadLocal;
-
-    public CustomDataTable(@NotNull Database database) {
+    public CustomDataTable(@NotNull Database database, @NotNull MetaTable metaTable) {
         super(database, database.getSchemaSet().customDataTable());
-        yamlThreadLocal = ThreadLocal.withInitial(YAML_SUPPLIER);
+        this.metaTable = metaTable;
     }
 
     @Override
     public void init() throws Exception {
         createTableAndIndex();
-    }
 
-    @Override
-    public @NotNull Configuration load(@NotNull String namespace, @NotNull String key) throws Exception {
-        var namespacedKey = namespace + ":" + key;
-
-        try (var connection = database.getConnection();
-             var statement = prepareStatement(connection, "SELECT `data` FROM `%table%` WHERE `key`=? LIMIT 1")) {
-            statement.setString(1, namespacedKey);
-
-            try (var resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
-                    return deserializeConfiguration(readBytesFromResultSet(resultSet, "data"));
-                }
-            }
+        if (!this.metaTable.isCurrentCustomDataFormat() && this.legacyTableExists()) {
+            this.legacyCustomDataTable = new LegacyCustomDataTable(this.database);
+            this.legacyCustomDataTable.init();
         }
-
-        return MappedConfiguration.create();
     }
 
     @Override
-    public void save(@NotNull String namespace, @NotNull String key, @NotNull Configuration configuration) throws Exception {
-        var namespacedKey = namespace + ":" + key;
+    public void updateFormatIfNeeded() throws Exception {
+        if (this.legacyCustomDataTable != null) {
+            this.legacyCustomDataTable.visitAllData((key, mapNode) -> {
+                try {
+                    this.saveData0(key, mapNode);
+                } catch (Exception e) {
+                    sneakyThrow(e);
+                }
+            });
+            this.legacyCustomDataTable = null;
+            this.metaTable.saveCurrentCustomDataFormat();
+        }
+    }
 
-        try (var connection = database.getConnection()) {
-            var data = serializeConfiguration(configuration);
+    @Override
+    public @NotNull MapNode loadData(@NotNull Key key) throws Exception {
+        return this.legacyCustomDataTable == null ? super.loadData(key) : this.legacyCustomDataTable.loadData(key);
+    }
 
-            if (isExistingKey(connection, namespacedKey)) {
-                updateData(connection, namespacedKey, data);
+    @Override
+    public void saveData(@NotNull Key key, @NotNull MapNode mapNode) throws Exception {
+        if (this.legacyCustomDataTable == null) {
+            super.saveData(key, mapNode);
+        } else {
+            this.legacyCustomDataTable.saveData(key, mapNode);
+        }
+    }
+
+    private void saveData0(@NotNull Key key, @NotNull MapNode mapNode) throws Exception {
+        super.saveData(key, mapNode);
+    }
+
+    @Override
+    public void visitData(@NotNull String namespace, @NotNull BiConsumer<Key, MapNode> consumer) throws Exception {
+        if (this.legacyCustomDataTable == null) {
+            super.visitData(namespace, consumer);
+        } else {
+            this.legacyCustomDataTable.visitData(namespace, consumer);
+        }
+    }
+
+    @Override
+    public void visitAllData(@NotNull BiConsumer<Key, MapNode> consumer) throws Exception {
+        if (this.legacyCustomDataTable == null) {
+            super.visitAllData(consumer);
+        } else {
+            this.legacyCustomDataTable.visitAllData(consumer);
+        }
+    }
+
+    protected @NotNull MapNode readDataFromResultSet(@NotNull ResultSet resultSet) throws Exception {
+        try (var in = new ByteArrayInputStream(readBytesFromResultSet(resultSet, "data"))) {
+            if (BinaryFormat.DEFAULT.load(in) instanceof MapNode mapNode) {
+                return mapNode;
             } else {
-                insertData(connection, namespacedKey, data);
+                // TODO: logging
+                return MapNode.create();
             }
         }
     }
 
-    @Override
-    public @NotNull Collection<Key> getKeys() throws Exception {
-        var result = new ArrayList<Key>();
-
-        try (var connection = database.getConnection();
-             var statement = prepareStatement(connection, "SELECT `key` FROM `%table%`")) {
-
-            try (var resultSet = statement.executeQuery()) {
-                while (resultSet.next()) {
-                    var namespacedKey = resultSet.getString("key");
-                    int index = namespacedKey != null ? namespacedKey.indexOf(':') : -1;
-
-                    if (index == -1 || index == namespacedKey.length() - 1) {
-                        continue;
-                    }
-
-                    var namespace = namespacedKey.substring(0, index);
-                    var key = namespacedKey.substring(index + 1);
-                    result.add(new Key(namespace, key));
-                }
+    private boolean legacyTableExists() throws SQLException {
+        try (var connection = database.getConnection()) {
+            var metaData = connection.getMetaData();
+            var tableName = this.database.getSchemaSet().legacyCustomDataTable().tableName();
+            try (var resultSet = metaData.getTables(null, null, tableName, null)) {
+                return resultSet.next();
             }
         }
-
-        return result;
     }
 
     @SuppressWarnings("unchecked")
-    private @NotNull Configuration deserializeConfiguration(byte[] bytes) {
-        try (var input = new ByteArrayInputStream(bytes);
-             var reader = new InputStreamReader(input)) {
-            var map = yamlThreadLocal.get().loadAs(reader, LinkedHashMap.class);
-            return MappedConfiguration.create(map);
-        } catch (IOException e) {
-            LoggerHolder.get().log(Level.SEVERE, "Could not deserialize data", e);
-            return MappedConfiguration.create();
-        }
-    }
-
-    private boolean isExistingKey(@NotNull Connection connection, @NotNull String namespacedKey) throws SQLException {
-        try (var statement = prepareStatement(connection, "SELECT `key` FROM `%table%` WHERE `key`=? LIMIT 1")) {
-            statement.setString(1, namespacedKey);
-
-            try (var result = statement.executeQuery()) {
-                return result.next();
-            }
-        }
-    }
-
-    private byte[] serializeConfiguration(@NotNull Configuration config) {
-        try (var byteOut = new ByteArrayOutputStream();
-             var writer = new OutputStreamWriter(byteOut)) {
-            var map = new LinkedHashMap<>();
-
-            toMap(config, map, "");
-
-            yamlThreadLocal.get().dump(map, writer);
-
-            return byteOut.toByteArray();
-        } catch (IOException e) {
-            LoggerHolder.get().log(Level.SEVERE, "Could not serialize config", e);
-            return new byte[0];
-        }
-    }
-
-    private void toMap(@NotNull Configuration config, @NotNull Map<Object, Object> map, @NotNull String keyPrefix) {
-        for (var key : config.getKeyList()) {
-            var section = config.getSection(key);
-
-            if (section != null) {
-                var newKeyPrefix = keyPrefix + key + Configuration.PATH_SEPARATOR;
-                toMap(section, map, newKeyPrefix);
-                continue;
-            }
-
-            var obj = config.get(key);
-
-            if (obj != null) {
-                map.put(keyPrefix + key, obj);
-            }
-        }
-    }
-
-    private void insertData(@NotNull Connection connection, @NotNull String namespacedKey, byte[] data) throws SQLException {
-        try (var statement = prepareStatement(connection, "INSERT INTO `%table%` (`key`, `data`) VALUES(?,?)")) {
-            statement.setString(1, namespacedKey);
-            writeBytesToStatement(statement, 2, data);
-
-            statement.execute();
-        }
-    }
-
-    private void updateData(@NotNull Connection connection, @NotNull String namespacedKey, byte[] data) throws SQLException {
-        try (var statement = prepareStatement(connection, "UPDATE `%table%` SET `data`=? WHERE `key`=?")) {
-            writeBytesToStatement(statement, 1, data);
-            statement.setString(2, namespacedKey);
-
-            statement.execute();
-        }
+    private static <T extends Throwable> void sneakyThrow(@NotNull Throwable exception) throws T {
+        throw (T) exception;
     }
 }

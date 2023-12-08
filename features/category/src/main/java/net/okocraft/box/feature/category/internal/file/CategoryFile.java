@@ -1,10 +1,12 @@
 package net.okocraft.box.feature.category.internal.file;
 
-import com.github.siroshun09.configapi.api.Configuration;
+import com.github.siroshun09.configapi.core.node.MapNode;
+import com.github.siroshun09.configapi.format.yaml.YamlFormat;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.model.item.BoxItem;
+import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.api.util.MCDataVersion;
 import net.okocraft.box.feature.category.api.category.Category;
 import net.okocraft.box.feature.category.api.registry.CategoryRegistry;
@@ -15,21 +17,32 @@ import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-public final class CategoryLoader {
+public final class CategoryFile {
 
-    public static void load(@NotNull CategoryRegistry registry, @NotNull Configuration source) {
+    public static void load(@NotNull CategoryRegistry registry, @NotNull Path filepath) throws IOException {
+        var loaded = Files.isRegularFile(filepath) ? YamlFormat.DEFAULT.load(filepath) : MapNode.empty();
+        var defaultCategoryFile = BundledCategoryFile.loadDefaultCategoryFile();
+
+        CategoryFile.load(registry, loaded, defaultCategoryFile);
+    }
+
+    private static void load(@NotNull CategoryRegistry registry, @NotNull MapNode source, @NotNull MapNode defaultCategoryFile) {
         var itemManager = BoxProvider.get().getItemManager();
         var uncategorizedItems = new ObjectOpenHashSet<>(itemManager.getItemList());
+        var iconMap = source.getMap("icons");
 
-        for (var key : source.getKeyList()) {
+        for (var entry : source.value().entrySet()) {
+            var key = entry.getKey();
+
             if (key.equals("icons") ||
                     key.equals(CommonDefaultCategory.UNCATEGORIZED.getName()) ||
                     key.equals(CommonDefaultCategory.CUSTOM_ITEMS.getName())) {
@@ -38,18 +51,18 @@ public final class CategoryLoader {
 
             Material iconMaterial;
 
-            var iconMaterialName = source.getString("icons." + key).toUpperCase(Locale.ROOT);
+            var iconMaterialName = iconMap.getString(key).toUpperCase(Locale.ROOT);
 
             try {
                 iconMaterial = Material.valueOf(iconMaterialName);
             } catch (IllegalArgumentException e) {
-                BoxProvider.get().getLogger().warning("Unknown icon: " + iconMaterialName + " (icons." + key + ")");
+                BoxLogger.logger().warn("Unknown icon: {} (icons.{})", iconMaterialName, key);
                 iconMaterial = Material.STONE;
             }
 
-            var category = getOrCreateCategory(registry, key, iconMaterial);
+            var category = getOrCreateCategory(registry, String.valueOf(key), iconMaterial);
 
-            var itemNameList = source.getStringList(key);
+            var itemNameList = source.getList(key).asList(String.class);
 
             for (var itemName : itemNameList) {
                 var optionalBoxItem = itemManager.getBoxItem(itemName);
@@ -76,13 +89,7 @@ public final class CategoryLoader {
             return;
         }
 
-        Map<Set<String>, CommonDefaultCategory> defaultCategoryMap;
-
-        try {
-            defaultCategoryMap = BundledCategoryFile.loadDefaultCategoryMap();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        var defaultCategoryMap = BundledCategoryFile.loadDefaultCategoryMap(defaultCategoryFile);
 
         for (var item : uncategorizedItems.stream().sorted(Comparator.comparing(BoxItem::getPlainName)).toList()) {
             CommonDefaultCategory defaultCategory = null;
@@ -104,7 +111,7 @@ public final class CategoryLoader {
 
             category.addItem(item);
 
-            BoxProvider.get().getLogger().info("Added uncategorized item '" + item.getPlainName() + "' to category " + defaultCategory.getName());
+            BoxLogger.logger().info("Added uncategorized item '{}' to category '{}'", item.getPlainName(), defaultCategory.getName());
         }
     }
 
@@ -126,11 +133,11 @@ public final class CategoryLoader {
         return getOrCreateCategory(registry, name, () -> Category.create(Component.translatable("box.category.name." + name), icon, shouldSave));
     }
 
-    private static @NotNull Category getOrCreateCategory(@NotNull net.okocraft.box.feature.category.api.registry.CategoryRegistry registry, @NotNull DefaultCategory defaultCategory) {
+    private static @NotNull Category getOrCreateCategory(@NotNull CategoryRegistry registry, @NotNull DefaultCategory defaultCategory) {
         return getOrCreateCategory(registry, defaultCategory.getName(), defaultCategory::toCategory);
     }
 
-    private static @NotNull Category getOrCreateCategory(@NotNull net.okocraft.box.feature.category.api.registry.CategoryRegistry registry, @NotNull String name, @NotNull Supplier<Category> categorySupplier) {
+    private static @NotNull Category getOrCreateCategory(@NotNull CategoryRegistry registry, @NotNull String name, @NotNull Supplier<Category> categorySupplier) {
         var category = registry.getByName(name).orElse(null);
 
         if (category == null) {
@@ -141,7 +148,27 @@ public final class CategoryLoader {
         return category;
     }
 
-    private CategoryLoader() {
+    public static @NotNull MapNode dump(@NotNull CategoryRegistry registry) {
+        var mapNode = MapNode.create();
+        var iconMap = mapNode.getOrCreateMap("icons");
+        var categoryMap = registry.asMap();
+
+        for (var entry : categoryMap.entrySet()) {
+            var category = entry.getValue();
+
+            if (!category.shouldSave()) {
+                continue;
+            }
+
+            var categoryName = entry.getKey();
+            iconMap.set(categoryName, category.getIconMaterial().name());
+            mapNode.set(categoryName, category.getItems().stream().map(BoxItem::getPlainName).toList());
+        }
+
+        return mapNode;
+    }
+
+    private CategoryFile() {
         throw new UnsupportedOperationException();
     }
 }

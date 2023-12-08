@@ -1,49 +1,49 @@
 package net.okocraft.box.feature.category.internal.file;
 
-import com.github.siroshun09.configapi.api.Configuration;
-import com.github.siroshun09.configapi.api.util.ResourceUtils;
-import com.github.siroshun09.configapi.yaml.YamlConfiguration;
-import net.okocraft.box.api.BoxProvider;
+import com.github.siroshun09.configapi.core.node.ListNode;
+import com.github.siroshun09.configapi.core.node.MapNode;
+import com.github.siroshun09.configapi.format.yaml.YamlFormat;
+import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.api.util.MCDataVersion;
 import net.okocraft.box.feature.category.internal.category.CommonDefaultCategory;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.jar.JarFile;
 
-public final class BundledCategoryFile {
+final class BundledCategoryFile {
 
-    public static void copy(@NotNull Path dist) throws IOException {
-        ResourceUtils.copyFromJarIfNotExists(BoxProvider.get().getJar(), getFilename(), dist);
+    static @NotNull MapNode loadDefaultCategoryFile() throws IOException {
+        try (var input = BundledCategoryFile.class.getResourceAsStream(getFilename())) {
+            if (input != null) {
+                return YamlFormat.DEFAULT.load(input);
+            } else {
+                return MapNode.empty();
+            }
+        }
     }
 
-    static @NotNull Map<Set<String>, CommonDefaultCategory> loadDefaultCategoryMap() throws IOException {
-        Configuration source;
-
-        try (var jar = new JarFile(BoxProvider.get().getJar().toFile());
-             var input = ResourceUtils.getInputStreamFromJar(jar, getFilename())) {
-            source = YamlConfiguration.loadFromInputStream(input);
-        }
-
+    static @NotNull Map<Set<String>, CommonDefaultCategory> loadDefaultCategoryMap(@NotNull MapNode source) {
         Map<Set<String>, CommonDefaultCategory> result = new HashMap<>();
 
-        for (var key : source.getKeyList()) {
+        for (var entry : source.value().entrySet()) {
+            var key = String.valueOf(entry.getKey());
+
             if (key.equals("icons") ||
                     key.equals(CommonDefaultCategory.UNCATEGORIZED.getName()) ||
-                    key.equals(CommonDefaultCategory.CUSTOM_ITEMS.getName())) {
+                    key.equals(CommonDefaultCategory.CUSTOM_ITEMS.getName()) ||
+                    !(entry.getValue() instanceof ListNode listNode)) {
                 continue;
             }
 
             var category = CommonDefaultCategory.byName(key);
 
             if (category != null) {
-                result.put(Set.copyOf(source.getStringList(key)), category);
+                result.put(Set.copyOf(listNode.asList(String.class)), category);
             } else {
-                BoxProvider.get().getLogger().warning("Unknown default category: " + key);
+                BoxLogger.logger().warn("Unknown default category: {}", key);
             }
         }
 

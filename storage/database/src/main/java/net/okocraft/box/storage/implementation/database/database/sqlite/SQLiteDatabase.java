@@ -3,8 +3,11 @@ package net.okocraft.box.storage.implementation.database.database.sqlite;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import net.okocraft.box.storage.api.model.Storage;
+import net.okocraft.box.storage.api.registry.StorageContext;
+import net.okocraft.box.storage.implementation.database.DatabaseStorage;
 import net.okocraft.box.storage.implementation.database.database.Database;
 import net.okocraft.box.storage.implementation.database.schema.SchemaSet;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -16,15 +19,20 @@ import java.util.List;
 
 public class SQLiteDatabase implements Database {
 
+    @Contract("_ -> new")
+    public static @NotNull DatabaseStorage createStorage(@NotNull StorageContext<SQLiteSetting> context) {
+        return new DatabaseStorage(new SQLiteDatabase(context));
+    }
+
     private final String tablePrefix;
     private final SchemaSet schemaSet;
     private final Path databasePath;
     private HikariDataSource hikariDataSource;
 
-    public SQLiteDatabase(@NotNull Path databasePath, @NotNull String tablePrefix) {
-        this.tablePrefix = tablePrefix;
+    public SQLiteDatabase(@NotNull StorageContext<SQLiteSetting> context) {
+        this.tablePrefix = context.setting().tablePrefix();
         this.schemaSet = SQLiteTableSchema.create(tablePrefix);
-        this.databasePath = databasePath;
+        this.databasePath = context.pluginDirectory().resolve(context.setting().filename());
     }
 
     @Override

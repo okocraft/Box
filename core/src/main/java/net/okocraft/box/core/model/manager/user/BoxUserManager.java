@@ -1,15 +1,14 @@
 package net.okocraft.box.core.model.manager.user;
 
-import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.model.manager.UserManager;
 import net.okocraft.box.api.model.user.BoxUser;
+import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.storage.api.factory.user.BoxUserFactory;
 import net.okocraft.box.storage.api.model.user.UserStorage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
-import java.util.logging.Level;
 
 public class BoxUserManager implements UserManager {
 
@@ -36,7 +35,7 @@ public class BoxUserManager implements UserManager {
         try {
             user = this.userStorage.loadBoxUser(uuid);
         } catch (Exception e) {
-            this.logException("load the user (" + uuid + ")", e);
+            BoxLogger.logger().error("Could not load the user ({})", uuid, e);
             return this.createBoxUser(uuid); // create a BoxUser without name
         }
 
@@ -50,7 +49,7 @@ public class BoxUserManager implements UserManager {
         try {
             result = this.userStorage.searchByName(name);
         } catch (Exception e) {
-            this.logException("search for the user by name (" + name + ")", e);
+            BoxLogger.logger().error("Could not search for the user by name ({})", name, e);
             return null;
         }
 
@@ -67,11 +66,7 @@ public class BoxUserManager implements UserManager {
         try {
             this.userStorage.saveBoxUser(user.getUUID(), name);
         } catch (Exception e) {
-            this.logException("save the user (uuid: " + user.getUUID() + " name: " + name, e);
+            BoxLogger.logger().error("Could not save the user (uuid: {} name: {})", user.getUUID(), name, e);
         }
-    }
-
-    private void logException(@NotNull String action, @NotNull Exception exception) {
-        BoxProvider.get().getLogger().log(Level.SEVERE, "Could not " + action, exception);
     }
 }

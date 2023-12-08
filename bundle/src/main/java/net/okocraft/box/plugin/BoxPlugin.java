@@ -1,28 +1,34 @@
 package net.okocraft.box.plugin;
 
-import com.github.siroshun09.configapi.yaml.YamlConfiguration;
+import com.github.siroshun09.configapi.core.node.MapNode;
+import com.github.siroshun09.configapi.format.yaml.YamlFormat;
 import net.okocraft.box.api.feature.BoxFeature;
+import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.bootstrap.BoxBootstrapContext;
-import net.okocraft.box.platform.PlatformDependent;
 import net.okocraft.box.core.BoxCore;
 import net.okocraft.box.core.PluginContext;
-import net.okocraft.box.storage.migrator.StorageMigrator;
+import net.okocraft.box.core.config.Config;
+import net.okocraft.box.platform.PlatformDependent;
+import net.okocraft.box.storage.api.holder.StorageHolder;
+import net.okocraft.box.storage.api.registry.StorageRegistry;
 import net.okocraft.box.storage.migrator.config.MigrationConfigLoader;
-import net.okocraft.box.util.TranslationDirectoryUtil;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 import java.util.Locale;
 import java.util.function.Supplier;
-import java.util.logging.Level;
 
 public final class BoxPlugin extends JavaPlugin {
 
-    private final PluginContext pluginContext;
     private final BoxCore boxCore;
+    private final PluginContext pluginContext;
+    private final StorageRegistry storageRegistry;
     private final @NotNull List<Supplier<? extends BoxFeature>> preregisteredFeatures;
 
     private Status status = Status.NOT_LOADED;
@@ -32,16 +38,14 @@ public final class BoxPlugin extends JavaPlugin {
                 this,
                 boxBootstrapContext.getVersion(),
                 boxBootstrapContext.getPluginDirectory(),
-                boxBootstrapContext.getJarFile(),
                 PlatformDependent.createScheduler(this),
                 boxBootstrapContext.getEventBus(),
-                YamlConfiguration.create(boxBootstrapContext.getPluginDirectory().resolve("config.yml")),
-                TranslationDirectoryUtil.fromContext(boxBootstrapContext),
-                boxBootstrapContext.getStorageRegistry(),
+                new Config(boxBootstrapContext.getPluginDirectory()),
                 PlatformDependent.createItemProvider(),
                 PlatformDependent.createCommandRegisterer(this.getName().toLowerCase(Locale.ENGLISH))
         );
         this.boxCore = new BoxCore(pluginContext);
+        this.storageRegistry = boxBootstrapContext.getStorageRegistry();
         this.preregisteredFeatures = boxBootstrapContext.getBoxFeatureList();
     }
 
@@ -53,15 +57,18 @@ public final class BoxPlugin extends JavaPlugin {
 
         var start = Instant.now();
 
-        if (boxCore.load()) {
-            status = Status.LOADED;
-        } else {
-            status = Status.EXCEPTION_OCCURRED;
+        try {
+            StorageHolder.init(this.pluginContext.config().loadAndCreateStorage(this.storageRegistry));
+        } catch (IOException e) {
+            BoxLogger.logger().error("Could not load config.yml", e);
+            this.status = Status.EXCEPTION_OCCURRED;
             return;
         }
 
+        this.status = Status.LOADED;
         var finish = Instant.now();
-        getLogger().info("Successfully loaded! (" + Duration.between(start, finish).toMillis() + "ms)");
+
+        BoxLogger.logger().info("Successfully loaded! ({}ms)", Duration.between(start, finish).toMillis());
     }
 
     @Override
@@ -74,14 +81,14 @@ public final class BoxPlugin extends JavaPlugin {
         try {
             runMigratorIfNeeded();
         } catch (Exception e) {
-            getLogger().log(Level.SEVERE, "An exception occurred while migrating data.", e);
+            BoxLogger.logger().error("An exception occurred while migrating data.", e);
             status = Status.EXCEPTION_OCCURRED;
             return;
         }
 
         var start = Instant.now();
 
-        if (boxCore.enable()) {
+        if (boxCore.enable(StorageHolder.getStorage())) {
             status = Status.ENABLED;
         } else {
             status = Status.EXCEPTION_OCCURRED;
@@ -93,8 +100,10 @@ public final class BoxPlugin extends JavaPlugin {
             this.boxCore.register(featureSupplier.get());
         }
 
+        this.preregisteredFeatures.clear();
+
         var finish = Instant.now();
-        getLogger().info("Successfully enabled! (" + Duration.between(start, finish).toMillis() + "ms)");
+        BoxLogger.logger().info("Successfully enabled! ({}ms)", Duration.between(start, finish).toMillis());
     }
 
     @Override
@@ -104,32 +113,48 @@ public final class BoxPlugin extends JavaPlugin {
             status = Status.DISABLED;
         }
 
-        getLogger().info("Successfully disabled. Goodbye!");
+        BoxLogger.logger().info("Successfully disabled. Goodbye!");
     }
 
     private void runMigratorIfNeeded() throws Exception {
-        StorageMigrator migrator = null;
+        var filepath = this.pluginContext.dataDirectory().resolve("migration.yml");
 
-        try (var migrationYaml = MigrationConfigLoader.load(boxCore.getPluginDirectory().resolve("migration.yml"), getLogger())) {
-            if (MigrationConfigLoader.isMigrationRequested(migrationYaml, getLogger())) {
-                migrator = MigrationConfigLoader.prepare(migrationYaml, pluginContext.storageRegistry(), pluginContext.defaultItemProvider(), getLogger());
-            }
+        if (!Files.isRegularFile(filepath)) {
+            return;
         }
 
-        if (migrator != null) {
-             var start = Instant.now();
+        MapNode loadedMigrationSetting;
 
-            getLogger().info("Initializing storages...");
+        try (var reader = Files.newBufferedReader(filepath, StandardCharsets.UTF_8)) {
+            loadedMigrationSetting = YamlFormat.COMMENT_PROCESSING.load(reader);
+        }
+
+        if (loadedMigrationSetting.getBoolean("migration-mode")) {
+            loadedMigrationSetting.set("migration-mode", false);
+
+            try (var writer = Files.newBufferedWriter(filepath, StandardCharsets.UTF_8)) {
+                YamlFormat.COMMENT_PROCESSING.save(loadedMigrationSetting, writer);
+            }
+        } else {
+            return;
+        }
+
+        var migrator = MigrationConfigLoader.prepare(loadedMigrationSetting, this.storageRegistry, this.pluginContext.dataDirectory(), this.pluginContext.defaultItemProvider());
+
+        if (migrator != null) {
+            var start = Instant.now();
+
+            BoxLogger.logger().info("Initializing storages...");
             migrator.init();
 
-            getLogger().info("Migrating data...");
+            BoxLogger.logger().info("Migrating data...");
             migrator.run();
 
-            getLogger().info("Shutting down storages...");
+            BoxLogger.logger().info("Shutting down storages...");
             migrator.close();
 
             var finish = Instant.now();
-            getLogger().info("Migration is completed. (" + Duration.between(start, finish).toMillis() + "ms)");
+            BoxLogger.logger().info("Migration is completed. ({}ms)", Duration.between(start, finish).toMillis());
         }
     }
 

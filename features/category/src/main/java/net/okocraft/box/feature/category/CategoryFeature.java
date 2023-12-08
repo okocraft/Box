@@ -1,23 +1,21 @@
 package net.okocraft.box.feature.category;
 
-import com.github.siroshun09.configapi.yaml.YamlConfiguration;
+import com.github.siroshun09.configapi.format.yaml.YamlFormat;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.feature.AbstractBoxFeature;
 import net.okocraft.box.api.feature.Disableable;
 import net.okocraft.box.api.feature.Reloadable;
 import net.okocraft.box.api.message.Components;
+import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.feature.category.api.registry.CategoryRegistry;
-import net.okocraft.box.feature.category.internal.file.BundledCategoryFile;
-import net.okocraft.box.feature.category.internal.file.CategoryDumper;
-import net.okocraft.box.feature.category.internal.file.CategoryLoader;
+import net.okocraft.box.feature.category.internal.file.CategoryFile;
 import net.okocraft.box.feature.category.internal.listener.CustomItemListener;
 import net.okocraft.box.feature.category.internal.listener.ItemInfoEventListener;
 import net.okocraft.box.feature.category.internal.registry.CategoryRegistryImpl;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
-import java.nio.file.Files;
-import java.util.logging.Level;
+import java.io.IOException;
 
 public class CategoryFeature extends AbstractBoxFeature implements Disableable, Reloadable {
 
@@ -31,22 +29,20 @@ public class CategoryFeature extends AbstractBoxFeature implements Disableable, 
 
     @Override
     public void enable() {
-        try (var yaml = YamlConfiguration.create(BoxProvider.get().getPluginDirectory().resolve("categories.yml"))) {
-            if (!Files.exists(yaml.getPath())) {
-                BundledCategoryFile.copy(yaml.getPath());
-            }
+        var filepath = BoxProvider.get().getPluginDirectory().resolve("categories.yml");
 
-            yaml.load();
+        try {
+            CategoryFile.load(this.categoryRegistry, filepath);
+        } catch (IOException e) {
+            BoxLogger.logger().error("Could not load categories.yml", e);
+            return;
+        }
 
-            CategoryLoader.load(categoryRegistry, yaml);
-
-            yaml.clear();
-
-            CategoryDumper.dump(categoryRegistry, yaml);
-
-            yaml.save();
-        } catch (Exception e) {
-            BoxProvider.get().getLogger().log(Level.SEVERE, "Could not load categories.yml", e);
+        try {
+            YamlFormat.DEFAULT.save(CategoryFile.dump(this.categoryRegistry), filepath);
+        } catch (IOException e) {
+            BoxLogger.logger().error("Could not save categories.yml", e);
+            return;
         }
 
         customItemListener.register(getListenerKey());

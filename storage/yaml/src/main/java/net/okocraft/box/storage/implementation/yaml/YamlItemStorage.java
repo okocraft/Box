@@ -1,27 +1,31 @@
 package net.okocraft.box.storage.implementation.yaml;
 
-import com.github.siroshun09.configapi.api.Configuration;
-import com.github.siroshun09.configapi.yaml.YamlConfiguration;
+import com.github.siroshun09.configapi.core.node.MapNode;
+import com.github.siroshun09.configapi.core.node.NumberValue;
+import com.github.siroshun09.configapi.format.yaml.YamlFormat;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.okocraft.box.api.model.item.BoxCustomItem;
 import net.okocraft.box.api.model.item.BoxItem;
+import net.okocraft.box.api.util.BoxLogger;
+import net.okocraft.box.api.util.ItemNameGenerator;
 import net.okocraft.box.api.util.MCDataVersion;
 import net.okocraft.box.storage.api.factory.item.BoxItemFactory;
-import net.okocraft.box.storage.api.holder.LoggerHolder;
 import net.okocraft.box.storage.api.model.item.ItemData;
 import net.okocraft.box.storage.api.model.item.ItemStorage;
 import net.okocraft.box.storage.api.util.item.DefaultItem;
-import net.okocraft.box.api.util.ItemNameGenerator;
 import net.okocraft.box.storage.api.util.item.ItemVersion;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -49,16 +53,16 @@ class YamlItemStorage implements ItemStorage {
     public void init() throws Exception {
         Files.createDirectories(this.itemDirectory);
 
-        try (var itemStorageMetaYaml = YamlConfiguration.create(this.itemStorageMetaFile)) {
-            itemStorageMetaYaml.load();
+        var metaData = YamlFormat.DEFAULT.load(this.itemStorageMetaFile);
 
-            if (itemStorageMetaYaml.get("data-version") != null) {
-                this.dataVersion = MCDataVersion.of(itemStorageMetaYaml.getInteger("data-version"));
-                this.defaultItemVersion = itemStorageMetaYaml.getInteger("default-item-version");
-            }
+        var dataVersion = metaData.get("data-version");
 
-            this.lastUsedItemId.set(itemStorageMetaYaml.getInteger("last-used-item-id"));
+        if (dataVersion instanceof NumberValue numberValue) {
+            this.dataVersion = MCDataVersion.of(numberValue.asInt());
+            this.defaultItemVersion = metaData.getInteger("default-item-version");
         }
+
+        this.lastUsedItemId.set(metaData.getInteger("last-used-item-id"));
     }
 
     @Override
@@ -76,24 +80,15 @@ class YamlItemStorage implements ItemStorage {
 
     @Override
     public @NotNull List<ItemData> loadAllDefaultItems() throws Exception {
-        List<ItemData> result;
+        var source = YamlFormat.DEFAULT.load(this.defaultItemDataFile);
+        var keys = source.value().keySet();
+        var result = new ArrayList<ItemData>(keys.size());
 
-        try (var source = YamlConfiguration.create(this.defaultItemDataFile)) {
-            source.load();
+        for (var key : source.value().keySet()) {
+            var data = readItemData(source, key);
 
-            var keyList = source.getKeyList();
-            result = new ArrayList<>(keyList.size());
-
-            for (var key : keyList) {
-                var id = this.parseIntOrNull(key);
-                var name = this.readPlainName(source, key);
-
-                if (id == null) {
-                    LoggerHolder.get().warning("Invalid id: " + key + " (name: " + name + ")");
-                    continue;
-                }
-
-                result.add(new ItemData(id, name, source.getBytes(key + ".data")));
+            if (data != null) {
+                result.add(data);
             }
         }
 
@@ -104,12 +99,11 @@ class YamlItemStorage implements ItemStorage {
     public @NotNull List<BoxItem> saveDefaultItems(@NotNull List<DefaultItem> newItems, @NotNull Int2ObjectMap<DefaultItem> updatedItemMap) throws Exception {
         var result = new ArrayList<BoxItem>(newItems.size() + updatedItemMap.size());
 
-        try (var target = YamlConfiguration.create(this.defaultItemDataFile)) {
+        try (var writer = Files.newBufferedWriter(this.defaultItemDataFile, StandardCharsets.UTF_8, YamlFileOptions.WRITE)) {
             for (var item : newItems) {
                 int id = this.lastUsedItemId.incrementAndGet();
 
-                this.writeDefaultItem(id, item, target);
-
+                writeItemData(id, item.plainName(), item.itemStack(), writer);
                 result.add(BoxItemFactory.createDefaultItem(id, item));
             }
 
@@ -117,12 +111,9 @@ class YamlItemStorage implements ItemStorage {
                 var internalId = entry.getIntKey();
                 var item = entry.getValue();
 
-                this.writeDefaultItem(internalId, item, target);
-
+                writeItemData(internalId, item.plainName(), item.itemStack(), writer);
                 result.add(BoxItemFactory.createDefaultItem(internalId, item));
             }
-
-            target.save();
         }
 
         this.saveItemStorageMeta();
@@ -132,25 +123,15 @@ class YamlItemStorage implements ItemStorage {
 
     @Override
     public @NotNull List<BoxCustomItem> loadAllCustomItems() throws Exception {
-        List<BoxCustomItem> result;
+        var source = YamlFormat.DEFAULT.load(this.customItemDataFile);
+        var keys = source.value().keySet();
+        var result = new ArrayList<BoxCustomItem>(keys.size());
 
-        try (var source = YamlConfiguration.create(this.customItemDataFile)) {
-            source.load();
+        for (var key : keys) {
+            var data = readItemData(source, key);
 
-            var keyList = source.getKeyList();
-            result = new ArrayList<>(keyList.size());
-
-            for (var key : keyList) {
-                var id = this.parseIntOrNull(key);
-                var name = this.readPlainName(source, key);
-
-                if (id == null) {
-                    LoggerHolder.get().warning("Invalid id: " + key + " (name: " + name + ")");
-                    continue;
-                }
-
-                var item = ItemStack.deserializeBytes(source.getBytes(key + ".data"));
-                result.add(BoxItemFactory.createCustomItem(id, name, item));
+            if (data != null) {
+                result.add(BoxItemFactory.createCustomItem(data.internalId(), data.plainName(), ItemStack.deserializeBytes(data.itemData())));
             }
         }
 
@@ -159,9 +140,10 @@ class YamlItemStorage implements ItemStorage {
 
     @Override
     public void updateCustomItems(@NotNull Collection<BoxCustomItem> items) throws Exception {
-        try (var target = YamlConfiguration.create(this.customItemDataFile)) {
-            items.forEach(boxItem -> this.writeCustomItem(boxItem, target));
-            target.save();
+        try (var writer = Files.newBufferedWriter(this.customItemDataFile, StandardCharsets.UTF_8, YamlFileOptions.WRITE)) {
+            for (var item : items) {
+                writeItemData(item.getInternalId(), item.getPlainName(), item.getOriginal(), writer);
+            }
         }
     }
 
@@ -171,10 +153,8 @@ class YamlItemStorage implements ItemStorage {
         var name = itemName != null ? itemName : ItemNameGenerator.itemStack(item.getType(), item.serializeAsBytes());
         var boxItem = BoxItemFactory.createCustomItem(id, name, item);
 
-        try (var target = YamlConfiguration.create(this.customItemDataFile)) {
-            target.load();
-            this.writeCustomItem(boxItem, target);
-            target.save();
+        try (var writer = Files.newBufferedWriter(this.customItemDataFile, StandardCharsets.UTF_8, StandardOpenOption.APPEND, StandardOpenOption.WRITE)) {
+            writeItemData(id, boxItem.getPlainName(), boxItem.getOriginal(), writer);
         }
 
         this.saveItemStorageMeta();
@@ -184,37 +164,41 @@ class YamlItemStorage implements ItemStorage {
 
     @Override
     public @NotNull BoxCustomItem renameCustomItem(@NotNull BoxCustomItem item, @NotNull String newName) throws Exception {
-        try (var target = YamlConfiguration.create(this.customItemDataFile)) {
-            target.load();
-            this.writeCustomItem(item, target);
-            target.save();
-        }
-
         BoxItemFactory.renameCustomItem(item, newName);
+
+        var mapNode = YamlFormat.DEFAULT.load(this.customItemDataFile);
+
+        var data = mapNode.getOrCreateMap(item.getInternalId());
+        data.set("name", item.getPlainName());
+        data.set("data", Base64.getEncoder().encodeToString(item.getOriginal().serializeAsBytes()));
+
+        YamlFormat.DEFAULT.save(mapNode, this.customItemDataFile);
 
         return item;
     }
 
-    private @Nullable Integer parseIntOrNull(@NotNull String text) {
+    private static @Nullable ItemData readItemData(@NotNull MapNode source, @NotNull Object key) {
+        int id;
+
+        var data = source.getMap(key);
+        var name = data.getString("name");
+
         try {
-            return Integer.parseInt(text);
+            id = key instanceof Number num ? num.intValue() : Integer.parseInt(String.valueOf(key));
         } catch (NumberFormatException e) {
+            BoxLogger.logger().warn("Invalid id: {} (name: {})", key, name);
             return null;
         }
+
+        return new ItemData(id, name, Base64.getDecoder().decode(data.getString("data")));
     }
 
-    private @NotNull String readPlainName(@NotNull Configuration source, @NotNull String key) {
-        return source.getString(key + ".name");
-    }
-
-    private void writeDefaultItem(int id, @NotNull DefaultItem defaultItem, @NotNull Configuration target) {
-        target.set(id + ".name", defaultItem.plainName());
-        target.setBytes(id + ".data", defaultItem.itemStack().serializeAsBytes());
-    }
-
-    private void writeCustomItem(@NotNull BoxCustomItem item, @NotNull Configuration target) {
-        target.set(item.getInternalId() + ".name", item.getPlainName());
-        target.setBytes(item.getInternalId() + ".data", item.getClonedItem().serializeAsBytes());
+    private static void writeItemData(int id, @NotNull String plainName, @NotNull ItemStack item, @NotNull BufferedWriter writer) throws IOException {
+        writer.write(id + ":");
+        writer.newLine();
+        writer.write("  name: " + plainName);
+        writer.write("  data: " + Base64.getEncoder().encodeToString(item.serializeAsBytes()));
+        writer.newLine();
     }
 
     private void saveItemStorageMeta() throws IOException {

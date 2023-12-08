@@ -3,13 +3,13 @@ package net.okocraft.box.bootstrap;
 import io.papermc.paper.plugin.bootstrap.BootstrapContext;
 import io.papermc.paper.plugin.bootstrap.PluginBootstrap;
 import io.papermc.paper.plugin.bootstrap.PluginProviderContext;
-import net.okocraft.box.bundle.BuiltinFeatures;
-import net.okocraft.box.bundle.BuiltinStorages;
-import net.okocraft.box.bundle.BuiltinTranslations;
+import net.okocraft.box.api.util.BoxLogger;
+import net.okocraft.box.bundle.Builtin;
 import net.okocraft.box.plugin.BoxPlugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.helpers.SubstituteLogger;
 
 @SuppressWarnings({"UnstableApiUsage", "unused"})
 public final class BoxBootstrap implements PluginBootstrap {
@@ -30,13 +30,11 @@ public final class BoxBootstrap implements PluginBootstrap {
     @Override
     public void bootstrap(@NotNull BootstrapContext context) {
         BoxBootstrap.instance = this;
+        ((SubstituteLogger) BoxLogger.logger()).setDelegate(context.getLogger());
         boxBootstrapContext = BoxBootstrapContext.create(context);
 
-        BuiltinFeatures.addToContext(boxBootstrapContext);
-        BuiltinStorages.addToRegistry(boxBootstrapContext.getStorageRegistry());
-
-        boxBootstrapContext.onLanguageDirectoryCreated().add(directory -> BuiltinTranslations.saveDefaultTranslationFiles(boxBootstrapContext.getJarFile(), directory));
-        boxBootstrapContext.getTranslationLoaderCreators().addCreator(locale -> BuiltinTranslations.loadDefaultTranslation(boxBootstrapContext.getJarFile(), locale));
+        Builtin.features(this.boxBootstrapContext);
+        Builtin.storages(this.boxBootstrapContext.getStorageRegistry());
     }
 
     @Override

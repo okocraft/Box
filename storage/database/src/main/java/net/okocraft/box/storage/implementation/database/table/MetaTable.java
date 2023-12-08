@@ -2,6 +2,8 @@ package net.okocraft.box.storage.implementation.database.table;
 
 import net.okocraft.box.api.util.MCDataVersion;
 import net.okocraft.box.storage.implementation.database.database.Database;
+import net.okocraft.box.storage.implementation.database.database.mysql.MySQLDatabase;
+import net.okocraft.box.storage.implementation.database.database.sqlite.SQLiteDatabase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,6 +15,8 @@ public class MetaTable extends AbstractTable {
 
     private static final String ITEM_DATA_VERSION_KEY = "item_data_version";
     private static final String DEFAULT_ITEM_VERSION_KEY = "default_item_version";
+    private static final String CUSTOM_DATA_FORMAT_KEY = "custom_data_format";
+    private static final String CURRENT_CUSTOM_DATA_FORMAT_VALUE = "configapi_v5_binary";
 
     private boolean hasItemDataVersion = false;
     private boolean hasDefaultItemVersion = false;
@@ -85,6 +89,40 @@ public class MetaTable extends AbstractTable {
             }
 
             statement.execute();
+        }
+    }
+
+    public boolean isCurrentCustomDataFormat() throws SQLException {
+        try (var connection = database.getConnection();
+             var statement = prepareStatement(connection, "SELECT `value` FROM `%table%` WHERE `key`=? LIMIT 1")) {
+            statement.setString(1, CUSTOM_DATA_FORMAT_KEY);
+
+            try (var resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return CURRENT_CUSTOM_DATA_FORMAT_VALUE.equals(resultSet.getString("value"));
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public void saveCurrentCustomDataFormat() throws SQLException {
+        try (var connection = database.getConnection();
+             var statement = prepareStatement(connection, this.upsertCurrentCustomDataFormatStatement())) {
+            statement.setString(1, CUSTOM_DATA_FORMAT_KEY);
+            statement.setString(2, CUSTOM_DATA_FORMAT_KEY);
+            statement.execute();
+        }
+    }
+
+    private @NotNull String upsertCurrentCustomDataFormatStatement() {
+        if (database instanceof MySQLDatabase) {
+            return "INSERT INTO `%table%` (`key`, `data`) VALUES (?, ?) AS new ON DUPLICATE KEY UPDATE `data` = new.data";
+        } else if (database instanceof SQLiteDatabase) {
+            return "INSERT INTO `%table%` (`key`, `data`) VALUES (?, ?) ON CONFLICT (`key`) DO UPDATE SET `data` = excluded.data";
+        } else {
+            throw new UnsupportedOperationException();
         }
     }
 }

@@ -1,6 +1,8 @@
 package net.okocraft.box.feature.autostore.model;
 
+import net.kyori.adventure.key.Key;
 import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.feature.autostore.message.AutoStoreMessage;
 import net.okocraft.box.feature.autostore.model.setting.AutoStoreSetting;
 import org.bukkit.Bukkit;
@@ -9,11 +11,9 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Level;
 
 /**
  * A class to manage user's {@link AutoStoreSetting}s.
@@ -47,8 +47,13 @@ public class AutoStoreSettingContainer {
      * @throws IllegalStateException if the {@link Player}'s {@link AutoStoreSetting} is not loaded
      */
     public @NotNull AutoStoreSetting get(@NotNull Player player) {
-        return Optional.ofNullable(settingMap.get(player.getUniqueId()))
-                .orElseThrow(() -> new IllegalStateException("player is not loaded (" + player.getName() + ")"));
+        var setting = this.settingMap.get(player.getUniqueId());
+
+        if (setting == null) {
+            throw new IllegalStateException("player is not loaded (" + player.getName() + ")");
+        }
+
+        return setting;
     }
 
     /**
@@ -57,12 +62,10 @@ public class AutoStoreSettingContainer {
      * NOTE: <b>This method is for internal use only.</b>
      *
      * @param player the {@link Player} to load the {@link AutoStoreSetting}
-     * @return the {@link CompletableFuture} to load the {@link AutoStoreSetting}
      */
     @ApiStatus.Internal
-    public @NotNull CompletableFuture<Void> load(@NotNull Player player) {
-        return load(player.getUniqueId())
-                .thenAcceptAsync(setting -> settingMap.put(player.getUniqueId(), setting));
+    public void load(@NotNull Player player) throws Exception {
+        this.settingMap.put(player.getUniqueId(), this.load(player.getUniqueId()));
     }
 
     /**
@@ -75,26 +78,19 @@ public class AutoStoreSettingContainer {
      * @param uuid the {@link UUID} to load the {@link AutoStoreSetting}
      * @return the {@link CompletableFuture} to load the {@link AutoStoreSetting}
      */
-    public @NotNull CompletableFuture<AutoStoreSetting> load(@NotNull UUID uuid) {
-        return BoxProvider.get()
-                .getCustomDataContainer()
-                .get("autostore", uuid.toString())
-                .thenApplyAsync(data -> AutoStoreSettingSerializer.deserializeConfiguration(uuid, data));
+    public @NotNull AutoStoreSetting load(@NotNull UUID uuid) throws Exception {
+        var data = BoxProvider.get().getCustomDataManager().loadData(createKey(uuid));
+        return AutoStoreSettingSerializer.deserialize(uuid, data);
     }
 
     /**
      * Saves the {@link AutoStoreSetting}.
      *
      * @param setting the {@link AutoStoreSetting} to save
-     * @return the {@link CompletableFuture} to save the {@link AutoStoreSetting}
      */
-    public @NotNull CompletableFuture<Void> save(@NotNull AutoStoreSetting setting) {
-        return CompletableFuture
-                .supplyAsync(() -> AutoStoreSettingSerializer.serialize(setting))
-                .thenAcceptAsync(
-                        data -> BoxProvider.get().getCustomDataContainer()
-                                .set("autostore", setting.getUuid().toString(), data)
-                );
+    public void save(@NotNull AutoStoreSetting setting) throws Exception {
+        var data = AutoStoreSettingSerializer.serialize(setting);
+        BoxProvider.get().getCustomDataManager().saveData(createKey(setting.getUuid()), data);
     }
 
     /**
@@ -103,17 +99,14 @@ public class AutoStoreSettingContainer {
      * NOTE: <b>This method is for internal use only.</b>
      *
      * @param player the {@link Player} to unload the {@link AutoStoreSetting}
-     * @return the {@link CompletableFuture} to unload the {@link AutoStoreSetting}
      */
     @ApiStatus.Internal
-    public @NotNull CompletableFuture<Void> unload(@NotNull Player player) {
-        return CompletableFuture.runAsync(() -> {
-            var setting = settingMap.remove(player.getUniqueId());
+    public void unload(@NotNull Player player) throws Exception {
+        var setting = this.settingMap.remove(player.getUniqueId());
 
-            if (setting != null) {
-                save(setting).join();
-            }
-        });
+        if (setting != null) {
+            this.save(setting);
+        }
     }
 
     /**
@@ -124,17 +117,12 @@ public class AutoStoreSettingContainer {
     @ApiStatus.Internal
     public void loadAll() {
         for (var player : Bukkit.getOnlinePlayers()) {
-            load(player).exceptionally(throwable -> {
-                BoxProvider.get().getLogger().log(
-                        Level.SEVERE,
-                        "Could not load autostore setting (" + player.getName() + ")",
-                        throwable
-                );
-
+            try {
+                this.load(player);
+            } catch (Exception e) {
+                BoxLogger.logger().error("Could not load autostore setting ({})", player.getName(), e);
                 player.sendMessage(AutoStoreMessage.ERROR_FAILED_TO_LOAD_SETTINGS);
-
-                return null;
-            });
+            }
         }
     }
 
@@ -145,16 +133,17 @@ public class AutoStoreSettingContainer {
      */
     @ApiStatus.Internal
     public void unloadAll() {
-        for (var setting : settingMap.values()) {
-            save(setting).exceptionally(throwable -> {
-                BoxProvider.get().getLogger().log(
-                        Level.SEVERE,
-                        "Could not unload autostore setting (" + setting.getUuid() + ")",
-                        throwable
-                );
-
-                return null;
-            });
+        for (var setting : this.settingMap.values()) {
+            try {
+                this.save(setting);
+            } catch (Exception e) {
+                BoxLogger.logger().error("Could not unload autostore setting ({})", setting.getUuid(), e);
+            }
         }
+    }
+
+    @SuppressWarnings("PatternValidation")
+    private static @NotNull Key createKey(@NotNull UUID uuid) {
+        return Key.key("autostore", uuid.toString());
     }
 }

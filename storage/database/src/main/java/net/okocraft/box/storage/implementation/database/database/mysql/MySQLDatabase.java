@@ -3,8 +3,11 @@ package net.okocraft.box.storage.implementation.database.database.mysql;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import net.okocraft.box.storage.api.model.Storage;
+import net.okocraft.box.storage.api.registry.StorageContext;
+import net.okocraft.box.storage.implementation.database.DatabaseStorage;
 import net.okocraft.box.storage.implementation.database.database.Database;
 import net.okocraft.box.storage.implementation.database.schema.SchemaSet;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.Connection;
@@ -16,13 +19,18 @@ import java.util.concurrent.TimeUnit;
 
 public class MySQLDatabase implements Database {
 
+    @Contract("_ -> new")
+    public static @NotNull DatabaseStorage createStorage(@NotNull StorageContext<MySQLSetting> context) {
+        return new DatabaseStorage(new MySQLDatabase(context));
+    }
+
     private final SchemaSet schemaSet;
-    private final MySQLConfig mySQLConfig;
+    private final MySQLSetting mySQLSetting;
     private HikariDataSource hikariDataSource;
 
-    public MySQLDatabase(@NotNull MySQLConfig config) {
-        this.mySQLConfig = config;
-        this.schemaSet = MySQLTableSchema.create(config.tablePrefix);
+    public MySQLDatabase(@NotNull StorageContext<MySQLSetting> context) {
+        this.mySQLSetting = context.setting();
+        this.schemaSet = MySQLTableSchema.create(mySQLSetting.tablePrefix());
     }
 
     @Override
@@ -31,9 +39,9 @@ public class MySQLDatabase implements Database {
 
         var config = new HikariConfig();
 
-        config.setJdbcUrl("jdbc:mysql://" + mySQLConfig.address + ":" + mySQLConfig.port + "/" + mySQLConfig.databaseName);
-        config.setUsername(mySQLConfig.username);
-        config.setPassword(mySQLConfig.password);
+        config.setJdbcUrl("jdbc:mysql://" + mySQLSetting.address() + ":" + mySQLSetting.port() + "/" + mySQLSetting.databaseName());
+        config.setUsername(mySQLSetting.username());
+        config.setPassword(mySQLSetting.password());
 
         config.setPoolName("BoxMySQLPool");
         config.setDriverClassName("com.mysql.cj.jdbc.Driver");
@@ -60,8 +68,8 @@ public class MySQLDatabase implements Database {
     public @NotNull List<Storage.Property> getInfo() {
         var result = new ArrayList<Storage.Property>();
 
-        result.add(Storage.Property.of("database-name", mySQLConfig.databaseName));
-        result.add(Storage.Property.of("table-prefix", mySQLConfig.tablePrefix));
+        result.add(Storage.Property.of("database-name", mySQLSetting.databaseName()));
+        result.add(Storage.Property.of("table-prefix", mySQLSetting.tablePrefix()));
 
         var ping = ping();
         if (0 < ping) {

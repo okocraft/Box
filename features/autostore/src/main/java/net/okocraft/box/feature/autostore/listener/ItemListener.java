@@ -99,7 +99,7 @@ public class ItemListener implements Listener {
     }
 
     private boolean processEvent(@NotNull Player player, @NotNull Location location, @NotNull ItemStack item, boolean direct) {
-        if (BoxProvider.get().isDisabledWorld(player)) {
+        if (!BoxProvider.get().canUseBox(player)) {
             return false;
         }
 

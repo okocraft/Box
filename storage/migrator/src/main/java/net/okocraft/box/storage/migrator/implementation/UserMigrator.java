@@ -1,9 +1,9 @@
 package net.okocraft.box.storage.migrator.implementation;
 
 import net.okocraft.box.api.model.user.BoxUser;
+import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.storage.api.model.Storage;
 import net.okocraft.box.storage.api.model.user.UserStorage;
-import net.okocraft.box.storage.migrator.util.LoggerWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -16,10 +16,10 @@ public class UserMigrator extends AbstractDataMigrator<UserMigrator.Result, User
     }
 
     @Override
-    public @NotNull UserMigrator.Result migrateData(@NotNull UserStorage source, @NotNull UserStorage target, @NotNull LoggerWrapper logger) throws Exception {
+    public @NotNull UserMigrator.Result migrateData(@NotNull UserStorage source, @NotNull UserStorage target, boolean debug) throws Exception {
         var users = source.loadAllBoxUsers();
         target.saveBoxUsers(users);
-        logger.info(users.size() + " users are migrated.");
+        BoxLogger.logger().info("{} users are migrated.", users.size());
         return new Result(users);
     }
 

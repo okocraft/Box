@@ -20,6 +20,7 @@ import net.okocraft.box.api.model.stock.StockEventCaller;
 import net.okocraft.box.api.model.stock.StockHolder;
 import net.okocraft.box.api.model.user.BoxUser;
 import net.okocraft.box.api.scheduler.BoxScheduler;
+import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.core.model.loader.LoadingPersonalStockHolder;
 import net.okocraft.box.core.model.manager.stock.autosave.ChangeQueue;
 import net.okocraft.box.core.model.stock.StockHolderImpl;
@@ -33,7 +34,6 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
-import java.util.logging.Level;
 
 public class BoxStockManager implements StockManager {
 
@@ -120,7 +120,7 @@ public class BoxStockManager implements StockManager {
             try {
                 partialSavingStockStorage.cleanupZeroStockData();
             } catch (Exception e) {
-                BoxProvider.get().getLogger().log(Level.SEVERE, "Could not cleanup stock data", e);
+                BoxLogger.logger().error("Could not cleanup stock data", e);
             }
         }
 
@@ -159,11 +159,7 @@ public class BoxStockManager implements StockManager {
     }
 
     private void logStockStorageError(@NotNull StockHolder stockHolder, @NotNull Exception e) {
-        BoxProvider.get().getLogger().log(
-                Level.SEVERE,
-                "Could not save user's stock holder (name: " + stockHolder.getName() + " uuid:" + stockHolder.getUUID() + ")",
-                e
-        );
+        BoxLogger.logger().error("Could not save user's stock holder (name: {} uuid: {})", stockHolder.getName(), stockHolder.getUUID(), e);
     }
 
     private static class QueuingStockEventCaller implements StockEventCaller {

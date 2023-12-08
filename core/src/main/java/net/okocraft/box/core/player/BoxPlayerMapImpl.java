@@ -6,6 +6,7 @@ import net.okocraft.box.api.event.player.PlayerUnloadEvent;
 import net.okocraft.box.api.player.BoxPlayer;
 import net.okocraft.box.api.player.BoxPlayerMap;
 import net.okocraft.box.api.scheduler.BoxScheduler;
+import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.core.message.ErrorMessages;
 import net.okocraft.box.core.model.manager.stock.BoxStockManager;
 import net.okocraft.box.core.model.manager.user.BoxUserManager;
@@ -17,7 +18,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
 
 public class BoxPlayerMapImpl implements BoxPlayerMap {
 
@@ -73,7 +73,7 @@ public class BoxPlayerMapImpl implements BoxPlayerMap {
             loadBoxPlayer(player);
         } catch (Exception e) {
             playerMap.remove(player);
-            BoxProvider.get().getLogger().log(Level.SEVERE, "Could not load a player (" + player.getName() + ")", e);
+            BoxLogger.logger().error("Could not load a player ({})", player.getName(), e);
             player.sendMessage(ErrorMessages.ERROR_LOAD_PLAYER_DATA_ON_JOIN);
         }
     }

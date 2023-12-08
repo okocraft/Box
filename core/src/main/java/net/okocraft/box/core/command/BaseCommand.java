@@ -40,7 +40,7 @@ public abstract class BaseCommand implements Command, SubCommandHoldable, Comman
             return;
         }
 
-        if (sender instanceof Player player && BoxProvider.get().isDisabledWorld(player)) {
+        if (sender instanceof Player player && !BoxProvider.get().canUseBox(player)) {
             sender.sendMessage(GeneralMessage.ERROR_DISABLED_WORLD.apply(player.getWorld()));
             return;
         }
@@ -83,7 +83,7 @@ public abstract class BaseCommand implements Command, SubCommandHoldable, Comman
             return Collections.emptyList();
         }
 
-        if (sender instanceof Player player && BoxProvider.get().isDisabledWorld(player)) {
+        if (sender instanceof Player player && !BoxProvider.get().canUseBox(player)) {
             return Collections.emptyList();
         }
 

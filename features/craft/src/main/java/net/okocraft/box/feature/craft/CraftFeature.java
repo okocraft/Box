@@ -1,17 +1,18 @@
 package net.okocraft.box.feature.craft;
 
-import com.github.siroshun09.configapi.api.util.ResourceUtils;
-import com.github.siroshun09.configapi.yaml.YamlConfiguration;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.feature.AbstractBoxFeature;
 import net.okocraft.box.api.feature.BoxFeature;
 import net.okocraft.box.api.feature.Disableable;
 import net.okocraft.box.api.feature.Reloadable;
 import net.okocraft.box.api.message.Components;
+import net.okocraft.box.api.model.item.BoxItem;
+import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.feature.craft.command.CraftCommand;
 import net.okocraft.box.feature.craft.loader.RecipeLoader;
 import net.okocraft.box.feature.craft.mode.CraftMode;
 import net.okocraft.box.feature.craft.model.IngredientHolder;
+import net.okocraft.box.feature.craft.model.RecipeHolder;
 import net.okocraft.box.feature.gui.GuiFeature;
 import net.okocraft.box.feature.gui.api.mode.ClickModeRegistry;
 import org.bukkit.command.CommandSender;
@@ -19,8 +20,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
 
 public class CraftFeature extends AbstractBoxFeature implements Disableable, Reloadable {
 
@@ -33,29 +34,25 @@ public class CraftFeature extends AbstractBoxFeature implements Disableable, Rel
 
     @Override
     public void enable() {
-        var recipeFile = BoxProvider.get().getPluginDirectory().resolve("recipes.yml");
-
-        var recipeConfig = YamlConfiguration.create(recipeFile);
-
-        try {
-            ResourceUtils.copyFromJarIfNotExists(BoxProvider.get().getJar(), "recipes.yml", recipeConfig.getPath());
-            recipeConfig.load();
-        } catch (IOException e) {
-            BoxProvider.get().getLogger().log(Level.SEVERE, "Could not load recipes.yml", e);
-        }
-
         // Reduce objects that will be generated
         // BoxIngredientItem 5030 -> 325
         // IngredientHolder 3506 -> 1417
         IngredientHolder.enableCache();
 
-        var recipeMap = RecipeLoader.load(recipeConfig);
+        Map<BoxItem, RecipeHolder> recipeMap;
+
+        try {
+            recipeMap = RecipeLoader.load(BoxProvider.get().getPluginDirectory().resolve("recipes.yml"));
+        } catch (IOException e) {
+            BoxLogger.logger().error("Could not load recipes.yml", e);
+            return;
+        }
 
         IngredientHolder.disableCache();
 
         RecipeRegistry.setRecipeMap(recipeMap);
 
-        BoxProvider.get().getLogger().info(recipeMap.size() + " recipes are imported!");
+        BoxLogger.logger().info("{} recipes are imported!", recipeMap.size());
 
         ClickModeRegistry.register(craftMode);
 

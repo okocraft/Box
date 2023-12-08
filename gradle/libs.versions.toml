@@ -2,11 +2,11 @@
 # common libraries
 adventure = "4.14.0"
 annotations = "24.1.0"
-configapi = "4.6.4"
+configapi = "5.0.0-alpha.4"
 event4j = "3.2.1"
 fastutil = "8.5.12"
 hikaricp = "5.1.0"
-translationloader = "2.0.2"
+snakeyaml = "2.2"
 
 # gradle plugins
 shadow = "8.1.1"
@@ -29,11 +29,12 @@ bolt = "1.0.518"
 # common libraries
 adventure = { module = "net.kyori:adventure-api", version.ref = "adventure" }
 annotations = { module = "org.jetbrains:annotations", version.ref = "annotations" }
-configapi-yaml = { module = "com.github.siroshun09.configapi:configapi-yaml", version.ref = "configapi" }
+configapi-core = { module = "com.github.siroshun09.configapi:configapi-core", version.ref = "configapi" }
+configapi-format-yaml = { module = "com.github.siroshun09.configapi:configapi-format-yaml", version.ref = "configapi" }
 event4j = { module = "com.github.siroshun09.event4j:event4j", version.ref = "event4j" }
 fastutil = { module = "it.unimi.dsi:fastutil", version.ref = "fastutil" }
 hikaricp = { module = "com.zaxxer:HikariCP", version.ref = "hikaricp" }
-translationloader = { module = "com.github.siroshun09.translationloader:translationloader", version.ref = "translationloader" }
+snakeyaml = { module = "org.yaml:snakeyaml", version.ref = "snakeyaml" }
 
 # testing library
 junit-bom = { module = "org.junit:junit-bom", version.ref = "junit" }

@@ -7,13 +7,13 @@ import net.okocraft.box.api.message.GeneralMessage;
 import net.okocraft.box.api.model.item.BoxCustomItem;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.model.result.item.ItemRegistrationResult;
+import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.feature.command.message.BoxAdminMessage;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 public class RenameCommand extends AbstractCommand {
@@ -77,7 +77,7 @@ public class RenameCommand extends AbstractCommand {
         } else if (result instanceof ItemRegistrationResult.ExceptionOccurred exceptionOccurred) {
             var ex = exceptionOccurred.exception();
             sender.sendMessage(BoxAdminMessage.RENAME_FAILURE.apply(ex));
-            BoxProvider.get().getLogger().log(Level.SEVERE, "Could not rename a custom item.", ex);
+            BoxLogger.logger().error("Could not rename a custom item.", ex);
         }
     }
 }
