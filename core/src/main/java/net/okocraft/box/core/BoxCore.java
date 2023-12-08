@@ -72,7 +72,7 @@ public class BoxCore implements BoxAPI {
 
     public boolean enable(@NotNull Storage storage) {
         if (this.context.config().coreSetting().debug()) {
-            DebugListener.register(getEventBus());
+            DebugListener.register(this.context.eventBus());
             BoxLogger.logger().info("Debug mode is ENABLED");
         }
 
@@ -94,13 +94,13 @@ public class BoxCore implements BoxAPI {
         try {
             var itemLoadResult = ItemLoader.load(storage.getItemStorage(), this.context.defaultItemProvider());
             itemLoadResult.logItemCount();
-            this.itemManager = new BoxItemManager(storage.getItemStorage(), itemLoadResult.asIterator());
+            this.itemManager = new BoxItemManager(storage.getItemStorage(), this.context.eventBus(), this.context.scheduler(), itemLoadResult.asIterator());
         } catch (Exception e) {
             BoxLogger.logger().error("Could not load default/custom items", e);
             return false;
         }
 
-        stockManager = new BoxStockManager(storage.getStockStorage(), this.itemManager::getBoxItemOrNull, uuid -> Bukkit.getPlayer(uuid) != null);
+        stockManager = new BoxStockManager(storage.getStockStorage(), this.context.eventBus(), this.itemManager::getBoxItemOrNull, uuid -> Bukkit.getPlayer(uuid) != null);
 
         this.customDataManager = new BoxCustomDataManager(storage.getCustomDataStorage());
 
@@ -140,7 +140,7 @@ public class BoxCore implements BoxAPI {
 
         stockManager.close();
 
-        DebugListener.unregister(getEventBus());
+        DebugListener.unregister(this.context.eventBus());
 
         context.eventBus().close();
 
@@ -167,7 +167,7 @@ public class BoxCore implements BoxAPI {
             }
         };
 
-        DebugListener.unregister(getEventBus());
+        DebugListener.unregister(this.context.eventBus());
 
         if (!(sender instanceof ConsoleCommandSender)) {
             BoxLogger.logger().info("Reloading box...");
@@ -182,7 +182,7 @@ public class BoxCore implements BoxAPI {
         }
 
         if (this.context.config().coreSetting().debug()) {
-            DebugListener.register(getEventBus());
+            DebugListener.register(this.context.eventBus());
             BoxLogger.logger().info("Debug mode is ENABLED");
         }
 
@@ -198,7 +198,7 @@ public class BoxCore implements BoxAPI {
             if (feature instanceof Reloadable reloadable) {
                 try {
                     reloadable.reload(sender);
-                    getEventBus().callEvent(new FeatureEvent(feature, FeatureEvent.Type.RELOAD));
+                    this.context.eventBus().callEvent(new FeatureEvent(feature, FeatureEvent.Type.RELOAD));
                 } catch (Throwable e) {
                     playerMessenger.accept(() -> ErrorMessages.ERROR_RELOAD_FAILURE.apply(feature.getName(), e));
                     BoxLogger.logger().error("Could not reload {}", feature.getName(), e);
@@ -303,7 +303,7 @@ public class BoxCore implements BoxAPI {
 
         features.add(boxFeature);
 
-        getEventBus().callEvent(new FeatureEvent(boxFeature, FeatureEvent.Type.REGISTER));
+        this.context.eventBus().callEvent(new FeatureEvent(boxFeature, FeatureEvent.Type.REGISTER));
 
         BoxLogger.logger().info("The {} feature has been enabled.", boxFeature.getName());
     }

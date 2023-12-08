@@ -1,9 +1,9 @@
 package net.okocraft.box.core.model.manager.stock;
 
+import com.github.siroshun09.event4j.bus.EventBus;
 import it.unimi.dsi.fastutil.objects.Object2ReferenceMap;
 import it.unimi.dsi.fastutil.objects.Object2ReferenceMaps;
 import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
-import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.event.BoxEvent;
 import net.okocraft.box.api.event.stockholder.StockHolderLoadEvent;
 import net.okocraft.box.api.event.stockholder.StockHolderResetEvent;
@@ -42,6 +42,7 @@ public class BoxStockManager implements StockManager {
     private static final long MILLISECONDS_TO_UNLOAD = Duration.ofMinutes(10).toMillis();
 
     private final StockStorage stockStorage;
+    private final EventBus<BoxEvent> eventBus;
     private final IntFunction<BoxItem> toBoxItem;
     private final Predicate<UUID> onlineChecker;
     private final ChangeQueue.Factory queueFactory;
@@ -50,8 +51,9 @@ public class BoxStockManager implements StockManager {
     private final ConcurrentLinkedQueue<ChangeQueue> availableQueues = new ConcurrentLinkedQueue<>();
     private final AtomicBoolean autoSaveTaskScheduled = new AtomicBoolean(false);
 
-    public BoxStockManager(@NotNull StockStorage stockStorage, @NotNull IntFunction<BoxItem> toBoxItem, @NotNull Predicate<UUID> onlineChecker) {
+    public BoxStockManager(@NotNull StockStorage stockStorage, @NotNull EventBus<BoxEvent> eventBus, @NotNull IntFunction<BoxItem> toBoxItem, @NotNull Predicate<UUID> onlineChecker) {
         this.stockStorage = stockStorage;
+        this.eventBus = eventBus;
         this.toBoxItem = toBoxItem;
         this.onlineChecker = onlineChecker;
         this.queueFactory = ChangeQueue.createFactory(stockStorage, this::logStockStorageError);
@@ -77,7 +79,7 @@ public class BoxStockManager implements StockManager {
             throw new RuntimeException("Could not load user's stock holder (" + user.getUUID() + ")", e);
         }
 
-        var eventCaller = new QueuingStockEventCaller(loader);
+        var eventCaller = new QueuingStockEventCaller(loader, this.eventBus);
         var stockHolder = StockHolderFactory.create(user, eventCaller, stockData, this.toBoxItem);
         var queue = this.queueFactory.createQueue(stockHolder);
 
@@ -85,7 +87,7 @@ public class BoxStockManager implements StockManager {
 
         this.availableQueues.offer(queue);
 
-        BoxProvider.get().getEventBus().callEventAsync(new StockHolderLoadEvent(loader));
+        this.eventBus.callEventAsync(new StockHolderLoadEvent(loader));
 
         return stockHolder;
     }
@@ -150,7 +152,7 @@ public class BoxStockManager implements StockManager {
                 continue;
             }
 
-            BoxProvider.get().getEventBus().callEventAsync(new StockHolderSaveEvent(loader));
+            this.eventBus.callEventAsync(new StockHolderSaveEvent(loader));
 
             if (this.onlineChecker.test(uuid) || !loader.unloadIfNeeded(MILLISECONDS_TO_UNLOAD)) {
                 this.availableQueues.offer(queue);
@@ -169,10 +171,12 @@ public class BoxStockManager implements StockManager {
     private static class QueuingStockEventCaller implements StockEventCaller {
 
         private final LoadingPersonalStockHolder loader;
+        private final EventBus<BoxEvent> eventBus;
         private ChangeQueue queue; // initialize later
 
-        private QueuingStockEventCaller(@NotNull LoadingPersonalStockHolder loader) {
+        private QueuingStockEventCaller(@NotNull LoadingPersonalStockHolder loader, @NotNull EventBus<BoxEvent> eventBus) {
             this.loader = loader;
+            this.eventBus = eventBus;
         }
 
         @Override
@@ -206,7 +210,7 @@ public class BoxStockManager implements StockManager {
         }
 
         private void callEvent(@NotNull BoxEvent event) {
-            BoxProvider.get().getEventBus().callEventAsync(event);
+            this.eventBus.callEventAsync(event);
         }
     }
 }

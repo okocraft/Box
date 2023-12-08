@@ -1,14 +1,16 @@
 package net.okocraft.box.core.model.manager.item;
 
+import com.github.siroshun09.event4j.bus.EventBus;
 import it.unimi.dsi.fastutil.ints.IntImmutableList;
 import it.unimi.dsi.fastutil.objects.ObjectImmutableList;
-import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.api.event.BoxEvent;
 import net.okocraft.box.api.event.item.CustomItemRegisterEvent;
 import net.okocraft.box.api.event.item.CustomItemRenameEvent;
 import net.okocraft.box.api.model.item.BoxCustomItem;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.model.manager.ItemManager;
 import net.okocraft.box.api.model.result.item.ItemRegistrationResult;
+import net.okocraft.box.api.scheduler.BoxScheduler;
 import net.okocraft.box.storage.api.factory.item.BoxItemFactory;
 import net.okocraft.box.storage.api.model.item.ItemStorage;
 import org.bukkit.inventory.ItemStack;
@@ -24,10 +26,15 @@ import java.util.function.Consumer;
 public class BoxItemManager implements ItemManager {
 
     private final ItemStorage itemStorage;
+    private final EventBus<BoxEvent> eventBus;
+    private final BoxScheduler scheduler;
     private final BukkitBoxItemMap boxItemMap;
 
-    public BoxItemManager(@NotNull ItemStorage itemStorage, @NotNull Iterator<BoxItem> initialBoxItemIterator) {
+    public BoxItemManager(@NotNull ItemStorage itemStorage, @NotNull EventBus<BoxEvent> eventBus,
+                          @NotNull BoxScheduler scheduler, @NotNull Iterator<BoxItem> initialBoxItemIterator) {
         this.itemStorage = itemStorage;
+        this.eventBus = eventBus;
+        this.scheduler = scheduler;
         this.boxItemMap = BukkitBoxItemMap.withItems(initialBoxItemIterator);
     }
 
@@ -88,12 +95,12 @@ public class BoxItemManager implements ItemManager {
         var one = original.asOne();
         Objects.requireNonNull(resultConsumer);
 
-        BoxProvider.get().getScheduler().runAsyncTask(() -> {
+        this.scheduler.runAsyncTask(() -> {
             this.boxItemMap.acquireWriteLock();
             ItemRegistrationResult result;
 
             try {
-                result = registerNewCustomItem(one, plainName);
+                result = this.registerNewCustomItem(one, plainName);
             } catch (Exception e) {
                 result = new ItemRegistrationResult.ExceptionOccurred(e);
             } finally {
@@ -101,7 +108,7 @@ public class BoxItemManager implements ItemManager {
             }
 
             if (result instanceof ItemRegistrationResult.Success success) {
-                BoxProvider.get().getEventBus().callEventAsync(new CustomItemRegisterEvent(success.customItem()));
+                this.eventBus.callEventAsync(new CustomItemRegisterEvent(success.customItem()));
             }
 
             resultConsumer.accept(result);
@@ -138,12 +145,12 @@ public class BoxItemManager implements ItemManager {
 
         String previousName = item.getPlainName();
 
-        BoxProvider.get().getScheduler().runAsyncTask(() -> {
+        this.scheduler.runAsyncTask(() -> {
             this.boxItemMap.acquireWriteLock();
             ItemRegistrationResult result;
 
             try {
-                result = renameItem(item, newName);
+                result = this.renameItem(item, newName);
             } catch (Exception e) {
                 result = new ItemRegistrationResult.ExceptionOccurred(e);
             } finally {
@@ -151,7 +158,7 @@ public class BoxItemManager implements ItemManager {
             }
 
             if (result instanceof ItemRegistrationResult.Success success) {
-                BoxProvider.get().getEventBus().callEventAsync(new CustomItemRenameEvent(success.customItem(), previousName));
+                this.eventBus.callEventAsync(new CustomItemRenameEvent(success.customItem(), previousName));
             }
 
             resultConsumer.accept(result);
