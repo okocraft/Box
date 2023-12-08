@@ -10,6 +10,7 @@ val boxPrefix = rootProject.name
 sequenceOf(
     "api",
     "core",
+    "test-shared-classes"
 ).forEach {
     include("$boxPrefix-$it")
     project(":$boxPrefix-$it").projectDir = file(it)
