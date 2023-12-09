@@ -10,14 +10,14 @@ import org.jetbrains.annotations.TestOnly;
 import java.util.Collection;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-class BasicChangeQueue implements ChangeQueue {
+class BasicChangeState implements ChangeState {
 
     private final StockStorage storage;
     private final StockHolder stockHolder;
     private final StockStorageErrorReporter reporter;
     private final AtomicBoolean hasChanges = new AtomicBoolean(false);
 
-    BasicChangeQueue(@NotNull StockStorage storage, @NotNull StockHolder stockHolder, @NotNull StockStorageErrorReporter reporter) {
+    BasicChangeState(@NotNull StockStorage storage, @NotNull StockHolder stockHolder, @NotNull StockStorageErrorReporter reporter) {
         this.storage = storage;
         this.stockHolder = stockHolder;
         this.reporter = reporter;

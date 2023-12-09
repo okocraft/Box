@@ -8,13 +8,13 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 
-public interface ChangeQueue {
+public interface ChangeState {
 
     static @NotNull Factory createFactory(@NotNull StockStorage storage, @NotNull StockStorageErrorReporter reporter) {
         if (storage instanceof PartialSavingStockStorage partialSaving) {
-            return stockHolder ->  new PartialSavingQueue(partialSaving, stockHolder, reporter);
+            return stockHolder ->  new PerItemChangeState(partialSaving, stockHolder, reporter);
         } else {
-            return stockHolder -> new BasicChangeQueue(storage, stockHolder, reporter);
+            return stockHolder -> new BasicChangeState(storage, stockHolder, reporter);
         }
     }
 
@@ -27,6 +27,6 @@ public interface ChangeQueue {
     void saveChanges();
 
     interface Factory {
-        @NotNull ChangeQueue createQueue(@NotNull StockHolder stockHolder);
+        @NotNull ChangeState create(@NotNull StockHolder stockHolder);
     }
 }

@@ -12,7 +12,7 @@ import org.jetbrains.annotations.TestOnly;
 import java.util.Collection;
 import java.util.concurrent.locks.StampedLock;
 
-class PartialSavingQueue implements ChangeQueue {
+class PerItemChangeState implements ChangeState {
 
     private final PartialSavingStockStorage storage;
     private final StockHolder stockHolder;
@@ -21,7 +21,7 @@ class PartialSavingQueue implements ChangeQueue {
     private final IntSet itemIdSet = new IntOpenHashSet();
     private final StampedLock lock = new StampedLock();
 
-    PartialSavingQueue(@NotNull PartialSavingStockStorage storage, @NotNull StockHolder stockHolder, @NotNull StockStorageErrorReporter reporter) {
+    PerItemChangeState(@NotNull PartialSavingStockStorage storage, @NotNull StockHolder stockHolder, @NotNull StockStorageErrorReporter reporter) {
         this.storage = storage;
         this.stockHolder = stockHolder;
         this.reporter = reporter;
@@ -34,24 +34,24 @@ class PartialSavingQueue implements ChangeQueue {
 
     @Override
     public void rememberChange(int itemId) {
-        boolean isQueued;
+        boolean alreadyChanged;
 
         {
             long stamp = this.lock.tryOptimisticRead();
-            isQueued = this.itemIdSet.contains(itemId);
+            alreadyChanged = this.itemIdSet.contains(itemId);
 
             if (!this.lock.validate(stamp)) {
                 long readStamp = this.lock.readLock();
 
                 try {
-                    isQueued = this.itemIdSet.contains(itemId);
+                    alreadyChanged = this.itemIdSet.contains(itemId);
                 } finally {
                     this.lock.unlockRead(readStamp);
                 }
             }
         }
 
-        if (isQueued) {
+        if (alreadyChanged) {
             return;
         }
 
@@ -117,7 +117,7 @@ class PartialSavingQueue implements ChangeQueue {
     }
 
     @TestOnly
-    @NotNull IntSet getQueuedItemIds() {
+    @NotNull IntSet getChangedItemIds() {
         return this.itemIdSet;
     }
 }

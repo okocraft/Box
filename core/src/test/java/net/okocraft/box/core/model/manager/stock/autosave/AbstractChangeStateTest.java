@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Assertions;
 import java.util.Collection;
 import java.util.List;
 
-abstract class AbstractChangeQueueTest {
+abstract class AbstractChangeStateTest {
 
     protected static final int ITEM_ID = 1;
     protected static final int ITEM_AMOUNT = 10;
