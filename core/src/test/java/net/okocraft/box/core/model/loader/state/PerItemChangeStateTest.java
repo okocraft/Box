@@ -1,5 +1,6 @@
-package net.okocraft.box.core.model.manager.stock.autosave;
+package net.okocraft.box.core.model.loader.state;
 
+import net.okocraft.box.test.shared.model.stock.TestStockHolder;
 import net.okocraft.box.test.shared.storage.memory.stock.MemoryPartialSavingStockStorage;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
@@ -8,10 +9,10 @@ import org.junit.jupiter.api.Test;
 class PerItemChangeStateTest extends AbstractChangeStateTest {
 
     @Test
-    void test() {
+    void test() throws Exception {
         var storage = new MemoryPartialSavingStockStorage();
-        var stockHolder = createStockHolder();
-        var state = new PerItemChangeState(storage, stockHolder, this::ignoreStorageError);
+        var stockHolder = TestStockHolder.create(STOCK_DATA);
+        var state = new PerItemChangeState(storage);
 
         checkSize(state, 0);
 
@@ -19,7 +20,7 @@ class PerItemChangeStateTest extends AbstractChangeStateTest {
 
         checkSize(state, 1);
 
-        state.saveChanges();
+        state.saveChanges(stockHolder);
 
         checkSize(state, 0);
         this.checkStorageAmount(storage, stockHolder, ITEM_AMOUNT);
@@ -29,10 +30,15 @@ class PerItemChangeStateTest extends AbstractChangeStateTest {
 
         checkSize(state, 1);
 
-        state.saveChanges();
+        state.saveChanges(stockHolder);
 
         checkSize(state, 0);
         this.checkStorageAmount(storage, stockHolder, 0);
+    }
+
+    @Override
+    protected @NotNull ChangeState createState() {
+        return new PerItemChangeState(new MemoryPartialSavingStockStorage());
     }
 
     private void checkSize(@NotNull PerItemChangeState state, int expected) {

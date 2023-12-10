@@ -98,6 +98,7 @@ public class BoxPlayerMapImpl implements BoxPlayerMap {
 
         var boxPlayer = new BoxPlayerImpl(boxUser, player, personal);
 
+        boxPlayer.getPersonalStockHolder().markAsOnline();
         this.playerMap.put(player, boxPlayer);
 
         BoxProvider.get().getEventBus().callEvent(new PlayerLoadEvent(boxPlayer));
@@ -105,11 +106,14 @@ public class BoxPlayerMapImpl implements BoxPlayerMap {
 
     public void unload(@NotNull Player player) {
         Objects.requireNonNull(player);
-        var boxPlayer = playerMap.remove(player);
 
-        if (boxPlayer != null && boxPlayer != NOT_LOADED_YET) {
-            BoxProvider.get().getEventBus().callEvent(new PlayerUnloadEvent(boxPlayer));
+        if (!(this.playerMap instanceof BoxPlayerImpl boxPlayer)) {
+            return;
         }
+
+        boxPlayer.getPersonalStockHolder().markAsOffline();
+
+        BoxProvider.get().getEventBus().callEvent(new PlayerUnloadEvent(boxPlayer));
     }
 
     public void loadAll() {

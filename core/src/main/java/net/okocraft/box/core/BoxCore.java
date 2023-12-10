@@ -45,6 +45,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -100,7 +101,7 @@ public class BoxCore implements BoxAPI {
             return false;
         }
 
-        stockManager = new BoxStockManager(storage.getStockStorage(), this.context.eventBus(), this.itemManager::getBoxItemOrNull, uuid -> Bukkit.getPlayer(uuid) != null);
+        this.stockManager = new BoxStockManager(storage.getStockStorage(), this.context.eventBus(), this.itemManager::getBoxItemOrNull, 300, 15, TimeUnit.SECONDS); // TODO: configurable
 
         this.customDataManager = new BoxCustomDataManager(storage.getCustomDataStorage());
 

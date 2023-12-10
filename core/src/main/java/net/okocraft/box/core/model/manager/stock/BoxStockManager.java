@@ -1,13 +1,9 @@
 package net.okocraft.box.core.model.manager.stock;
 
 import com.github.siroshun09.event4j.bus.EventBus;
-import it.unimi.dsi.fastutil.objects.Object2ReferenceMap;
-import it.unimi.dsi.fastutil.objects.Object2ReferenceMaps;
-import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
 import net.okocraft.box.api.event.BoxEvent;
 import net.okocraft.box.api.event.stockholder.StockHolderLoadEvent;
 import net.okocraft.box.api.event.stockholder.StockHolderResetEvent;
-import net.okocraft.box.api.event.stockholder.StockHolderSaveEvent;
 import net.okocraft.box.api.event.stockholder.stock.StockDecreaseEvent;
 import net.okocraft.box.api.event.stockholder.stock.StockEvent;
 import net.okocraft.box.api.event.stockholder.stock.StockIncreaseEvent;
@@ -22,53 +18,58 @@ import net.okocraft.box.api.model.user.BoxUser;
 import net.okocraft.box.api.scheduler.BoxScheduler;
 import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.core.model.loader.LoadingPersonalStockHolder;
-import net.okocraft.box.core.model.manager.stock.autosave.ChangeState;
+import net.okocraft.box.core.model.loader.state.ChangeState;
 import net.okocraft.box.core.model.stock.StockHolderFactory;
-import net.okocraft.box.storage.api.model.stock.PartialSavingStockStorage;
 import net.okocraft.box.storage.api.model.stock.StockStorage;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.VisibleForTesting;
 
 import java.time.Duration;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.IntFunction;
-import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 public class BoxStockManager implements StockManager {
-
-    private static final long MILLISECONDS_TO_UNLOAD = Duration.ofMinutes(10).toMillis();
 
     private final StockStorage stockStorage;
     private final EventBus<BoxEvent> eventBus;
     private final IntFunction<BoxItem> toBoxItem;
-    private final Predicate<UUID> onlineChecker;
-    private final ChangeState.Factory changeStateFactory;
+    private final Supplier<ChangeState> changeStateFactory;
+    private final long unloadTime;
+    private final long saveInterval;
 
-    private final Object2ReferenceMap<UUID, LoadingPersonalStockHolder> loaderMap = Object2ReferenceMaps.synchronize(new Object2ReferenceOpenHashMap<>());
-    private final ConcurrentLinkedQueue<ChangeState> changeStates = new ConcurrentLinkedQueue<>();
-    private final AtomicBoolean autoSaveTaskScheduled = new AtomicBoolean(false);
+    private final ConcurrentMap<UUID, LoadingPersonalStockHolder> loaderMap = new ConcurrentHashMap<>();
+    private final AtomicBoolean closed = new AtomicBoolean(false);
 
-    public BoxStockManager(@NotNull StockStorage stockStorage, @NotNull EventBus<BoxEvent> eventBus, @NotNull IntFunction<BoxItem> toBoxItem, @NotNull Predicate<UUID> onlineChecker) {
+    public BoxStockManager(@NotNull StockStorage stockStorage, @NotNull EventBus<BoxEvent> eventBus, @NotNull IntFunction<BoxItem> toBoxItem,
+                           long unloadTime, long saveInterval, @NotNull TimeUnit timeUnit) {
         this.stockStorage = stockStorage;
         this.eventBus = eventBus;
         this.toBoxItem = toBoxItem;
-        this.onlineChecker = onlineChecker;
-        this.changeStateFactory = ChangeState.createFactory(stockStorage, this::logStockStorageError);
+        this.changeStateFactory = ChangeState.createSupplier(stockStorage);
+        this.unloadTime = Math.max(0, timeUnit.toNanos(unloadTime));
+        this.saveInterval = Math.max(0, timeUnit.toNanos(saveInterval));
     }
 
     @Override
     public @NotNull LoadingPersonalStockHolder getPersonalStockHolder(@NotNull BoxUser user) {
+        this.checkClosed();
         return this.loaderMap.computeIfAbsent(user.getUUID(), ignored -> this.createLoader(user));
     }
 
     private @NotNull LoadingPersonalStockHolder createLoader(@NotNull BoxUser user) {
-        return new LoadingPersonalStockHolder(user, this::loadStockHolder);
+        return new LoadingPersonalStockHolder(user, this.changeStateFactory.get(), this::loadStockHolder);
     }
 
     private @NotNull StockHolder loadStockHolder(@NotNull LoadingPersonalStockHolder loader) {
+        this.checkClosed();
+
         var user = loader.getUser();
 
         Collection<StockData> stockData;
@@ -79,13 +80,8 @@ public class BoxStockManager implements StockManager {
             throw new RuntimeException("Could not load user's stock holder (" + user.getUUID() + ")", e);
         }
 
-        var eventCaller = new QueuingStockEventCaller(loader, this.eventBus);
+        var eventCaller = new StateUpdatingStockEventCaller(loader, this.eventBus);
         var stockHolder = StockHolderFactory.create(user, eventCaller, stockData, this.toBoxItem);
-        var state = this.changeStateFactory.create(stockHolder);
-
-        eventCaller.state = state;
-
-        this.changeStates.offer(state);
 
         this.eventBus.callEventAsync(new StockHolderLoadEvent(loader));
 
@@ -99,113 +95,101 @@ public class BoxStockManager implements StockManager {
 
     @Override
     public @NotNull StockHolder createStockHolder(@NotNull UUID uuid, @NotNull String name, @NotNull StockEventCaller eventCaller, @NotNull Collection<StockData> stockData) {
+        this.checkClosed();
         return StockHolderFactory.create(uuid, name, eventCaller, stockData, this.toBoxItem);
     }
 
     public void schedulerAutoSaveTask(@NotNull BoxScheduler scheduler) {
-        this.autoSaveTaskScheduled.set(true);
-        scheduler.scheduleRepeatingAsyncTask(this::saveChangesAndCleanupOffline, Duration.ofMinutes(5), this.autoSaveTaskScheduled::get);
+        this.checkClosed();
+        scheduler.scheduleRepeatingAsyncTask(this::saveChangesAndCleanupOffline, Duration.ofSeconds(5), this::isNotClosed);
     }
 
     public void close() {
-        this.autoSaveTaskScheduled.set(false);
-
-        ChangeState state;
-
-        while ((state = this.changeStates.poll()) != null) {
-            state.saveChanges();
-
-            var removedLoader = this.loaderMap.remove(state.getStockHolder().getUUID());
-
-            if (removedLoader != null) {
-                removedLoader.unload();
-            }
+        if (!this.closed.compareAndSet(false, true)) {
+            throw new IllegalStateException("This BoxStockManager is already closed.");
         }
 
-        if (this.stockStorage instanceof PartialSavingStockStorage partialSavingStockStorage) {
-            try {
-                partialSavingStockStorage.cleanupZeroStockData();
-            } catch (Exception e) {
-                BoxLogger.logger().error("Could not cleanup stock data", e);
-            }
-        }
-
+        this.loaderMap.values().forEach(this::closeLoader);
         this.loaderMap.clear();
     }
 
     private void saveChangesAndCleanupOffline() {
-        ChangeState state;
-        ChangeState firstRestoredState = null;
+        this.loaderMap.values().forEach(this::autoSaveOrUnload);
+    }
 
-        while ((state = this.changeStates.poll()) != null) {
-            if (state == firstRestoredState) {
-                this.changeStates.offer(state);
-                break;
-            }
+    @VisibleForTesting
+    void autoSaveOrUnload(@NotNull LoadingPersonalStockHolder loader) {
+        if (this.closed.get()) {
+            return;
+        }
 
-            state.saveChanges();
+        try {
+            loader.saveChangesOrUnloadIfNeeded(this.unloadTime, this.saveInterval);
+        } catch (Exception e) {
+            BoxLogger.logger().error("Could not save user's stock holder (name: {} uuid: {})", loader.getName(), loader.getUUID(), e);
+        }
+    }
 
-            var uuid = state.getStockHolder().getUUID();
-            var loader = this.loaderMap.get(uuid);
+    @VisibleForTesting
+    void closeLoader(@NotNull LoadingPersonalStockHolder loader) {
+        var unloaded = loader.close();
 
-            if (loader == null) {
-                continue;
-            }
-
-            this.eventBus.callEventAsync(new StockHolderSaveEvent(loader));
-
-            if (this.onlineChecker.test(uuid) || !loader.unloadIfNeeded(MILLISECONDS_TO_UNLOAD)) {
-                this.changeStates.offer(state);
-
-                if (firstRestoredState == null) {
-                    firstRestoredState = state;
-                }
+        if (unloaded != null) {
+            try {
+                loader.getChangeState().saveChanges(unloaded);
+            } catch (Exception e) {
+                BoxLogger.logger().error("Could not save user's stock holder before closing (name: {} uuid: {})", loader.getName(), loader.getUUID(), e);
             }
         }
     }
 
-    private void logStockStorageError(@NotNull StockHolder stockHolder, @NotNull Exception e) {
-        BoxLogger.logger().error("Could not save user's stock holder (name: {} uuid: {})", stockHolder.getName(), stockHolder.getUUID(), e);
+    private boolean isNotClosed() {
+        return !this.closed.get();
     }
 
-    private static class QueuingStockEventCaller implements StockEventCaller {
+    private void checkClosed() {
+        if (this.closed.get()) {
+            throw new IllegalStateException("This BoxStockManager is already closed.");
+        }
+    }
+
+    private static class StateUpdatingStockEventCaller implements StockEventCaller {
 
         private final LoadingPersonalStockHolder loader;
         private final EventBus<BoxEvent> eventBus;
-        private ChangeState state; // initialize later
 
-        private QueuingStockEventCaller(@NotNull LoadingPersonalStockHolder loader, @NotNull EventBus<BoxEvent> eventBus) {
+        private StateUpdatingStockEventCaller(@NotNull LoadingPersonalStockHolder loader, @NotNull EventBus<BoxEvent> eventBus) {
             this.loader = loader;
             this.eventBus = eventBus;
         }
 
         @Override
         public void callSetEvent(@NotNull StockHolder stockHolder, @NotNull BoxItem item, int amount, int previousAmount, StockEvent.@NotNull Cause cause) {
-            this.state.rememberChange(item.getInternalId());
+            this.loader.getChangeState().rememberChange(item.getInternalId());
             this.callEvent(new StockSetEvent(this.loader, item, amount, previousAmount, cause));
         }
 
         @Override
         public void callIncreaseEvent(@NotNull StockHolder stockHolder, @NotNull BoxItem item, int increments, int currentAmount, StockEvent.@NotNull Cause cause) {
-            this.state.rememberChange(item.getInternalId());
+            this.loader.getChangeState().rememberChange(item.getInternalId());
             this.callEvent(new StockIncreaseEvent(this.loader, item, increments, currentAmount, cause));
         }
 
         @Override
         public void callOverflowEvent(@NotNull StockHolder stockHolder, @NotNull BoxItem item, int increments, int excess, StockEvent.@NotNull Cause cause) {
-            this.state.rememberChange(item.getInternalId());
+            this.loader.getChangeState().rememberChange(item.getInternalId());
             this.callEvent(new StockOverflowEvent(this.loader, item, increments, excess, cause));
         }
 
         @Override
         public void callDecreaseEvent(@NotNull StockHolder stockHolder, @NotNull BoxItem item, int decrements, int currentAmount, StockEvent.@NotNull Cause cause) {
-            this.state.rememberChange(item.getInternalId());
+            this.loader.getChangeState().rememberChange(item.getInternalId());
             this.callEvent(new StockDecreaseEvent(this.loader, item, decrements, currentAmount, cause));
         }
 
         @Override
         public void callResetEvent(@NotNull StockHolder stockHolder, @NotNull Collection<StockData> stockDataBeforeReset) {
-            this.state.rememberReset(stockDataBeforeReset);
+            this.loader.getChangeState().rememberReset(stockDataBeforeReset);
             this.callEvent(new StockHolderResetEvent(this.loader, stockDataBeforeReset));
         }
 

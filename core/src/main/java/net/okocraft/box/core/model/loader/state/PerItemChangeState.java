@@ -1,5 +1,6 @@
-package net.okocraft.box.core.model.manager.stock.autosave;
+package net.okocraft.box.core.model.loader.state;
 
+import it.unimi.dsi.fastutil.ints.IntImmutableList;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.ints.IntSet;
 import it.unimi.dsi.fastutil.objects.ObjectImmutableList;
@@ -15,21 +16,14 @@ import java.util.concurrent.locks.StampedLock;
 class PerItemChangeState implements ChangeState {
 
     private final PartialSavingStockStorage storage;
-    private final StockHolder stockHolder;
-    private final StockStorageErrorReporter reporter;
 
     private final IntSet itemIdSet = new IntOpenHashSet();
     private final StampedLock lock = new StampedLock();
 
-    PerItemChangeState(@NotNull PartialSavingStockStorage storage, @NotNull StockHolder stockHolder, @NotNull StockStorageErrorReporter reporter) {
-        this.storage = storage;
-        this.stockHolder = stockHolder;
-        this.reporter = reporter;
-    }
+    private long lastSave;
 
-    @Override
-    public @NotNull StockHolder getStockHolder() {
-        return this.stockHolder;
+    PerItemChangeState(@NotNull PartialSavingStockStorage storage) {
+        this.storage = storage;
     }
 
     @Override
@@ -76,7 +70,14 @@ class PerItemChangeState implements ChangeState {
     }
 
     @Override
-    public void saveChanges() {
+    public long lastSave() {
+        return this.lastSave;
+    }
+
+    @Override
+    public void saveChanges(@NotNull StockHolder stockHolder) throws Exception {
+        this.lastSave = System.nanoTime();
+
         {
             long stamp = this.lock.tryOptimisticRead();
             boolean empty = this.itemIdSet.isEmpty();
@@ -87,13 +88,16 @@ class PerItemChangeState implements ChangeState {
         }
 
         int[] itemIds;
-        long stamp = this.lock.writeLock();
 
-        try {
-            itemIds = this.itemIdSet.toIntArray();
-            this.itemIdSet.clear();
-        } finally {
-            this.lock.unlockWrite(stamp);
+        {
+            long stamp = this.lock.writeLock();
+
+            try {
+                itemIds = this.itemIdSet.toIntArray();
+                this.itemIdSet.clear();
+            } finally {
+                this.lock.unlockWrite(stamp);
+            }
         }
 
         if (itemIds.length == 0) {
@@ -104,15 +108,23 @@ class PerItemChangeState implements ChangeState {
 
         for (int i = 0; i < itemIds.length; i++) {
             int itemId = itemIds[i];
-            int amount = this.stockHolder.getAmount(itemId);
+            int amount = stockHolder.getAmount(itemId);
 
             partialStockData[i] = new StockData(itemId, amount);
         }
 
         try {
-            this.storage.savePartialStockData(this.stockHolder.getUUID(), ObjectImmutableList.of(partialStockData));
+            this.storage.savePartialStockData(stockHolder.getUUID(), ObjectImmutableList.of(partialStockData));
         } catch (Exception e) {
-            this.reporter.report(this.stockHolder, e);
+            long stamp = this.lock.writeLock();
+
+            try {
+                this.itemIdSet.addAll(IntImmutableList.of(itemIds));
+            } finally {
+                this.lock.unlockWrite(stamp);
+            }
+
+            throw e;
         }
     }
 

@@ -1,4 +1,4 @@
-package net.okocraft.box.core.model.manager.stock.autosave;
+package net.okocraft.box.core.model.loader.state;
 
 import it.unimi.dsi.fastutil.ints.Int2IntFunction;
 import net.okocraft.box.api.model.stock.StockData;
@@ -13,19 +13,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 class BasicChangeState implements ChangeState {
 
     private final StockStorage storage;
-    private final StockHolder stockHolder;
-    private final StockStorageErrorReporter reporter;
     private final AtomicBoolean hasChanges = new AtomicBoolean(false);
 
-    BasicChangeState(@NotNull StockStorage storage, @NotNull StockHolder stockHolder, @NotNull StockStorageErrorReporter reporter) {
-        this.storage = storage;
-        this.stockHolder = stockHolder;
-        this.reporter = reporter;
-    }
+    private volatile long lastSave;
 
-    @Override
-    public @NotNull StockHolder getStockHolder() {
-        return this.stockHolder;
+    BasicChangeState(@NotNull StockStorage storage) {
+        this.storage = storage;
     }
 
     @Override
@@ -39,16 +32,23 @@ class BasicChangeState implements ChangeState {
     }
 
     @Override
-    public void saveChanges() {
+    public long lastSave() {
+        return this.lastSave;
+    }
+
+    @Override
+    public void saveChanges(@NotNull StockHolder stockHolder) throws Exception {
+        this.lastSave = System.nanoTime();
+
         if (!this.hasChanges.compareAndSet(true, false)) {
             return;
         }
 
         try {
-            this.storage.saveStockData(this.stockHolder.getUUID(), this.stockHolder.toStockDataCollection(), Int2IntFunction.identity());
+            this.storage.saveStockData(stockHolder.getUUID(), stockHolder.toStockDataCollection(), Int2IntFunction.identity());
         } catch (Exception e) {
-            this.reporter.report(this.stockHolder, e);
             this.hasChanges.set(true);
+            throw e;
         }
     }
 

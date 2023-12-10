@@ -1,4 +1,4 @@
-package net.okocraft.box.core.model.manager.stock.autosave;
+package net.okocraft.box.core.model.loader.state;
 
 import net.okocraft.box.api.model.stock.StockData;
 import net.okocraft.box.api.model.stock.StockHolder;
@@ -6,9 +6,11 @@ import net.okocraft.box.storage.api.model.stock.StockStorage;
 import net.okocraft.box.test.shared.model.stock.TestStockHolder;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 abstract class AbstractChangeStateTest {
 
@@ -16,12 +18,13 @@ abstract class AbstractChangeStateTest {
     protected static final int ITEM_AMOUNT = 10;
     protected static final List<StockData> STOCK_DATA = List.of(new StockData(ITEM_ID, ITEM_AMOUNT));
 
-    @SuppressWarnings("unused")
-    protected final void ignoreStorageError(@NotNull StockHolder stockHolder, @NotNull Exception e) {
-    }
-
-    protected @NotNull StockHolder createStockHolder() {
-        return TestStockHolder.create(STOCK_DATA);
+    @Test
+    void testIsInInterval() throws Exception {
+        var nanosToSave = TimeUnit.SECONDS.toNanos(15);
+        var state = this.createState();
+        Assertions.assertFalse(state.isInInterval(nanosToSave));
+        state.saveChanges(TestStockHolder.create());
+        Assertions.assertTrue(state.isInInterval(nanosToSave));
     }
 
     protected void checkStorageAmount(@NotNull StockStorage storage, @NotNull StockHolder stockHolder, int expectedAmount) {
@@ -45,4 +48,6 @@ abstract class AbstractChangeStateTest {
         Assertions.assertEquals(ITEM_ID, data.itemId());
         Assertions.assertEquals(expectedAmount, data.amount());
     }
+
+    protected abstract @NotNull ChangeState createState();
 }
