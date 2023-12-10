@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Assertions;
 import java.util.Collection;
 import java.util.LinkedList;
 
-public class EventCollector implements StockEventCaller {
+public class StockEventCollector implements StockEventCaller {
 
     public static final StockEvent.Cause TEST_CAUSE = StockEvent.Cause.create("BoxTestCause");
     private final LinkedList<BoxEvent> events = new LinkedList<>();

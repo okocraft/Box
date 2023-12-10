@@ -109,7 +109,7 @@ public class EventCollector implements EventBus<BoxEvent> {
         throw new UnsupportedOperationException();
     }
 
-    public void isFired(@NotNull BoxEvent expectedEvent) {
-        Assertions.assertEquals(expectedEvent, this.calledEvents.poll());
+    public <E extends BoxEvent> void checkEvent(@NotNull Class<E> eventClass, @NotNull Consumer<E> checker) {
+        checker.accept(Assertions.assertInstanceOf(eventClass, this.calledEvents.poll()));
     }
 }

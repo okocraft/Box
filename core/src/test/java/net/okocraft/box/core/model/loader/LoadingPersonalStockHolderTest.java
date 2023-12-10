@@ -8,7 +8,7 @@ import net.okocraft.box.api.model.stock.StockHolder;
 import net.okocraft.box.core.model.loader.state.ChangeState;
 import net.okocraft.box.storage.api.model.stock.StockStorage;
 import net.okocraft.box.test.shared.model.item.DummyItem;
-import net.okocraft.box.test.shared.model.stock.EventCollector;
+import net.okocraft.box.test.shared.model.stock.StockEventCollector;
 import net.okocraft.box.test.shared.model.stock.TestStockHolder;
 import net.okocraft.box.test.shared.model.user.TestUser;
 import net.okocraft.box.test.shared.storage.memory.stock.MemoryPartialSavingStockStorage;
@@ -125,14 +125,14 @@ class LoadingPersonalStockHolderTest {
 
     private static void addStock(@NotNull LoadingPersonalStockHolder loader) {
         // test_item_1: 10
-        loader.increase(ITEM_1, 10, EventCollector.TEST_CAUSE);
+        loader.increase(ITEM_1, 10, StockEventCollector.TEST_CAUSE);
 
         // test_item_2: 10
-        loader.setAmount(ITEM_2, 10, EventCollector.TEST_CAUSE);
+        loader.setAmount(ITEM_2, 10, StockEventCollector.TEST_CAUSE);
 
         // test_item_3: 5
-        loader.setAmount(ITEM_3, 10, EventCollector.TEST_CAUSE);
-        loader.decrease(ITEM_3, 5, EventCollector.TEST_CAUSE);
+        loader.setAmount(ITEM_3, 10, StockEventCollector.TEST_CAUSE);
+        loader.decrease(ITEM_3, 5, StockEventCollector.TEST_CAUSE);
     }
 
     private static void checkStockData(@NotNull StockStorage storage, LoadingPersonalStockHolder loader) throws Exception {
