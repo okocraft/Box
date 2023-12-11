@@ -4,17 +4,17 @@ import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.player.BoxPlayer;
 import net.okocraft.box.feature.craft.RecipeRegistry;
-import net.okocraft.box.feature.craft.lang.Displays;
 import net.okocraft.box.feature.craft.gui.menu.CraftMenu;
 import net.okocraft.box.feature.craft.gui.menu.RecipeSelectorMenu;
+import net.okocraft.box.feature.craft.lang.Displays;
 import net.okocraft.box.feature.gui.api.button.Button;
 import net.okocraft.box.feature.gui.api.button.ClickResult;
 import net.okocraft.box.feature.gui.api.menu.Menu;
 import net.okocraft.box.feature.gui.api.mode.BoxItemClickMode;
 import net.okocraft.box.feature.gui.api.session.PlayerSession;
+import net.okocraft.box.feature.gui.api.util.SoundBase;
 import net.okocraft.box.feature.gui.api.util.TranslationUtil;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
@@ -68,7 +68,7 @@ public class CraftMode implements BoxItemClickMode {
         var recipes = RecipeRegistry.getRecipes(item);
 
         if (recipes == null) {
-            viewer.playSound(viewer.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 100f, 1.5f);
+            SoundBase.UNSUCCESSFUL.play(viewer);
             return ClickResult.NO_UPDATE_NEEDED;
         }
 

@@ -6,6 +6,7 @@ import net.okocraft.box.feature.gui.api.button.ClickResult;
 import net.okocraft.box.feature.gui.api.session.Amount;
 import net.okocraft.box.feature.gui.api.session.PlayerSession;
 import net.okocraft.box.feature.gui.api.session.TypedKey;
+import net.okocraft.box.feature.gui.api.util.SoundBase;
 import net.okocraft.box.feature.gui.api.util.TranslationUtil;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -16,6 +17,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public class IncreaseCustomNumberButton extends AmountModificationButton {
+
+    private static final SoundBase INCREASE_SOUND = SoundBase.builder().sound(Sound.BLOCK_WOODEN_BUTTON_CLICK_ON).pitch(1.5f).build();
 
     private final Component displayName;
     private final SingleArgument<Integer> clickToSetLore;
@@ -77,8 +80,7 @@ public class IncreaseCustomNumberButton extends AmountModificationButton {
             amount.increase();
         }
 
-        var clicker = session.getViewer();
-        clicker.playSound(clicker.getLocation(), Sound.BLOCK_WOODEN_BUTTON_CLICK_ON, 100f, 1.5f);
+        INCREASE_SOUND.play(session.getViewer());
 
         return returningResult;
     }

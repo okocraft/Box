@@ -1,14 +1,14 @@
 package net.okocraft.box.feature.craft.gui.button;
 
 import net.kyori.adventure.text.Component;
-import net.okocraft.box.feature.craft.lang.Displays;
 import net.okocraft.box.feature.craft.gui.util.ItemCrafter;
+import net.okocraft.box.feature.craft.lang.Displays;
 import net.okocraft.box.feature.gui.api.button.Button;
 import net.okocraft.box.feature.gui.api.button.ClickResult;
 import net.okocraft.box.feature.gui.api.session.PlayerSession;
+import net.okocraft.box.feature.gui.api.util.SoundBase;
 import net.okocraft.box.feature.gui.api.util.TranslationUtil;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -60,8 +60,7 @@ public class ToggleDestinationButton implements Button {
             session.putData(ItemCrafter.PUT_CRAFTED_ITEMS_INTO_INVENTORY, Boolean.TRUE);
         }
 
-        var clicker = session.getViewer();
-        clicker.playSound(clicker.getLocation(), Sound.BLOCK_COMPARATOR_CLICK, 100f, 1.5f);
+        SoundBase.CLICK.play(session.getViewer());
         return ClickResult.UPDATE_BUTTON;
     }
 }

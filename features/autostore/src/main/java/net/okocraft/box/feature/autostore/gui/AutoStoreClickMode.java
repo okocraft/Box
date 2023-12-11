@@ -14,6 +14,7 @@ import net.okocraft.box.feature.gui.api.buttons.BackOrCloseButton;
 import net.okocraft.box.feature.gui.api.menu.Menu;
 import net.okocraft.box.feature.gui.api.mode.BoxItemClickMode;
 import net.okocraft.box.feature.gui.api.session.PlayerSession;
+import net.okocraft.box.feature.gui.api.util.SoundBase;
 import net.okocraft.box.feature.gui.api.util.TranslationUtil;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -29,6 +30,9 @@ import java.util.Optional;
 import static net.okocraft.box.feature.gui.api.lang.Styles.NO_DECORATION_GOLD;
 
 public class AutoStoreClickMode implements BoxItemClickMode {
+
+    private static final SoundBase ENABLE_SOUND = SoundBase.builder().sound(Sound.BLOCK_WOODEN_BUTTON_CLICK_ON).pitch(1.5f).build();
+    private static final SoundBase DISABLE_SOUND = SoundBase.builder().sound(Sound.BLOCK_WOODEN_BUTTON_CLICK_OFF).pitch(1.5f).build();
 
     private static final AutoStoreSettingMenu SETTING_MENU = new AutoStoreSettingMenu();
 
@@ -94,8 +98,7 @@ public class AutoStoreClickMode implements BoxItemClickMode {
         playerSetting.setEnabled(true);
         playerSetting.setAllMode(false);
 
-        var sound = enabled ? Sound.BLOCK_WOODEN_BUTTON_CLICK_ON : Sound.BLOCK_WOODEN_BUTTON_CLICK_OFF;
-        player.playSound(player.getLocation(), sound, 100f, 1.5f);
+        (enabled ? ENABLE_SOUND : DISABLE_SOUND).play(player);
 
         return ClickResult.UPDATE_BUTTON;
     }

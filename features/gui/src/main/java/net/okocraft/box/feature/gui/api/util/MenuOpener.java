@@ -13,6 +13,9 @@ import java.util.function.Consumer;
 
 public final class MenuOpener {
 
+    private static final SoundBase XMAS_SOUND = SoundBase.builder().sound(Sound.BLOCK_NOTE_BLOCK_CHIME).pitch(1.8f).build();
+    private static final SoundBase NORMAL_SOUND = SoundBase.builder().sound(Sound.ENTITY_EXPERIENCE_ORB_PICKUP).pitch(2.0f).build();
+
     public static void open(@NotNull Menu menu, @NotNull PlayerSession session) {
         var holder = new BoxInventoryHolder(menu, session);
         var viewer = session.getViewer();
@@ -21,9 +24,9 @@ public final class MenuOpener {
             viewer.openInventory(holder.getInventory());
 
             if (XmasChecker.isXmas()) {
-                viewer.playSound(viewer.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 100f, 1.8f);
+                XMAS_SOUND.play(viewer);
             } else {
-                viewer.playSound(viewer.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 100f, 2.0f);
+                NORMAL_SOUND.play(viewer);
             }
         });
     }
@@ -36,9 +39,9 @@ public final class MenuOpener {
             viewer.openInventory(holder.getInventory());
 
             if (XmasChecker.isXmas()) {
-                viewer.playSound(viewer.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 100f, 1.8f);
+                XMAS_SOUND.play(viewer);
             } else {
-                viewer.playSound(viewer.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 100f, 2.0f);
+                NORMAL_SOUND.play(viewer);
             }
 
             onOpened.accept(viewer.getUniqueId());

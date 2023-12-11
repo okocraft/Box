@@ -13,14 +13,15 @@ import net.okocraft.box.feature.craft.model.SelectedRecipe;
 import net.okocraft.box.feature.gui.api.button.ClickResult;
 import net.okocraft.box.feature.gui.api.session.PlayerSession;
 import net.okocraft.box.feature.gui.api.session.TypedKey;
+import net.okocraft.box.feature.gui.api.util.SoundBase;
 import org.bukkit.Sound;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 
 public class ItemCrafter {
 
+    private static final SoundBase CRAFT_SOUND = SoundBase.builder().sound(Sound.BLOCK_LEVER_CLICK).build();
     public static final TypedKey<Boolean> PUT_CRAFTED_ITEMS_INTO_INVENTORY = TypedKey.of(Boolean.class, "put_crafted_items_into_inventory");
 
     public static boolean canCraft(@NotNull StockHolder stockHolder, @NotNull SelectedRecipe recipe, int times) {
@@ -56,7 +57,7 @@ public class ItemCrafter {
         BoxProvider.get().getEventBus().callEvent(event);
 
         if (event.isCancelled()) {
-            playNotCraftedSound(session.getViewer());
+            SoundBase.UNSUCCESSFUL.play(crafter);
             waitingTask.complete(ClickResult.NO_UPDATE_NEEDED);
             return;
         }
@@ -86,7 +87,7 @@ public class ItemCrafter {
         }
 
         if (!stockHolder.decreaseIfPossible(ingredientMap, cause)) {
-            playNotCraftedSound(session.getViewer());
+            SoundBase.UNSUCCESSFUL.play(crafter);
             waitingTask.complete(ClickResult.NO_UPDATE_NEEDED);
             return;
         }
@@ -107,22 +108,14 @@ public class ItemCrafter {
                     stockHolder.increase(recipe.result(), remaining, cause);
                 }
 
-                playCraftSound(crafter);
+                CRAFT_SOUND.play(crafter);
 
                 waitingTask.completeAsync(ClickResult.UPDATE_ICONS);
             });
         } else {
             waitingTask.complete(ClickResult.UPDATE_ICONS);
             stockHolder.increase(recipe.result(), resultAmount, cause);
-            playCraftSound(crafter);
+            CRAFT_SOUND.play(crafter);
         }
-    }
-
-    private static void playCraftSound(@NotNull Player viewer) {
-        viewer.playSound(viewer.getLocation(), Sound.BLOCK_LEVER_CLICK, 100f, 1.0f);
-    }
-
-    private static void playNotCraftedSound(@NotNull Player viewer) {
-        viewer.playSound(viewer.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 100f, 1.5f);
     }
 }

@@ -3,6 +3,7 @@ package net.okocraft.box.feature.gui.api.menu.paginate;
 import net.okocraft.box.feature.gui.api.button.Button;
 import net.okocraft.box.feature.gui.api.button.ClickResult;
 import net.okocraft.box.feature.gui.api.session.PlayerSession;
+import net.okocraft.box.feature.gui.api.util.SoundBase;
 import net.okocraft.box.feature.gui.api.util.TranslationUtil;
 import net.okocraft.box.feature.gui.internal.lang.Displays;
 import org.bukkit.Material;
@@ -18,6 +19,8 @@ public abstract class AbstractPaginatedMenu<T> implements PaginatedMenu {
 
     private final int rows;
     private final List<T> list;
+
+    private static final SoundBase PAGE_CHANGE_SOUND = SoundBase.builder().sound(Sound.BLOCK_LEVER_CLICK).pitch(1.5f).build();
 
     private final int iconsPerPage;
     private final int maxPage;
@@ -109,10 +112,7 @@ public abstract class AbstractPaginatedMenu<T> implements PaginatedMenu {
 
             if (currentPage != newPage) {
                 session.putData(PaginatedMenu.CURRENT_PAGE_KEY, newPage);
-
-                var clicker = session.getViewer();
-                clicker.playSound(clicker.getLocation(), Sound.BLOCK_LEVER_CLICK, 100f, 1.5f);
-
+                PAGE_CHANGE_SOUND.play(session.getViewer());
                 return ClickResult.UPDATE_ICONS;
             } else {
                 return ClickResult.NO_UPDATE_NEEDED;

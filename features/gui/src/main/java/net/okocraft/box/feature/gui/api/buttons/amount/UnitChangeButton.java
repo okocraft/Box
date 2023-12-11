@@ -6,6 +6,7 @@ import net.okocraft.box.feature.gui.api.lang.Styles;
 import net.okocraft.box.feature.gui.api.session.Amount;
 import net.okocraft.box.feature.gui.api.session.PlayerSession;
 import net.okocraft.box.feature.gui.api.session.TypedKey;
+import net.okocraft.box.feature.gui.api.util.SoundBase;
 import net.okocraft.box.feature.gui.api.util.TranslationUtil;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -16,6 +17,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 
 public class UnitChangeButton extends AmountModificationButton {
+
+    private static final SoundBase RESET_SOUND = SoundBase.builder().sound(Sound.ENTITY_EXPERIENCE_ORB_PICKUP).pitch(1.5f).build();
 
     private final Component displayName;
     private final Component clickToResetAmount;
@@ -63,17 +66,16 @@ public class UnitChangeButton extends AmountModificationButton {
 
     @Override
     public @NotNull ClickResult onClick(@NotNull PlayerSession session, @NotNull ClickType clickType) {
-        var clicker = session.getViewer();
         var amount = getOrCreateAmount(session);
 
         if (clickType.isShiftClick()) {
             if (amount.getValue() != 1) {
                 amount.setValue(1);
-                clicker.playSound(clicker.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 100f, 1.5f);
+                RESET_SOUND.play(session.getViewer());
             }
         } else {
             amount.nextUnit();
-            clicker.playSound(clicker.getLocation(), Sound.BLOCK_COMPARATOR_CLICK, 100f, 1.5f);
+            SoundBase.CLICK.play(session.getViewer());
         }
 
         return returningResult;

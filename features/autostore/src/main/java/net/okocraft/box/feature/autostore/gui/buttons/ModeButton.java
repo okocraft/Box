@@ -6,9 +6,9 @@ import net.okocraft.box.feature.autostore.gui.AutoStoreSettingKey;
 import net.okocraft.box.feature.autostore.model.setting.AutoStoreSetting;
 import net.okocraft.box.feature.gui.api.button.ClickResult;
 import net.okocraft.box.feature.gui.api.session.PlayerSession;
+import net.okocraft.box.feature.gui.api.util.SoundBase;
 import net.okocraft.box.feature.gui.api.util.TranslationUtil;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
@@ -67,8 +67,7 @@ public class ModeButton extends AbstractAutoStoreSettingButton {
             result = ClickResult.UPDATE_BUTTON;
         }
 
-        var clicker = session.getViewer();
-        clicker.playSound(clicker.getLocation(), Sound.BLOCK_COMPARATOR_CLICK, 100f, 1.5f);
+        SoundBase.CLICK.play(session.getViewer());
         callAutoStoreSettingChangeEvent(setting);
 
         return result;

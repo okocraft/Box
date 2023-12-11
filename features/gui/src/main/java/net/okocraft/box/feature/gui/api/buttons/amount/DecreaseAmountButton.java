@@ -6,6 +6,7 @@ import net.okocraft.box.feature.gui.api.button.ClickResult;
 import net.okocraft.box.feature.gui.api.session.Amount;
 import net.okocraft.box.feature.gui.api.session.PlayerSession;
 import net.okocraft.box.feature.gui.api.session.TypedKey;
+import net.okocraft.box.feature.gui.api.util.SoundBase;
 import net.okocraft.box.feature.gui.api.util.TranslationUtil;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -16,6 +17,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 
 public class DecreaseAmountButton extends AmountModificationButton {
+
+    private static final SoundBase DECREASE_SOUND = SoundBase.builder().sound(Sound.BLOCK_WOODEN_BUTTON_CLICK_OFF).pitch(1.5f).build();
 
     private final Component displayName;
     private final SingleArgument<Integer> clickToDecreaseLore;
@@ -74,8 +77,7 @@ public class DecreaseAmountButton extends AmountModificationButton {
             return ClickResult.NO_UPDATE_NEEDED;
         }
 
-        var clicker = session.getViewer();
-        clicker.playSound(clicker.getLocation(), Sound.BLOCK_WOODEN_BUTTON_CLICK_OFF, 100f, 1.5f);
+        DECREASE_SOUND.play(session.getViewer());
 
         return returningResult;
     }

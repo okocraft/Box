@@ -7,6 +7,7 @@ import net.okocraft.box.feature.autostore.gui.AutoStoreSettingKey;
 import net.okocraft.box.feature.gui.api.button.ClickResult;
 import net.okocraft.box.feature.gui.api.session.PlayerSession;
 import net.okocraft.box.feature.gui.api.session.TypedKey;
+import net.okocraft.box.feature.gui.api.util.SoundBase;
 import net.okocraft.box.feature.gui.api.util.TranslationUtil;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -19,6 +20,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class BulkEditingButton extends AbstractAutoStoreSettingButton {
+
+    private static final SoundBase ENABLE_ALL_SOUND = SoundBase.builder().sound(Sound.BLOCK_WOODEN_DOOR_OPEN).pitch(1.5f).build();
+    private static final SoundBase DISABLE_ALL_SOUND = SoundBase.builder().sound(Sound.BLOCK_WOODEN_DOOR_CLOSE).pitch(1.5f).build();
 
     private static final TypedKey<Boolean> RECENT_OPERATION_KEY = TypedKey.of(Boolean.class, "autostore_bulk_editing_recent");
 
@@ -66,17 +70,17 @@ public class BulkEditingButton extends AbstractAutoStoreSettingButton {
         }
 
         var perItemSetting = setting.getPerItemModeSetting();
-        Sound sound;
+        SoundBase sound;
 
         Boolean recent = session.getData(RECENT_OPERATION_KEY);
 
         if (recent == null || !recent) {
             perItemSetting.setEnabledItems(BoxProvider.get().getItemManager().getItemList());
-            sound = Sound.BLOCK_WOODEN_DOOR_OPEN;
+            sound = ENABLE_ALL_SOUND;
             recent = true;
         } else {
             perItemSetting.setEnabledItems(Collections.emptyList());
-            sound = Sound.BLOCK_WOODEN_DOOR_CLOSE;
+            sound = DISABLE_ALL_SOUND;
             recent = false;
         }
 
@@ -93,8 +97,7 @@ public class BulkEditingButton extends AbstractAutoStoreSettingButton {
             result = ClickResult.UPDATE_ICONS;
         }
 
-        var clicker = session.getViewer();
-        clicker.playSound(clicker.getLocation(), sound, 100f, 1.5f);
+        sound.play(session.getViewer());
         callAutoStoreSettingChangeEvent(setting);
 
         return result;
