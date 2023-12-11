@@ -9,6 +9,7 @@ import net.okocraft.box.feature.gui.api.menu.Menu;
 import net.okocraft.box.feature.gui.api.mode.AdditionalButton;
 import net.okocraft.box.feature.gui.api.mode.BoxItemClickMode;
 import net.okocraft.box.feature.gui.api.session.PlayerSession;
+import net.okocraft.box.feature.gui.api.util.SoundBase;
 import net.okocraft.box.feature.gui.api.util.TranslationUtil;
 import net.okocraft.box.feature.gui.internal.lang.Displays;
 import org.bukkit.Material;
@@ -25,6 +26,9 @@ import java.util.List;
 import java.util.Optional;
 
 public class StorageMode implements BoxItemClickMode {
+
+    private static final SoundBase DEPOSIT_SOUND = SoundBase.builder().sound(Sound.ENTITY_ITEM_PICKUP).build();
+    private static final SoundBase WITHDRAW_SOUND = SoundBase.builder().sound(Sound.BLOCK_STONE_BUTTON_CLICK_ON).build();
 
     private static final String TRANSACTION_AMOUNT_NAME = "transaction-amount";
 
@@ -106,7 +110,7 @@ public class StorageMode implements BoxItemClickMode {
                         .join();
 
         if (!resultList.getType().isModified()) {
-            player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 100f, 1.5f);
+            SoundBase.UNSUCCESSFUL.play(player);
             return;
         }
 
@@ -117,7 +121,7 @@ public class StorageMode implements BoxItemClickMode {
                 .filter(result -> result.getType().isModified())
                 .forEach(result -> stockHolder.increase(result.getItem(), result.getAmount(), new GuiCauses.Deposit(player)));
 
-        player.playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, 100f, 1.0f);
+        DEPOSIT_SOUND.play(player);
     }
 
     public void processWithdraw(@NotNull Context context) {
@@ -128,7 +132,7 @@ public class StorageMode implements BoxItemClickMode {
         var currentStock = stockHolder.getAmount(context.item());
 
         if (currentStock < 1) {
-            player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 100f, 1.5f);
+            SoundBase.UNSUCCESSFUL.play(player);
             return;
         }
 
@@ -143,13 +147,15 @@ public class StorageMode implements BoxItemClickMode {
 
         if (result.getType().isModified()) {
             stockHolder.decrease(result.getItem(), result.getAmount(), new GuiCauses.Withdraw(player));
-            player.playSound(player.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 100f, 1.0f);
+            WITHDRAW_SOUND.play(player);
         } else {
-            player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 100f, 1.5f);
+            SoundBase.UNSUCCESSFUL.play(player);
         }
     }
 
     private static class DepositAllButton extends AdditionalButton {
+
+        private static final SoundBase DEPOSIT_ALL_SOUND = SoundBase.builder().sound(Sound.BLOCK_NOTE_BLOCK_HARP).pitch(2.0f).build();
 
         @Override
         public @NotNull Material getIconMaterial() {
@@ -188,7 +194,7 @@ public class StorageMode implements BoxItemClickMode {
                             .join();
 
             if (!resultList.getType().isModified()) {
-                clicker.playSound(clicker.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 100f, 1.5f);
+                SoundBase.UNSUCCESSFUL.play(clicker);
                 return;
             }
 
@@ -199,7 +205,7 @@ public class StorageMode implements BoxItemClickMode {
                     .filter(result -> result.getType().isModified())
                     .forEach(result -> stockHolder.increase(result.getItem(), result.getAmount(), new GuiCauses.Deposit(clicker)));
 
-            clicker.playSound(clicker.getLocation(), Sound.BLOCK_NOTE_BLOCK_HARP, 100f, 2.0f);
+            DEPOSIT_ALL_SOUND.play(clicker);
         }
     }
 }

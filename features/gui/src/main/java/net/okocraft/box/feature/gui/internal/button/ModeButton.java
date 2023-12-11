@@ -4,10 +4,10 @@ import net.kyori.adventure.text.Component;
 import net.okocraft.box.feature.gui.api.button.RefreshableButton;
 import net.okocraft.box.feature.gui.api.lang.Styles;
 import net.okocraft.box.feature.gui.api.session.PlayerSession;
+import net.okocraft.box.feature.gui.api.util.SoundBase;
 import net.okocraft.box.feature.gui.api.util.TranslationUtil;
 import net.okocraft.box.feature.gui.internal.lang.Displays;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -68,7 +68,7 @@ public class ModeButton implements RefreshableButton {
 
         session.setBoxItemClickMode(modes.get(nextIndex));
 
-        clicker.playSound(clicker.getLocation(), Sound.BLOCK_COMPARATOR_CLICK, 100f, 1.5f);
+        SoundBase.CLICK.play(clicker);
 
         updateFlag.set(true);
     }

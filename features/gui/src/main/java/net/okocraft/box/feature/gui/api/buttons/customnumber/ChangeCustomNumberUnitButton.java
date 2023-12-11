@@ -5,6 +5,7 @@ import net.okocraft.box.feature.gui.api.button.RefreshableButton;
 import net.okocraft.box.feature.gui.api.lang.Styles;
 import net.okocraft.box.feature.gui.api.menu.Menu;
 import net.okocraft.box.feature.gui.api.session.CustomNumberHolder;
+import net.okocraft.box.feature.gui.api.util.SoundBase;
 import net.okocraft.box.feature.gui.api.util.TranslationUtil;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -17,6 +18,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 
 public class ChangeCustomNumberUnitButton implements RefreshableButton {
+
+    private static final SoundBase RESET_SOUND = SoundBase.builder().sound(Sound.ENTITY_EXPERIENCE_ORB_PICKUP).pitch(1.5f).build();
 
     private final CustomNumberHolder holder;
     private final Component displayName;
@@ -79,11 +82,11 @@ public class ChangeCustomNumberUnitButton implements RefreshableButton {
         if (clickType.isShiftClick()) {
             if (holder.getAmount() != 1) {
                 holder.setAmount(1);
-                clicker.playSound(clicker.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 100f, 1.5f);
+                RESET_SOUND.play(clicker);
             }
         } else {
             holder.changeAmountUnit();
-            clicker.playSound(clicker.getLocation(), Sound.BLOCK_COMPARATOR_CLICK, 100f, 1.5f);
+            SoundBase.CLICK.play(clicker);
         }
 
         if (menuToUpdate != null) {

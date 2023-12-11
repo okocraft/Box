@@ -5,9 +5,9 @@ import net.kyori.adventure.text.format.TextDecoration;
 import net.okocraft.box.feature.autostore.gui.AutoStoreMenuDisplays;
 import net.okocraft.box.feature.autostore.message.AutoStoreMessage;
 import net.okocraft.box.feature.autostore.model.setting.AutoStoreSetting;
+import net.okocraft.box.feature.gui.api.util.SoundBase;
 import net.okocraft.box.feature.gui.api.util.TranslationUtil;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -49,7 +49,7 @@ public class ToggleButton extends AbstractAutoStoreSettingButton {
     @Override
     public void onClick(@NotNull Player clicker, @NotNull ClickType clickType) {
         setting.setEnabled(!setting.isEnabled());
-        clicker.playSound(clicker.getLocation(), Sound.BLOCK_COMPARATOR_CLICK, 100f, 1.5f);
+        SoundBase.CLICK.play(clicker);
         callAutoStoreSettingChangeEvent();
     }
 }

@@ -12,6 +12,7 @@ import net.okocraft.box.feature.gui.api.menu.Menu;
 import net.okocraft.box.feature.gui.api.mode.AdditionalButton;
 import net.okocraft.box.feature.gui.api.mode.BoxItemClickMode;
 import net.okocraft.box.feature.gui.api.session.PlayerSession;
+import net.okocraft.box.feature.gui.api.util.SoundBase;
 import net.okocraft.box.feature.gui.api.util.TranslationUtil;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -28,6 +29,7 @@ import java.util.Optional;
 public abstract class AbstractStorageMode implements BoxItemClickMode {
 
     protected static final String TRANSACTION_AMOUNT_NAME = "transaction-amount";
+    private static final SoundBase DEPOSIT_SOUND = SoundBase.builder().sound(Sound.BLOCK_NOTE_BLOCK_HARP).pitch(2.0f).build();
 
     @Override
     public @NotNull Material getIconMaterial() {
@@ -118,7 +120,7 @@ public abstract class AbstractStorageMode implements BoxItemClickMode {
                             .join();
 
             if (!resultList.getType().isModified()) {
-                clicker.playSound(clicker.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 100f, 1.5f);
+                SoundBase.UNSUCCESSFUL.play(clicker);
                 return;
             }
 
@@ -131,7 +133,7 @@ public abstract class AbstractStorageMode implements BoxItemClickMode {
 
             clicked = false;
 
-            clicker.playSound(clicker.getLocation(), Sound.BLOCK_NOTE_BLOCK_HARP, 100f, 2.0f);
+            DEPOSIT_SOUND.play(clicker);
         }
     }
 }

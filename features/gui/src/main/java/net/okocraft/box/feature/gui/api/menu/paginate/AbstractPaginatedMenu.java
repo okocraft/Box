@@ -3,6 +3,7 @@ package net.okocraft.box.feature.gui.api.menu.paginate;
 import net.okocraft.box.feature.gui.api.button.Button;
 import net.okocraft.box.feature.gui.api.menu.AbstractMenu;
 import net.okocraft.box.feature.gui.api.menu.RenderedButton;
+import net.okocraft.box.feature.gui.api.util.SoundBase;
 import net.okocraft.box.feature.gui.api.util.TranslationUtil;
 import net.okocraft.box.feature.gui.internal.lang.Displays;
 import org.bukkit.Material;
@@ -17,6 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class AbstractPaginatedMenu<T> extends AbstractMenu implements PaginatedMenu {
+
+    private static final SoundBase PAGE_CHANGE_SOUND = SoundBase.builder().sound(Sound.BLOCK_LEVER_CLICK).pitch(1.5f).build();
 
     private final int iconsPerPage;
     private final int maxPage;
@@ -183,7 +186,7 @@ public abstract class AbstractPaginatedMenu<T> extends AbstractMenu implements P
                 }
             }
 
-            clicker.playSound(clicker.getLocation(), Sound.BLOCK_LEVER_CLICK, 100f, 1.5f);
+            PAGE_CHANGE_SOUND.play(clicker);
         }
     }
 }

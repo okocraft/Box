@@ -10,9 +10,9 @@ import net.okocraft.box.feature.gui.api.menu.Menu;
 import net.okocraft.box.feature.gui.api.mode.AdditionalButton;
 import net.okocraft.box.feature.gui.api.mode.BoxItemClickMode;
 import net.okocraft.box.feature.gui.api.util.MenuOpener;
+import net.okocraft.box.feature.gui.api.util.SoundBase;
 import net.okocraft.box.feature.gui.api.util.TranslationUtil;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
@@ -43,7 +43,7 @@ public class CraftMode implements BoxItemClickMode {
         var recipes = RecipeRegistry.getRecipes(context.item());
 
         if (recipes == null) {
-            clicker.playSound(clicker.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 100f, 1.5f);
+            SoundBase.UNSUCCESSFUL.play(clicker);
             return;
         }
 
