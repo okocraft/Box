@@ -113,7 +113,7 @@ public final class CategoryLoader {
             return ExperimentalItems.mc1_19_3();
         } else if (MCDataVersion.MC_1_19_4.isSame(MCDataVersion.CURRENT)) {
             return ExperimentalItems.mc1_19_4();
-        } else if (MCDataVersion.MC_1_20_3.isSame(MCDataVersion.CURRENT)) {
+        } else if (MCDataVersion.MC_1_20_3.isSame(MCDataVersion.CURRENT) || MCDataVersion.MC_1_20_4.isSame(MCDataVersion.CURRENT)) {
             return ExperimentalItems.mc1_20_3();
         } else {
             return Collections.emptySet();
