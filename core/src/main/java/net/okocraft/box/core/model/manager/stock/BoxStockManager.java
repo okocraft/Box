@@ -24,6 +24,7 @@ import net.okocraft.box.storage.api.model.stock.StockStorage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.VisibleForTesting;
 
+import java.math.BigInteger;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.Collections;
@@ -101,7 +102,8 @@ public class BoxStockManager implements StockManager {
 
     public void schedulerAutoSaveTask(@NotNull BoxScheduler scheduler) {
         this.checkClosed();
-        scheduler.scheduleRepeatingAsyncTask(this::saveChangesAndCleanupOffline, Duration.ofSeconds(5), this::isNotClosed);
+        long interval = computeInterval(this.unloadTime, this.saveInterval);
+        scheduler.scheduleRepeatingAsyncTask(this::saveChangesAndCleanupOffline, Duration.ofNanos(interval), this::isNotClosed);
     }
 
     public void close() {
@@ -115,6 +117,14 @@ public class BoxStockManager implements StockManager {
 
     private void saveChangesAndCleanupOffline() {
         this.loaderMap.values().forEach(this::autoSaveOrUnload);
+    }
+
+    static long computeInterval(long unloadTime, long saveInterval) {
+        if (unloadTime == 0 && saveInterval == 0) {
+            return TimeUnit.SECONDS.toNanos(1);
+        } else {
+            return BigInteger.valueOf(unloadTime).gcd(BigInteger.valueOf(saveInterval)).longValue();
+        }
     }
 
     @VisibleForTesting
