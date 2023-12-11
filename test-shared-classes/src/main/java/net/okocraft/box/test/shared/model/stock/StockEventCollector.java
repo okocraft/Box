@@ -87,6 +87,7 @@ public class StockEventCollector implements StockEventCaller {
         var event = Assertions.assertInstanceOf(StockHolderResetEvent.class, this.nextEvent());
 
         Assertions.assertEquals(stockHolder, event.getStockHolder());
+        Assertions.assertEquals(stockDataBeforeReset.size(), event.getStockDataBeforeReset().size());
         Assertions.assertTrue(stockDataBeforeReset.containsAll(event.getStockDataBeforeReset()));
     }
 

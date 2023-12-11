@@ -25,8 +25,7 @@ class BasicChangeStateTest extends AbstractChangeStateTest {
         checkChanges(state, false);
         this.checkStorageAmount(storage, stockHolder, ITEM_AMOUNT);
 
-        stockHolder.reset();
-        state.rememberReset(STOCK_DATA);
+        state.rememberReset(stockHolder.reset());
 
         checkChanges(state, true);
 

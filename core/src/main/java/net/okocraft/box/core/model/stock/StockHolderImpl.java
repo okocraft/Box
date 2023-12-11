@@ -278,7 +278,7 @@ class StockHolderImpl implements StockHolder {
     }
 
     @Override
-    public void reset() {
+    public @NotNull @Unmodifiable Collection<StockData> reset() {
         Collection<StockData> stockDataCollection;
 
         long stamp = this.lock.writeLock();
@@ -291,6 +291,8 @@ class StockHolderImpl implements StockHolder {
         }
 
         eventCaller.callResetEvent(this, stockDataCollection);
+
+        return stockDataCollection;
     }
 
     @Override

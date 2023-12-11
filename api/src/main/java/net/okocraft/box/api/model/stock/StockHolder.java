@@ -193,6 +193,8 @@ public interface StockHolder {
 
     /**
      * Resets all stock.
+     *
+     * @return the collection of {@link StockData} before reset
      */
-    void reset();
+    @NotNull @Unmodifiable Collection<StockData> reset();
 }

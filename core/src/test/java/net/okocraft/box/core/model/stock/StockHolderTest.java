@@ -517,11 +517,16 @@ class StockHolderTest {
         //   stock data:
         //     - test_item_1: 10
         //     - test_item_2: 10
-        stockHolder.reset();
+        var stockData = stockHolder.reset();
 
         Assertions.assertEquals(0, stockHolder.getAmount(ITEM_1));
         Assertions.assertEquals(0, stockHolder.getAmount(ITEM_2));
-        collector.checkResetEvent(stockHolder, List.of(new StockData(ITEM_1.internalId(), 10), new StockData(ITEM_2.internalId(), 10)));
+
+        var expectedStockData = List.of(new StockData(ITEM_1.internalId(), 10), new StockData(ITEM_2.internalId(), 10));
+
+        Assertions.assertEquals(expectedStockData.size(), stockData.size());
+        Assertions.assertTrue(expectedStockData.containsAll(stockData));
+        collector.checkResetEvent(stockHolder, expectedStockData);
     }
 
     @SuppressWarnings("DataFlowIssue")

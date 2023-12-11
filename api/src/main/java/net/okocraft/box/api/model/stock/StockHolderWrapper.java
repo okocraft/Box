@@ -79,7 +79,7 @@ public interface StockHolderWrapper extends StockHolder {
     }
 
     @Override
-    default void reset() {
-        delegate().reset();
+    default @NotNull @Unmodifiable Collection<StockData> reset() {
+        return delegate().reset();
     }
 }

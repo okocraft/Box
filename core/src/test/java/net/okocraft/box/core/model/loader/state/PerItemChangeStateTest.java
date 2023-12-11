@@ -25,8 +25,7 @@ class PerItemChangeStateTest extends AbstractChangeStateTest {
         checkSize(state, 0);
         this.checkStorageAmount(storage, stockHolder, ITEM_AMOUNT);
 
-        stockHolder.reset();
-        state.rememberReset(STOCK_DATA);
+        state.rememberReset(stockHolder.reset());
 
         checkSize(state, 1);
 
