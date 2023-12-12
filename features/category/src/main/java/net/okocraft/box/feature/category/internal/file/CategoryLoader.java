@@ -121,7 +121,7 @@ public final class CategoryLoader {
     }
 
     private static String renameItem(String name) {
-        if (MCDataVersion.MC_1_20_3.isAfterOrSame(MCDataVersion.CURRENT)) {
+        if (MCDataVersion.CURRENT.isAfterOrSame(MCDataVersion.MC_1_20_3)) {
             if (name.equals("GRASS")) {
                 return "SHORT_GRASS";
             }

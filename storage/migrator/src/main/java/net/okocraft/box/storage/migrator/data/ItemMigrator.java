@@ -121,7 +121,7 @@ public class ItemMigrator implements DataMigrator<ItemStorage> {
             if (plainName.equals("GOAT_HORN")) {
                 return "PONDER_GOAT_HORN";
             }
-        } else if (dataVersion.isBeforeOrSame(MCDataVersion.MC_1_20_2) && MCDataVersion.MC_1_20_3.isAfterOrSame(MCDataVersion.CURRENT)) {
+        } else if (dataVersion.isBeforeOrSame(MCDataVersion.MC_1_20_2) && MCDataVersion.CURRENT.isAfterOrSame(MCDataVersion.MC_1_20_3)) {
             if (plainName.equals("GRASS")) {
                 return "SHORT_GRASS";
             }
