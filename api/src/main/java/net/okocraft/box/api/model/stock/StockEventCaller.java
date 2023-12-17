@@ -1,5 +1,7 @@
 package net.okocraft.box.api.model.stock;
 
+import com.github.siroshun09.event4j.caller.AsyncEventCaller;
+import net.okocraft.box.api.event.BoxEvent;
 import net.okocraft.box.api.event.stockholder.stock.StockEvent;
 import net.okocraft.box.api.model.item.BoxItem;
 import org.jetbrains.annotations.Contract;
@@ -13,23 +15,28 @@ import java.util.Collection;
 public interface StockEventCaller {
 
     /**
-     * A default implementation of {@link  StockEventCaller}.
-     * <p>
-     * {@link StockEvent}s will be called by {@link com.github.siroshun09.event4j.bus.EventBus#callEventAsync(Object)}.
-     */
-    @SuppressWarnings("unused")
-    StockEventCaller DEFAULT = new DefaultStockEventCallers.Default();
-
-    /**
-     * Creates a {@link StockEventCaller} that passes a specified {@link StockHolderWrapper} to {@link StockEvent}.
+     * Creates a default implementation of {@link  StockEventCaller}.
      *
-     * @param wrapper a {@link StockHolderWrapper} that is passed to {@link StockEvent}
+     * @param eventCaller a {@link AsyncEventCaller} to call {@link StockEvent}s
      * @return a new {@link StockEventCaller}
      */
     @SuppressWarnings("unused")
     @Contract(value = "_ -> new", pure = true)
-    static @NotNull StockEventCaller useWrapper(@NotNull StockHolderWrapper wrapper) {
-        return new DefaultStockEventCallers.UsingWrapper(wrapper);
+    static @NotNull StockEventCaller createDefault(@NotNull AsyncEventCaller<BoxEvent> eventCaller) {
+        return new DefaultStockEventCallers.Default(eventCaller);
+    }
+
+    /**
+     * Creates a {@link StockEventCaller} that passes a specified {@link StockHolderWrapper} to {@link StockEvent}.
+     *
+     * @param wrapper     a {@link StockHolderWrapper} that is passed to {@link StockEvent}
+     * @param eventCaller a {@link AsyncEventCaller} to call {@link StockEvent}s
+     * @return a new {@link StockEventCaller}
+     */
+    @SuppressWarnings("unused")
+    @Contract(value = "_, _ -> new", pure = true)
+    static @NotNull StockEventCaller useWrapper(@NotNull AsyncEventCaller<BoxEvent> eventCaller, @NotNull StockHolderWrapper wrapper) {
+        return new DefaultStockEventCallers.UsingWrapper(eventCaller, wrapper);
     }
 
     /**

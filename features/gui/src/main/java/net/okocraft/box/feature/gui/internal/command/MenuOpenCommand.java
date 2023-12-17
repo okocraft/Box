@@ -185,11 +185,12 @@ public class MenuOpenCommand extends AbstractCommand {
     }
 
     private void openMenu(@NotNull PlayerSession session, @NotNull Menu menu) {
-        if (BoxProvider.get().getEventBus().callEvent(new MenuOpenEvent(menu, session)).isCancelled()) {
-            session.getViewer().sendMessage(CANNOT_OPEN_MENU);
-            return;
-        }
-
-        MenuOpener.open(menu, session);
+        BoxProvider.get().getEventManager().callAsync(new MenuOpenEvent(menu, session), event -> {
+            if (event.isCancelled()) {
+                session.getViewer().sendMessage(CANNOT_OPEN_MENU);
+            } else {
+                MenuOpener.open(menu, session);
+            }
+        });
     }
 }

@@ -1,6 +1,6 @@
 package net.okocraft.box.feature.category.internal.listener;
 
-import com.github.siroshun09.event4j.key.Key;
+import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
@@ -40,17 +40,11 @@ public class ItemInfoEventListener {
     }
 
     public void register(@NotNull Key listenerKey) {
-        BoxProvider.get()
-                .getEventBus()
-                .getSubscriber(PlayerCollectItemInfoEvent.class)
-                .subscribe(listenerKey, this::processEvent);
+        BoxProvider.get().getEventManager().getSubscriber(PlayerCollectItemInfoEvent.class).subscribe(listenerKey, this::processEvent);
     }
 
     public void unregister(@NotNull Key listenerKey) {
-        BoxProvider.get()
-                .getEventBus()
-                .getSubscriber(PlayerCollectItemInfoEvent.class)
-                .unsubscribeAll(listenerKey);
+        BoxProvider.get().getEventManager().getSubscriber(PlayerCollectItemInfoEvent.class).unsubscribeByKey(listenerKey);
     }
 
     private void processEvent(@NotNull PlayerCollectItemInfoEvent event) {

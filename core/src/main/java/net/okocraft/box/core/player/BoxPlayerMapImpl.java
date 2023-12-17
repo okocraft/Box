@@ -101,7 +101,7 @@ public class BoxPlayerMapImpl implements BoxPlayerMap {
         boxPlayer.getPersonalStockHolder().markAsOnline();
         this.playerMap.put(player, boxPlayer);
 
-        BoxProvider.get().getEventBus().callEvent(new PlayerLoadEvent(boxPlayer));
+        BoxProvider.get().getEventManager().call(new PlayerLoadEvent(boxPlayer));
     }
 
     public void unload(@NotNull Player player) {
@@ -113,7 +113,7 @@ public class BoxPlayerMapImpl implements BoxPlayerMap {
 
         boxPlayer.getPersonalStockHolder().markAsOffline();
 
-        BoxProvider.get().getEventBus().callEvent(new PlayerUnloadEvent(boxPlayer));
+        BoxProvider.get().getEventManager().call(new PlayerUnloadEvent(boxPlayer));
     }
 
     public void loadAll() {

@@ -1,6 +1,6 @@
 package net.okocraft.box.core.model.manager.stock;
 
-import com.github.siroshun09.event4j.bus.EventBus;
+import com.github.siroshun09.event4j.caller.AsyncEventCaller;
 import net.okocraft.box.api.event.BoxEvent;
 import net.okocraft.box.api.event.stockholder.StockHolderLoadEvent;
 import net.okocraft.box.api.event.stockholder.StockHolderResetEvent;
@@ -39,7 +39,7 @@ import java.util.function.Supplier;
 public class BoxStockManager implements StockManager {
 
     private final StockStorage stockStorage;
-    private final EventBus<BoxEvent> eventBus;
+    private final AsyncEventCaller<BoxEvent> eventCaller;
     private final IntFunction<BoxItem> toBoxItem;
     private final Supplier<ChangeState> changeStateFactory;
     private final long unloadTime;
@@ -48,10 +48,12 @@ public class BoxStockManager implements StockManager {
     private final ConcurrentMap<UUID, LoadingPersonalStockHolder> loaderMap = new ConcurrentHashMap<>();
     private final AtomicBoolean closed = new AtomicBoolean(false);
 
-    public BoxStockManager(@NotNull StockStorage stockStorage, @NotNull EventBus<BoxEvent> eventBus, @NotNull IntFunction<BoxItem> toBoxItem,
+    public BoxStockManager(@NotNull StockStorage stockStorage,
+                           @NotNull AsyncEventCaller<BoxEvent> eventCaller,
+                           @NotNull IntFunction<BoxItem> toBoxItem,
                            long unloadTime, long saveInterval, @NotNull TimeUnit timeUnit) {
         this.stockStorage = stockStorage;
-        this.eventBus = eventBus;
+        this.eventCaller = eventCaller;
         this.toBoxItem = toBoxItem;
         this.changeStateFactory = ChangeState.createSupplier(stockStorage);
         this.unloadTime = Math.max(0, timeUnit.toNanos(unloadTime));
@@ -81,10 +83,10 @@ public class BoxStockManager implements StockManager {
             throw new RuntimeException("Could not load user's stock holder (" + user.getUUID() + ")", e);
         }
 
-        var eventCaller = new StateUpdatingStockEventCaller(loader, this.eventBus);
+        var eventCaller = new StateUpdatingStockEventCaller(loader, this.eventCaller);
         var stockHolder = StockHolderFactory.create(user, eventCaller, stockData, this.toBoxItem);
 
-        this.eventBus.callEventAsync(new StockHolderLoadEvent(loader));
+        this.eventCaller.callAsync(new StockHolderLoadEvent(loader));
 
         return stockHolder;
     }
@@ -166,11 +168,11 @@ public class BoxStockManager implements StockManager {
     private static class StateUpdatingStockEventCaller implements StockEventCaller {
 
         private final LoadingPersonalStockHolder loader;
-        private final EventBus<BoxEvent> eventBus;
+        private final AsyncEventCaller<BoxEvent> eventCaller;
 
-        private StateUpdatingStockEventCaller(@NotNull LoadingPersonalStockHolder loader, @NotNull EventBus<BoxEvent> eventBus) {
+        private StateUpdatingStockEventCaller(@NotNull LoadingPersonalStockHolder loader, @NotNull AsyncEventCaller<BoxEvent> eventCaller) {
             this.loader = loader;
-            this.eventBus = eventBus;
+            this.eventCaller = eventCaller;
         }
 
         @Override
@@ -204,7 +206,7 @@ public class BoxStockManager implements StockManager {
         }
 
         private void callEvent(@NotNull BoxEvent event) {
-            this.eventBus.callEventAsync(event);
+            this.eventCaller.callAsync(event);
         }
     }
 }

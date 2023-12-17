@@ -33,7 +33,7 @@ public class StockHolderEvent extends BoxEvent {
 
     @Override
     public @NotNull String toDebugLog() {
-        return getEventName() + "{" +
+        return this.getClass().getSimpleName() + "{" +
                 "uuid=" + getStockHolder().getUUID() +
                 ", name=" + getStockHolder().getName() +
                 ", class=" + getStockHolder().getClass().getSimpleName() +

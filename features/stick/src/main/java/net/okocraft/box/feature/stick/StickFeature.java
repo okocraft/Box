@@ -60,9 +60,11 @@ public class StickFeature extends AbstractBoxFeature implements Disableable {
             var menu = new CategorySelectorMenu();
             var session = PlayerSession.newSession(player);
 
-            if (!BoxProvider.get().getEventBus().callEvent(new MenuOpenEvent(menu, session)).isCancelled()) {
-                MenuOpener.open(menu, session);
-            }
+            BoxProvider.get().getEventManager().callAsync(new MenuOpenEvent(menu, session), event -> {
+                if (!event.isCancelled()) {
+                    MenuOpener.open(menu, session);
+                }
+            });
         }
     }
 }

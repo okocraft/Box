@@ -1,6 +1,5 @@
 package net.okocraft.box.api.feature;
 
-import com.github.siroshun09.event4j.key.Key;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
@@ -18,13 +17,6 @@ public interface BoxFeature {
      * @return the name of this feature
      */
     @NotNull String getName();
-
-    /**
-     * Gets the key of listeners.
-     *
-     * @return the key of listeners
-     */
-    @NotNull Key getListenerKey();
 
     /**
      * Enables this feature.

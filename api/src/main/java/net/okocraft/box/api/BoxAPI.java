@@ -1,11 +1,10 @@
 package net.okocraft.box.api;
 
-import com.github.siroshun09.event4j.bus.EventBus;
 import net.okocraft.box.api.command.base.BoxAdminCommand;
 import net.okocraft.box.api.command.base.BoxCommand;
-import net.okocraft.box.api.event.BoxEvent;
 import net.okocraft.box.api.feature.BoxFeature;
 import net.okocraft.box.api.model.customdata.CustomDataManager;
+import net.okocraft.box.api.model.manager.EventManager;
 import net.okocraft.box.api.model.manager.ItemManager;
 import net.okocraft.box.api.model.manager.StockManager;
 import net.okocraft.box.api.model.manager.UserManager;
@@ -73,11 +72,11 @@ public interface BoxAPI {
     @NotNull BoxPlayerMap getBoxPlayerMap();
 
     /**
-     * Gets the {@link EventBus}.
+     * Gets the {@link EventManager}.
      *
-     * @return the {@link EventBus}
+     * @return the {@link EventManager}
      */
-    @NotNull EventBus<BoxEvent> getEventBus();
+    @NotNull EventManager getEventManager();
 
     /**
      * Gets the {@link CustomDataManager}.

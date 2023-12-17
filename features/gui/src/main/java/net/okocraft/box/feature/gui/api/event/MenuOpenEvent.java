@@ -1,6 +1,6 @@
 package net.okocraft.box.feature.gui.api.event;
 
-import com.github.siroshun09.event4j.event.Cancellable;
+import net.okocraft.box.api.event.Cancellable;
 import net.okocraft.box.feature.gui.api.menu.Menu;
 import net.okocraft.box.feature.gui.api.session.PlayerSession;
 import org.jetbrains.annotations.NotNull;

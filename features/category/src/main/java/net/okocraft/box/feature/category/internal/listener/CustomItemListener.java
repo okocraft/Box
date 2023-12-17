@@ -1,7 +1,7 @@
 package net.okocraft.box.feature.category.internal.listener;
 
 import com.github.siroshun09.configapi.format.yaml.YamlFormat;
-import com.github.siroshun09.event4j.key.Key;
+import net.kyori.adventure.key.Key;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.event.item.CustomItemRegisterEvent;
 import net.okocraft.box.api.event.item.CustomItemRenameEvent;
@@ -20,27 +20,13 @@ public class CustomItemListener {
     }
 
     public void register(@NotNull Key listenerKey) {
-        BoxProvider.get()
-                .getEventBus()
-                .getSubscriber(CustomItemRegisterEvent.class)
-                .subscribe(listenerKey, this::processEvent);
-
-        BoxProvider.get()
-                .getEventBus()
-                .getSubscriber(CustomItemRenameEvent.class)
-                .subscribe(listenerKey, this::processEvent);
+        BoxProvider.get().getEventManager().getSubscriber(CustomItemRegisterEvent.class).subscribe(listenerKey, this::processEvent);
+        BoxProvider.get().getEventManager().getSubscriber(CustomItemRenameEvent.class).subscribe(listenerKey, this::processEvent);
     }
 
     public void unregister(@NotNull Key listenerKey) {
-        BoxProvider.get()
-                .getEventBus()
-                .getSubscriber(CustomItemRegisterEvent.class)
-                .unsubscribeAll(listenerKey);
-
-        BoxProvider.get()
-                .getEventBus()
-                .getSubscriber(CustomItemRenameEvent.class)
-                .unsubscribeAll(listenerKey);
+        BoxProvider.get().getEventManager().getSubscriber(CustomItemRegisterEvent.class).unsubscribeByKey(listenerKey);
+        BoxProvider.get().getEventManager().getSubscriber(CustomItemRenameEvent.class).unsubscribeByKey(listenerKey);
     }
 
     private void processEvent(@NotNull CustomItemRegisterEvent event) {
@@ -49,7 +35,7 @@ public class CustomItemListener {
         updateCategoriesFile();
     }
 
-    private void processEvent(@NotNull CustomItemRenameEvent event) {
+    private void processEvent(@NotNull CustomItemRenameEvent ignored) {
         updateCategoriesFile();
     }
 

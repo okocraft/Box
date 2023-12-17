@@ -10,7 +10,7 @@ public class AutoSaveStartEvent extends BoxEvent {
 
     @Override
     public @NotNull String toDebugLog() {
-        return getEventName();
+        return this.getClass().getSimpleName();
     }
 
 }

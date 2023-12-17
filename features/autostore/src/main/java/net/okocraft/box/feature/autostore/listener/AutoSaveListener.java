@@ -1,6 +1,8 @@
 package net.okocraft.box.feature.autostore.listener;
 
-import com.github.siroshun09.event4j.key.Key;
+import com.github.siroshun09.event4j.listener.ListenerBase;
+import com.github.siroshun09.event4j.priority.Priority;
+import net.kyori.adventure.key.Key;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.event.general.AutoSaveStartEvent;
 import net.okocraft.box.api.util.BoxLogger;
@@ -10,38 +12,27 @@ import net.okocraft.box.feature.autostore.model.setting.AutoStoreSetting;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class AutoSaveListener {
 
-    private final List<AutoStoreSetting> modifiedSettings = new ArrayList<>();
-
-    private Key listenerKey;
+    private final Set<AutoStoreSetting> modifiedSettings = ConcurrentHashMap.newKeySet();
 
     public void register(@NotNull Key listenerKey) {
-        this.listenerKey = listenerKey;
-
-        var eventBus = BoxProvider.get().getEventBus();
-
-        eventBus.getSubscriber(AutoStoreSettingChangeEvent.class)
-                .subscribe(listenerKey, event -> modifiedSettings.add(event.getSetting()));
-
-        eventBus.getSubscriber(AutoSaveStartEvent.class)
-                .subscribe(listenerKey, this::saveModifiedSettings);
+        BoxProvider.get().getEventManager().subscribeAll(List.of(
+                new ListenerBase<>(AutoStoreSettingChangeEvent.class, listenerKey, event -> this.modifiedSettings.add(event.getSetting()), Priority.NORMAL),
+                new ListenerBase<>(AutoSaveStartEvent.class, listenerKey, event -> this.saveModifiedSettings(), Priority.NORMAL)
+        ));
     }
 
-    public void unregister() {
-        if (listenerKey != null) {
-            var eventBus = BoxProvider.get().getEventBus();
-            eventBus.getSubscriber(AutoStoreSettingChangeEvent.class).unsubscribeAll(listenerKey);
-            eventBus.getSubscriber(AutoSaveStartEvent.class).unsubscribeAll(listenerKey);
-        }
+    public void unregister(@NotNull Key listenerKey) {
+        BoxProvider.get().getEventManager().unsubscribeByKey(listenerKey);
     }
 
-    private void saveModifiedSettings(@NotNull AutoSaveStartEvent event) {
+    private void saveModifiedSettings() {
         var copied = List.copyOf(modifiedSettings);
-
         modifiedSettings.clear();
 
         copied.stream()

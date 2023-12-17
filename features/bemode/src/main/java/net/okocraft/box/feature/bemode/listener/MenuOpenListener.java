@@ -1,6 +1,5 @@
 package net.okocraft.box.feature.bemode.listener;
 
-import com.github.siroshun09.event4j.listener.Listener;
 import net.okocraft.box.feature.bemode.util.BEPlayerChecker;
 import net.okocraft.box.feature.gui.api.event.MenuOpenEvent;
 import net.okocraft.box.feature.gui.api.mode.BoxItemClickMode;
@@ -8,11 +7,12 @@ import net.okocraft.box.feature.gui.api.mode.ClickModeRegistry;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.function.Consumer;
 
-public class MenuOpenListener implements Listener<MenuOpenEvent> {
+public class MenuOpenListener implements Consumer<MenuOpenEvent> {
 
     @Override
-    public void handle(@NotNull MenuOpenEvent event) {
+    public void accept(@NotNull MenuOpenEvent event) {
         var viewer = event.getViewer();
 
         if (!BEPlayerChecker.isBEPlayer(viewer)) {

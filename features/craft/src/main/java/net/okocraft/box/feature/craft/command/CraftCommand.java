@@ -64,12 +64,13 @@ public class CraftCommand extends AbstractCommand {
             menu = new RecipeSelectorMenu(item.get(), recipeHolder);
         }
 
-        if (BoxProvider.get().getEventBus().callEvent(new MenuOpenEvent(menu, session)).isCancelled()) {
-            session.getViewer().sendMessage(Components.redTranslatable("box.gui.cannot-open-menu"));
-            return;
-        }
-
-        MenuOpener.open(menu, session);
+        BoxProvider.get().getEventManager().callAsync(new MenuOpenEvent(menu, session), event -> {
+            if (event.isCancelled()) {
+                session.getViewer().sendMessage(Components.redTranslatable("box.gui.cannot-open-menu"));
+            } else {
+                MenuOpener.open(menu, session);
+            }
+        });
     }
 
     @Override

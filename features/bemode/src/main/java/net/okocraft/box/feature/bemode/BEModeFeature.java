@@ -1,5 +1,6 @@
 package net.okocraft.box.feature.bemode;
 
+import net.kyori.adventure.key.Key;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.feature.AbstractBoxFeature;
 import net.okocraft.box.api.feature.BoxFeature;
@@ -16,6 +17,8 @@ import java.util.Set;
 
 public class BEModeFeature extends AbstractBoxFeature {
 
+    private static final Key MENU_OPEN_EVENT_LISTENER_KEY = Key.key("box", "feature/bemode/listener");
+
     private final StorageDepositMode storageDepositMode = new StorageDepositMode();
     private final StorageWithdrawMode storageWithdrawMode = new StorageWithdrawMode();
 
@@ -27,18 +30,14 @@ public class BEModeFeature extends AbstractBoxFeature {
     public void enable() {
         ClickModeRegistry.register(storageDepositMode);
         ClickModeRegistry.register(storageWithdrawMode);
-
-        BoxProvider.get().getEventBus()
-                .getSubscriber(MenuOpenEvent.class)
-                .subscribe(getListenerKey(), new MenuOpenListener());
+        BoxProvider.get().getEventManager().getSubscriber(MenuOpenEvent.class).subscribe(MENU_OPEN_EVENT_LISTENER_KEY, new MenuOpenListener());
     }
 
     @Override
     public void disable() {
         ClickModeRegistry.unregister(storageDepositMode);
         ClickModeRegistry.unregister(storageWithdrawMode);
-
-        BoxProvider.get().getEventBus().unsubscribeAll(getListenerKey());
+        BoxProvider.get().getEventManager().getSubscriber(MenuOpenEvent.class).unsubscribeByKey(MENU_OPEN_EVENT_LISTENER_KEY);
     }
 
     @Override
