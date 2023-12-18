@@ -1,7 +1,7 @@
 package net.okocraft.box.feature.craft.loader;
 
-import net.okocraft.box.api.BoxProvider;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.ShapelessRecipe;
@@ -17,7 +17,6 @@ final class AdditionalRecipes {
     }
 
     private static @NotNull Recipe fireworkRocket(int power) {
-        var namespace = BoxProvider.get().createNamespacedKey("recipe_firework_rocket_" + power);
         var firework = new ItemStack(Material.FIREWORK_ROCKET, 3);
 
         if (firework.getItemMeta() instanceof FireworkMeta meta) {
@@ -25,8 +24,12 @@ final class AdditionalRecipes {
             firework.setItemMeta(meta);
         }
 
-        return new ShapelessRecipe(namespace, firework)
+        return new ShapelessRecipe(createFireworkRecipeKey(power), firework)
                 .addIngredient(power, Material.GUNPOWDER)
                 .addIngredient(1, Material.PAPER);
+    }
+
+    private static @NotNull NamespacedKey createFireworkRecipeKey(int power) {
+        return new NamespacedKey("box", "recipe_firework_rocket_" + power);
     }
 }

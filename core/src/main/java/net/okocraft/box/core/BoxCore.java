@@ -29,7 +29,6 @@ import net.okocraft.box.core.player.BoxPlayerMapImpl;
 import net.okocraft.box.storage.api.model.Storage;
 import net.okocraft.box.storage.api.util.item.ItemLoader;
 import org.bukkit.Bukkit;
-import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -326,10 +325,5 @@ public class BoxCore implements BoxAPI {
     @Override
     public boolean isDisabledWorld(@NotNull String worldName) {
         return this.context.config().coreSetting().disabledWorlds().contains(worldName);
-    }
-
-    @Override
-    public @NotNull NamespacedKey createNamespacedKey(@NotNull String value) {
-        return new NamespacedKey(context.plugin(), value);
     }
 }

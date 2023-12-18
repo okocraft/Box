@@ -10,7 +10,6 @@ import net.okocraft.box.api.model.manager.StockManager;
 import net.okocraft.box.api.model.manager.UserManager;
 import net.okocraft.box.api.player.BoxPlayerMap;
 import net.okocraft.box.api.scheduler.BoxScheduler;
-import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -157,12 +156,4 @@ public interface BoxAPI {
      * @return if Box is disabled in the specified world, returns {@code true}, otherwise {@code false}
      */
     boolean isDisabledWorld(@NotNull String worldName);
-
-    /**
-     * Creates a {@link NamespacedKey}.
-     *
-     * @param value the value of the {@link NamespacedKey}
-     * @return a new {@link NamespacedKey}
-     */
-    @NotNull NamespacedKey createNamespacedKey(@NotNull String value);
 }

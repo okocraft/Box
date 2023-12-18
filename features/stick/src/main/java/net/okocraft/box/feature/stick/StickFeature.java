@@ -13,13 +13,14 @@ import net.okocraft.box.feature.stick.command.StickCommand;
 import net.okocraft.box.feature.stick.item.BoxStickItem;
 import net.okocraft.box.feature.stick.listener.StickListener;
 import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 public class StickFeature extends AbstractBoxFeature implements Disableable {
 
-    private final BoxStickItem boxStickItem = new BoxStickItem(BoxProvider.get().createNamespacedKey("stick"));
+    private final BoxStickItem boxStickItem = new BoxStickItem(new NamespacedKey("box", "stick"));
     private final StickCommand stickCommand = new StickCommand(boxStickItem);
     private final CustomStickCommand customStickCommand = new CustomStickCommand(boxStickItem);
     private final StickListener stickListener = new StickListener(boxStickItem);

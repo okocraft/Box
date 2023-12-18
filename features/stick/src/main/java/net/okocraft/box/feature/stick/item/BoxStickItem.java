@@ -4,7 +4,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.translation.GlobalTranslator;
-import net.okocraft.box.api.BoxProvider;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -31,7 +30,7 @@ import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
  */
 public final class BoxStickItem {
 
-    private static final NamespacedKey V3_STICK_KEY = BoxProvider.get().createNamespacedKey("boxstick");
+    private static final NamespacedKey V3_STICK_KEY = new NamespacedKey("box", "boxstick");
 
     private static final Style NO_DECORATION =
             Style.style().decoration(TextDecoration.ITALIC, TextDecoration.State.FALSE).build();
