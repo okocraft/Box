@@ -8,10 +8,11 @@ val libs = extensions.getByType(org.gradle.accessors.dm.LibrariesForLibs::class)
 repositories {
     mavenCentral()
 
-    // for snapshots
+    /* for snapshots
     maven {
         url = uri("https://oss.sonatype.org/content/repositories/snapshots/")
     }
+    */
 
     maven {
         url = uri("https://repo.papermc.io/repository/maven-public/")
