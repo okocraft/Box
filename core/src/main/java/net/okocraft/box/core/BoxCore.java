@@ -53,9 +53,6 @@ public class BoxCore implements BoxAPI {
     private final PluginContext context;
     private final BoxEventManager eventManager;
 
-    private final BoxCommandImpl boxCommand = new BoxCommandImpl();
-    private final BoxAdminCommandImpl boxAdminCommand = new BoxAdminCommandImpl();
-
     private final List<BoxFeature> features = new ArrayList<>();
 
     private Storage storage;
@@ -64,6 +61,9 @@ public class BoxCore implements BoxAPI {
     private BoxUserManager userManager;
     private BoxCustomDataManager customDataManager;
     private BoxPlayerMapImpl playerMap;
+
+    private BoxCommandImpl boxCommand;
+    private BoxAdminCommandImpl boxAdminCommand;
 
     public BoxCore(@NotNull PluginContext context) {
         this.context = context;
@@ -114,12 +114,13 @@ public class BoxCore implements BoxAPI {
 
         BoxLogger.logger().info("Registering commands...");
 
+        this.boxCommand = new BoxCommandImpl(this.context.scheduler());
+        this.boxAdminCommand = new BoxAdminCommandImpl(this.context.scheduler());
+
         this.context.commandRegisterer().register(this.boxCommand).register(this.boxAdminCommand);
 
-        BoxLogger.logger().info("Registering async-tab-completion listener...");
-
-        Bukkit.getPluginManager().registerEvents(boxCommand, context.plugin());
-        Bukkit.getPluginManager().registerEvents(boxAdminCommand, context.plugin());
+        Bukkit.getPluginManager().registerEvents(this.boxCommand, this.context.plugin());
+        Bukkit.getPluginManager().registerEvents(this.boxAdminCommand, this.context.plugin());
 
         return true;
     }

@@ -5,6 +5,7 @@ import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.command.base.BoxCommand;
 import net.okocraft.box.api.message.Components;
 import net.okocraft.box.api.message.GeneralMessage;
+import net.okocraft.box.api.scheduler.BoxScheduler;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -13,6 +14,10 @@ import org.jetbrains.annotations.Unmodifiable;
 import java.util.Set;
 
 public class BoxCommandImpl extends BaseCommand implements BoxCommand {
+
+    public BoxCommandImpl(@NotNull BoxScheduler scheduler) {
+        super(scheduler);
+    }
 
     @Override
     public @NotNull String getName() {

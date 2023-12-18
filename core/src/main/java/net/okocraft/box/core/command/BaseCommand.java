@@ -5,6 +5,7 @@ import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.command.Command;
 import net.okocraft.box.api.command.SubCommandHoldable;
 import net.okocraft.box.api.message.GeneralMessage;
+import net.okocraft.box.api.scheduler.BoxScheduler;
 import net.okocraft.box.core.message.ErrorMessages;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -25,7 +26,12 @@ import static net.kyori.adventure.text.format.NamedTextColor.GOLD;
 public abstract class BaseCommand implements Command, SubCommandHoldable, Listener {
 
     private final SubCommandHolder subCommandHolder = new SubCommandHolder();
+    private final BoxScheduler scheduler;
     private Command commandOfNoArgument;
+
+    protected BaseCommand(@NotNull BoxScheduler scheduler) {
+        this.scheduler = scheduler;
+    }
 
     @Override
     public void onCommand(@NotNull CommandSender sender, @NotNull String[] args) {
@@ -44,7 +50,7 @@ public abstract class BaseCommand implements Command, SubCommandHoldable, Listen
 
         if (args.length == 0) {
             if (commandOfNoArgument != null && sender.hasPermission(commandOfNoArgument.getPermissionNode())) {
-                runCommandAsync(commandOfNoArgument, sender, args);
+                this.scheduler.runAsyncTask(() -> this.commandOfNoArgument.onCommand(sender, args));
             } else {
                 sender.sendMessage(ErrorMessages.ERROR_COMMAND_NO_ARGUMENT);
                 sendHelp(sender);
@@ -65,7 +71,7 @@ public abstract class BaseCommand implements Command, SubCommandHoldable, Listen
         var subCommand = optionalSubCommand.get();
 
         if (sender.hasPermission(subCommand.getPermissionNode())) {
-            runCommandAsync(subCommand, sender, args);
+            this.scheduler.runAsyncTask(() -> subCommand.onCommand(sender, args));
         } else {
             sender.sendMessage(GeneralMessage.ERROR_NO_PERMISSION.apply(subCommand.getPermissionNode()));
         }
@@ -152,9 +158,5 @@ public abstract class BaseCommand implements Command, SubCommandHoldable, Listen
                 .stream()
                 .map(Command::getHelp)
                 .forEach(sender::sendMessage);
-    }
-
-    private void runCommandAsync(@NotNull Command command, @NotNull CommandSender sender, @NotNull String[] args) {
-        BoxProvider.get().getScheduler().runAsyncTask(() -> command.onCommand(sender, args));
     }
 }
