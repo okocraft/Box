@@ -174,19 +174,9 @@ loadScripts(document, 'script');</script>
 <div class="block">Checks if Box is not available in the specified world.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#register(net.okocraft.box.api.feature.BoxFeature)" class="member-name-link">register</a><wbr>(<a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/NotNull.html" title="class or interface in org.jetbrains.annotations" class="external-link">@NotNull</a> <a href="feature/BoxFeature.html" title="interface in net.okocraft.box.api.feature">BoxFeature</a>&nbsp;boxFeature)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#reload(org.bukkit.command.CommandSender)" class="member-name-link">reload</a><wbr>(<a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/NotNull.html" title="class or interface in org.jetbrains.annotations" class="external-link">@NotNull</a> <a href="https://jd.papermc.io/paper/1.20/org/bukkit/command/CommandSender.html" title="class or interface in org.bukkit.command" class="external-link">CommandSender</a>&nbsp;sender)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-<div class="block">Registers the <a href="feature/BoxFeature.html" title="interface in net.okocraft.box.api.feature"><code>BoxFeature</code></a>.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#reload(org.bukkit.command.CommandSender)" class="member-name-link">reload</a><wbr>(<a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/NotNull.html" title="class or interface in org.jetbrains.annotations" class="external-link">@NotNull</a> <a href="https://jd.papermc.io/paper/1.20/org/bukkit/command/CommandSender.html" title="class or interface in org.bukkit.command" class="external-link">CommandSender</a>&nbsp;sender)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Reloads box and registered <a href="feature/BoxFeature.html" title="interface in net.okocraft.box.api.feature"><code>BoxFeature</code></a>s.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#unregister(net.okocraft.box.api.feature.BoxFeature)" class="member-name-link">unregister</a><wbr>(<a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/NotNull.html" title="class or interface in org.jetbrains.annotations" class="external-link">@NotNull</a> <a href="feature/BoxFeature.html" title="interface in net.okocraft.box.api.feature">BoxFeature</a>&nbsp;boxFeature)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-<div class="block">Unregisters the <a href="feature/BoxFeature.html" title="interface in net.okocraft.box.api.feature"><code>BoxFeature</code></a>.</div>
 </div>
 </div>
 </div>
@@ -364,30 +354,6 @@ loadScripts(document, 'script');</script>
 <dd><code>clazz</code> - the feature class</dd>
 <dt>Returns:</dt>
 <dd>if the <a href="feature/BoxFeature.html" title="interface in net.okocraft.box.api.feature"><code>BoxFeature</code></a> is registered, returns its instance, otherwise <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Optional.html#empty()" title="class or interface in java.util" class="external-link"><code>Optional.empty()</code></a></dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="register(net.okocraft.box.api.feature.BoxFeature)">
-<h3>register</h3>
-<div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">register</span><wbr><span class="parameters">(<a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/NotNull.html" title="class or interface in org.jetbrains.annotations" class="external-link">@NotNull</a>
- <a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/NotNull.html" title="class or interface in org.jetbrains.annotations" class="external-link">@NotNull</a> <a href="feature/BoxFeature.html" title="interface in net.okocraft.box.api.feature">BoxFeature</a>&nbsp;boxFeature)</span></div>
-<div class="block">Registers the <a href="feature/BoxFeature.html" title="interface in net.okocraft.box.api.feature"><code>BoxFeature</code></a>.</div>
-<dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>boxFeature</code> - the <a href="feature/BoxFeature.html" title="interface in net.okocraft.box.api.feature"><code>BoxFeature</code></a> to register</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="unregister(net.okocraft.box.api.feature.BoxFeature)">
-<h3>unregister</h3>
-<div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">unregister</span><wbr><span class="parameters">(<a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/NotNull.html" title="class or interface in org.jetbrains.annotations" class="external-link">@NotNull</a>
- <a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/NotNull.html" title="class or interface in org.jetbrains.annotations" class="external-link">@NotNull</a> <a href="feature/BoxFeature.html" title="interface in net.okocraft.box.api.feature">BoxFeature</a>&nbsp;boxFeature)</span></div>
-<div class="block">Unregisters the <a href="feature/BoxFeature.html" title="interface in net.okocraft.box.api.feature"><code>BoxFeature</code></a>.</div>
-<dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>boxFeature</code> - the <a href="feature/BoxFeature.html" title="interface in net.okocraft.box.api.feature"><code>BoxFeature</code></a> to unregister</dd>
 </dl>
 </section>
 </li>
