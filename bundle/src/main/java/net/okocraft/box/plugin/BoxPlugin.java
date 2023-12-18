@@ -98,7 +98,7 @@ public final class BoxPlugin extends JavaPlugin {
         APISetter.set(this.boxCore);
 
         for (var featureSupplier : this.preregisteredFeatures) {
-            this.boxCore.register(featureSupplier.get());
+            this.boxCore.registerFeature(featureSupplier.get());
         }
 
         this.preregisteredFeatures.clear();

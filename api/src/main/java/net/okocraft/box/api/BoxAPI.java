@@ -125,20 +125,6 @@ public interface BoxAPI {
     <T extends BoxFeature> @NotNull Optional<T> getFeature(@NotNull Class<T> clazz);
 
     /**
-     * Registers the {@link BoxFeature}.
-     *
-     * @param boxFeature the {@link BoxFeature} to register
-     */
-    void register(@NotNull BoxFeature boxFeature);
-
-    /**
-     * Unregisters the {@link BoxFeature}.
-     *
-     * @param boxFeature the {@link BoxFeature} to unregister
-     */
-    void unregister(@NotNull BoxFeature boxFeature);
-
-    /**
      * Reloads box and registered {@link BoxFeature}s.
      * <p>
      * This method reloads some settings of Box (such as language and disabled world)

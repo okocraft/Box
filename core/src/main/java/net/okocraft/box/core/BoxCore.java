@@ -267,14 +267,13 @@ public class BoxCore implements BoxAPI {
                 .findFirst();
     }
 
-    @Override
-    public void register(@NotNull BoxFeature boxFeature) {
+    public void registerFeature(@NotNull BoxFeature boxFeature) {
         var dependencies = boxFeature.getDependencies();
 
         if (!dependencies.isEmpty()) {
             for (var dependencyClass : dependencies) {
                 if (features.stream().noneMatch(feature -> dependencyClass.isAssignableFrom(feature.getClass()))) {
-                    BoxLogger.logger().warn("{} that is the dependency of the {} is not registered.", dependencyClass.getSimpleName(), boxFeature.getName());
+                    BoxLogger.logger().warn("{} that is the dependency of {} is not registered.", dependencyClass.getSimpleName(), boxFeature.getName());
                     return;
                 }
             }
@@ -283,7 +282,7 @@ public class BoxCore implements BoxAPI {
         try {
             boxFeature.enable();
         } catch (Throwable throwable) {
-            BoxLogger.logger().error("Could not enable the {} feature.", boxFeature.getName(), throwable);
+            BoxLogger.logger().error("Could not enable {} feature.", boxFeature.getName(), throwable);
             boxFeature.disable();
             return;
         }
@@ -292,21 +291,7 @@ public class BoxCore implements BoxAPI {
 
         this.eventManager.call(new FeatureEvent(boxFeature, FeatureEvent.Type.REGISTER));
 
-        BoxLogger.logger().info("The {} feature has been enabled.", boxFeature.getName());
-    }
-
-    @Override
-    public void unregister(@NotNull BoxFeature boxFeature) {
-        BoxLogger.logger().info("Disabling the {} feature...", boxFeature.getName());
-        features.remove(boxFeature);
-
-        try {
-            boxFeature.disable();
-        } catch (Throwable throwable) {
-            BoxLogger.logger().error("Could not disable the {} feature.", boxFeature.getName(), throwable);
-        }
-
-        this.eventManager.call(new FeatureEvent(boxFeature, FeatureEvent.Type.UNREGISTER));
+        BoxLogger.logger().info("{} feature has been enabled.", boxFeature.getName());
     }
 
     public void unregisterAllFeatures() {
