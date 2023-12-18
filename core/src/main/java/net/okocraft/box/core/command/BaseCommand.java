@@ -1,14 +1,12 @@
 package net.okocraft.box.core.command;
 
 import com.destroystokyo.paper.event.server.AsyncTabCompleteEvent;
-import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.command.Command;
 import net.okocraft.box.api.command.SubCommandHoldable;
 import net.okocraft.box.api.message.GeneralMessage;
 import net.okocraft.box.api.scheduler.BoxScheduler;
 import net.okocraft.box.core.message.ErrorMessages;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
@@ -40,11 +38,6 @@ public abstract class BaseCommand implements Command, SubCommandHoldable, Listen
 
         if (!sender.hasPermission(getPermissionNode())) {
             sender.sendMessage(GeneralMessage.ERROR_NO_PERMISSION.apply(getPermissionNode()));
-            return;
-        }
-
-        if (sender instanceof Player player && !BoxProvider.get().canUseBox(player)) {
-            sender.sendMessage(GeneralMessage.ERROR_DISABLED_WORLD.apply(player.getWorld()));
             return;
         }
 
@@ -83,10 +76,6 @@ public abstract class BaseCommand implements Command, SubCommandHoldable, Listen
         Objects.requireNonNull(args);
 
         if (args.length == 0 || !sender.hasPermission(getPermissionNode())) {
-            return Collections.emptyList();
-        }
-
-        if (sender instanceof Player player && !BoxProvider.get().canUseBox(player)) {
             return Collections.emptyList();
         }
 

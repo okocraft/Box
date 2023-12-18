@@ -114,7 +114,7 @@ public class BoxCore implements BoxAPI {
 
         BoxLogger.logger().info("Registering commands...");
 
-        this.boxCommand = new BoxCommandImpl(this.context.scheduler());
+        this.boxCommand = new BoxCommandImpl(this.context.scheduler(), this.playerMap, this::canUseBox);
         this.boxAdminCommand = new BoxAdminCommandImpl(this.context.scheduler());
 
         this.context.commandRegisterer().register(this.boxCommand).register(this.boxAdminCommand);
