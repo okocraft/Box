@@ -1,6 +1,7 @@
 package net.okocraft.box.plugin;
 
 import com.github.siroshun09.configapi.format.yaml.YamlFormat;
+import net.okocraft.box.api.APISetter;
 import net.okocraft.box.api.feature.BoxFeature;
 import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.bootstrap.BoxBootstrapContext;
@@ -94,6 +95,8 @@ public final class BoxPlugin extends JavaPlugin {
             return;
         }
 
+        APISetter.set(this.boxCore);
+
         for (var featureSupplier : this.preregisteredFeatures) {
             this.boxCore.register(featureSupplier.get());
         }
@@ -106,10 +109,15 @@ public final class BoxPlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        if (status == Status.ENABLED) {
-            boxCore.disable();
-            status = Status.DISABLED;
+        if (this.status != Status.ENABLED) {
+            return;
         }
+
+        this.boxCore.unregisterAllFeatures();
+        APISetter.unset();
+
+        this.boxCore.disable();
+        this.status = Status.DISABLED;
 
         BoxLogger.logger().info("Successfully disabled. Goodbye!");
     }

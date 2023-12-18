@@ -2,14 +2,12 @@ package net.okocraft.box.api;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
-
 /**
  * A class to provide {@link BoxAPI}.
  */
 public final class BoxProvider {
 
-    private static BoxAPI API;
+    static BoxAPI API;
 
     /**
      * Gets a {@link BoxAPI}.
@@ -22,33 +20,6 @@ public final class BoxProvider {
             return API;
         } else {
             throw new IllegalStateException("BoxAPI is not loaded.");
-        }
-    }
-
-    /**
-     * Sets a {@link BoxAPI}.
-     *
-     * @param api a {@link BoxAPI}
-     * @throws IllegalStateException if {@link BoxAPI} is already set
-     */
-    public static void set(@NotNull BoxAPI api) {
-        if (API == null) {
-            API = Objects.requireNonNull(api);
-        } else {
-            throw new IllegalStateException("BoxAPI is already set.");
-        }
-    }
-
-    /**
-     * Unsets a {@link BoxAPI}.
-     *
-     * @throws IllegalStateException if {@link BoxAPI} is not set
-     */
-    public static void unset() {
-        if (API != null) {
-            API = null;
-        } else {
-            throw new IllegalStateException("BoxAPI is not set.");
         }
     }
 }

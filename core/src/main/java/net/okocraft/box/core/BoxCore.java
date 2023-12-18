@@ -2,7 +2,6 @@ package net.okocraft.box.core;
 
 import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.BoxAPI;
-import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.command.base.BoxAdminCommand;
 import net.okocraft.box.api.command.base.BoxCommand;
 import net.okocraft.box.api.event.feature.FeatureEvent;
@@ -35,7 +34,6 @@ import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
@@ -68,7 +66,6 @@ public class BoxCore implements BoxAPI {
     public BoxCore(@NotNull PluginContext context) {
         this.context = context;
         this.eventManager = new BoxEventManager(context.eventServiceProvider(), context.scheduler());
-        BoxProvider.set(this);
     }
 
     public boolean enable(@NotNull Storage storage) {
@@ -126,16 +123,6 @@ public class BoxCore implements BoxAPI {
     }
 
     public void disable() {
-        BoxLogger.logger().info("Unregistering all listeners...");
-        HandlerList.unregisterAll(getPluginInstance());
-
-        if (!features.isEmpty()) {
-            BoxLogger.logger().info("Disabling features...");
-            List.copyOf(features).forEach(this::unregister);
-        }
-
-        BoxProvider.unset();
-
         if (playerMap != null) {
             playerMap.unloadAll();
         }
@@ -320,6 +307,25 @@ public class BoxCore implements BoxAPI {
         }
 
         this.eventManager.call(new FeatureEvent(boxFeature, FeatureEvent.Type.UNREGISTER));
+    }
+
+    public void unregisterAllFeatures() {
+        if (!this.features.isEmpty()) {
+            BoxLogger.logger().info("Disabling features...");
+
+            for (var feature : this.features) {
+                BoxLogger.logger().info("Disabling {} feature...", feature.getName());
+                features.remove(feature);
+
+                try {
+                    feature.disable();
+                } catch (Throwable throwable) {
+                    BoxLogger.logger().error("Could not disable {} feature.", feature.getName(), throwable);
+                }
+
+                this.eventManager.call(new FeatureEvent(feature, FeatureEvent.Type.UNREGISTER));
+            }
+        }
     }
 
     @Override
