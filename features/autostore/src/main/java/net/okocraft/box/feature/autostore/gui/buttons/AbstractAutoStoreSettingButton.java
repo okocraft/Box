@@ -20,6 +20,6 @@ abstract class AbstractAutoStoreSettingButton implements Button {
     }
 
     protected void callAutoStoreSettingChangeEvent(@NotNull AutoStoreSetting setting) {
-        BoxProvider.get().getEventBus().callEventAsync(new AutoStoreSettingChangeEvent(setting));
+        BoxProvider.get().getEventManager().callAsync(new AutoStoreSettingChangeEvent(setting));
     }
 }

@@ -1,6 +1,6 @@
 package net.okocraft.box.feature.craft.event;
 
-import com.github.siroshun09.event4j.event.Cancellable;
+import net.okocraft.box.api.event.Cancellable;
 import net.okocraft.box.api.event.BoxEvent;
 import net.okocraft.box.feature.craft.model.SelectedRecipe;
 import org.bukkit.entity.Player;

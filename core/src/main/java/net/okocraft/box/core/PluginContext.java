@@ -1,6 +1,8 @@
 package net.okocraft.box.core;
 
-import com.github.siroshun09.event4j.bus.EventBus;
+import com.github.siroshun09.event4j.priority.Priority;
+import com.github.siroshun09.event4j.simple.EventServiceProvider;
+import net.kyori.adventure.key.Key;
 import net.okocraft.box.api.event.BoxEvent;
 import net.okocraft.box.api.scheduler.BoxScheduler;
 import net.okocraft.box.core.command.CommandRegisterer;
@@ -15,7 +17,7 @@ public record PluginContext(@NotNull JavaPlugin plugin,
                             @NotNull String version,
                             @NotNull Path dataDirectory,
                             @NotNull BoxScheduler scheduler,
-                            @NotNull EventBus<BoxEvent> eventBus,
+                            @NotNull EventServiceProvider<Key, BoxEvent, Priority> eventServiceProvider,
                             @NotNull Config config,
                             @NotNull DefaultItemProvider defaultItemProvider,
                             @NotNull CommandRegisterer commandRegisterer) {

@@ -1,6 +1,8 @@
 package net.okocraft.box.feature.notifier.listener;
 
-import com.github.siroshun09.event4j.key.Key;
+import com.github.siroshun09.event4j.listener.ListenerBase;
+import com.github.siroshun09.event4j.priority.Priority;
+import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.event.stockholder.stock.StockDecreaseEvent;
@@ -13,31 +15,21 @@ import net.okocraft.box.feature.notifier.factory.NotificationFactory;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.Optional;
 
 public class StockHolderListener {
 
-    private Key listenerKey;
-
     public void register(@NotNull Key listenerKey) {
-        this.listenerKey = listenerKey;
-        var eventBus = BoxProvider.get().getEventBus();
-
-        eventBus.getSubscriber(StockIncreaseEvent.class).subscribe(listenerKey, this::onIncrease);
-        eventBus.getSubscriber(StockDecreaseEvent.class).subscribe(listenerKey, this::onDecrease);
-        eventBus.getSubscriber(StockSetEvent.class).subscribe(listenerKey, this::onSet);
+        BoxProvider.get().getEventManager().subscribeAll(List.of(
+                new ListenerBase<>(StockIncreaseEvent.class, listenerKey, this::onIncrease, Priority.NORMAL),
+                new ListenerBase<>(StockDecreaseEvent.class, listenerKey, this::onDecrease, Priority.NORMAL),
+                new ListenerBase<>(StockSetEvent.class, listenerKey, this::onSet, Priority.NORMAL)
+        ));
     }
 
-    public void unregister() {
-        if (listenerKey == null) {
-            return;
-        }
-
-        var eventBus = BoxProvider.get().getEventBus();
-
-        eventBus.getSubscriber(StockIncreaseEvent.class).unsubscribeAll(listenerKey);
-        eventBus.getSubscriber(StockDecreaseEvent.class).unsubscribeAll(listenerKey);
-        eventBus.getSubscriber(StockSetEvent.class).unsubscribeAll(listenerKey);
+    public void unregister(@NotNull Key listenerKey) {
+        BoxProvider.get().getEventManager().unsubscribeByKey(listenerKey);
     }
 
     public void onIncrease(@NotNull StockIncreaseEvent event) {

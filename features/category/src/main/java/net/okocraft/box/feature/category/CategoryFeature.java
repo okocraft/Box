@@ -1,6 +1,7 @@
 package net.okocraft.box.feature.category;
 
 import com.github.siroshun09.configapi.format.yaml.YamlFormat;
+import net.kyori.adventure.key.Key;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.feature.AbstractBoxFeature;
 import net.okocraft.box.api.feature.Disableable;
@@ -18,6 +19,9 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 
 public class CategoryFeature extends AbstractBoxFeature implements Disableable, Reloadable {
+
+    private static final Key CUSTOM_ITEM_LISTENER_KEY = Key.key("box", "feature/category/custom_item_listener");
+    private static final Key ITEM_INFO_COLLECT_EVENT_LISTENER_KEY = Key.key("box", "feature/category/item_info_collect_event");
 
     private final CategoryRegistry categoryRegistry = new CategoryRegistryImpl();
     private final CustomItemListener customItemListener = new CustomItemListener(categoryRegistry);
@@ -45,15 +49,15 @@ public class CategoryFeature extends AbstractBoxFeature implements Disableable, 
             return;
         }
 
-        customItemListener.register(getListenerKey());
-        itemInfoEventListener.register(getListenerKey());
+        this.customItemListener.register(CUSTOM_ITEM_LISTENER_KEY);
+        this.itemInfoEventListener.register(ITEM_INFO_COLLECT_EVENT_LISTENER_KEY);
     }
 
     @Override
     public void disable() {
-        customItemListener.unregister(getListenerKey());
-        itemInfoEventListener.unregister(getListenerKey());
-        categoryRegistry.unregisterAll();
+        this.customItemListener.unregister(CUSTOM_ITEM_LISTENER_KEY);
+        this.itemInfoEventListener.unregister(ITEM_INFO_COLLECT_EVENT_LISTENER_KEY);
+        this.categoryRegistry.unregisterAll();
     }
 
     @Override

@@ -1,7 +1,9 @@
 package net.okocraft.box.bootstrap;
 
-import com.github.siroshun09.event4j.bus.EventBus;
+import com.github.siroshun09.event4j.priority.Priority;
+import com.github.siroshun09.event4j.simple.EventServiceProvider;
 import io.papermc.paper.plugin.bootstrap.BootstrapContext;
+import net.kyori.adventure.key.Key;
 import net.okocraft.box.api.event.BoxEvent;
 import net.okocraft.box.api.feature.BoxFeature;
 import net.okocraft.box.storage.api.registry.StorageRegistry;
@@ -27,14 +29,14 @@ public final class BoxBootstrapContext {
     private final Path dataDirectory;
     private final String version;
     private final StorageRegistry storageRegistry;
-    private final EventBus<BoxEvent> eventBus;
+    private final EventServiceProvider<Key, BoxEvent, Priority> eventServiceProvider;
     private final List<Supplier<? extends BoxFeature>> boxFeatureList = new ArrayList<>();
 
     private BoxBootstrapContext(@NotNull Path pluginDirectory, @NotNull String version) {
         this.dataDirectory = pluginDirectory;
         this.version = version;
         this.storageRegistry = new StorageRegistry();
-        this.eventBus = EventBus.create(BoxEvent.class);
+        this.eventServiceProvider = EventServiceProvider.factory().keyClass(Key.class).eventClass(BoxEvent.class).orderComparator(Priority.COMPARATOR, Priority.NORMAL).create();
     }
 
     public @NotNull Path getPluginDirectory() {
@@ -49,8 +51,8 @@ public final class BoxBootstrapContext {
         return storageRegistry;
     }
 
-    public @NotNull EventBus<BoxEvent> getEventBus() {
-        return eventBus;
+    public @NotNull EventServiceProvider<Key, BoxEvent, Priority> getEventServiceProvider() {
+        return this.eventServiceProvider;
     }
 
     public @NotNull List<Supplier<? extends BoxFeature>> getBoxFeatureList() {

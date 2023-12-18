@@ -80,7 +80,9 @@ public class BoxInventoryHolder implements InventoryHolder {
 
         var event = new MenuClickEvent(menu, session, button, clickType);
 
-        if (BoxProvider.get().getEventBus().callEvent(event).isCancelled()) {
+        BoxProvider.get().getEventManager().call(event);
+
+        if (event.isCancelled()) {
             return;
         }
 

@@ -48,7 +48,7 @@ public class ResetAllCommand extends AbstractCommand {
 
             BoxProvider.get().getStockManager().getPersonalStockHolder(target).reset();
 
-            BoxProvider.get().getEventBus().callEvent(new UserDataResetEvent(target));
+            BoxProvider.get().getEventManager().call(new UserDataResetEvent(target));
 
             sender.sendMessage(BoxAdminMessage.RESET_ALL_SUCCESS_SENDER.apply(target));
 

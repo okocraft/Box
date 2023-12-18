@@ -1,6 +1,8 @@
 package net.okocraft.box.feature.autostore.listener;
 
-import com.github.siroshun09.event4j.key.Key;
+import com.github.siroshun09.event4j.listener.ListenerBase;
+import com.github.siroshun09.event4j.priority.Priority;
+import net.kyori.adventure.key.Key;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.event.player.PlayerLoadEvent;
 import net.okocraft.box.api.event.player.PlayerUnloadEvent;
@@ -9,26 +11,19 @@ import net.okocraft.box.feature.autostore.message.AutoStoreMessage;
 import net.okocraft.box.feature.autostore.model.AutoStoreSettingContainer;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 public class BoxPlayerListener {
 
-    private Key listenerKey;
-
     public void register(@NotNull Key listenerKey) {
-        this.listenerKey = listenerKey;
-
-        var eventBus = BoxProvider.get().getEventBus();
-
-        eventBus.getSubscriber(PlayerLoadEvent.class).subscribe(listenerKey, this::onLoad);
-
-        eventBus.getSubscriber(PlayerUnloadEvent.class).subscribe(listenerKey, this::onUnload);
+        BoxProvider.get().getEventManager().subscribeAll(List.of(
+                new ListenerBase<>(PlayerLoadEvent.class, listenerKey, this::onLoad, Priority.NORMAL),
+                new ListenerBase<>(PlayerUnloadEvent.class, listenerKey, this::onUnload, Priority.NORMAL)
+        ));
     }
 
-    public void unregister() {
-        if (listenerKey != null) {
-            var eventBus = BoxProvider.get().getEventBus();
-            eventBus.getSubscriber(PlayerLoadEvent.class).unsubscribeAll(listenerKey);
-            eventBus.getSubscriber(PlayerUnloadEvent.class).unsubscribeAll(listenerKey);
-        }
+    public void unregister(@NotNull Key listenerKey) {
+        BoxProvider.get().getEventManager().unsubscribeByKey(listenerKey);
     }
 
     private void onLoad(@NotNull PlayerLoadEvent event) {

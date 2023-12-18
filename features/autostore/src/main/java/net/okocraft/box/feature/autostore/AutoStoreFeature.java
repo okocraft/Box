@@ -1,5 +1,6 @@
 package net.okocraft.box.feature.autostore;
 
+import net.kyori.adventure.key.Key;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.feature.AbstractBoxFeature;
 import net.okocraft.box.api.feature.Disableable;
@@ -17,6 +18,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class AutoStoreFeature extends AbstractBoxFeature implements Disableable, Reloadable {
 
+    public static final @NotNull Key AUTO_SAVE_LISTENER_KEY = Key.key("box", "feature/autostore/auto_save_listener");
+    public static final @NotNull Key PLAYER_LISTENER_KEY = Key.key("box", "feature/autostore/player_listener");
     private final BoxPlayerListener boxPlayerListener = new BoxPlayerListener();
     private final AutoSaveListener autoSaveListener = new AutoSaveListener();
     private final ItemListener itemListener = new ItemListener();
@@ -32,8 +35,8 @@ public class AutoStoreFeature extends AbstractBoxFeature implements Disableable,
     public void enable() {
         AutoStoreSettingContainer.INSTANCE.loadAll();
 
-        boxPlayerListener.register(getListenerKey());
-        autoSaveListener.register(getListenerKey());
+        this.boxPlayerListener.register(PLAYER_LISTENER_KEY);
+        this.autoSaveListener.register(AUTO_SAVE_LISTENER_KEY);
 
         itemListener.register();
 
@@ -48,8 +51,8 @@ public class AutoStoreFeature extends AbstractBoxFeature implements Disableable,
 
         itemListener.unregister();
 
-        autoSaveListener.unregister();
-        boxPlayerListener.unregister();
+        autoSaveListener.unregister(AUTO_SAVE_LISTENER_KEY);
+        boxPlayerListener.unregister(PLAYER_LISTENER_KEY);
 
         AutoStoreSettingContainer.INSTANCE.unloadAll();
     }

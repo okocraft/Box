@@ -1,6 +1,6 @@
 package net.okocraft.box.api.model.stock;
 
-import net.okocraft.box.api.BoxProvider;
+import com.github.siroshun09.event4j.caller.AsyncEventCaller;
 import net.okocraft.box.api.event.BoxEvent;
 import net.okocraft.box.api.event.stockholder.StockHolderResetEvent;
 import net.okocraft.box.api.event.stockholder.stock.StockDecreaseEvent;
@@ -17,6 +17,13 @@ import java.util.Objects;
 final class DefaultStockEventCallers {
 
     static final class Default implements StockEventCaller {
+
+        private final AsyncEventCaller<BoxEvent> eventCaller;
+
+        Default(@NotNull AsyncEventCaller<BoxEvent> eventCaller) {
+            this.eventCaller = eventCaller;
+        }
+
         @Override
         public void callSetEvent(@NotNull StockHolder stockHolder, @NotNull BoxItem item, int amount, int previousAmount, StockEvent.@NotNull Cause cause) {
             this.callEvent(new StockSetEvent(stockHolder, item, amount, previousAmount, cause));
@@ -43,15 +50,17 @@ final class DefaultStockEventCallers {
         }
 
         private void callEvent(@NotNull BoxEvent event) {
-            BoxProvider.get().getEventBus().callEventAsync(event);
+            this.eventCaller.callAsync(event);
         }
     }
 
     static final class UsingWrapper implements StockEventCaller {
 
+        private final AsyncEventCaller<BoxEvent> eventCaller;
         private final StockHolderWrapper wrapper;
 
-        UsingWrapper(@NotNull StockHolderWrapper wrapper) {
+        UsingWrapper(@NotNull AsyncEventCaller<BoxEvent> eventCaller, @NotNull StockHolderWrapper wrapper) {
+            this.eventCaller = eventCaller;
             this.wrapper = Objects.requireNonNull(wrapper);
         }
 
@@ -81,7 +90,7 @@ final class DefaultStockEventCallers {
         }
 
         private void callEvent(@NotNull BoxEvent event) {
-            BoxProvider.get().getEventBus().callEventAsync(event);
+            this.eventCaller.callAsync(event);
         }
     }
 

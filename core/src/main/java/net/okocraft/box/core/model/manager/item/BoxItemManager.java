@@ -1,6 +1,6 @@
 package net.okocraft.box.core.model.manager.item;
 
-import com.github.siroshun09.event4j.bus.EventBus;
+import com.github.siroshun09.event4j.caller.AsyncEventCaller;
 import it.unimi.dsi.fastutil.ints.IntImmutableList;
 import it.unimi.dsi.fastutil.objects.ObjectImmutableList;
 import net.okocraft.box.api.event.BoxEvent;
@@ -26,14 +26,14 @@ import java.util.function.Consumer;
 public class BoxItemManager implements ItemManager {
 
     private final ItemStorage itemStorage;
-    private final EventBus<BoxEvent> eventBus;
+    private final AsyncEventCaller<BoxEvent> eventCaller;
     private final BoxScheduler scheduler;
     private final BukkitBoxItemMap boxItemMap;
 
-    public BoxItemManager(@NotNull ItemStorage itemStorage, @NotNull EventBus<BoxEvent> eventBus,
+    public BoxItemManager(@NotNull ItemStorage itemStorage, @NotNull AsyncEventCaller<BoxEvent> eventCaller,
                           @NotNull BoxScheduler scheduler, @NotNull Iterator<BoxItem> initialBoxItemIterator) {
         this.itemStorage = itemStorage;
-        this.eventBus = eventBus;
+        this.eventCaller = eventCaller;
         this.scheduler = scheduler;
         this.boxItemMap = BukkitBoxItemMap.withItems(initialBoxItemIterator);
     }
@@ -108,7 +108,7 @@ public class BoxItemManager implements ItemManager {
             }
 
             if (result instanceof ItemRegistrationResult.Success success) {
-                this.eventBus.callEventAsync(new CustomItemRegisterEvent(success.customItem()));
+                this.eventCaller.callAsync(new CustomItemRegisterEvent(success.customItem()));
             }
 
             resultConsumer.accept(result);
@@ -158,7 +158,7 @@ public class BoxItemManager implements ItemManager {
             }
 
             if (result instanceof ItemRegistrationResult.Success success) {
-                this.eventBus.callEventAsync(new CustomItemRenameEvent(success.customItem(), previousName));
+                this.eventCaller.callAsync(new CustomItemRenameEvent(success.customItem(), previousName));
             }
 
             resultConsumer.accept(result);

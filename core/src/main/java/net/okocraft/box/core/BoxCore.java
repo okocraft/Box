@@ -1,12 +1,10 @@
 package net.okocraft.box.core;
 
-import com.github.siroshun09.event4j.bus.EventBus;
 import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.api.command.base.BoxAdminCommand;
 import net.okocraft.box.api.command.base.BoxCommand;
-import net.okocraft.box.api.event.BoxEvent;
 import net.okocraft.box.api.event.feature.FeatureEvent;
 import net.okocraft.box.api.feature.BoxFeature;
 import net.okocraft.box.api.feature.Reloadable;
@@ -24,6 +22,7 @@ import net.okocraft.box.core.listener.PlayerConnectionListener;
 import net.okocraft.box.core.message.ErrorMessages;
 import net.okocraft.box.core.message.MicsMessages;
 import net.okocraft.box.core.model.manager.customdata.BoxCustomDataManager;
+import net.okocraft.box.core.model.manager.event.BoxEventManager;
 import net.okocraft.box.core.model.manager.item.BoxItemManager;
 import net.okocraft.box.core.model.manager.stock.BoxStockManager;
 import net.okocraft.box.core.model.manager.user.BoxUserManager;
@@ -52,6 +51,7 @@ import java.util.function.Supplier;
 public class BoxCore implements BoxAPI {
 
     private final PluginContext context;
+    private final BoxEventManager eventManager;
 
     private final BoxCommandImpl boxCommand = new BoxCommandImpl();
     private final BoxAdminCommandImpl boxAdminCommand = new BoxAdminCommandImpl();
@@ -67,13 +67,13 @@ public class BoxCore implements BoxAPI {
 
     public BoxCore(@NotNull PluginContext context) {
         this.context = context;
-
+        this.eventManager = new BoxEventManager(context.eventServiceProvider(), context.scheduler());
         BoxProvider.set(this);
     }
 
     public boolean enable(@NotNull Storage storage) {
         if (this.context.config().coreSetting().debug()) {
-            DebugListener.register(this.context.eventBus());
+            DebugListener.register(this.eventManager);
             BoxLogger.logger().info("Debug mode is ENABLED");
         }
 
@@ -95,17 +95,17 @@ public class BoxCore implements BoxAPI {
         try {
             var itemLoadResult = ItemLoader.load(storage.getItemStorage(), this.context.defaultItemProvider());
             itemLoadResult.logItemCount();
-            this.itemManager = new BoxItemManager(storage.getItemStorage(), this.context.eventBus(), this.context.scheduler(), itemLoadResult.asIterator());
+            this.itemManager = new BoxItemManager(storage.getItemStorage(), this.eventManager, this.context.scheduler(), itemLoadResult.asIterator());
         } catch (Exception e) {
             BoxLogger.logger().error("Could not load default/custom items", e);
             return false;
         }
 
-        this.stockManager = new BoxStockManager(storage.getStockStorage(), this.context.eventBus(), this.itemManager::getBoxItemOrNull, 300, 15, TimeUnit.SECONDS); // TODO: configurable
+        this.stockManager = new BoxStockManager(storage.getStockStorage(), this.eventManager, this.itemManager::getBoxItemOrNull, 300, 15, TimeUnit.SECONDS); // TODO: configurable
 
         this.customDataManager = new BoxCustomDataManager(storage.getCustomDataStorage());
 
-        this.playerMap = new BoxPlayerMapImpl(this.userManager, this.stockManager, this.context.scheduler());
+        this.playerMap = new BoxPlayerMapImpl(this.userManager, this.stockManager, this.eventManager, this.context.scheduler());
         this.playerMap.loadAll();
 
         Bukkit.getPluginManager().registerEvents(new PlayerConnectionListener(this.playerMap), context.plugin());
@@ -141,9 +141,7 @@ public class BoxCore implements BoxAPI {
 
         stockManager.close();
 
-        DebugListener.unregister(this.context.eventBus());
-
-        context.eventBus().close();
+        DebugListener.unregister(this.eventManager);
 
         BoxLogger.logger().info("Closing the storage...");
 
@@ -168,7 +166,7 @@ public class BoxCore implements BoxAPI {
             }
         };
 
-        DebugListener.unregister(this.context.eventBus());
+        DebugListener.unregister(this.eventManager);
 
         if (!(sender instanceof ConsoleCommandSender)) {
             BoxLogger.logger().info("Reloading box...");
@@ -183,7 +181,7 @@ public class BoxCore implements BoxAPI {
         }
 
         if (this.context.config().coreSetting().debug()) {
-            DebugListener.register(this.context.eventBus());
+            DebugListener.register(this.eventManager);
             BoxLogger.logger().info("Debug mode is ENABLED");
         }
 
@@ -199,7 +197,7 @@ public class BoxCore implements BoxAPI {
             if (feature instanceof Reloadable reloadable) {
                 try {
                     reloadable.reload(sender);
-                    this.context.eventBus().callEvent(new FeatureEvent(feature, FeatureEvent.Type.RELOAD));
+                    this.eventManager.call(new FeatureEvent(feature, FeatureEvent.Type.RELOAD));
                 } catch (Throwable e) {
                     playerMessenger.accept(() -> ErrorMessages.ERROR_RELOAD_FAILURE.apply(feature.getName(), e));
                     BoxLogger.logger().error("Could not reload {}", feature.getName(), e);
@@ -220,6 +218,11 @@ public class BoxCore implements BoxAPI {
     @Override
     public @NotNull Path getPluginDirectory() {
         return context.dataDirectory();
+    }
+
+    @Override
+    public @NotNull BoxEventManager getEventManager() {
+        return this.eventManager;
     }
 
     @Override
@@ -250,11 +253,6 @@ public class BoxCore implements BoxAPI {
     @Override
     public @NotNull BoxPlayerMap getBoxPlayerMap() {
         return playerMap;
-    }
-
-    @Override
-    public @NotNull EventBus<BoxEvent> getEventBus() {
-        return context.eventBus();
     }
 
     @Override
@@ -304,7 +302,7 @@ public class BoxCore implements BoxAPI {
 
         features.add(boxFeature);
 
-        this.context.eventBus().callEvent(new FeatureEvent(boxFeature, FeatureEvent.Type.REGISTER));
+        this.eventManager.call(new FeatureEvent(boxFeature, FeatureEvent.Type.REGISTER));
 
         BoxLogger.logger().info("The {} feature has been enabled.", boxFeature.getName());
     }
@@ -320,7 +318,7 @@ public class BoxCore implements BoxAPI {
             BoxLogger.logger().error("Could not disable the {} feature.", boxFeature.getName(), throwable);
         }
 
-        context.eventBus().callEvent(new FeatureEvent(boxFeature, FeatureEvent.Type.UNREGISTER));
+        this.eventManager.call(new FeatureEvent(boxFeature, FeatureEvent.Type.UNREGISTER));
     }
 
     @Override

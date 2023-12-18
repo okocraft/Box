@@ -24,7 +24,7 @@ final class AutoStoreCommandUtil {
     }
 
     static void callEvent(@NotNull AutoStoreSetting setting) {
-        BoxProvider.get().getEventBus().callEventAsync(new AutoStoreSettingChangeEvent(setting));
+        BoxProvider.get().getEventManager().callAsync(new AutoStoreSettingChangeEvent(setting));
     }
 
     static @Nullable Boolean getBoolean(@NotNull String arg) {
