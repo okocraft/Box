@@ -1,6 +1,7 @@
 package net.okocraft.box.core.player;
 
-import net.okocraft.box.api.BoxProvider;
+import com.github.siroshun09.event4j.caller.AsyncEventCaller;
+import net.okocraft.box.api.event.BoxEvent;
 import net.okocraft.box.api.event.player.PlayerLoadEvent;
 import net.okocraft.box.api.event.player.PlayerUnloadEvent;
 import net.okocraft.box.api.player.BoxPlayer;
@@ -28,12 +29,14 @@ public class BoxPlayerMapImpl implements BoxPlayerMap {
     private final Map<Player, BoxPlayer> playerMap = new ConcurrentHashMap<>();
     private final BoxStockManager stockManager;
     private final BoxUserManager userManager;
+    private final AsyncEventCaller<BoxEvent> eventCaller;
     private final BoxScheduler scheduler;
 
     public BoxPlayerMapImpl(@NotNull BoxUserManager userManager, @NotNull BoxStockManager stockManager,
-                            @NotNull BoxScheduler scheduler) {
+                            @NotNull AsyncEventCaller<BoxEvent> eventCaller, @NotNull BoxScheduler scheduler) {
         this.userManager = userManager;
         this.stockManager = stockManager;
+        this.eventCaller = eventCaller;
         this.scheduler = scheduler;
     }
 
@@ -96,12 +99,12 @@ public class BoxPlayerMapImpl implements BoxPlayerMap {
 
         personal.load();
 
-        var boxPlayer = new BoxPlayerImpl(boxUser, player, personal);
+        var boxPlayer = new BoxPlayerImpl(boxUser, player, personal, this.eventCaller);
 
         boxPlayer.getPersonalStockHolder().markAsOnline();
         this.playerMap.put(player, boxPlayer);
 
-        BoxProvider.get().getEventManager().call(new PlayerLoadEvent(boxPlayer));
+        this.eventCaller.call(new PlayerLoadEvent(boxPlayer));
     }
 
     public void unload(@NotNull Player player) {
@@ -113,7 +116,7 @@ public class BoxPlayerMapImpl implements BoxPlayerMap {
 
         boxPlayer.getPersonalStockHolder().markAsOffline();
 
-        BoxProvider.get().getEventManager().call(new PlayerUnloadEvent(boxPlayer));
+        this.eventCaller.call(new PlayerUnloadEvent(boxPlayer));
     }
 
     public void loadAll() {

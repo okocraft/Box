@@ -105,7 +105,7 @@ public class BoxCore implements BoxAPI {
 
         this.customDataManager = new BoxCustomDataManager(storage.getCustomDataStorage());
 
-        this.playerMap = new BoxPlayerMapImpl(this.userManager, this.stockManager, this.context.scheduler());
+        this.playerMap = new BoxPlayerMapImpl(this.userManager, this.stockManager, this.eventManager, this.context.scheduler());
         this.playerMap.loadAll();
 
         Bukkit.getPluginManager().registerEvents(new PlayerConnectionListener(this.playerMap), context.plugin());
