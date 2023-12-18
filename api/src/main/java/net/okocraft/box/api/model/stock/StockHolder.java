@@ -104,7 +104,6 @@ public interface StockHolder {
      * Decreases the stock of the specified item.
      * <p>
      * This method has the following specification:
-     * <p>
      * <ul>
      * <li>If the stock is less than {@code limit}, this method sets the stock to zero and returns the stock before set to zero</li>
      * <li>Otherwise, this method decreases the stock by {@code limit} and returns {@code limit}</li>
