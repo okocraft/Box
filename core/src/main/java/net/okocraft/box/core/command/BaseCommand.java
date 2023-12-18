@@ -6,10 +6,7 @@ import net.okocraft.box.api.command.Command;
 import net.okocraft.box.api.command.SubCommandHoldable;
 import net.okocraft.box.api.message.GeneralMessage;
 import net.okocraft.box.core.message.ErrorMessages;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.PluginCommand;
-import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -25,7 +22,7 @@ import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.DARK_GRAY;
 import static net.kyori.adventure.text.format.NamedTextColor.GOLD;
 
-public abstract class BaseCommand implements Command, SubCommandHoldable, CommandExecutor, TabCompleter, Listener {
+public abstract class BaseCommand implements Command, SubCommandHoldable, Listener {
 
     private final SubCommandHolder subCommandHolder = new SubCommandHolder();
     private Command commandOfNoArgument;
@@ -108,24 +105,6 @@ public abstract class BaseCommand implements Command, SubCommandHoldable, Comman
 
     public void changeNoArgumentCommand(@Nullable Command command) {
         commandOfNoArgument = command;
-    }
-
-    @Override
-    public boolean onCommand(@NotNull CommandSender sender, org.bukkit.command.@NotNull Command command,
-                             @NotNull String label, @NotNull String[] args) {
-        onCommand(sender, args);
-        return true;
-    }
-
-    @Override
-    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, org.bukkit.command.@NotNull Command command,
-                                                @NotNull String label, @NotNull String[] args) {
-        return onTabComplete(sender, args);
-    }
-
-    public void register(@NotNull PluginCommand pluginCommand) {
-        pluginCommand.setExecutor(this);
-        pluginCommand.setTabCompleter(this);
     }
 
     @EventHandler
