@@ -38,8 +38,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
@@ -50,8 +52,6 @@ public class BoxCore implements BoxAPI {
     private final PluginContext context;
     private final BoxEventManager eventManager;
 
-    private final List<BoxFeature> features = new ArrayList<>();
-
     private Storage storage;
     private BoxItemManager itemManager;
     private BoxStockManager stockManager;
@@ -61,6 +61,8 @@ public class BoxCore implements BoxAPI {
 
     private BoxCommandImpl boxCommand;
     private BoxAdminCommandImpl boxAdminCommand;
+
+    private Map<Class<? extends BoxFeature>, BoxFeature> featureMap;
 
     public BoxCore(@NotNull PluginContext context) {
         this.context = context;
@@ -180,7 +182,7 @@ public class BoxCore implements BoxAPI {
             BoxLogger.logger().error("Could not reload languages", e);
         }
 
-        for (var feature : features) {
+        for (var feature : this.featureMap.values()) {
             if (feature instanceof Reloadable reloadable) {
                 try {
                     reloadable.reload(sender);
@@ -253,62 +255,74 @@ public class BoxCore implements BoxAPI {
     }
 
     @Override
-    public @NotNull
-    @Unmodifiable List<BoxFeature> getFeatures() {
-        return List.copyOf(features);
+    public @NotNull @Unmodifiable List<BoxFeature> getFeatures() {
+        return List.copyOf(this.featureMap.values());
     }
 
     @Override
     public @NotNull <T extends BoxFeature> Optional<T> getFeature(@NotNull Class<T> clazz) {
-        return features.stream()
-                .filter(feature -> feature.getClass() == clazz)
-                .map(clazz::cast)
-                .findFirst();
+        return Optional.ofNullable(this.featureMap.get(clazz)).map(clazz::cast);
     }
 
-    public void registerFeature(@NotNull BoxFeature boxFeature) {
-        var dependencies = boxFeature.getDependencies();
+    public void initializeFeatures(@NotNull List<Supplier<? extends BoxFeature>> features) {
+        if (features.isEmpty()) {
+            this.featureMap = Collections.emptyMap();
+            return;
+        }
 
-        if (!dependencies.isEmpty()) {
-            for (var dependencyClass : dependencies) {
-                if (features.stream().noneMatch(feature -> dependencyClass.isAssignableFrom(feature.getClass()))) {
-                    BoxLogger.logger().warn("{} that is the dependency of {} is not registered.", dependencyClass.getSimpleName(), boxFeature.getName());
-                    return;
-                }
+        BoxLogger.logger().info("Enabling features...");
+
+        var featureMap = new LinkedHashMap<Class<? extends BoxFeature>, BoxFeature>();
+
+        for (var supplier : features) {
+            var feature = supplier.get();
+            initializeFeature(featureMap, feature);
+            this.eventManager.call(new FeatureEvent(feature, FeatureEvent.Type.REGISTER));
+        }
+
+        this.featureMap = Collections.unmodifiableMap(featureMap);
+    }
+
+    private static void initializeFeature(@NotNull Map<Class<? extends BoxFeature>, BoxFeature> featureMap, @NotNull BoxFeature feature) {
+        if (featureMap.containsKey(feature.getClass())) {
+            throw new IllegalStateException("%s is registered twice.".formatted(feature.getName()));
+        }
+
+        var dependencies = feature.getDependencies();
+
+        for (var dependencyClass : dependencies) {
+            if (!featureMap.containsKey(dependencyClass)) {
+                throw new IllegalStateException("%s that is the dependency of %s is not registered.".formatted(dependencyClass.getName(), feature.getName()));
             }
         }
 
         try {
-            boxFeature.enable();
-        } catch (Throwable throwable) {
-            BoxLogger.logger().error("Could not enable {} feature.", boxFeature.getName(), throwable);
-            boxFeature.disable();
-            return;
+            feature.enable();
+        } catch (Throwable e) {
+            throw new IllegalStateException("Failed to enable %s.".formatted(feature.getName()), e);
         }
 
-        features.add(boxFeature);
-
-        this.eventManager.call(new FeatureEvent(boxFeature, FeatureEvent.Type.REGISTER));
-
-        BoxLogger.logger().info("{} feature has been enabled.", boxFeature.getName());
+        featureMap.put(feature.getClass(), feature);
+        BoxLogger.logger().info("Feature '{}' has been enabled.", feature.getName());
     }
 
     public void unregisterAllFeatures() {
-        if (!this.features.isEmpty()) {
-            BoxLogger.logger().info("Disabling features...");
+        if (this.featureMap.isEmpty()) {
+            return;
+        }
 
-            for (var feature : this.features) {
-                BoxLogger.logger().info("Disabling {} feature...", feature.getName());
-                features.remove(feature);
+        BoxLogger.logger().info("Disabling features...");
 
-                try {
-                    feature.disable();
-                } catch (Throwable throwable) {
-                    BoxLogger.logger().error("Could not disable {} feature.", feature.getName(), throwable);
-                }
-
-                this.eventManager.call(new FeatureEvent(feature, FeatureEvent.Type.UNREGISTER));
+        for (var feature : this.featureMap.values()) {
+            try {
+                feature.disable();
+            } catch (Throwable throwable) {
+                BoxLogger.logger().error("Failed to disable {}.", feature.getName(), throwable);
+                continue;
             }
+
+            this.eventManager.call(new FeatureEvent(feature, FeatureEvent.Type.UNREGISTER));
+            BoxLogger.logger().info("Feature '{}' has been disabled.", feature.getName());
         }
     }
 

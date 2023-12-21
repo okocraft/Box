@@ -97,8 +97,12 @@ public final class BoxPlugin extends JavaPlugin {
 
         APISetter.set(this.boxCore);
 
-        for (var featureSupplier : this.preregisteredFeatures) {
-            this.boxCore.registerFeature(featureSupplier.get());
+        try {
+            this.boxCore.initializeFeatures(this.preregisteredFeatures);
+        } catch (IllegalStateException e) {
+            BoxLogger.logger().error("An exception occurred while initializing features", e);
+            getServer().getPluginManager().disablePlugin(this);
+            return;
         }
 
         this.preregisteredFeatures.clear();
