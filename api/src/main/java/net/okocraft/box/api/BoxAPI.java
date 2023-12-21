@@ -3,6 +3,7 @@ package net.okocraft.box.api;
 import net.okocraft.box.api.command.base.BoxAdminCommand;
 import net.okocraft.box.api.command.base.BoxCommand;
 import net.okocraft.box.api.feature.BoxFeature;
+import net.okocraft.box.api.message.MessageProvider;
 import net.okocraft.box.api.model.customdata.CustomDataManager;
 import net.okocraft.box.api.model.manager.EventManager;
 import net.okocraft.box.api.model.manager.ItemManager;
@@ -60,6 +61,13 @@ public interface BoxAPI {
      * @return the path of the plugin directory
      */
     @NotNull Path getPluginDirectory();
+
+    /**
+     * Gets the {@link MessageProvider}.
+     *
+     * @return the {@link MessageProvider}
+     */
+    @NotNull MessageProvider getMessageProvider();
 
     /**
      * Gets the {@link UserManager}.

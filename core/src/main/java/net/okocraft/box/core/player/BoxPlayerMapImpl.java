@@ -4,11 +4,12 @@ import com.github.siroshun09.event4j.caller.AsyncEventCaller;
 import net.okocraft.box.api.event.BoxEvent;
 import net.okocraft.box.api.event.player.PlayerLoadEvent;
 import net.okocraft.box.api.event.player.PlayerUnloadEvent;
+import net.okocraft.box.api.message.MessageProvider;
 import net.okocraft.box.api.player.BoxPlayer;
 import net.okocraft.box.api.player.BoxPlayerMap;
 import net.okocraft.box.api.scheduler.BoxScheduler;
 import net.okocraft.box.api.util.BoxLogger;
-import net.okocraft.box.core.message.ErrorMessages;
+import net.okocraft.box.core.message.CoreMessages;
 import net.okocraft.box.core.model.manager.stock.BoxStockManager;
 import net.okocraft.box.core.model.manager.user.BoxUserManager;
 import org.bukkit.Bukkit;
@@ -31,13 +32,16 @@ public class BoxPlayerMapImpl implements BoxPlayerMap {
     private final BoxUserManager userManager;
     private final AsyncEventCaller<BoxEvent> eventCaller;
     private final BoxScheduler scheduler;
+    private final MessageProvider messageProvider;
 
     public BoxPlayerMapImpl(@NotNull BoxUserManager userManager, @NotNull BoxStockManager stockManager,
-                            @NotNull AsyncEventCaller<BoxEvent> eventCaller, @NotNull BoxScheduler scheduler) {
+                            @NotNull AsyncEventCaller<BoxEvent> eventCaller, @NotNull BoxScheduler scheduler,
+                            @NotNull MessageProvider messageProvider) {
         this.userManager = userManager;
         this.stockManager = stockManager;
         this.eventCaller = eventCaller;
         this.scheduler = scheduler;
+        this.messageProvider = messageProvider;
     }
 
     @Override
@@ -77,7 +81,7 @@ public class BoxPlayerMapImpl implements BoxPlayerMap {
         } catch (Exception e) {
             playerMap.remove(player);
             BoxLogger.logger().error("Could not load a player ({})", player.getName(), e);
-            player.sendMessage(ErrorMessages.ERROR_LOAD_PLAYER_DATA_ON_JOIN);
+            CoreMessages.LOAD_FAILURE_ON_JOIN.source(this.messageProvider.findSource(player)).send(player);
         }
     }
 

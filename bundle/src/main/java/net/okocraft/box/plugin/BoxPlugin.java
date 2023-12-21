@@ -39,6 +39,7 @@ public final class BoxPlugin extends JavaPlugin {
                 boxBootstrapContext.getPluginDirectory(),
                 PlatformDependent.createScheduler(this),
                 boxBootstrapContext.getEventServiceProvider(),
+                boxBootstrapContext.createMessageProvider(),
                 new Config(boxBootstrapContext.getPluginDirectory()),
                 PlatformDependent.createItemProvider(),
                 PlatformDependent.createCommandRegisterer(this.getName().toLowerCase(Locale.ENGLISH))
@@ -60,6 +61,14 @@ public final class BoxPlugin extends JavaPlugin {
             StorageHolder.init(this.pluginContext.config().loadAndCreateStorage(this.storageRegistry));
         } catch (IOException e) {
             BoxLogger.logger().error("Could not load config.yml", e);
+            this.status = Status.EXCEPTION_OCCURRED;
+            return;
+        }
+
+        try {
+            this.pluginContext.messageProvider().load();
+        } catch (IOException e) {
+            BoxLogger.logger().error("Could not load messages.", e);
             this.status = Status.EXCEPTION_OCCURRED;
             return;
         }

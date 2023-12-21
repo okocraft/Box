@@ -7,6 +7,7 @@ import net.okocraft.box.api.command.base.BoxCommand;
 import net.okocraft.box.api.event.feature.FeatureEvent;
 import net.okocraft.box.api.feature.BoxFeature;
 import net.okocraft.box.api.feature.Reloadable;
+import net.okocraft.box.api.message.MessageProvider;
 import net.okocraft.box.api.model.manager.ItemManager;
 import net.okocraft.box.api.model.manager.StockManager;
 import net.okocraft.box.api.model.manager.UserManager;
@@ -18,8 +19,7 @@ import net.okocraft.box.core.command.BoxCommandImpl;
 import net.okocraft.box.core.config.Config;
 import net.okocraft.box.core.listener.DebugListener;
 import net.okocraft.box.core.listener.PlayerConnectionListener;
-import net.okocraft.box.core.message.ErrorMessages;
-import net.okocraft.box.core.message.MicsMessages;
+import net.okocraft.box.core.message.CoreMessages;
 import net.okocraft.box.core.model.manager.customdata.BoxCustomDataManager;
 import net.okocraft.box.core.model.manager.event.BoxEventManager;
 import net.okocraft.box.core.model.manager.item.BoxItemManager;
@@ -103,7 +103,7 @@ public class BoxCore implements BoxAPI {
 
         this.customDataManager = new BoxCustomDataManager(storage.getCustomDataStorage());
 
-        this.playerMap = new BoxPlayerMapImpl(this.userManager, this.stockManager, this.eventManager, this.context.scheduler());
+        this.playerMap = new BoxPlayerMapImpl(this.userManager, this.stockManager, this.eventManager, this.context.scheduler(), this.context.messageProvider());
         this.playerMap.loadAll();
 
         Bukkit.getPluginManager().registerEvents(new PlayerConnectionListener(this.playerMap), context.plugin());
@@ -112,8 +112,8 @@ public class BoxCore implements BoxAPI {
 
         BoxLogger.logger().info("Registering commands...");
 
-        this.boxCommand = new BoxCommandImpl(this.context.scheduler(), this.playerMap, this::canUseBox);
-        this.boxAdminCommand = new BoxAdminCommandImpl(this.context.scheduler());
+        this.boxCommand = new BoxCommandImpl(this.context.messageProvider(), this.context.scheduler(), this.playerMap, this::canUseBox);
+        this.boxAdminCommand = new BoxAdminCommandImpl(this.context.messageProvider(), this.context.scheduler());
 
         this.context.commandRegisterer().register(this.boxCommand).register(this.boxAdminCommand);
 
@@ -140,12 +140,13 @@ public class BoxCore implements BoxAPI {
             BoxLogger.logger().error("Could not close the storage.", e);
         }
 
-        BoxLogger.logger().info("Unloading languages...");
-        // TODO: translationDirectory.unload();
+        BoxLogger.logger().info("Unloading messages...");
+        this.context.messageProvider().unload();
     }
 
     @Override
     public void reload(@NotNull CommandSender sender) {
+        var source = this.context.messageProvider().findSource(sender);
         var playerMessenger = new Consumer<Supplier<Component>>() {
             @Override
             public void accept(Supplier<Component> componentSupplier) {
@@ -163,9 +164,9 @@ public class BoxCore implements BoxAPI {
 
         try {
             this.context.config().reload();
-            sender.sendMessage(MicsMessages.CONFIG_RELOADED);
+            CoreMessages.CONFIG_RELOADED_MSG.apply(Config.FILENAME).source(source).send(sender);
         } catch (Throwable e) {
-            playerMessenger.accept(() -> ErrorMessages.ERROR_RELOAD_FAILURE.apply(Config.FILENAME, e));
+            playerMessenger.accept(() -> CoreMessages.CONFIG_RELOAD_FAILURE.apply(Config.FILENAME, e).source(source).message());
             BoxLogger.logger().error("Could not reload {}", Config.FILENAME, e);
         }
 
@@ -175,11 +176,11 @@ public class BoxCore implements BoxAPI {
         }
 
         try {
-            // TODO: translationDirectory.load();
-            sender.sendMessage(MicsMessages.LANGUAGES_RELOADED);
+            this.context.messageProvider().load();
+            CoreMessages.MESSAGE_RELOADED_MSG.source(source).send(sender);
         } catch (Throwable e) {
-            playerMessenger.accept(() -> ErrorMessages.ERROR_RELOAD_FAILURE.apply("languages", e));
-            BoxLogger.logger().error("Could not reload languages", e);
+            playerMessenger.accept(() -> CoreMessages.MESSAGES_RELOAD_FAILURE.apply(e).source(source).message());
+            BoxLogger.logger().error("Could not reload messages", e);
         }
 
         for (var feature : this.featureMap.values()) {
@@ -188,7 +189,7 @@ public class BoxCore implements BoxAPI {
                     reloadable.reload(sender);
                     this.eventManager.call(new FeatureEvent(feature, FeatureEvent.Type.RELOAD));
                 } catch (Throwable e) {
-                    playerMessenger.accept(() -> ErrorMessages.ERROR_RELOAD_FAILURE.apply(feature.getName(), e));
+                    playerMessenger.accept(() -> CoreMessages.FEATURE_RELOAD_FAILURE.apply(feature, e).source(source).message());
                     BoxLogger.logger().error("Could not reload {}", feature.getName(), e);
                 }
             }
@@ -207,6 +208,11 @@ public class BoxCore implements BoxAPI {
     @Override
     public @NotNull Path getPluginDirectory() {
         return context.dataDirectory();
+    }
+
+    @Override
+    public @NotNull MessageProvider getMessageProvider() {
+        return this.context.messageProvider();
     }
 
     @Override

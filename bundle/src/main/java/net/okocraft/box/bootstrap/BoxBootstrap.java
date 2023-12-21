@@ -5,6 +5,7 @@ import io.papermc.paper.plugin.bootstrap.PluginBootstrap;
 import io.papermc.paper.plugin.bootstrap.PluginProviderContext;
 import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.bundle.Builtin;
+import net.okocraft.box.core.message.CoreMessages;
 import net.okocraft.box.plugin.BoxPlugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
@@ -33,8 +34,10 @@ public final class BoxBootstrap implements PluginBootstrap {
         ((SubstituteLogger) BoxLogger.logger()).setDelegate(context.getLogger());
         boxBootstrapContext = BoxBootstrapContext.create(context);
 
+        CoreMessages.addDefaultMessages(this.boxBootstrapContext.getDefaultMessageCollector());
         Builtin.features(this.boxBootstrapContext);
         Builtin.storages(this.boxBootstrapContext.getStorageRegistry());
+        Builtin.japaneseFile(this.boxBootstrapContext);
     }
 
     @Override
