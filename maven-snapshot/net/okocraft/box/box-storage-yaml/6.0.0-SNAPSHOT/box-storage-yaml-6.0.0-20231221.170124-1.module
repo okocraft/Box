@@ -1,0 +1,158 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "net.okocraft.box",
+    "module": "box-storage-yaml",
+    "version": "6.0.0-SNAPSHOT",
+    "attributes": {
+      "org.gradle.status": "integration"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.4"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 17,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api"
+      },
+      "dependencies": [
+        {
+          "group": "com.github.siroshun09.configapi",
+          "module": "configapi-format-yaml",
+          "version": {
+            "requires": "5.0.0-alpha.5"
+          },
+          "excludes": [
+            {
+              "group": "org.yaml",
+              "module": "snakeyaml"
+            }
+          ]
+        },
+        {
+          "group": "com.github.siroshun09.event4j",
+          "module": "event4j",
+          "version": {
+            "requires": "4.0.0-rc.1"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "box-storage-yaml-6.0.0-SNAPSHOT.jar",
+          "url": "box-storage-yaml-6.0.0-SNAPSHOT.jar",
+          "size": 26175,
+          "sha512": "547381ae7ac58fc209335d78a7093511c00478e8d20d0ea0718254c6a5b7c1db1da1f41b72ab5100921c23e4515a988c1eb67da8ad096531c2b24787b0c29c41",
+          "sha256": "63938c391582459027e730e2b49acc3490d20504dbb1626384e9b6cd39188b4a",
+          "sha1": "96e265a10013d418ccb20c50ae1a2af884a59031",
+          "md5": "7a8dc42219f7455fc6e08a5cd2b38719"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 17,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "dependencies": [
+        {
+          "group": "net.okocraft.box",
+          "module": "box-api",
+          "version": {
+            "requires": "6.0.0-SNAPSHOT"
+          }
+        },
+        {
+          "group": "net.okocraft.box",
+          "module": "box-storage-api",
+          "version": {
+            "requires": "6.0.0-SNAPSHOT"
+          }
+        },
+        {
+          "group": "com.github.siroshun09.configapi",
+          "module": "configapi-format-yaml",
+          "version": {
+            "requires": "5.0.0-alpha.5"
+          },
+          "excludes": [
+            {
+              "group": "org.yaml",
+              "module": "snakeyaml"
+            }
+          ]
+        },
+        {
+          "group": "com.github.siroshun09.event4j",
+          "module": "event4j",
+          "version": {
+            "requires": "4.0.0-rc.1"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "box-storage-yaml-6.0.0-SNAPSHOT.jar",
+          "url": "box-storage-yaml-6.0.0-SNAPSHOT.jar",
+          "size": 26175,
+          "sha512": "547381ae7ac58fc209335d78a7093511c00478e8d20d0ea0718254c6a5b7c1db1da1f41b72ab5100921c23e4515a988c1eb67da8ad096531c2b24787b0c29c41",
+          "sha256": "63938c391582459027e730e2b49acc3490d20504dbb1626384e9b6cd39188b4a",
+          "sha1": "96e265a10013d418ccb20c50ae1a2af884a59031",
+          "md5": "7a8dc42219f7455fc6e08a5cd2b38719"
+        }
+      ]
+    },
+    {
+      "name": "javadocElements",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "javadoc",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "box-storage-yaml-6.0.0-SNAPSHOT-javadoc.jar",
+          "url": "box-storage-yaml-6.0.0-SNAPSHOT-javadoc.jar",
+          "size": 92570,
+          "sha512": "c94e9483d4772806b619fa7068d36fc1b190cf130a06e23e136a89f5aa56f229ad4fa67aadaf80cddda21f7cd05ccd3bf3d82cab77decf23a1beff325f082900",
+          "sha256": "0c9dcf6956e951d048c1b7883321b52e6cf5a776be832f3d2404c29d7bfafde1",
+          "sha1": "f1dbe87d9ef00958eafb2fcd37cb1d06bdd811ea",
+          "md5": "f6161af4d9a45a310e0678e1daf83342"
+        }
+      ]
+    },
+    {
+      "name": "sourcesElements",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "box-storage-yaml-6.0.0-SNAPSHOT-sources.jar",
+          "url": "box-storage-yaml-6.0.0-SNAPSHOT-sources.jar",
+          "size": 9363,
+          "sha512": "05d867198393b8799fb4c92543e82af438c63a9058852e2352fd83da44f12ae3cad474ca70bf52ebae564147f812bbdb637b162c0ebbe8d3c4b9246a98e42625",
+          "sha256": "ada8c77871b29eba3f4ae14e31e518e77c13fc163f44b359338760d732c10cb4",
+          "sha1": "0603369138a18a06a10983eaeca20a18af9f9330",
+          "md5": "0f764d91ee016cb14563539aeea90f6f"
+        }
+      ]
+    }
+  ]
+}
