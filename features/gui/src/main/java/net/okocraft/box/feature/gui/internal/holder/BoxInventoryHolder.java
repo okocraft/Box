@@ -2,7 +2,7 @@ package net.okocraft.box.feature.gui.internal.holder;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.feature.gui.api.button.Button;
 import net.okocraft.box.feature.gui.api.button.ClickResult;
@@ -64,7 +64,7 @@ public class BoxInventoryHolder implements InventoryHolder {
             viewer.sendMessage(Displays.ERROR_WHILE_CLICK_PROCESSING.apply(e));
             BoxLogger.logger().error("An error occurred while processing a click event ({})", viewer.getName(), e);
 
-            BoxProvider.get().getScheduler().runEntityTask(viewer, () -> {
+            BoxAPI.api().getScheduler().runEntityTask(viewer, () -> {
                 viewer.closeInventory();
                 onClickProcessed.accept(viewer.getUniqueId());
             });
@@ -80,7 +80,7 @@ public class BoxInventoryHolder implements InventoryHolder {
 
         var event = new MenuClickEvent(menu, session, button, clickType);
 
-        BoxProvider.get().getEventManager().call(event);
+        BoxAPI.api().getEventManager().call(event);
 
         if (event.isCancelled()) {
             return;

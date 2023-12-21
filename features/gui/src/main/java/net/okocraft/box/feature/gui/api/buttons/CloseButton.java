@@ -1,6 +1,6 @@
 package net.okocraft.box.feature.gui.api.buttons;
 
-import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.feature.gui.api.button.Button;
 import net.okocraft.box.feature.gui.api.button.ClickResult;
 import net.okocraft.box.feature.gui.api.session.PlayerSession;
@@ -40,7 +40,7 @@ public record CloseButton(int slot) implements Button {
         var clicker = session.getViewer();
         var result = ClickResult.waitingTask();
 
-        BoxProvider.get().getScheduler().runEntityTask(clicker, () -> {
+        BoxAPI.api().getScheduler().runEntityTask(clicker, () -> {
             clicker.closeInventory();
             CLOSE_SOUND.play(clicker);
             result.completeAsync(ClickResult.NO_UPDATE_NEEDED);

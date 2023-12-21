@@ -1,7 +1,7 @@
 package net.okocraft.box.feature.stick.command;
 
 import net.kyori.adventure.text.Component;
-import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.command.AbstractCommand;
 import net.okocraft.box.api.message.GeneralMessage;
 import net.okocraft.box.feature.stick.item.BoxStickItem;
@@ -39,7 +39,7 @@ public class StickCommand extends AbstractCommand {
             return;
         }
 
-        BoxProvider.get().getScheduler().runEntityTask(player, () -> this.runCommand(player));
+        BoxAPI.api().getScheduler().runEntityTask(player, () -> this.runCommand(player));
     }
 
     private void runCommand(@NotNull Player player) {

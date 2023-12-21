@@ -4,7 +4,7 @@ import com.github.siroshun09.configapi.core.node.MapNode;
 import com.github.siroshun09.configapi.format.yaml.YamlFormat;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.kyori.adventure.text.Component;
-import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.api.util.MCDataVersion;
@@ -36,7 +36,7 @@ public final class CategoryFile {
     }
 
     private static void load(@NotNull CategoryRegistry registry, @NotNull MapNode source, @NotNull MapNode defaultCategoryFile) {
-        var itemManager = BoxProvider.get().getItemManager();
+        var itemManager = BoxAPI.api().getItemManager();
         var uncategorizedItems = new ObjectOpenHashSet<>(itemManager.getItemList());
         var iconMap = source.getMap("icons");
 

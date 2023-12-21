@@ -1,6 +1,6 @@
 package net.okocraft.box.feature.gui.api.mode;
 
-import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.transaction.StockHolderTransaction;
 import net.okocraft.box.feature.gui.api.button.Button;
@@ -27,7 +27,7 @@ public abstract class AbstractStorageMode implements BoxItemClickMode {
         var amountData = session.getData(Amount.SHARED_DATA_KEY);
         int amount = amountData != null ? amountData.getValue() : 1;
 
-        var scheduler = BoxProvider.get().getScheduler();
+        var scheduler = BoxAPI.api().getScheduler();
         var result = ClickResult.waitingTask();
 
         scheduler.runEntityTask(viewer, () -> {
@@ -59,7 +59,7 @@ public abstract class AbstractStorageMode implements BoxItemClickMode {
 
         var amount = Math.min(currentStock, limit);
 
-        var scheduler = BoxProvider.get().getScheduler();
+        var scheduler = BoxAPI.api().getScheduler();
         var result = ClickResult.waitingTask();
 
         scheduler.runEntityTask(viewer, () -> {
@@ -110,7 +110,7 @@ public abstract class AbstractStorageMode implements BoxItemClickMode {
         public @NotNull ClickResult onClick(@NotNull PlayerSession session, @NotNull ClickType clickType) {
             if (canDepositAll.test(session, clickType)) {
                 var viewer = session.getViewer();
-                var scheduler = BoxProvider.get().getScheduler();
+                var scheduler = BoxAPI.api().getScheduler();
                 var result = ClickResult.waitingTask();
 
                 scheduler.runEntityTask(viewer, () -> {

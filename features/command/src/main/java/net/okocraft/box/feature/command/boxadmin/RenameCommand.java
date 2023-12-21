@@ -1,7 +1,7 @@
 package net.okocraft.box.feature.command.boxadmin;
 
 import net.kyori.adventure.text.Component;
-import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.command.AbstractCommand;
 import net.okocraft.box.api.message.GeneralMessage;
 import net.okocraft.box.api.model.item.BoxCustomItem;
@@ -30,7 +30,7 @@ public class RenameCommand extends AbstractCommand {
             return;
         }
 
-        var itemManager = BoxProvider.get().getItemManager();
+        var itemManager = BoxAPI.api().getItemManager();
 
         var item = itemManager.getBoxItem(args[1]);
 
@@ -52,7 +52,7 @@ public class RenameCommand extends AbstractCommand {
     @Override
     public @NotNull List<String> onTabComplete(@NotNull CommandSender sender, @NotNull String[] args) {
         if (args.length == 2) {
-            var itemManager = BoxProvider.get().getItemManager();
+            var itemManager = BoxAPI.api().getItemManager();
 
             return itemManager.getItemList()
                     .stream()

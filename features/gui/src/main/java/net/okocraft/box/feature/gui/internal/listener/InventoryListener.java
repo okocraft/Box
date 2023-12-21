@@ -1,6 +1,6 @@
 package net.okocraft.box.feature.gui.internal.listener;
 
-import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.feature.category.api.category.Category;
 import net.okocraft.box.feature.category.api.registry.CategoryRegistry;
@@ -66,11 +66,11 @@ public class InventoryListener implements Listener {
             task = () -> openCategoryMenu(topHolder, clicked.getItem(event.getSlot()));
         }
 
-        BoxProvider.get().getScheduler().runAsyncTask(task);
+        BoxAPI.api().getScheduler().runAsyncTask(task);
     }
 
     private void openCategoryMenu(@NotNull BoxInventoryHolder holder, @Nullable ItemStack item) {
-        var boxItem = item != null ? BoxProvider.get().getItemManager().getBoxItem(item).orElse(null) : null;
+        var boxItem = item != null ? BoxAPI.api().getItemManager().getBoxItem(item).orElse(null) : null;
 
         if (boxItem == null) {
             return;

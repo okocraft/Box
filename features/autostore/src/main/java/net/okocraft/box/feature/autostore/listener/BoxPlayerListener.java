@@ -3,7 +3,7 @@ package net.okocraft.box.feature.autostore.listener;
 import com.github.siroshun09.event4j.listener.ListenerBase;
 import com.github.siroshun09.event4j.priority.Priority;
 import net.kyori.adventure.key.Key;
-import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.event.player.PlayerLoadEvent;
 import net.okocraft.box.api.event.player.PlayerUnloadEvent;
 import net.okocraft.box.api.util.BoxLogger;
@@ -16,14 +16,14 @@ import java.util.List;
 public class BoxPlayerListener {
 
     public void register(@NotNull Key listenerKey) {
-        BoxProvider.get().getEventManager().subscribeAll(List.of(
+        BoxAPI.api().getEventManager().subscribeAll(List.of(
                 new ListenerBase<>(PlayerLoadEvent.class, listenerKey, this::onLoad, Priority.NORMAL),
                 new ListenerBase<>(PlayerUnloadEvent.class, listenerKey, this::onUnload, Priority.NORMAL)
         ));
     }
 
     public void unregister(@NotNull Key listenerKey) {
-        BoxProvider.get().getEventManager().unsubscribeByKey(listenerKey);
+        BoxAPI.api().getEventManager().unsubscribeByKey(listenerKey);
     }
 
     private void onLoad(@NotNull PlayerLoadEvent event) {

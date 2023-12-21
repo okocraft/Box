@@ -4,7 +4,7 @@ import com.github.siroshun09.event4j.listener.ListenerBase;
 import com.github.siroshun09.event4j.priority.Priority;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
-import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.event.stockholder.stock.StockDecreaseEvent;
 import net.okocraft.box.api.event.stockholder.stock.StockEvent;
 import net.okocraft.box.api.event.stockholder.stock.StockIncreaseEvent;
@@ -21,7 +21,7 @@ import java.util.Optional;
 public class StockHolderListener {
 
     public void register(@NotNull Key listenerKey) {
-        BoxProvider.get().getEventManager().subscribeAll(List.of(
+        BoxAPI.api().getEventManager().subscribeAll(List.of(
                 new ListenerBase<>(StockIncreaseEvent.class, listenerKey, this::onIncrease, Priority.NORMAL),
                 new ListenerBase<>(StockDecreaseEvent.class, listenerKey, this::onDecrease, Priority.NORMAL),
                 new ListenerBase<>(StockSetEvent.class, listenerKey, this::onSet, Priority.NORMAL)
@@ -29,7 +29,7 @@ public class StockHolderListener {
     }
 
     public void unregister(@NotNull Key listenerKey) {
-        BoxProvider.get().getEventManager().unsubscribeByKey(listenerKey);
+        BoxAPI.api().getEventManager().unsubscribeByKey(listenerKey);
     }
 
     public void onIncrease(@NotNull StockIncreaseEvent event) {

@@ -3,7 +3,7 @@ package net.okocraft.box.feature.autostore.model;
 import com.github.siroshun09.configapi.core.node.IntValue;
 import com.github.siroshun09.configapi.core.node.MapNode;
 import com.github.siroshun09.configapi.core.node.NumberValue;
-import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.feature.autostore.model.setting.AutoStoreSetting;
 import org.jetbrains.annotations.NotNull;
 
@@ -45,7 +45,7 @@ class AutoStoreSettingSerializer {
                         .asList(NumberValue.class)
                         .stream()
                         .mapToInt(NumberValue::asInt)
-                        .mapToObj(BoxProvider.get().getItemManager()::getBoxItem)
+                        .mapToObj(BoxAPI.api().getItemManager()::getBoxItem)
                         .filter(Optional::isPresent)
                         .map(Optional::get)
                         .collect(Collectors.toList())

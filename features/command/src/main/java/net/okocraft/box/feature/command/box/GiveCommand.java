@@ -1,7 +1,7 @@
 package net.okocraft.box.feature.command.box;
 
 import net.kyori.adventure.text.Component;
-import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.command.AbstractCommand;
 import net.okocraft.box.api.message.GeneralMessage;
 import net.okocraft.box.api.model.item.BoxItem;
@@ -55,12 +55,12 @@ public class GiveCommand extends AbstractCommand {
             return;
         }
 
-        if (!BoxProvider.get().canUseBox(target)) {
+        if (!BoxAPI.api().canUseBox(target)) {
             sender.sendMessage(BoxMessage.GIVE_TARGET_IS_IN_DISABLED_WORLD.apply(target, target.getWorld()));
             return;
         }
 
-        var optionalBoxItem = BoxProvider.get().getItemManager().getBoxItem(args[2]);
+        var optionalBoxItem = BoxAPI.api().getItemManager().getBoxItem(args[2]);
 
         if (optionalBoxItem.isEmpty()) {
             sender.sendMessage(GeneralMessage.ERROR_COMMAND_ITEM_NOT_FOUND.apply(args[2]));
@@ -69,7 +69,7 @@ public class GiveCommand extends AbstractCommand {
 
         var boxItem = optionalBoxItem.get();
 
-        var playerMap = BoxProvider.get().getBoxPlayerMap();
+        var playerMap = BoxAPI.api().getBoxPlayerMap();
 
         var senderBoxPlayer = playerMap.get(player);
         var stockHolder = senderBoxPlayer.getCurrentStockHolder();
@@ -129,7 +129,7 @@ public class GiveCommand extends AbstractCommand {
 
         if (args.length == 3) {
             var itemNameFilter = args[2].toLowerCase(Locale.ENGLISH);
-            var stockHolder = BoxProvider.get().getBoxPlayerMap().get(player).getCurrentStockHolder();
+            var stockHolder = BoxAPI.api().getBoxPlayerMap().get(player).getCurrentStockHolder();
 
             return stockHolder.getStockedItems().stream()
                     .map(BoxItem::getPlainName)

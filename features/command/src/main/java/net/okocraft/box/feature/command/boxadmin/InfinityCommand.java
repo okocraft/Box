@@ -2,7 +2,7 @@ package net.okocraft.box.feature.command.boxadmin;
 
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.kyori.adventure.text.Component;
-import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.command.AbstractCommand;
 import net.okocraft.box.api.event.stockholder.stock.StockEvent;
 import net.okocraft.box.api.message.GeneralMessage;
@@ -53,7 +53,7 @@ public class InfinityCommand extends AbstractCommand {
             self = true;
         }
 
-        var playerMap = BoxProvider.get().getBoxPlayerMap();
+        var playerMap = BoxAPI.api().getBoxPlayerMap();
 
         if (!playerMap.isLoaded(target)) {
             Component message;
@@ -147,7 +147,7 @@ public class InfinityCommand extends AbstractCommand {
 
         @Override
         public @NotNull @Unmodifiable Collection<BoxItem> getStockedItems() {
-            return BoxProvider.get().getItemManager().getItemList();
+            return BoxAPI.api().getItemManager().getItemList();
         }
 
         @Override

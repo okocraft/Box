@@ -1,6 +1,6 @@
 package net.okocraft.box.feature.stick.listener;
 
-import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.player.BoxPlayer;
 import net.okocraft.box.api.util.MCDataVersion;
@@ -105,7 +105,7 @@ public class StickListener implements Listener {
             return;
         }
 
-        var boxItem = BoxProvider.get().getItemManager().getBoxItem(block.getBlockData().getPlacementMaterial().name());
+        var boxItem = BoxAPI.api().getItemManager().getBoxItem(block.getBlockData().getPlacementMaterial().name());
 
         if (boxItem.isEmpty()) {
             return;
@@ -117,7 +117,7 @@ public class StickListener implements Listener {
 
         if (boxStickItem.check(mainHand)) {
             if (!offHand.getType().isAir()) {
-                var optionalOffHandBoxItem = BoxProvider.get().getItemManager().getBoxItem(offHand);
+                var optionalOffHandBoxItem = BoxAPI.api().getItemManager().getBoxItem(offHand);
 
                 if (optionalOffHandBoxItem.isEmpty()) {
                     return;
@@ -259,7 +259,7 @@ public class StickListener implements Listener {
             return;
         }
 
-        BoxProvider.get().getItemManager()
+        BoxAPI.api().getItemManager()
                 .getBoxItem(defaultReplacementMaterialName)
                 .ifPresent(defaultReplacementItem -> boxPlayer.getCurrentStockHolder().increase(defaultReplacementItem, 1, cause));
     }
@@ -338,17 +338,17 @@ public class StickListener implements Listener {
 
             // If setConsumeItem is set to false, the arrow will not be picked up.
             // This task overwrites it after 1 tick.
-            BoxProvider.get().getScheduler().runEntityTask(arrow, () -> arrow.setPickupStatus(AbstractArrow.PickupStatus.ALLOWED));
+            BoxAPI.api().getScheduler().runEntityTask(arrow, () -> arrow.setPickupStatus(AbstractArrow.PickupStatus.ALLOWED));
         }
     }
 
     private @Nullable BoxPlayer getBoxPlayerOrNull(@NotNull Player player) {
-        var playerMap = BoxProvider.get().getBoxPlayerMap();
+        var playerMap = BoxAPI.api().getBoxPlayerMap();
         return playerMap.isLoaded(player) ? playerMap.get(player) : null;
     }
 
     private boolean tryConsumingStock(@NotNull BoxPlayer boxPlayer, @NotNull ItemStack item, @NotNull StickCause cause) {
-        var boxItem = BoxProvider.get().getItemManager().getBoxItem(item);
+        var boxItem = BoxAPI.api().getItemManager().getBoxItem(item);
         return boxItem.isPresent() && boxPlayer.getCurrentStockHolder().decreaseIfPossible(boxItem.get(), 1, cause) != -1;
     }
 
@@ -362,7 +362,7 @@ public class StickListener implements Listener {
     }
 
     private boolean canUseBox(@NotNull Player player) {
-        return BoxProvider.get().canUseBox(player);
+        return BoxAPI.api().canUseBox(player);
     }
 
     private boolean isSurvivalOrAdventure(@NotNull Player player) {

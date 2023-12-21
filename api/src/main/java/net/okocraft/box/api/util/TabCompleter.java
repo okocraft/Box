@@ -1,6 +1,6 @@
 package net.okocraft.box.api.util;
 
-import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.api.BoxAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +23,7 @@ public final class TabCompleter {
      */
     public static @NotNull List<String> itemNames(@NotNull String filter) {
         var itemNameFilter = filter.toLowerCase(Locale.ENGLISH);
-        return BoxProvider.get()
+        return BoxAPI.api()
                 .getItemManager()
                 .getItemNameList()
                 .stream()

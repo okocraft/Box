@@ -1,7 +1,7 @@
 package net.okocraft.box.feature.command.box;
 
 import net.kyori.adventure.text.Component;
-import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.command.AbstractCommand;
 import net.okocraft.box.api.message.GeneralMessage;
 import net.okocraft.box.api.model.item.BoxItem;
@@ -36,7 +36,7 @@ public class WithdrawCommand extends AbstractCommand {
             return;
         }
 
-        var optionalBoxItem = BoxProvider.get().getItemManager().getBoxItem(args[1]);
+        var optionalBoxItem = BoxAPI.api().getItemManager().getBoxItem(args[1]);
 
         if (optionalBoxItem.isEmpty()) {
             sender.sendMessage(GeneralMessage.ERROR_COMMAND_ITEM_NOT_FOUND.apply(args[1]));
@@ -45,7 +45,7 @@ public class WithdrawCommand extends AbstractCommand {
 
         var boxItem = optionalBoxItem.get();
 
-        var stockHolder = BoxProvider.get().getBoxPlayerMap().get(player).getCurrentStockHolder();
+        var stockHolder = BoxAPI.api().getBoxPlayerMap().get(player).getCurrentStockHolder();
 
         var currentStock = stockHolder.getAmount(boxItem);
 
@@ -67,7 +67,7 @@ public class WithdrawCommand extends AbstractCommand {
             amount = 1;
         }
 
-        BoxProvider.get().getScheduler().runEntityTask(player, () -> {
+        BoxAPI.api().getScheduler().runEntityTask(player, () -> {
             int withdrawnAmount =
                     StockHolderTransaction.create(stockHolder)
                             .withdraw(boxItem, amount)
@@ -90,7 +90,7 @@ public class WithdrawCommand extends AbstractCommand {
         }
 
         var itemNameFilter = args[1].toLowerCase(Locale.ENGLISH);
-        var stockHolder = BoxProvider.get().getBoxPlayerMap().get(player).getCurrentStockHolder();
+        var stockHolder = BoxAPI.api().getBoxPlayerMap().get(player).getCurrentStockHolder();
 
         return stockHolder.getStockedItems().stream()
                 .map(BoxItem::getPlainName)

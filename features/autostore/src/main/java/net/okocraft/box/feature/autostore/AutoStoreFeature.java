@@ -1,7 +1,7 @@
 package net.okocraft.box.feature.autostore;
 
 import net.kyori.adventure.key.Key;
-import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.feature.AbstractBoxFeature;
 import net.okocraft.box.api.feature.Disableable;
 import net.okocraft.box.api.feature.Reloadable;
@@ -40,13 +40,13 @@ public class AutoStoreFeature extends AbstractBoxFeature implements Disableable,
 
         itemListener.register();
 
-        BoxProvider.get().getBoxCommand().getSubCommandHolder().register(autoStoreCommand);
+        BoxAPI.api().getBoxCommand().getSubCommandHolder().register(autoStoreCommand);
         ClickModeRegistry.register(autoStoreClickMode);
     }
 
     @Override
     public void disable() {
-        BoxProvider.get().getBoxCommand().getSubCommandHolder().unregister(autoStoreCommand);
+        BoxAPI.api().getBoxCommand().getSubCommandHolder().unregister(autoStoreCommand);
         ClickModeRegistry.unregister(autoStoreClickMode);
 
         itemListener.unregister();

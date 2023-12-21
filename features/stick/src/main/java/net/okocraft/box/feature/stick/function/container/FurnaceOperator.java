@@ -1,6 +1,6 @@
 package net.okocraft.box.feature.stick.function.container;
 
-import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.feature.stick.event.stock.StickCauses;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryAction;
@@ -26,7 +26,7 @@ public final class FurnaceOperator {
             return false;
         }
 
-        var boxItem = BoxProvider.get().getItemManager().getBoxItem(result);
+        var boxItem = BoxAPI.api().getItemManager().getBoxItem(result);
 
         if (boxItem.isEmpty()) {
             return false;

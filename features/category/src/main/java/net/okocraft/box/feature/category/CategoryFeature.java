@@ -2,7 +2,7 @@ package net.okocraft.box.feature.category;
 
 import com.github.siroshun09.configapi.format.yaml.YamlFormat;
 import net.kyori.adventure.key.Key;
-import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.feature.AbstractBoxFeature;
 import net.okocraft.box.api.feature.Disableable;
 import net.okocraft.box.api.feature.Reloadable;
@@ -33,7 +33,7 @@ public class CategoryFeature extends AbstractBoxFeature implements Disableable, 
 
     @Override
     public void enable() {
-        var filepath = BoxProvider.get().getPluginDirectory().resolve("categories.yml");
+        var filepath = BoxAPI.api().getPluginDirectory().resolve("categories.yml");
 
         try {
             CategoryFile.load(this.categoryRegistry, filepath);

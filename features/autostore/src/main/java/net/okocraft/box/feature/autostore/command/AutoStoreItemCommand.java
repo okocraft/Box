@@ -1,6 +1,6 @@
 package net.okocraft.box.feature.autostore.command;
 
-import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.message.GeneralMessage;
 import net.okocraft.box.api.util.TabCompleter;
 import net.okocraft.box.feature.autostore.message.AutoStoreMessage;
@@ -34,7 +34,7 @@ class AutoStoreItemCommand extends AutoStoreSubCommand {
         }
 
         var perItemModeSetting = setting.getPerItemModeSetting();
-        var itemManager = BoxProvider.get().getItemManager();
+        var itemManager = BoxAPI.api().getItemManager();
         var optionalBoxItem = itemManager.getBoxItem(args[2]);
 
         if (optionalBoxItem.isEmpty()) {

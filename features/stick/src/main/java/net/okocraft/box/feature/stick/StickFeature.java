@@ -1,6 +1,6 @@
 package net.okocraft.box.feature.stick;
 
-import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.feature.AbstractBoxFeature;
 import net.okocraft.box.api.feature.Disableable;
 import net.okocraft.box.feature.gui.GuiFeature;
@@ -31,19 +31,19 @@ public class StickFeature extends AbstractBoxFeature implements Disableable {
 
     @Override
     public void enable() {
-        if (BoxProvider.get().getFeature(GuiFeature.class).isPresent()) {
+        if (BoxAPI.api().getFeature(GuiFeature.class).isPresent()) {
             this.boxStickItem.onRightClick(this::defaultRightClickAction);
         }
 
-        BoxProvider.get().getBoxCommand().getSubCommandHolder().register(stickCommand);
-        BoxProvider.get().getBoxAdminCommand().getSubCommandHolder().register(customStickCommand);
-        Bukkit.getPluginManager().registerEvents(stickListener, BoxProvider.get().getPluginInstance());
+        BoxAPI.api().getBoxCommand().getSubCommandHolder().register(stickCommand);
+        BoxAPI.api().getBoxAdminCommand().getSubCommandHolder().register(customStickCommand);
+        Bukkit.getPluginManager().registerEvents(stickListener, BoxAPI.api().getPluginInstance());
     }
 
     @Override
     public void disable() {
-        BoxProvider.get().getBoxCommand().getSubCommandHolder().unregister(stickCommand);
-        BoxProvider.get().getBoxAdminCommand().getSubCommandHolder().register(customStickCommand);
+        BoxAPI.api().getBoxCommand().getSubCommandHolder().unregister(stickCommand);
+        BoxAPI.api().getBoxAdminCommand().getSubCommandHolder().register(customStickCommand);
         HandlerList.unregisterAll(stickListener);
     }
 
@@ -61,7 +61,7 @@ public class StickFeature extends AbstractBoxFeature implements Disableable {
             var menu = new CategorySelectorMenu();
             var session = PlayerSession.newSession(player);
 
-            BoxProvider.get().getEventManager().callAsync(new MenuOpenEvent(menu, session), event -> {
+            BoxAPI.api().getEventManager().callAsync(new MenuOpenEvent(menu, session), event -> {
                 if (!event.isCancelled()) {
                     MenuOpener.open(menu, session);
                 }

@@ -1,6 +1,6 @@
 package net.okocraft.box.feature.autostore.gui.buttons;
 
-import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.feature.autostore.event.AutoStoreSettingChangeEvent;
 import net.okocraft.box.feature.autostore.model.setting.AutoStoreSetting;
 import net.okocraft.box.feature.gui.api.button.Button;
@@ -20,6 +20,6 @@ abstract class AbstractAutoStoreSettingButton implements Button {
     }
 
     protected void callAutoStoreSettingChangeEvent(@NotNull AutoStoreSetting setting) {
-        BoxProvider.get().getEventManager().callAsync(new AutoStoreSettingChangeEvent(setting));
+        BoxAPI.api().getEventManager().callAsync(new AutoStoreSettingChangeEvent(setting));
     }
 }

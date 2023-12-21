@@ -2,7 +2,7 @@ package net.okocraft.box.feature.category.internal.listener;
 
 import com.github.siroshun09.configapi.format.yaml.YamlFormat;
 import net.kyori.adventure.key.Key;
-import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.event.item.CustomItemRegisterEvent;
 import net.okocraft.box.api.event.item.CustomItemRenameEvent;
 import net.okocraft.box.api.util.BoxLogger;
@@ -20,13 +20,13 @@ public class CustomItemListener {
     }
 
     public void register(@NotNull Key listenerKey) {
-        BoxProvider.get().getEventManager().getSubscriber(CustomItemRegisterEvent.class).subscribe(listenerKey, this::processEvent);
-        BoxProvider.get().getEventManager().getSubscriber(CustomItemRenameEvent.class).subscribe(listenerKey, this::processEvent);
+        BoxAPI.api().getEventManager().getSubscriber(CustomItemRegisterEvent.class).subscribe(listenerKey, this::processEvent);
+        BoxAPI.api().getEventManager().getSubscriber(CustomItemRenameEvent.class).subscribe(listenerKey, this::processEvent);
     }
 
     public void unregister(@NotNull Key listenerKey) {
-        BoxProvider.get().getEventManager().getSubscriber(CustomItemRegisterEvent.class).unsubscribeByKey(listenerKey);
-        BoxProvider.get().getEventManager().getSubscriber(CustomItemRenameEvent.class).unsubscribeByKey(listenerKey);
+        BoxAPI.api().getEventManager().getSubscriber(CustomItemRegisterEvent.class).unsubscribeByKey(listenerKey);
+        BoxAPI.api().getEventManager().getSubscriber(CustomItemRenameEvent.class).unsubscribeByKey(listenerKey);
     }
 
     private void processEvent(@NotNull CustomItemRegisterEvent event) {
@@ -41,7 +41,7 @@ public class CustomItemListener {
 
     private void updateCategoriesFile() {
         try {
-            var filepath = BoxProvider.get().getPluginDirectory().resolve("categories.yml");
+            var filepath = BoxAPI.api().getPluginDirectory().resolve("categories.yml");
             YamlFormat.DEFAULT.save(CategoryFile.dump(this.registry), filepath);
         } catch (Exception e) {
             BoxLogger.logger().error("Could not save categories.yml", e);

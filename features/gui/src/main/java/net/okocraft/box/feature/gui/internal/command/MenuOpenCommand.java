@@ -1,7 +1,7 @@
 package net.okocraft.box.feature.gui.internal.command;
 
 import net.kyori.adventure.text.Component;
-import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.command.AbstractCommand;
 import net.okocraft.box.api.message.Components;
 import net.okocraft.box.api.message.GeneralMessage;
@@ -76,7 +76,7 @@ public class MenuOpenCommand extends AbstractCommand {
                 }
 
                 var onlinePlayer = Bukkit.getPlayer(args[i + 1]);
-                var playerMap = BoxProvider.get().getBoxPlayerMap();
+                var playerMap = BoxAPI.api().getBoxPlayerMap();
 
                 if (onlinePlayer != null && playerMap.isLoaded(onlinePlayer)) {
                     session = PlayerSession.newSession(player, playerMap.get(onlinePlayer));
@@ -85,7 +85,7 @@ public class MenuOpenCommand extends AbstractCommand {
 
                     if (offlineUser != null) {
                         session = PlayerSession.newSession(player);
-                        session.setStockHolder(BoxProvider.get().getStockManager().getPersonalStockHolder(offlineUser));
+                        session.setStockHolder(BoxAPI.api().getStockManager().getPersonalStockHolder(offlineUser));
                     } else {
                         player.sendMessage(GeneralMessage.ERROR_COMMAND_PLAYER_NOT_FOUND.apply(args[i + 1]));
                         return;
@@ -179,13 +179,13 @@ public class MenuOpenCommand extends AbstractCommand {
         }
 
         var session = PlayerSession.newSession(player);
-        session.setStockHolder(BoxProvider.get().getStockManager().getPersonalStockHolder(user));
+        session.setStockHolder(BoxAPI.api().getStockManager().getPersonalStockHolder(user));
 
         openMenu(session, new CategorySelectorMenu());
     }
 
     private void openMenu(@NotNull PlayerSession session, @NotNull Menu menu) {
-        BoxProvider.get().getEventManager().callAsync(new MenuOpenEvent(menu, session), event -> {
+        BoxAPI.api().getEventManager().callAsync(new MenuOpenEvent(menu, session), event -> {
             if (event.isCancelled()) {
                 session.getViewer().sendMessage(CANNOT_OPEN_MENU);
             } else {

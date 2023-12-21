@@ -1,7 +1,7 @@
 package net.okocraft.box.feature.autostore.gui.buttons;
 
 import net.kyori.adventure.text.Component;
-import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.feature.autostore.gui.AutoStoreMenuDisplays;
 import net.okocraft.box.feature.autostore.gui.AutoStoreSettingKey;
 import net.okocraft.box.feature.gui.api.button.ClickResult;
@@ -75,7 +75,7 @@ public class BulkEditingButton extends AbstractAutoStoreSettingButton {
         Boolean recent = session.getData(RECENT_OPERATION_KEY);
 
         if (recent == null || !recent) {
-            perItemSetting.setEnabledItems(BoxProvider.get().getItemManager().getItemList());
+            perItemSetting.setEnabledItems(BoxAPI.api().getItemManager().getItemList());
             sound = ENABLE_ALL_SOUND;
             recent = true;
         } else {

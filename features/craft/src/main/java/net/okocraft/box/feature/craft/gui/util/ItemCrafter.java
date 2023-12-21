@@ -2,7 +2,7 @@ package net.okocraft.box.feature.craft.gui.util;
 
 import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.model.stock.StockHolder;
 import net.okocraft.box.api.util.InventoryUtil;
@@ -54,7 +54,7 @@ public class ItemCrafter {
         var stockHolder = session.getStockHolder();
 
         var event = new BoxCraftEvent(crafter, recipe, times);
-        BoxProvider.get().getEventManager().call(event);
+        BoxAPI.api().getEventManager().call(event);
 
         if (event.isCancelled()) {
             SoundBase.UNSUCCESSFUL.play(crafter);
@@ -75,7 +75,7 @@ public class ItemCrafter {
             var remainingItem = ingredient.item().getOriginal().getType().getCraftingRemainingItem();
 
             if (remainingItem != null) {
-                var remainingBoxItem = BoxProvider.get().getItemManager().getBoxItem(remainingItem.name());
+                var remainingBoxItem = BoxAPI.api().getItemManager().getBoxItem(remainingItem.name());
 
                 if (remainingBoxItem.isPresent()) {
                     if (craftRemainingItemMap == null) {
@@ -101,7 +101,7 @@ public class ItemCrafter {
         int resultAmount = recipe.amount() * times;
 
         if (session.getData(PUT_CRAFTED_ITEMS_INTO_INVENTORY) != null) {
-            BoxProvider.get().getScheduler().runEntityTask(crafter, () -> {
+            BoxAPI.api().getScheduler().runEntityTask(crafter, () -> {
                 int remaining = InventoryUtil.putItems(crafter.getInventory(), recipe.result().getOriginal(), resultAmount);
 
                 if (0 < remaining) {

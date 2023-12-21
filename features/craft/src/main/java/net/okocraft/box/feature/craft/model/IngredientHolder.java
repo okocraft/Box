@@ -1,6 +1,6 @@
 package net.okocraft.box.feature.craft.model;
 
-import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.api.BoxAPI;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.RecipeChoice;
 import org.jetbrains.annotations.ApiStatus;
@@ -74,7 +74,7 @@ public class IngredientHolder {
         var tempPattern = new ArrayList<BoxIngredientItem>(patterns.size());
 
         for (var item : patterns) {
-            BoxProvider.get().getItemManager().getBoxItem(item)
+            BoxAPI.api().getItemManager().getBoxItem(item)
                     .ifPresent(value -> tempPattern.add(ModelCache.getIngredientItem(value, item.getAmount())));
         }
 

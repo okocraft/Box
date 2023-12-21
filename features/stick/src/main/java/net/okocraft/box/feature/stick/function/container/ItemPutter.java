@@ -1,6 +1,6 @@
 package net.okocraft.box.feature.stick.function.container;
 
-import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.event.stockholder.stock.StockEvent;
 import net.okocraft.box.api.player.BoxPlayer;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -26,7 +26,7 @@ final class ItemPutter {
             return false;
         }
 
-        var boxItem = BoxProvider.get().getItemManager().getBoxItem(mainHandItem).orElse(null);
+        var boxItem = BoxAPI.api().getItemManager().getBoxItem(mainHandItem).orElse(null);
 
         if (boxItem == null) {
             return false;

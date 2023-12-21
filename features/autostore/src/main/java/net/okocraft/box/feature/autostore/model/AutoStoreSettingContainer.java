@@ -1,7 +1,7 @@
 package net.okocraft.box.feature.autostore.model;
 
 import net.kyori.adventure.key.Key;
-import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.feature.autostore.message.AutoStoreMessage;
 import net.okocraft.box.feature.autostore.model.setting.AutoStoreSetting;
@@ -79,7 +79,7 @@ public class AutoStoreSettingContainer {
      * @return the {@link CompletableFuture} to load the {@link AutoStoreSetting}
      */
     public @NotNull AutoStoreSetting load(@NotNull UUID uuid) throws Exception {
-        var data = BoxProvider.get().getCustomDataManager().loadData(createKey(uuid));
+        var data = BoxAPI.api().getCustomDataManager().loadData(createKey(uuid));
         return AutoStoreSettingSerializer.deserialize(uuid, data);
     }
 
@@ -90,7 +90,7 @@ public class AutoStoreSettingContainer {
      */
     public void save(@NotNull AutoStoreSetting setting) throws Exception {
         var data = AutoStoreSettingSerializer.serialize(setting);
-        BoxProvider.get().getCustomDataManager().saveData(createKey(setting.getUuid()), data);
+        BoxAPI.api().getCustomDataManager().saveData(createKey(setting.getUuid()), data);
     }
 
     /**

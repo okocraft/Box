@@ -1,7 +1,7 @@
 package net.okocraft.box.feature.command.box;
 
 import net.kyori.adventure.text.Component;
-import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.command.AbstractCommand;
 import net.okocraft.box.api.message.GeneralMessage;
 import net.okocraft.box.api.model.item.BoxItem;
@@ -40,7 +40,7 @@ public class DepositCommand extends AbstractCommand {
             return;
         }
 
-        var itemManager = BoxProvider.get().getItemManager();
+        var itemManager = BoxAPI.api().getItemManager();
 
         if (args.length == 2) {
             var arg = args[1];
@@ -93,7 +93,7 @@ public class DepositCommand extends AbstractCommand {
     }
 
     private void depositItemInMainHand(@NotNull Player player, int limit) {
-        BoxProvider.get().getScheduler().runEntityTask(player, () -> {
+        BoxAPI.api().getScheduler().runEntityTask(player, () -> {
             if (limit < 1) {
                 player.sendMessage(BoxMessage.DEPOSIT_NOT_DEPOSITED);
                 return;
@@ -106,7 +106,7 @@ public class DepositCommand extends AbstractCommand {
                 return;
             }
 
-            var boxItem = BoxProvider.get().getItemManager().getBoxItem(mainHand).orElse(null);
+            var boxItem = BoxAPI.api().getItemManager().getBoxItem(mainHand).orElse(null);
 
             if (boxItem == null) {
                 player.sendMessage(BoxMessage.DEPOSIT_ITEM_NOT_REGISTERED);
@@ -116,7 +116,7 @@ public class DepositCommand extends AbstractCommand {
             int amount = Math.min(limit, mainHand.getAmount());
             int remaining = mainHand.getAmount() - amount;
 
-            int current = BoxProvider.get().getBoxPlayerMap().get(player).getCurrentStockHolder().increase(boxItem, amount, CommandCauses.DEPOSIT);
+            int current = BoxAPI.api().getBoxPlayerMap().get(player).getCurrentStockHolder().increase(boxItem, amount, CommandCauses.DEPOSIT);
 
             if (0 < remaining) {
                 player.getInventory().setItemInMainHand(mainHand.asQuantity(remaining));
@@ -129,9 +129,9 @@ public class DepositCommand extends AbstractCommand {
     }
 
     private void depositAll(@NotNull Player player) {
-        BoxProvider.get().getScheduler().runEntityTask(player, () -> {
+        BoxAPI.api().getScheduler().runEntityTask(player, () -> {
             var resultList =
-                    StockHolderTransaction.create(BoxProvider.get().getBoxPlayerMap().get(player).getCurrentStockHolder())
+                    StockHolderTransaction.create(BoxAPI.api().getBoxPlayerMap().get(player).getCurrentStockHolder())
                             .depositAll()
                             .fromInventory(player.getInventory(), CommandCauses.DEPOSIT);
 
@@ -141,9 +141,9 @@ public class DepositCommand extends AbstractCommand {
     }
 
     private void depositItem(@NotNull Player player, @NotNull BoxItem boxItem, int amount) {
-        BoxProvider.get().getScheduler().runEntityTask(player, () -> {
+        BoxAPI.api().getScheduler().runEntityTask(player, () -> {
             var resultList =
-                    StockHolderTransaction.create(BoxProvider.get().getBoxPlayerMap().get(player).getCurrentStockHolder())
+                    StockHolderTransaction.create(BoxAPI.api().getBoxPlayerMap().get(player).getCurrentStockHolder())
                             .deposit(boxItem, amount)
                             .fromInventory(player.getInventory(), CommandCauses.DEPOSIT);
 
@@ -169,7 +169,7 @@ public class DepositCommand extends AbstractCommand {
             var result =
                     Arrays.stream(player.getInventory().getStorageContents())
                             .filter(Objects::nonNull)
-                            .map(BoxProvider.get().getItemManager()::getBoxItem)
+                            .map(BoxAPI.api().getItemManager()::getBoxItem)
                             .filter(Optional::isPresent)
                             .map(Optional::get)
                             .map(BoxItem::getPlainName)

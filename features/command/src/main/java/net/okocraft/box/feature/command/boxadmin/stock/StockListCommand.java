@@ -1,7 +1,7 @@
 package net.okocraft.box.feature.command.boxadmin.stock;
 
 import net.kyori.adventure.text.Component;
-import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.command.AbstractCommand;
 import net.okocraft.box.api.message.GeneralMessage;
 import net.okocraft.box.api.util.TabCompleter;
@@ -39,7 +39,7 @@ class StockListCommand extends AbstractCommand {
 
         if (target != null) {
             sender.sendMessage(SharedStockListCommand.createStockList(
-                    BoxProvider.get().getStockManager().getPersonalStockHolder(target),
+                    BoxAPI.api().getStockManager().getPersonalStockHolder(target),
                     3 < args.length ? Arrays.copyOfRange(args, 3, args.length) : null
             ));
         } else {

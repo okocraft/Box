@@ -1,6 +1,6 @@
 package net.okocraft.box.feature.craft;
 
-import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.feature.AbstractBoxFeature;
 import net.okocraft.box.api.feature.BoxFeature;
 import net.okocraft.box.api.feature.Disableable;
@@ -42,7 +42,7 @@ public class CraftFeature extends AbstractBoxFeature implements Disableable, Rel
         Map<BoxItem, RecipeHolder> recipeMap;
 
         try {
-            recipeMap = RecipeLoader.load(BoxProvider.get().getPluginDirectory().resolve("recipes.yml"));
+            recipeMap = RecipeLoader.load(BoxAPI.api().getPluginDirectory().resolve("recipes.yml"));
         } catch (IOException e) {
             BoxLogger.logger().error("Could not load recipes.yml", e);
             return;
@@ -56,13 +56,13 @@ public class CraftFeature extends AbstractBoxFeature implements Disableable, Rel
 
         ClickModeRegistry.register(craftMode);
 
-        BoxProvider.get().getBoxCommand().getSubCommandHolder().register(craftCommand);
+        BoxAPI.api().getBoxCommand().getSubCommandHolder().register(craftCommand);
     }
 
     @Override
     public void disable() {
         ClickModeRegistry.unregister(craftMode);
-        BoxProvider.get().getBoxCommand().getSubCommandHolder().unregister(craftCommand);
+        BoxAPI.api().getBoxCommand().getSubCommandHolder().unregister(craftCommand);
     }
 
     @Override

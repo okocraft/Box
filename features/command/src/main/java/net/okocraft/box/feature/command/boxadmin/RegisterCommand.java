@@ -1,7 +1,7 @@
 package net.okocraft.box.feature.command.boxadmin;
 
 import net.kyori.adventure.text.Component;
-import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.command.AbstractCommand;
 import net.okocraft.box.api.message.GeneralMessage;
 import net.okocraft.box.api.model.result.item.ItemRegistrationResult;
@@ -31,7 +31,7 @@ public class RegisterCommand extends AbstractCommand {
             return;
         }
 
-        BoxProvider.get().getItemManager().registerCustomItem(
+        BoxAPI.api().getItemManager().registerCustomItem(
                 mainHandItem,
                 1 < args.length ? args[1] : null,
                 result -> consumeResult(player, result)

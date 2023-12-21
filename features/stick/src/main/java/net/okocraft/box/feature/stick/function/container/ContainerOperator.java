@@ -1,6 +1,6 @@
 package net.okocraft.box.feature.stick.function.container;
 
-import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.transaction.StockHolderTransaction;
 import net.okocraft.box.feature.stick.event.stock.StickCauses;
 import org.bukkit.inventory.Inventory;
@@ -31,7 +31,7 @@ public final class ContainerOperator {
     }
 
     private static boolean withdrawToInventory(@NotNull ContainerOperation.Context<Inventory> context) {
-        var boxItem = BoxProvider.get().getItemManager().getBoxItem(context.player().getPlayer().getInventory().getItemInMainHand()).orElse(null);
+        var boxItem = BoxAPI.api().getItemManager().getBoxItem(context.player().getPlayer().getInventory().getItemInMainHand()).orElse(null);
 
         if (boxItem == null) {
             return false;

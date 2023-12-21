@@ -1,6 +1,6 @@
 package net.okocraft.box.api.util;
 
-import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.model.user.BoxUser;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +23,7 @@ public final class UserSearcher {
         var uuid = toUuidOrNull(uuidOrName);
 
         var onlinePlayer = uuid != null ? Bukkit.getPlayer(uuid) : Bukkit.getPlayer(uuidOrName);
-        var userManager = BoxProvider.get().getUserManager();
+        var userManager = BoxAPI.api().getUserManager();
 
         if (onlinePlayer != null) {
             return userManager.createBoxUser(onlinePlayer.getUniqueId(), onlinePlayer.getName());

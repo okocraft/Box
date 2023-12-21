@@ -1,6 +1,6 @@
 package net.okocraft.box.feature.autostore.command;
 
-import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.feature.autostore.event.AutoStoreSettingChangeEvent;
 import net.okocraft.box.feature.autostore.message.AutoStoreMessage;
 import net.okocraft.box.feature.autostore.model.setting.AutoStoreSetting;
@@ -24,7 +24,7 @@ final class AutoStoreCommandUtil {
     }
 
     static void callEvent(@NotNull AutoStoreSetting setting) {
-        BoxProvider.get().getEventManager().callAsync(new AutoStoreSettingChangeEvent(setting));
+        BoxAPI.api().getEventManager().callAsync(new AutoStoreSettingChangeEvent(setting));
     }
 
     static @Nullable Boolean getBoolean(@NotNull String arg) {

@@ -1,7 +1,7 @@
 package net.okocraft.box.feature.gui;
 
 import it.unimi.dsi.fastutil.objects.ObjectList;
-import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.feature.AbstractBoxFeature;
 import net.okocraft.box.api.feature.BoxFeature;
 import net.okocraft.box.api.feature.Disableable;
@@ -33,17 +33,17 @@ public class GuiFeature extends AbstractBoxFeature implements Disableable, Reloa
 
     @Override
     public void enable() {
-        var boxCommand = BoxProvider.get().getBoxCommand();
+        var boxCommand = BoxAPI.api().getBoxCommand();
 
         boxCommand.changeNoArgumentCommand(command);
         boxCommand.getSubCommandHolder().register(command);
 
-        Bukkit.getPluginManager().registerEvents(listener, BoxProvider.get().getPluginInstance());
+        Bukkit.getPluginManager().registerEvents(listener, BoxAPI.api().getPluginInstance());
     }
 
     @Override
     public void disable() {
-        var boxCommand = BoxProvider.get().getBoxCommand();
+        var boxCommand = BoxAPI.api().getBoxCommand();
 
         boxCommand.changeNoArgumentCommand(null);
         boxCommand.getSubCommandHolder().unregister(command);
@@ -79,7 +79,7 @@ public class GuiFeature extends AbstractBoxFeature implements Disableable, Reloa
 
         if (schedulingPlayers != null && !schedulingPlayers.isEmpty()) {
             for (var player : schedulingPlayers) {
-                BoxProvider.get().getScheduler().runEntityTask(player, () -> closeMenu(player));
+                BoxAPI.api().getScheduler().runEntityTask(player, () -> closeMenu(player));
             }
         }
     }

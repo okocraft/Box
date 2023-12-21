@@ -1,6 +1,6 @@
 package net.okocraft.box.api.transaction;
 
-import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.event.stockholder.stock.StockEvent;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.model.stock.StockHolder;
@@ -47,7 +47,7 @@ record DepositAllImpl(@NotNull StockHolder stockHolder,
                 continue;
             }
 
-            var boxItem = BoxProvider.get().getItemManager().getBoxItem(item).orElse(null);
+            var boxItem = BoxAPI.api().getItemManager().getBoxItem(item).orElse(null);
 
             if (boxItem == null || (filter != null && !filter.test(boxItem)) || (view != null && !checkClickEvent(view, i))) {
                 continue;

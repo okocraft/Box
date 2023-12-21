@@ -1,7 +1,7 @@
 package net.okocraft.box.feature.autostore.listener;
 
 import io.papermc.paper.event.block.PlayerShearBlockEvent;
-import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.event.stockholder.stock.StockEvent;
 import net.okocraft.box.feature.autostore.integration.CoreProtectIntegration;
 import net.okocraft.box.feature.autostore.model.AutoStoreSettingContainer;
@@ -28,7 +28,7 @@ public class ItemListener implements Listener {
     private static final StockEvent.Cause AUTOSTORE_CAUSE = StockEvent.Cause.create("autostore");
 
     public void register() {
-        var plugin = BoxProvider.get().getPluginInstance();
+        var plugin = BoxAPI.api().getPluginInstance();
         Bukkit.getPluginManager().registerEvents(this, plugin);
     }
 
@@ -99,11 +99,11 @@ public class ItemListener implements Listener {
     }
 
     private boolean processEvent(@NotNull Player player, @NotNull Location location, @NotNull ItemStack item, boolean direct) {
-        if (!BoxProvider.get().canUseBox(player)) {
+        if (!BoxAPI.api().canUseBox(player)) {
             return false;
         }
 
-        var playerMap = BoxProvider.get().getBoxPlayerMap();
+        var playerMap = BoxAPI.api().getBoxPlayerMap();
         var container = AutoStoreSettingContainer.INSTANCE;
 
         if (!playerMap.isLoaded(player) || !container.isLoaded(player)) {
@@ -120,7 +120,7 @@ public class ItemListener implements Listener {
             return false;
         }
 
-        var boxItem = BoxProvider.get().getItemManager().getBoxItem(item);
+        var boxItem = BoxAPI.api().getItemManager().getBoxItem(item);
 
         if (boxItem.isEmpty()) {
             return false;

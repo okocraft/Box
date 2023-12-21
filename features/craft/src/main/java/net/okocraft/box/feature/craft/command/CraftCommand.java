@@ -1,7 +1,7 @@
 package net.okocraft.box.feature.craft.command;
 
 import net.kyori.adventure.text.Component;
-import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.command.AbstractCommand;
 import net.okocraft.box.api.message.Components;
 import net.okocraft.box.api.message.GeneralMessage;
@@ -41,7 +41,7 @@ public class CraftCommand extends AbstractCommand {
             return;
         }
 
-        var item = BoxProvider.get().getItemManager().getBoxItem(args[1]);
+        var item = BoxAPI.api().getItemManager().getBoxItem(args[1]);
 
         if (item.isEmpty()) {
             player.sendMessage(GeneralMessage.ERROR_COMMAND_ITEM_NOT_FOUND.apply(args[1]));
@@ -64,7 +64,7 @@ public class CraftCommand extends AbstractCommand {
             menu = new RecipeSelectorMenu(item.get(), recipeHolder);
         }
 
-        BoxProvider.get().getEventManager().callAsync(new MenuOpenEvent(menu, session), event -> {
+        BoxAPI.api().getEventManager().callAsync(new MenuOpenEvent(menu, session), event -> {
             if (event.isCancelled()) {
                 session.getViewer().sendMessage(Components.redTranslatable("box.gui.cannot-open-menu"));
             } else {

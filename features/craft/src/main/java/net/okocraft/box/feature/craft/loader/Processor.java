@@ -1,6 +1,6 @@
 package net.okocraft.box.feature.craft.loader;
 
-import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.model.manager.ItemManager;
 import net.okocraft.box.api.util.BoxLogger;
@@ -30,7 +30,7 @@ final class Processor {
     private static final Set<ItemStack> DISABLED_ITEM = Set.of(new ItemStack(Material.FIREWORK_ROCKET));
 
     private final RecipeConfig recipeConfig;
-    private final ItemManager itemManager = BoxProvider.get().getItemManager();
+    private final ItemManager itemManager = BoxAPI.api().getItemManager();
     private final Map<BoxItem, RecipeHolder> recipeMap = new HashMap<>(100, 0.8f);
 
     Processor(@NotNull RecipeConfig recipeConfig) {
@@ -64,7 +64,7 @@ final class Processor {
 
     void processCustomRecipes() {
         var logger = BoxLogger.logger();
-        var itemManager = BoxProvider.get().getItemManager();
+        var itemManager = BoxAPI.api().getItemManager();
 
         for (var customRecipe : this.recipeConfig.customRecipes()) {
             var resultItem = itemManager.getBoxItem(customRecipe.result());
@@ -206,6 +206,6 @@ final class Processor {
     private void addRecipe(@NotNull List<IngredientHolder> ingredients, @NotNull BoxItem result, int amount) {
         var recipe = new BoxItemRecipe(ingredients, result, amount);
         recipeMap.computeIfAbsent(result, i -> new RecipeHolder()).addRecipe(recipe);
-        BoxProvider.get().getEventManager().call(new RecipeImportEvent(recipe));
+        BoxAPI.api().getEventManager().call(new RecipeImportEvent(recipe));
     }
 }

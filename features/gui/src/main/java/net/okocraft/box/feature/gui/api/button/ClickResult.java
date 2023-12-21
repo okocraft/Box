@@ -1,6 +1,6 @@
 package net.okocraft.box.feature.gui.api.button;
 
-import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.feature.gui.api.menu.Menu;
 import org.jetbrains.annotations.NotNull;
 
@@ -54,7 +54,7 @@ public sealed interface ClickResult permits ClickResult.ChangeMenu, ClickResult.
                 if (this.consumer == null) {
                     this.result = result;
                 } else {
-                    BoxProvider.get().getScheduler().runAsyncTask(() -> this.consumer.accept(result));
+                    BoxAPI.api().getScheduler().runAsyncTask(() -> this.consumer.accept(result));
                 }
             }
         }

@@ -1,7 +1,7 @@
 package net.okocraft.box.feature.command.boxadmin;
 
 import net.kyori.adventure.text.Component;
-import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.command.AbstractCommand;
 import net.okocraft.box.api.event.user.UserDataResetEvent;
 import net.okocraft.box.api.message.GeneralMessage;
@@ -46,9 +46,9 @@ public class ResetAllCommand extends AbstractCommand {
         if (CONFIRM.equalsIgnoreCase(args[1]) && confirmationMap.containsKey(sender)) {
             var target = confirmationMap.remove(sender);
 
-            BoxProvider.get().getStockManager().getPersonalStockHolder(target).reset();
+            BoxAPI.api().getStockManager().getPersonalStockHolder(target).reset();
 
-            BoxProvider.get().getEventManager().call(new UserDataResetEvent(target));
+            BoxAPI.api().getEventManager().call(new UserDataResetEvent(target));
 
             sender.sendMessage(BoxAdminMessage.RESET_ALL_SUCCESS_SENDER.apply(target));
 

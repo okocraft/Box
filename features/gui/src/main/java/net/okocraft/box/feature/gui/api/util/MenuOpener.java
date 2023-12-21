@@ -1,6 +1,6 @@
 package net.okocraft.box.feature.gui.api.util;
 
-import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.feature.gui.api.menu.Menu;
 import net.okocraft.box.feature.gui.api.session.PlayerSession;
 import net.okocraft.box.feature.gui.internal.holder.BoxInventoryHolder;
@@ -20,7 +20,7 @@ public final class MenuOpener {
         var holder = new BoxInventoryHolder(menu, session);
         var viewer = session.getViewer();
 
-        BoxProvider.get().getScheduler().runEntityTask(viewer, () -> {
+        BoxAPI.api().getScheduler().runEntityTask(viewer, () -> {
             viewer.openInventory(holder.getInventory());
 
             if (XmasChecker.isXmas()) {
@@ -35,7 +35,7 @@ public final class MenuOpener {
         var holder = new BoxInventoryHolder(menu, session);
         var viewer = session.getViewer();
 
-        BoxProvider.get().getScheduler().runEntityTask(viewer, () -> {
+        BoxAPI.api().getScheduler().runEntityTask(viewer, () -> {
             viewer.openInventory(holder.getInventory());
 
             if (XmasChecker.isXmas()) {

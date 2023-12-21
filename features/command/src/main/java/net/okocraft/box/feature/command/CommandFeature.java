@@ -1,6 +1,6 @@
 package net.okocraft.box.feature.command;
 
-import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.command.Command;
 import net.okocraft.box.api.feature.AbstractBoxFeature;
 import net.okocraft.box.feature.command.box.DepositCommand;
@@ -35,14 +35,14 @@ public class CommandFeature extends AbstractBoxFeature {
 
     @Override
     public void enable() {
-        var api = BoxProvider.get();
+        var api = BoxAPI.api();
         boxSubCommands.forEach(api.getBoxCommand().getSubCommandHolder()::register);
         boxAdminSubCommands.forEach(api.getBoxAdminCommand().getSubCommandHolder()::register);
     }
 
     @Override
     public void disable() {
-        var api = BoxProvider.get();
+        var api = BoxAPI.api();
         boxSubCommands.forEach(api.getBoxCommand().getSubCommandHolder()::unregister);
         boxAdminSubCommands.forEach(api.getBoxAdminCommand().getSubCommandHolder()::unregister);
     }

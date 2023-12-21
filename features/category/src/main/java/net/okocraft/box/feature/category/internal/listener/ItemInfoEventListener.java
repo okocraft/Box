@@ -5,7 +5,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.event.player.PlayerCollectItemInfoEvent;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.feature.category.api.category.Category;
@@ -40,11 +40,11 @@ public class ItemInfoEventListener {
     }
 
     public void register(@NotNull Key listenerKey) {
-        BoxProvider.get().getEventManager().getSubscriber(PlayerCollectItemInfoEvent.class).subscribe(listenerKey, this::processEvent);
+        BoxAPI.api().getEventManager().getSubscriber(PlayerCollectItemInfoEvent.class).subscribe(listenerKey, this::processEvent);
     }
 
     public void unregister(@NotNull Key listenerKey) {
-        BoxProvider.get().getEventManager().getSubscriber(PlayerCollectItemInfoEvent.class).unsubscribeByKey(listenerKey);
+        BoxAPI.api().getEventManager().getSubscriber(PlayerCollectItemInfoEvent.class).unsubscribeByKey(listenerKey);
     }
 
     private void processEvent(@NotNull PlayerCollectItemInfoEvent event) {

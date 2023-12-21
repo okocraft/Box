@@ -1,6 +1,6 @@
 package net.okocraft.box.feature.gui.api.session;
 
-import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.model.stock.StockHolder;
 import net.okocraft.box.api.player.BoxPlayer;
 import net.okocraft.box.feature.gui.api.menu.Menu;
@@ -19,7 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class PlayerSession {
 
     public static @NotNull PlayerSession newSession(@NotNull Player player) {
-        return newSession(player, BoxProvider.get().getBoxPlayerMap().get(player));
+        return newSession(player, BoxAPI.api().getBoxPlayerMap().get(player));
     }
 
     public static @NotNull PlayerSession newSession(@NotNull Player player, @NotNull BoxPlayer source) {

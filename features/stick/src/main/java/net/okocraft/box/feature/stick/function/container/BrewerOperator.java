@@ -1,6 +1,6 @@
 package net.okocraft.box.feature.stick.function.container;
 
-import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.feature.stick.event.stock.StickCause;
 import net.okocraft.box.feature.stick.event.stock.StickCauses;
 import org.bukkit.Material;
@@ -43,7 +43,7 @@ public final class BrewerOperator {
                 continue;
             }
 
-            var boxItem = BoxProvider.get().getItemManager().getBoxItem(potion);
+            var boxItem = BoxAPI.api().getItemManager().getBoxItem(potion);
 
             if (boxItem.isEmpty()) {
                 continue;
@@ -73,7 +73,7 @@ public final class BrewerOperator {
     }
 
     private static boolean putPotions(@NotNull ContainerOperation.Context<BrewerInventory> context, @NotNull ItemStack mainHand) {
-        var optionalBoxItem = BoxProvider.get().getItemManager().getBoxItem(mainHand);
+        var optionalBoxItem = BoxAPI.api().getItemManager().getBoxItem(mainHand);
 
         if (optionalBoxItem.isEmpty()) {
             return false;

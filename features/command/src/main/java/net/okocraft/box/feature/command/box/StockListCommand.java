@@ -1,7 +1,7 @@
 package net.okocraft.box.feature.command.box;
 
 import net.kyori.adventure.text.Component;
-import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.command.AbstractCommand;
 import net.okocraft.box.api.message.GeneralMessage;
 import net.okocraft.box.feature.command.message.BoxMessage;
@@ -33,7 +33,7 @@ public class StockListCommand extends AbstractCommand {
             return;
         }
 
-        var playerMap = BoxProvider.get().getBoxPlayerMap();
+        var playerMap = BoxAPI.api().getBoxPlayerMap();
 
         if (!playerMap.isLoaded(player)) {
             if (playerMap.isScheduledLoading(player)) {

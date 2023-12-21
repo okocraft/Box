@@ -1,7 +1,7 @@
 package net.okocraft.box.feature.command.boxadmin.stock;
 
 import net.kyori.adventure.text.Component;
-import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.command.AbstractCommand;
 import net.okocraft.box.api.command.Command;
 import net.okocraft.box.api.message.GeneralMessage;
@@ -124,7 +124,7 @@ class StockModifyCommands {
                 return;
             }
 
-            var item = BoxProvider.get().getItemManager().getBoxItem(args[3]);
+            var item = BoxAPI.api().getItemManager().getBoxItem(args[3]);
 
             if (item.isEmpty()) {
                 sender.sendMessage(GeneralMessage.ERROR_COMMAND_ITEM_NOT_FOUND.apply(args[3]));
@@ -150,7 +150,7 @@ class StockModifyCommands {
             var target = UserSearcher.search(args[2]);
 
             if (target != null) {
-                var stockHolder = BoxProvider.get().getStockManager().getPersonalStockHolder(target);
+                var stockHolder = BoxAPI.api().getStockManager().getPersonalStockHolder(target);
                 int current = modifyStock(sender, stockHolder, item.get(), amount);
                 sendMessage(sender, target, item.get(), amount, current);
             } else {
