@@ -17,10 +17,18 @@ import java.util.Objects;
  */
 public class IngredientHolder {
 
+    /**
+     * Enables caching objects.
+     */
+    @ApiStatus.Internal
     public static void enableCache() {
         ModelCache.createCache();
     }
 
+    /**
+     * Disables caching objects.
+     */
+    @ApiStatus.Internal
     public static void disableCache() {
         ModelCache.clearCache();
     }

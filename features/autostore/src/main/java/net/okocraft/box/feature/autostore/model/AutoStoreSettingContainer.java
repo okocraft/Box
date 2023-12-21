@@ -62,6 +62,7 @@ public class AutoStoreSettingContainer {
      * NOTE: <b>This method is for internal use only.</b>
      *
      * @param player the {@link Player} to load the {@link AutoStoreSetting}
+     * @throws Exception if the error happened while loading {@link AutoStoreSetting}
      */
     @ApiStatus.Internal
     public void load(@NotNull Player player) throws Exception {
@@ -77,6 +78,7 @@ public class AutoStoreSettingContainer {
      *
      * @param uuid the {@link UUID} to load the {@link AutoStoreSetting}
      * @return the {@link CompletableFuture} to load the {@link AutoStoreSetting}
+     * @throws Exception if the error happened while loading {@link AutoStoreSetting}
      */
     public @NotNull AutoStoreSetting load(@NotNull UUID uuid) throws Exception {
         var data = BoxAPI.api().getCustomDataManager().loadData(createKey(uuid));
@@ -87,6 +89,7 @@ public class AutoStoreSettingContainer {
      * Saves the {@link AutoStoreSetting}.
      *
      * @param setting the {@link AutoStoreSetting} to save
+     * @throws Exception if the error happened while saving {@link AutoStoreSetting}
      */
     public void save(@NotNull AutoStoreSetting setting) throws Exception {
         var data = AutoStoreSettingSerializer.serialize(setting);
@@ -99,6 +102,7 @@ public class AutoStoreSettingContainer {
      * NOTE: <b>This method is for internal use only.</b>
      *
      * @param player the {@link Player} to unload the {@link AutoStoreSetting}
+     * @throws Exception if the error happened while saving {@link AutoStoreSetting}
      */
     @ApiStatus.Internal
     public void unload(@NotNull Player player) throws Exception {

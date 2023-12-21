@@ -110,14 +110,29 @@ public final class BoxStickItem {
                 meta.getPersistentDataContainer().has(V3_STICK_KEY, PersistentDataType.INTEGER);
     }
 
+    /**
+     * Gets the {@link NamespacedKey} that is used for saving data to {@link PersistentDataContainer}.
+     *
+     * @return the {@link NamespacedKey} that is used for saving data to {@link PersistentDataContainer}
+     */
     public @NotNull NamespacedKey key() {
         return this.key;
     }
 
+    /**
+     * Sets the action called when the {@link Player} right-clicked.
+     *
+     * @param onRightClick the action on right-click
+     */
     public void onRightClick(@NotNull Consumer<Player> onRightClick) {
         this.onRightClick = onRightClick;
     }
 
+    /**
+     * Calls the action of right-click
+     *
+     * @param player the {@link Player} who clicked
+     */
     public void onRightClick(@NotNull Player player) {
         if (this.onRightClick != null) {
             this.onRightClick.accept(player);

@@ -60,6 +60,7 @@ public final class StockHolderTransaction {
     /**
      * Creates a {@link Deposit} instance that depositing filtered items that can be deposited.
      *
+     * @param filter a {@link Predicate} to filter {@link BoxItem}s
      * @return a {@link Deposit} instance
      * @throws NullPointerException if {@code filter} is null
      */

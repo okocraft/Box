@@ -16,8 +16,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * A {@link net.okocraft.box.api.feature.BoxFeature} that provides Box Stick.
+ */
 public class StickFeature extends AbstractBoxFeature implements Disableable {
 
     private final BoxStickItem boxStickItem = new BoxStickItem(new NamespacedKey("box", "stick"));
@@ -25,6 +29,10 @@ public class StickFeature extends AbstractBoxFeature implements Disableable {
     private final CustomStickCommand customStickCommand = new CustomStickCommand(boxStickItem);
     private final StickListener stickListener = new StickListener(boxStickItem);
 
+    /**
+     * The constructor of {@link StickFeature}.
+     */
+    @ApiStatus.Internal
     public StickFeature() {
         super("stick");
     }
