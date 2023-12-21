@@ -1,0 +1,144 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "net.okocraft.box",
+    "module": "box-stick-feature",
+    "version": "6.0.0-SNAPSHOT",
+    "attributes": {
+      "org.gradle.status": "integration"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.4"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 17,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api"
+      },
+      "dependencies": [
+        {
+          "group": "com.github.siroshun09.configapi",
+          "module": "configapi-format-yaml",
+          "version": {
+            "requires": "5.0.0-alpha.5"
+          },
+          "excludes": [
+            {
+              "group": "org.yaml",
+              "module": "snakeyaml"
+            }
+          ]
+        },
+        {
+          "group": "com.github.siroshun09.event4j",
+          "module": "event4j",
+          "version": {
+            "requires": "4.0.0-rc.1"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "box-stick-feature-6.0.0-SNAPSHOT.jar",
+          "url": "box-stick-feature-6.0.0-SNAPSHOT.jar",
+          "size": 57995,
+          "sha512": "5b8a66218342717475f9bd3ecf808253f00d5e3bcf7647b2a3dfe5c905041add969e9d5c741e60798213e7f623046f3a234eb35aabee69bf7238b1bcc54403ee",
+          "sha256": "28c4fb688904ed1e00a50e6fcf9cf2d506e0582d0d5b611a2b97d632c0b2eaf0",
+          "sha1": "be77b2a427fa5fd988b5f5436cfdcc32f124d38e",
+          "md5": "eaa6d30ff40d7fa62aeb02b495693ef2"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 17,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "dependencies": [
+        {
+          "group": "com.github.siroshun09.configapi",
+          "module": "configapi-format-yaml",
+          "version": {
+            "requires": "5.0.0-alpha.5"
+          },
+          "excludes": [
+            {
+              "group": "org.yaml",
+              "module": "snakeyaml"
+            }
+          ]
+        },
+        {
+          "group": "com.github.siroshun09.event4j",
+          "module": "event4j",
+          "version": {
+            "requires": "4.0.0-rc.1"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "box-stick-feature-6.0.0-SNAPSHOT.jar",
+          "url": "box-stick-feature-6.0.0-SNAPSHOT.jar",
+          "size": 57995,
+          "sha512": "5b8a66218342717475f9bd3ecf808253f00d5e3bcf7647b2a3dfe5c905041add969e9d5c741e60798213e7f623046f3a234eb35aabee69bf7238b1bcc54403ee",
+          "sha256": "28c4fb688904ed1e00a50e6fcf9cf2d506e0582d0d5b611a2b97d632c0b2eaf0",
+          "sha1": "be77b2a427fa5fd988b5f5436cfdcc32f124d38e",
+          "md5": "eaa6d30ff40d7fa62aeb02b495693ef2"
+        }
+      ]
+    },
+    {
+      "name": "javadocElements",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "javadoc",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "box-stick-feature-6.0.0-SNAPSHOT-javadoc.jar",
+          "url": "box-stick-feature-6.0.0-SNAPSHOT-javadoc.jar",
+          "size": 145842,
+          "sha512": "855ed6f98395a77bea3277be9a1acf3f0ae170db2748f6b5deadb495c9842c6dc644b2fe33889aa70eee9aeb773aa899891978196dfe42ed50a631feca1e51bc",
+          "sha256": "0b3c47382316b835e0d4ec63e1f182fb9bda9b35a35fd420442a5ab4072c9ffe",
+          "sha1": "f65570259c33edbee3bd6e061fb02d5d7fbe2a30",
+          "md5": "c88e193913cf847f848cf0db115e0771"
+        }
+      ]
+    },
+    {
+      "name": "sourcesElements",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "box-stick-feature-6.0.0-SNAPSHOT-sources.jar",
+          "url": "box-stick-feature-6.0.0-SNAPSHOT-sources.jar",
+          "size": 21600,
+          "sha512": "6bf17aed016d76b91dd8ae9e98c859e4684f7f5487f0e87860c972b3727ec15eb87fded4d34a4c5f407a0293c90336f357326d81b70d266315e96f9f729ace80",
+          "sha256": "6ea74500b9eed9e2437e58eb4702f1d38fadaa4b21a35358be351622567f7a45",
+          "sha1": "6d5b22f8f8205bb6c7662d7673e31e8ccda2e842",
+          "md5": "35288f176c882fe868c6c9e442d39403"
+        }
+      ]
+    }
+  ]
+}
