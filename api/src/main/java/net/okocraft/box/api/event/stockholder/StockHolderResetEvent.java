@@ -19,7 +19,8 @@ public class StockHolderResetEvent extends StockHolderEvent implements AsyncEven
     /**
      * The constructor of {@link StockHolderResetEvent}.
      *
-     * @param stockHolder the stockholder of the event
+     * @param stockHolder          the stockholder of the event
+     * @param stockDataBeforeReset the {@link StockData} collection before reset
      */
     public StockHolderResetEvent(@NotNull StockHolder stockHolder, @NotNull Collection<StockData> stockDataBeforeReset) {
         super(stockHolder);

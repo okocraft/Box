@@ -20,6 +20,11 @@ public class UserDataResetEvent extends BoxEvent {
         this.user = user;
     }
 
+    /**
+     * Gets the user being reset
+     *
+     * @return the user being reset
+     */
     public @NotNull BoxUser getUser() {
         return user;
     }
