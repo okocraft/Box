@@ -22,4 +22,8 @@ public final class BoxProvider {
             throw new IllegalStateException("BoxAPI is not loaded.");
         }
     }
+
+    private BoxProvider() {
+        throw new UnsupportedOperationException();
+    }
 }
