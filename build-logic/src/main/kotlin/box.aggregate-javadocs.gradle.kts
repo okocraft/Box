@@ -9,10 +9,12 @@ tasks {
             include(JavadocAggregator.includes)
             exclude(JavadocAggregator.excludes)
 
-            (options as StandardJavadocDocletOptions)
-                .docTitle("Box $version")
+            val opts = options as StandardJavadocDocletOptions
+            opts.docTitle("Box $version")
                 .windowTitle("Box $version")
                 .links(*JavadocAggregator.javadocLinks.toTypedArray())
+
+            opts.addStringOption("Xmaxwarns", Int.MAX_VALUE.toString())
         }
     }
 }
