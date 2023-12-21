@@ -10,9 +10,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4.1.0
+      - uses: actions/checkout@v4.1.1
       - name: Set up JDK 17
-        uses: actions/setup-java@v3.13.0
+        uses: actions/setup-java@v4.0.0
         with:
           distribution: 'temurin'
           java-version: '17'
@@ -20,13 +20,13 @@ jobs:
         uses: gradle/wrapper-validation-action@v1.1.0
       - run: chmod +x ./gradlew
       - name: Publish artifacts
-        uses: gradle/gradle-build-action@v2.9.0
+        uses: gradle/gradle-build-action@v2.11.1
         with:
           arguments: |
             clean
             publish -P box.release=${{ startsWith(github.ref, 'refs/tags/') }}
       - name: Generate Javadocs
-        uses: gradle/gradle-build-action@v2.9.0
+        uses: gradle/gradle-build-action@v2.11.1
         with:
           arguments: aggregateJavadoc -P box.release=${{ startsWith(github.ref, 'refs/tags/') }}
       - name: Create top and not-found pages
