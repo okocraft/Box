@@ -1,6 +1,5 @@
 package net.okocraft.box.api.event.player;
 
-import net.okocraft.box.api.event.AsyncEvent;
 import net.okocraft.box.api.model.stock.StockHolder;
 import net.okocraft.box.api.player.BoxPlayer;
 import org.jetbrains.annotations.NotNull;
@@ -10,7 +9,7 @@ import java.util.Objects;
 /**
  * A {@link PlayerEvent} called when the player changed the {@link StockHolder}.
  */
-public class PlayerStockHolderChangeEvent extends PlayerEvent implements AsyncEvent {
+public class PlayerStockHolderChangeEvent extends PlayerEvent {
 
     private final StockHolder previous;
 

@@ -1,6 +1,5 @@
 package net.okocraft.box.feature.autostore.event;
 
-import net.okocraft.box.api.event.AsyncEvent;
 import net.okocraft.box.api.event.BoxEvent;
 import net.okocraft.box.feature.autostore.model.setting.AutoStoreSetting;
 import org.jetbrains.annotations.NotNull;
@@ -8,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * An event called when the {@link AutoStoreSetting} has changed.
  */
-public class AutoStoreSettingChangeEvent extends BoxEvent implements AsyncEvent {
+public class AutoStoreSettingChangeEvent extends BoxEvent {
 
     private final AutoStoreSetting setting;
 

@@ -1,6 +1,5 @@
 package net.okocraft.box.api.event.stockholder.stock;
 
-import net.okocraft.box.api.event.AsyncEvent;
 import net.okocraft.box.api.event.stockholder.StockHolderEvent;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.model.stock.StockHolder;
@@ -14,7 +13,7 @@ import java.util.Objects;
  * You need to be very careful not to call methods that cause changes to a {@link StockHolder} in the event,
  * as this may result in an infinite loop.
  */
-public class StockEvent extends StockHolderEvent implements AsyncEvent {
+public class StockEvent extends StockHolderEvent {
 
     private final BoxItem item;
     private final int amount;

@@ -1,6 +1,5 @@
 package net.okocraft.box.api.event.stockholder;
 
-import net.okocraft.box.api.event.AsyncEvent;
 import net.okocraft.box.api.model.stock.StockData;
 import net.okocraft.box.api.model.stock.StockHolder;
 import org.jetbrains.annotations.NotNull;
@@ -12,7 +11,7 @@ import java.util.Collections;
 /**
  * A {@link StockHolderResetEvent} called when {@link StockHolder} has reset.
  */
-public class StockHolderResetEvent extends StockHolderEvent implements AsyncEvent {
+public class StockHolderResetEvent extends StockHolderEvent {
 
     private final Collection<StockData> stockDataBeforeReset;
 
