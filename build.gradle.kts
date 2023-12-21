@@ -1,41 +1,19 @@
 plugins {
-    alias(libs.plugins.aggregate.javadoc)
+    id("box.aggregate-javadocs")
 }
 
-tasks {
-    aggregateJavadoc {
-        sequenceOf(
-            "api/**",
-            "feature/autostore/event/**",
-            "feature/autostore/model/**",
-            "feature/category/api/**",
-            "feature/command/event/stock/**",
-            "feature/craft/package-info.java",
-            "feature/craft/RecipeRegistry.java",
-            "feature/craft/model/**",
-            "feature/craft/event/**",
-            "feature/gui/api/**",
-            "feature/stick/StickFeature.java",
-            "feature/stick/package-info.java",
-            "feature/stick/event/stock/**",
-            "feature/stick/item/BoxStickItem.java",
-            "feature/stick/item/package-info.java",
-        ).forEach { include("net/okocraft/box/$it") }
+tasks.aggregateJavadoc {
+    val release = findProperty("box.release")?.toString()?.toBoolean()
 
-        (options as StandardJavadocDocletOptions).docTitle("Box $version").windowTitle("Box $version")
+    if (release != null) {
+        val stagingDir = rootDir.resolve("staging")
 
-        val release = findProperty("box.release")?.toString()?.toBoolean()
-
-        if (release != null) {
-            val stagingDir = rootDir.resolve("staging")
-
-            setDestinationDir(
-                if (release == true) {
-                    stagingDir.resolve("release")
-                } else {
-                    stagingDir.resolve("snapshot")
-                }
-            )
-        }
+        setDestinationDir(
+            if (release == true) {
+                stagingDir.resolve("release")
+            } else {
+                stagingDir.resolve("snapshot")
+            }
+        )
     }
 }

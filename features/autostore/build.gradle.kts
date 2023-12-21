@@ -13,3 +13,12 @@ dependencies {
     compileOnly(projects.boxGuiFeature)
     compileOnly(libs.coreprotect)
 }
+
+tasks.javadoc {
+    include("net/okocraft/box/feature/autostore/event/**")
+    include("net/okocraft/box/feature/autostore/model/**")
+}
+
+afterEvaluate {
+    collector.JavadocAggregator.addProject(this)
+}
