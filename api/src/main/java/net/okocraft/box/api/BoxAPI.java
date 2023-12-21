@@ -27,6 +27,25 @@ import java.util.Optional;
 public interface BoxAPI {
 
     /**
+     * Gets an instance of {@link BoxAPI}.
+     * 
+     * @return an instance of {@link BoxAPI}
+     * @throws IllegalStateException if {@link BoxAPI} is not loaded
+     */
+    static @NotNull BoxAPI api() {
+        return BoxProvider.get();
+    }
+
+    /**
+     * Checks if {@link BoxAPI} is available.
+     * 
+     * @return {@code true} if {@link BoxAPI} is loaded, otherwise {@code false}
+     */
+    static boolean isLoaded() {
+        return BoxProvider.API != null;
+    }
+
+    /**
      * Gets the instance of Box.
      * <p>
      * This is intended for operations that require a plugin instance.
