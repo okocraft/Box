@@ -52,7 +52,7 @@ public final class CategoryLoader {
             var itemNameList = source.getStringList(key);
 
             for (var itemName : itemNameList) {
-                var optionalBoxItem = itemManager.getBoxItem(itemName);
+                var optionalBoxItem = itemManager.getBoxItem(renameItem(itemName));
 
                 if (optionalBoxItem.isPresent()) {
                     category.addItem(optionalBoxItem.get());
@@ -113,9 +113,21 @@ public final class CategoryLoader {
             return ExperimentalItems.mc1_19_3();
         } else if (MCDataVersion.MC_1_19_4.isSame(MCDataVersion.CURRENT)) {
             return ExperimentalItems.mc1_19_4();
+        } else if (MCDataVersion.MC_1_20_3.isSame(MCDataVersion.CURRENT) || MCDataVersion.MC_1_20_4.isSame(MCDataVersion.CURRENT)) {
+            return ExperimentalItems.mc1_20_3();
         } else {
             return Collections.emptySet();
         }
+    }
+
+    static String renameItem(String name) {
+        if (MCDataVersion.CURRENT.isAfterOrSame(MCDataVersion.MC_1_20_3)) {
+            if (name.equals("GRASS")) {
+                return "SHORT_GRASS";
+            }
+        }
+
+        return name;
     }
 
     private static @NotNull Category getOrCreateCategory(@NotNull CategoryRegistry registry, @NotNull String name, @NotNull Material icon) {

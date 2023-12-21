@@ -2,9 +2,9 @@ package net.okocraft.box.feature.craft.button;
 
 import net.okocraft.box.feature.craft.lang.Displays;
 import net.okocraft.box.feature.gui.api.button.RefreshableButton;
+import net.okocraft.box.feature.gui.api.util.SoundBase;
 import net.okocraft.box.feature.gui.api.util.TranslationUtil;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -52,6 +52,6 @@ public class IngredientChangeModeButton implements RefreshableButton {
     @Override
     public void onClick(@NotNull Player clicker, @NotNull ClickType clickType) {
         bulkIngredientChange.set(!bulkIngredientChange.get());
-        clicker.playSound(clicker.getLocation(), Sound.BLOCK_COMPARATOR_CLICK, 100f, 1.5f);
+        SoundBase.CLICK.play(clicker);
     }
 }

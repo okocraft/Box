@@ -4,6 +4,7 @@ import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.feature.autostore.gui.AutoStoreMenuDisplays;
 import net.okocraft.box.feature.autostore.model.setting.AutoStoreSetting;
+import net.okocraft.box.feature.gui.api.util.SoundBase;
 import net.okocraft.box.feature.gui.api.util.TranslationUtil;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -17,6 +18,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class BulkEditingButton extends AbstractAutoStoreSettingButton {
+
+    private static final SoundBase ENABLE_ALL_SOUND = SoundBase.builder().sound(Sound.BLOCK_WOODEN_DOOR_OPEN).pitch(1.5f).build();
+    private static final SoundBase DISABLE_ALL_SOUND = SoundBase.builder().sound(Sound.BLOCK_WOODEN_DOOR_CLOSE).pitch(1.5f).build();
 
     private Boolean recent = null;
 
@@ -58,15 +62,15 @@ public class BulkEditingButton extends AbstractAutoStoreSettingButton {
     @Override
     public void onClick(@NotNull Player clicker, @NotNull ClickType clickType) {
         var perItemSetting = setting.getPerItemModeSetting();
-        Sound sound;
+        SoundBase sound;
 
         if (recent == null || !recent) {
             perItemSetting.setEnabledItems(BoxProvider.get().getItemManager().getItemList());
-            sound = Sound.BLOCK_WOODEN_DOOR_OPEN;
+            sound = ENABLE_ALL_SOUND;
             recent = true;
         } else {
             perItemSetting.setEnabledItems(Collections.emptyList());
-            sound = Sound.BLOCK_WOODEN_DOOR_CLOSE;
+            sound = DISABLE_ALL_SOUND;
             recent = false;
         }
 
@@ -78,7 +82,7 @@ public class BulkEditingButton extends AbstractAutoStoreSettingButton {
             setting.setAllMode(false);
         }
 
-        clicker.playSound(clicker.getLocation(), sound, 100f, 1.5f);
+        sound.play(clicker);
         callAutoStoreSettingChangeEvent();
     }
 }

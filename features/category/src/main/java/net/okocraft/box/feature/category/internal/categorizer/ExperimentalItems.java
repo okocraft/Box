@@ -68,4 +68,28 @@ public final class ExperimentalItems {
                 Material.valueOf("POTTERY_SHARD_SKULL")
         );
     }
+
+    /*
+     * This is extracted Materials that marked as @MinecraftExperimental.
+     * Let's hope that an appropriate API will be provided in the future.
+     */
+    public static @NotNull @Unmodifiable Set<Material> mc1_20_3() {
+        return EnumSet.of(
+                Material.TUFF_SLAB, Material.TUFF_STAIRS, Material.TUFF_WALL, Material.CHISELED_TUFF,
+                Material.POLISHED_TUFF, Material.POLISHED_TUFF_SLAB, Material.POLISHED_TUFF_STAIRS, Material.POLISHED_TUFF_WALL,
+                Material.TUFF_BRICKS, Material.TUFF_BRICK_SLAB, Material.TUFF_BRICK_STAIRS, Material.TUFF_BRICK_WALL,
+                Material.CHISELED_TUFF_BRICKS, Material.CHISELED_COPPER, Material.EXPOSED_CHISELED_COPPER,
+                Material.WEATHERED_CHISELED_COPPER, Material.OXIDIZED_CHISELED_COPPER, Material.WAXED_CHISELED_COPPER,
+                Material.WAXED_EXPOSED_CHISELED_COPPER, Material.WAXED_WEATHERED_CHISELED_COPPER, Material.WAXED_OXIDIZED_CHISELED_COPPER,
+                Material.COPPER_DOOR, Material.EXPOSED_COPPER_DOOR, Material.WEATHERED_COPPER_DOOR, Material.OXIDIZED_COPPER_DOOR,
+                Material.WAXED_COPPER_DOOR, Material.WAXED_EXPOSED_COPPER_DOOR, Material.WAXED_WEATHERED_COPPER_DOOR, Material.WAXED_OXIDIZED_COPPER_DOOR,
+                Material.COPPER_TRAPDOOR, Material.EXPOSED_COPPER_TRAPDOOR, Material.WEATHERED_COPPER_TRAPDOOR, Material.OXIDIZED_COPPER_TRAPDOOR,
+                Material.WAXED_COPPER_TRAPDOOR, Material.WAXED_EXPOSED_COPPER_TRAPDOOR, Material.WAXED_WEATHERED_COPPER_TRAPDOOR, Material.WAXED_OXIDIZED_COPPER_TRAPDOOR,
+                Material.COPPER_GRATE, Material.EXPOSED_COPPER_GRATE, Material.WEATHERED_COPPER_GRATE, Material.OXIDIZED_COPPER_GRATE,
+                Material.WAXED_COPPER_GRATE, Material.WAXED_EXPOSED_COPPER_GRATE, Material.WAXED_WEATHERED_COPPER_GRATE, Material.WAXED_OXIDIZED_COPPER_GRATE,
+                Material.COPPER_BULB, Material.EXPOSED_COPPER_BULB, Material.WEATHERED_COPPER_BULB, Material.OXIDIZED_COPPER_BULB,
+                Material.WAXED_COPPER_BULB, Material.WAXED_EXPOSED_COPPER_BULB, Material.WAXED_WEATHERED_COPPER_BULB, Material.WAXED_OXIDIZED_COPPER_BULB,
+                Material.CRAFTER, Material.BREEZE_SPAWN_EGG, Material.TRIAL_SPAWNER, Material.TRIAL_KEY
+        );
+    }
 }

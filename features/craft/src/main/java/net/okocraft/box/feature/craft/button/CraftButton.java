@@ -7,6 +7,7 @@ import net.okocraft.box.feature.craft.util.IngredientRenderer;
 import net.okocraft.box.feature.craft.util.ItemCrafter;
 import net.okocraft.box.feature.gui.api.button.RefreshableButton;
 import net.okocraft.box.feature.gui.api.session.PlayerSession;
+import net.okocraft.box.feature.gui.api.util.SoundBase;
 import net.okocraft.box.feature.gui.api.util.TranslationUtil;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -27,6 +28,8 @@ import static net.okocraft.box.feature.gui.api.lang.Styles.NO_DECORATION_AQUA;
 import static net.okocraft.box.feature.gui.api.lang.Styles.NO_DECORATION_GRAY;
 
 public class CraftButton implements RefreshableButton {
+
+    private static final SoundBase CRAFT_SOUND = SoundBase.builder().sound(Sound.BLOCK_LEVER_CLICK).build();
 
     private final Supplier<SelectedRecipe> recipeSupplier;
 
@@ -107,21 +110,16 @@ public class CraftButton implements RefreshableButton {
 
     @Override
     public void onClick(@NotNull Player clicker, @NotNull ClickType clickType) {
-        Sound sound;
-        float pitch;
 
         int times = timesSupplier.get();
         var recipe = recipeSupplier.get();
 
         if (ItemCrafter.craft(clicker, recipe, times)) {
-            sound = Sound.BLOCK_LEVER_CLICK;
-            pitch = 1.0f;
+            CRAFT_SOUND.play(clicker);
         } else {
-            sound = Sound.ENTITY_ENDERMAN_TELEPORT;
-            pitch = 1.5f;
+            SoundBase.UNSUCCESSFUL.play(clicker);
         }
 
-        clicker.playSound(clicker.getLocation(), sound, 100f, pitch);
         craftedFlag.set(true);
     }
 

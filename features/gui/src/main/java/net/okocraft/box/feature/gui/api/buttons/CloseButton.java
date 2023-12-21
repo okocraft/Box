@@ -2,6 +2,7 @@ package net.okocraft.box.feature.gui.api.buttons;
 
 import net.okocraft.box.api.BoxProvider;
 import net.okocraft.box.feature.gui.api.button.Button;
+import net.okocraft.box.feature.gui.api.util.SoundBase;
 import net.okocraft.box.feature.gui.api.util.TranslationUtil;
 import net.okocraft.box.feature.gui.internal.lang.Displays;
 import org.bukkit.Material;
@@ -14,6 +15,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class CloseButton implements Button {
+
+    private static final SoundBase CLOSE_SOUND = SoundBase.builder().sound(Sound.BLOCK_CHEST_CLOSE).pitch(1.5f).build();
 
     @Override
     public @NotNull Material getIconMaterial() {
@@ -39,6 +42,6 @@ public class CloseButton implements Button {
     @Override
     public void onClick(@NotNull Player clicker, @NotNull ClickType clickType) {
         BoxProvider.get().getTaskFactory().runEntityTask(clicker, Player::closeInventory);
-        clicker.playSound(clicker.getLocation(), Sound.BLOCK_CHEST_CLOSE, SoundCategory.MASTER, 100f, 1.5f);
+        CLOSE_SOUND.play(clicker);
     }
 }

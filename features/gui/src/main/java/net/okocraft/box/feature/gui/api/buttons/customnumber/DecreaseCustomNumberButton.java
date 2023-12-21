@@ -5,6 +5,7 @@ import net.okocraft.box.api.message.argument.SingleArgument;
 import net.okocraft.box.feature.gui.api.button.RefreshableButton;
 import net.okocraft.box.feature.gui.api.menu.Menu;
 import net.okocraft.box.feature.gui.api.session.CustomNumberHolder;
+import net.okocraft.box.feature.gui.api.util.SoundBase;
 import net.okocraft.box.feature.gui.api.util.TranslationUtil;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -17,6 +18,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 
 public class DecreaseCustomNumberButton implements RefreshableButton {
+
+    private static final SoundBase DECREASE_SOUND = SoundBase.builder().sound(Sound.BLOCK_WOODEN_BUTTON_CLICK_OFF).pitch(1.5f).build();
 
     private final CustomNumberHolder holder;
     private final Component displayName;
@@ -85,7 +88,7 @@ public class DecreaseCustomNumberButton implements RefreshableButton {
             return;
         }
 
-        clicker.playSound(clicker.getLocation(), Sound.BLOCK_WOODEN_BUTTON_CLICK_OFF, 100f, 1.5f);
+        DECREASE_SOUND.play(clicker);
 
         if (menuToUpdate != null) {
             menuToUpdate.updateMenu(clicker);

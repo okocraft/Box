@@ -10,6 +10,9 @@ import org.jetbrains.annotations.NotNull;
 
 public final class MenuOpener {
 
+    private static final SoundBase XMAS_SOUND = SoundBase.builder().sound(Sound.BLOCK_NOTE_BLOCK_CHIME).pitch(1.8f).build();
+    private static final SoundBase NORMAL_SOUND = SoundBase.builder().sound(Sound.ENTITY_EXPERIENCE_ORB_PICKUP).pitch(2.0f).build();
+
     public static void open(@NotNull Menu menu, @NotNull Player viewer) {
         open(menu, viewer, true);
     }
@@ -27,9 +30,9 @@ public final class MenuOpener {
         }
 
         if (XmasChecker.isXmas()) {
-            viewer.playSound(viewer.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 100f, 1.8f);
+            XMAS_SOUND.play(viewer);
         } else {
-            viewer.playSound(viewer.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 100f, 2.0f);
+            NORMAL_SOUND.play(viewer);
         }
     }
 
