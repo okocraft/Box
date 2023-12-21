@@ -1,0 +1,151 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "net.okocraft.box",
+    "module": "box-category-feature",
+    "version": "6.0.0-SNAPSHOT",
+    "attributes": {
+      "org.gradle.status": "integration"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.5"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 17,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api"
+      },
+      "dependencies": [
+        {
+          "group": "com.github.siroshun09.configapi",
+          "module": "configapi-format-yaml",
+          "version": {
+            "requires": "5.0.0-alpha.5"
+          },
+          "excludes": [
+            {
+              "group": "org.yaml",
+              "module": "snakeyaml"
+            }
+          ]
+        },
+        {
+          "group": "com.github.siroshun09.event4j",
+          "module": "event4j",
+          "version": {
+            "requires": "4.0.0-rc.1"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "box-category-feature-6.0.0-SNAPSHOT.jar",
+          "url": "box-category-feature-6.0.0-SNAPSHOT.jar",
+          "size": 66912,
+          "sha512": "7ef8a2a78d37fb77f4598090b6d5720e9e52fc245137b8704be6b05336a770c793b1ba3d982dd976eb5918cf92e53c2b852299b1947f95f51fe845ed4aad5bf2",
+          "sha256": "e02beb817332c3824033338e3bd3e2043d49a301c59c758643094fb823d7d647",
+          "sha1": "c9ac1d967f2840e852bf2400977cb22a10b5011d",
+          "md5": "d92faf012037967a467b73dd1945178e"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 17,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "dependencies": [
+        {
+          "group": "net.okocraft.box",
+          "module": "box-api",
+          "version": {
+            "requires": "6.0.0-SNAPSHOT"
+          }
+        },
+        {
+          "group": "com.github.siroshun09.configapi",
+          "module": "configapi-format-yaml",
+          "version": {
+            "requires": "5.0.0-alpha.5"
+          },
+          "excludes": [
+            {
+              "group": "org.yaml",
+              "module": "snakeyaml"
+            }
+          ]
+        },
+        {
+          "group": "com.github.siroshun09.event4j",
+          "module": "event4j",
+          "version": {
+            "requires": "4.0.0-rc.1"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "box-category-feature-6.0.0-SNAPSHOT.jar",
+          "url": "box-category-feature-6.0.0-SNAPSHOT.jar",
+          "size": 66912,
+          "sha512": "7ef8a2a78d37fb77f4598090b6d5720e9e52fc245137b8704be6b05336a770c793b1ba3d982dd976eb5918cf92e53c2b852299b1947f95f51fe845ed4aad5bf2",
+          "sha256": "e02beb817332c3824033338e3bd3e2043d49a301c59c758643094fb823d7d647",
+          "sha1": "c9ac1d967f2840e852bf2400977cb22a10b5011d",
+          "md5": "d92faf012037967a467b73dd1945178e"
+        }
+      ]
+    },
+    {
+      "name": "javadocElements",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "javadoc",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "box-category-feature-6.0.0-SNAPSHOT-javadoc.jar",
+          "url": "box-category-feature-6.0.0-SNAPSHOT-javadoc.jar",
+          "size": 91730,
+          "sha512": "2bf04e594b278848e66c013d25b6447222ae68f4c8194c8126e90f8b17c299a08ddc5239c12a2b20f819b7006df997a64e597548b81ee3ed1305b343158eead5",
+          "sha256": "c78775365f72a9dfd059396582cb5a61498b743ff23b6e7612365e1c7f461f0e",
+          "sha1": "81ca2948e8a905ab3d057d857669dc60fcbef1d6",
+          "md5": "b89c39f8aa1de48defd7a4b480b9bdcc"
+        }
+      ]
+    },
+    {
+      "name": "sourcesElements",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "box-category-feature-6.0.0-SNAPSHOT-sources.jar",
+          "url": "box-category-feature-6.0.0-SNAPSHOT-sources.jar",
+          "size": 50513,
+          "sha512": "3f9b344c74641bd86514ceaf30567a1bde512f0242ce4e474162fd800692035f244375756a56e0cba6f6afd467a17e4fddfccbfcd26d7c8508fcfcf0d1fedb47",
+          "sha256": "f465346880eb299300cf7d836cfca3948c685f4563325cdcd734f7c648f5d4f9",
+          "sha1": "36e7f5689b321810d9f0e0c6b8c72ab4b3af4249",
+          "md5": "1dc2be700cb949ffd0ccd4755c59942d"
+        }
+      ]
+    }
+  ]
+}
