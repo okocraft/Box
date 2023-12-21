@@ -110,7 +110,10 @@ public interface BoxAPI {
      * Gets the {@link EventBus}.
      *
      * @return the {@link EventBus}
+     * @deprecated reworked in Box v6.0.0 (in v5, there is no replacement)
      */
+    @Deprecated(since = "5.5.2", forRemoval = true)
+    @ApiStatus.ScheduledForRemoval(inVersion = "6.0.0")
     @NotNull EventBus<BoxEvent> getEventBus();
 
     /**
@@ -176,14 +179,20 @@ public interface BoxAPI {
      * Registers the {@link BoxFeature}.
      *
      * @param boxFeature the {@link BoxFeature} to register
+     * @deprecated runtime registration is not supported in v6.0.0
      */
+    @Deprecated(since = "5.5.2", forRemoval = true)
+    @ApiStatus.ScheduledForRemoval(inVersion = "6.0.0")
     void register(@NotNull BoxFeature boxFeature);
 
     /**
      * Unregisters the {@link BoxFeature}.
      *
      * @param boxFeature the {@link BoxFeature} to unregister
+     * @deprecated runtime unregistration is not supported in v6.0.0
      */
+    @Deprecated(since = "5.5.2", forRemoval = true)
+    @ApiStatus.ScheduledForRemoval(inVersion = "6.0.0")
     void unregister(@NotNull BoxFeature boxFeature);
 
     /**
@@ -238,6 +247,9 @@ public interface BoxAPI {
      *
      * @param value the value of the {@link NamespacedKey}
      * @return a new {@link NamespacedKey}
+     * @deprecated use {@link NamespacedKey#NamespacedKey(String, String)}}, it is not deprecated in Paper API since 1.19
      */
+    @Deprecated(since = "5.5.2", forRemoval = true)
+    @ApiStatus.ScheduledForRemoval(inVersion = "6.0.0")
     @NotNull NamespacedKey createNamespacedKey(@NotNull String value);
 }
