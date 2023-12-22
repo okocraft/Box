@@ -1,12 +1,15 @@
 package net.okocraft.box.feature.command.boxadmin.stock;
 
+import com.github.siroshun09.messages.minimessage.source.MiniMessageSource;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.JoinConfiguration;
+import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.command.AbstractCommand;
 import net.okocraft.box.api.command.Command;
 import net.okocraft.box.api.command.SubCommandHoldable;
-import net.okocraft.box.api.message.GeneralMessage;
-import net.okocraft.box.feature.command.message.BoxAdminMessage;
+import net.okocraft.box.api.message.DefaultMessageCollector;
+import net.okocraft.box.api.message.ErrorMessages;
+import net.okocraft.box.feature.command.shared.SharedStockListCommand;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,35 +22,25 @@ public class StockCommand extends AbstractCommand implements SubCommandHoldable 
 
     private final SubCommandHolder subCommandHolder;
 
-    public StockCommand() {
+    public StockCommand(@NotNull DefaultMessageCollector collector, @NotNull SharedStockListCommand sharedStockListCommand) {
         super("stock", "box.admin.command.stock", Set.of("s", "st"));
         this.subCommandHolder = new SubCommandHolder(
-                StockModifyCommands.give(),
-                new StockInfoCommand(),
-                new StockListCommand(),
-                new StockResetCommand(),
-                StockModifyCommands.set(),
-                StockModifyCommands.take()
+                new StockModifyCommands.StockGiveCommand(collector),
+                new StockModifyCommands.StockTakeCommand(collector),
+                new StockModifyCommands.StockSetCommand(collector),
+                new StockInfoCommand(collector),
+                new StockListCommand(collector, sharedStockListCommand),
+                new StockResetCommand(collector)
         );
     }
 
     @Override
-    public @NotNull Component getHelp() {
-        return BoxAdminMessage.STOCK_HELP
-                .append(Component.newline())
-                .append(
-                        Component.join(
-                                JoinConfiguration.separator(Component.newline()),
-                                subCommandHolder.getSubCommands().stream().map(Command::getHelp).toList()
-                        )
-                );
-    }
-
-    @Override
     public void onCommand(@NotNull CommandSender sender, @NotNull String[] args) {
+        var msgSrc = BoxAPI.api().getMessageProvider().findSource(sender);
+
         if (args.length < 2) {
-            sender.sendMessage(GeneralMessage.ERROR_COMMAND_NOT_ENOUGH_ARGUMENT);
-            sender.sendMessage(getHelp());
+            ErrorMessages.NOT_ENOUGH_ARGUMENT.source(msgSrc).send(sender);
+            sender.sendMessage(this.getHelp(msgSrc));
             return;
         }
 
@@ -55,9 +48,9 @@ public class StockCommand extends AbstractCommand implements SubCommandHoldable 
 
         if (optionalSubCommand.isEmpty()) {
             if (!args[1].equalsIgnoreCase("help")) {
-                sender.sendMessage(GeneralMessage.ERROR_COMMAND_SUBCOMMAND_NOT_FOUND);
+                ErrorMessages.SUB_COMMAND_NOT_FOUND.source(msgSrc).send(sender);
             }
-            sender.sendMessage(getHelp());
+            sender.sendMessage(this.getHelp(msgSrc));
             return;
         }
 
@@ -66,7 +59,7 @@ public class StockCommand extends AbstractCommand implements SubCommandHoldable 
         if (sender.hasPermission(subCommand.getPermissionNode())) {
             subCommand.onCommand(sender, args);
         } else {
-            sender.sendMessage(GeneralMessage.ERROR_NO_PERMISSION.apply(subCommand.getPermissionNode()));
+            ErrorMessages.NO_PERMISSION.apply(subCommand.getPermissionNode()).source(msgSrc).send(sender);
         }
     }
 
@@ -84,6 +77,17 @@ public class StockCommand extends AbstractCommand implements SubCommandHoldable 
                     .map(cmd -> cmd.onTabComplete(sender, args))
                     .orElse(Collections.emptyList());
         }
+    }
+
+    @Override
+    public @NotNull Component getHelp(@NotNull MiniMessageSource msgSrc) {
+        return Component.join(
+                JoinConfiguration.newlines(),
+                this.subCommandHolder.getSubCommands()
+                        .stream()
+                        .map(command -> command.getHelp(msgSrc))
+                        .toList()
+        );
     }
 
     @Override

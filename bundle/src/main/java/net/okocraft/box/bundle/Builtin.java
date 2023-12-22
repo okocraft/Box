@@ -27,7 +27,7 @@ import java.util.Locale;
 public final class Builtin {
 
     public static void features(@NotNull BoxBootstrapContext context) {
-        context.addFeature(ignored -> new CommandFeature())
+        context.addFeature(CommandFeature::new)
                 .addFeature(ignored -> new CategoryFeature())
                 .addFeature(ignored -> new GuiFeature())
                 .addFeature(ignored -> new BEModeFeature())
