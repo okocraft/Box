@@ -10,6 +10,7 @@ import io.papermc.paper.plugin.bootstrap.BootstrapContext;
 import net.kyori.adventure.key.Key;
 import net.okocraft.box.api.event.BoxEvent;
 import net.okocraft.box.api.feature.BoxFeature;
+import net.okocraft.box.api.feature.FeatureContext;
 import net.okocraft.box.core.message.BoxMessageProvider;
 import net.okocraft.box.storage.api.registry.StorageRegistry;
 import org.jetbrains.annotations.Contract;
@@ -22,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public final class BoxBootstrapContext {
@@ -41,7 +43,7 @@ public final class BoxBootstrapContext {
     private final EventServiceProvider<Key, BoxEvent, Priority> eventServiceProvider;
     private final BoxMessageProvider.Collector defaultMessageCollector;
     private final Map<Locale, Loader<Locale, Map<String, String>>> localizationLoaderMap = new HashMap<>();
-    private final List<Supplier<? extends BoxFeature>> boxFeatureList = new ArrayList<>();
+    private final List<BoxFeature> boxFeatureList = new ArrayList<>();
 
     private BoxBootstrapContext(@NotNull Path pluginDirectory, @NotNull String version) {
         this.dataDirectory = pluginDirectory;
@@ -96,13 +98,13 @@ public final class BoxBootstrapContext {
         );
     }
 
-    public @NotNull List<Supplier<? extends BoxFeature>> getBoxFeatureList() {
-        return boxFeatureList;
+    public @NotNull List<BoxFeature> getBoxFeatureList() {
+        return this.boxFeatureList;
     }
 
     @Contract("_ -> this")
-    public @NotNull BoxBootstrapContext addFeature(@NotNull Supplier<? extends BoxFeature> featureSupplier) {
-        boxFeatureList.add(featureSupplier);
+    public @NotNull BoxBootstrapContext addFeature(@NotNull Function<FeatureContext.Registration, ? extends BoxFeature> featureFactory) {
+        this.boxFeatureList.add(featureFactory.apply(new FeatureContext.Registration(this.dataDirectory, this.defaultMessageCollector)));
         return this;
     }
 }

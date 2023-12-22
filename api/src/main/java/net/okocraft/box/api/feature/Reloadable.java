@@ -13,6 +13,11 @@ public interface Reloadable {
      *
      * @param sender the sender who executed reload
      */
-    void reload(@NotNull CommandSender sender);
+    @Deprecated
+    default void reload(@NotNull CommandSender sender) {
+    }
 
+    default void reload(@NotNull FeatureContext.Reloading context) throws Throwable {
+        this.reload(context.commandSender());
+    }
 }

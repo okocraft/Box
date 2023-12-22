@@ -27,14 +27,14 @@ import java.util.Locale;
 public final class Builtin {
 
     public static void features(@NotNull BoxBootstrapContext context) {
-        context.addFeature(CommandFeature::new)
-                .addFeature(CategoryFeature::new)
-                .addFeature(GuiFeature::new)
-                .addFeature(BEModeFeature::new)
-                .addFeature(AutoStoreFeature::new)
-                .addFeature(CraftFeature::new)
-                .addFeature(StickFeature::new)
-                .addFeature(NotifierFeature::new);
+        context.addFeature(ignored -> new CommandFeature())
+                .addFeature(ignored -> new CategoryFeature())
+                .addFeature(ignored -> new GuiFeature())
+                .addFeature(ignored -> new BEModeFeature())
+                .addFeature(ignored -> new AutoStoreFeature())
+                .addFeature(ignored -> new CraftFeature())
+                .addFeature(ignored -> new StickFeature())
+                .addFeature(ignored -> new NotifierFeature());
     }
 
     public static void storages(@NotNull StorageRegistry registry) {

@@ -21,14 +21,26 @@ public interface BoxFeature {
     /**
      * Enables this feature.
      */
-    void enable();
+    @Deprecated
+    default void enable() {
+    }
+
+    default void enable(@NotNull FeatureContext.Enabling context) throws Throwable {
+        this.enable();
+    }
 
     /**
      * Disables this feature.
      * <p>
      * This method will be called even if an exception is thrown while executing {@link #enable()}.
      */
-    void disable();
+    @Deprecated
+    default void disable() {
+    }
+
+    default void disable(@NotNull FeatureContext.Disabling context) throws Throwable {
+        this.disable();
+    }
 
     /**
      * Gets classes of the dependent {@link BoxFeature}.

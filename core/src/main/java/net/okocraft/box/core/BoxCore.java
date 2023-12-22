@@ -6,6 +6,7 @@ import net.okocraft.box.api.command.base.BoxAdminCommand;
 import net.okocraft.box.api.command.base.BoxCommand;
 import net.okocraft.box.api.event.feature.FeatureEvent;
 import net.okocraft.box.api.feature.BoxFeature;
+import net.okocraft.box.api.feature.FeatureContext;
 import net.okocraft.box.api.feature.Reloadable;
 import net.okocraft.box.api.message.MessageProvider;
 import net.okocraft.box.api.model.manager.ItemManager;
@@ -183,10 +184,12 @@ public class BoxCore implements BoxAPI {
             BoxLogger.logger().error("Could not reload messages", e);
         }
 
+        var featureReloadContext = new FeatureContext.Reloading(this.context.plugin(), sender);
+
         for (var feature : this.featureMap.values()) {
             if (feature instanceof Reloadable reloadable) {
                 try {
-                    reloadable.reload(sender);
+                    reloadable.reload(featureReloadContext);
                     this.eventManager.call(new FeatureEvent(feature, FeatureEvent.Type.RELOAD));
                 } catch (Throwable e) {
                     playerMessenger.accept(() -> CoreMessages.FEATURE_RELOAD_FAILURE.apply(feature, e).source(source).message());
@@ -270,7 +273,7 @@ public class BoxCore implements BoxAPI {
         return Optional.ofNullable(this.featureMap.get(clazz)).map(clazz::cast);
     }
 
-    public void initializeFeatures(@NotNull List<Supplier<? extends BoxFeature>> features) {
+    public void initializeFeatures(@NotNull List<BoxFeature> features) {
         if (features.isEmpty()) {
             this.featureMap = Collections.emptyMap();
             return;
@@ -279,49 +282,50 @@ public class BoxCore implements BoxAPI {
         BoxLogger.logger().info("Enabling features...");
 
         var featureMap = new LinkedHashMap<Class<? extends BoxFeature>, BoxFeature>();
+        var context = new FeatureContext.Enabling(this.context.plugin());
 
-        for (var supplier : features) {
-            var feature = supplier.get();
-            initializeFeature(featureMap, feature);
+        for (var feature : features) {
+            initializeFeature(feature, featureMap, context);
             this.eventManager.call(new FeatureEvent(feature, FeatureEvent.Type.REGISTER));
         }
 
         this.featureMap = Collections.unmodifiableMap(featureMap);
     }
 
-    private static void initializeFeature(@NotNull Map<Class<? extends BoxFeature>, BoxFeature> featureMap, @NotNull BoxFeature feature) {
-        if (featureMap.containsKey(feature.getClass())) {
+    private static void initializeFeature(@NotNull BoxFeature feature, @NotNull Map<Class<? extends BoxFeature>, BoxFeature> registry, @NotNull FeatureContext.Enabling context) {
+        if (registry.containsKey(feature.getClass())) {
             throw new IllegalStateException("%s is registered twice.".formatted(feature.getName()));
         }
 
         var dependencies = feature.getDependencies();
 
         for (var dependencyClass : dependencies) {
-            if (!featureMap.containsKey(dependencyClass)) {
+            if (!registry.containsKey(dependencyClass)) {
                 throw new IllegalStateException("%s that is the dependency of %s is not registered.".formatted(dependencyClass.getName(), feature.getName()));
             }
         }
 
         try {
-            feature.enable();
+            feature.enable(context);
         } catch (Throwable e) {
             throw new IllegalStateException("Failed to enable %s.".formatted(feature.getName()), e);
         }
 
-        featureMap.put(feature.getClass(), feature);
+        registry.put(feature.getClass(), feature);
         BoxLogger.logger().info("Feature '{}' has been enabled.", feature.getName());
     }
 
-    public void unregisterAllFeatures() {
+    public void disableAllFeatures() {
         if (this.featureMap.isEmpty()) {
             return;
         }
 
         BoxLogger.logger().info("Disabling features...");
+        var context = new FeatureContext.Disabling(this.context.plugin());
 
         for (var feature : this.featureMap.values()) {
             try {
-                feature.disable();
+                feature.disable(context);
             } catch (Throwable throwable) {
                 BoxLogger.logger().error("Failed to disable {}.", feature.getName(), throwable);
                 continue;
