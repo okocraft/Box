@@ -29,7 +29,7 @@ public final class Builtin {
     public static void features(@NotNull BoxBootstrapContext context) {
         context.addFeature(CommandFeature::new)
                 .addFeature(CategoryFeature::new)
-                .addFeature(ignored -> new GuiFeature())
+                .addFeature(GuiFeature::new)
                 .addFeature(ignored -> new BEModeFeature())
                 .addFeature(ignored -> new AutoStoreFeature())
                 .addFeature(ignored -> new CraftFeature())

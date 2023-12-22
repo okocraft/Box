@@ -1,11 +1,14 @@
 package net.okocraft.box.feature.gui.internal.command;
 
+import com.github.siroshun09.messages.minimessage.arg.Arg1;
+import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
+import com.github.siroshun09.messages.minimessage.source.MiniMessageSource;
 import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.command.AbstractCommand;
-import net.okocraft.box.api.message.Components;
-import net.okocraft.box.api.message.GeneralMessage;
-import net.okocraft.box.api.message.argument.SingleArgument;
+import net.okocraft.box.api.message.DefaultMessageCollector;
+import net.okocraft.box.api.message.ErrorMessages;
+import net.okocraft.box.api.message.Placeholders;
 import net.okocraft.box.api.util.TabCompleter;
 import net.okocraft.box.api.util.UserSearcher;
 import net.okocraft.box.feature.category.api.registry.CategoryRegistry;
@@ -31,12 +34,17 @@ import java.util.stream.IntStream;
 public class MenuOpenCommand extends AbstractCommand {
 
     private static final String OTHER_PLAYERS_GUI_PERMISSION = "box.admin.command.gui.other";
-    private static final Component CANNOT_OPEN_MENU = Components.redTranslatable("box.gui.cannot-open-menu");
-    private static final Component COMMAND_HELP = Components.commandHelp("box.gui.command-help", false);
-    private static final SingleArgument<String> CATEGORY_NOT_FOUND = arg -> Components.redTranslatable("box.gui.category-not-found", Components.aquaText(arg));
 
-    public MenuOpenCommand() {
+    private final MiniMessageBase help;
+    private final MiniMessageBase cannotOpen;
+    private final Arg1<String> categoryNotFound;
+
+    public MenuOpenCommand(@NotNull DefaultMessageCollector collector) {
         super("gui", "box.command.gui", Set.of("g", "menu", "m"));
+
+        this.help = MiniMessageBase.messageKey(collector.add("box.gui.command.help", "<aqua>/box gui<dark_gray> - <gray>Opens Box menu"));
+        this.cannotOpen = MiniMessageBase.messageKey(collector.add("box.gui.command.cannot-open-menu", "<red>Cannot open the menu."));
+        this.categoryNotFound = Arg1.arg1(collector.add("box.gui.command.category-not-found", "<red>Category <aqua><arg><red> not found"), Placeholders.ARG);
 
         ItemInfoEventListener.setCommandCreator(((category, item) -> {
             var name = CategoryRegistry.get().getRegisteredName(category);
@@ -47,8 +55,10 @@ public class MenuOpenCommand extends AbstractCommand {
 
     @Override
     public void onCommand(@NotNull CommandSender sender, @NotNull String[] args) {
+        var msgSrc = BoxAPI.api().getMessageProvider().findSource(sender);
+
         if (!(sender instanceof Player player)) {
-            sender.sendMessage(GeneralMessage.ERROR_COMMAND_ONLY_PLAYER);
+            ErrorMessages.COMMAND_ONLY_PLAYER.source(msgSrc).send(sender);
             return;
         }
 
@@ -71,7 +81,7 @@ public class MenuOpenCommand extends AbstractCommand {
 
             if (session == null && (arg.equalsIgnoreCase("-p") || arg.equalsIgnoreCase("--player"))) {
                 if (!player.hasPermission(OTHER_PLAYERS_GUI_PERMISSION)) {
-                    player.sendMessage(GeneralMessage.ERROR_NO_PERMISSION.apply(OTHER_PLAYERS_GUI_PERMISSION));
+                    ErrorMessages.NO_PERMISSION.apply(OTHER_PLAYERS_GUI_PERMISSION).source(msgSrc).send(sender);
                     return;
                 }
 
@@ -87,7 +97,7 @@ public class MenuOpenCommand extends AbstractCommand {
                         session = PlayerSession.newSession(player);
                         session.setStockHolder(BoxAPI.api().getStockManager().getPersonalStockHolder(offlineUser));
                     } else {
-                        player.sendMessage(GeneralMessage.ERROR_COMMAND_PLAYER_NOT_FOUND.apply(args[i + 1]));
+                        ErrorMessages.PLAYER_NOT_FOUND.apply(args[i + 1]).source(msgSrc).send(sender);
                         return;
                     }
                 }
@@ -95,7 +105,7 @@ public class MenuOpenCommand extends AbstractCommand {
                 var category = CategoryRegistry.get().getByName(args[i + 1]);
 
                 if (category.isEmpty()) {
-                    player.sendMessage(CATEGORY_NOT_FOUND.apply(args[i + 1]));
+                    this.categoryNotFound.apply(args[i + 1]).source(msgSrc).send(sender);
                     return;
                 }
 
@@ -104,7 +114,7 @@ public class MenuOpenCommand extends AbstractCommand {
                 try {
                     page = Integer.parseInt(args[i + 1]);
                 } catch (NumberFormatException ignored) {
-                    player.sendMessage(GeneralMessage.ERROR_COMMAND_INVALID_NUMBER.apply(args[i + 1]));
+                    ErrorMessages.INVALID_NUMBER.apply(args[i + 1]).source(msgSrc).send(sender);
                     return;
                 }
             }
@@ -129,8 +139,8 @@ public class MenuOpenCommand extends AbstractCommand {
     }
 
     @Override
-    public @NotNull Component getHelp() {
-        return COMMAND_HELP;
+    public @NotNull Component getHelp(@NotNull MiniMessageSource msgSrc) {
+        return this.help.create(msgSrc);
     }
 
     @Override
@@ -166,15 +176,17 @@ public class MenuOpenCommand extends AbstractCommand {
     }
 
     private void legacyBehavior(@NotNull Player player, @NotNull String[] args) {
+        var msgSrc = BoxAPI.api().getMessageProvider().findSource(player);
+
         if (!player.hasPermission(OTHER_PLAYERS_GUI_PERMISSION)) {
-            player.sendMessage(GeneralMessage.ERROR_NO_PERMISSION.apply(OTHER_PLAYERS_GUI_PERMISSION));
+            ErrorMessages.NO_PERMISSION.apply(OTHER_PLAYERS_GUI_PERMISSION).source(msgSrc).send(player);
             return;
         }
 
         var user = UserSearcher.search(args[1]);
 
         if (user == null) {
-            player.sendMessage(GeneralMessage.ERROR_COMMAND_PLAYER_NOT_FOUND.apply(args[1]));
+            ErrorMessages.PLAYER_NOT_FOUND.apply(args[1]).source(msgSrc).send(player);
             return;
         }
 
@@ -187,9 +199,9 @@ public class MenuOpenCommand extends AbstractCommand {
     private void openMenu(@NotNull PlayerSession session, @NotNull Menu menu) {
         BoxAPI.api().getEventManager().callAsync(new MenuOpenEvent(menu, session), event -> {
             if (event.isCancelled()) {
-                session.getViewer().sendMessage(CANNOT_OPEN_MENU);
+                this.cannotOpen.source(event.getSession().getMessageSource()).send(event.getViewer());
             } else {
-                MenuOpener.open(menu, session);
+                MenuOpener.open(event.getMenu(), event.getSession());
             }
         });
     }

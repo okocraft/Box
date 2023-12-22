@@ -34,8 +34,7 @@ public class ResetAllCommand extends AbstractCommand {
             <gray>Reset all data of player <aqua><player_name>
             <red>This operation cannot be undone.
             <gray>To confirm, run <green>/boxadmin resetall confirm
-            <gray>To cancel, run <red>/boxadmin resetall cancel
-            """;
+            <gray>To cancel, run <red>/boxadmin resetall cancel""";
 
     private final Map<CommandSender, BoxUser> confirmationMap = new ConcurrentHashMap<>();
 

@@ -14,23 +14,26 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-public class DecreaseAmountButton extends AmountModificationButton {
+public class IncreaseAmountButton extends AmountModificationButton {
 
-    private static final SoundBase DECREASE_SOUND = SoundBase.builder().sound(Sound.BLOCK_WOODEN_BUTTON_CLICK_OFF).pitch(1.5f).build();
+    private static final SoundBase INCREASE_SOUND = SoundBase.builder().sound(Sound.BLOCK_WOODEN_BUTTON_CLICK_ON).pitch(1.5f).build();
 
     private final MiniMessageBase displayName;
-    private final Arg1<Integer> clickToDecreaseLore;
+    private final Arg1<Integer> clickToSetLore;
+    private final Arg1<Integer> clickToIncreaseLore;
     private final Arg1<Integer> currentAmountLore;
     private final ClickResult returningResult;
 
-    public DecreaseAmountButton(int slot, @NotNull TypedKey<Amount> dataKey,
+    public IncreaseAmountButton(int slot, @NotNull TypedKey<Amount> dataKey,
                                 @NotNull MiniMessageBase displayName,
-                                @NotNull Arg1<Integer> clickToDecreaseLore,
+                                @NotNull Arg1<Integer> clickToSetLore,
+                                @NotNull Arg1<Integer> clickToIncreaseLore,
                                 @NotNull Arg1<Integer> currentAmountLore,
                                 @NotNull ClickResult returningResult) {
         super(slot, dataKey);
         this.displayName = displayName;
-        this.clickToDecreaseLore = clickToDecreaseLore;
+        this.clickToSetLore = clickToSetLore;
+        this.clickToIncreaseLore = clickToIncreaseLore;
         this.currentAmountLore = currentAmountLore;
         this.returningResult = returningResult;
     }
@@ -38,28 +41,35 @@ public class DecreaseAmountButton extends AmountModificationButton {
     @Override
     public @NotNull ItemStack createIcon(@NotNull PlayerSession session) {
         var amount = this.getOrCreateAmount(session);
+        var unit = amount.getUnit().getAmount();
+        var currentAmount = amount.getValue();
 
         return ItemEditor.create()
                 .displayName(this.displayName.create(session.getMessageSource()))
                 .loreEmptyLine()
-                .loreLine(this.clickToDecreaseLore.apply(amount.getUnit().getAmount()).create(session.getMessageSource()))
+                .loreLine(this.getClickToLore(unit, currentAmount).apply(unit).create(session.getMessageSource()))
                 .loreEmptyLine()
-                .loreLine(this.currentAmountLore.apply(amount.getValue()).create(session.getMessageSource()))
-                .createItem(Material.RED_STAINED_GLASS_PANE);
+                .loreLine(this.currentAmountLore.apply(currentAmount).create(session.getMessageSource()))
+                .createItem(Material.BLUE_STAINED_GLASS_PANE);
+    }
+
+    private @NotNull Arg1<Integer> getClickToLore(int unit, int amount) {
+        return unit != 1 && amount == 1 ? clickToSetLore : clickToIncreaseLore;
     }
 
     @Override
     public @NotNull ClickResult onClick(@NotNull PlayerSession session, @NotNull ClickType clickType) {
         var amount = this.getOrCreateAmount(session);
+        var unit = amount.getUnit();
         var current = amount.getValue();
 
-        if (1 < current) {
-            amount.decrease();
+        if (current == 1 && unit.getAmount() != 1) {
+            amount.setValue(unit.getAmount());
         } else {
-            return ClickResult.NO_UPDATE_NEEDED;
+            amount.increase();
         }
 
-        DECREASE_SOUND.play(session.getViewer());
+        INCREASE_SOUND.play(session.getViewer());
 
         return this.returningResult;
     }

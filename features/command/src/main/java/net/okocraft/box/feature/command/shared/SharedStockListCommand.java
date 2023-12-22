@@ -40,8 +40,7 @@ public class SharedStockListCommand {
     private static final String DEFAULT_ARGUMENT_HELP = """
              <aqua>-s <gray>(<aqua>--sorter<gray>) <aqua><sort><dark_gray> - <gray>Specifies the order of stock
              <aqua>-p <gray>(<aqua>--page<gray>) <aqua><page><dark_gray> - <gray>Specifies the page
-             <aqua>-f <gray>(<aqua>--filter<gray>) <aqua><item name><dark_gray> - <gray>Filters items
-            """;
+             <aqua>-f <gray>(<aqua>--filter<gray>) <aqua><item name><dark_gray> - <gray>Filters items""";
 
     private static final Placeholder<Integer> CURRENT_PAGE = Placeholder.component("page", Component::text);
     private static final Placeholder<Integer> MAX_PAGE = Placeholder.component("max_page", Component::text);

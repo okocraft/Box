@@ -38,8 +38,7 @@ public class DepositCommand extends AbstractCommand {
     private static final String HELP = """
             <aqua>/box deposit [amount]<dark_gray> - <gray>Deposits the item in your main hand
             <aqua>/box deposit all<dark_gray> - <gray>Deposits all items in your inventory
-            <aqua>/box deposit <item> [amount]<dark_gray> - <gray>Deposits specified item in your inventory
-            """;
+            <aqua>/box deposit <item> [amount]<dark_gray> - <gray>Deposits specified item in your inventory""";
 
     private final Arg3<BoxItem, Integer, Integer> depositSuccess;
     private final Arg1<Integer> depositAllSuccess;

@@ -2,19 +2,19 @@ package net.okocraft.box.feature.craft.gui.menu;
 
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import net.kyori.adventure.text.Component;
+import net.okocraft.box.feature.craft.gui.CurrentRecipe;
 import net.okocraft.box.feature.craft.gui.button.CraftButton;
 import net.okocraft.box.feature.craft.gui.button.IngredientButton;
 import net.okocraft.box.feature.craft.gui.button.IngredientChangeModeButton;
 import net.okocraft.box.feature.craft.gui.button.ResultButton;
 import net.okocraft.box.feature.craft.gui.button.ToggleDestinationButton;
-import net.okocraft.box.feature.craft.gui.CurrentRecipe;
 import net.okocraft.box.feature.craft.lang.Displays;
 import net.okocraft.box.feature.craft.model.BoxItemRecipe;
 import net.okocraft.box.feature.gui.api.button.Button;
 import net.okocraft.box.feature.gui.api.button.ClickResult;
 import net.okocraft.box.feature.gui.api.buttons.BackOrCloseButton;
 import net.okocraft.box.feature.gui.api.buttons.amount.DecreaseAmountButton;
-import net.okocraft.box.feature.gui.api.buttons.amount.IncreaseCustomNumberButton;
+import net.okocraft.box.feature.gui.api.buttons.amount.IncreaseAmountButton;
 import net.okocraft.box.feature.gui.api.buttons.amount.UnitChangeButton;
 import net.okocraft.box.feature.gui.api.menu.Menu;
 import net.okocraft.box.feature.gui.api.session.Amount;
@@ -58,9 +58,10 @@ public class CraftMenu implements Menu {
                 new DecreaseAmountButton(
                         45,
                         KEY,
-                        Displays.CHANGE_CRAFT_TIMES_BUTTON_DECREASE_DISPLAY_NAME,
+                        null, null, null, // TODO
+                       /* Displays.CHANGE_CRAFT_TIMES_BUTTON_DECREASE_DISPLAY_NAME,
                         Displays.CHANGE_CRAFT_TIMES_BUTTON_DECREASE_LORE,
-                        Displays.CHANGE_CRAFT_TIMES_BUTTON_CURRENT,
+                        Displays.CHANGE_CRAFT_TIMES_BUTTON_CURRENT,*/
                         ClickResult.UPDATE_ICONS
                 )
         );
@@ -69,20 +70,22 @@ public class CraftMenu implements Menu {
                 new UnitChangeButton(
                         46,
                         KEY,
-                        Displays.CHANGE_UNIT_BUTTON_DISPLAY_NAME,
-                        Displays.CHANGE_UNIT_BUTTON_SHIFT_CLICK_TO_RESET_TIMES,
+                        null, null,
+/*                        Displays.CHANGE_UNIT_BUTTON_DISPLAY_NAME,
+                        Displays.CHANGE_UNIT_BUTTON_SHIFT_CLICK_TO_RESET_TIMES,*/
                         ClickResult.UPDATE_ICONS
                 )
         );
 
         buttons.add(
-                new IncreaseCustomNumberButton(
+                new IncreaseAmountButton(
                         47,
                         KEY,
-                        Displays.CHANGE_CRAFT_TIMES_BUTTON_INCREASE_DISPLAY_NAME,
+                        null, null, null, null, // TODO
+/*                        Displays.CHANGE_CRAFT_TIMES_BUTTON_INCREASE_DISPLAY_NAME,
                         Displays.CHANGE_CRAFT_TIMES_BUTTON_SET_TO_UNIT,
                         Displays.CHANGE_CRAFT_TIMES_BUTTON_INCREASE_LORE,
-                        Displays.CHANGE_CRAFT_TIMES_BUTTON_CURRENT,
+                        Displays.CHANGE_CRAFT_TIMES_BUTTON_CURRENT,*/
                         ClickResult.UPDATE_ICONS
                 )
         );

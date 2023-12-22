@@ -1,11 +1,12 @@
 package net.okocraft.box.feature.gui.api.menu.paginate;
 
+import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
 import net.okocraft.box.feature.gui.api.button.Button;
 import net.okocraft.box.feature.gui.api.button.ClickResult;
 import net.okocraft.box.feature.gui.api.session.PlayerSession;
+import net.okocraft.box.feature.gui.api.util.ItemEditor;
 import net.okocraft.box.feature.gui.api.util.SoundBase;
-import net.okocraft.box.feature.gui.api.util.TranslationUtil;
-import net.okocraft.box.feature.gui.internal.lang.Displays;
+import net.okocraft.box.feature.gui.internal.lang.DisplayKeys;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.event.inventory.ClickType;
@@ -76,7 +77,10 @@ public abstract class AbstractPaginatedMenu<T> implements PaginatedMenu {
 
     protected abstract void addAdditionalButtons(@NotNull PlayerSession session, @NotNull List<Button> buttons);
 
-    protected record PageSwitchButton(int rows, int maxPage, boolean next) implements Button {
+    private record PageSwitchButton(int rows, int maxPage, boolean next) implements Button {
+
+        private static final MiniMessageBase PREVIOUS_PAGE = MiniMessageBase.messageKey(DisplayKeys.PREVIOUS_PAGE);
+        private static final MiniMessageBase NEXT_PAGE = MiniMessageBase.messageKey(DisplayKeys.NEXT_PAGE);
 
         @Override
         public int getSlot() {
@@ -85,14 +89,9 @@ public abstract class AbstractPaginatedMenu<T> implements PaginatedMenu {
 
         @Override
         public @NotNull ItemStack createIcon(@NotNull PlayerSession session) {
-            int amount = Math.min(PaginatedMenu.getCurrentPage(session) + (next ? 1 : -1), 64);
-
-            var icon = new ItemStack(Material.ARROW, amount);
-
-            var displayName = next ? Displays.PAGE_SWITCH_BUTTON_NEXT : Displays.PAGE_SWITCH_BUTTON_PREVIOUS;
-            icon.editMeta(meta -> meta.displayName(TranslationUtil.render(displayName, session.getViewer())));
-
-            return icon;
+            return ItemEditor.create()
+                    .displayName((this.next ? NEXT_PAGE : PREVIOUS_PAGE).create(session.getMessageSource()))
+                    .createItem(Material.ARROW, Math.min(PaginatedMenu.getCurrentPage(session) + (this.next ? 1 : -1), 64));
         }
 
         @Override

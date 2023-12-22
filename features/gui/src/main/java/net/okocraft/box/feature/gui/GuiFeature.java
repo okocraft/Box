@@ -5,14 +5,16 @@ import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.feature.AbstractBoxFeature;
 import net.okocraft.box.api.feature.BoxFeature;
 import net.okocraft.box.api.feature.Disableable;
+import net.okocraft.box.api.feature.FeatureContext;
 import net.okocraft.box.api.feature.Reloadable;
 import net.okocraft.box.api.util.Folia;
 import net.okocraft.box.feature.category.CategoryFeature;
 import net.okocraft.box.feature.gui.internal.command.MenuOpenCommand;
 import net.okocraft.box.feature.gui.internal.holder.BoxInventoryHolder;
+import net.okocraft.box.feature.gui.internal.lang.DisplayKeys;
 import net.okocraft.box.feature.gui.internal.listener.InventoryListener;
+import net.okocraft.box.feature.gui.internal.mode.StorageMode;
 import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
@@ -24,25 +26,29 @@ import java.util.Set;
 
 public class GuiFeature extends AbstractBoxFeature implements Disableable, Reloadable {
 
-    private final MenuOpenCommand command = new MenuOpenCommand();
+    private final MenuOpenCommand command;
     private final InventoryListener listener = new InventoryListener();
 
-    public GuiFeature() {
+    public GuiFeature(@NotNull FeatureContext.Registration context) {
         super("gui");
+        DisplayKeys.addDefaults(context.defaultMessageCollector());
+        new StorageMode(context.defaultMessageCollector()); // TODO
+        this.command = new MenuOpenCommand(context.defaultMessageCollector());
+        BoxInventoryHolder.addDefaultErrorMessage(context.defaultMessageCollector());
     }
 
     @Override
-    public void enable() {
+    public void enable(@NotNull FeatureContext.Enabling context) {
         var boxCommand = BoxAPI.api().getBoxCommand();
 
         boxCommand.changeNoArgumentCommand(command);
         boxCommand.getSubCommandHolder().register(command);
 
-        Bukkit.getPluginManager().registerEvents(listener, BoxAPI.api().getPluginInstance());
+        Bukkit.getPluginManager().registerEvents(this.listener, context.plugin());
     }
 
     @Override
-    public void disable() {
+    public void disable(@NotNull FeatureContext.Disabling context) {
         var boxCommand = BoxAPI.api().getBoxCommand();
 
         boxCommand.changeNoArgumentCommand(null);
@@ -52,7 +58,7 @@ public class GuiFeature extends AbstractBoxFeature implements Disableable, Reloa
     }
 
     @Override
-    public void reload(@NotNull CommandSender sender) {
+    public void reload(@NotNull FeatureContext.Reloading context) {
         List<Player> schedulingPlayers = null;
 
         if (Folia.check()) {

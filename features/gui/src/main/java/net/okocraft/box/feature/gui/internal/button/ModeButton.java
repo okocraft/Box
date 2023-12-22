@@ -1,26 +1,21 @@
 package net.okocraft.box.feature.gui.internal.button;
 
+import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
 import net.kyori.adventure.text.Component;
 import net.okocraft.box.feature.gui.api.button.Button;
 import net.okocraft.box.feature.gui.api.button.ClickResult;
 import net.okocraft.box.feature.gui.api.lang.Styles;
 import net.okocraft.box.feature.gui.api.session.PlayerSession;
+import net.okocraft.box.feature.gui.api.util.ItemEditor;
 import net.okocraft.box.feature.gui.api.util.SoundBase;
-import net.okocraft.box.feature.gui.api.util.TranslationUtil;
-import net.okocraft.box.feature.gui.internal.lang.Displays;
+import net.okocraft.box.feature.gui.internal.lang.DisplayKeys;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
+public record ModeButton(int slot) implements Button {
 
-public class ModeButton implements Button {
-
-    private final int slot;
-
-    public ModeButton(int slot) {
-        this.slot = slot;
-    }
+    private static final MiniMessageBase DISPLAY_NAME = MiniMessageBase.messageKey(DisplayKeys.MODE_CHANGE);
 
     @Override
     public int getSlot() {
@@ -29,32 +24,15 @@ public class ModeButton implements Button {
 
     @Override
     public @NotNull ItemStack createIcon(@NotNull PlayerSession session) {
+        var editor = ItemEditor.create().displayName(DISPLAY_NAME.create(session.getMessageSource()));
         var currentMode = session.getBoxItemClickMode();
-        var icon = new ItemStack(currentMode.getIconMaterial());
 
-        icon.editMeta(meta -> {
-            meta.displayName(TranslationUtil.render(Displays.MODE_BUTTON, session.getViewer()));
+        for (var mode : session.getAvailableClickModes()) {
+            var style = currentMode == mode ? Styles.NO_DECORATION_AQUA : Styles.NO_DECORATION_GRAY;
+            editor.loreLine(Component.text().append(Component.text(" > ")).append(mode.getDisplayName(session)).style(style).build());
+        }
 
-            var modes = session.getAvailableClickModes();
-            var lore = new ArrayList<Component>(modes.size());
-
-            for (var mode : modes) {
-                var style = currentMode == mode ? Styles.NO_DECORATION_AQUA : Styles.NO_DECORATION_GRAY;
-
-                lore.add(TranslationUtil.render(
-                        Component.text()
-                                .append(Component.text(" > "))
-                                .append(mode.getDisplayName())
-                                .style(style)
-                                .build(),
-                        session.getViewer()
-                ));
-            }
-
-            meta.lore(lore);
-        });
-
-        return icon;
+        return editor.createItem(currentMode.getIconMaterial());
     }
 
     @Override
