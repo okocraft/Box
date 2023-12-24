@@ -285,7 +285,7 @@ public class StickListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onShoot(@NotNull EntityShootBowEvent event) {
         if (event.getHand() != EquipmentSlot.HAND ||
-                !(event.getEntity() instanceof Player player) || !(event.getProjectile() instanceof AbstractArrow arrow) ||
+                !(event.getEntity() instanceof Player player) || !(event.getProjectile() instanceof Arrow arrow) ||
                 event.getBow() == null || event.getBow().getType() != Material.BOW ||
                 !event.shouldConsumeItem()) {
             return;
