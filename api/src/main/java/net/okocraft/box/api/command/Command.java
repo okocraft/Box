@@ -38,15 +38,10 @@ public interface Command {
     /**
      * Gets the helps.
      *
+     * @param msgSrc a {@link MiniMessageSource}
      * @return the helps
      */
-    default @NotNull Component getHelp() {
-        return Component.empty();
-    }
-
-    default @NotNull Component getHelp(@NotNull MiniMessageSource msgSrc) {
-        return this.getHelp();
-    }
+    @NotNull Component getHelp(@NotNull MiniMessageSource msgSrc);
 
     /**
      * Executes the command.

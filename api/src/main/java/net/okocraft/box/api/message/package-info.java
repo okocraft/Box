@@ -1,4 +1,4 @@
 /**
- * A package of {@link net.okocraft.box.api.message.GeneralMessage}.
+ * A package of message related classes.
  */
 package net.okocraft.box.api.message;
