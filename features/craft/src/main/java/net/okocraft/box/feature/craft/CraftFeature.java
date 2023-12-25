@@ -4,7 +4,6 @@ import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
 import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.feature.AbstractBoxFeature;
 import net.okocraft.box.api.feature.BoxFeature;
-import net.okocraft.box.api.feature.Disableable;
 import net.okocraft.box.api.feature.FeatureContext;
 import net.okocraft.box.api.feature.Reloadable;
 import net.okocraft.box.api.model.item.BoxItem;
@@ -24,7 +23,7 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 
-public class CraftFeature extends AbstractBoxFeature implements Disableable, Reloadable {
+public class CraftFeature extends AbstractBoxFeature implements Reloadable {
 
     private final CraftMode craftMode;
     private final CraftCommand craftCommand;

@@ -4,7 +4,6 @@ import it.unimi.dsi.fastutil.objects.ObjectList;
 import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.feature.AbstractBoxFeature;
 import net.okocraft.box.api.feature.BoxFeature;
-import net.okocraft.box.api.feature.Disableable;
 import net.okocraft.box.api.feature.FeatureContext;
 import net.okocraft.box.api.feature.Reloadable;
 import net.okocraft.box.api.util.Folia;
@@ -24,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public class GuiFeature extends AbstractBoxFeature implements Disableable, Reloadable {
+public class GuiFeature extends AbstractBoxFeature implements Reloadable {
 
     private final MenuOpenCommand command;
     private final InventoryListener listener = new InventoryListener();

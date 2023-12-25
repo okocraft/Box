@@ -4,7 +4,6 @@ import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
 import net.kyori.adventure.key.Key;
 import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.feature.AbstractBoxFeature;
-import net.okocraft.box.api.feature.Disableable;
 import net.okocraft.box.api.feature.FeatureContext;
 import net.okocraft.box.api.feature.Reloadable;
 import net.okocraft.box.feature.autostore.command.AutoStoreCommand;
@@ -18,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.github.siroshun09.messages.minimessage.base.MiniMessageBase.messageKey;
 
-public class AutoStoreFeature extends AbstractBoxFeature implements Disableable, Reloadable {
+public class AutoStoreFeature extends AbstractBoxFeature implements Reloadable {
 
     public static final @NotNull Key AUTO_SAVE_LISTENER_KEY = Key.key("box", "feature/autostore/auto_save_listener");
     public static final @NotNull Key PLAYER_LISTENER_KEY = Key.key("box", "feature/autostore/player_listener");

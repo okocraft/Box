@@ -2,7 +2,6 @@ package net.okocraft.box.feature.stick;
 
 import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.feature.AbstractBoxFeature;
-import net.okocraft.box.api.feature.Disableable;
 import net.okocraft.box.api.feature.FeatureContext;
 import net.okocraft.box.feature.gui.GuiFeature;
 import net.okocraft.box.feature.gui.api.event.MenuOpenEvent;
@@ -23,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * A {@link net.okocraft.box.api.feature.BoxFeature} that provides Box Stick.
  */
-public class StickFeature extends AbstractBoxFeature implements Disableable {
+public class StickFeature extends AbstractBoxFeature {
 
     private final BoxStickItem boxStickItem;
     private final StickCommand stickCommand;

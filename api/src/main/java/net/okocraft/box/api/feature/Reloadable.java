@@ -1,6 +1,5 @@
 package net.okocraft.box.api.feature;
 
-import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -9,15 +8,11 @@ import org.jetbrains.annotations.NotNull;
 public interface Reloadable {
 
     /**
-     * Reloads this.
+     * Reloads the {@link BoxFeature}.
      *
-     * @param sender the sender who executed reload
+     * @param context the {@link net.okocraft.box.api.feature.FeatureContext.Reloading} context
+     * @throws Throwable if an exception occurred while reloading
      */
-    @Deprecated
-    default void reload(@NotNull CommandSender sender) {
-    }
+    void reload(@NotNull FeatureContext.Reloading context) throws Throwable;
 
-    default void reload(@NotNull FeatureContext.Reloading context) throws Throwable {
-        this.reload(context.commandSender());
-    }
 }
