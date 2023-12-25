@@ -1,6 +1,8 @@
 package net.okocraft.box.feature.autostore.command;
 
-import net.okocraft.box.feature.autostore.message.AutoStoreMessage;
+import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
+import com.github.siroshun09.messages.minimessage.source.MiniMessageSource;
+import net.okocraft.box.api.message.DefaultMessageCollector;
 import net.okocraft.box.feature.autostore.model.setting.AutoStoreSetting;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
@@ -10,15 +12,18 @@ import java.util.List;
 
 class AutoStoreAllCommand extends AutoStoreSubCommand {
 
-    AutoStoreAllCommand() {
+    private final MiniMessageBase allModeEnabled;
+
+    AutoStoreAllCommand(@NotNull DefaultMessageCollector collector) {
         super("all");
+        this.allModeEnabled = MiniMessageBase.messageKey(collector.add("box.autostore.command.change-to-all-mode", "<gray>Auto-store mode is now <aqua>all-items<gray> and all items are stored to Box."));
     }
 
     @Override
-    void runCommand(@NotNull CommandSender sender, @NotNull String[] args, @NotNull AutoStoreSetting setting) {
-        sender.sendMessage(AutoStoreMessage.COMMAND_MODE_CHANGED.apply(true));
+    void runCommand(@NotNull CommandSender sender, @NotNull String[] args, @NotNull MiniMessageSource msgSrc, @NotNull AutoStoreSetting setting) {
+        this.allModeEnabled.source(msgSrc).send(sender);
 
-        if (AutoStoreCommandUtil.enableAutoStore(setting, sender) || !setting.isAllMode()) { // setting changed
+        if (AutoStoreCommandUtil.changeAutoStore(setting, sender, msgSrc, true, false) || !setting.isAllMode()) { // setting changed
             setting.setAllMode(true);
             AutoStoreCommandUtil.callEvent(setting);
         }

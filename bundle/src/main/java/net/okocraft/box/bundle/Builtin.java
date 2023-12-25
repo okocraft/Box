@@ -31,7 +31,7 @@ public final class Builtin {
                 .addFeature(CategoryFeature::new)
                 .addFeature(GuiFeature::new)
                 .addFeature(ignored -> new BEModeFeature())
-                .addFeature(ignored -> new AutoStoreFeature())
+                .addFeature(AutoStoreFeature::new)
                 .addFeature(ignored -> new CraftFeature())
                 .addFeature(ignored -> new StickFeature())
                 .addFeature(ignored -> new NotifierFeature());

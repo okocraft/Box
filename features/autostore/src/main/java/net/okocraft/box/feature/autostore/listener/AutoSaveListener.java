@@ -19,6 +19,11 @@ import java.util.concurrent.ConcurrentHashMap;
 public class AutoSaveListener {
 
     private final Set<AutoStoreSetting> modifiedSettings = ConcurrentHashMap.newKeySet();
+    private final AutoStoreSettingContainer container;
+
+    public AutoSaveListener(@NotNull AutoStoreSettingContainer container) {
+        this.container = container;
+    }
 
     public void register(@NotNull Key listenerKey) {
         BoxAPI.api().getEventManager().subscribeAll(List.of(
@@ -39,7 +44,7 @@ public class AutoSaveListener {
                 .filter(setting -> Bukkit.getPlayer(setting.getUuid()) != null)
                 .forEach(setting -> {
                     try {
-                        AutoStoreSettingContainer.INSTANCE.save(setting);
+                        this.container.save(setting);
                     } catch (Exception e) {
                         BoxLogger.logger().error("Could not save autostore setting ({})", setting.getUuid(), e);
                     }

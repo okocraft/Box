@@ -26,6 +26,11 @@ import org.jetbrains.annotations.NotNull;
 public class ItemListener implements Listener {
 
     private static final StockEvent.Cause AUTOSTORE_CAUSE = StockEvent.Cause.create("autostore");
+    private final AutoStoreSettingContainer container;
+
+    public ItemListener(@NotNull AutoStoreSettingContainer container) {
+        this.container = container;
+    }
 
     public void register() {
         var plugin = BoxAPI.api().getPluginInstance();
@@ -104,13 +109,12 @@ public class ItemListener implements Listener {
         }
 
         var playerMap = BoxAPI.api().getBoxPlayerMap();
-        var container = AutoStoreSettingContainer.INSTANCE;
 
-        if (!playerMap.isLoaded(player) || !container.isLoaded(player)) {
+        if (!playerMap.isLoaded(player) || !this.container.isLoaded(player)) {
             return false;
         }
 
-        var setting = container.get(player);
+        var setting = this.container.get(player);
 
         if (!setting.isEnabled() || !player.hasPermission("box.autostore")) {
             return false;

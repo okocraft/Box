@@ -1,9 +1,9 @@
 package net.okocraft.box.feature.autostore.model;
 
+import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
 import net.kyori.adventure.key.Key;
 import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.util.BoxLogger;
-import net.okocraft.box.feature.autostore.message.AutoStoreMessage;
 import net.okocraft.box.feature.autostore.model.setting.AutoStoreSetting;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -20,12 +20,16 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class AutoStoreSettingContainer {
 
-    /**
-     * The instance of {@link AutoStoreSetting}.
-     */
-    public static final AutoStoreSettingContainer INSTANCE = new AutoStoreSettingContainer();
-
     private final Map<UUID, AutoStoreSetting> settingMap = new ConcurrentHashMap<>();
+    private final MiniMessageBase failedToLoadSetting;
+
+    public AutoStoreSettingContainer(@NotNull MiniMessageBase failedToLoadSetting) {
+        this.failedToLoadSetting = failedToLoadSetting;
+    }
+
+    public @NotNull MiniMessageBase getLoadErrorMessage() {
+        return this.failedToLoadSetting;
+    }
 
     /**
      * Checks if the {@link AutoStoreSetting} of the specified {@link Player} is loaded.
@@ -125,7 +129,7 @@ public class AutoStoreSettingContainer {
                 this.load(player);
             } catch (Exception e) {
                 BoxLogger.logger().error("Could not load autostore setting ({})", player.getName(), e);
-                player.sendMessage(AutoStoreMessage.ERROR_FAILED_TO_LOAD_SETTINGS);
+                this.failedToLoadSetting.source(BoxAPI.api().getMessageProvider().findSource(player)).send(player);
             }
         }
     }

@@ -1,52 +1,43 @@
 package net.okocraft.box.feature.autostore.gui.buttons;
 
-import net.kyori.adventure.text.Component;
-import net.okocraft.box.feature.autostore.gui.AutoStoreMenuDisplays;
+import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
+import net.okocraft.box.api.message.DefaultMessageCollector;
 import net.okocraft.box.feature.autostore.gui.AutoStoreSettingKey;
-import net.okocraft.box.feature.autostore.model.setting.AutoStoreSetting;
 import net.okocraft.box.feature.gui.api.button.ClickResult;
 import net.okocraft.box.feature.gui.api.session.PlayerSession;
+import net.okocraft.box.feature.gui.api.util.ItemEditor;
 import net.okocraft.box.feature.gui.api.util.SoundBase;
-import net.okocraft.box.feature.gui.api.util.TranslationUtil;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
+import static com.github.siroshun09.messages.minimessage.base.MiniMessageBase.messageKey;
 
 public class ModeButton extends AbstractAutoStoreSettingButton {
 
-    public ModeButton() {
+    private final MiniMessageBase displayName;
+    private final MiniMessageBase changeToAll;
+    private final MiniMessageBase changeToPerItem;
+
+    public ModeButton(@NotNull DefaultMessageCollector collector) {
         super(10);
+        this.displayName = messageKey(collector.add("box.autostore.gui.mode.setting-menu.buttons.change-mode.display-name", "<gold>Change auto-store mode"));
+        this.changeToAll = messageKey(collector.add("box.autostore.gui.mode.setting-menu.buttons.change-mode.click-to-all", "<gray>Click to change to <aqua>all-items"));
+        this.changeToPerItem = messageKey(collector.add("box.autostore.gui.mode.setting-menu.buttons.change-mode.click-to-per-item", "<gray>Click to change to <aqua>per-item"));
     }
 
     @Override
     public @NotNull ItemStack createIcon(@NotNull PlayerSession session) {
         var setting = session.getData(AutoStoreSettingKey.KEY);
+        if (setting == null) return new ItemStack(Material.AIR);
 
-        if (setting == null) {
-            return new ItemStack(Material.AIR);
-        }
-
-        var icon = new ItemStack(setting.isAllMode() ? Material.REDSTONE_TORCH : Material.SOUL_TORCH);
-
-        icon.editMeta(meta -> editIconMeta(session.getViewer(), setting, meta));
-
-        return icon;
-    }
-
-    private void editIconMeta(@NotNull Player viewer, @NotNull AutoStoreSetting setting, @NotNull ItemMeta target) {
-        target.displayName(TranslationUtil.render(AutoStoreMenuDisplays.AUTOSTORE_MODE_SETTING_MENU_CHANGE_MODE, viewer));
-
-        var lore =
-                setting.isAllMode() ?
-                        AutoStoreMenuDisplays.AUTOSTORE_MODE_SETTING_MENU_CHANGE_TO_PER_ITEM :
-                        AutoStoreMenuDisplays.AUTOSTORE_MODE_SETTING_MENU_CHANGE_TO_ALL;
-
-        target.lore(List.of(Component.empty(), TranslationUtil.render(lore, viewer), Component.empty()));
+        return ItemEditor.create()
+                .displayName(this.displayName.create(session.getMessageSource()))
+                .loreEmptyLine()
+                .loreLine((setting.isAllMode() ? this.changeToPerItem : this.changeToAll).create(session.getMessageSource()))
+                .loreEmptyLine()
+                .createItem(setting.isAllMode() ? Material.REDSTONE_TORCH : Material.SOUL_TORCH);
     }
 
     @Override
