@@ -1,18 +1,22 @@
 package net.okocraft.box.feature.craft.gui.button;
 
+import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
 import net.okocraft.box.feature.craft.gui.CurrentRecipe;
-import net.okocraft.box.feature.craft.lang.Displays;
+import net.okocraft.box.feature.craft.lang.DisplayKeys;
 import net.okocraft.box.feature.gui.api.button.Button;
 import net.okocraft.box.feature.gui.api.button.ClickResult;
 import net.okocraft.box.feature.gui.api.session.PlayerSession;
+import net.okocraft.box.feature.gui.api.util.ItemEditor;
 import net.okocraft.box.feature.gui.api.util.SoundBase;
-import net.okocraft.box.feature.gui.api.util.TranslationUtil;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 public class IngredientChangeModeButton implements Button {
+
+    private static final MiniMessageBase EACH_INGREDIENT_MODE = MiniMessageBase.messageKey(DisplayKeys.EACH_INGREDIENT_MODE);
+    private static final MiniMessageBase ALL_INGREDIENT_MODE = MiniMessageBase.messageKey(DisplayKeys.ALL_INGREDIENT_MODE);
 
     private final int slot;
 
@@ -27,17 +31,10 @@ public class IngredientChangeModeButton implements Button {
 
     @Override
     public @NotNull ItemStack createIcon(@NotNull PlayerSession session) {
-        var changePerIngredientMode = session.getData(CurrentRecipe.CHANGE_PER_INGREDIENT) != null;
-        var icon = new ItemStack(changePerIngredientMode ? Material.FIREWORK_STAR : Material.FIRE_CHARGE);
-
-        icon.editMeta(meta -> meta.displayName(
-                TranslationUtil.render(
-                        changePerIngredientMode ? Displays.EACH_INGREDIENT_CHANGE_MODE : Displays.BULK_INGREDIENT_CHANGE_MODE,
-                        session.getViewer()
-                )
-        ));
-
-        return icon;
+        boolean changePerIngredientMode = session.getData(CurrentRecipe.CHANGE_PER_INGREDIENT) != null;
+        return ItemEditor.create()
+                .displayName((changePerIngredientMode ? EACH_INGREDIENT_MODE : ALL_INGREDIENT_MODE).create(session.getMessageSource()))
+                .createItem(changePerIngredientMode ? Material.FIREWORK_STAR : Material.FIRE_CHARGE);
     }
 
     @Override

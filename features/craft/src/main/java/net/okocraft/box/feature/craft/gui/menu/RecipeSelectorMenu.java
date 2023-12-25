@@ -1,9 +1,11 @@
 package net.okocraft.box.feature.craft.gui.menu;
 
+import com.github.siroshun09.messages.minimessage.arg.Arg1;
 import net.kyori.adventure.text.Component;
+import net.okocraft.box.api.message.Placeholders;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.feature.craft.gui.button.RecipeSelectButton;
-import net.okocraft.box.feature.craft.lang.Displays;
+import net.okocraft.box.feature.craft.lang.DisplayKeys;
 import net.okocraft.box.feature.craft.model.BoxItemRecipe;
 import net.okocraft.box.feature.craft.model.RecipeHolder;
 import net.okocraft.box.feature.gui.api.button.Button;
@@ -17,6 +19,7 @@ import java.util.List;
 public class RecipeSelectorMenu extends AbstractPaginatedMenu<BoxItemRecipe> {
 
     private static final BackOrCloseButton BACK_OR_CLOSE_BUTTON = new BackOrCloseButton(49);
+    private static final Arg1<BoxItem> TITLE = Arg1.arg1(DisplayKeys.RECIPE_SELECTOR_TITLE, Placeholders.ITEM);
 
     private final BoxItem item;
     private final RecipeHolder recipeHolder;
@@ -29,7 +32,7 @@ public class RecipeSelectorMenu extends AbstractPaginatedMenu<BoxItemRecipe> {
 
     @Override
     public @NotNull Component getTitle(@NotNull PlayerSession session) {
-        return Displays.RECIPE_SELECTOR_TITLE.apply(item);
+        return TITLE.apply(this.item).create(session.getMessageSource());
     }
 
     @Override

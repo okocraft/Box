@@ -1,32 +1,32 @@
 package net.okocraft.box.feature.craft.gui.util;
 
+import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
 import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.model.item.BoxItem;
-import net.okocraft.box.api.model.stock.StockHolder;
-import net.okocraft.box.feature.craft.lang.Displays;
+import net.okocraft.box.feature.craft.lang.DisplayKeys;
 import net.okocraft.box.feature.craft.model.BoxIngredientItem;
 import net.okocraft.box.feature.craft.model.BoxItemRecipe;
 import net.okocraft.box.feature.craft.model.IngredientHolder;
 import net.okocraft.box.feature.craft.model.SelectedRecipe;
 import net.okocraft.box.feature.gui.api.lang.Styles;
-import net.okocraft.box.feature.gui.api.util.TranslationUtil;
-import org.bukkit.entity.Player;
+import net.okocraft.box.feature.gui.api.session.PlayerSession;
+import net.okocraft.box.feature.gui.api.util.ItemEditor;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
-import java.util.List;
 
-import static net.kyori.adventure.text.Component.empty;
 import static net.kyori.adventure.text.Component.space;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.Component.translatable;
 
-
 public final class IngredientRenderer {
 
-    public static void render(@NotNull List<Component> target, @NotNull Player viewer,
-                              @NotNull SelectedRecipe recipe, int times, @NotNull StockHolder stockHolder) {
-        target.add(TranslationUtil.render(Displays.CRAFT_BUTTON_INGREDIENTS.append(text(":")), viewer));
+    private static final MiniMessageBase INGREDIENTS_HEADER = MiniMessageBase.messageKey(DisplayKeys.INGREDIENTS_HEADER);
+
+    public static void render(@NotNull ItemEditor<? extends ItemMeta> editor, @NotNull PlayerSession session,
+                              @NotNull SelectedRecipe recipe, int times) {
+        editor.loreLine(INGREDIENTS_HEADER.create(session.getMessageSource()));
 
         var ingredientMap = new HashMap<BoxItem, Integer>();
 
@@ -41,10 +41,10 @@ public final class IngredientRenderer {
             var item = ingredient.getKey();
             int need = ingredient.getValue() * times;
 
-            int current = stockHolder.getAmount(item);
+            int current = session.getStockHolder().getAmount(item);
             var style = need <= current ? Styles.NO_DECORATION_AQUA : Styles.NO_DECORATION_RED;
 
-            target.add(
+            editor.loreLine(
                     space().toBuilder()
                             .append(translatable(item.getOriginal(), style))
                             .append(text(": ", Styles.NO_DECORATION_GRAY))
@@ -56,9 +56,8 @@ public final class IngredientRenderer {
         }
     }
 
-    public static void render(@NotNull List<Component> target, @NotNull Player viewer,
-                              @NotNull BoxItemRecipe recipe, int times, boolean simple,
-                              @NotNull StockHolder stockHolder) {
+    public static void render(@NotNull ItemEditor<? extends ItemMeta> editor, @NotNull PlayerSession session,
+                              @NotNull BoxItemRecipe recipe, int times, boolean simple) {
         if (simple) {
             var ingredients =
                     recipe.ingredients()
@@ -66,7 +65,7 @@ public final class IngredientRenderer {
                             .map(holder -> holder.getPatterns().get(0))
                             .toList();
 
-            render(target, viewer, new SelectedRecipe(ingredients, recipe.result(), recipe.amount()), times, stockHolder);
+            render(editor, session, new SelectedRecipe(ingredients, recipe.result(), recipe.amount()), times);
             return;
         }
 
@@ -76,7 +75,7 @@ public final class IngredientRenderer {
             ingredientMap.put(ingredient, ingredientMap.getOrDefault(ingredient, 0) + 1);
         }
 
-        target.add(TranslationUtil.render(Displays.CRAFT_BUTTON_INGREDIENTS.append(text(":")), viewer));
+        editor.loreLine(INGREDIENTS_HEADER.create(session.getMessageSource()));
 
         int ingredientCounter = 0;
         int ingredientLast = ingredientMap.size();
@@ -113,11 +112,11 @@ public final class IngredientRenderer {
                     );
                 }
 
-                target.add(line);
+                editor.loreLine(line);
             }
 
             if (ingredientCounter != ingredientLast) {
-                target.add(empty());
+                editor.loreEmptyLine();
             }
         }
     }

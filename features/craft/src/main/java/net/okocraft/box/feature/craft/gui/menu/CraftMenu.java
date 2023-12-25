@@ -1,14 +1,18 @@
 package net.okocraft.box.feature.craft.gui.menu;
 
+import com.github.siroshun09.messages.minimessage.arg.Arg1;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import net.kyori.adventure.text.Component;
+import net.okocraft.box.api.message.Placeholders;
+import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.feature.craft.gui.CurrentRecipe;
 import net.okocraft.box.feature.craft.gui.button.CraftButton;
 import net.okocraft.box.feature.craft.gui.button.IngredientButton;
 import net.okocraft.box.feature.craft.gui.button.IngredientChangeModeButton;
 import net.okocraft.box.feature.craft.gui.button.ResultButton;
 import net.okocraft.box.feature.craft.gui.button.ToggleDestinationButton;
-import net.okocraft.box.feature.craft.lang.Displays;
+import net.okocraft.box.feature.craft.lang.CraftPlaceholders;
+import net.okocraft.box.feature.craft.lang.DisplayKeys;
 import net.okocraft.box.feature.craft.model.BoxItemRecipe;
 import net.okocraft.box.feature.gui.api.button.Button;
 import net.okocraft.box.feature.gui.api.button.ClickResult;
@@ -26,10 +30,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static com.github.siroshun09.messages.minimessage.arg.Arg1.arg1;
+import static com.github.siroshun09.messages.minimessage.base.MiniMessageBase.messageKey;
+
 public class CraftMenu implements Menu {
 
     private static final TypedKey<Amount> KEY = TypedKey.of(Amount.class, "craft-times");
 
+    private static final Arg1<BoxItem> TITLE = arg1(DisplayKeys.CRAFT_MENU_TITLE, Placeholders.ITEM);
     private static final List<Button> SHARED_BUTTONS;
 
     static {
@@ -58,10 +66,9 @@ public class CraftMenu implements Menu {
                 new DecreaseAmountButton(
                         45,
                         KEY,
-                        null, null, null, // TODO
-                       /* Displays.CHANGE_CRAFT_TIMES_BUTTON_DECREASE_DISPLAY_NAME,
-                        Displays.CHANGE_CRAFT_TIMES_BUTTON_DECREASE_LORE,
-                        Displays.CHANGE_CRAFT_TIMES_BUTTON_CURRENT,*/
+                        messageKey(DisplayKeys.DECREASE_CRAFT_TIMES_DISPLAY_NAME),
+                        arg1(DisplayKeys.DECREASE_CRAFT_TIMES_LORE, CraftPlaceholders.TIMES),
+                        arg1(DisplayKeys.CURRENT_CRAFT_TIMES, CraftPlaceholders.TIMES),
                         ClickResult.UPDATE_ICONS
                 )
         );
@@ -70,9 +77,8 @@ public class CraftMenu implements Menu {
                 new UnitChangeButton(
                         46,
                         KEY,
-                        null, null,
-/*                        Displays.CHANGE_UNIT_BUTTON_DISPLAY_NAME,
-                        Displays.CHANGE_UNIT_BUTTON_SHIFT_CLICK_TO_RESET_TIMES,*/
+                        messageKey(DisplayKeys.CHANGE_UNIT),
+                        messageKey(DisplayKeys.RESET_CRAFT_TIMES),
                         ClickResult.UPDATE_ICONS
                 )
         );
@@ -81,11 +87,10 @@ public class CraftMenu implements Menu {
                 new IncreaseAmountButton(
                         47,
                         KEY,
-                        null, null, null, null, // TODO
-/*                        Displays.CHANGE_CRAFT_TIMES_BUTTON_INCREASE_DISPLAY_NAME,
-                        Displays.CHANGE_CRAFT_TIMES_BUTTON_SET_TO_UNIT,
-                        Displays.CHANGE_CRAFT_TIMES_BUTTON_INCREASE_LORE,
-                        Displays.CHANGE_CRAFT_TIMES_BUTTON_CURRENT,*/
+                        messageKey(DisplayKeys.INCREASE_CRAFT_TIMES_DISPLAY_NAME),
+                        arg1(DisplayKeys.SET_CRAFT_TIMES_LORE, CraftPlaceholders.TIMES),
+                        arg1(DisplayKeys.INCREASE_CRAFT_TIMES_LORE, CraftPlaceholders.TIMES),
+                        arg1(DisplayKeys.CURRENT_CRAFT_TIMES, CraftPlaceholders.TIMES),
                         ClickResult.UPDATE_ICONS
                 )
         );
@@ -119,8 +124,7 @@ public class CraftMenu implements Menu {
 
     @Override
     public @NotNull Component getTitle(@NotNull PlayerSession session) {
-        var recipe = session.getDataOrThrow(CurrentRecipe.DATA_KEY);
-        return Displays.CRAFT_MENU_TITLE.apply(recipe.getResult());
+        return TITLE.apply(session.getDataOrThrow(CurrentRecipe.DATA_KEY).getResult()).create(session.getMessageSource());
     }
 
     @Override

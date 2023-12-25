@@ -1,29 +1,39 @@
 package net.okocraft.box.feature.craft.mode;
 
+import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
 import net.kyori.adventure.text.Component;
+import net.okocraft.box.api.message.DefaultMessageCollector;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.player.BoxPlayer;
 import net.okocraft.box.feature.craft.RecipeRegistry;
 import net.okocraft.box.feature.craft.gui.menu.CraftMenu;
 import net.okocraft.box.feature.craft.gui.menu.RecipeSelectorMenu;
-import net.okocraft.box.feature.craft.lang.Displays;
 import net.okocraft.box.feature.gui.api.button.Button;
 import net.okocraft.box.feature.gui.api.button.ClickResult;
 import net.okocraft.box.feature.gui.api.menu.Menu;
 import net.okocraft.box.feature.gui.api.mode.BoxItemClickMode;
 import net.okocraft.box.feature.gui.api.session.PlayerSession;
+import net.okocraft.box.feature.gui.api.util.ItemEditor;
 import net.okocraft.box.feature.gui.api.util.SoundBase;
-import net.okocraft.box.feature.gui.api.util.TranslationUtil;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Optional;
+import static com.github.siroshun09.messages.minimessage.base.MiniMessageBase.messageKey;
 
 public class CraftMode implements BoxItemClickMode {
+
+    private final MiniMessageBase displayName;
+    private final MiniMessageBase clickToShowRecipes;
+    private final MiniMessageBase noRecipe;
+
+    public CraftMode(@NotNull DefaultMessageCollector collector) {
+        this.displayName = messageKey(collector.add("box.craft.mode.display-name", "Craft mode"));
+        this.clickToShowRecipes = messageKey(collector.add("box.craft.mode.click-to-show-recipes", "<gray>Click to show recipes"));
+        this.noRecipe = messageKey(collector.add("box.craft.mode.no-recipe", "<red>There is no recipe"));
+    }
 
     @Override
     public @NotNull Material getIconMaterial() {
@@ -31,31 +41,18 @@ public class CraftMode implements BoxItemClickMode {
     }
 
     @Override
-    public @NotNull Component getDisplayName() {
-        return Displays.CRAFT_MODE;
+    public @NotNull Component getDisplayName(@NotNull PlayerSession session) {
+        return this.displayName.create(session.getMessageSource());
     }
 
     @Override
     public @NotNull ItemStack createItemIcon(@NotNull PlayerSession session, @NotNull BoxItem item) {
-        var icon = item.getClonedItem();
-
-        icon.editMeta(target -> {
-            var newLore = Optional.ofNullable(target.lore()).map(ArrayList::new).orElseGet(ArrayList::new);
-
-            newLore.add(Component.empty());
-
-            if (RecipeRegistry.hasRecipe(item)) {
-                newLore.add(TranslationUtil.render(Displays.CLICK_TO_SHOW_RECIPES, session.getViewer()));
-            } else {
-                newLore.add(TranslationUtil.render(Displays.RECIPE_NOT_FOUND, session.getViewer()));
-            }
-
-            newLore.add(Component.empty());
-
-            target.lore(newLore);
-        });
-
-        return icon;
+        return ItemEditor.create()
+                .copyLoreFrom(item.getOriginal())
+                .loreEmptyLine()
+                .loreLine((RecipeRegistry.hasRecipe(item) ? this.clickToShowRecipes : this.noRecipe).create(session.getMessageSource()))
+                .loreEmptyLine()
+                .applyTo(item.getClonedItem());
     }
 
     @Override
@@ -75,7 +72,7 @@ public class CraftMode implements BoxItemClickMode {
         Menu menu;
 
         if (recipes.getRecipeList().size() == 1) {
-            menu = CraftMenu.prepare(session,recipes.getRecipeList().get(0));
+            menu = CraftMenu.prepare(session, recipes.getRecipeList().get(0));
         } else {
             menu = new RecipeSelectorMenu(item, recipes);
         }

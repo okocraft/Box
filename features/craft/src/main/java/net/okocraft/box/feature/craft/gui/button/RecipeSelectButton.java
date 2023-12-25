@@ -1,30 +1,31 @@
 package net.okocraft.box.feature.craft.gui.button;
 
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextDecoration;
-import net.okocraft.box.feature.craft.lang.Displays;
+import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
+import net.kyori.adventure.text.format.TextDecoration.State;
 import net.okocraft.box.feature.craft.gui.menu.CraftMenu;
-import net.okocraft.box.feature.craft.model.BoxItemRecipe;
 import net.okocraft.box.feature.craft.gui.util.IngredientRenderer;
+import net.okocraft.box.feature.craft.lang.DisplayKeys;
+import net.okocraft.box.feature.craft.model.BoxItemRecipe;
 import net.okocraft.box.feature.gui.api.button.Button;
 import net.okocraft.box.feature.gui.api.button.ClickResult;
 import net.okocraft.box.feature.gui.api.session.PlayerSession;
 import net.okocraft.box.feature.gui.api.session.TypedKey;
-import net.okocraft.box.feature.gui.api.util.TranslationUtil;
+import net.okocraft.box.feature.gui.api.util.ItemEditor;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-
 import static net.kyori.adventure.text.Component.space;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.Component.translatable;
+import static net.kyori.adventure.text.format.TextDecoration.ITALIC;
 import static net.okocraft.box.feature.gui.api.lang.Styles.NO_DECORATION_AQUA;
 import static net.okocraft.box.feature.gui.api.lang.Styles.NO_DECORATION_GRAY;
 import static net.okocraft.box.feature.gui.api.lang.Styles.NO_DECORATION_YELLOW;
 
 public class RecipeSelectButton implements Button {
+
+    private static final MiniMessageBase CLICK_TO_SHOW_DETAILS = MiniMessageBase.messageKey(DisplayKeys.CLICK_TO_SHOW_DETAILS);
 
     private static final TypedKey<Boolean> SHOW_DETAILS = TypedKey.of(Boolean.class, "recipe_show_details");
 
@@ -45,42 +46,24 @@ public class RecipeSelectButton implements Button {
 
     @Override
     public @NotNull ItemStack createIcon(@NotNull PlayerSession session) {
-        var icon = new ItemStack(recipe.result().getOriginal().getType());
+        var editor = ItemEditor.create()
+                .displayName(translatable(this.recipe.result().getOriginal()).decoration(ITALIC, State.FALSE).append(space()).append(text("#" + number, NO_DECORATION_YELLOW)))
+                .loreEmptyLine();
 
-        var viewer = session.getViewer();
+        boolean simple = session.getData(SHOW_DETAILS) == null;
+        IngredientRenderer.render(editor, session, this.recipe, 1, simple);
 
-        icon.editMeta(target -> {
-            target.displayName(
-                    translatable(recipe.result().getOriginal()).decoration(TextDecoration.ITALIC, TextDecoration.State.FALSE)
-                            .append(Component.space())
-                            .append(text("#" + number, NO_DECORATION_YELLOW))
-            );
-
-            boolean simple = session.getData(SHOW_DETAILS) == null;
-
-            var lore = new ArrayList<Component>();
-            lore.add(Component.empty());
-
-            IngredientRenderer.render(lore, viewer, recipe, 1, simple, session.getStockHolder());
-
-            lore.add(Component.empty());
-            lore.add(
-                    text(" -> ", NO_DECORATION_GRAY)
-                            .append(translatable(recipe.result().getOriginal(), recipe.result().getDisplayName().style()))
-                            .append(space())
-                            .append(text("x", NO_DECORATION_GRAY))
-                            .append(text(recipe.amount(), NO_DECORATION_AQUA))
-            );
-
-            if (simple) {
-                lore.add(Component.empty());
-                lore.add(TranslationUtil.render(Displays.RECIPE_BUTTON_SHIFT_CLICK_TO_SHOW_DETAILS, viewer));
-            }
-
-            target.lore(lore);
-        });
-
-        return icon;
+        return editor.loreEmptyLine()
+                .loreLine(
+                        text(" -> ", NO_DECORATION_GRAY)
+                                .append(translatable(recipe.result().getOriginal(), recipe.result().getDisplayName().style()))
+                                .append(space())
+                                .append(text("x", NO_DECORATION_GRAY))
+                                .append(text(recipe.amount(), NO_DECORATION_AQUA))
+                )
+                .loreEmptyLineIf(simple)
+                .loreLineIf(simple, () -> CLICK_TO_SHOW_DETAILS.create(session.getMessageSource()))
+                .createItem(this.recipe.result().getOriginal().getType());
     }
 
     @Override
