@@ -15,8 +15,7 @@ public record MCDataVersion(int dataVersion) {
     /**
      * A {@link MCDataVersion} that represents the version of the server on which Box is currently running.
      */
-    @SuppressWarnings("deprecation")
-    public static final MCDataVersion CURRENT = new MCDataVersion(Bukkit.getUnsafe().getDataVersion());
+    public static final MCDataVersion CURRENT = getCurrent();
 
     /**
      * A {@link MCDataVersion} that represents Minecraft 1.17
@@ -167,10 +166,16 @@ public record MCDataVersion(int dataVersion) {
      * Checks if this {@link MCDataVersion} is contained between the specified {@link MCDataVersion}s.
      *
      * @param startInclusive beginning of included {@link MCDataVersion}
-     * @param endInclusive end of included {@link MCDataVersion}
+     * @param endInclusive   end of included {@link MCDataVersion}
      * @return {@code true} if this {@link MCDataVersion} is contained between the specified {@link MCDataVersion}s, otherwise {@code false}
      */
     public boolean isBetween(@NotNull MCDataVersion startInclusive, @NotNull MCDataVersion endInclusive) {
         return isAfterOrSame(startInclusive) && isBeforeOrSame(endInclusive);
+    }
+
+    @SuppressWarnings({"ConstantValue", "deprecation"})
+    private static @NotNull MCDataVersion getCurrent() {
+        var server = Bukkit.getServer();
+        return MCDataVersion.of(server != null ? server.getUnsafe().getDataVersion() : -1);
     }
 }
