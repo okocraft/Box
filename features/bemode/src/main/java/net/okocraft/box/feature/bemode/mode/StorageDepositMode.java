@@ -1,9 +1,12 @@
 package net.okocraft.box.feature.bemode.mode;
 
+import com.github.siroshun09.messages.minimessage.arg.Arg1;
+import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
 import net.kyori.adventure.text.Component;
+import net.okocraft.box.api.message.DefaultMessageCollector;
+import net.okocraft.box.api.message.Placeholders;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.player.BoxPlayer;
-import net.okocraft.box.feature.bemode.lang.Displays;
 import net.okocraft.box.feature.bemode.util.BEPlayerChecker;
 import net.okocraft.box.feature.gui.api.button.Button;
 import net.okocraft.box.feature.gui.api.button.ClickResult;
@@ -11,18 +14,33 @@ import net.okocraft.box.feature.gui.api.mode.AbstractStorageMode;
 import net.okocraft.box.feature.gui.api.session.Amount;
 import net.okocraft.box.feature.gui.api.session.PlayerSession;
 import net.okocraft.box.feature.gui.api.session.TypedKey;
-import net.okocraft.box.feature.gui.api.util.TranslationUtil;
+import net.okocraft.box.feature.gui.api.util.ItemEditor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import static com.github.siroshun09.messages.minimessage.base.MiniMessageBase.messageKey;
 
 public class StorageDepositMode extends AbstractStorageMode {
+
+    private final MiniMessageBase displayName;
+    private final Arg1<Integer> currentStock;
+    private final Arg1<Integer> clickToDeposit;
+
+    private final MiniMessageBase depositAllDisplayName;
+    private final MiniMessageBase depositAllLore;
+    private final MiniMessageBase depositAllConfirmation;
+
+    public StorageDepositMode(@NotNull Arg1<Integer> currentStock, @NotNull DefaultMessageCollector collector) {
+        this.displayName = messageKey(collector.add("box.bemode.storage-mode.deposit.display-name", "<gray>Storage mode (deposit)"));
+        this.clickToDeposit = Arg1.arg1(collector.add("box.bemode.storage-mode.deposit.click-to-deposit", "<gray>Click to deposit <aqua><amount><gray> items"), Placeholders.AMOUNT);
+        this.depositAllDisplayName = messageKey(collector.add("box.bemode.storage-mode.deposit.deposit-all-button.display-name", "<gold>Deposits all items in inventory"));
+        this.depositAllLore = messageKey(collector.add("box.bemode.storage-mode.deposit.deposit-all-button.lore", "<gray>Double click to deposit"));
+        this.depositAllConfirmation = messageKey(collector.add("box.bemode.storage-mode.deposit.deposit-all-button.confirmation", "<gray>Please click again to confirm"));
+        this.currentStock = currentStock;
+    }
 
     @Override
     public @NotNull Material getIconMaterial() {
@@ -30,27 +48,22 @@ public class StorageDepositMode extends AbstractStorageMode {
     }
 
     @Override
-    public @NotNull Component getDisplayName() {
-        return Displays.STORAGE_DEPOSIT_MODE_DISPLAY_NAME;
+    public @NotNull Component getDisplayName(@NotNull PlayerSession session) {
+        return this.displayName.create(session.getMessageSource());
     }
 
     @Override
     public @NotNull ItemStack createItemIcon(@NotNull PlayerSession session, @NotNull BoxItem item) {
         var icon = item.getClonedItem();
+        var amountData = session.getData(Amount.SHARED_DATA_KEY);
 
-        var newLore = Optional.ofNullable(icon.lore()).map(ArrayList::new).orElseGet(ArrayList::new);
-
-        var additionalLore = List.of(
-                Component.empty(),
-                getButtonInformationLore(session),
-                Component.empty(),
-                Displays.CURRENT_STOCK.apply(session.getStockHolder().getAmount(item))
-        );
-
-        newLore.addAll(TranslationUtil.render(additionalLore, session.getViewer()));
-        icon.lore(newLore);
-
-        return icon;
+        return ItemEditor.create()
+                .copyLoreFrom(icon)
+                .loreEmptyLine()
+                .loreLine(this.clickToDeposit.apply(amountData != null ? amountData.getValue() : 1).create(session.getMessageSource()))
+                .loreEmptyLine()
+                .loreLine(this.currentStock.apply(session.getStockHolder().getAmount(item)).create(session.getMessageSource()))
+                .applyTo(icon);
     }
 
     @Override
@@ -74,12 +87,7 @@ public class StorageDepositMode extends AbstractStorageMode {
 
     @Override
     public @NotNull Button createAdditionalButton(@NotNull PlayerSession session, int slot) {
-        return new DepositAllButton(slot);
-    }
-
-    private @NotNull Component getButtonInformationLore(@NotNull PlayerSession session) {
-        var amountData = session.getData(Amount.SHARED_DATA_KEY);
-        return Displays.STORAGE_DEPOSIT_MODE_CLICK_TO_DEPOSIT.apply(amountData != null ? amountData.getValue() : 1);
+        return new DepositAllButton(slot, this.depositAllDisplayName, this.depositAllLore, this.depositAllConfirmation);
     }
 
     private static class DepositAllButton extends AbstractDepositAllButton {
@@ -99,33 +107,26 @@ public class StorageDepositMode extends AbstractStorageMode {
             }
         }
 
-        private DepositAllButton(int slot) {
+        private final MiniMessageBase displayName;
+        private final MiniMessageBase lore;
+        private final MiniMessageBase confirmation;
+
+        private DepositAllButton(int slot, @NotNull MiniMessageBase displayName, @NotNull MiniMessageBase lore, @NotNull MiniMessageBase confirmation) {
             super(slot, DepositAllButton::canDepositAll, ClickResult.UPDATE_BUTTON);
+            this.displayName = displayName;
+            this.lore = lore;
+            this.confirmation = confirmation;
         }
 
         @Override
         public @NotNull ItemStack createIcon(@NotNull PlayerSession session) {
-            var icon = new ItemStack(Material.NETHER_STAR);
-            var viewer = session.getViewer();
-
-            icon.editMeta(meta -> {
-                meta.displayName(TranslationUtil.render(Displays.DEPOSIT_ALL_BUTTON_DISPLAY_NAME, viewer));
-
-                var lore = new ArrayList<Component>();
-
-                lore.add(Component.empty());
-                lore.add(TranslationUtil.render(Displays.DEPOSIT_ALL_BUTTON_LORE, viewer));
-
-                if (isClicked(session)) {
-                    lore.add(TranslationUtil.render(Displays.DEPOSIT_ALL_BUTTON_CONFIRMATION, viewer));
-                }
-
-                lore.add(Component.empty());
-
-                meta.lore(lore);
-            });
-
-            return icon;
+            return ItemEditor.create()
+                    .displayName(this.displayName.create(session.getMessageSource()))
+                    .loreEmptyLine()
+                    .loreLine(this.lore.create(session.getMessageSource()))
+                    .loreLineIf(isClicked(session), () -> this.confirmation.create(session.getMessageSource()))
+                    .loreEmptyLine()
+                    .createItem(Material.NETHER_STAR);
         }
     }
 }

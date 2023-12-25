@@ -30,7 +30,7 @@ public final class Builtin {
         context.addFeature(CommandFeature::new)
                 .addFeature(CategoryFeature::new)
                 .addFeature(GuiFeature::new)
-                .addFeature(ignored -> new BEModeFeature())
+                .addFeature(BEModeFeature::new)
                 .addFeature(AutoStoreFeature::new)
                 .addFeature(ignored -> new CraftFeature())
                 .addFeature(ignored -> new StickFeature())

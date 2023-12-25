@@ -1,27 +1,36 @@
 package net.okocraft.box.feature.bemode.mode;
 
+import com.github.siroshun09.messages.minimessage.arg.Arg1;
+import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
 import net.kyori.adventure.text.Component;
+import net.okocraft.box.api.message.DefaultMessageCollector;
+import net.okocraft.box.api.message.Placeholders;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.player.BoxPlayer;
-import net.okocraft.box.feature.bemode.lang.Displays;
 import net.okocraft.box.feature.bemode.util.BEPlayerChecker;
 import net.okocraft.box.feature.gui.api.button.Button;
 import net.okocraft.box.feature.gui.api.button.ClickResult;
 import net.okocraft.box.feature.gui.api.mode.AbstractStorageMode;
 import net.okocraft.box.feature.gui.api.session.Amount;
 import net.okocraft.box.feature.gui.api.session.PlayerSession;
-import net.okocraft.box.feature.gui.api.util.TranslationUtil;
+import net.okocraft.box.feature.gui.api.util.ItemEditor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
 public class StorageWithdrawMode extends AbstractStorageMode {
+
+    private final MiniMessageBase displayName;
+    private final Arg1<Integer> clickToWithdraw;
+    private final Arg1<Integer> currentStock;
+
+    public StorageWithdrawMode(@NotNull Arg1<Integer> currentStock, @NotNull DefaultMessageCollector collector) {
+        this.displayName = MiniMessageBase.messageKey(collector.add("box.bemode.storage-mode.withdraw.display-name", "<gray>Storage mode (withdraw)"));
+        this.clickToWithdraw = Arg1.arg1(collector.add("box.bemode.storage-mode.withdraw.click-to-withdraw", "<gray>Click to withdraw <aqua><amount><gray> items"), Placeholders.AMOUNT);
+        this.currentStock = currentStock;
+    }
 
     @Override
     public @NotNull Material getIconMaterial() {
@@ -29,27 +38,22 @@ public class StorageWithdrawMode extends AbstractStorageMode {
     }
 
     @Override
-    public @NotNull Component getDisplayName() {
-        return Displays.STORAGE_WITHDRAW_MODE_DISPLAY_NAME;
+    public @NotNull Component getDisplayName(@NotNull PlayerSession session) {
+        return this.displayName.create(session.getMessageSource());
     }
 
     @Override
     public @NotNull ItemStack createItemIcon(@NotNull PlayerSession session, @NotNull BoxItem item) {
         var icon = item.getClonedItem();
+        var amountData = session.getData(Amount.SHARED_DATA_KEY);
 
-        var newLore = Optional.ofNullable(icon.lore()).map(ArrayList::new).orElseGet(ArrayList::new);
-
-        var additionalLore = List.of(
-                Component.empty(),
-                getButtonInformationLore(session),
-                Component.empty(),
-                Displays.CURRENT_STOCK.apply(session.getStockHolder().getAmount(item))
-        );
-
-        newLore.addAll(TranslationUtil.render(additionalLore, session.getViewer()));
-        icon.lore(newLore);
-
-        return icon;
+        return ItemEditor.create()
+                .copyLoreFrom(icon)
+                .loreEmptyLine()
+                .loreLine(this.clickToWithdraw.apply(amountData != null ? amountData.getValue() : 1).create(session.getMessageSource()))
+                .loreEmptyLine()
+                .loreLine(this.currentStock.apply(session.getStockHolder().getAmount(item)).create(session.getMessageSource()))
+                .applyTo(icon);
     }
 
     @Override
@@ -74,10 +78,5 @@ public class StorageWithdrawMode extends AbstractStorageMode {
     @Override
     public @NotNull Button createAdditionalButton(@NotNull PlayerSession session, int slot) {
         throw new UnsupportedOperationException();
-    }
-
-    private @NotNull Component getButtonInformationLore(@NotNull PlayerSession session) {
-        var amountData = session.getData(Amount.SHARED_DATA_KEY);
-        return Displays.STORAGE_WITHDRAW_MODE_CLICK_TO_WITHDRAW.apply(amountData != null ? amountData.getValue() : 1);
     }
 }
