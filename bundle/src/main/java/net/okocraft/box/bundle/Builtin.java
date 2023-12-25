@@ -34,7 +34,7 @@ public final class Builtin {
                 .addFeature(AutoStoreFeature::new)
                 .addFeature(ignored -> new CraftFeature())
                 .addFeature(ignored -> new StickFeature())
-                .addFeature(ignored -> new NotifierFeature());
+                .addFeature(NotifierFeature::new);
     }
 
     public static void storages(@NotNull StorageRegistry registry) {
