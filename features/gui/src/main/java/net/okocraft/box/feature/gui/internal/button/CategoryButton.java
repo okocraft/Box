@@ -1,14 +1,11 @@
 package net.okocraft.box.feature.gui.internal.button;
 
-import net.kyori.adventure.text.Component;
 import net.okocraft.box.feature.category.api.category.Category;
 import net.okocraft.box.feature.gui.api.button.Button;
 import net.okocraft.box.feature.gui.api.button.ClickResult;
 import net.okocraft.box.feature.gui.api.lang.Styles;
 import net.okocraft.box.feature.gui.api.session.PlayerSession;
-import net.okocraft.box.feature.gui.api.util.TranslationUtil;
 import net.okocraft.box.feature.gui.internal.menu.CategoryMenu;
-import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -34,7 +31,7 @@ public class CategoryButton implements Button {
     public @NotNull ItemStack createIcon(@NotNull PlayerSession session) {
         var icon = new ItemStack(category.getIconMaterial());
 
-        icon.editMeta(meta -> meta.displayName(renderCategoryDisplayName(session.getViewer()).style(Styles.NO_DECORATION_GOLD)));
+        icon.editMeta(meta -> meta.displayName(category.getDisplayName(session.getViewer()).style(Styles.NO_DECORATION_GOLD)));
 
         return icon;
     }
@@ -42,9 +39,5 @@ public class CategoryButton implements Button {
     @Override
     public @NotNull ClickResult onClick(@NotNull PlayerSession session, @NotNull ClickType clickType) {
         return ClickResult.changeMenu(menu);
-    }
-
-    private @NotNull Component renderCategoryDisplayName(@NotNull Player viewer) {
-        return TranslationUtil.render(category.getDisplayName(), viewer);
     }
 }

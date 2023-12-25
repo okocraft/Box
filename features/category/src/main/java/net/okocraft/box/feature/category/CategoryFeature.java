@@ -1,51 +1,57 @@
 package net.okocraft.box.feature.category;
 
-import com.github.siroshun09.configapi.format.yaml.YamlFormat;
+import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
 import net.kyori.adventure.key.Key;
 import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.feature.AbstractBoxFeature;
 import net.okocraft.box.api.feature.Disableable;
+import net.okocraft.box.api.feature.FeatureContext;
 import net.okocraft.box.api.feature.Reloadable;
-import net.okocraft.box.api.message.Components;
 import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.feature.category.api.registry.CategoryRegistry;
+import net.okocraft.box.feature.category.internal.category.CustomItemCategory;
 import net.okocraft.box.feature.category.internal.file.CategoryFile;
 import net.okocraft.box.feature.category.internal.listener.CustomItemListener;
 import net.okocraft.box.feature.category.internal.listener.ItemInfoEventListener;
 import net.okocraft.box.feature.category.internal.registry.CategoryRegistryImpl;
-import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.nio.file.Path;
 
 public class CategoryFeature extends AbstractBoxFeature implements Disableable, Reloadable {
 
     private static final Key CUSTOM_ITEM_LISTENER_KEY = Key.key("box", "feature/category/custom_item_listener");
     private static final Key ITEM_INFO_COLLECT_EVENT_LISTENER_KEY = Key.key("box", "feature/category/item_info_collect_event");
 
+    private final Path filepath;
     private final CategoryRegistry categoryRegistry = new CategoryRegistryImpl();
-    private final CustomItemListener customItemListener = new CustomItemListener(categoryRegistry);
-    private final ItemInfoEventListener itemInfoEventListener = new ItemInfoEventListener(categoryRegistry);
+    private final CustomItemCategory customItemCategory = new CustomItemCategory();
+    private final CustomItemListener customItemListener;
+    private final ItemInfoEventListener itemInfoEventListener;
+    private final MiniMessageBase reloaded;
 
-    public CategoryFeature() {
+    public CategoryFeature(@NotNull FeatureContext.Registration context) {
         super("category");
+        this.filepath = context.dataDirectory().resolve("categories.yml");
+        this.customItemListener = new CustomItemListener(this.filepath, this.customItemCategory);
+        this.itemInfoEventListener = new ItemInfoEventListener(this.categoryRegistry, context.defaultMessageCollector());
+        CustomItemCategory.addDefaultCategoryName(context.defaultMessageCollector());
+        this.reloaded = MiniMessageBase.messageKey(context.defaultMessageCollector().add("box.category.reloaded", "<gray>Categories have been reloaded."));
     }
 
     @Override
-    public void enable() {
-        var filepath = BoxAPI.api().getPluginDirectory().resolve("categories.yml");
+    public void enable(@NotNull FeatureContext.Enabling context) {
+        this.categoryRegistry.register("custom-items", this.customItemCategory);
 
-        try {
-            CategoryFile.load(this.categoryRegistry, filepath);
+        try (var file = new CategoryFile(this.filepath, this.categoryRegistry, BoxAPI.api().getItemManager())) {
+            file.loadFile()
+                    .convertIfUnknownVersion()
+                    .readCategoriesIfExists()
+                    .readCustomItemsIfExists(this.customItemCategory)
+                    .addNewDefaultItemsIfNeeded();
         } catch (IOException e) {
             BoxLogger.logger().error("Could not load categories.yml", e);
-            return;
-        }
-
-        try {
-            YamlFormat.DEFAULT.save(CategoryFile.dump(this.categoryRegistry), filepath);
-        } catch (IOException e) {
-            BoxLogger.logger().error("Could not save categories.yml", e);
             return;
         }
 
@@ -54,20 +60,20 @@ public class CategoryFeature extends AbstractBoxFeature implements Disableable, 
     }
 
     @Override
-    public void disable() {
+    public void disable(@NotNull FeatureContext.Disabling context) {
         this.customItemListener.unregister(CUSTOM_ITEM_LISTENER_KEY);
         this.itemInfoEventListener.unregister(ITEM_INFO_COLLECT_EVENT_LISTENER_KEY);
         this.categoryRegistry.unregisterAll();
     }
 
     @Override
-    public void reload(@NotNull CommandSender sender) {
-        disable();
-        enable();
-        sender.sendMessage(Components.grayTranslatable("box.category.reloaded"));
+    public void reload(@NotNull FeatureContext.Reloading context) {
+        this.disable(context.asDisabling());
+        this.enable(context.asEnabling());
+        this.reloaded.source(BoxAPI.api().getMessageProvider().findSource(context.commandSender())).send(context.commandSender());
     }
 
     public @NotNull CategoryRegistry getCategoryRegistry() {
-        return categoryRegistry;
+        return this.categoryRegistry;
     }
 }

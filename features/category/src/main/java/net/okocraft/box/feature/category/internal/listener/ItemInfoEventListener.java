@@ -1,12 +1,15 @@
 package net.okocraft.box.feature.category.internal.listener;
 
+import com.github.siroshun09.messages.minimessage.arg.Arg1;
+import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
+import com.github.siroshun09.messages.minimessage.base.Placeholder;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.JoinConfiguration;
 import net.kyori.adventure.text.event.ClickEvent;
-import net.kyori.adventure.text.event.HoverEvent;
-import net.kyori.adventure.text.format.NamedTextColor;
 import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.event.player.PlayerCollectItemInfoEvent;
+import net.okocraft.box.api.message.DefaultMessageCollector;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.feature.category.api.category.Category;
 import net.okocraft.box.feature.category.api.registry.CategoryRegistry;
@@ -14,18 +17,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
 public class ItemInfoEventListener {
-
-    private static final Component ITEM_INFO_PREFIX =
-            Component.text()
-                    .append(Component.translatable("box.category.item-info.prefix"))
-                    .append(Component.text(":"))
-                    .color(NamedTextColor.GRAY)
-                    .build();
-
-    private static final HoverEvent<Component> CLICK_TO_OPEN_MENU =
-            HoverEvent.showText(Component.translatable("box.category.item-info.click-to-open"));
 
     private static BiFunction<Category, BoxItem, String> commandCreator;
 
@@ -34,9 +28,15 @@ public class ItemInfoEventListener {
     }
 
     private final CategoryRegistry registry;
+    private final Arg1<Component> itemInfoFormat;
+    private final Arg1<Component> categoryFormat;
+    private final MiniMessageBase categorySeparator;
 
-    public ItemInfoEventListener(@NotNull CategoryRegistry registry) {
+    public ItemInfoEventListener(@NotNull CategoryRegistry registry, @NotNull DefaultMessageCollector collector) {
         this.registry = registry;
+        this.itemInfoFormat = Arg1.arg1(collector.add("box.category.item-info.format", "<gray>Category: <aqua><categories>"), Placeholder.component("categories", Function.identity()));
+        this.categoryFormat = Arg1.arg1(collector.add("box.category.item-info.category-display", "<hover:show_text:'Click to open the menu'>[<category>]"), Placeholder.component("category", Function.identity()));
+        this.categorySeparator = MiniMessageBase.messageKey(collector.add("box.category.item-info.category-separator", " "));
     }
 
     public void register(@NotNull Key listenerKey) {
@@ -48,25 +48,19 @@ public class ItemInfoEventListener {
     }
 
     private void processEvent(@NotNull PlayerCollectItemInfoEvent event) {
-        var info = Component.text().append(ITEM_INFO_PREFIX);
+        var player = event.getBoxPlayer().getPlayer();
+        var src = BoxAPI.api().getMessageProvider().findSource(player);
 
-        registry.values().stream()
-                .filter(category -> category.containsItem(event.getItem()))
-                .map(category -> formatCategory(category, event.getItem()))
-                .forEach(info::append);
-
-        event.addInfo(info.build());
-    }
-
-    private @NotNull Component formatCategory(@NotNull Category category, @NotNull BoxItem item) {
-        return Component.space().append(
-                Component.text()
-                        .append(Component.text("["))
-                        .append(category.getDisplayName())
-                        .append(Component.text("]"))
-                        .color(NamedTextColor.AQUA)
-                        .hoverEvent(CLICK_TO_OPEN_MENU)
-                        .clickEvent(commandCreator != null ? ClickEvent.runCommand(commandCreator.apply(category, item)) : null)
-        );
+        event.addInfo(this.itemInfoFormat.apply(Component.join(
+                JoinConfiguration.separator(this.categorySeparator.create(src)),
+                this.registry.values()
+                        .stream()
+                        .filter(category -> category.containsItem(event.getItem()))
+                        .map(category ->
+                                this.categoryFormat.apply(category.getDisplayName(player))
+                                        .create(src)
+                                        .clickEvent(commandCreator != null ? ClickEvent.runCommand(commandCreator.apply(category, event.getItem())) : null))
+                        .toList()
+        )).create(src));
     }
 }
