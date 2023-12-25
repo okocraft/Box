@@ -3,6 +3,7 @@ package net.okocraft.box.feature.stick;
 import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.feature.AbstractBoxFeature;
 import net.okocraft.box.api.feature.Disableable;
+import net.okocraft.box.api.feature.FeatureContext;
 import net.okocraft.box.feature.gui.GuiFeature;
 import net.okocraft.box.feature.gui.api.event.MenuOpenEvent;
 import net.okocraft.box.feature.gui.api.session.PlayerSession;
@@ -24,35 +25,39 @@ import org.jetbrains.annotations.NotNull;
  */
 public class StickFeature extends AbstractBoxFeature implements Disableable {
 
-    private final BoxStickItem boxStickItem = new BoxStickItem(new NamespacedKey("box", "stick"));
-    private final StickCommand stickCommand = new StickCommand(boxStickItem);
-    private final CustomStickCommand customStickCommand = new CustomStickCommand(boxStickItem);
-    private final StickListener stickListener = new StickListener(boxStickItem);
+    private final BoxStickItem boxStickItem;
+    private final StickCommand stickCommand;
+    private final CustomStickCommand customStickCommand;
+    private final StickListener stickListener;
 
     /**
      * The constructor of {@link StickFeature}.
      */
     @ApiStatus.Internal
-    public StickFeature() {
+    public StickFeature(@NotNull FeatureContext.Registration context) {
         super("stick");
+        this.boxStickItem = new BoxStickItem(new NamespacedKey("box", "stick"));
+        this.stickCommand = new StickCommand(this.boxStickItem, context.defaultMessageCollector());
+        this.customStickCommand = new CustomStickCommand(this.boxStickItem, context.defaultMessageCollector());
+        this.stickListener = new StickListener(this.boxStickItem);
     }
 
     @Override
-    public void enable() {
+    public void enable(@NotNull FeatureContext.Enabling context) {
         if (BoxAPI.api().getFeature(GuiFeature.class).isPresent()) {
             this.boxStickItem.onRightClick(this::defaultRightClickAction);
         }
 
-        BoxAPI.api().getBoxCommand().getSubCommandHolder().register(stickCommand);
-        BoxAPI.api().getBoxAdminCommand().getSubCommandHolder().register(customStickCommand);
-        Bukkit.getPluginManager().registerEvents(stickListener, BoxAPI.api().getPluginInstance());
+        BoxAPI.api().getBoxCommand().getSubCommandHolder().register(this.stickCommand);
+        BoxAPI.api().getBoxAdminCommand().getSubCommandHolder().register(this.customStickCommand);
+        Bukkit.getPluginManager().registerEvents(this.stickListener, BoxAPI.api().getPluginInstance());
     }
 
     @Override
-    public void disable() {
-        BoxAPI.api().getBoxCommand().getSubCommandHolder().unregister(stickCommand);
-        BoxAPI.api().getBoxAdminCommand().getSubCommandHolder().register(customStickCommand);
-        HandlerList.unregisterAll(stickListener);
+    public void disable(@NotNull FeatureContext.Disabling context) {
+        BoxAPI.api().getBoxCommand().getSubCommandHolder().unregister(this.stickCommand);
+        BoxAPI.api().getBoxAdminCommand().getSubCommandHolder().register(this.customStickCommand);
+        HandlerList.unregisterAll(this.stickListener);
     }
 
     /**

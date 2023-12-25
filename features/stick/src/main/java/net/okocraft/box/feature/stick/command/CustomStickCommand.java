@@ -1,65 +1,69 @@
 package net.okocraft.box.feature.stick.command;
 
+import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
+import com.github.siroshun09.messages.minimessage.source.MiniMessageSource;
 import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.command.AbstractCommand;
-import net.okocraft.box.api.message.GeneralMessage;
+import net.okocraft.box.api.message.DefaultMessageCollector;
+import net.okocraft.box.api.message.ErrorMessages;
 import net.okocraft.box.feature.stick.item.BoxStickItem;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import static net.okocraft.box.api.message.Components.commandHelp;
-import static net.okocraft.box.api.message.Components.grayTranslatable;
-import static net.okocraft.box.api.message.Components.redTranslatable;
+import static com.github.siroshun09.messages.minimessage.base.MiniMessageBase.messageKey;
 
 public class CustomStickCommand extends AbstractCommand {
 
-    private static final Component CUSTOM_STICK_HELP = commandHelp("box.stick.command.customstick");
-    private static final Component CUSTOM_STICK_SUCCESS = grayTranslatable("box.stick.command.customstick.success");
-    private static final Component CUSTOM_STICK_ALREADY = redTranslatable("box.stick.command.customstick.already");
-    private static final Component CUSTOM_STICK_IS_AIR = redTranslatable("box.stick.command.customstick.is-air");
+    private final MiniMessageBase success;
+    private final MiniMessageBase isStick;
+    private final MiniMessageBase isAir;
+    private final MiniMessageBase help;
 
     private final BoxStickItem boxStickItem;
 
-    public CustomStickCommand(@NotNull BoxStickItem boxStickItem) {
+    public CustomStickCommand(@NotNull BoxStickItem boxStickItem, @NotNull DefaultMessageCollector collector) {
         super("customstick", "box.admin.command.customstick");
         this.boxStickItem = boxStickItem;
+
+        this.success = messageKey(collector.add("box.stick.command.customstick.success", "<gray>The item in your hand can now be used as Box Stick."));
+        this.isStick = messageKey(collector.add("box.stick.command.customstick.is-stick", "<red>The item in your hand can already be used as Box Stick."));
+        this.isAir = messageKey(collector.add("box.stick.command.customstick.is-air", "<red>You have no item in your main hand."));
+        this.help = messageKey(collector.add("box.stick.command.customstick.help", "<aqua>/boxadmin customstick<dark_gray> - <gray>Makes item in main hand a Box Stick"));
     }
 
     @Override
     public void onCommand(@NotNull CommandSender sender, @NotNull String[] args) {
-        if (!(sender instanceof Player player)) {
-            sender.sendMessage(GeneralMessage.ERROR_COMMAND_ONLY_PLAYER);
-            return;
+        if (sender instanceof Player player) {
+            BoxAPI.api().getScheduler().runEntityTask(player, () -> this.runCommand(player));
+        } else {
+            ErrorMessages.COMMAND_ONLY_PLAYER.source(BoxAPI.api().getMessageProvider().findSource(sender)).send(sender);
         }
-
-        BoxAPI.api().getScheduler().runEntityTask(player, () -> this.giveStick(player));
     }
 
-    private void giveStick(@NotNull Player player) {
+    private void runCommand(@NotNull Player player) {
+        var msgSrc = BoxAPI.api().getMessageProvider().findSource(player);
+
         var item = player.getInventory().getItemInMainHand();
         var meta = item.getItemMeta();
 
         if (meta == null) {
-            player.sendMessage(CUSTOM_STICK_IS_AIR);
+            this.isAir.source(msgSrc).send(player);
             return;
         }
 
-        if (boxStickItem.check(item)) {
-            player.sendMessage(CUSTOM_STICK_ALREADY);
+        if (this.boxStickItem.check(item)) {
+            this.isStick.source(msgSrc).send(player);
             return;
         }
 
-        boxStickItem.saveBoxStickKey(meta.getPersistentDataContainer());
-
-        item.setItemMeta(meta);
-
-        player.sendMessage(CUSTOM_STICK_SUCCESS);
+        item.editMeta(target -> this.boxStickItem.saveBoxStickKey(target.getPersistentDataContainer()));
+        this.success.source(msgSrc).send(player);
     }
 
     @Override
-    public @NotNull Component getHelp() {
-        return CUSTOM_STICK_HELP;
+    public @NotNull Component getHelp(@NotNull MiniMessageSource msgSrc) {
+        return this.help.create(msgSrc);
     }
 }
