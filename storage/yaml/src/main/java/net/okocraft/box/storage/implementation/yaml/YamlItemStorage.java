@@ -196,8 +196,11 @@ class YamlItemStorage implements ItemStorage {
     private static void writeItemData(int id, @NotNull String plainName, @NotNull ItemStack item, @NotNull BufferedWriter writer) throws IOException {
         writer.write(id + ":");
         writer.newLine();
-        writer.write("  name: " + plainName);
-        writer.write("  data: " + Base64.getEncoder().encodeToString(item.serializeAsBytes()));
+        writer.write("  name: ");
+        writer.write(plainName);
+        writer.newLine();
+        writer.write("  data: ");
+        writer.write(Base64.getEncoder().encodeToString(item.serializeAsBytes()));
         writer.newLine();
     }
 
@@ -205,18 +208,19 @@ class YamlItemStorage implements ItemStorage {
         try (var writer = Files.newBufferedWriter(this.itemStorageMetaFile, StandardCharsets.UTF_8, YamlFileOptions.WRITE)) {
             if (this.dataVersion != null) {
                 writer.write("data-version: ");
-                writer.write(this.dataVersion.dataVersion());
+                writer.write(Integer.toString(this.dataVersion.dataVersion()));
                 writer.newLine();
             }
 
             if (this.defaultItemVersion != 0) {
                 writer.write("default-item-version: ");
-                writer.write(this.defaultItemVersion);
+                writer.write(Integer.toString(this.defaultItemVersion));
                 writer.newLine();
             }
 
             writer.write("last-used-item-id: ");
-            writer.write(this.lastUsedItemId.get());
+            writer.write(Integer.toString(this.lastUsedItemId.get()));
+            writer.newLine();
         }
     }
 }
