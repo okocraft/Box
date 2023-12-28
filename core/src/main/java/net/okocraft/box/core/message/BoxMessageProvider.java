@@ -14,6 +14,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.TestOnly;
 
 import java.io.IOException;
 import java.util.LinkedHashMap;
@@ -97,6 +98,11 @@ public class BoxMessageProvider implements MessageProvider {
             }
 
             return key;
+        }
+
+        @TestOnly
+        public @NotNull Map<String, String> getCollectedMessages() {
+            return new LinkedHashMap<>(this.collectedMessages);
         }
     }
 }

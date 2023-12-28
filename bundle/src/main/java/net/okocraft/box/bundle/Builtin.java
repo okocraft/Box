@@ -18,11 +18,13 @@ import net.okocraft.box.storage.implementation.database.database.sqlite.SQLiteDa
 import net.okocraft.box.storage.implementation.database.database.sqlite.SQLiteSetting;
 import net.okocraft.box.storage.implementation.yaml.YamlStorage;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.VisibleForTesting;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.Collections;
 import java.util.Locale;
+import java.util.Map;
 
 public final class Builtin {
 
@@ -46,13 +48,16 @@ public final class Builtin {
     }
 
     public static void japaneseFile(@NotNull BoxBootstrapContext context) {
-        context.addLocalization(Locale.JAPANESE, () -> {
-            try (var input = Builtin.class.getResourceAsStream("ja.properties")) {
-                return input != null ? PropertiesFile.load(input) : Collections.emptyMap();
-            } catch (IOException e) {
-                throw new UncheckedIOException(e);
-            }
-        });
+        context.addLocalization(Locale.JAPANESE, Builtin::loadJapaneseFileFromJar);
+    }
+
+    @VisibleForTesting
+    public static @NotNull Map<String, String> loadJapaneseFileFromJar() {
+        try (var input = Builtin.class.getClassLoader().getResourceAsStream("ja.properties")) {
+            return input != null ? PropertiesFile.load(input) : Collections.emptyMap();
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 
     private Builtin() {

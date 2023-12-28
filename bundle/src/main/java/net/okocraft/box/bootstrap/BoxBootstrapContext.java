@@ -15,6 +15,7 @@ import net.okocraft.box.core.message.BoxMessageProvider;
 import net.okocraft.box.storage.api.registry.StorageRegistry;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.VisibleForTesting;
 
 import java.io.UncheckedIOException;
 import java.nio.file.Path;
@@ -45,7 +46,8 @@ public final class BoxBootstrapContext {
     private final Map<Locale, Loader<Locale, Map<String, String>>> localizationLoaderMap = new HashMap<>();
     private final List<BoxFeature> boxFeatureList = new ArrayList<>();
 
-    private BoxBootstrapContext(@NotNull Path pluginDirectory, @NotNull String version) {
+    @VisibleForTesting
+    BoxBootstrapContext(@NotNull Path pluginDirectory, @NotNull String version) {
         this.dataDirectory = pluginDirectory;
         this.version = version;
         this.storageRegistry = new StorageRegistry();
