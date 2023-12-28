@@ -31,12 +31,6 @@ tasks {
             expand("projectVersion" to project.version)
         }
     }
-
-    shadowJar {
-        minimize()
-        relocate("com.github.siroshun09", "net.okocraft.box.lib")
-        relocate("com.zaxxer", "net.okocraft.box.lib")
-    }
 }
 
 fun getArtifactFilepath() : File {
