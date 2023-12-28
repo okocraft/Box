@@ -211,7 +211,7 @@ public final class CategoryFile implements AutoCloseable {
             case "concretes" -> Map.of(LOCALE_DEFAULT, "Concretes", "ja", "コンクリート");
             case "custom-items" -> Map.of(LOCALE_DEFAULT, "Custom Items", "ja", "カスタムアイテム");
             case "decorated-pot" -> Map.of(LOCALE_DEFAULT, "Decorated Pots", "ja", "飾り壺");
-            case "decorations" -> Map.of(LOCALE_DEFAULT, "Decorations", "ja", "装飾ブロック");
+            case "decorations" -> Map.of(LOCALE_DEFAULT, "Decorations", "ja", "装飾アイテム");
             case "dirt" -> Map.of(LOCALE_DEFAULT, "Dirt", "ja", "土類");
             case "dyes" -> Map.of(LOCALE_DEFAULT, "Dyes", "ja", "染料");
             case "enchanted-books" -> Map.of(LOCALE_DEFAULT, "Enchanted Books", "ja", "エンチャント本");
