@@ -10,9 +10,9 @@ import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.api.util.MCDataVersion;
 import net.okocraft.box.feature.category.api.registry.CategoryRegistry;
 import net.okocraft.box.feature.category.internal.category.CustomItemCategory;
+import net.okocraft.box.feature.category.internal.category.LoadedCategory;
 import net.okocraft.box.feature.category.internal.category.defaults.DefaultCategories;
 import net.okocraft.box.feature.category.internal.category.defaults.DefaultCategory;
-import net.okocraft.box.feature.category.internal.category.LoadedCategory;
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 
@@ -91,6 +91,8 @@ public final class CategoryFile implements AutoCloseable {
     }
 
     public CategoryFile readCategoriesIfExists() {
+        if (this.loadedSource == null) return this;
+
         for (var entry : this.loadedSource.value().entrySet()) {
             var key = String.valueOf(entry.getKey());
             if (!key.startsWith("$") && entry.getValue() instanceof MapNode section) {
@@ -102,7 +104,9 @@ public final class CategoryFile implements AutoCloseable {
     }
 
     public CategoryFile readCustomItemsIfExists(@NotNull CustomItemCategory category) {
-        category.addItems(this.toBoxItems(this.loadedSource.getList(CustomItemCategory.KEY).asList(String.class)));
+        if (this.loadedSource != null) {
+            category.addItems(this.toBoxItems(this.loadedSource.getList(CustomItemCategory.KEY).asList(String.class)));
+        }
         return this;
     }
 
