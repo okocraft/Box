@@ -22,19 +22,19 @@ import java.util.stream.Stream;
 
 public final class PlatformDependent {
 
-    public static @NotNull BoxScheduler createScheduler(@NotNull Plugin plugin) {
+    public static @NotNull BoxScheduler createScheduler(@NotNull Plugin plugin) throws NotSupportedException {
         if (Folia.check() || MCDataVersion.CURRENT.isAfterOrSame(MCDataVersion.MC_1_20)) {
             return new FoliaSchedulerWrapper(plugin);
         }
 
-        throw new UnsupportedOperationException("Unsupported version: " + Bukkit.getVersion());
+        throw new NotSupportedException("Unsupported version: " + Bukkit.getVersion());
     }
 
-    public static @NotNull DefaultItemProvider createItemProvider() {
+    public static @NotNull DefaultItemProvider createItemProvider() throws NotSupportedException {
         if (MCDataVersion.CURRENT.isAfterOrSame(MCDataVersion.MC_1_21)) {
             return new DefaultItemProviderImpl(new ItemVersion(MCDataVersion.MC_1_21, 0), Paper_1_21::defaultItems);
         }
-        throw new UnsupportedOperationException("Unsupported version: " + Bukkit.getVersion());
+        throw new NotSupportedException("Unsupported version: " + Bukkit.getVersion());
     }
 
     public static @NotNull CommandRegisterer createCommandRegisterer(@NotNull String fallbackPrefix) {
@@ -61,5 +61,13 @@ public final class PlatformDependent {
 
     private PlatformDependent() {
         throw new UnsupportedOperationException();
+    }
+
+    public static final class NotSupportedException extends Exception {
+        public final String reason;
+        private NotSupportedException(@NotNull String reason) {
+            super(reason, null, true, false);
+            this.reason = reason;
+        }
     }
 }

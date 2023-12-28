@@ -27,30 +27,45 @@ public final class BoxPlugin extends JavaPlugin {
     private final BoxCore boxCore;
     private final PluginContext pluginContext;
     private final StorageRegistry storageRegistry;
-    private final @NotNull List<BoxFeature> features;
+    private final List<BoxFeature> features;
 
     private Status status = Status.NOT_LOADED;
 
     public BoxPlugin(@NotNull BoxBootstrapContext boxBootstrapContext) {
-        this.pluginContext = new PluginContext(
-                this,
-                boxBootstrapContext.getVersion(),
-                boxBootstrapContext.getPluginDirectory(),
-                PlatformDependent.createScheduler(this),
-                boxBootstrapContext.getEventServiceProvider(),
-                boxBootstrapContext.createMessageProvider(),
-                new Config(boxBootstrapContext.getPluginDirectory()),
-                PlatformDependent.createItemProvider(),
-                PlatformDependent.createCommandRegisterer(this.getName().toLowerCase(Locale.ENGLISH))
-        );
-        this.boxCore = new BoxCore(pluginContext);
+        PluginContext context;
+
+        try {
+            context = new PluginContext(
+                    this,
+                    boxBootstrapContext.getVersion(),
+                    boxBootstrapContext.getPluginDirectory(),
+                    PlatformDependent.createScheduler(this),
+                    boxBootstrapContext.getEventServiceProvider(),
+                    boxBootstrapContext.createMessageProvider(),
+                    new Config(boxBootstrapContext.getPluginDirectory()),
+                    PlatformDependent.createItemProvider(),
+                    PlatformDependent.createCommandRegisterer(this.getName().toLowerCase(Locale.ENGLISH))
+            );
+        } catch (PlatformDependent.NotSupportedException e) {
+            this.pluginContext = null;
+            this.boxCore = null;
+            this.storageRegistry = null;
+            this.features = null;
+            this.status = Status.UNSUPPORTED_PLATFORM;
+            BoxLogger.logger().error(e.reason);
+            return;
+        }
+
+        this.pluginContext = context;
+        this.boxCore = new BoxCore(context);
         this.storageRegistry = boxBootstrapContext.getStorageRegistry();
         this.features = boxBootstrapContext.getBoxFeatureList();
     }
 
     @Override
     public void onLoad() {
-        if (status != Status.NOT_LOADED) {
+        if (this.status != Status.NOT_LOADED) {
+            BoxLogger.logger().error("Cannot load Box ({})", this.status);
             return;
         }
 
@@ -80,7 +95,8 @@ public final class BoxPlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        if (status != Status.LOADED) {
+        if (this.status != Status.LOADED) {
+            BoxLogger.logger().error("Cannot enable Box ({})", this.status);
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
@@ -89,16 +105,16 @@ public final class BoxPlugin extends JavaPlugin {
             runMigratorIfNeeded();
         } catch (Exception e) {
             BoxLogger.logger().error("An exception occurred while migrating data.", e);
-            status = Status.EXCEPTION_OCCURRED;
+            this.status = Status.EXCEPTION_OCCURRED;
             return;
         }
 
         var start = Instant.now();
 
         if (boxCore.enable(StorageHolder.getStorage())) {
-            status = Status.ENABLED;
+            this.status = Status.ENABLED;
         } else {
-            status = Status.EXCEPTION_OCCURRED;
+            this.status = Status.EXCEPTION_OCCURRED;
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
@@ -122,6 +138,7 @@ public final class BoxPlugin extends JavaPlugin {
     @Override
     public void onDisable() {
         if (this.status != Status.ENABLED) {
+            BoxLogger.logger().error("Cannot disable Box ({})", this.status);
             return;
         }
 
@@ -174,6 +191,7 @@ public final class BoxPlugin extends JavaPlugin {
         LOADED,
         ENABLED,
         DISABLED,
-        EXCEPTION_OCCURRED
+        EXCEPTION_OCCURRED,
+        UNSUPPORTED_PLATFORM
     }
 }
