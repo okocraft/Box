@@ -714,7 +714,7 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Disables caching objects.</div>
 </dd>
-<dt><a href="net/okocraft/box/api/feature/FeatureContext.Disabling.html#%3Cinit%3E(org.bukkit.plugin.Plugin)" class="member-name-link">Disabling(Plugin)</a> - Constructor for record class net.okocraft.box.api.feature.<a href="net/okocraft/box/api/feature/FeatureContext.Disabling.html" title="class in net.okocraft.box.api.feature">FeatureContext.Disabling</a></dt>
+<dt><a href="net/okocraft/box/api/feature/FeatureContext.Disabling.html#%3Cinit%3E(org.bukkit.plugin.Plugin,net.okocraft.box.api.feature.FeatureProvider)" class="member-name-link">Disabling(Plugin, FeatureProvider)</a> - Constructor for record class net.okocraft.box.api.feature.<a href="net/okocraft/box/api/feature/FeatureContext.Disabling.html" title="class in net.okocraft.box.api.feature">FeatureContext.Disabling</a></dt>
 <dd>
 <div class="block">Creates an instance of a <code>Disabling</code> record class.</div>
 </dd>
@@ -743,7 +743,7 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Enables caching objects.</div>
 </dd>
-<dt><a href="net/okocraft/box/api/feature/FeatureContext.Enabling.html#%3Cinit%3E(org.bukkit.plugin.Plugin)" class="member-name-link">Enabling(Plugin)</a> - Constructor for record class net.okocraft.box.api.feature.<a href="net/okocraft/box/api/feature/FeatureContext.Enabling.html" title="class in net.okocraft.box.api.feature">FeatureContext.Enabling</a></dt>
+<dt><a href="net/okocraft/box/api/feature/FeatureContext.Enabling.html#%3Cinit%3E(org.bukkit.plugin.Plugin,net.okocraft.box.api.feature.FeatureProvider)" class="member-name-link">Enabling(Plugin, FeatureProvider)</a> - Constructor for record class net.okocraft.box.api.feature.<a href="net/okocraft/box/api/feature/FeatureContext.Enabling.html" title="class in net.okocraft.box.api.feature">FeatureContext.Enabling</a></dt>
 <dd>
 <div class="block">Creates an instance of a <code>Enabling</code> record class.</div>
 </dd>
@@ -962,6 +962,22 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Types of this event.</div>
 </dd>
+<dt><a href="net/okocraft/box/api/feature/FeatureContext.Disabling.html#featureProvider()" class="member-name-link">featureProvider()</a> - Method in record class net.okocraft.box.api.feature.<a href="net/okocraft/box/api/feature/FeatureContext.Disabling.html" title="class in net.okocraft.box.api.feature">FeatureContext.Disabling</a></dt>
+<dd>
+<div class="block">Returns the value of the <code>featureProvider</code> record component.</div>
+</dd>
+<dt><a href="net/okocraft/box/api/feature/FeatureContext.Enabling.html#featureProvider()" class="member-name-link">featureProvider()</a> - Method in record class net.okocraft.box.api.feature.<a href="net/okocraft/box/api/feature/FeatureContext.Enabling.html" title="class in net.okocraft.box.api.feature">FeatureContext.Enabling</a></dt>
+<dd>
+<div class="block">Returns the value of the <code>featureProvider</code> record component.</div>
+</dd>
+<dt><a href="net/okocraft/box/api/feature/FeatureContext.Reloading.html#featureProvider()" class="member-name-link">featureProvider()</a> - Method in record class net.okocraft.box.api.feature.<a href="net/okocraft/box/api/feature/FeatureContext.Reloading.html" title="class in net.okocraft.box.api.feature">FeatureContext.Reloading</a></dt>
+<dd>
+<div class="block">Returns the value of the <code>featureProvider</code> record component.</div>
+</dd>
+<dt><a href="net/okocraft/box/api/feature/FeatureProvider.html" class="type-name-link" title="interface in net.okocraft.box.api.feature">FeatureProvider</a> - Interface in <a href="net/okocraft/box/api/feature/package-summary.html">net.okocraft.box.api.feature</a></dt>
+<dd>
+<div class="block">An interface to provide <a href="net/okocraft/box/api/feature/BoxFeature.html" title="interface in net.okocraft.box.api.feature"><code>BoxFeature</code></a>s.</div>
+</dd>
 <dt><a href="net/okocraft/box/api/message/MessageProvider.html#findSource(org.bukkit.command.CommandSender)" class="member-name-link">findSource(CommandSender)</a> - Method in interface net.okocraft.box.api.message.<a href="net/okocraft/box/api/message/MessageProvider.html" title="interface in net.okocraft.box.api.message">MessageProvider</a></dt>
 <dd>
 <div class="block">Gets a localized <code>MiniMessageSource</code> for <a href="https://jd.papermc.io/paper/1.20/org/bukkit/command/CommandSender.html" title="class or interface in org.bukkit.command" class="external-link"><code>CommandSender</code></a>s.</div>
@@ -1165,13 +1181,17 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Gets the <a href="net/okocraft/box/api/feature/BoxFeature.html" title="interface in net.okocraft.box.api.feature"><code>BoxFeature</code></a> of this event.</div>
 </dd>
-<dt><a href="net/okocraft/box/api/BoxAPI.html#getFeature(java.lang.Class)" class="member-name-link">getFeature(Class&lt;T&gt;)</a> - Method in interface net.okocraft.box.api.<a href="net/okocraft/box/api/BoxAPI.html" title="interface in net.okocraft.box.api">BoxAPI</a></dt>
+<dt><a href="net/okocraft/box/api/feature/FeatureProvider.html#getFeature(java.lang.Class)" class="member-name-link">getFeature(Class&lt;? extends F&gt;)</a> - Method in interface net.okocraft.box.api.feature.<a href="net/okocraft/box/api/feature/FeatureProvider.html" title="interface in net.okocraft.box.api.feature">FeatureProvider</a></dt>
 <dd>
-<div class="block">Gets the registered <a href="net/okocraft/box/api/feature/BoxFeature.html" title="interface in net.okocraft.box.api.feature"><code>BoxFeature</code></a> instance.</div>
+<div class="block">Gets the <a href="net/okocraft/box/api/feature/BoxFeature.html" title="interface in net.okocraft.box.api.feature"><code>BoxFeature</code></a> instance of the specified class.</div>
 </dd>
-<dt><a href="net/okocraft/box/api/BoxAPI.html#getFeatures()" class="member-name-link">getFeatures()</a> - Method in interface net.okocraft.box.api.<a href="net/okocraft/box/api/BoxAPI.html" title="interface in net.okocraft.box.api">BoxAPI</a></dt>
+<dt><a href="net/okocraft/box/api/BoxAPI.html#getFeatureProvider()" class="member-name-link">getFeatureProvider()</a> - Method in interface net.okocraft.box.api.<a href="net/okocraft/box/api/BoxAPI.html" title="interface in net.okocraft.box.api">BoxAPI</a></dt>
 <dd>
-<div class="block">Gets registered <a href="net/okocraft/box/api/feature/BoxFeature.html" title="interface in net.okocraft.box.api.feature"><code>BoxFeature</code></a>s.</div>
+<div class="block">Gets the <a href="net/okocraft/box/api/feature/FeatureProvider.html" title="interface in net.okocraft.box.api.feature"><code>FeatureProvider</code></a>.</div>
+</dd>
+<dt><a href="net/okocraft/box/api/feature/FeatureProvider.html#getFeatures()" class="member-name-link">getFeatures()</a> - Method in interface net.okocraft.box.api.feature.<a href="net/okocraft/box/api/feature/FeatureProvider.html" title="interface in net.okocraft.box.api.feature">FeatureProvider</a></dt>
+<dd>
+<div class="block">Gets all registered <a href="net/okocraft/box/api/feature/BoxFeature.html" title="interface in net.okocraft.box.api.feature"><code>BoxFeature</code></a>s.</div>
 </dd>
 <dt><a href="net/okocraft/box/api/command/Command.html#getHelp(com.github.siroshun09.messages.minimessage.source.MiniMessageSource)" class="member-name-link">getHelp(MiniMessageSource)</a> - Method in interface net.okocraft.box.api.command.<a href="net/okocraft/box/api/command/Command.html" title="interface in net.okocraft.box.api.command">Command</a></dt>
 <dd>
@@ -2608,7 +2628,7 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">an interface to indicate that it is reloadable.</div>
 </dd>
-<dt><a href="net/okocraft/box/api/feature/FeatureContext.Reloading.html#%3Cinit%3E(org.bukkit.plugin.Plugin,org.bukkit.command.CommandSender)" class="member-name-link">Reloading(Plugin, CommandSender)</a> - Constructor for record class net.okocraft.box.api.feature.<a href="net/okocraft/box/api/feature/FeatureContext.Reloading.html" title="class in net.okocraft.box.api.feature">FeatureContext.Reloading</a></dt>
+<dt><a href="net/okocraft/box/api/feature/FeatureContext.Reloading.html#%3Cinit%3E(org.bukkit.plugin.Plugin,net.okocraft.box.api.feature.FeatureProvider,org.bukkit.command.CommandSender)" class="member-name-link">Reloading(Plugin, FeatureProvider, CommandSender)</a> - Constructor for record class net.okocraft.box.api.feature.<a href="net/okocraft/box/api/feature/FeatureContext.Reloading.html" title="class in net.okocraft.box.api.feature">FeatureContext.Reloading</a></dt>
 <dd>
 <div class="block">Creates an instance of a <code>Reloading</code> record class.</div>
 </dd>
