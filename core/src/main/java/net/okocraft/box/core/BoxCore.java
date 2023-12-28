@@ -7,6 +7,7 @@ import net.okocraft.box.api.command.base.BoxCommand;
 import net.okocraft.box.api.event.feature.FeatureEvent;
 import net.okocraft.box.api.feature.BoxFeature;
 import net.okocraft.box.api.feature.FeatureContext;
+import net.okocraft.box.api.feature.FeatureProvider;
 import net.okocraft.box.api.feature.Reloadable;
 import net.okocraft.box.api.message.MessageProvider;
 import net.okocraft.box.api.model.manager.ItemManager;
@@ -18,6 +19,7 @@ import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.core.command.BoxAdminCommandImpl;
 import net.okocraft.box.core.command.BoxCommandImpl;
 import net.okocraft.box.core.config.Config;
+import net.okocraft.box.core.feature.BoxFeatureProvider;
 import net.okocraft.box.core.listener.DebugListener;
 import net.okocraft.box.core.listener.PlayerConnectionListener;
 import net.okocraft.box.core.message.CoreMessages;
@@ -36,14 +38,12 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Unmodifiable;
 
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -63,7 +63,7 @@ public class BoxCore implements BoxAPI {
     private BoxCommandImpl boxCommand;
     private BoxAdminCommandImpl boxAdminCommand;
 
-    private Map<Class<? extends BoxFeature>, BoxFeature> featureMap;
+    private BoxFeatureProvider boxFeatureProvider;
 
     public BoxCore(@NotNull PluginContext context) {
         this.context = context;
@@ -184,9 +184,9 @@ public class BoxCore implements BoxAPI {
             BoxLogger.logger().error("Could not reload messages", e);
         }
 
-        var featureReloadContext = new FeatureContext.Reloading(this.context.plugin(), sender);
+        var featureReloadContext = new FeatureContext.Reloading(this.context.plugin(), this.boxFeatureProvider, sender);
 
-        for (var feature : this.featureMap.values()) {
+        for (var feature : this.boxFeatureProvider.getFeatures()) {
             if (feature instanceof Reloadable reloadable) {
                 try {
                     reloadable.reload(featureReloadContext);
@@ -244,6 +244,11 @@ public class BoxCore implements BoxAPI {
     }
 
     @Override
+    public @NotNull FeatureProvider getFeatureProvider() {
+        return this.boxFeatureProvider;
+    }
+
+    @Override
     public @NotNull BoxScheduler getScheduler() {
         return this.context.scheduler();
     }
@@ -263,33 +268,23 @@ public class BoxCore implements BoxAPI {
         return boxAdminCommand;
     }
 
-    @Override
-    public @NotNull @Unmodifiable List<BoxFeature> getFeatures() {
-        return List.copyOf(this.featureMap.values());
-    }
-
-    @Override
-    public @NotNull <T extends BoxFeature> Optional<T> getFeature(@NotNull Class<T> clazz) {
-        return Optional.ofNullable(this.featureMap.get(clazz)).map(clazz::cast);
-    }
-
     public void initializeFeatures(@NotNull List<BoxFeature> features) {
         if (features.isEmpty()) {
-            this.featureMap = Collections.emptyMap();
+            this.boxFeatureProvider = new BoxFeatureProvider(Collections.emptyMap());
             return;
         }
 
         BoxLogger.logger().info("Enabling features...");
 
         var featureMap = new LinkedHashMap<Class<? extends BoxFeature>, BoxFeature>();
-        var context = new FeatureContext.Enabling(this.context.plugin());
+        var context = new FeatureContext.Enabling(this.context.plugin(), new BoxFeatureProvider(featureMap));
 
         for (var feature : features) {
             initializeFeature(feature, featureMap, context);
             this.eventManager.call(new FeatureEvent(feature, FeatureEvent.Type.REGISTER));
         }
 
-        this.featureMap = Collections.unmodifiableMap(featureMap);
+        this.boxFeatureProvider = new BoxFeatureProvider(Collections.unmodifiableMap(featureMap));
     }
 
     private static void initializeFeature(@NotNull BoxFeature feature, @NotNull Map<Class<? extends BoxFeature>, BoxFeature> registry, @NotNull FeatureContext.Enabling context) {
@@ -316,14 +311,16 @@ public class BoxCore implements BoxAPI {
     }
 
     public void disableAllFeatures() {
-        if (this.featureMap.isEmpty()) {
+        var features = this.getFeatureProvider().getFeatures();
+
+        if (features.isEmpty()) {
             return;
         }
 
         BoxLogger.logger().info("Disabling features...");
-        var context = new FeatureContext.Disabling(this.context.plugin());
+        var context = new FeatureContext.Disabling(this.context.plugin(), this.boxFeatureProvider);
 
-        for (var feature : this.featureMap.values()) {
+        for (var feature : features) {
             try {
                 feature.disable(context);
             } catch (Throwable throwable) {

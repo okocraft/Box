@@ -3,6 +3,7 @@ package net.okocraft.box.api;
 import net.okocraft.box.api.command.base.BoxAdminCommand;
 import net.okocraft.box.api.command.base.BoxCommand;
 import net.okocraft.box.api.feature.BoxFeature;
+import net.okocraft.box.api.feature.FeatureProvider;
 import net.okocraft.box.api.message.MessageProvider;
 import net.okocraft.box.api.model.customdata.CustomDataManager;
 import net.okocraft.box.api.model.manager.EventManager;
@@ -16,11 +17,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Unmodifiable;
 
 import java.nio.file.Path;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * An API of Box.
@@ -29,7 +27,7 @@ public interface BoxAPI {
 
     /**
      * Gets an instance of {@link BoxAPI}.
-     * 
+     *
      * @return an instance of {@link BoxAPI}
      * @throws IllegalStateException if {@link BoxAPI} is not loaded
      */
@@ -39,7 +37,7 @@ public interface BoxAPI {
 
     /**
      * Checks if {@link BoxAPI} is available.
-     * 
+     *
      * @return {@code true} if {@link BoxAPI} is loaded, otherwise {@code false}
      */
     static boolean isLoaded() {
@@ -112,6 +110,13 @@ public interface BoxAPI {
     @NotNull CustomDataManager getCustomDataManager();
 
     /**
+     * Gets the {@link FeatureProvider}.
+     *
+     * @return the {@link FeatureProvider}
+     */
+    @NotNull FeatureProvider getFeatureProvider();
+
+    /**
      * Gets the {@link BoxScheduler}.
      *
      * @return the {@link BoxScheduler}
@@ -131,24 +136,6 @@ public interface BoxAPI {
      * @return the {@link BoxAdminCommand}
      */
     @NotNull BoxAdminCommand getBoxAdminCommand();
-
-    /**
-     * Gets registered {@link BoxFeature}s.
-     *
-     * @return registered {@link BoxFeature}
-     */
-    @NotNull @Unmodifiable List<BoxFeature> getFeatures();
-
-    /**
-     * Gets the registered {@link BoxFeature} instance.
-     * <p>
-     * Note: This method returns the first BoxFeature instance with matching class from {@link #getFeatures()}.
-     *
-     * @param clazz the feature class
-     * @param <T>   the type of {@link BoxFeature}
-     * @return if the {@link BoxFeature} is registered, returns its instance, otherwise {@link Optional#empty()}
-     */
-    <T extends BoxFeature> @NotNull Optional<T> getFeature(@NotNull Class<T> clazz);
 
     /**
      * Reloads box and registered {@link BoxFeature}s.

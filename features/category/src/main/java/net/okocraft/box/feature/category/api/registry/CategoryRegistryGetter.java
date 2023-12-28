@@ -13,7 +13,7 @@ class CategoryRegistryGetter {
             return registry;
         }
 
-        var feature = BoxAPI.api().getFeature(CategoryFeature.class);
+        var feature = BoxAPI.api().getFeatureProvider().getFeature(CategoryFeature.class);
 
         if (feature.isEmpty()) {
             throw new IllegalStateException("category feature is not enabled.");
