@@ -32,6 +32,7 @@ import java.util.function.UnaryOperator;
 
 public final class CategoryFile implements AutoCloseable {
 
+    public static final String VERSION_KEY = "$version";
     public static final String ITEMS_KEY = "items";
     public static final String ICON_KEY = "icon";
     public static final String DISPLAY_NAME_KEY = "display-name";
@@ -58,7 +59,7 @@ public final class CategoryFile implements AutoCloseable {
     public CategoryFile loadFile() throws IOException {
         if (Files.isRegularFile(this.filepath)) {
             this.loadedSource = YamlFormat.COMMENT_PROCESSING.load(this.filepath);
-            this.version = MCDataVersion.of(this.loadedSource.getInteger("$version"));
+            this.version = MCDataVersion.of(this.loadedSource.getInteger(VERSION_KEY));
         }
         return this;
     }
@@ -68,7 +69,7 @@ public final class CategoryFile implements AutoCloseable {
             return this;
         }
 
-        Files.copy(this.filepath, this.filepath.getParent().resolve(this.filepath.getFileName().toString() + ".backup"));
+        Files.copy(this.filepath, this.filepath.getParent().resolve(this.filepath.getFileName().toString() + ".backup-" + System.currentTimeMillis()));
 
         var mapNode = MapNode.create();
 
@@ -83,10 +84,11 @@ public final class CategoryFile implements AutoCloseable {
 
             var map = mapNode.createMap(renameKey(key));
             map.set(ICON_KEY, this.loadedSource.getMap("icons").getString(key));
-            map.set(ITEMS_KEY, this.loadedSource.getList(key));
             addDefaultDisplayName(String.valueOf(key), map);
+            map.set(ITEMS_KEY, this.loadedSource.getList(key));
         }
 
+        this.loadedSource = mapNode;
         return this;
     }
 
@@ -144,6 +146,7 @@ public final class CategoryFile implements AutoCloseable {
             );
         }
 
+        mapNode.set(VERSION_KEY, MCDataVersion.CURRENT.dataVersion());
         YamlFormat.COMMENT_PROCESSING.save(mapNode, this.filepath);
     }
 
