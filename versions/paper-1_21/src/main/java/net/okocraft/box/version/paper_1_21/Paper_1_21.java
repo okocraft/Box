@@ -10,7 +10,7 @@ public final class Paper_1_21 {
 
     public static @NotNull Stream<DefaultItem> defaultItems() {
         return new ItemSources.Merger()
-                .append(ItemSources.materials().filter(ItemSources.NOT_GOATHORN).map(ItemSources::toDefaultItem))
+                .append(ItemSources.materials().filter(ItemSources.NOT_GOAT_HORN).map(ItemSources::toDefaultItem))
                 .append(ItemSources.potions())
                 .append(ItemSources.enchantedBooks())
                 .append(ItemSources.fireworks())

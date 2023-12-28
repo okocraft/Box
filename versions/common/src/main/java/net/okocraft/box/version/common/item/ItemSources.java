@@ -20,7 +20,7 @@ import java.util.stream.StreamSupport;
 
 public final class ItemSources {
 
-    public static Predicate<Material> NOT_GOATHORN = Predicate.not(material -> material.name().equals("GOAT_HORN"));
+    public static final Predicate<Material> NOT_GOAT_HORN = Predicate.not(material -> material.name().equals("GOAT_HORN"));
 
     public static @NotNull Stream<Material> materials() {
         return Arrays.stream(Material.values())
