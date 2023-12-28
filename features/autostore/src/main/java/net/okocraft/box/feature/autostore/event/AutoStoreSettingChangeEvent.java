@@ -1,7 +1,7 @@
 package net.okocraft.box.feature.autostore.event;
 
 import net.okocraft.box.api.event.BoxEvent;
-import net.okocraft.box.feature.autostore.model.setting.AutoStoreSetting;
+import net.okocraft.box.feature.autostore.setting.AutoStoreSetting;
 import org.jetbrains.annotations.NotNull;
 
 /**

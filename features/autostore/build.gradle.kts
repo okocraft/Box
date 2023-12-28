@@ -15,8 +15,10 @@ dependencies {
 }
 
 tasks.javadoc {
-    include("net/okocraft/box/feature/autostore/event/**")
-    include("net/okocraft/box/feature/autostore/model/**")
+    include("net/okocraft/box/feature/autostore/AutoStoreFeature.java")
+    include("net/okocraft/box/feature/autostore/AutoStoreSettingProvider.java")
+    include("net/okocraft/box/feature/autostore/package-info.java")
+    include("net/okocraft/box/feature/autostore/setting/**")
 }
 
 afterEvaluate {

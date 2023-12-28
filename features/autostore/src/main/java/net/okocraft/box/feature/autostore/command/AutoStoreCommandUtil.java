@@ -7,7 +7,7 @@ import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.message.DefaultMessageCollector;
 import net.okocraft.box.api.message.Placeholders;
 import net.okocraft.box.feature.autostore.event.AutoStoreSettingChangeEvent;
-import net.okocraft.box.feature.autostore.model.setting.AutoStoreSetting;
+import net.okocraft.box.feature.autostore.setting.AutoStoreSetting;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

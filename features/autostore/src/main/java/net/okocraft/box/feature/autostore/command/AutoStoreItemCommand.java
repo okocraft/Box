@@ -3,13 +3,14 @@ package net.okocraft.box.feature.autostore.command;
 import com.github.siroshun09.messages.minimessage.arg.Arg1;
 import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
 import com.github.siroshun09.messages.minimessage.source.MiniMessageSource;
+import it.unimi.dsi.fastutil.ints.IntSet;
 import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.message.DefaultMessageCollector;
 import net.okocraft.box.api.message.ErrorMessages;
 import net.okocraft.box.api.message.Placeholders;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.util.TabCompleter;
-import net.okocraft.box.feature.autostore.model.setting.AutoStoreSetting;
+import net.okocraft.box.feature.autostore.setting.AutoStoreSetting;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
@@ -68,7 +69,7 @@ class AutoStoreItemCommand extends AutoStoreSubCommand {
             AutoStoreCommandUtil.changeAutoStore(setting, sender, msgSrc, true, false);
             changeToPerItemMode(setting, sender, msgSrc);
 
-            perItemModeSetting.setEnabledItems(result ? itemManager.getItemList() : Collections.emptyList());
+            perItemModeSetting.clearAndEnableItems(result ? itemManager.getItemIdList() : IntSet.of());
             (result ? this.allEnabled : this.allDisabled).source(msgSrc).send(sender);
 
             AutoStoreCommandUtil.callEvent(setting);

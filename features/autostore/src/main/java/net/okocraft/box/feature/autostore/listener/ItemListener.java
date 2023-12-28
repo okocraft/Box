@@ -3,8 +3,8 @@ package net.okocraft.box.feature.autostore.listener;
 import io.papermc.paper.event.block.PlayerShearBlockEvent;
 import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.event.stockholder.stock.StockEvent;
+import net.okocraft.box.feature.autostore.AutoStoreSettingProvider;
 import net.okocraft.box.feature.autostore.integration.CoreProtectIntegration;
-import net.okocraft.box.feature.autostore.model.AutoStoreSettingContainer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -26,9 +26,9 @@ import org.jetbrains.annotations.NotNull;
 public class ItemListener implements Listener {
 
     private static final StockEvent.Cause AUTOSTORE_CAUSE = StockEvent.Cause.create("autostore");
-    private final AutoStoreSettingContainer container;
+    private final AutoStoreSettingProvider container;
 
-    public ItemListener(@NotNull AutoStoreSettingContainer container) {
+    public ItemListener(@NotNull AutoStoreSettingProvider container) {
         this.container = container;
     }
 
@@ -109,18 +109,12 @@ public class ItemListener implements Listener {
         }
 
         var playerMap = BoxAPI.api().getBoxPlayerMap();
+        var setting = this.container.getIfLoaded(player.getUniqueId());
 
-        if (!playerMap.isLoaded(player) || !this.container.isLoaded(player)) {
-            return false;
-        }
-
-        var setting = this.container.get(player);
-
-        if (!setting.isEnabled() || !player.hasPermission("box.autostore")) {
-            return false;
-        }
-
-        if (direct && !setting.isDirect()) {
+        if (!playerMap.isLoaded(player) || setting == null ||
+                !setting.isEnabled() || !player.hasPermission("box.autostore") ||
+                (direct && !setting.isDirect())
+        ) {
             return false;
         }
 

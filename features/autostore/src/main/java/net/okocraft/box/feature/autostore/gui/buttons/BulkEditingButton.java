@@ -1,9 +1,10 @@
 package net.okocraft.box.feature.autostore.gui.buttons;
 
 import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
+import it.unimi.dsi.fastutil.ints.IntSet;
 import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.message.DefaultMessageCollector;
-import net.okocraft.box.feature.autostore.gui.AutoStoreSettingKey;
+import net.okocraft.box.feature.autostore.setting.AutoStoreSetting;
 import net.okocraft.box.feature.gui.api.button.ClickResult;
 import net.okocraft.box.feature.gui.api.session.PlayerSession;
 import net.okocraft.box.feature.gui.api.session.TypedKey;
@@ -14,8 +15,6 @@ import org.bukkit.Sound;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Collections;
 
 import static com.github.siroshun09.messages.minimessage.base.MiniMessageBase.messageKey;
 
@@ -64,7 +63,7 @@ public class BulkEditingButton extends AbstractAutoStoreSettingButton {
 
     @Override
     public @NotNull ClickResult onClick(@NotNull PlayerSession session, @NotNull ClickType clickType) {
-        var setting = session.getData(AutoStoreSettingKey.KEY);
+        var setting = session.getData(AutoStoreSetting.KEY);
 
         if (setting == null) {
             return ClickResult.NO_UPDATE_NEEDED;
@@ -76,11 +75,11 @@ public class BulkEditingButton extends AbstractAutoStoreSettingButton {
         Boolean recent = session.getData(RECENT_OPERATION_KEY);
 
         if (recent == null || !recent) {
-            perItemSetting.setEnabledItems(BoxAPI.api().getItemManager().getItemList());
+            perItemSetting.clearAndEnableItems(BoxAPI.api().getItemManager().getItemIdList());
             sound = ENABLE_ALL_SOUND;
             recent = true;
         } else {
-            perItemSetting.setEnabledItems(Collections.emptyList());
+            perItemSetting.clearAndEnableItems(IntSet.of());
             sound = DISABLE_ALL_SOUND;
             recent = false;
         }

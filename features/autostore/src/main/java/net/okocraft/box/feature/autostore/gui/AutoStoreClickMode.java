@@ -5,11 +5,12 @@ import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.message.DefaultMessageCollector;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.player.BoxPlayer;
+import net.okocraft.box.feature.autostore.AutoStoreSettingProvider;
 import net.okocraft.box.feature.autostore.gui.buttons.BulkEditingButton;
 import net.okocraft.box.feature.autostore.gui.buttons.DirectButton;
 import net.okocraft.box.feature.autostore.gui.buttons.ModeButton;
 import net.okocraft.box.feature.autostore.gui.buttons.ToggleButton;
-import net.okocraft.box.feature.autostore.model.AutoStoreSettingContainer;
+import net.okocraft.box.feature.autostore.setting.AutoStoreSetting;
 import net.okocraft.box.feature.gui.api.button.Button;
 import net.okocraft.box.feature.gui.api.button.ClickResult;
 import net.okocraft.box.feature.gui.api.buttons.BackOrCloseButton;
@@ -34,7 +35,7 @@ public class AutoStoreClickMode implements BoxItemClickMode {
     private static final SoundBase ENABLE_SOUND = SoundBase.builder().sound(Sound.BLOCK_WOODEN_BUTTON_CLICK_ON).pitch(1.5f).build();
     private static final SoundBase DISABLE_SOUND = SoundBase.builder().sound(Sound.BLOCK_WOODEN_BUTTON_CLICK_OFF).pitch(1.5f).build();
 
-    private final AutoStoreSettingContainer container;
+    private final AutoStoreSettingProvider container;
 
     private final MiniMessageBase displayName;
     private final MiniMessageBase itemEnabled;
@@ -42,7 +43,7 @@ public class AutoStoreClickMode implements BoxItemClickMode {
     private final MiniMessageBase settingMenuButtonDisplayName;
     private final AutoStoreSettingMenu settingMenu;
 
-    public AutoStoreClickMode(@NotNull AutoStoreSettingContainer container, @NotNull DefaultMessageCollector collector) {
+    public AutoStoreClickMode(@NotNull AutoStoreSettingProvider container, @NotNull DefaultMessageCollector collector) {
         this.container = container;
         this.displayName = messageKey(collector.add("box.autostore.gui.mode.display-name", "Auto-store setting"));
         this.itemEnabled = messageKey(collector.add("box.autostore.gui.mode.item.enabled", "<gray>Auto-store setting: <green>Enabled"));
@@ -64,24 +65,29 @@ public class AutoStoreClickMode implements BoxItemClickMode {
     @Override
     public @NotNull ItemStack createItemIcon(@NotNull PlayerSession session, @NotNull BoxItem item) {
         var icon = item.getClonedItem();
-        var enabled = this.container.get(session.getViewer()).getPerItemModeSetting().isEnabled(item);
-
-        return ItemEditor.create()
-                .copyLoreFrom(icon)
-                .loreEmptyLine()
-                .loreLine((enabled ? this.itemEnabled : this.itemDisabled).create(session.getMessageSource()))
-                .loreEmptyLine()
-                .applyTo(icon);
+        var setting = session.getData(AutoStoreSetting.KEY);
+        if (setting == null) {
+            return new ItemStack(Material.AIR);
+        } else {
+            return ItemEditor.create()
+                    .copyLoreFrom(icon)
+                    .loreEmptyLine()
+                    .loreLine((setting.getPerItemModeSetting().isEnabled(item) ? this.itemEnabled : this.itemDisabled).create(session.getMessageSource()))
+                    .loreEmptyLine()
+                    .applyTo(icon);
+        }
     }
 
     @Override
     public void onSelect(@NotNull PlayerSession session) {
-        var source = session.getSource();
-
-        if (this.container.isLoaded(source.getPlayer())) {
-            session.putData(AutoStoreSettingKey.KEY, this.container.get(source.getPlayer()));
-        } else if (this.container.isLoaded(session.getViewer())) {
-            session.putData(AutoStoreSettingKey.KEY, this.container.get(session.getViewer()));
+        var setting = this.container.getIfLoaded(session.getSource().getUUID());
+        if (setting != null) {
+            session.putData(AutoStoreSetting.KEY, setting);
+        } else {
+            var viewerSetting = this.container.getIfLoaded(session.getViewer().getUniqueId());
+            if (viewerSetting != null) {
+                session.putData(AutoStoreSetting.KEY, viewerSetting);
+            }
         }
     }
 
@@ -89,7 +95,7 @@ public class AutoStoreClickMode implements BoxItemClickMode {
     public @NotNull ClickResult onClick(@NotNull PlayerSession session, @NotNull BoxItem item, @NotNull ClickType clickType) {
         var player = session.getViewer();
 
-        var playerSetting = session.getData(AutoStoreSettingKey.KEY);
+        var playerSetting = session.getData(AutoStoreSetting.KEY);
 
         if (playerSetting == null) {
             return ClickResult.NO_UPDATE_NEEDED;
@@ -117,7 +123,7 @@ public class AutoStoreClickMode implements BoxItemClickMode {
     @Override
     public boolean canUse(@NotNull Player viewer, @NotNull BoxPlayer source) {
         if (viewer.hasPermission("box.autostore")) {
-            return this.container.isLoaded(source.getPlayer()) || this.container.isLoaded(viewer);
+            return this.container.isLoaded(source.getPlayer().getUniqueId()) || this.container.isLoaded(viewer.getUniqueId());
         } else {
             return false;
         }

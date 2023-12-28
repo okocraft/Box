@@ -1,6 +1,7 @@
-package net.okocraft.box.feature.autostore.model.setting;
+package net.okocraft.box.feature.autostore.setting;
 
 import net.okocraft.box.api.model.item.BoxItem;
+import net.okocraft.box.feature.gui.api.session.TypedKey;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
@@ -9,6 +10,11 @@ import java.util.UUID;
  * A class to hold the user's auto-store settings.
  */
 public class AutoStoreSetting {
+
+    /**
+     * A {@link TypedKey} to put {@link AutoStoreSetting} to the {@link net.okocraft.box.feature.gui.api.session.PlayerSession}.
+     */
+    public static final TypedKey<AutoStoreSetting> KEY = new TypedKey<>(AutoStoreSetting.class, "autostore_setting");
 
     private final UUID uuid;
     private final PerItemSetting perItemSetting = new PerItemSetting();
@@ -101,7 +107,7 @@ public class AutoStoreSetting {
      * Checks if the {@link BoxItem} should be auto-stored.
      * <p>
      * If the auto-store mode is all mode ({@link #isAllMode()} returns {@code true}),
-     * or if the {@link BoxItem} is included in {@link PerItemSetting#getEnabledItems()},
+     * or if {@link PerItemSetting#isEnabled(BoxItem)} returns {@code true},
      * this method returns {@code true}. Otherwise, this returns {@code false}.
      *
      * @param item the {@link BoxItem} to check

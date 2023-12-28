@@ -9,7 +9,7 @@ import net.okocraft.box.api.command.AbstractCommand;
 import net.okocraft.box.api.message.DefaultMessageCollector;
 import net.okocraft.box.api.message.ErrorMessages;
 import net.okocraft.box.api.message.Placeholders;
-import net.okocraft.box.feature.autostore.model.AutoStoreSettingContainer;
+import net.okocraft.box.feature.autostore.AutoStoreSettingProvider;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -30,16 +30,18 @@ public class AutoStoreCommand extends AbstractCommand {
             <aqua>/box autostore item <item> [on/off]<dark_gray> - <gray>Changes the auto-store setting of the item
             <aqua>/box autostore direct [on/off]<dark_gray> - <gray>Switches auto-store setting to store item drops directly.""";
 
+    private final AutoStoreSettingProvider container;
+    private final MiniMessageBase loadErrorMessage;
     private final AutoStoreAllCommand allCommand;
     private final AutoStoreItemCommand itemCommand;
     private final AutoStoreDirectCommand directCommand;
     private final MiniMessageBase help;
     private final Arg1<String> subCommandNotFound;
-    private final AutoStoreSettingContainer container;
 
-    public AutoStoreCommand(@NotNull AutoStoreSettingContainer container, @NotNull DefaultMessageCollector collector) {
+    public AutoStoreCommand(@NotNull AutoStoreSettingProvider container, @NotNull MiniMessageBase loadErrorMessage, @NotNull DefaultMessageCollector collector) {
         super("autostore", "box.command.autostore", Set.of("a", "as"));
         this.container = container;
+        this.loadErrorMessage = loadErrorMessage;
 
         AutoStoreCommandUtil.addToggleMessages(collector);
 
@@ -61,12 +63,12 @@ public class AutoStoreCommand extends AbstractCommand {
             return;
         }
 
-        if (!this.container.isLoaded(player)) {
-            this.container.getLoadErrorMessage().source(msgSrc).send(sender);
+        var setting = this.container.getIfLoaded(player.getUniqueId());
+
+        if (setting == null) {
+            this.loadErrorMessage.source(msgSrc).send(sender);
             return;
         }
-
-        var setting = this.container.get(player);
 
         // process autostore toggle
         if (args.length == 1) {

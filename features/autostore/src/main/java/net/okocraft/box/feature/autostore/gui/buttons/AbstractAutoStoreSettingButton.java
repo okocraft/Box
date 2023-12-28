@@ -2,7 +2,7 @@ package net.okocraft.box.feature.autostore.gui.buttons;
 
 import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.feature.autostore.event.AutoStoreSettingChangeEvent;
-import net.okocraft.box.feature.autostore.model.setting.AutoStoreSetting;
+import net.okocraft.box.feature.autostore.setting.AutoStoreSetting;
 import net.okocraft.box.feature.gui.api.button.Button;
 import org.jetbrains.annotations.NotNull;
 

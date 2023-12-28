@@ -5,56 +5,63 @@ import net.kyori.adventure.key.Key;
 import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.feature.AbstractBoxFeature;
 import net.okocraft.box.api.feature.FeatureContext;
-import net.okocraft.box.api.feature.Reloadable;
 import net.okocraft.box.feature.autostore.command.AutoStoreCommand;
 import net.okocraft.box.feature.autostore.gui.AutoStoreClickMode;
 import net.okocraft.box.feature.autostore.listener.AutoSaveListener;
-import net.okocraft.box.feature.autostore.listener.BoxPlayerListener;
 import net.okocraft.box.feature.autostore.listener.ItemListener;
-import net.okocraft.box.feature.autostore.model.AutoStoreSettingContainer;
 import net.okocraft.box.feature.gui.api.mode.ClickModeRegistry;
+import org.bukkit.Bukkit;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import static com.github.siroshun09.messages.minimessage.base.MiniMessageBase.messageKey;
 
-public class AutoStoreFeature extends AbstractBoxFeature implements Reloadable {
+/**
+ * A {@link net.okocraft.box.api.feature.BoxFeature} that provides autostore feature.
+ */
+public class AutoStoreFeature extends AbstractBoxFeature {
 
-    public static final @NotNull Key AUTO_SAVE_LISTENER_KEY = Key.key("box", "feature/autostore/auto_save_listener");
-    public static final @NotNull Key PLAYER_LISTENER_KEY = Key.key("box", "feature/autostore/player_listener");
+    private static final Key AUTO_SAVE_LISTENER_KEY = Key.key("box", "feature/autostore/auto_save_listener");
 
     private final AutoStoreSettingContainer settingContainer;
-    private final MiniMessageBase reloadSuccess;
+    private final MiniMessageBase loadErrorMessage;
 
-    private final BoxPlayerListener boxPlayerListener;
     private final AutoSaveListener autoSaveListener;
     private final ItemListener itemListener;
 
     private final AutoStoreCommand autoStoreCommand;
     private final AutoStoreClickMode autoStoreClickMode;
 
+    /**
+     * The constructor of {@link AutoStoreFeature}.
+
+     * @param context a context of {@link net.okocraft.box.api.feature.FeatureContext.Registration}
+     */
+    @ApiStatus.Internal
     public AutoStoreFeature(@NotNull FeatureContext.Registration context) {
         super("autostore");
         var collector = context.defaultMessageCollector();
-        this.settingContainer = new AutoStoreSettingContainer(messageKey(collector.add("box.autostore.error.failed-to-load-settings", "<red>Failed to load the auto-store settings. Please contact the administrator.")));
-        this.reloadSuccess = messageKey(collector.add("box.autostore.reload-success", "<gray>Auto store feature has been reloaded."));
-        this.boxPlayerListener = new BoxPlayerListener(this.settingContainer);
+        this.loadErrorMessage = messageKey(collector.add("box.autostore.error.failed-to-load-settings", "<red>Failed to load the auto-store settings. Please contact the administrator."));
+        this.settingContainer = new AutoStoreSettingContainer();
         this.autoSaveListener = new AutoSaveListener(this.settingContainer);
         this.itemListener = new ItemListener(this.settingContainer);
-        this.autoStoreCommand = new AutoStoreCommand(this.settingContainer, collector);
+        this.autoStoreCommand = new AutoStoreCommand(this.settingContainer, this.loadErrorMessage, collector);
         this.autoStoreClickMode = new AutoStoreClickMode(this.settingContainer, collector);
     }
 
     @Override
     public void enable(@NotNull FeatureContext.Enabling context) {
-        this.settingContainer.loadAll();
-
-        this.boxPlayerListener.register(PLAYER_LISTENER_KEY);
+        this.settingContainer.registerBoxPlayerListener(this.loadErrorMessage);
         this.autoSaveListener.register(AUTO_SAVE_LISTENER_KEY);
 
         this.itemListener.register();
 
         BoxAPI.api().getBoxCommand().getSubCommandHolder().register(this.autoStoreCommand);
         ClickModeRegistry.register(this.autoStoreClickMode);
+
+        for (var player : Bukkit.getOnlinePlayers()) {
+            this.settingContainer.load(player, this.loadErrorMessage);
+        }
     }
 
     @Override
@@ -65,15 +72,18 @@ public class AutoStoreFeature extends AbstractBoxFeature implements Reloadable {
         this.itemListener.unregister();
 
         this.autoSaveListener.unregister(AUTO_SAVE_LISTENER_KEY);
-        this.boxPlayerListener.unregister(PLAYER_LISTENER_KEY);
+        this.settingContainer.unregisterBoxPlayerListener();
 
         this.settingContainer.unloadAll();
     }
 
-    @Override
-    public void reload(@NotNull FeatureContext.Reloading context) {
-        this.disable(context.asDisabling());
-        this.enable(context.asEnabling());
-        this.reloadSuccess.source(BoxAPI.api().getMessageProvider().findSource(context.commandSender())).send(context.commandSender());
+    /**
+     * Gets a {@link AutoStoreSettingProvider}.
+     *
+     * @return a {@link AutoStoreSettingProvider}
+     */
+    @SuppressWarnings("unused")
+    public @NotNull AutoStoreSettingProvider getAutoStoreSettingProvider() {
+        return this.settingContainer;
     }
 }
