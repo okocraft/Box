@@ -21,14 +21,13 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 import java.util.Locale;
-import java.util.function.Supplier;
 
 public final class BoxPlugin extends JavaPlugin {
 
     private final BoxCore boxCore;
     private final PluginContext pluginContext;
     private final StorageRegistry storageRegistry;
-    private final @NotNull List<Supplier<? extends BoxFeature>> preregisteredFeatures;
+    private final @NotNull List<BoxFeature> features;
 
     private Status status = Status.NOT_LOADED;
 
@@ -39,13 +38,14 @@ public final class BoxPlugin extends JavaPlugin {
                 boxBootstrapContext.getPluginDirectory(),
                 PlatformDependent.createScheduler(this),
                 boxBootstrapContext.getEventServiceProvider(),
+                boxBootstrapContext.createMessageProvider(),
                 new Config(boxBootstrapContext.getPluginDirectory()),
                 PlatformDependent.createItemProvider(),
                 PlatformDependent.createCommandRegisterer(this.getName().toLowerCase(Locale.ENGLISH))
         );
         this.boxCore = new BoxCore(pluginContext);
         this.storageRegistry = boxBootstrapContext.getStorageRegistry();
-        this.preregisteredFeatures = boxBootstrapContext.getBoxFeatureList();
+        this.features = boxBootstrapContext.getBoxFeatureList();
     }
 
     @Override
@@ -60,6 +60,14 @@ public final class BoxPlugin extends JavaPlugin {
             StorageHolder.init(this.pluginContext.config().loadAndCreateStorage(this.storageRegistry));
         } catch (IOException e) {
             BoxLogger.logger().error("Could not load config.yml", e);
+            this.status = Status.EXCEPTION_OCCURRED;
+            return;
+        }
+
+        try {
+            this.pluginContext.messageProvider().load();
+        } catch (IOException e) {
+            BoxLogger.logger().error("Could not load messages.", e);
             this.status = Status.EXCEPTION_OCCURRED;
             return;
         }
@@ -98,14 +106,14 @@ public final class BoxPlugin extends JavaPlugin {
         APISetter.set(this.boxCore);
 
         try {
-            this.boxCore.initializeFeatures(this.preregisteredFeatures);
+            this.boxCore.initializeFeatures(this.features);
         } catch (IllegalStateException e) {
             BoxLogger.logger().error("An exception occurred while initializing features", e);
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
 
-        this.preregisteredFeatures.clear();
+        this.features.clear();
 
         var finish = Instant.now();
         BoxLogger.logger().info("Successfully enabled! ({}ms)", Duration.between(start, finish).toMillis());
@@ -117,7 +125,7 @@ public final class BoxPlugin extends JavaPlugin {
             return;
         }
 
-        this.boxCore.unregisterAllFeatures();
+        this.boxCore.disableAllFeatures();
         APISetter.unset();
 
         this.boxCore.disable();

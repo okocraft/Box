@@ -1,21 +1,25 @@
 package net.okocraft.box.feature.craft.gui.button;
 
-import net.kyori.adventure.text.Component;
+import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
 import net.okocraft.box.feature.craft.gui.util.ItemCrafter;
-import net.okocraft.box.feature.craft.lang.Displays;
+import net.okocraft.box.feature.craft.lang.DisplayKeys;
 import net.okocraft.box.feature.gui.api.button.Button;
 import net.okocraft.box.feature.gui.api.button.ClickResult;
 import net.okocraft.box.feature.gui.api.session.PlayerSession;
+import net.okocraft.box.feature.gui.api.util.ItemEditor;
 import net.okocraft.box.feature.gui.api.util.SoundBase;
-import net.okocraft.box.feature.gui.api.util.TranslationUtil;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-
 public class ToggleDestinationButton implements Button {
+
+    private static final MiniMessageBase DISPLAY_NAME = MiniMessageBase.messageKey(DisplayKeys.DESTINATION_BUTTON);
+    private static final MiniMessageBase INVENTORY = MiniMessageBase.messageKey(DisplayKeys.INVENTORY);
+    private static final MiniMessageBase BOX = MiniMessageBase.messageKey(DisplayKeys.BOX);
+    private static final MiniMessageBase CHANGE_TO_INVENTORY = MiniMessageBase.messageKey(DisplayKeys.CHANGE_TO_INVENTORY);
+    private static final MiniMessageBase CHANGE_TO_BOX = MiniMessageBase.messageKey(DisplayKeys.CHANGE_TO_BOX);
 
     private final int slot;
 
@@ -31,27 +35,14 @@ public class ToggleDestinationButton implements Button {
     @Override
     public @NotNull ItemStack createIcon(@NotNull PlayerSession session) {
         boolean currentState = session.getData(ItemCrafter.PUT_CRAFTED_ITEMS_INTO_INVENTORY) != null;
-        var icon = new ItemStack(currentState ? Material.PLAYER_HEAD : Material.CHEST);
-
-        icon.editMeta(target -> {
-            var viewer = session.getViewer();
-            target.displayName(TranslationUtil.render(Displays.DISTRIBUTION_BUTTON_DISPLAY_NAME, viewer));
-
-            target.lore(List.of(
-                    Component.empty(),
-                    TranslationUtil.render(
-                            Displays.DISTRIBUTION_CURRENT.apply(currentState), viewer
-                    ),
-                    Component.empty(),
-                    TranslationUtil.render(
-                            Displays.DISTRIBUTION_CLICK_TO_CHANGE.apply(currentState), viewer
-                    ),
-                    Component.empty()
-            ));
-
-        });
-
-        return icon;
+        return ItemEditor.create()
+                .displayName(DISPLAY_NAME.create(session.getMessageSource()))
+                .loreEmptyLine()
+                .loreLine((currentState ? INVENTORY : BOX).create(session.getMessageSource()))
+                .loreEmptyLine()
+                .loreLine((currentState ? CHANGE_TO_BOX : CHANGE_TO_INVENTORY).create(session.getMessageSource()))
+                .loreEmptyLine()
+                .createItem(currentState ? Material.PLAYER_HEAD : Material.CHEST);
     }
 
     @Override

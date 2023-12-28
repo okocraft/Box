@@ -19,23 +19,27 @@ public interface BoxFeature {
     @NotNull String getName();
 
     /**
-     * Enables this feature.
+     * Enables this {@link BoxFeature}.
+     *
+     * @param context the {@link net.okocraft.box.api.feature.FeatureContext.Enabling} context
+     * @throws Throwable if an exception occurred while enabling
      */
-    void enable();
+    void enable(@NotNull FeatureContext.Enabling context) throws Throwable;
 
     /**
-     * Disables this feature.
-     * <p>
-     * This method will be called even if an exception is thrown while executing {@link #enable()}.
+     * Disables this {@link BoxFeature}.
+     *
+     * @param context the {@link net.okocraft.box.api.feature.FeatureContext.Disabling} context
+     * @throws Throwable if an exception occurred while disabling
      */
-    void disable();
+    void disable(@NotNull FeatureContext.Disabling context) throws Throwable;
 
     /**
      * Gets classes of the dependent {@link BoxFeature}.
      *
      * @return classes of the dependent {@link BoxFeature}
      */
-   default @NotNull @Unmodifiable Set<Class<? extends BoxFeature>> getDependencies() {
-       return Collections.emptySet();
-   }
+    default @NotNull @Unmodifiable Set<Class<? extends BoxFeature>> getDependencies() {
+        return Collections.emptySet();
+    }
 }

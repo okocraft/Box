@@ -1,34 +1,32 @@
 package net.okocraft.box.feature.gui.api.buttons.amount;
 
-import net.kyori.adventure.text.Component;
-import net.okocraft.box.api.message.argument.SingleArgument;
+import com.github.siroshun09.messages.minimessage.arg.Arg1;
+import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
 import net.okocraft.box.feature.gui.api.button.ClickResult;
 import net.okocraft.box.feature.gui.api.session.Amount;
 import net.okocraft.box.feature.gui.api.session.PlayerSession;
 import net.okocraft.box.feature.gui.api.session.TypedKey;
+import net.okocraft.box.feature.gui.api.util.ItemEditor;
 import net.okocraft.box.feature.gui.api.util.SoundBase;
-import net.okocraft.box.feature.gui.api.util.TranslationUtil;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-
 public class DecreaseAmountButton extends AmountModificationButton {
 
     private static final SoundBase DECREASE_SOUND = SoundBase.builder().sound(Sound.BLOCK_WOODEN_BUTTON_CLICK_OFF).pitch(1.5f).build();
 
-    private final Component displayName;
-    private final SingleArgument<Integer> clickToDecreaseLore;
-    private final SingleArgument<Integer> currentAmountLore;
+    private final MiniMessageBase displayName;
+    private final Arg1<Integer> clickToDecreaseLore;
+    private final Arg1<Integer> currentAmountLore;
     private final ClickResult returningResult;
 
     public DecreaseAmountButton(int slot, @NotNull TypedKey<Amount> dataKey,
-                                @NotNull Component displayName,
-                                @NotNull SingleArgument<Integer> clickToDecreaseLore,
-                                @NotNull SingleArgument<Integer> currentAmountLore,
+                                @NotNull MiniMessageBase displayName,
+                                @NotNull Arg1<Integer> clickToDecreaseLore,
+                                @NotNull Arg1<Integer> currentAmountLore,
                                 @NotNull ClickResult returningResult) {
         super(slot, dataKey);
         this.displayName = displayName;
@@ -39,36 +37,20 @@ public class DecreaseAmountButton extends AmountModificationButton {
 
     @Override
     public @NotNull ItemStack createIcon(@NotNull PlayerSession session) {
-        var icon = new ItemStack(Material.RED_STAINED_GLASS_PANE);
+        var amount = this.getOrCreateAmount(session);
 
-        icon.editMeta(meta -> {
-            var viewer = session.getViewer();
-            meta.displayName(TranslationUtil.render(displayName, viewer));
-
-            var lore = new ArrayList<Component>();
-
-            var amount = getOrCreateAmount(session);
-            var unit = amount.getUnit().getAmount();
-            var currentAmount = amount.getValue();
-
-            lore.add(Component.empty());
-
-            lore.add(clickToDecreaseLore.apply(unit));
-
-
-            lore.add(Component.empty());
-
-            lore.add(currentAmountLore.apply(currentAmount));
-
-            meta.lore(TranslationUtil.render(lore, viewer));
-        });
-
-        return icon;
+        return ItemEditor.create()
+                .displayName(this.displayName.create(session.getMessageSource()))
+                .loreEmptyLine()
+                .loreLine(this.clickToDecreaseLore.apply(amount.getUnit().getAmount()).create(session.getMessageSource()))
+                .loreEmptyLine()
+                .loreLine(this.currentAmountLore.apply(amount.getValue()).create(session.getMessageSource()))
+                .createItem(Material.RED_STAINED_GLASS_PANE);
     }
 
     @Override
     public @NotNull ClickResult onClick(@NotNull PlayerSession session, @NotNull ClickType clickType) {
-        var amount = getOrCreateAmount(session);
+        var amount = this.getOrCreateAmount(session);
         var current = amount.getValue();
 
         if (1 < current) {
@@ -79,6 +61,6 @@ public class DecreaseAmountButton extends AmountModificationButton {
 
         DECREASE_SOUND.play(session.getViewer());
 
-        return returningResult;
+        return this.returningResult;
     }
 }

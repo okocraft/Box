@@ -16,7 +16,14 @@ public interface BoxItemClickMode {
 
     @NotNull Material getIconMaterial();
 
-    @NotNull Component getDisplayName();
+    @Deprecated
+    default @NotNull Component getDisplayName() {
+        return Component.empty();
+    }
+
+    default @NotNull Component getDisplayName(@NotNull PlayerSession session) {
+        return this.getDisplayName();
+    }
 
     @NotNull ItemStack createItemIcon(@NotNull PlayerSession session, @NotNull BoxItem item);
 

@@ -6,7 +6,9 @@ import net.okocraft.box.api.command.base.BoxAdminCommand;
 import net.okocraft.box.api.command.base.BoxCommand;
 import net.okocraft.box.api.event.feature.FeatureEvent;
 import net.okocraft.box.api.feature.BoxFeature;
+import net.okocraft.box.api.feature.FeatureContext;
 import net.okocraft.box.api.feature.Reloadable;
+import net.okocraft.box.api.message.MessageProvider;
 import net.okocraft.box.api.model.manager.ItemManager;
 import net.okocraft.box.api.model.manager.StockManager;
 import net.okocraft.box.api.model.manager.UserManager;
@@ -18,8 +20,7 @@ import net.okocraft.box.core.command.BoxCommandImpl;
 import net.okocraft.box.core.config.Config;
 import net.okocraft.box.core.listener.DebugListener;
 import net.okocraft.box.core.listener.PlayerConnectionListener;
-import net.okocraft.box.core.message.ErrorMessages;
-import net.okocraft.box.core.message.MicsMessages;
+import net.okocraft.box.core.message.CoreMessages;
 import net.okocraft.box.core.model.manager.customdata.BoxCustomDataManager;
 import net.okocraft.box.core.model.manager.event.BoxEventManager;
 import net.okocraft.box.core.model.manager.item.BoxItemManager;
@@ -103,7 +104,7 @@ public class BoxCore implements BoxAPI {
 
         this.customDataManager = new BoxCustomDataManager(storage.getCustomDataStorage());
 
-        this.playerMap = new BoxPlayerMapImpl(this.userManager, this.stockManager, this.eventManager, this.context.scheduler());
+        this.playerMap = new BoxPlayerMapImpl(this.userManager, this.stockManager, this.eventManager, this.context.scheduler(), this.context.messageProvider());
         this.playerMap.loadAll();
 
         Bukkit.getPluginManager().registerEvents(new PlayerConnectionListener(this.playerMap), context.plugin());
@@ -112,8 +113,8 @@ public class BoxCore implements BoxAPI {
 
         BoxLogger.logger().info("Registering commands...");
 
-        this.boxCommand = new BoxCommandImpl(this.context.scheduler(), this.playerMap, this::canUseBox);
-        this.boxAdminCommand = new BoxAdminCommandImpl(this.context.scheduler());
+        this.boxCommand = new BoxCommandImpl(this.context.messageProvider(), this.context.scheduler(), this.playerMap, this::canUseBox);
+        this.boxAdminCommand = new BoxAdminCommandImpl(this.context.messageProvider(), this.context.scheduler());
 
         this.context.commandRegisterer().register(this.boxCommand).register(this.boxAdminCommand);
 
@@ -140,12 +141,13 @@ public class BoxCore implements BoxAPI {
             BoxLogger.logger().error("Could not close the storage.", e);
         }
 
-        BoxLogger.logger().info("Unloading languages...");
-        // TODO: translationDirectory.unload();
+        BoxLogger.logger().info("Unloading messages...");
+        this.context.messageProvider().unload();
     }
 
     @Override
     public void reload(@NotNull CommandSender sender) {
+        var source = this.context.messageProvider().findSource(sender);
         var playerMessenger = new Consumer<Supplier<Component>>() {
             @Override
             public void accept(Supplier<Component> componentSupplier) {
@@ -163,9 +165,9 @@ public class BoxCore implements BoxAPI {
 
         try {
             this.context.config().reload();
-            sender.sendMessage(MicsMessages.CONFIG_RELOADED);
+            CoreMessages.CONFIG_RELOADED_MSG.apply(Config.FILENAME).source(source).send(sender);
         } catch (Throwable e) {
-            playerMessenger.accept(() -> ErrorMessages.ERROR_RELOAD_FAILURE.apply(Config.FILENAME, e));
+            playerMessenger.accept(() -> CoreMessages.CONFIG_RELOAD_FAILURE.apply(Config.FILENAME, e).source(source).message());
             BoxLogger.logger().error("Could not reload {}", Config.FILENAME, e);
         }
 
@@ -175,20 +177,22 @@ public class BoxCore implements BoxAPI {
         }
 
         try {
-            // TODO: translationDirectory.load();
-            sender.sendMessage(MicsMessages.LANGUAGES_RELOADED);
+            this.context.messageProvider().load();
+            CoreMessages.MESSAGE_RELOADED_MSG.source(source).send(sender);
         } catch (Throwable e) {
-            playerMessenger.accept(() -> ErrorMessages.ERROR_RELOAD_FAILURE.apply("languages", e));
-            BoxLogger.logger().error("Could not reload languages", e);
+            playerMessenger.accept(() -> CoreMessages.MESSAGES_RELOAD_FAILURE.apply(e).source(source).message());
+            BoxLogger.logger().error("Could not reload messages", e);
         }
+
+        var featureReloadContext = new FeatureContext.Reloading(this.context.plugin(), sender);
 
         for (var feature : this.featureMap.values()) {
             if (feature instanceof Reloadable reloadable) {
                 try {
-                    reloadable.reload(sender);
+                    reloadable.reload(featureReloadContext);
                     this.eventManager.call(new FeatureEvent(feature, FeatureEvent.Type.RELOAD));
                 } catch (Throwable e) {
-                    playerMessenger.accept(() -> ErrorMessages.ERROR_RELOAD_FAILURE.apply(feature.getName(), e));
+                    playerMessenger.accept(() -> CoreMessages.FEATURE_RELOAD_FAILURE.apply(feature, e).source(source).message());
                     BoxLogger.logger().error("Could not reload {}", feature.getName(), e);
                 }
             }
@@ -207,6 +211,11 @@ public class BoxCore implements BoxAPI {
     @Override
     public @NotNull Path getPluginDirectory() {
         return context.dataDirectory();
+    }
+
+    @Override
+    public @NotNull MessageProvider getMessageProvider() {
+        return this.context.messageProvider();
     }
 
     @Override
@@ -264,7 +273,7 @@ public class BoxCore implements BoxAPI {
         return Optional.ofNullable(this.featureMap.get(clazz)).map(clazz::cast);
     }
 
-    public void initializeFeatures(@NotNull List<Supplier<? extends BoxFeature>> features) {
+    public void initializeFeatures(@NotNull List<BoxFeature> features) {
         if (features.isEmpty()) {
             this.featureMap = Collections.emptyMap();
             return;
@@ -273,49 +282,50 @@ public class BoxCore implements BoxAPI {
         BoxLogger.logger().info("Enabling features...");
 
         var featureMap = new LinkedHashMap<Class<? extends BoxFeature>, BoxFeature>();
+        var context = new FeatureContext.Enabling(this.context.plugin());
 
-        for (var supplier : features) {
-            var feature = supplier.get();
-            initializeFeature(featureMap, feature);
+        for (var feature : features) {
+            initializeFeature(feature, featureMap, context);
             this.eventManager.call(new FeatureEvent(feature, FeatureEvent.Type.REGISTER));
         }
 
         this.featureMap = Collections.unmodifiableMap(featureMap);
     }
 
-    private static void initializeFeature(@NotNull Map<Class<? extends BoxFeature>, BoxFeature> featureMap, @NotNull BoxFeature feature) {
-        if (featureMap.containsKey(feature.getClass())) {
+    private static void initializeFeature(@NotNull BoxFeature feature, @NotNull Map<Class<? extends BoxFeature>, BoxFeature> registry, @NotNull FeatureContext.Enabling context) {
+        if (registry.containsKey(feature.getClass())) {
             throw new IllegalStateException("%s is registered twice.".formatted(feature.getName()));
         }
 
         var dependencies = feature.getDependencies();
 
         for (var dependencyClass : dependencies) {
-            if (!featureMap.containsKey(dependencyClass)) {
+            if (!registry.containsKey(dependencyClass)) {
                 throw new IllegalStateException("%s that is the dependency of %s is not registered.".formatted(dependencyClass.getName(), feature.getName()));
             }
         }
 
         try {
-            feature.enable();
+            feature.enable(context);
         } catch (Throwable e) {
             throw new IllegalStateException("Failed to enable %s.".formatted(feature.getName()), e);
         }
 
-        featureMap.put(feature.getClass(), feature);
+        registry.put(feature.getClass(), feature);
         BoxLogger.logger().info("Feature '{}' has been enabled.", feature.getName());
     }
 
-    public void unregisterAllFeatures() {
+    public void disableAllFeatures() {
         if (this.featureMap.isEmpty()) {
             return;
         }
 
         BoxLogger.logger().info("Disabling features...");
+        var context = new FeatureContext.Disabling(this.context.plugin());
 
         for (var feature : this.featureMap.values()) {
             try {
-                feature.disable();
+                feature.disable(context);
             } catch (Throwable throwable) {
                 BoxLogger.logger().error("Failed to disable {}.", feature.getName(), throwable);
                 continue;

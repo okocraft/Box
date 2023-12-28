@@ -1,21 +1,21 @@
 package net.okocraft.box.feature.craft;
 
+import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
 import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.feature.AbstractBoxFeature;
 import net.okocraft.box.api.feature.BoxFeature;
-import net.okocraft.box.api.feature.Disableable;
+import net.okocraft.box.api.feature.FeatureContext;
 import net.okocraft.box.api.feature.Reloadable;
-import net.okocraft.box.api.message.Components;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.feature.craft.command.CraftCommand;
+import net.okocraft.box.feature.craft.lang.DisplayKeys;
 import net.okocraft.box.feature.craft.loader.RecipeLoader;
 import net.okocraft.box.feature.craft.mode.CraftMode;
 import net.okocraft.box.feature.craft.model.IngredientHolder;
 import net.okocraft.box.feature.craft.model.RecipeHolder;
 import net.okocraft.box.feature.gui.GuiFeature;
 import net.okocraft.box.feature.gui.api.mode.ClickModeRegistry;
-import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
@@ -23,17 +23,22 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 
-public class CraftFeature extends AbstractBoxFeature implements Disableable, Reloadable {
+public class CraftFeature extends AbstractBoxFeature implements Reloadable {
 
-    private final CraftMode craftMode = new CraftMode();
-    private final CraftCommand craftCommand = new CraftCommand();
+    private final CraftMode craftMode;
+    private final CraftCommand craftCommand;
+    private final MiniMessageBase reloaded;
 
-    public CraftFeature() {
+    public CraftFeature(@NotNull FeatureContext.Registration context) {
         super("craft");
+        DisplayKeys.addDefaults(context.defaultMessageCollector());
+        this.craftMode = new CraftMode(context.defaultMessageCollector());
+        this.craftCommand = new CraftCommand(context.defaultMessageCollector());
+        this.reloaded = MiniMessageBase.messageKey(context.defaultMessageCollector().add("box.craft.reloaded", "<gray>Item recipes have been reloaded."));
     }
 
     @Override
-    public void enable() {
+    public void enable(@NotNull FeatureContext.Enabling context) {
         // Reduce objects that will be generated
         // BoxIngredientItem 5030 -> 325
         // IngredientHolder 3506 -> 1417
@@ -60,24 +65,16 @@ public class CraftFeature extends AbstractBoxFeature implements Disableable, Rel
     }
 
     @Override
-    public void disable() {
+    public void disable(@NotNull FeatureContext.Disabling context) {
         ClickModeRegistry.unregister(craftMode);
         BoxAPI.api().getBoxCommand().getSubCommandHolder().unregister(craftCommand);
     }
 
     @Override
-    public void reload(@NotNull CommandSender sender) {
-        disable();
-        enable();
-
-        try {
-            sender.sendMessage(Components.grayTranslatable("box.craft.command.recipe-reloaded"));
-        } catch (Exception ignored) {
-            // I don't know why it loops infinitely and throws an exception when the message send to the console.
-            // It's probably a bug of Paper or Adventure.
-            //
-            // IllegalStateException: Exceeded maximum depth of 512 while attempting to flatten components!
-        }
+    public void reload(@NotNull FeatureContext.Reloading context) {
+        disable(context.asDisabling());
+        enable(context.asEnabling());
+        this.reloaded.source(BoxAPI.api().getMessageProvider().findSource(context.commandSender())).send(context.commandSender());
     }
 
     @Override

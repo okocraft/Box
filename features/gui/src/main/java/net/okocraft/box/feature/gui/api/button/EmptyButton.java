@@ -2,12 +2,11 @@ package net.okocraft.box.feature.gui.api.button;
 
 import net.kyori.adventure.text.Component;
 import net.okocraft.box.feature.gui.api.session.PlayerSession;
+import net.okocraft.box.feature.gui.api.util.ItemEditor;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Collections;
 
 record EmptyButton(Material material, int slot) implements Button {
 
@@ -18,14 +17,10 @@ record EmptyButton(Material material, int slot) implements Button {
 
     @Override
     public @NotNull ItemStack createIcon(@NotNull PlayerSession session) {
-        var icon = new ItemStack(material);
-
-        icon.editMeta(meta -> {
-            meta.displayName(Component.empty());
-            meta.lore(Collections.emptyList());
-        });
-
-        return icon;
+        return ItemEditor.create()
+                .displayName(Component.empty())
+                .clearLore()
+                .createItem(this.material);
     }
 
     @Override

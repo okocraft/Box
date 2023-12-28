@@ -1,5 +1,6 @@
 package net.okocraft.box.feature.autostore.command;
 
+import com.github.siroshun09.messages.minimessage.source.MiniMessageSource;
 import net.okocraft.box.feature.autostore.model.setting.AutoStoreSetting;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
@@ -19,7 +20,7 @@ abstract class AutoStoreSubCommand {
         return this.name;
     }
 
-    abstract void runCommand(@NotNull CommandSender sender, @NotNull String[] args, @NotNull AutoStoreSetting setting);
+    abstract void runCommand(@NotNull CommandSender sender, @NotNull String[] args, @NotNull MiniMessageSource msgSrc, @NotNull AutoStoreSetting setting);
 
     abstract @NotNull List<String> runTabComplete(@NotNull CommandSender sender, @NotNull String[] args);
 }

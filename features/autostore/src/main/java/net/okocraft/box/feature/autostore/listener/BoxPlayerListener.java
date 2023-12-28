@@ -7,13 +7,18 @@ import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.event.player.PlayerLoadEvent;
 import net.okocraft.box.api.event.player.PlayerUnloadEvent;
 import net.okocraft.box.api.util.BoxLogger;
-import net.okocraft.box.feature.autostore.message.AutoStoreMessage;
 import net.okocraft.box.feature.autostore.model.AutoStoreSettingContainer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 public class BoxPlayerListener {
+
+    private final AutoStoreSettingContainer container;
+
+    public BoxPlayerListener(@NotNull AutoStoreSettingContainer container) {
+        this.container = container;
+    }
 
     public void register(@NotNull Key listenerKey) {
         BoxAPI.api().getEventManager().subscribeAll(List.of(
@@ -30,10 +35,10 @@ public class BoxPlayerListener {
         var player = event.getBoxPlayer().getPlayer();
 
         try {
-            AutoStoreSettingContainer.INSTANCE.load(player);
+            this.container.load(player);
         } catch (Exception e) {
             BoxLogger.logger().error("Could not load autostore setting ({})", player.getName(), e);
-            player.sendMessage(AutoStoreMessage.ERROR_FAILED_TO_LOAD_SETTINGS);
+            this.container.getLoadErrorMessage().source(BoxAPI.api().getMessageProvider().findSource(player)).send(player);
         }
     }
 
@@ -41,7 +46,7 @@ public class BoxPlayerListener {
         var player = event.getBoxPlayer().getPlayer();
 
         try {
-            AutoStoreSettingContainer.INSTANCE.unload(player);
+            this.container.unload(player);
         } catch (Exception e) {
             BoxLogger.logger().error("Could not unload autostore setting ({})", player.getName(), e);
         }

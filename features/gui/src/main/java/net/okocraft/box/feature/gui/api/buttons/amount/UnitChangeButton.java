@@ -1,31 +1,31 @@
 package net.okocraft.box.feature.gui.api.buttons.amount;
 
+import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
 import net.kyori.adventure.text.Component;
 import net.okocraft.box.feature.gui.api.button.ClickResult;
 import net.okocraft.box.feature.gui.api.lang.Styles;
 import net.okocraft.box.feature.gui.api.session.Amount;
 import net.okocraft.box.feature.gui.api.session.PlayerSession;
 import net.okocraft.box.feature.gui.api.session.TypedKey;
+import net.okocraft.box.feature.gui.api.util.ItemEditor;
 import net.okocraft.box.feature.gui.api.util.SoundBase;
-import net.okocraft.box.feature.gui.api.util.TranslationUtil;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-
 public class UnitChangeButton extends AmountModificationButton {
 
     private static final SoundBase RESET_SOUND = SoundBase.builder().sound(Sound.ENTITY_EXPERIENCE_ORB_PICKUP).pitch(1.5f).build();
 
-    private final Component displayName;
-    private final Component clickToResetAmount;
+    private final MiniMessageBase displayName;
+    private final MiniMessageBase clickToResetAmount;
     private final ClickResult returningResult;
 
     public UnitChangeButton(int slot, @NotNull TypedKey<Amount> dataKey,
-                            @NotNull Component displayName, @NotNull Component clickToResetAmount,
+                            @NotNull MiniMessageBase displayName,
+                            @NotNull MiniMessageBase clickToResetAmount,
                             @NotNull ClickResult returningResult) {
         super(slot, dataKey);
 
@@ -36,37 +36,26 @@ public class UnitChangeButton extends AmountModificationButton {
 
     @Override
     public @NotNull ItemStack createIcon(@NotNull PlayerSession session) {
-        var icon = new ItemStack(Material.WHITE_STAINED_GLASS_PANE);
+        var editor = ItemEditor.create().displayName(this.displayName.create(session.getMessageSource()));
+        var currentUnit = this.getOrCreateAmount(session).getUnit();
 
-        icon.editMeta(meta -> {
-            var viewer = session.getViewer();
-            meta.displayName(TranslationUtil.render(displayName, viewer));
+        for (var unit : Amount.Unit.values()) {
+            editor.loreLine(
+                    Component.text()
+                            .content(" > " + unit.getAmount())
+                            .style(currentUnit == unit ? Styles.NO_DECORATION_AQUA : Styles.NO_DECORATION_GRAY)
+                            .build()
+            );
+        }
 
-            var lore = new ArrayList<Component>();
-
-            var currentUnit = getOrCreateAmount(session).getUnit();
-
-            for (var unit : Amount.Unit.values()) {
-                lore.add(
-                        Component.text()
-                                .content(" > " + unit.getAmount())
-                                .style(currentUnit == unit ? Styles.NO_DECORATION_AQUA : Styles.NO_DECORATION_GRAY)
-                                .build()
-                );
-            }
-
-            lore.add(Component.empty());
-            lore.add(TranslationUtil.render(clickToResetAmount, viewer));
-
-            meta.lore(lore);
-        });
-
-        return icon;
+        return editor.loreEmptyLine()
+                .loreLine(this.clickToResetAmount.create(session.getMessageSource()))
+                .createItem(Material.WHITE_STAINED_GLASS_PANE);
     }
 
     @Override
     public @NotNull ClickResult onClick(@NotNull PlayerSession session, @NotNull ClickType clickType) {
-        var amount = getOrCreateAmount(session);
+        var amount = this.getOrCreateAmount(session);
 
         if (clickType.isShiftClick()) {
             if (amount.getValue() != 1) {
@@ -78,6 +67,6 @@ public class UnitChangeButton extends AmountModificationButton {
             SoundBase.CLICK.play(session.getViewer());
         }
 
-        return returningResult;
+        return this.returningResult;
     }
 }

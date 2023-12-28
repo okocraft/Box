@@ -1,6 +1,9 @@
 package net.okocraft.box.feature.gui.internal.menu;
 
+import com.github.siroshun09.messages.minimessage.arg.Arg1;
+import com.github.siroshun09.messages.minimessage.base.Placeholder;
 import net.kyori.adventure.text.Component;
+import net.okocraft.box.api.model.stock.StockHolder;
 import net.okocraft.box.feature.category.api.category.Category;
 import net.okocraft.box.feature.category.api.registry.CategoryRegistry;
 import net.okocraft.box.feature.gui.api.button.Button;
@@ -8,7 +11,7 @@ import net.okocraft.box.feature.gui.api.buttons.CloseButton;
 import net.okocraft.box.feature.gui.api.menu.paginate.AbstractPaginatedMenu;
 import net.okocraft.box.feature.gui.api.session.PlayerSession;
 import net.okocraft.box.feature.gui.internal.button.CategoryButton;
-import net.okocraft.box.feature.gui.internal.lang.Displays;
+import net.okocraft.box.feature.gui.internal.lang.DisplayKeys;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -18,6 +21,7 @@ import java.util.List;
 public class CategorySelectorMenu extends AbstractPaginatedMenu<Category> {
 
     private static final List<Button> FOOTER;
+    private static final Arg1<StockHolder> TITLE = Arg1.arg1(DisplayKeys.CATEGORY_SELECTOR_MENU_TITLE, Placeholder.component("name", holder -> Component.text(holder.getName())));
 
     static {
         var footer = new ArrayList<Button>(9);
@@ -39,7 +43,7 @@ public class CategorySelectorMenu extends AbstractPaginatedMenu<Category> {
 
     @Override
     public @NotNull Component getTitle(@NotNull PlayerSession session) {
-        return Displays.CATEGORY_SELECTOR_MENU; // TODO: stockholder name
+        return TITLE.apply(session.getStockHolder()).create(session.getMessageSource());
     }
 
     @Override

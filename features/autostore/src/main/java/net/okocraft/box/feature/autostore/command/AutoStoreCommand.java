@@ -1,11 +1,15 @@
 package net.okocraft.box.feature.autostore.command;
 
+import com.github.siroshun09.messages.minimessage.arg.Arg1;
+import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
+import com.github.siroshun09.messages.minimessage.source.MiniMessageSource;
 import net.kyori.adventure.text.Component;
+import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.command.AbstractCommand;
-import net.okocraft.box.api.message.GeneralMessage;
-import net.okocraft.box.feature.autostore.message.AutoStoreMessage;
+import net.okocraft.box.api.message.DefaultMessageCollector;
+import net.okocraft.box.api.message.ErrorMessages;
+import net.okocraft.box.api.message.Placeholders;
 import net.okocraft.box.feature.autostore.model.AutoStoreSettingContainer;
-import net.okocraft.box.feature.autostore.model.setting.AutoStoreSetting;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -20,40 +24,58 @@ import java.util.stream.Stream;
 
 public class AutoStoreCommand extends AbstractCommand {
 
-    private final AutoStoreAllCommand allCommand = new AutoStoreAllCommand();
-    private final AutoStoreItemCommand itemCommand = new AutoStoreItemCommand();
-    private final AutoStoreDirectCommand directCommand = new AutoStoreDirectCommand();
+    private static final String DEFAULT_HELP = """
+            <aqua>/box autostore [on/off]<dark_gray> - <gray>Switches on/off auto-store
+            <aqua>/box autostore [all/item]<dark_gray> - <gray>Changes auto-store mode
+            <aqua>/box autostore item <item> [on/off]<dark_gray> - <gray>Changes the auto-store setting of the item
+            <aqua>/box autostore direct [on/off]<dark_gray> - <gray>Switches auto-store setting to store item drops directly.""";
 
-    public AutoStoreCommand() {
+    private final AutoStoreAllCommand allCommand;
+    private final AutoStoreItemCommand itemCommand;
+    private final AutoStoreDirectCommand directCommand;
+    private final MiniMessageBase help;
+    private final Arg1<String> subCommandNotFound;
+    private final AutoStoreSettingContainer container;
+
+    public AutoStoreCommand(@NotNull AutoStoreSettingContainer container, @NotNull DefaultMessageCollector collector) {
         super("autostore", "box.command.autostore", Set.of("a", "as"));
+        this.container = container;
+
+        AutoStoreCommandUtil.addToggleMessages(collector);
+
+        this.allCommand = new AutoStoreAllCommand(collector);
+        this.itemCommand = new AutoStoreItemCommand(collector);
+        this.directCommand = new AutoStoreDirectCommand(collector);
+
+        AutoStoreCommandUtil.addErrorMessages(collector);
+        this.help = MiniMessageBase.messageKey(collector.add("box.autostore.command.help", DEFAULT_HELP));
+        this.subCommandNotFound = Arg1.arg1(collector.add("box.autostore.command.error.subcommand-not-found", "<red>Auto-store sub command named <aqua><arg><red> is not found."), Placeholders.ARG);
     }
 
     @Override
     public void onCommand(@NotNull CommandSender sender, @NotNull String[] args) {
-        if (args.length < 1) { // never reach.
-            return;
-        }
+        var msgSrc = BoxAPI.api().getMessageProvider().findSource(sender);
 
         if (!(sender instanceof Player player)) {
-            sender.sendMessage(GeneralMessage.ERROR_COMMAND_ONLY_PLAYER);
-            return;
-        }
-        var container = AutoStoreSettingContainer.INSTANCE;
-        if (!container.isLoaded(player)) {
-            player.sendMessage(AutoStoreMessage.ERROR_FAILED_TO_LOAD_SETTINGS);
+            ErrorMessages.COMMAND_ONLY_PLAYER.source(msgSrc).send(sender);
             return;
         }
 
-        var setting = container.get(player);
+        if (!this.container.isLoaded(player)) {
+            this.container.getLoadErrorMessage().source(msgSrc).send(sender);
+            return;
+        }
+
+        var setting = this.container.get(player);
 
         // process autostore toggle
         if (args.length == 1) {
-            changeAutoStore(setting, !setting.isEnabled(), sender);
+            AutoStoreCommandUtil.changeAutoStore(setting, sender, msgSrc, !setting.isEnabled(), true);
             return;
         } else {
             Boolean value = AutoStoreCommandUtil.getBoolean(args[1]);
             if (value != null) {
-                changeAutoStore(setting, value, sender);
+                AutoStoreCommandUtil.changeAutoStore(setting, sender, msgSrc, value, true);
                 return;
             }
         }
@@ -61,22 +83,13 @@ public class AutoStoreCommand extends AbstractCommand {
         var subCommand = matchSubCommand(args[1]);
 
         if (subCommand.isPresent()) {
-            subCommand.get().runCommand(sender, args, setting);
+            subCommand.get().runCommand(sender, args, msgSrc, setting);
         } else {
             if (!args[1].equalsIgnoreCase("help")) {
-                sender.sendMessage(AutoStoreMessage.COMMAND_SUB_COMMAND_NOT_FOUND.apply(args[1]));
+                this.subCommandNotFound.apply(args[1]).source(msgSrc).send(sender);
             }
 
-            sender.sendMessage(getHelp());
-        }
-    }
-
-    private void changeAutoStore(@NotNull AutoStoreSetting setting, boolean value, @NotNull CommandSender sender) {
-        sender.sendMessage(AutoStoreMessage.COMMAND_AUTOSTORE_TOGGLED.apply(value));
-
-        if (setting.isEnabled() != value) { // setting changed
-            setting.setEnabled(value);
-            AutoStoreCommandUtil.callEvent(setting);
+            sender.sendMessage(this.getHelp(msgSrc));
         }
     }
 
@@ -104,12 +117,7 @@ public class AutoStoreCommand extends AbstractCommand {
     }
 
     @Override
-    public @NotNull Component getHelp() {
-        return Component.text()
-                .append(AutoStoreMessage.COMMAND_HELP_1).append(Component.newline())
-                .append(AutoStoreMessage.COMMAND_HELP_2).append(Component.newline())
-                .append(AutoStoreMessage.COMMAND_HELP_3).append(Component.newline())
-                .append(AutoStoreMessage.COMMAND_HELP_4)
-                .build();
+    public @NotNull Component getHelp(@NotNull MiniMessageSource msgSrc) {
+        return this.help.create(msgSrc);
     }
 }

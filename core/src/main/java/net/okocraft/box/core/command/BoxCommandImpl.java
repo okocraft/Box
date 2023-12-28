@@ -1,9 +1,8 @@
 package net.okocraft.box.core.command;
 
-import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.command.base.BoxCommand;
-import net.okocraft.box.api.message.Components;
-import net.okocraft.box.api.message.GeneralMessage;
+import net.okocraft.box.api.message.ErrorMessages;
+import net.okocraft.box.api.message.MessageProvider;
 import net.okocraft.box.api.player.BoxPlayerMap;
 import net.okocraft.box.api.scheduler.BoxScheduler;
 import org.bukkit.command.CommandSender;
@@ -22,8 +21,9 @@ public class BoxCommandImpl extends BaseCommand implements BoxCommand {
 
     private final Predicate<Player> canUseBox;
 
-    public BoxCommandImpl(@NotNull BoxScheduler scheduler, @NotNull BoxPlayerMap playerMap, @NotNull Predicate<Player> canUseBox) {
-        super(scheduler);
+    public BoxCommandImpl(@NotNull MessageProvider messageProvider, @NotNull BoxScheduler scheduler,
+                          @NotNull BoxPlayerMap playerMap, @NotNull Predicate<Player> canUseBox) {
+        super(messageProvider, scheduler);
         this.playerMap = playerMap;
         this.canUseBox = canUseBox;
     }
@@ -44,23 +44,18 @@ public class BoxCommandImpl extends BaseCommand implements BoxCommand {
     }
 
     @Override
-    public @NotNull Component getHelp() {
-        return Components.commandHelp("box.command.box");
-    }
-
-    @Override
     public void onCommand(@NotNull CommandSender sender, @NotNull String[] args) {
         if (sender instanceof Player player) {
             if (this.playerMap.isLoaded(player)) {
                 if (!this.canUseBox.test(player)) {
-                    sender.sendMessage(GeneralMessage.ERROR_DISABLED_WORLD.apply(player.getWorld()));
+                    ErrorMessages.CANNOT_USE_BOX.source(this.messageProvider.findSource(sender)).send(sender);
                     return;
                 }
             } else {
                 if (this.playerMap.isScheduledLoading(player)) {
-                    sender.sendMessage(GeneralMessage.ERROR_PLAYER_LOADING);
+                    ErrorMessages.playerDataIsLoading(null).source(this.messageProvider.findSource(sender)).send(sender);
                 } else {
-                    sender.sendMessage(GeneralMessage.ERROR_PLAYER_NOT_LOADED);
+                    ErrorMessages.playerDataIsNotLoaded(null).source(this.messageProvider.findSource(sender)).send(sender);
                 }
                 return;
             }

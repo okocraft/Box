@@ -24,6 +24,7 @@ dependencies {
         exclude("org.yaml", "snakeyaml")
     }
     api(libs.event4j)
+    api(libs.messages)
 
     compileOnly(libs.paper)
     compileOnly(libs.annotations)

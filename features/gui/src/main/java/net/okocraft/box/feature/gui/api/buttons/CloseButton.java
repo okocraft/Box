@@ -1,12 +1,13 @@
 package net.okocraft.box.feature.gui.api.buttons;
 
+import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
 import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.feature.gui.api.button.Button;
 import net.okocraft.box.feature.gui.api.button.ClickResult;
 import net.okocraft.box.feature.gui.api.session.PlayerSession;
+import net.okocraft.box.feature.gui.api.util.ItemEditor;
 import net.okocraft.box.feature.gui.api.util.SoundBase;
-import net.okocraft.box.feature.gui.api.util.TranslationUtil;
-import net.okocraft.box.feature.gui.internal.lang.Displays;
+import net.okocraft.box.feature.gui.internal.lang.DisplayKeys;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.event.inventory.ClickType;
@@ -16,6 +17,7 @@ import org.jetbrains.annotations.NotNull;
 public record CloseButton(int slot) implements Button {
 
     private static final SoundBase CLOSE_SOUND = SoundBase.builder().sound(Sound.BLOCK_CHEST_CLOSE).pitch(1.5f).build();
+    private static final MiniMessageBase DISPLAY_NAME = MiniMessageBase.messageKey(DisplayKeys.CLOSE);
 
     @Override
     public int getSlot() {
@@ -24,11 +26,7 @@ public record CloseButton(int slot) implements Button {
 
     @Override
     public @NotNull ItemStack createIcon(@NotNull PlayerSession session) {
-        var icon = new ItemStack(Material.OAK_DOOR);
-
-        icon.editMeta(meta -> meta.displayName(TranslationUtil.render(Displays.CLOSE_BUTTON, session.getViewer())));
-
-        return icon;
+        return ItemEditor.create().displayName(DISPLAY_NAME.create(session.getMessageSource())).createItem(Material.OAK_DOOR);
     }
 
     @Override

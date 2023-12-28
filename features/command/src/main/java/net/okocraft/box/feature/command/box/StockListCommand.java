@@ -1,10 +1,12 @@
 package net.okocraft.box.feature.command.box;
 
+import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
+import com.github.siroshun09.messages.minimessage.source.MiniMessageSource;
 import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.command.AbstractCommand;
-import net.okocraft.box.api.message.GeneralMessage;
-import net.okocraft.box.feature.command.message.BoxMessage;
+import net.okocraft.box.api.message.DefaultMessageCollector;
+import net.okocraft.box.api.message.ErrorMessages;
 import net.okocraft.box.feature.command.shared.SharedStockListCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -17,40 +19,39 @@ import java.util.Set;
 
 public class StockListCommand extends AbstractCommand {
 
-    public StockListCommand() {
-        super("stocklist", "box.command.stocklist", Set.of("slist", "list", "sl", "l"));
-    }
+    private final SharedStockListCommand sharedStockListCommand;
+    private final MiniMessageBase help;
 
-    @Override
-    public @NotNull Component getHelp() {
-        return BoxMessage.LIST_HELP;
+    public StockListCommand(@NotNull DefaultMessageCollector collector, @NotNull SharedStockListCommand sharedStockListCommand) {
+        super("stocklist", "box.command.stocklist", Set.of("slist", "list", "sl", "l"));
+        this.sharedStockListCommand = sharedStockListCommand;
+        this.help = MiniMessageBase.messageKey(collector.add("box.command.box.stocklist.help", "<aqua>/box stocklist [args]<dark_gray> - <gray>Shows the stock list"));
     }
 
     @Override
     public void onCommand(@NotNull CommandSender sender, @NotNull String[] args) {
+        var msgSrc = BoxAPI.api().getMessageProvider().findSource(sender);
+
         if (!(sender instanceof Player player)) {
-            sender.sendMessage(GeneralMessage.ERROR_COMMAND_ONLY_PLAYER);
+            ErrorMessages.COMMAND_ONLY_PLAYER.source(msgSrc).send(sender);
             return;
         }
 
         var playerMap = BoxAPI.api().getBoxPlayerMap();
 
-        if (!playerMap.isLoaded(player)) {
+        if (playerMap.isLoaded(player)) {
+            this.sharedStockListCommand.createAndSendStockList(
+                    sender,
+                    playerMap.get(player).getCurrentStockHolder(),
+                    1 < args.length ? Arrays.copyOfRange(args, 1, args.length) : null
+            );
+        } else {
             if (playerMap.isScheduledLoading(player)) {
-                sender.sendMessage(GeneralMessage.ERROR_PLAYER_LOADING);
+                ErrorMessages.playerDataIsLoading(null).source(msgSrc).send(sender);
             } else {
-                sender.sendMessage(GeneralMessage.ERROR_PLAYER_NOT_LOADED);
+                ErrorMessages.playerDataIsNotLoaded(null).source(msgSrc).send(sender);
             }
-
-            return;
         }
-
-        var boxPlayer = playerMap.get(player);
-
-        sender.sendMessage(SharedStockListCommand.createStockList(
-                boxPlayer.getCurrentStockHolder(),
-                1 < args.length ? Arrays.copyOfRange(args, 1, args.length) : null
-        ));
     }
 
     @Override
@@ -65,5 +66,10 @@ public class StockListCommand extends AbstractCommand {
 
         int index = args.length - 1;
         return SharedStockListCommand.createTabCompletion(args[index - 1], args[index]);
+    }
+
+    @Override
+    public @NotNull Component getHelp(@NotNull MiniMessageSource msgSrc) {
+        return this.help.create(msgSrc).appendNewline().append(this.sharedStockListCommand.getArgHelp().create(msgSrc));
     }
 }

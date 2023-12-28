@@ -1,14 +1,17 @@
 package net.okocraft.box.feature.command.boxadmin;
 
+import com.github.siroshun09.messages.minimessage.arg.Arg1;
+import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
+import com.github.siroshun09.messages.minimessage.source.MiniMessageSource;
 import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.command.AbstractCommand;
-import net.okocraft.box.api.message.GeneralMessage;
+import net.okocraft.box.api.message.DefaultMessageCollector;
+import net.okocraft.box.api.message.ErrorMessages;
 import net.okocraft.box.api.model.item.BoxCustomItem;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.model.result.item.ItemRegistrationResult;
 import net.okocraft.box.api.util.BoxLogger;
-import net.okocraft.box.feature.command.message.BoxAdminMessage;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
@@ -16,17 +19,36 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.github.siroshun09.messages.minimessage.arg.Arg1.arg1;
+import static com.github.siroshun09.messages.minimessage.base.MiniMessageBase.messageKey;
+import static net.okocraft.box.api.message.Placeholders.ERROR;
+import static net.okocraft.box.api.message.Placeholders.ITEM;
+import static net.okocraft.box.api.message.Placeholders.ITEM_NAME;
+
 public class RenameCommand extends AbstractCommand {
 
-    public RenameCommand() {
+    private final Arg1<String> success;
+    private final Arg1<BoxItem> notCustomItem;
+    private final Arg1<String> usedName;
+    private final Arg1<Throwable> exceptionOccurred;
+    private final MiniMessageBase help;
+
+    public RenameCommand(@NotNull DefaultMessageCollector collector) {
         super("rename", "box.admin.command.rename");
+        this.success = arg1(collector.add("box.command.boxadmin.rename.success", "<gray>The item has been renamed to <aqua><item_name><gray>."), ITEM_NAME);
+        this.notCustomItem = arg1(collector.add("box.command.boxadmin.rename.not-custom-item", "<red>The item <aqua><item><red> cannot be renamed."), ITEM);
+        this.usedName = arg1(collector.add("box.command.boxadmin.rename.used-name", "<aqua><item_name><red> is already used."), ITEM_NAME);
+        this.exceptionOccurred = arg1(collector.add("box.command.boxadmin.rename.exception-occurred", "<red>Failed to rename the item. Error message: <white><error>"), ERROR);
+        this.help = messageKey(collector.add("box.command.boxadmin.rename.help", "<aqua>/boxadmin rename <current name> <new name><dark_gray> - <gray>Changes item name"));
     }
 
     @Override
     public void onCommand(@NotNull CommandSender sender, @NotNull String[] args) {
+        var msgSrc = BoxAPI.api().getMessageProvider().findSource(sender);
+
         if (args.length < 3) {
-            sender.sendMessage(GeneralMessage.ERROR_COMMAND_NOT_ENOUGH_ARGUMENT);
-            sender.sendMessage(getHelp());
+            ErrorMessages.NOT_ENOUGH_ARGUMENT.source(msgSrc).send(sender);
+            sender.sendMessage(this.getHelp(msgSrc));
             return;
         }
 
@@ -35,18 +57,17 @@ public class RenameCommand extends AbstractCommand {
         var item = itemManager.getBoxItem(args[1]);
 
         if (item.isEmpty()) {
-            sender.sendMessage(GeneralMessage.ERROR_COMMAND_ITEM_NOT_FOUND.apply(args[1]));
+            ErrorMessages.ITEM_NOT_FOUND.apply(args[1]).source(msgSrc).send(sender);
             return;
         }
 
         var boxItem = item.get();
 
-        if (!itemManager.isCustomItem(boxItem)) {
-            sender.sendMessage(BoxAdminMessage.RENAME_IS_NOT_CUSTOM_ITEM.apply(boxItem));
-            return;
+        if (itemManager.isCustomItem(boxItem)) {
+            itemManager.renameCustomItem((BoxCustomItem) boxItem, args[2], result -> this.consumeResult(sender, result));
+        } else {
+            this.notCustomItem.apply(boxItem).source(msgSrc).send(sender);
         }
-
-        itemManager.renameCustomItem((BoxCustomItem) boxItem, args[2], result -> consumeResult(sender, result));
     }
 
     @Override
@@ -65,18 +86,19 @@ public class RenameCommand extends AbstractCommand {
     }
 
     @Override
-    public @NotNull Component getHelp() {
-        return BoxAdminMessage.RENAME_HELP;
+    public @NotNull Component getHelp(@NotNull MiniMessageSource msgSrc) {
+        return this.help.create(msgSrc);
     }
 
     private void consumeResult(@NotNull CommandSender sender, @NotNull ItemRegistrationResult result) {
-        if (result instanceof ItemRegistrationResult.Success success) {
-            sender.sendMessage(BoxAdminMessage.RENAME_SUCCESS.apply(success.customItem()));
-        } else if (result instanceof ItemRegistrationResult.DuplicateName duplicateName) {
-            sender.sendMessage(BoxAdminMessage.RENAME_ALREADY_USED_NAME.apply(duplicateName.name()));
-        } else if (result instanceof ItemRegistrationResult.ExceptionOccurred exceptionOccurred) {
-            var ex = exceptionOccurred.exception();
-            sender.sendMessage(BoxAdminMessage.RENAME_FAILURE.apply(ex));
+        var msgSrc = BoxAPI.api().getMessageProvider().findSource(sender);
+        if (result instanceof ItemRegistrationResult.Success successResult) {
+            this.success.apply(successResult.customItem().getPlainName()).source(msgSrc).send(sender);
+        } else if (result instanceof ItemRegistrationResult.DuplicateName duplicateNameResult) {
+            this.usedName.apply(duplicateNameResult.name()).source(msgSrc).send(sender);
+        } else if (result instanceof ItemRegistrationResult.ExceptionOccurred exceptionOccurredResult) {
+            var ex = exceptionOccurredResult.exception();
+            this.exceptionOccurred.apply(ex).source(msgSrc).send(sender);
             BoxLogger.logger().error("Could not rename a custom item.", ex);
         }
     }

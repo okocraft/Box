@@ -1,48 +1,43 @@
 package net.okocraft.box.feature.autostore.gui.buttons;
 
-import net.kyori.adventure.text.Component;
-import net.okocraft.box.feature.autostore.gui.AutoStoreMenuDisplays;
+import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
+import net.okocraft.box.api.message.DefaultMessageCollector;
 import net.okocraft.box.feature.autostore.gui.AutoStoreSettingKey;
 import net.okocraft.box.feature.gui.api.button.ClickResult;
 import net.okocraft.box.feature.gui.api.session.PlayerSession;
+import net.okocraft.box.feature.gui.api.util.ItemEditor;
 import net.okocraft.box.feature.gui.api.util.SoundBase;
-import net.okocraft.box.feature.gui.api.util.TranslationUtil;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
+import static com.github.siroshun09.messages.minimessage.base.MiniMessageBase.messageKey;
 
 public class DirectButton extends AbstractAutoStoreSettingButton {
 
-    public DirectButton() {
+    private final MiniMessageBase displayName;
+    private final MiniMessageBase enable;
+    private final MiniMessageBase disable;
+
+    public DirectButton(@NotNull DefaultMessageCollector collector) {
         super(15);
+        this.displayName = messageKey(collector.add("box.autostore.gui.mode.setting-menu.buttons.toggle-direct.display-name", "<gold>Toggle auto-store direct mode"));
+        this.enable = messageKey(collector.add("box.autostore.gui.mode.setting-menu.buttons.toggle-direct.click-to-enable", "<gray>Click to <aqua>enable<gray> auto-store direct"));
+        this.disable = messageKey(collector.add("box.autostore.gui.mode.setting-menu.buttons.toggle-direct.click-to-disable", "<gray>Click to <red>disable<gray> auto-store direct"));
     }
 
     @Override
     public @NotNull ItemStack createIcon(@NotNull PlayerSession session) {
-        var item = new ItemStack(Material.HOPPER);
-        item.editMeta(meta -> editIconMeta(session, meta));
-        return item;
-    }
-
-    private void editIconMeta(@NotNull PlayerSession session, @NotNull ItemMeta target) {
-        var viewer = session.getViewer();
-
-        target.displayName(TranslationUtil.render(AutoStoreMenuDisplays.AUTOSTORE_MODE_SETTING_MENU_TOGGLE_DIRECT, viewer));
-
         var setting = session.getData(AutoStoreSettingKey.KEY);
+        if (setting == null) return new ItemStack(Material.AIR);
 
-        if (setting != null) {
-            var lore = TranslationUtil.render(
-                    AutoStoreMenuDisplays.AUTOSTORE_MODE_SETTING_MENU_TOGGLE_DIRECT_LORE.apply(!setting.isDirect()),
-                    viewer
-            );
-
-            target.lore(List.of(Component.empty(), lore, Component.empty()));
-        }
+        return ItemEditor.create()
+                .displayName(this.displayName.create(session.getMessageSource()))
+                .loreEmptyLine()
+                .loreLine((setting.isDirect() ? this.disable : this.enable).create(session.getMessageSource()))
+                .loreEmptyLine()
+                .createItem(Material.HOPPER);
     }
 
     @Override

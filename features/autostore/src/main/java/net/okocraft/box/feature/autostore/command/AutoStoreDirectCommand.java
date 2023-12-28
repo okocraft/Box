@@ -1,6 +1,8 @@
 package net.okocraft.box.feature.autostore.command;
 
-import net.okocraft.box.feature.autostore.message.AutoStoreMessage;
+import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
+import com.github.siroshun09.messages.minimessage.source.MiniMessageSource;
+import net.okocraft.box.api.message.DefaultMessageCollector;
 import net.okocraft.box.feature.autostore.model.setting.AutoStoreSetting;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
@@ -13,30 +15,35 @@ import java.util.stream.Stream;
 
 class AutoStoreDirectCommand extends AutoStoreSubCommand {
 
-    AutoStoreDirectCommand() {
+    private final MiniMessageBase directModeEnabled;
+    private final MiniMessageBase directModeDisabled;
+
+    AutoStoreDirectCommand(@NotNull DefaultMessageCollector collector) {
         super("direct");
+        this.directModeEnabled = MiniMessageBase.messageKey(collector.add("box.autostore.command.direct-mode-enabled", "<gray>Direct-auto-store is now <green>enabled<gray>."));
+        this.directModeDisabled = MiniMessageBase.messageKey(collector.add("box.autostore.command.direct-mode-disabled", "<gray>Direct-auto-store is now <red>disabled<gray>."));
     }
 
     @Override
-    void runCommand(@NotNull CommandSender sender, @NotNull String[] args, @NotNull AutoStoreSetting setting) {
-        boolean result;
+    void runCommand(@NotNull CommandSender sender, @NotNull String[] args, @NotNull MiniMessageSource msgSrc, @NotNull AutoStoreSetting setting) {
+        boolean enabled;
 
         if (2 < args.length) {
             var bool = AutoStoreCommandUtil.getBoolean(args[2]);
             if (bool != null) {
-                result = bool;
+                enabled = bool;
             } else {
-                sender.sendMessage(AutoStoreMessage.COMMAND_NOT_BOOLEAN.apply(args[2]));
+                AutoStoreCommandUtil.NOT_BOOLEAN.apply(args[2]).source(msgSrc).send(sender);
                 return;
             }
         } else {
-            result = !setting.isDirect();
+            enabled = !setting.isDirect();
         }
 
-        sender.sendMessage(AutoStoreMessage.COMMAND_AUTOSTORE_DIRECT_TOGGLED.apply(result));
+        (enabled ? this.directModeEnabled : this.directModeDisabled).source(msgSrc).send(sender);
 
-        if ((result && AutoStoreCommandUtil.enableAutoStore(setting, sender)) || result != setting.isDirect()) {
-            setting.setDirect(result);
+        if ((enabled && AutoStoreCommandUtil.changeAutoStore(setting, sender, msgSrc, true, false)) || enabled != setting.isDirect()) {
+            setting.setDirect(enabled);
             AutoStoreCommandUtil.callEvent(setting);
         }
     }

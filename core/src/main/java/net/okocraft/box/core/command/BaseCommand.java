@@ -1,11 +1,14 @@
 package net.okocraft.box.core.command;
 
 import com.destroystokyo.paper.event.server.AsyncTabCompleteEvent;
+import com.github.siroshun09.messages.minimessage.source.MiniMessageSource;
+import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.command.Command;
 import net.okocraft.box.api.command.SubCommandHoldable;
-import net.okocraft.box.api.message.GeneralMessage;
+import net.okocraft.box.api.message.ErrorMessages;
+import net.okocraft.box.api.message.MessageProvider;
 import net.okocraft.box.api.scheduler.BoxScheduler;
-import net.okocraft.box.core.message.ErrorMessages;
+import net.okocraft.box.core.message.CoreMessages;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -17,17 +20,15 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
-import static net.kyori.adventure.text.Component.text;
-import static net.kyori.adventure.text.format.NamedTextColor.DARK_GRAY;
-import static net.kyori.adventure.text.format.NamedTextColor.GOLD;
-
 public abstract class BaseCommand implements Command, SubCommandHoldable, Listener {
 
     private final SubCommandHolder subCommandHolder = new SubCommandHolder();
+    protected final MessageProvider messageProvider;
     private final BoxScheduler scheduler;
     private Command commandOfNoArgument;
 
-    protected BaseCommand(@NotNull BoxScheduler scheduler) {
+    protected BaseCommand(@NotNull MessageProvider messageProvider, @NotNull BoxScheduler scheduler) {
+        this.messageProvider = messageProvider;
         this.scheduler = scheduler;
     }
 
@@ -36,8 +37,10 @@ public abstract class BaseCommand implements Command, SubCommandHoldable, Listen
         Objects.requireNonNull(sender);
         Objects.requireNonNull(args);
 
+        var source = this.messageProvider.findSource(sender);
+
         if (!sender.hasPermission(getPermissionNode())) {
-            sender.sendMessage(GeneralMessage.ERROR_NO_PERMISSION.apply(getPermissionNode()));
+            ErrorMessages.NO_PERMISSION.apply(this.getPermissionNode()).source(source).send(sender);
             return;
         }
 
@@ -45,8 +48,8 @@ public abstract class BaseCommand implements Command, SubCommandHoldable, Listen
             if (commandOfNoArgument != null && sender.hasPermission(commandOfNoArgument.getPermissionNode())) {
                 this.scheduler.runAsyncTask(() -> this.commandOfNoArgument.onCommand(sender, args));
             } else {
-                sender.sendMessage(ErrorMessages.ERROR_COMMAND_NO_ARGUMENT);
-                sendHelp(sender);
+                ErrorMessages.NOT_ENOUGH_ARGUMENT.source(source).send(sender);
+                sendHelp(sender, source);
             }
             return;
         }
@@ -55,18 +58,24 @@ public abstract class BaseCommand implements Command, SubCommandHoldable, Listen
 
         if (optionalSubCommand.isEmpty()) {
             if (!args[0].equalsIgnoreCase("help")) {
-                sender.sendMessage(GeneralMessage.ERROR_COMMAND_SUBCOMMAND_NOT_FOUND);
+                ErrorMessages.SUB_COMMAND_NOT_FOUND.source(source).send(sender);
             }
-            sendHelp(sender);
+            sendHelp(sender, source);
             return;
         }
 
         var subCommand = optionalSubCommand.get();
 
         if (sender.hasPermission(subCommand.getPermissionNode())) {
-            this.scheduler.runAsyncTask(() -> subCommand.onCommand(sender, args));
+            this.scheduler.runAsyncTask(() -> {
+                try {
+                    subCommand.onCommand(sender, args);
+                } catch (Throwable e) {
+                    CoreMessages.COMMAND_EXECUTION_ERROR_MSG.apply(e).source(source).send(sender);
+                }
+            });
         } else {
-            sender.sendMessage(GeneralMessage.ERROR_NO_PERMISSION.apply(subCommand.getPermissionNode()));
+            ErrorMessages.NO_PERMISSION.apply(subCommand.getPermissionNode()).source(source).send(sender);
         }
     }
 
@@ -96,6 +105,11 @@ public abstract class BaseCommand implements Command, SubCommandHoldable, Listen
     @Override
     public @NotNull SubCommandHolder getSubCommandHolder() {
         return subCommandHolder;
+    }
+
+    @Override
+    public @NotNull Component getHelp(@NotNull MiniMessageSource msgSrc) {
+        return Component.text("/" + this.getName());
     }
 
     public void changeNoArgumentCommand(@Nullable Command command) {
@@ -135,17 +149,11 @@ public abstract class BaseCommand implements Command, SubCommandHoldable, Listen
         event.setHandled(true);
     }
 
-    private void sendHelp(@NotNull CommandSender sender) {
-        sender.sendMessage(
-                text("============================== ", DARK_GRAY)
-                        .append(text("Box Help", GOLD))
-                        .append(text(" ============================== ", DARK_GRAY))
-        );
-
-        sender.sendMessage(getHelp());
-        subCommandHolder.getSubCommands()
+    private void sendHelp(@NotNull CommandSender sender, @NotNull MiniMessageSource msgSrc) {
+        CoreMessages.COMMAND_HELP_HEADER.apply("/" + this.getName()).source(msgSrc).send(sender);
+        this.subCommandHolder.getSubCommands()
                 .stream()
-                .map(Command::getHelp)
+                .map(command -> command.getHelp(msgSrc))
                 .forEach(sender::sendMessage);
     }
 }

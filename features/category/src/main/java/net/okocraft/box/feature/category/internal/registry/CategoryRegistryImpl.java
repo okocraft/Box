@@ -24,10 +24,6 @@ public class CategoryRegistryImpl implements CategoryRegistry {
         Objects.requireNonNull(name);
         Objects.requireNonNull(category);
 
-        if (name.equals("icons")) {
-            throw new IllegalArgumentException("Cannot use 'icons' for category name.");
-        }
-
         synchronized (lock) {
             registry.put(name, category);
             snapshot = List.copyOf(registry.values());
