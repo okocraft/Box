@@ -5,6 +5,7 @@ import net.okocraft.box.storage.api.util.item.DefaultItem;
 import org.bukkit.Material;
 import org.bukkit.Registry;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.MusicInstrumentMeta;
 import org.jetbrains.annotations.NotNull;
@@ -33,7 +34,15 @@ public final class ItemSources {
     }
 
     public static @NotNull Stream<DefaultItem> enchantedBooks() {
-        return toStream(new DefaultEnchantedBooksIterator());
+        return toStream(Registry.ENCHANTMENT.iterator())
+                .map(enchantment -> {
+                    var name = ItemNameGenerator.keys(Material.ENCHANTED_BOOK, enchantment);
+
+                    var book = new ItemStack(Material.ENCHANTED_BOOK, 0);
+                    book.editMeta(EnchantmentStorageMeta.class, meta -> meta.addStoredEnchant(enchantment, enchantment.getMaxLevel(), false));
+
+                    return new DefaultItem(name, book);
+                });
     }
 
     public static @NotNull Stream<DefaultItem> fireworks() {
