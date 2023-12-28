@@ -4,6 +4,7 @@ import com.github.siroshun09.event4j.caller.AsyncEventCaller;
 import net.okocraft.box.api.event.BoxEvent;
 import net.okocraft.box.api.event.stockholder.StockHolderLoadEvent;
 import net.okocraft.box.api.event.stockholder.StockHolderResetEvent;
+import net.okocraft.box.api.event.stockholder.StockHolderSaveEvent;
 import net.okocraft.box.api.event.stockholder.stock.StockDecreaseEvent;
 import net.okocraft.box.api.event.stockholder.stock.StockEvent;
 import net.okocraft.box.api.event.stockholder.stock.StockIncreaseEvent;
@@ -137,6 +138,7 @@ public class BoxStockManager implements StockManager {
 
         try {
             loader.saveChangesOrUnloadIfNeeded(this.unloadTime, this.saveInterval);
+            this.eventCaller.callAsync(new StockHolderSaveEvent(loader));
         } catch (Exception e) {
             BoxLogger.logger().error("Could not save user's stock holder (name: {} uuid: {})", loader.getName(), loader.getUUID(), e);
         }
