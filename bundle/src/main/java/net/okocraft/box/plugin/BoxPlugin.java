@@ -111,11 +111,9 @@ public final class BoxPlugin extends JavaPlugin {
 
         var start = Instant.now();
 
-        if (boxCore.enable(StorageHolder.getStorage())) {
-            this.status = Status.ENABLED;
-        } else {
+        if (!this.boxCore.enable(StorageHolder.getStorage())) {
             this.status = Status.EXCEPTION_OCCURRED;
-            getServer().getPluginManager().disablePlugin(this);
+            this.getServer().getPluginManager().disablePlugin(this);
             return;
         }
 
@@ -130,6 +128,8 @@ public final class BoxPlugin extends JavaPlugin {
         }
 
         this.features.clear();
+
+        this.status = Status.ENABLED;
 
         var finish = Instant.now();
         BoxLogger.logger().info("Successfully enabled! ({}ms)", Duration.between(start, finish).toMillis());
