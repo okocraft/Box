@@ -6,7 +6,6 @@ import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.feature.AbstractBoxFeature;
 import net.okocraft.box.api.feature.FeatureContext;
 import net.okocraft.box.api.feature.Reloadable;
-import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.feature.category.api.registry.CategoryRegistry;
 import net.okocraft.box.feature.category.internal.category.CustomItemCategory;
 import net.okocraft.box.feature.category.internal.file.CategoryFile;
@@ -40,7 +39,7 @@ public class CategoryFeature extends AbstractBoxFeature implements Reloadable {
     }
 
     @Override
-    public void enable(@NotNull FeatureContext.Enabling context) {
+    public void enable(@NotNull FeatureContext.Enabling context) throws IOException {
         this.categoryRegistry.register("custom-items", this.customItemCategory);
 
         try (var file = new CategoryFile(this.filepath, this.categoryRegistry, BoxAPI.api().getItemManager())) {
@@ -49,9 +48,6 @@ public class CategoryFeature extends AbstractBoxFeature implements Reloadable {
                     .readCategoriesIfExists()
                     .readCustomItemsIfExists(this.customItemCategory)
                     .addNewDefaultItemsIfNeeded();
-        } catch (IOException e) {
-            BoxLogger.logger().error("Could not load categories.yml", e);
-            return;
         }
 
         this.customItemListener.register(CUSTOM_ITEM_LISTENER_KEY);
@@ -66,7 +62,7 @@ public class CategoryFeature extends AbstractBoxFeature implements Reloadable {
     }
 
     @Override
-    public void reload(@NotNull FeatureContext.Reloading context) {
+    public void reload(@NotNull FeatureContext.Reloading context) throws IOException {
         this.disable(context.asDisabling());
         this.enable(context.asEnabling());
         this.reloaded.source(BoxAPI.api().getMessageProvider().findSource(context.commandSender())).send(context.commandSender());

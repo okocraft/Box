@@ -6,21 +6,18 @@ import net.okocraft.box.api.feature.AbstractBoxFeature;
 import net.okocraft.box.api.feature.BoxFeature;
 import net.okocraft.box.api.feature.FeatureContext;
 import net.okocraft.box.api.feature.Reloadable;
-import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.feature.craft.command.CraftCommand;
 import net.okocraft.box.feature.craft.lang.DisplayKeys;
 import net.okocraft.box.feature.craft.loader.RecipeLoader;
 import net.okocraft.box.feature.craft.mode.CraftMode;
 import net.okocraft.box.feature.craft.model.IngredientHolder;
-import net.okocraft.box.feature.craft.model.RecipeHolder;
 import net.okocraft.box.feature.gui.GuiFeature;
 import net.okocraft.box.feature.gui.api.mode.ClickModeRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
 import java.io.IOException;
-import java.util.Map;
 import java.util.Set;
 
 public class CraftFeature extends AbstractBoxFeature implements Reloadable {
@@ -38,20 +35,13 @@ public class CraftFeature extends AbstractBoxFeature implements Reloadable {
     }
 
     @Override
-    public void enable(@NotNull FeatureContext.Enabling context) {
+    public void enable(@NotNull FeatureContext.Enabling context) throws IOException {
         // Reduce objects that will be generated
         // BoxIngredientItem 5030 -> 325
         // IngredientHolder 3506 -> 1417
         IngredientHolder.enableCache();
 
-        Map<BoxItem, RecipeHolder> recipeMap;
-
-        try {
-            recipeMap = RecipeLoader.load(BoxAPI.api().getPluginDirectory().resolve("recipes.yml"));
-        } catch (IOException e) {
-            BoxLogger.logger().error("Could not load recipes.yml", e);
-            return;
-        }
+        var recipeMap = RecipeLoader.load(BoxAPI.api().getPluginDirectory().resolve("recipes.yml"));
 
         IngredientHolder.disableCache();
 
@@ -71,7 +61,7 @@ public class CraftFeature extends AbstractBoxFeature implements Reloadable {
     }
 
     @Override
-    public void reload(@NotNull FeatureContext.Reloading context) {
+    public void reload(@NotNull FeatureContext.Reloading context) throws IOException {
         disable(context.asDisabling());
         enable(context.asEnabling());
         this.reloaded.source(BoxAPI.api().getMessageProvider().findSource(context.commandSender())).send(context.commandSender());
