@@ -1,4 +1,4 @@
 /**
- * A package for {@link net.okocraft.box.api.model.result.item.ItemRegistrationResult}.
+ * A package for results of registering / renaming custom items.
  */
 package net.okocraft.box.api.model.result.item;

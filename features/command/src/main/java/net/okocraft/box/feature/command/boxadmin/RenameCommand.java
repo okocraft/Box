@@ -10,7 +10,7 @@ import net.okocraft.box.api.message.DefaultMessageCollector;
 import net.okocraft.box.api.message.ErrorMessages;
 import net.okocraft.box.api.model.item.BoxCustomItem;
 import net.okocraft.box.api.model.item.BoxItem;
-import net.okocraft.box.api.model.result.item.ItemRegistrationResult;
+import net.okocraft.box.api.model.result.item.ItemRenameResult;
 import net.okocraft.box.api.util.BoxLogger;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
@@ -90,13 +90,13 @@ public class RenameCommand extends AbstractCommand {
         return this.help.create(msgSrc);
     }
 
-    private void consumeResult(@NotNull CommandSender sender, @NotNull ItemRegistrationResult result) {
+    private void consumeResult(@NotNull CommandSender sender, @NotNull ItemRenameResult result) {
         var msgSrc = BoxAPI.api().getMessageProvider().findSource(sender);
-        if (result instanceof ItemRegistrationResult.Success successResult) {
+        if (result instanceof ItemRenameResult.Success successResult) {
             this.success.apply(successResult.customItem().getPlainName()).source(msgSrc).send(sender);
-        } else if (result instanceof ItemRegistrationResult.DuplicateName duplicateNameResult) {
+        } else if (result instanceof ItemRenameResult.DuplicateName duplicateNameResult) {
             this.usedName.apply(duplicateNameResult.name()).source(msgSrc).send(sender);
-        } else if (result instanceof ItemRegistrationResult.ExceptionOccurred exceptionOccurredResult) {
+        } else if (result instanceof ItemRenameResult.ExceptionOccurred exceptionOccurredResult) {
             var ex = exceptionOccurredResult.exception();
             this.exceptionOccurred.apply(ex).source(msgSrc).send(sender);
             BoxLogger.logger().error("Could not rename a custom item.", ex);

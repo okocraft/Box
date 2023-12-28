@@ -10,6 +10,7 @@ import net.okocraft.box.api.model.item.BoxCustomItem;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.model.manager.ItemManager;
 import net.okocraft.box.api.model.result.item.ItemRegistrationResult;
+import net.okocraft.box.api.model.result.item.ItemRenameResult;
 import net.okocraft.box.api.scheduler.BoxScheduler;
 import net.okocraft.box.storage.api.factory.item.BoxItemFactory;
 import net.okocraft.box.storage.api.model.item.ItemStorage;
@@ -134,7 +135,7 @@ public class BoxItemManager implements ItemManager {
     }
 
     @Override
-    public void renameCustomItem(@NotNull BoxCustomItem item, @NotNull String newName, @NotNull Consumer<ItemRegistrationResult> resultConsumer) {
+    public void renameCustomItem(@NotNull BoxCustomItem item, @NotNull String newName, @NotNull Consumer<ItemRenameResult> resultConsumer) {
         Objects.requireNonNull(item);
         Objects.requireNonNull(newName);
         Objects.requireNonNull(resultConsumer);
@@ -143,22 +144,20 @@ public class BoxItemManager implements ItemManager {
             throw new IllegalStateException("Could not rename item because the item is not created by box.");
         }
 
-        String previousName = item.getPlainName();
-
         this.scheduler.runAsyncTask(() -> {
             this.boxItemMap.acquireWriteLock();
-            ItemRegistrationResult result;
+            ItemRenameResult result;
 
             try {
                 result = this.renameItem(item, newName);
             } catch (Exception e) {
-                result = new ItemRegistrationResult.ExceptionOccurred(e);
+                result = new ItemRenameResult.ExceptionOccurred(e);
             } finally {
                 this.boxItemMap.releaseWriteLock();
             }
 
-            if (result instanceof ItemRegistrationResult.Success success) {
-                this.eventCaller.callAsync(new CustomItemRenameEvent(success.customItem(), previousName));
+            if (result instanceof ItemRenameResult.Success success) {
+                this.eventCaller.callAsync(new CustomItemRenameEvent(success.customItem(), success.previousName()));
             }
 
             resultConsumer.accept(result);
@@ -166,18 +165,19 @@ public class BoxItemManager implements ItemManager {
     }
 
     // Note: Update BoxItemMapTest#testRenameItem when this method modified.
-    private @NotNull ItemRegistrationResult renameItem(@NotNull BoxCustomItem item, @NotNull String newName) throws Exception {
+    private @NotNull ItemRenameResult renameItem(@NotNull BoxCustomItem item, @NotNull String newName) throws Exception {
         if (this.boxItemMap.checkItemNameAtUnsynchronized(newName)) {
-            return new ItemRegistrationResult.DuplicateName(newName);
+            return new ItemRenameResult.DuplicateName(newName);
         }
 
         this.boxItemMap.removeItemAtUnsynchronized(item);
 
+        var previousName = item.getPlainName();
         var customItem = this.itemStorage.renameCustomItem(item, newName);
 
         this.boxItemMap.addItemAtUnsynchronized(customItem);
         this.boxItemMap.rebuildCache();
 
-        return new ItemRegistrationResult.Success(customItem);
+        return new ItemRenameResult.Success(customItem, previousName);
     }
 }

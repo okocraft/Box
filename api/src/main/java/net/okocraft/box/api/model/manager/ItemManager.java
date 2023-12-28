@@ -5,6 +5,7 @@ import it.unimi.dsi.fastutil.objects.ObjectImmutableList;
 import net.okocraft.box.api.model.item.BoxCustomItem;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.model.result.item.ItemRegistrationResult;
+import net.okocraft.box.api.model.result.item.ItemRenameResult;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -121,5 +122,5 @@ public interface ItemManager {
      * @param resultConsumer a {@link Consumer}, which will be called when completed rename process
      * @throws IllegalArgumentException {@link BoxCustomItem} is not created by Box ({@link #isCustomItem(BoxItem)} returns {@code false})
      */
-    void renameCustomItem(@NotNull BoxCustomItem item, @NotNull String newName, @NotNull Consumer<ItemRegistrationResult> resultConsumer);
+    void renameCustomItem(@NotNull BoxCustomItem item, @NotNull String newName, @NotNull Consumer<ItemRenameResult> resultConsumer);
 }
