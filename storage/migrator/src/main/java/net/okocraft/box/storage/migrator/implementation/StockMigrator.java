@@ -24,7 +24,7 @@ public class StockMigrator extends AbstractDataMigrator<ItemMigrator.Result, Sto
 
         for (var user : users) {
             var stockData = source.loadStockData(user.getUUID());
-            target.saveStockData(user.getUUID(), stockData, this.itemMigratorResult.itemIdMap());
+            target.saveStockData(user.getUUID(), stockData, id -> this.itemMigratorResult.itemIdMap().getOrDefault(id, id));
 
             if (debug) {
                 BoxLogger.logger().info("Migrated stock data: {}", stockData);
