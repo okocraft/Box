@@ -140,7 +140,11 @@ class YamlUserStorage implements UserStorage {
             long stamp = this.lock.writeLock();
 
             try {
-                this.uuidToNameMap.put(uuid, name);
+                var oldName = this.uuidToNameMap.put(uuid, name);
+
+                if (oldName != null) {
+                    this.nameToUUIDMap.remove(new NameKey(oldName));
+                }
 
                 if (!name.isEmpty()) {
                     this.nameToUUIDMap.put(new NameKey(name), uuid);
