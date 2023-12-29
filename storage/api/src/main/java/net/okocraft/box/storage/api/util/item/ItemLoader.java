@@ -58,7 +58,7 @@ public class ItemLoader {
         BoxLogger.logger().info("Loading default/custom items...");
         return new ItemLoadResult(
                 storage.loadAllDefaultItems(BoxItemFactory::createDefaultItem),
-                storage.loadAllDefaultItems(BoxItemFactory::createCustomItem)
+                storage.loadAllCustomItems(BoxItemFactory::createCustomItem)
         );
     }
 
