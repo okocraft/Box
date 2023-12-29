@@ -28,7 +28,11 @@ public class MemoryUserStorage implements UserStorage {
 
     @Override
     public void saveBoxUser(@NotNull UUID uuid, @Nullable String name) {
-        this.uuidToNameMap.put(uuid, name);
+        var oldName = this.uuidToNameMap.put(uuid, name);
+
+        if (oldName != null) {
+            this.nameToUuidMap.remove(oldName);
+        }
 
         if (name != null) {
             this.nameToUuidMap.put(name, uuid);
