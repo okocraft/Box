@@ -1,0 +1,207 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "net.okocraft.box",
+    "module": "box-test-shared-classes",
+    "version": "6.0.0-SNAPSHOT",
+    "attributes": {
+      "org.gradle.status": "integration"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.5"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 17,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api"
+      },
+      "dependencies": [
+        {
+          "group": "com.github.siroshun09.configapi",
+          "module": "configapi-format-yaml",
+          "version": {
+            "requires": "5.0.0-alpha.5"
+          },
+          "excludes": [
+            {
+              "group": "org.yaml",
+              "module": "snakeyaml"
+            }
+          ]
+        },
+        {
+          "group": "com.github.siroshun09.event4j",
+          "module": "event4j",
+          "version": {
+            "requires": "4.0.0-rc.1"
+          }
+        },
+        {
+          "group": "com.github.siroshun09.messages",
+          "module": "messages-minimessage",
+          "version": {
+            "requires": "0.5.0"
+          }
+        },
+        {
+          "group": "net.okocraft.box",
+          "module": "box-api",
+          "version": {
+            "requires": "6.0.0-SNAPSHOT"
+          }
+        },
+        {
+          "group": "net.okocraft.box",
+          "module": "box-storage-api",
+          "version": {
+            "requires": "6.0.0-SNAPSHOT"
+          }
+        },
+        {
+          "group": "org.junit.jupiter",
+          "module": "junit-jupiter",
+          "version": {
+            "requires": "5.10.1"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "box-test-shared-classes-6.0.0-SNAPSHOT.jar",
+          "url": "box-test-shared-classes-6.0.0-SNAPSHOT.jar",
+          "size": 29713,
+          "sha512": "c579bd11c26260235e98109a94dd10167657b241db6e761f38634b16fc163d172bf987ab404ebbeef3f16fa00db9e58bc4e946745a4bc6f4d2e4d8c1b0d3d243",
+          "sha256": "2fdec6e22f920687b64112b804afe372987fa6698205104fa86cd967941dd28d",
+          "sha1": "9ca6d2a5b20d70fd65b7c636893ccb2375f28801",
+          "md5": "823890cfc6499900447220e4ccbd1782"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 17,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "dependencies": [
+        {
+          "group": "net.okocraft.box",
+          "module": "box-core",
+          "version": {
+            "requires": "6.0.0-SNAPSHOT"
+          }
+        },
+        {
+          "group": "com.github.siroshun09.configapi",
+          "module": "configapi-format-yaml",
+          "version": {
+            "requires": "5.0.0-alpha.5"
+          },
+          "excludes": [
+            {
+              "group": "org.yaml",
+              "module": "snakeyaml"
+            }
+          ]
+        },
+        {
+          "group": "com.github.siroshun09.event4j",
+          "module": "event4j",
+          "version": {
+            "requires": "4.0.0-rc.1"
+          }
+        },
+        {
+          "group": "com.github.siroshun09.messages",
+          "module": "messages-minimessage",
+          "version": {
+            "requires": "0.5.0"
+          }
+        },
+        {
+          "group": "net.okocraft.box",
+          "module": "box-api",
+          "version": {
+            "requires": "6.0.0-SNAPSHOT"
+          }
+        },
+        {
+          "group": "net.okocraft.box",
+          "module": "box-storage-api",
+          "version": {
+            "requires": "6.0.0-SNAPSHOT"
+          }
+        },
+        {
+          "group": "org.junit.jupiter",
+          "module": "junit-jupiter",
+          "version": {
+            "requires": "5.10.1"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "box-test-shared-classes-6.0.0-SNAPSHOT.jar",
+          "url": "box-test-shared-classes-6.0.0-SNAPSHOT.jar",
+          "size": 29713,
+          "sha512": "c579bd11c26260235e98109a94dd10167657b241db6e761f38634b16fc163d172bf987ab404ebbeef3f16fa00db9e58bc4e946745a4bc6f4d2e4d8c1b0d3d243",
+          "sha256": "2fdec6e22f920687b64112b804afe372987fa6698205104fa86cd967941dd28d",
+          "sha1": "9ca6d2a5b20d70fd65b7c636893ccb2375f28801",
+          "md5": "823890cfc6499900447220e4ccbd1782"
+        }
+      ]
+    },
+    {
+      "name": "javadocElements",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "javadoc",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "box-test-shared-classes-6.0.0-SNAPSHOT-javadoc.jar",
+          "url": "box-test-shared-classes-6.0.0-SNAPSHOT-javadoc.jar",
+          "size": 181355,
+          "sha512": "cf6488c3ead5c0a29cc042da3ebdc7091e87525868a8c58f4da328571a5adb2d1f7cf02e0fb5fd07ef71617b158ddd805edf0655f72aa0556f72dd718c7b0885",
+          "sha256": "c2d62dfd9caa14e4bd7aba0d3a0676b8fe7344f37c15014e87eb3940a0542a1b",
+          "sha1": "b02e584caedd80b5a223da8fdf70c7f099d94f82",
+          "md5": "05b6585eb9a79d30381d4614d693fd4a"
+        }
+      ]
+    },
+    {
+      "name": "sourcesElements",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "box-test-shared-classes-6.0.0-SNAPSHOT-sources.jar",
+          "url": "box-test-shared-classes-6.0.0-SNAPSHOT-sources.jar",
+          "size": 14825,
+          "sha512": "630d901551cd9fba0e8ed728a6350b136407f00f9c538379b2275551c6202dcf8a115cf430238a2ab73c2807c5b3a4e592fb79b242423fbdcf585c719e49cdea",
+          "sha256": "65d07dbec35ccd8dc0a30ec809624f0db1164abf5ad08d3ee72d9ffdf8a89204",
+          "sha1": "76b5aa0465e80913b3139c122409416bc5bf98c3",
+          "md5": "d4326aeed2e77f5421de483fbfbc20b6"
+        }
+      ]
+    }
+  ]
+}
