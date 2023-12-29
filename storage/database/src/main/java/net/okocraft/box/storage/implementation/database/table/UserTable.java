@@ -42,7 +42,7 @@ public class UserTable extends AbstractTable implements UserStorage {
     @Override
     public void saveBoxUser(@NotNull UUID uuid, @Nullable String name) throws Exception {
         try (var connection = database.getConnection();
-             var statement = connection.prepareStatement(insertOrUpdateUsernameStatement())) {
+             var statement = this.prepareStatement(connection, insertOrUpdateUsernameStatement())) {
             statement.setString(1, uuid.toString());
             statement.setString(2, name != null ? name : "");
             statement.execute();
@@ -107,9 +107,9 @@ public class UserTable extends AbstractTable implements UserStorage {
 
     private @NotNull String insertOrUpdateUsernameStatement() {
         if (database instanceof MySQLDatabase) {
-            return "INSERT INTO `%table%` (`uuid`, `username`) VALUES (?, ?, ?) AS new ON DUPLICATE KEY UPDATE `username` = new.username";
+            return "INSERT INTO `%table%` (`uuid`, `username`) VALUES (?, ?) AS new ON DUPLICATE KEY UPDATE `username` = new.username";
         } else if (database instanceof SQLiteDatabase) {
-            return "INSERT INTO `%table%` (`uuid`, `username`) VALUES (?, ?, ?) ON CONFLICT (`uuid`) DO UPDATE SET `username` = excluded.username";
+            return "INSERT INTO `%table%` (`uuid`, `username`) VALUES (?, ?) ON CONFLICT (`uuid`) DO UPDATE SET `username` = excluded.username";
         } else {
             throw new UnsupportedOperationException();
         }
