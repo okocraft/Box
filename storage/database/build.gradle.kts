@@ -9,4 +9,7 @@ dependencies {
     implementation(libs.hikaricp) {
         exclude("org.slf4j")
     }
+
+    testImplementation(projects.boxTestSharedClasses)
+    testRuntimeOnly(libs.sqlite.jdbc)
 }
