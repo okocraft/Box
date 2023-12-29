@@ -5,7 +5,7 @@ import com.github.siroshun09.configapi.core.node.NumberValue;
 import com.github.siroshun09.configapi.format.yaml.YamlFormat;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.okocraft.box.api.model.item.BoxCustomItem;
-import net.okocraft.box.api.model.item.BoxItem;
+import net.okocraft.box.api.model.item.BoxDefaultItem;
 import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.api.util.ItemNameGenerator;
 import net.okocraft.box.api.util.MCDataVersion;
@@ -30,6 +30,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
 
 class YamlItemStorage implements ItemStorage {
 
@@ -79,16 +80,16 @@ class YamlItemStorage implements ItemStorage {
     }
 
     @Override
-    public @NotNull List<ItemData> loadAllDefaultItems() throws Exception {
+    public <I> @NotNull List<I> loadAllDefaultItems(@NotNull Function<ItemData, I> function) throws Exception {
         var source = YamlFormat.DEFAULT.load(this.defaultItemDataFile);
         var keys = source.value().keySet();
-        var result = new ArrayList<ItemData>(keys.size());
+        var result = new ArrayList<I>(keys.size());
 
         for (var key : source.value().keySet()) {
             var data = readItemData(source, key);
 
             if (data != null) {
-                result.add(data);
+                result.add(function.apply(data));
             }
         }
 
@@ -96,14 +97,14 @@ class YamlItemStorage implements ItemStorage {
     }
 
     @Override
-    public @NotNull List<BoxItem> saveDefaultItems(@NotNull List<DefaultItem> newItems, @NotNull Int2ObjectMap<DefaultItem> updatedItemMap) throws Exception {
-        var result = new ArrayList<BoxItem>(newItems.size() + updatedItemMap.size());
+    public @NotNull List<BoxDefaultItem> saveDefaultItems(@NotNull List<DefaultItem> newItems, @NotNull Int2ObjectMap<DefaultItem> updatedItemMap) throws Exception {
+        var result = new ArrayList<BoxDefaultItem>(newItems.size() + updatedItemMap.size());
 
         try (var writer = Files.newBufferedWriter(this.defaultItemDataFile, StandardCharsets.UTF_8, YamlFileOptions.WRITE)) {
             for (var item : newItems) {
                 int id = this.lastUsedItemId.incrementAndGet();
 
-                writeItemData(id, item.plainName(), item.itemStack(), writer);
+                writeItemData(id, item.plainName(), item.itemStack().serializeAsBytes(), writer);
                 result.add(BoxItemFactory.createDefaultItem(id, item));
             }
 
@@ -111,7 +112,7 @@ class YamlItemStorage implements ItemStorage {
                 var internalId = entry.getIntKey();
                 var item = entry.getValue();
 
-                writeItemData(internalId, item.plainName(), item.itemStack(), writer);
+                writeItemData(internalId, item.plainName(), item.itemStack().serializeAsBytes(), writer);
                 result.add(BoxItemFactory.createDefaultItem(internalId, item));
             }
         }
@@ -122,16 +123,16 @@ class YamlItemStorage implements ItemStorage {
     }
 
     @Override
-    public @NotNull List<BoxCustomItem> loadAllCustomItems() throws Exception {
+    public <I> @NotNull List<I> loadAllCustomItems(@NotNull Function<ItemData, I> function) throws Exception {
         var source = YamlFormat.DEFAULT.load(this.customItemDataFile);
         var keys = source.value().keySet();
-        var result = new ArrayList<BoxCustomItem>(keys.size());
+        var result = new ArrayList<I>(keys.size());
 
         for (var key : keys) {
             var data = readItemData(source, key);
 
             if (data != null) {
-                result.add(BoxItemFactory.createCustomItem(data.internalId(), data.plainName(), ItemStack.deserializeBytes(data.itemData())));
+                result.add(function.apply(data));
             }
         }
 
@@ -142,7 +143,7 @@ class YamlItemStorage implements ItemStorage {
     public void updateCustomItems(@NotNull Collection<BoxCustomItem> items) throws Exception {
         try (var writer = Files.newBufferedWriter(this.customItemDataFile, StandardCharsets.UTF_8, YamlFileOptions.WRITE)) {
             for (var item : items) {
-                writeItemData(item.getInternalId(), item.getPlainName(), item.getOriginal(), writer);
+                writeItemData(item.getInternalId(), item.getPlainName(), item.getOriginal().serializeAsBytes(), writer);
             }
         }
     }
@@ -154,7 +155,7 @@ class YamlItemStorage implements ItemStorage {
         var boxItem = BoxItemFactory.createCustomItem(id, name, item);
 
         try (var writer = Files.newBufferedWriter(this.customItemDataFile, StandardCharsets.UTF_8, StandardOpenOption.APPEND, StandardOpenOption.WRITE)) {
-            writeItemData(id, boxItem.getPlainName(), boxItem.getOriginal(), writer);
+            writeItemData(id, boxItem.getPlainName(), boxItem.getOriginal().serializeAsBytes(), writer);
         }
 
         this.saveItemStorageMeta();
@@ -193,14 +194,15 @@ class YamlItemStorage implements ItemStorage {
         return new ItemData(id, name, Base64.getDecoder().decode(data.getString("data")));
     }
 
-    private static void writeItemData(int id, @NotNull String plainName, @NotNull ItemStack item, @NotNull BufferedWriter writer) throws IOException {
-        writer.write(id + ":");
+    private static void writeItemData(int id, @NotNull String plainName, byte @NotNull [] itemData, @NotNull BufferedWriter writer) throws IOException {
+        writer.write(Integer.toString(id));
+        writer.write(":");
         writer.newLine();
         writer.write("  name: ");
         writer.write(plainName);
         writer.newLine();
         writer.write("  data: ");
-        writer.write(Base64.getEncoder().encodeToString(item.serializeAsBytes()));
+        writer.write(Base64.getEncoder().encodeToString(itemData));
         writer.newLine();
     }
 

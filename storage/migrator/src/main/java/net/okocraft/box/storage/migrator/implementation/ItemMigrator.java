@@ -19,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.Set;
+import java.util.function.Function;
 
 public class ItemMigrator extends AbstractDataMigrator<ItemMigrator.Result, ItemStorage> {
 
@@ -67,27 +68,25 @@ public class ItemMigrator extends AbstractDataMigrator<ItemMigrator.Result, Item
             }
         }
 
-        var sourceCustomItems = source.loadAllCustomItems();
+        var sourceCustomItems = source.loadAllCustomItems(Function.identity());
         var targetCustomItems = this.loadTargetCustomItems(target);
         int migrated = 0;
 
         for (var customItem : sourceCustomItems) {
-            int idInTarget = targetCustomItems.left().getOrDefault(customItem.getOriginal(), Integer.MIN_VALUE);
+            var itemStack = ItemStack.deserializeBytes(customItem.itemData());
+            int idInTarget = targetCustomItems.left().getOrDefault(itemStack, Integer.MIN_VALUE);
 
             if (idInTarget != Integer.MIN_VALUE) {
-                itemIdMap.put(customItem.getInternalId(), idInTarget);
+                itemIdMap.put(customItem.internalId(), idInTarget);
                 if (debug) {
-                    logMigrated(customItem.getPlainName(), customItem.getInternalId(), idInTarget);
+                    logMigrated(customItem.plainName(), customItem.internalId(), idInTarget);
                 }
             } else {
-                var itemName = customItem.getPlainName();
-                var newCustomItem = target.saveNewCustomItem(
-                        customItem.getOriginal(),
-                        targetCustomItems.right().contains(itemName) ? itemName : null
-                );
-                itemIdMap.put(customItem.getInternalId(), newCustomItem.getInternalId());
+                var itemName = customItem.plainName();
+                var newCustomItem = target.saveNewCustomItem(itemStack, targetCustomItems.right().contains(itemName) ? itemName : null);
+                itemIdMap.put(customItem.internalId(), newCustomItem.getInternalId());
                 if (debug) {
-                    logMigrated(customItem.getPlainName(), customItem.getInternalId(), newCustomItem.getInternalId());
+                    logMigrated(customItem.plainName(), customItem.internalId(), newCustomItem.getInternalId());
                 }
                 migrated++;
             }
@@ -101,7 +100,7 @@ public class ItemMigrator extends AbstractDataMigrator<ItemMigrator.Result, Item
     }
 
     private static @NotNull Int2ObjectMap<String> loadSourceDefaultItemIdToNameMap(@NotNull ItemStorage storage, @NotNull ItemNamePatcher patcher) throws Exception {
-        var loaded = storage.loadAllDefaultItems();
+        var loaded = storage.loadAllDefaultItems(Function.identity());
         var map = new Int2ObjectOpenHashMap<String>(loaded.size());
 
         for (var data : loaded) {
@@ -112,7 +111,7 @@ public class ItemMigrator extends AbstractDataMigrator<ItemMigrator.Result, Item
     }
 
     private static @NotNull Object2IntMap<String> loadTargetDefaultItemIdToNameMap(@NotNull ItemStorage storage, @NotNull ItemNamePatcher patcher) throws Exception {
-        var loaded = storage.loadAllDefaultItems();
+        var loaded = storage.loadAllDefaultItems(Function.identity());
         var map = new Object2IntOpenHashMap<String>(loaded.size());
 
         for (var data : loaded) {
@@ -123,13 +122,13 @@ public class ItemMigrator extends AbstractDataMigrator<ItemMigrator.Result, Item
     }
 
     private @NotNull Pair<Object2IntMap<ItemStack>, Set<String>> loadTargetCustomItems(@NotNull ItemStorage storage) throws Exception {
-        var loaded = storage.loadAllCustomItems();
+        var loaded = storage.loadAllCustomItems(Function.identity());
         var itemStackToIdMap = new Object2IntOpenHashMap<ItemStack>(loaded.size());
         var itemNameSet = new ObjectOpenHashSet<String>(loaded.size());
 
         for (var item : loaded) {
-            itemStackToIdMap.put(item.getOriginal(), item.getInternalId());
-            itemNameSet.add(item.getPlainName());
+            itemStackToIdMap.put(ItemStack.deserializeBytes(item.itemData()), item.internalId());
+            itemNameSet.add(item.plainName());
         }
 
         return Pair.of(itemStackToIdMap, itemNameSet);

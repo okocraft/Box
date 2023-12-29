@@ -2,7 +2,7 @@ package net.okocraft.box.storage.implementation.database.table;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.okocraft.box.api.model.item.BoxCustomItem;
-import net.okocraft.box.api.model.item.BoxItem;
+import net.okocraft.box.api.model.item.BoxDefaultItem;
 import net.okocraft.box.api.util.ItemNameGenerator;
 import net.okocraft.box.storage.api.factory.item.BoxItemFactory;
 import net.okocraft.box.storage.api.model.item.ItemData;
@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 
 // | id | name | item_data | is_default_item
 public class ItemTable extends AbstractTable implements ItemStorage {
@@ -51,14 +52,14 @@ public class ItemTable extends AbstractTable implements ItemStorage {
     }
 
     @Override
-    public @NotNull List<ItemData> loadAllDefaultItems() throws Exception {
-        var result = new ArrayList<ItemData>(1000); // The number of default items is currently around 1400, so this should only need to be expanded once.
+    public <I> @NotNull List<I> loadAllDefaultItems(@NotNull Function<ItemData, I> function) throws Exception {
+        var result = new ArrayList<I>(1000); // The number of default items is currently around 1400, so this should only need to be expanded once.
 
         try (var connection = this.database.getConnection();
              var statement = prepareStatement(connection, "SELECT `id`, `name`, `item_data` FROM `%table%` WHERE `is_default_item`=TRUE")) {
             try (var rs = statement.executeQuery()) {
                 while (rs.next()) {
-                    result.add(readAsDefaultItem(rs));
+                    result.add(function.apply(this.toItemData(rs)));
                 }
             }
         }
@@ -67,8 +68,8 @@ public class ItemTable extends AbstractTable implements ItemStorage {
     }
 
     @Override
-    public @NotNull List<BoxItem> saveDefaultItems(@NotNull List<DefaultItem> newItems, @NotNull Int2ObjectMap<DefaultItem> updatedItemMap) throws Exception {
-        var result = new ArrayList<BoxItem>(newItems.size() + updatedItemMap.size());
+    public @NotNull List<BoxDefaultItem> saveDefaultItems(@NotNull List<DefaultItem> newItems, @NotNull Int2ObjectMap<DefaultItem> updatedItemMap) throws Exception {
+        var result = new ArrayList<BoxDefaultItem>(newItems.size() + updatedItemMap.size());
 
         try (var connection = this.database.getConnection()) {
             try (var statement = prepareStatement(connection, "UPDATE `%table%` SET `name`=?, `item_data`=? WHERE `id`=?")) {
@@ -112,14 +113,14 @@ public class ItemTable extends AbstractTable implements ItemStorage {
     }
 
     @Override
-    public @NotNull List<BoxCustomItem> loadAllCustomItems() throws Exception {
-        var result = new ArrayList<BoxCustomItem>();
+    public <I> @NotNull List<I> loadAllCustomItems(@NotNull Function<ItemData, I> function) throws Exception {
+        var result = new ArrayList<I>();
 
         try (var connection = this.database.getConnection();
              var statement = prepareStatement(connection, "SELECT `id`, `name`, `item_data` FROM `%table%` WHERE `is_default_item`=FALSE")) {
             try (var rs = statement.executeQuery()) {
                 while (rs.next()) {
-                    result.add(readAsCustomItem(rs));
+                    result.add(function.apply(this.toItemData(rs)));
                 }
             }
         }
@@ -183,21 +184,11 @@ public class ItemTable extends AbstractTable implements ItemStorage {
         return item;
     }
 
-    private @NotNull ItemData readAsDefaultItem(@NotNull ResultSet resultSet) throws SQLException {
+    private @NotNull ItemData toItemData(@NotNull ResultSet resultSet) throws SQLException {
         int id = resultSet.getInt("id");
         var name = resultSet.getString("name");
         var itemData = readBytesFromResultSet(resultSet, "item_data");
 
         return new ItemData(id, name, itemData);
-    }
-
-    private @NotNull BoxCustomItem readAsCustomItem(@NotNull ResultSet resultSet) throws SQLException {
-        int id = resultSet.getInt("id");
-        var name = resultSet.getString("name");
-        var itemData = readBytesFromResultSet(resultSet, "item_data");
-
-        var item = ItemStack.deserializeBytes(itemData);
-
-        return BoxItemFactory.createCustomItem(id, name, item);
     }
 }

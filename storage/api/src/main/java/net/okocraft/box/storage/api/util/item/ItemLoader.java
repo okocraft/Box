@@ -1,11 +1,12 @@
 package net.okocraft.box.storage.api.util.item;
 
-import com.google.common.collect.Lists;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.okocraft.box.api.model.item.BoxCustomItem;
+import net.okocraft.box.api.model.item.BoxDefaultItem;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.util.BoxLogger;
+import net.okocraft.box.storage.api.factory.item.BoxItemFactory;
 import net.okocraft.box.storage.api.model.item.ItemData;
 import net.okocraft.box.storage.api.model.item.ItemStorage;
 import net.okocraft.box.storage.api.util.item.patcher.ItemDataPatcher;
@@ -17,6 +18,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 public class ItemLoader {
@@ -55,8 +57,8 @@ public class ItemLoader {
     public static @NotNull ItemLoadResult loadItems(@NotNull ItemStorage storage) throws Exception {
         BoxLogger.logger().info("Loading default/custom items...");
         return new ItemLoadResult(
-                Lists.transform(storage.loadAllDefaultItems(), ItemData::toDefaultItem),
-                storage.loadAllCustomItems()
+                storage.loadAllDefaultItems(BoxItemFactory::createDefaultItem),
+                storage.loadAllDefaultItems(BoxItemFactory::createCustomItem)
         );
     }
 
@@ -68,16 +70,16 @@ public class ItemLoader {
         var defaultItems = updateDefaultItems(storage, itemDataPatcher, defaultItemStream);
 
         BoxLogger.logger().warn("Updating custom item data...");
-        var customItems = storage.loadAllCustomItems();
+        var customItems = storage.loadAllCustomItems(BoxItemFactory::createCustomItem);
         storage.updateCustomItems(customItems);
         storage.saveItemVersion(currentVersion);
         return new ItemLoadResult(defaultItems, customItems);
     }
 
-    private static @NotNull List<BoxItem> updateDefaultItems(@NotNull ItemStorage storage,
-                                                             @NotNull ItemDataPatcher itemDataPatcher,
-                                                             @NotNull Stream<DefaultItem> defaultItemStream) throws Exception {
-        var loadedItemData = storage.loadAllDefaultItems();
+    private static @NotNull List<BoxDefaultItem> updateDefaultItems(@NotNull ItemStorage storage,
+                                                                    @NotNull ItemDataPatcher itemDataPatcher,
+                                                                    @NotNull Stream<DefaultItem> defaultItemStream) throws Exception {
+        var loadedItemData = storage.loadAllDefaultItems(Function.identity());
         var oldItemMap = new HashMap<ItemStack, ItemData>();
 
         for (var itemData : loadedItemData) {
@@ -101,7 +103,7 @@ public class ItemLoader {
         return storage.saveDefaultItems(newItems, updatedItemMap);
     }
 
-    public record ItemLoadResult(@NotNull List<BoxItem> defaultItems, @NotNull List<BoxCustomItem> customItems) {
+    public record ItemLoadResult(@NotNull List<BoxDefaultItem> defaultItems, @NotNull List<BoxCustomItem> customItems) {
         public @NotNull Iterator<BoxItem> asIterator() {
             return new InitialBoxItemIterator(this.defaultItems, this.customItems);
         }
@@ -119,12 +121,12 @@ public class ItemLoader {
 
     private static class InitialBoxItemIterator implements Iterator<BoxItem> {
 
-        private final Iterator<BoxItem> defaultItemIterator;
+        private final Iterator<BoxDefaultItem> defaultItemIterator;
         private final Iterator<BoxCustomItem> customItemIterator;
 
         private boolean firstIterator = true;
 
-        private InitialBoxItemIterator(@NotNull List<BoxItem> defaultItems, @NotNull List<BoxCustomItem> customItems) {
+        private InitialBoxItemIterator(@NotNull List<BoxDefaultItem> defaultItems, @NotNull List<BoxCustomItem> customItems) {
             this.defaultItemIterator = defaultItems.listIterator();
             this.customItemIterator = customItems.listIterator();
         }

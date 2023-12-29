@@ -1,24 +1,12 @@
 package net.okocraft.box.storage.api.factory.item;
 
 import net.kyori.adventure.text.Component;
-import net.okocraft.box.api.model.item.BoxCustomItem;
+import net.okocraft.box.api.model.item.BoxDefaultItem;
 import net.okocraft.box.api.model.item.BoxItem;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
-
-final class BoxCustomItemImpl implements BoxCustomItem {
-
-    private final int internalId;
-    private final ItemStack original;
-    private String plainName;
-
-    BoxCustomItemImpl(int internalId, @NotNull String plainName, @NotNull ItemStack original) {
-        this.internalId = internalId;
-        this.original = original;
-        this.plainName = plainName;
-    }
+record BoxDefaultItemImpl(int internalId, @NotNull String plainName, @NotNull ItemStack original) implements BoxDefaultItem {
 
     @Override
     public int getInternalId() {
@@ -28,10 +16,6 @@ final class BoxCustomItemImpl implements BoxCustomItem {
     @Override
     public @NotNull String getPlainName() {
         return this.plainName;
-    }
-
-    void setPlainName(@NotNull String plainName) {
-        this.plainName = Objects.requireNonNull(plainName);
     }
 
     @Override
