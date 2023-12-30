@@ -5,6 +5,7 @@ import com.github.siroshun09.configapi.core.node.StringRepresentable;
 import com.github.siroshun09.configapi.format.yaml.YamlFormat;
 import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.model.item.BoxItem;
+import net.okocraft.box.api.model.item.ItemVersion;
 import net.okocraft.box.api.model.manager.ItemManager;
 import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.api.util.MCDataVersion;
@@ -32,7 +33,8 @@ import java.util.function.UnaryOperator;
 
 public final class CategoryFile implements AutoCloseable {
 
-    public static final String VERSION_KEY = "$version";
+    public static final String DATA_VERSION_KEY = "$data-version";
+    public static final String DEFAULT_ITEM_VERSION_KEY = "$default-item-version";
     public static final String ITEMS_KEY = "items";
     public static final String ICON_KEY = "icon";
     public static final String DISPLAY_NAME_KEY = "display-name";
@@ -43,7 +45,7 @@ public final class CategoryFile implements AutoCloseable {
     private final ItemManager itemManager;
 
     private MapNode loadedSource;
-    private MCDataVersion version;
+    private ItemVersion version;
 
     public CategoryFile(@NotNull Path filepath, @NotNull CategoryRegistry registry, @NotNull ItemManager itemManager) {
         this.filepath = filepath;
@@ -59,19 +61,20 @@ public final class CategoryFile implements AutoCloseable {
     public CategoryFile loadFile() throws IOException {
         if (Files.isRegularFile(this.filepath)) {
             this.loadedSource = YamlFormat.COMMENT_PROCESSING.load(this.filepath);
-            this.version = MCDataVersion.of(this.loadedSource.getInteger(VERSION_KEY));
+            this.version = new ItemVersion(MCDataVersion.of(this.loadedSource.getInteger(DATA_VERSION_KEY)), this.loadedSource.getInteger(DEFAULT_ITEM_VERSION_KEY));
         }
         return this;
     }
 
     public CategoryFile convertIfUnknownVersion() throws IOException {
-        if (this.version == null || this.version.dataVersion() != 0) {
+        if (this.version == null || this.version.dataVersion().dataVersion() != 0) {
             return this;
         }
 
         Files.copy(this.filepath, this.filepath.getParent().resolve(this.filepath.getFileName().toString() + ".backup-" + System.currentTimeMillis()));
 
         var mapNode = MapNode.create();
+        var patcher = BoxAPI.api().getItemManager().getItemNameConverter(new ItemVersion(MCDataVersion.MC_1_17, 0));
 
         for (var key : this.loadedSource.value().keySet()) {
             if (key.equals("icons")) {
@@ -85,7 +88,9 @@ public final class CategoryFile implements AutoCloseable {
             var map = mapNode.createMap(renameKey(key));
             map.set(ICON_KEY, this.loadedSource.getMap("icons").getString(key));
             addDefaultDisplayName(String.valueOf(key), map);
-            map.set(ITEMS_KEY, this.loadedSource.getList(key));
+
+            var items = map.createList(ITEMS_KEY);
+            this.loadedSource.getList(key).asList(String.class).stream().map(patcher).forEach(items::add);
         }
 
         this.loadedSource = mapNode;
@@ -98,7 +103,7 @@ public final class CategoryFile implements AutoCloseable {
         for (var entry : this.loadedSource.value().entrySet()) {
             var key = String.valueOf(entry.getKey());
             if (!key.startsWith("$") && entry.getValue() instanceof MapNode section) {
-                this.registry.register(key, loadCategory(key, section, UnaryOperator.identity()));
+                this.registry.register(key, loadCategory(key, section, BoxAPI.api().getItemManager().getItemNameConverter(this.version)));
             }
         }
 
@@ -119,9 +124,9 @@ public final class CategoryFile implements AutoCloseable {
         if (this.version == null) {
             mapNode = MapNode.create();
             defaultCategories = DefaultCategories.loadDefaultCategories(MCDataVersion.CURRENT);
-        } else if (MCDataVersion.CURRENT.isAfter(this.version)) {
+        } else if (MCDataVersion.CURRENT.isAfter(this.version.dataVersion())) {
             mapNode = Objects.requireNonNull(this.loadedSource);
-            defaultCategories = DefaultCategories.loadNewItems(this.version, MCDataVersion.CURRENT);
+            defaultCategories = DefaultCategories.loadNewItems(this.version.dataVersion(), MCDataVersion.CURRENT);
         } else {
             return;
         }
@@ -146,7 +151,9 @@ public final class CategoryFile implements AutoCloseable {
             );
         }
 
-        mapNode.set(VERSION_KEY, MCDataVersion.CURRENT.dataVersion());
+        var currentVersion = BoxAPI.api().getItemManager().getCurrentVersion();
+        mapNode.set(DATA_VERSION_KEY, currentVersion.dataVersion().dataVersion());
+        mapNode.set(DEFAULT_ITEM_VERSION_KEY, currentVersion.defaultItemVersion());
         YamlFormat.COMMENT_PROCESSING.save(mapNode, this.filepath);
     }
 
