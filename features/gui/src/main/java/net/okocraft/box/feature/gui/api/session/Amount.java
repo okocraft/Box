@@ -6,7 +6,7 @@ public final class Amount {
 
     public static final TypedKey<Amount> SHARED_DATA_KEY = TypedKey.of(Amount.class, "shared_amount");
 
-    private int value = 0;
+    private int value = 1;
     private Unit unit = Unit.UNIT_1;
 
     public int getValue() {

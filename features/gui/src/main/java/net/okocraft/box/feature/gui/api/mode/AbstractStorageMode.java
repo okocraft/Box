@@ -27,10 +27,9 @@ public abstract class AbstractStorageMode implements BoxItemClickMode {
         var amountData = session.getData(Amount.SHARED_DATA_KEY);
         int amount = amountData != null ? amountData.getValue() : 1;
 
-        var scheduler = BoxAPI.api().getScheduler();
         var result = ClickResult.waitingTask();
 
-        scheduler.runEntityTask(viewer, () -> {
+        BoxAPI.api().getScheduler().runEntityTask(viewer, () -> {
             var resultList =
                     StockHolderTransaction
                             .create(session.getStockHolder())
@@ -57,12 +56,10 @@ public abstract class AbstractStorageMode implements BoxItemClickMode {
             return ClickResult.NO_UPDATE_NEEDED;
         }
 
-        var amount = Math.min(currentStock, limit);
-
-        var scheduler = BoxAPI.api().getScheduler();
+        int amount = Math.min(currentStock, limit);
         var result = ClickResult.waitingTask();
 
-        scheduler.runEntityTask(viewer, () -> {
+        BoxAPI.api().getScheduler().runEntityTask(viewer, () -> {
             var withdrawn =
                     StockHolderTransaction
                             .create(session.getStockHolder())
