@@ -19,6 +19,8 @@ import java.util.function.Supplier;
 
 public class ItemEditor<M extends ItemMeta> {
 
+    private static final Style DEFAULT_STYLE = Style.style().color(NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, TextDecoration.State.FALSE).build();
+
     @Contract("-> new")
     public static @NotNull ItemEditor<ItemMeta> create() {
         return new ItemEditor<>(ItemMeta.class);
@@ -39,7 +41,7 @@ public class ItemEditor<M extends ItemMeta> {
     }
 
     public @NotNull ItemEditor<M> displayName(@NotNull Component displayName) {
-        this.displayName = displayName;
+        this.displayName = displayName.applyFallbackStyle(DEFAULT_STYLE);
         return this;
     }
 
@@ -61,7 +63,7 @@ public class ItemEditor<M extends ItemMeta> {
     }
 
     public @NotNull ItemEditor<M> loreLine(@NotNull Component line) {
-        this.getOrCreateLore().add(line.colorIfAbsent(NamedTextColor.WHITE).decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE));
+        this.getOrCreateLore().add(line.applyFallbackStyle(DEFAULT_STYLE));
         return this;
     }
 
