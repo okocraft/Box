@@ -82,11 +82,6 @@ public class StockEvent extends StockHolderEvent {
         }
 
         /**
-         * This is synonymous with "unknown" and is used when no {@link Cause} is passed when changing stock.
-         */
-        Cause API = create("api");
-
-        /**
          * Gets the string that indicates the cause.
          * <p>
          * This method returns a string that is a concise representation of the "cause".
