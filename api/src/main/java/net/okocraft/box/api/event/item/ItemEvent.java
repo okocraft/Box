@@ -28,6 +28,13 @@ public class ItemEvent extends BoxEvent {
      * @return the {@link BoxItem} of this event
      */
     public @NotNull BoxItem getItem() {
-        return item;
+        return this.item;
+    }
+
+    @Override
+    public String toString() {
+        return this.getClass().getSimpleName() + "{" +
+                "item=" + this.getItem() +
+                '}';
     }
 }

@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * A {@link PlayerEvent} called when the {@link BoxPlayer} is unloaded.
  */
-public class PlayerUnloadEvent extends PlayerEvent{
+public class PlayerUnloadEvent extends PlayerEvent {
 
     /**
      * The constructor of a {@link PlayerUnloadEvent}.
@@ -17,18 +17,4 @@ public class PlayerUnloadEvent extends PlayerEvent{
         super(boxPlayer);
     }
 
-    @Override
-    public @NotNull String toDebugLog() {
-        return "PlayerUnloadEvent{" +
-                "uuid=" + getBoxPlayer().getUUID() +
-                ", name=" + getBoxPlayer().getName() +
-                '}';
-    }
-
-    @Override
-    public String toString() {
-        return "PlayerUnloadEvent{" +
-                "boxPlayer=" + getBoxPlayer() +
-                '}';
-    }
 }

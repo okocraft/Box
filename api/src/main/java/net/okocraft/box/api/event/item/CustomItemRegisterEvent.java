@@ -8,8 +8,6 @@ import org.jetbrains.annotations.NotNull;
  */
 public class CustomItemRegisterEvent extends ItemEvent {
 
-    private final BoxCustomItem newItem;
-
     /**
      * The constructor of {@link CustomItemRegisterEvent}.
      *
@@ -17,23 +15,6 @@ public class CustomItemRegisterEvent extends ItemEvent {
      */
     public CustomItemRegisterEvent(@NotNull BoxCustomItem newItem) {
         super(newItem);
-        this.newItem = newItem;
     }
 
-    /**
-     * Gets the registered {@link BoxCustomItem}.
-     *
-     * @return the registered {@link BoxCustomItem}
-     */
-    @Override
-    public @NotNull BoxCustomItem getItem() {
-        return newItem;
-    }
-
-    @Override
-    public String toString() {
-        return "CustomItemRegisterEvent{" +
-                "newItem=" + newItem +
-                '}';
-    }
 }

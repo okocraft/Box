@@ -19,10 +19,4 @@ public class ItemImportEvent extends ItemEvent {
         super(importedItem);
     }
 
-    @Override
-    public String toString() {
-        return "ItemImportEvent{" +
-                "item=" + this.getItem() +
-                '}';
-    }
 }

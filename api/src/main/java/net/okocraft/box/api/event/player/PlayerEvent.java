@@ -28,6 +28,21 @@ public class PlayerEvent extends BoxEvent {
      * @return the player of this event
      */
     public @NotNull BoxPlayer getBoxPlayer() {
-        return boxPlayer;
+        return this.boxPlayer;
+    }
+
+    @Override
+    public @NotNull String toDebugLog() {
+        return this.getClass().getSimpleName() + "{" +
+                "uuid=" + this.getBoxPlayer().getUUID() +
+                ", name=" + this.getBoxPlayer().getName() +
+                '}';
+    }
+
+    @Override
+    public String toString() {
+        return this.getClass().getSimpleName() + "{" +
+                "boxPlayer=" + this.getBoxPlayer() +
+                '}';
     }
 }

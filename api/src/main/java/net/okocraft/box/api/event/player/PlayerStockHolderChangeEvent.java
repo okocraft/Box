@@ -31,7 +31,7 @@ public class PlayerStockHolderChangeEvent extends PlayerEvent {
      * @return the previous {@link StockHolder} of the player
      */
     public @NotNull StockHolder getPreviousStockHolder() {
-        return previous;
+        return this.previous;
     }
 
     @Override
@@ -39,20 +39,20 @@ public class PlayerStockHolderChangeEvent extends PlayerEvent {
         return "PlayerStockHolderChangeEvent{" +
                 "uuid=" + getBoxPlayer().getUUID() +
                 ", name=" + getBoxPlayer().getName() +
-                ", previousStockholderUuid=" + previous.getUUID() +
-                ", previousStockHolderName=" + previous.getName() +
-                ", previousStockHolderClass=" + previous.getClass().getSimpleName() +
-                ", currentStockholderUuid=" + getBoxPlayer().getCurrentStockHolder().getUUID() +
-                ", currentStockHolderName=" + getBoxPlayer().getCurrentStockHolder().getName() +
-                ", currentStockHolderClass=" + getBoxPlayer().getCurrentStockHolder().getClass().getSimpleName() +
+                ", previousStockholderUuid=" + this.previous.getUUID() +
+                ", previousStockHolderName=" + this.previous.getName() +
+                ", previousStockHolderClass=" + this.previous.getClass().getSimpleName() +
+                ", currentStockholderUuid=" + this.getBoxPlayer().getCurrentStockHolder().getUUID() +
+                ", currentStockHolderName=" + this.getBoxPlayer().getCurrentStockHolder().getName() +
+                ", currentStockHolderClass=" + this.getBoxPlayer().getCurrentStockHolder().getClass().getSimpleName() +
                 '}';
     }
 
     @Override
     public String toString() {
         return "PlayerStockHolderChangeEvent{" +
-                "boxPlayer=" + getBoxPlayer() +
-                ", previous=" + previous +
+                "boxPlayer=" + this.getBoxPlayer() +
+                ", previous=" + this.previous +
                 '}';
     }
 }

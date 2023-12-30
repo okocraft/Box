@@ -4,6 +4,8 @@ import net.okocraft.box.api.event.BoxEvent;
 import net.okocraft.box.api.model.user.BoxUser;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 /**
  * An event called when {@code /boxadmin resetall &lt;username&gt;} is executed.
  */
@@ -17,7 +19,7 @@ public class UserDataResetEvent extends BoxEvent {
      * @param user the user of this event
      */
     public UserDataResetEvent(@NotNull BoxUser user) {
-        this.user = user;
+        this.user = Objects.requireNonNull(user);
     }
 
     /**
@@ -26,21 +28,21 @@ public class UserDataResetEvent extends BoxEvent {
      * @return the user being reset
      */
     public @NotNull BoxUser getUser() {
-        return user;
+        return this.user;
     }
 
     @Override
     public @NotNull String toDebugLog() {
         return "UserDataResetEvent{" +
-                "uuid=" + user.getUUID() +
-                ", name=" + user.getName() +
+                "uuid=" + this.user.getUUID() +
+                ", name=" + this.user.getName() +
                 '}';
     }
 
     @Override
     public String toString() {
         return "UserDataResetEvent{" +
-                "user=" + user +
+                "user=" + this.user +
                 '}';
     }
 }

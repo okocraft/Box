@@ -17,18 +17,4 @@ public class PlayerLoadEvent extends PlayerEvent {
         super(boxPlayer);
     }
 
-    @Override
-    public @NotNull String toDebugLog() {
-        return "PlayerLoadEvent{" +
-                "uuid=" + getBoxPlayer().getUUID() +
-                ", name=" + getBoxPlayer().getName() +
-                '}';
-    }
-
-    @Override
-    public String toString() {
-        return "PlayerLoadEvent{" +
-                "boxPlayer=" + getBoxPlayer() +
-                '}';
-    }
 }

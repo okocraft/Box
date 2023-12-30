@@ -31,7 +31,7 @@ public class FeatureEvent extends BoxEvent {
      * @return the {@link BoxFeature} of this event
      */
     public @NotNull BoxFeature getFeature() {
-        return feature;
+        return this.feature;
     }
 
     /**
@@ -46,16 +46,16 @@ public class FeatureEvent extends BoxEvent {
     @Override
     public @NotNull String toDebugLog() {
         return "FeatureEvent{" +
-                "feature=" + feature.getName() +
-                ", type=" + type +
+                "feature=" + this.feature.getName() +
+                ", type=" + this.type +
                 '}';
     }
 
     @Override
     public String toString() {
         return "FeatureEvent{" +
-                "feature=" + feature +
-                ", type=" + type +
+                "feature=" + this.feature +
+                ", type=" + this.type +
                 '}';
     }
 

@@ -10,6 +10,7 @@ import org.jetbrains.annotations.UnmodifiableView;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * A {@link PlayerEvent} called when the {@link BoxPlayer} collects item info through {@code /box iteminfo}.
@@ -27,7 +28,7 @@ public class PlayerCollectItemInfoEvent extends PlayerEvent {
      */
     public PlayerCollectItemInfoEvent(@NotNull BoxPlayer boxPlayer, @NotNull BoxItem item) {
         super(boxPlayer);
-        this.item = item;
+        this.item = Objects.requireNonNull(item);
     }
 
     /**
@@ -36,7 +37,7 @@ public class PlayerCollectItemInfoEvent extends PlayerEvent {
      * @return the {@link BoxItem} to collect information
      */
     public @NotNull BoxItem getItem() {
-        return item;
+        return this.item;
     }
 
     /**
@@ -45,7 +46,7 @@ public class PlayerCollectItemInfoEvent extends PlayerEvent {
      * @return the list of information of the {@link BoxItem} for the {@link BoxPlayer}
      */
     public @NotNull @UnmodifiableView List<Component> getInfo() {
-        return Collections.unmodifiableList(info);
+        return Collections.unmodifiableList(this.info);
     }
 
     /**
@@ -54,25 +55,25 @@ public class PlayerCollectItemInfoEvent extends PlayerEvent {
      * @param component the {@link Component} to represents information of the {@link BoxItem}
      */
     public void addInfo(@NotNull Component component) {
-        info.add(component);
+        this.info.add(component);
     }
 
     @Override
     public @NotNull String toDebugLog() {
         return "PlayerCollectItemInfoEvent{" +
-                "uuid=" + getBoxPlayer().getUUID() +
-                ", name=" + getBoxPlayer().getName() +
-                ", item=" + getItem() +
-                ", info=" + getInfo().stream().map(PlainTextComponentSerializer.plainText()::serialize).toList() +
+                "uuid=" + this.getBoxPlayer().getUUID() +
+                ", name=" + this.getBoxPlayer().getName() +
+                ", item=" + this.getItem().getPlainName() +
+                ", info=" + this.getInfo().stream().map(PlainTextComponentSerializer.plainText()::serialize).toList() +
                 '}';
     }
 
     @Override
     public String toString() {
         return "PlayerCollectItemInfoEvent{" +
-                "boxPlayer=" + getBoxPlayer() +
-                ", item=" + getItem() +
-                ", info=" + getInfo() +
+                "boxPlayer=" + this.getBoxPlayer() +
+                ", item=" + this.getItem() +
+                ", info=" + this.getInfo() +
                 '}';
     }
 }

@@ -10,7 +10,6 @@ import java.util.Objects;
  */
 public class CustomItemRenameEvent extends ItemEvent {
 
-    private final BoxCustomItem renamedItem;
     private final String previousName;
 
     /**
@@ -21,7 +20,6 @@ public class CustomItemRenameEvent extends ItemEvent {
      */
     public CustomItemRenameEvent(@NotNull BoxCustomItem renamedItem, @NotNull String previousName) {
         super(renamedItem);
-        this.renamedItem = renamedItem;
         this.previousName = Objects.requireNonNull(previousName);
     }
 
@@ -31,14 +29,14 @@ public class CustomItemRenameEvent extends ItemEvent {
      * @return the previous name of the item
      */
     public @NotNull String getPreviousName() {
-        return previousName;
+        return this.previousName;
     }
 
     @Override
     public String toString() {
         return "CustomItemRenameEvent{" +
-                "renamedItem=" + renamedItem +
-                ", previousName='" + previousName + '\'' +
+                "item=" + this.getItem() +
+                ", previousName='" + this.previousName + '\'' +
                 '}';
     }
 }
