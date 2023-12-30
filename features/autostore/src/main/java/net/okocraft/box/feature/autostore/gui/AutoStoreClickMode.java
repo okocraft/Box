@@ -145,9 +145,9 @@ public class AutoStoreClickMode implements BoxItemClickMode {
 
         @Override
         public @NotNull ItemStack createIcon(@NotNull PlayerSession session) {
-            var item = new ItemStack(Material.SUNFLOWER);
-            item.editMeta(meta -> meta.displayName(this.displayName.create(session.getMessageSource())));
-            return item;
+            return ItemEditor.create()
+                    .displayName(this.displayName.create(session.getMessageSource()))
+                    .createItem(Material.SUNFLOWER);
         }
 
         @Override
