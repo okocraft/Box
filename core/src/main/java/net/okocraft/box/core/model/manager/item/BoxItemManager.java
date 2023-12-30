@@ -41,7 +41,7 @@ public class BoxItemManager implements ItemManager {
         this.eventCaller = eventCaller;
         this.scheduler = scheduler;
         this.defaultItemProvider = defaultItemProvider;
-        this.boxItemMap = BukkitBoxItemMap.withItems(initialBoxItemIterator);
+        this.boxItemMap = BukkitBoxItemMap.withItems(initialBoxItemIterator, eventCaller);
     }
 
     @Override

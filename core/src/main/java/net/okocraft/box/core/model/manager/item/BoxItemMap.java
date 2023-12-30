@@ -9,7 +9,6 @@ import net.okocraft.box.api.model.item.BoxItem;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Iterator;
 import java.util.Objects;
 import java.util.concurrent.locks.StampedLock;
 
@@ -168,11 +167,6 @@ class BoxItemMap {
     }
 
     /* Thread-Unsafe methods */
-
-    protected final void initialize(@NotNull Iterator<BoxItem> initialBoxItemIterator) {
-        initialBoxItemIterator.forEachRemaining(this::addItemAtUnsynchronized);
-        rebuildCache();
-    }
 
     protected final @Nullable BoxItem getByIdAtUnsynchronized(int id) {
         return id != UNKNOWN_ID ? this.idToBoxItem.get(id) : null;

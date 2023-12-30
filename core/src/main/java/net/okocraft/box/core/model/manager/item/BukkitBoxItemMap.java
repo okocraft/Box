@@ -1,7 +1,10 @@
 package net.okocraft.box.core.model.manager.item;
 
+import com.github.siroshun09.event4j.caller.EventCaller;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import net.okocraft.box.api.event.BoxEvent;
+import net.okocraft.box.api.event.item.ItemImportEvent;
 import net.okocraft.box.api.model.item.BoxItem;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -12,9 +15,16 @@ import java.util.Objects;
 
 class BukkitBoxItemMap extends BoxItemMap {
 
-    static @NotNull BukkitBoxItemMap withItems(@NotNull Iterator<BoxItem> initialBoxItemIterator) {
+    static @NotNull BukkitBoxItemMap withItems(@NotNull Iterator<BoxItem> initialBoxItemIterator, @NotNull EventCaller<BoxEvent> eventCaller) {
         var itemMap = new BukkitBoxItemMap();
-        itemMap.initialize(initialBoxItemIterator);
+
+        initialBoxItemIterator.forEachRemaining(item -> {
+            itemMap.addItemAtUnsynchronized(item);
+            eventCaller.call(new ItemImportEvent(item));
+        });
+
+        itemMap.rebuildCache();
+
         return itemMap;
     }
 
