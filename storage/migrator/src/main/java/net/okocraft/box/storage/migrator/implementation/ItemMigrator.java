@@ -49,6 +49,10 @@ public class ItemMigrator extends AbstractDataMigrator<ItemMigrator.Result, Item
             throw new IllegalStateException("Cannot get the item version from the target storage.");
         }
 
+        if (targetItemVersion.get().isTryingDowngrade(sourceItemVersion.get())) {
+            throw new IllegalStateException("Cannot migrate item data to lower version.");
+        }
+
         var patcherFactory = this.defaultItemProvider.itemNamePatcherFactory();
         var sourceItemIdToNameMap = loadSourceDefaultItemIdToNameMap(source, patcherFactory.create(sourceItemVersion.get()));
         var targetItemNameToIdMap = loadTargetDefaultItemIdToNameMap(target, patcherFactory.create(targetItemVersion.get()));
