@@ -1,5 +1,6 @@
 package net.okocraft.box.storage.implementation.yaml;
 
+import net.okocraft.box.test.shared.storage.test.CustomDataStorageTest;
 import net.okocraft.box.test.shared.storage.test.StockStorageTest;
 import net.okocraft.box.test.shared.storage.test.UserStorageTest;
 import org.junit.jupiter.api.Nested;
@@ -38,6 +39,22 @@ class YamlStorageCommonTest {
         @Test
         void testCleaningZeroStock(@TempDir Path dir) throws Exception {
             StockStorageTest.testCleaningZeroStock(new YamlStockStorage(dir));
+        }
+
+    }
+
+    @Nested
+    class CustomData {
+
+        @Test
+        void testSaving(@TempDir Path dir) throws Exception {
+            CustomDataStorageTest.testLoadingAndSaving(new YamlCustomDataStorage(dir));
+            CustomDataStorageTest.testLoadingFromNewlyCreatedStorage(new YamlCustomDataStorage(dir));
+        }
+
+        @Test
+        void testVisit(@TempDir Path dir) throws Exception {
+            CustomDataStorageTest.testVisit(new YamlCustomDataStorage(dir));
         }
 
     }
