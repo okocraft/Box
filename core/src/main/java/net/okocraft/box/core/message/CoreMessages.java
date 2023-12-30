@@ -49,7 +49,7 @@ public class CoreMessages {
     public static final Arg2<BoxFeature, Throwable> FEATURE_RELOAD_FAILURE = arg2(ERROR_RELOAD_FEATURE, Placeholder.component("feature", feature -> Component.text(feature.getName())), ERROR);
 
     public static void addDefaultMessages(@NotNull DefaultMessageCollector collector) {
-        collector.add(HELP_BOX, "<dark_gray>============================== <gold>Command helps for <command><dark_gray> ==============================");
+        collector.add(HELP_BOX, "<dark_gray>==================== <gold>Command helps for <command><dark_gray> ====================");
         collector.add(ONLY_PLAYER, "<red>This command can only be executed by the player in the game.");
         collector.add(INVALID_NUMBER, "<aqua><arg><red> is not a valid number.");
         collector.add(ITEM_NOT_FOUND, "<red>The item <aqua><item_name><red> could not be found.");
