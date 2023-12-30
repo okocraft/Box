@@ -6,7 +6,7 @@ import net.okocraft.box.api.util.MCDataVersion;
 import net.okocraft.box.core.command.CommandRegisterer;
 import net.okocraft.box.storage.api.util.item.DefaultItem;
 import net.okocraft.box.storage.api.util.item.DefaultItemProvider;
-import net.okocraft.box.storage.api.util.item.ItemVersion;
+import net.okocraft.box.api.model.item.ItemVersion;
 import net.okocraft.box.storage.api.util.item.patcher.ItemDataPatcher;
 import net.okocraft.box.storage.api.util.item.patcher.ItemNamePatcher;
 import net.okocraft.box.storage.api.util.item.patcher.PatcherFactory;

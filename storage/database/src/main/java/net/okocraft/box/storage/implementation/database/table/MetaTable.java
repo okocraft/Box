@@ -54,7 +54,7 @@ public class MetaTable extends AbstractTable {
         return Objects.requireNonNullElse(version, 0);
     }
 
-    public void saveDefaultItemProviderVersion(int version) throws SQLException {
+    public void saveDefaultItemVersion(int version) throws SQLException {
         saveVersion(DEFAULT_ITEM_VERSION_KEY, version, hasDefaultItemVersion);
     }
 

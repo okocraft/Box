@@ -94,7 +94,7 @@ public class BoxCore implements BoxAPI {
         try {
             var itemLoadResult = ItemLoader.load(storage.getItemStorage(), this.context.defaultItemProvider());
             itemLoadResult.logItemCount();
-            this.itemManager = new BoxItemManager(storage.getItemStorage(), this.eventManager, this.context.scheduler(), itemLoadResult.asIterator());
+            this.itemManager = new BoxItemManager(storage.getItemStorage(), this.eventManager, this.context.scheduler(), this.context.defaultItemProvider(), itemLoadResult.asIterator());
         } catch (Exception e) {
             BoxLogger.logger().error("Could not load default/custom items", e);
             return false;

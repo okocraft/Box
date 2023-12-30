@@ -8,7 +8,7 @@ import net.okocraft.box.storage.api.factory.item.BoxItemFactory;
 import net.okocraft.box.storage.api.model.item.ItemData;
 import net.okocraft.box.storage.api.model.item.ItemStorage;
 import net.okocraft.box.storage.api.util.item.DefaultItem;
-import net.okocraft.box.storage.api.util.item.ItemVersion;
+import net.okocraft.box.api.model.item.ItemVersion;
 import net.okocraft.box.storage.implementation.database.database.Database;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -48,7 +48,7 @@ public class ItemTable extends AbstractTable implements ItemStorage {
     @Override
     public void saveItemVersion(@NotNull ItemVersion itemVersion) throws Exception {
         this.metaTable.saveItemDataVersion(itemVersion.dataVersion().dataVersion());
-        this.metaTable.saveDefaultItemProviderVersion(itemVersion.defaultItemProviderVersion());
+        this.metaTable.saveDefaultItemVersion(itemVersion.defaultItemVersion());
     }
 
     @Override

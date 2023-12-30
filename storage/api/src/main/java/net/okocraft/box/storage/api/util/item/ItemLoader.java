@@ -5,6 +5,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.okocraft.box.api.model.item.BoxCustomItem;
 import net.okocraft.box.api.model.item.BoxDefaultItem;
 import net.okocraft.box.api.model.item.BoxItem;
+import net.okocraft.box.api.model.item.ItemVersion;
 import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.storage.api.factory.item.BoxItemFactory;
 import net.okocraft.box.storage.api.model.item.ItemData;
@@ -28,7 +29,7 @@ public class ItemLoader {
         var currentVersion = defaultItemProvider.version();
         var storageItemVersion = storage.getItemVersion();
 
-        if (storageItemVersion.isPresent() && currentVersion.isTryingDowngrade(storageItemVersion.get())) {
+        if (storageItemVersion.isPresent() && storageItemVersion.get().isAfter(currentVersion)) {
             throw new IllegalStateException("Downgrading version is not supported.");
         }
 

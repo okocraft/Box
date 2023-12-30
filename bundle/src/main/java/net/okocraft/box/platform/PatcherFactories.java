@@ -1,6 +1,6 @@
 package net.okocraft.box.platform;
 
-import net.okocraft.box.storage.api.util.item.ItemVersion;
+import net.okocraft.box.api.model.item.ItemVersion;
 import net.okocraft.box.storage.api.util.item.patcher.ItemDataPatcher;
 import net.okocraft.box.storage.api.util.item.patcher.ItemNamePatcher;
 import net.okocraft.box.version.common.item.LegacyVersionPatches;
@@ -17,7 +17,7 @@ final class PatcherFactories {
     static @NotNull ItemNamePatcher createItemNamePatcher(@NotNull ItemVersion startingVersion) {
         var builder = new ItemNamePatcherBuilder();
         var dataVer = startingVersion.dataVersion();
-        var itemVer = startingVersion.defaultItemProviderVersion();
+        var itemVer = startingVersion.defaultItemVersion();
 
         if (dataVer.isBetween(MC_1_19, MC_1_19_4) && itemVer == 0) {
             builder.append(LegacyVersionPatches::goatHornName);
@@ -37,7 +37,7 @@ final class PatcherFactories {
     static @NotNull ItemDataPatcher createItemDataPatcher(@NotNull ItemVersion startingVersion) {
         var builder = new ItemDataPatcherBuilder();
         var dataVer = startingVersion.dataVersion();
-        var itemVer = startingVersion.defaultItemProviderVersion();
+        var itemVer = startingVersion.defaultItemVersion();
 
         if (dataVer.isBetween(MC_1_19, MC_1_19_4) && itemVer == 0) {
             builder.append(LegacyVersionPatches::goatHorn);

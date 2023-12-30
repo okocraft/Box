@@ -49,7 +49,7 @@ public class ItemMigrator extends AbstractDataMigrator<ItemMigrator.Result, Item
             throw new IllegalStateException("Cannot get the item version from the target storage.");
         }
 
-        if (targetItemVersion.get().isTryingDowngrade(sourceItemVersion.get())) {
+        if (sourceItemVersion.get().isAfter(targetItemVersion.get())) {
             throw new IllegalStateException("Cannot migrate item data to lower version.");
         }
 

@@ -8,12 +8,14 @@ import net.okocraft.box.api.event.item.CustomItemRegisterEvent;
 import net.okocraft.box.api.event.item.CustomItemRenameEvent;
 import net.okocraft.box.api.model.item.BoxCustomItem;
 import net.okocraft.box.api.model.item.BoxItem;
+import net.okocraft.box.api.model.item.ItemVersion;
 import net.okocraft.box.api.model.manager.ItemManager;
 import net.okocraft.box.api.model.result.item.ItemRegistrationResult;
 import net.okocraft.box.api.model.result.item.ItemRenameResult;
 import net.okocraft.box.api.scheduler.BoxScheduler;
 import net.okocraft.box.storage.api.factory.item.BoxItemFactory;
 import net.okocraft.box.storage.api.model.item.ItemStorage;
+import net.okocraft.box.storage.api.util.item.DefaultItemProvider;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -29,13 +31,15 @@ public class BoxItemManager implements ItemManager {
     private final ItemStorage itemStorage;
     private final AsyncEventCaller<BoxEvent> eventCaller;
     private final BoxScheduler scheduler;
+    private final DefaultItemProvider defaultItemProvider;
     private final BukkitBoxItemMap boxItemMap;
 
     public BoxItemManager(@NotNull ItemStorage itemStorage, @NotNull AsyncEventCaller<BoxEvent> eventCaller,
-                          @NotNull BoxScheduler scheduler, @NotNull Iterator<BoxItem> initialBoxItemIterator) {
+                          @NotNull BoxScheduler scheduler, @NotNull DefaultItemProvider defaultItemProvider, @NotNull Iterator<BoxItem> initialBoxItemIterator) {
         this.itemStorage = itemStorage;
         this.eventCaller = eventCaller;
         this.scheduler = scheduler;
+        this.defaultItemProvider = defaultItemProvider;
         this.boxItemMap = BukkitBoxItemMap.withItems(initialBoxItemIterator);
     }
 
@@ -179,5 +183,10 @@ public class BoxItemManager implements ItemManager {
         this.boxItemMap.rebuildCache();
 
         return new ItemRenameResult.Success(customItem, previousName);
+    }
+
+    @Override
+    public @NotNull ItemVersion getCurrentVersion() {
+        return this.defaultItemProvider.version();
     }
 }

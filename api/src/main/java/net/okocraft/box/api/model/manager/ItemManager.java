@@ -4,6 +4,7 @@ import it.unimi.dsi.fastutil.ints.IntImmutableList;
 import it.unimi.dsi.fastutil.objects.ObjectImmutableList;
 import net.okocraft.box.api.model.item.BoxCustomItem;
 import net.okocraft.box.api.model.item.BoxItem;
+import net.okocraft.box.api.model.item.ItemVersion;
 import net.okocraft.box.api.model.result.item.ItemRegistrationResult;
 import net.okocraft.box.api.model.result.item.ItemRenameResult;
 import org.bukkit.inventory.ItemStack;
@@ -123,4 +124,12 @@ public interface ItemManager {
      * @throws IllegalArgumentException {@link BoxCustomItem} is not created by Box ({@link #isCustomItem(BoxItem)} returns {@code false})
      */
     void renameCustomItem(@NotNull BoxCustomItem item, @NotNull String newName, @NotNull Consumer<ItemRenameResult> resultConsumer);
+
+    /**
+     * Returns the current {@link ItemVersion}.
+     *
+     * @return the current {@link ItemVersion}
+     */
+    @NotNull ItemVersion getCurrentVersion();
+
 }

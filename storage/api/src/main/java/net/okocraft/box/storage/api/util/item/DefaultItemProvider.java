@@ -1,5 +1,6 @@
 package net.okocraft.box.storage.api.util.item;
 
+import net.okocraft.box.api.model.item.ItemVersion;
 import net.okocraft.box.storage.api.util.item.patcher.ItemDataPatcher;
 import net.okocraft.box.storage.api.util.item.patcher.ItemNamePatcher;
 import net.okocraft.box.storage.api.util.item.patcher.PatcherFactory;
