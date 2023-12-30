@@ -13,13 +13,18 @@ import java.sql.ResultSet;
 
 public class LegacyCustomDataTable extends AbstractCustomDataTable {
 
-    public LegacyCustomDataTable(@NotNull Database database) {
+    private final boolean createTable;
+
+    public LegacyCustomDataTable(@NotNull Database database, boolean createTable) {
         super(database, database.getSchemaSet().legacyCustomDataTable());
+        this.createTable = createTable;
     }
 
     @Override
-    public void init() {
-        // Not needed to create the table and index
+    public void init() throws Exception {
+        if (this.createTable) {
+            this.createTableAndIndex();
+        }
     }
 
     @Override

@@ -28,7 +28,7 @@ public class CustomDataTable extends AbstractCustomDataTable {
         createTableAndIndex();
 
         if (!this.metaTable.isCurrentCustomDataFormat() && this.legacyTableExists()) {
-            this.legacyCustomDataTable = new LegacyCustomDataTable(this.database);
+            this.legacyCustomDataTable = new LegacyCustomDataTable(this.database, false);
             this.legacyCustomDataTable.init();
         }
     }
