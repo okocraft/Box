@@ -7,6 +7,7 @@ import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.storage.api.model.data.CustomDataStorage;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.FileVisitResult;
@@ -112,7 +113,7 @@ public class YamlCustomDataStorage implements CustomDataStorage {
         @SuppressWarnings("PatternValidation")
         @Override
         public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-            var relative = this.rootDir.relativize(file).toString();
+            var relative = this.rootDir.relativize(file).toString().replace(File.separatorChar, '/');
 
             if (!relative.endsWith(".yml")) {
                 return FileVisitResult.CONTINUE;
