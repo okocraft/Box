@@ -104,7 +104,9 @@ public class StickCommand extends AbstractCommand {
         var src = BoxAPI.api().getMessageProvider().findSource(player);
         return ItemEditor.create()
                 .displayName(this.defaultDisplayName.create(src))
+                .loreEmptyLine()
                 .loreLines(this.defaultLore.create(src))
+                .loreEmptyLine()
                 .editMeta(meta -> this.boxStickItem.saveBoxStickKey(meta.getPersistentDataContainer()))
                 .createItem(Material.STICK);
     }
