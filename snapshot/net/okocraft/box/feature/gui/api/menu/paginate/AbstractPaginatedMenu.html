@@ -45,7 +45,7 @@ loadScripts(document, 'script');</script>
 <ul class="sub-nav-list">
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
-<li><a href="#field-summary">Field</a>&nbsp;|&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
 <li><a href="#constructor-summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method-summary">Method</a></li>
 </ul>
@@ -86,15 +86,6 @@ implements <a href="PaginatedMenu.html" title="interface in net.okocraft.box.fea
 </section>
 <section class="summary">
 <ul class="summary-list">
-<!-- =========== FIELD SUMMARY =========== -->
-<li>
-<section class="field-summary" id="field-summary">
-<h2>Field Summary</h2>
-<div class="inherited-list">
-<h3 id="fields-inherited-from-class-net.okocraft.box.feature.gui.api.menu.paginate.PaginatedMenu">Fields inherited from interface&nbsp;net.okocraft.box.feature.gui.api.menu.paginate.<a href="PaginatedMenu.html" title="interface in net.okocraft.box.feature.gui.api.menu.paginate">PaginatedMenu</a></h3>
-<code><a href="PaginatedMenu.html#CURRENT_PAGE_KEY">CURRENT_PAGE_KEY</a></code></div>
-</section>
-</li>
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
 <li>
 <section class="constructor-summary" id="constructor-summary">
@@ -105,8 +96,9 @@ implements <a href="PaginatedMenu.html" title="interface in net.okocraft.box.fea
 <div class="table-header col-second">Constructor</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color"><code>protected </code></div>
-<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(int,java.util.List)" class="member-name-link">AbstractPaginatedMenu</a><wbr>(int&nbsp;rows,
- <a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/NotNull.html" title="class or interface in org.jetbrains.annotations" class="external-link">@NotNull</a> <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="AbstractPaginatedMenu.html" title="type parameter in AbstractPaginatedMenu">T</a>&gt;&nbsp;list)</code></div>
+<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(int,java.util.List,net.okocraft.box.feature.gui.api.session.TypedKey)" class="member-name-link">AbstractPaginatedMenu</a><wbr>(int&nbsp;rows,
+ <a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/NotNull.html" title="class or interface in org.jetbrains.annotations" class="external-link">@NotNull</a> <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="AbstractPaginatedMenu.html" title="type parameter in AbstractPaginatedMenu">T</a>&gt;&nbsp;list,
+ <a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/NotNull.html" title="class or interface in org.jetbrains.annotations" class="external-link">@NotNull</a> <a href="../../session/TypedKey.html" title="class in net.okocraft.box.feature.gui.api.session">TypedKey</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link">Integer</a>&gt;&nbsp;currentPageKey)</code></div>
 <div class="col-last even-row-color">&nbsp;</div>
 </div>
 </section>
@@ -133,14 +125,21 @@ implements <a href="PaginatedMenu.html" title="interface in net.okocraft.box.fea
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/NotNull.html" title="class or interface in org.jetbrains.annotations" class="external-link">@NotNull</a> <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;? extends <a href="../../button/Button.html" title="interface in net.okocraft.box.feature.gui.api.button">Button</a>&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getButtons(net.okocraft.box.feature.gui.api.session.PlayerSession)" class="member-name-link">getButtons</a><wbr>(<a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/NotNull.html" title="class or interface in org.jetbrains.annotations" class="external-link">@NotNull</a> <a href="../../session/PlayerSession.html" title="class in net.okocraft.box.feature.gui.api.session">PlayerSession</a>&nbsp;session)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final int</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getIconsPerPage()" class="member-name-link">getIconsPerPage</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getCurrentPage(net.okocraft.box.feature.gui.api.session.PlayerSession)" class="member-name-link">getCurrentPage</a><wbr>(<a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/NotNull.html" title="class or interface in org.jetbrains.annotations" class="external-link">@NotNull</a> <a href="../../session/PlayerSession.html" title="class in net.okocraft.box.feature.gui.api.session">PlayerSession</a>&nbsp;session)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final int</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getMaxPage()" class="member-name-link">getMaxPage</a>()</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getIconsPerPage()" class="member-name-link">getIconsPerPage</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final int</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getRows()" class="member-name-link">getRows</a>()</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getMaxPage()" class="member-name-link">getMaxPage</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final int</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getRows()" class="member-name-link">getRows</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setCurrentPage(net.okocraft.box.feature.gui.api.session.PlayerSession,int)" class="member-name-link">setCurrentPage</a><wbr>(<a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/NotNull.html" title="class or interface in org.jetbrains.annotations" class="external-link">@NotNull</a> <a href="../../session/PlayerSession.html" title="class in net.okocraft.box.feature.gui.api.session">PlayerSession</a>&nbsp;session,
+ int&nbsp;page)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 </div>
 </div>
@@ -163,11 +162,13 @@ implements <a href="PaginatedMenu.html" title="interface in net.okocraft.box.fea
 <h2>Constructor Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="&lt;init&gt;(int,java.util.List)">
+<section class="detail" id="&lt;init&gt;(int,java.util.List,net.okocraft.box.feature.gui.api.session.TypedKey)">
 <h3>AbstractPaginatedMenu</h3>
 <div class="member-signature"><span class="modifiers">protected</span>&nbsp;<span class="element-name">AbstractPaginatedMenu</span><wbr><span class="parameters">(int&nbsp;rows,
  <a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/NotNull.html" title="class or interface in org.jetbrains.annotations" class="external-link">@NotNull</a>
- <a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/NotNull.html" title="class or interface in org.jetbrains.annotations" class="external-link">@NotNull</a> <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="AbstractPaginatedMenu.html" title="type parameter in AbstractPaginatedMenu">T</a>&gt;&nbsp;list)</span></div>
+ <a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/NotNull.html" title="class or interface in org.jetbrains.annotations" class="external-link">@NotNull</a> <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="AbstractPaginatedMenu.html" title="type parameter in AbstractPaginatedMenu">T</a>&gt;&nbsp;list,
+ <a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/NotNull.html" title="class or interface in org.jetbrains.annotations" class="external-link">@NotNull</a>
+ <a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/NotNull.html" title="class or interface in org.jetbrains.annotations" class="external-link">@NotNull</a> <a href="../../session/TypedKey.html" title="class in net.okocraft.box.feature.gui.api.session">TypedKey</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link">Integer</a>&gt;&nbsp;currentPageKey)</span></div>
 </section>
 </li>
 </ul>
@@ -205,6 +206,29 @@ implements <a href="PaginatedMenu.html" title="interface in net.okocraft.box.fea
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="PaginatedMenu.html#getIconsPerPage()">getIconsPerPage</a></code>&nbsp;in interface&nbsp;<code><a href="PaginatedMenu.html" title="interface in net.okocraft.box.feature.gui.api.menu.paginate">PaginatedMenu</a></code></dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getCurrentPage(net.okocraft.box.feature.gui.api.session.PlayerSession)">
+<h3>getCurrentPage</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">getCurrentPage</span><wbr><span class="parameters">(<a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/NotNull.html" title="class or interface in org.jetbrains.annotations" class="external-link">@NotNull</a>
+ <a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/NotNull.html" title="class or interface in org.jetbrains.annotations" class="external-link">@NotNull</a> <a href="../../session/PlayerSession.html" title="class in net.okocraft.box.feature.gui.api.session">PlayerSession</a>&nbsp;session)</span></div>
+<dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="PaginatedMenu.html#getCurrentPage(net.okocraft.box.feature.gui.api.session.PlayerSession)">getCurrentPage</a></code>&nbsp;in interface&nbsp;<code><a href="PaginatedMenu.html" title="interface in net.okocraft.box.feature.gui.api.menu.paginate">PaginatedMenu</a></code></dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="setCurrentPage(net.okocraft.box.feature.gui.api.session.PlayerSession,int)">
+<h3>setCurrentPage</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setCurrentPage</span><wbr><span class="parameters">(<a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/NotNull.html" title="class or interface in org.jetbrains.annotations" class="external-link">@NotNull</a>
+ <a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/NotNull.html" title="class or interface in org.jetbrains.annotations" class="external-link">@NotNull</a> <a href="../../session/PlayerSession.html" title="class in net.okocraft.box.feature.gui.api.session">PlayerSession</a>&nbsp;session,
+ int&nbsp;page)</span></div>
+<dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="PaginatedMenu.html#setCurrentPage(net.okocraft.box.feature.gui.api.session.PlayerSession,int)">setCurrentPage</a></code>&nbsp;in interface&nbsp;<code><a href="PaginatedMenu.html" title="interface in net.okocraft.box.feature.gui.api.menu.paginate">PaginatedMenu</a></code></dd>
 </dl>
 </section>
 </li>
