@@ -3,6 +3,7 @@ package net.okocraft.box.test.shared.storage.memory.stock;
 import it.unimi.dsi.fastutil.ints.Int2IntFunction;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
+import it.unimi.dsi.fastutil.ints.IntCollection;
 import net.okocraft.box.api.model.stock.StockData;
 import net.okocraft.box.storage.api.model.stock.PartialSavingStockStorage;
 import org.jetbrains.annotations.NotNull;
@@ -68,5 +69,13 @@ public class MemoryPartialSavingStockStorage implements PartialSavingStockStorag
         for (var stockMap : this.stockDataMap.values()) {
             stockMap.values().removeIf(amount -> amount == 0);
         }
+    }
+
+    @Override
+    public boolean hasZeroStock() {
+        return this.stockDataMap.values().stream()
+                .map(Int2IntMap::values)
+                .flatMapToInt(IntCollection::intStream)
+                .anyMatch(amount -> amount == 0);
     }
 }

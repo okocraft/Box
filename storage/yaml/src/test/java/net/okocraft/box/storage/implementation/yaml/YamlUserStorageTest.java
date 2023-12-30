@@ -1,35 +1,22 @@
 package net.okocraft.box.storage.implementation.yaml;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import net.okocraft.box.test.shared.storage.test.CommonUserStorageTest;
+import net.okocraft.box.test.shared.storage.test.UserStorageTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
 
-import java.nio.file.Path;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
-class YamlUserStorageTest extends CommonUserStorageTest {
-
-    @Test
-    void testLoadingAndSaving(@TempDir Path dir) throws Exception {
-        this.testLoadingAndSaving(new YamlUserStorage(dir));
-        this.testLoadingFromNewlyCreatedStorage(new YamlUserStorage(dir));
-    }
-
-    @Test
-    void testRename(@TempDir Path dir) throws Exception {
-        this.testRename(new YamlUserStorage(dir));
-    }
+class YamlUserStorageTest {
 
     @Test
     void testUserMap() {
         var userMap = new YamlUserStorage.UserMap();
 
-        var uuid = TEST_USER_1.getUUID();
-        var name = TEST_USER_1.getName().orElseThrow();
+        var uuid = UserStorageTest.TEST_USER_1.getUUID();
+        var name = UserStorageTest.TEST_USER_1.getName().orElseThrow();
 
         userMap.putUUIDAndUsername(uuid, name);
         Assertions.assertEquals(uuid, userMap.searchForUUID(name)); // obtain uuid
@@ -42,7 +29,7 @@ class YamlUserStorageTest extends CommonUserStorageTest {
         Assertions.assertEquals(uuid, userMap.searchForUUID("renamed")); // obtain uuid by new name
         Assertions.assertNull(userMap.searchForUUID(name)); // cannot obtain uuid by old name
 
-        Assertions.assertEquals(List.of(TEST_USER_1), userMap.getAllUsers());
+        Assertions.assertEquals(List.of(UserStorageTest.TEST_USER_1), userMap.getAllUsers());
 
         var expectedSnapshot = new Object2ObjectOpenHashMap<UUID, String>();
         expectedSnapshot.put(uuid, "renamed");

@@ -98,6 +98,15 @@ public class StockTable extends AbstractTable implements PartialSavingStockStora
         }
     }
 
+    @Override
+    public boolean hasZeroStock() throws Exception {
+        try (var connection = this.database.getConnection();
+             var statement = prepareStatement(connection, "SELECT COUNT(*) FROM `%table%` WHERE `amount`=0");
+             var result = statement.executeQuery()) {
+            return result.next() && 0 < result.getInt(1);
+        }
+    }
+
     private @NotNull String insertOrUpdateStockDataStatement() {
         if (database instanceof MySQLDatabase) {
             return "INSERT INTO `%table%` (`uuid`, `item_id`, `amount`) VALUES (?, ?, ?) AS new ON DUPLICATE KEY UPDATE `amount` = new.amount";

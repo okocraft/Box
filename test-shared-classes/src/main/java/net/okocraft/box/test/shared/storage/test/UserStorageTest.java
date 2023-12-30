@@ -10,12 +10,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
-public abstract class CommonUserStorageTest {
+public final class UserStorageTest {
 
-    protected static final BoxUser TEST_USER_1 = BoxUserFactory.create(UUID.randomUUID(), "test_user_1");
-    protected static final BoxUser TEST_USER_2 = BoxUserFactory.create(UUID.randomUUID(), "test_user_2");
+    public  static final BoxUser TEST_USER_1 = BoxUserFactory.create(UUID.randomUUID(), "test_user_1");
+    public static final BoxUser TEST_USER_2 = BoxUserFactory.create(UUID.randomUUID(), "test_user_2");
 
-    protected void testLoadingAndSaving(@NotNull UserStorage storage) throws Exception {
+    public static void testLoadingAndSaving(@NotNull UserStorage storage) throws Exception {
         storage.init();
 
         save(storage, TEST_USER_1);
@@ -29,7 +29,7 @@ public abstract class CommonUserStorageTest {
         Assertions.assertTrue(List.of(TEST_USER_1, TEST_USER_2).containsAll(users));
     }
 
-    protected void testLoadingFromNewlyCreatedStorage(@NotNull UserStorage storage) throws Exception {
+    public static void testLoadingFromNewlyCreatedStorage(@NotNull UserStorage storage) throws Exception {
         storage.init();
 
         checkLoad(storage, TEST_USER_1);
@@ -40,7 +40,7 @@ public abstract class CommonUserStorageTest {
         Assertions.assertTrue(List.of(TEST_USER_1, TEST_USER_2).containsAll(users));
     }
 
-    protected void testRename(@NotNull UserStorage storage) throws Exception {
+    public static void testRename(@NotNull UserStorage storage) throws Exception {
         storage.init();
 
         save(storage, TEST_USER_1);

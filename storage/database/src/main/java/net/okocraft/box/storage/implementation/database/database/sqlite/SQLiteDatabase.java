@@ -9,6 +9,7 @@ import net.okocraft.box.storage.implementation.database.database.Database;
 import net.okocraft.box.storage.implementation.database.schema.SchemaSet;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.VisibleForTesting;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -29,7 +30,8 @@ public class SQLiteDatabase implements Database {
     private final Path databasePath;
     private HikariDataSource hikariDataSource;
 
-    public SQLiteDatabase(@NotNull StorageContext<SQLiteSetting> context) {
+    @VisibleForTesting
+    SQLiteDatabase(@NotNull StorageContext<SQLiteSetting> context) {
         this.tablePrefix = context.setting().tablePrefix();
         this.schemaSet = SQLiteTableSchema.create(tablePrefix);
         this.databasePath = context.pluginDirectory().resolve(context.setting().filename());
