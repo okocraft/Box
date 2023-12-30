@@ -43,13 +43,16 @@ public final class CustomDataStorageTest {
         NodeAssertion.assertEquals(MapNode.create(Map.of("a", "b")), storage.loadData(KEY_2));
     }
 
-    public static void testVisit(@NotNull CustomDataStorage storage) throws Exception {
+    public static void testVisit(@NotNull CustomDataStorage storage, boolean saveNodes) throws Exception {
         storage.init();
 
         var node = Samples.mapNode();
-        storage.saveData(KEY_1, node);
-        storage.saveData(KEY_2, node);
-        storage.saveData(KEY_3, node);
+
+        if (saveNodes) {
+            storage.saveData(KEY_1, node);
+            storage.saveData(KEY_2, node);
+            storage.saveData(KEY_3, node);
+        }
 
         { // test CustomDataStorage#visitData
             var expectedKeys = new HashSet<>(Arrays.asList(KEY_1, KEY_2));

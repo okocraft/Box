@@ -120,7 +120,7 @@ class SQLiteStorageCommonTest {
             try {
                 var metaTable = new MetaTable(db);
                 metaTable.init();
-                CustomDataStorageTest.testVisit(new CustomDataTable(db, metaTable));
+                CustomDataStorageTest.testVisit(new CustomDataTable(db, metaTable), true);
             } finally {
                 db.shutdown();
             }
@@ -151,7 +151,7 @@ class SQLiteStorageCommonTest {
         void testVisit(@TempDir Path dir) throws Exception {
             var db = setupDatabase(dir);
             try {
-                CustomDataStorageTest.testVisit(new LegacyCustomDataTable(db, true));
+                CustomDataStorageTest.testVisit(new LegacyCustomDataTable(db, true), true);
             } finally {
                 db.shutdown();
             }

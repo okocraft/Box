@@ -54,7 +54,7 @@ class YamlStorageCommonTest {
 
         @Test
         void testVisit(@TempDir Path dir) throws Exception {
-            CustomDataStorageTest.testVisit(new YamlCustomDataStorage(dir));
+            CustomDataStorageTest.testVisit(new YamlCustomDataStorage(dir), true);
         }
 
     }
