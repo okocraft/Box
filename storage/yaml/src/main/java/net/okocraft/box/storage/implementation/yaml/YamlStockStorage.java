@@ -59,9 +59,9 @@ class YamlStockStorage implements StockStorage {
             for (var stock : stockData) {
                 if (0 != stock.amount()) {
                     writer.write('\'');
-                    writer.write(itemIdRemapper.applyAsInt(stock.itemId()));
+                    writer.write(Integer.toString(itemIdRemapper.applyAsInt(stock.itemId())));
                     writer.write("': ");
-                    writer.write(stock.amount());
+                    writer.write(Integer.toString(stock.amount()));
                     writer.newLine();
                 }
             }
