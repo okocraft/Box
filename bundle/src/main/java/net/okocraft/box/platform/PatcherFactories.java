@@ -10,7 +10,7 @@ import static net.okocraft.box.api.util.MCDataVersion.CURRENT;
 import static net.okocraft.box.api.util.MCDataVersion.MC_1_19;
 import static net.okocraft.box.api.util.MCDataVersion.MC_1_19_4;
 import static net.okocraft.box.api.util.MCDataVersion.MC_1_20_3;
-import static net.okocraft.box.api.util.MCDataVersion.MC_1_21;
+import static net.okocraft.box.api.util.MCDataVersion.MC_1_20_4;
 
 final class PatcherFactories {
 
@@ -27,7 +27,7 @@ final class PatcherFactories {
             builder.append(LegacyVersionPatches::shortGrassName);
         }
 
-        if (dataVer.isBefore(MC_1_21) && CURRENT.isAfterOrSame(MC_1_21)) {
+        if (dataVer.isBefore(MC_1_20_4) && CURRENT.isAfterOrSame(MC_1_20_4)) { // TODO: back to MC_1_21 after Minecraft 1.21 released
             builder.append(LegacyVersionPatches::potionName);
         }
 
