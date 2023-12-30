@@ -132,12 +132,12 @@ public class YamlCustomDataStorage implements CustomDataStorage {
 
         @Override
         public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
-            throw new IOException();
+            throw exc;
         }
 
         @Override
-        public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-            throw new IOException();
+        public FileVisitResult postVisitDirectory(Path dir, IOException exc) {
+            return FileVisitResult.CONTINUE;
         }
     }
 }
