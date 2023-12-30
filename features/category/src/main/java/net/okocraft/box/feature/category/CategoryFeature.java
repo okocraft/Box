@@ -40,8 +40,6 @@ public class CategoryFeature extends AbstractBoxFeature implements Reloadable {
 
     @Override
     public void enable(@NotNull FeatureContext.Enabling context) throws IOException {
-        this.categoryRegistry.register("custom-items", this.customItemCategory);
-
         try (var file = new CategoryFile(this.filepath, this.categoryRegistry, BoxAPI.api().getItemManager())) {
             file.loadFile()
                     .convertIfUnknownVersion()
@@ -50,6 +48,7 @@ public class CategoryFeature extends AbstractBoxFeature implements Reloadable {
                     .addNewDefaultItemsIfNeeded();
         }
 
+        this.categoryRegistry.register("custom-items", this.customItemCategory);
         this.customItemListener.register(CUSTOM_ITEM_LISTENER_KEY);
         this.itemInfoEventListener.register(ITEM_INFO_COLLECT_EVENT_LISTENER_KEY);
     }
