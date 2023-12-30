@@ -6,6 +6,7 @@ import net.okocraft.box.storage.implementation.database.database.Database;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.sql.ResultSet;
@@ -19,6 +20,14 @@ public class LegacyCustomDataTable extends AbstractCustomDataTable {
     @Override
     public void init() {
         // Not needed to create the table and index
+    }
+
+    @Override
+    protected byte @NotNull [] toBytes(@NotNull MapNode node) throws Exception {
+        try (var out = new ByteArrayOutputStream()) {
+            YamlFormat.DEFAULT.save(node, out);
+            return out.toByteArray();
+        }
     }
 
     protected @NotNull MapNode readDataFromResultSet(@NotNull ResultSet resultSet) throws Exception {

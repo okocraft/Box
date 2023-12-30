@@ -7,6 +7,7 @@ import net.okocraft.box.storage.implementation.database.database.Database;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.function.BiConsumer;
@@ -83,14 +84,17 @@ public class CustomDataTable extends AbstractCustomDataTable {
         }
     }
 
+    @Override
+    protected byte @NotNull [] toBytes(@NotNull MapNode node) throws Exception {
+        try (var out = new ByteArrayOutputStream()) {
+            BinaryFormat.DEFAULT.save(node, out);
+            return out.toByteArray();
+        }
+    }
+
     protected @NotNull MapNode readDataFromResultSet(@NotNull ResultSet resultSet) throws Exception {
         try (var in = new ByteArrayInputStream(readBytesFromResultSet(resultSet, "data"))) {
-            if (BinaryFormat.DEFAULT.load(in) instanceof MapNode mapNode) {
-                return mapNode;
-            } else {
-                // TODO: logging
-                return MapNode.create();
-            }
+            return BinaryFormat.DEFAULT.load(in) instanceof MapNode mapNode ? mapNode : MapNode.create();
         }
     }
 

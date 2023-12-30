@@ -1,6 +1,5 @@
 package net.okocraft.box.storage.implementation.database.table;
 
-import com.github.siroshun09.configapi.core.file.java.binary.BinaryFormat;
 import com.github.siroshun09.configapi.core.node.MapNode;
 import net.kyori.adventure.key.Key;
 import net.okocraft.box.storage.api.model.data.CustomDataStorage;
@@ -10,7 +9,6 @@ import net.okocraft.box.storage.implementation.database.database.sqlite.SQLiteDa
 import net.okocraft.box.storage.implementation.database.schema.TableSchema;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.ByteArrayOutputStream;
 import java.sql.ResultSet;
 import java.util.function.BiConsumer;
 
@@ -45,15 +43,10 @@ public abstract class AbstractCustomDataTable extends AbstractTable implements C
                 statement.execute();
             }
         } else {
-            byte[] data;
-            try (var out = new ByteArrayOutputStream()) {
-                BinaryFormat.DEFAULT.save(mapNode, out);
-                data = out.toByteArray();
-            }
             try (var connection = database.getConnection();
                  var statement = prepareStatement(connection, this.insertOrUpdateDataStatement())) {
                 statement.setString(1, key.asString());
-                this.writeBytesToStatement(statement, 2, data);
+                this.writeBytesToStatement(statement, 2, this.toBytes(mapNode));
                 statement.execute();
             }
         }
@@ -96,6 +89,8 @@ public abstract class AbstractCustomDataTable extends AbstractTable implements C
             throw new UnsupportedOperationException();
         }
     }
+
+    protected abstract byte @NotNull [] toBytes(@NotNull MapNode node) throws Exception;
 
     protected abstract @NotNull MapNode readDataFromResultSet(@NotNull ResultSet resultSet) throws Exception;
 
