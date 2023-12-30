@@ -20,6 +20,7 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class BoxInventoryHolder implements InventoryHolder {
@@ -141,6 +142,8 @@ public class BoxInventoryHolder implements InventoryHolder {
     }
 
     private void renderButtons() {
+        Arrays.fill(this.icons, null);
+
         for (var button : menu.getButtons(session)) {
             int slot = button.getSlot();
 
