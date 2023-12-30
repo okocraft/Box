@@ -27,8 +27,8 @@ public class AutoStoreCommand extends AbstractCommand {
     private static final String DEFAULT_HELP = """
             <aqua>/box autostore [on/off]<dark_gray> - <gray>Switches on/off auto-store
             <aqua>/box autostore [all/item]<dark_gray> - <gray>Changes auto-store mode
-            <aqua>/box autostore item <item> [on/off]<dark_gray> - <gray>Changes the auto-store setting of the item
-            <aqua>/box autostore direct [on/off]<dark_gray> - <gray>Switches auto-store setting to store item drops directly.""";
+            <aqua>/box autostore item <item> [on/off]<dark_gray> - <gray>Toggles the auto-store setting of the item
+            <aqua>/box autostore direct [on/off]<dark_gray> - <gray>Toggles auto-store setting to store drops directly""";
 
     private final AutoStoreSettingProvider container;
     private final MiniMessageBase loadErrorMessage;
