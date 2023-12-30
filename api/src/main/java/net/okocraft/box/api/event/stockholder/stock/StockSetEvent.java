@@ -31,30 +31,30 @@ public class StockSetEvent extends StockEvent {
      * @return the amount of stock before set
      */
     public int getPreviousAmount() {
-        return previousAmount;
+        return this.previousAmount;
     }
 
     @Override
     public @NotNull String toDebugLog() {
         return "StockSetEvent{" +
-                "stockholderUuid=" + getStockHolder().getUUID() +
-                ", stockHolderName=" + getStockHolder().getName() +
-                ", stockHolderClass=" + getStockHolder().getClass().getSimpleName() +
-                ", item=" + getItem() +
-                ", previousAmount=" + previousAmount +
-                ", amount=" + getAmount() +
-                ", cause=" + getCause() +
+                "stockholderUuid=" + this.getStockHolder().getUUID() +
+                ", stockHolderName=" + this.getStockHolder().getName() +
+                ", stockHolderClass=" + this.getStockHolder().getClass().getSimpleName() +
+                ", item=" + this.getItem().getPlainName() +
+                ", previousAmount=" + this.previousAmount +
+                ", amount=" + this.getAmount() +
+                ", cause=" + this.getCause() +
                 '}';
     }
 
     @Override
     public String toString() {
         return "StockSetEvent{" +
-                "stockholder=" + getStockHolder() +
-                ", item=" + getItem() +
-                ", previousAmount=" + previousAmount +
-                ", amount=" + getAmount() +
-                ", cause=" + getCause() +
+                "stockholder=" + this.getStockHolder() +
+                ", item=" + this.getItem() +
+                ", previousAmount=" + this.previousAmount +
+                ", amount=" + this.getAmount() +
+                ", cause=" + this.getCause() +
                 '}';
     }
 }

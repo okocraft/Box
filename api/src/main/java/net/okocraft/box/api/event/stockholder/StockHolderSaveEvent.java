@@ -17,10 +17,4 @@ public class StockHolderSaveEvent extends StockHolderEvent {
         super(stockHolder);
     }
 
-    @Override
-    public String toString() {
-        return "StockHolderSaveEvent{" +
-                "stockholder=" + getStockHolder() +
-                "}";
-    }
 }

@@ -28,15 +28,22 @@ public class StockHolderEvent extends BoxEvent {
      * @return the stockholder
      */
     public @NotNull StockHolder getStockHolder() {
-        return stockHolder;
+        return this.stockHolder;
     }
 
     @Override
     public @NotNull String toDebugLog() {
         return this.getClass().getSimpleName() + "{" +
-                "uuid=" + getStockHolder().getUUID() +
-                ", name=" + getStockHolder().getName() +
-                ", class=" + getStockHolder().getClass().getSimpleName() +
+                "uuid=" + this.getStockHolder().getUUID() +
+                ", name=" + this.getStockHolder().getName() +
+                ", class=" + this.getStockHolder().getClass().getSimpleName() +
+                "}";
+    }
+
+    @Override
+    public String toString() {
+        return this.getClass().getSimpleName() + "{" +
+                "stockHolder=" + this.getStockHolder() +
                 "}";
     }
 }

@@ -7,6 +7,7 @@ import org.jetbrains.annotations.UnmodifiableView;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.stream.Collectors;
 
 /**
  * A {@link StockHolderResetEvent} called when {@link StockHolder} has reset.
@@ -32,13 +33,24 @@ public class StockHolderResetEvent extends StockHolderEvent {
      * @return {@link StockHolder#toStockDataCollection()} before reset
      */
     public @NotNull @UnmodifiableView Collection<StockData> getStockDataBeforeReset() {
-        return stockDataBeforeReset;
+        return this.stockDataBeforeReset;
+    }
+
+    @Override
+    public @NotNull String toDebugLog() {
+        return "StockHolderResetEvent{" +
+                "uuid=" + this.getStockHolder().getUUID() +
+                ", name=" + this.getStockHolder().getName() +
+                ", class=" + this.getStockHolder().getClass().getSimpleName() +
+                ", stockDataBeforeReset={" + this.stockDataBeforeReset.stream().map(data -> data.itemId() + "=" + data.amount()).collect(Collectors.joining(",")) + "}" +
+                "}";
     }
 
     @Override
     public String toString() {
         return "StockHolderResetEvent{" +
-                "stockholder=" + getStockHolder() +
+                "stockholder=" + this.getStockHolder() +
+                ", stockDataBeforeReset=" + this.stockDataBeforeReset +
                 "}";
     }
 }

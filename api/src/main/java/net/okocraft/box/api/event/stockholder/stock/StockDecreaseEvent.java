@@ -32,30 +32,30 @@ public class StockDecreaseEvent extends StockEvent {
      * @return the amount of decreased
      */
     public int getDecrements() {
-        return decrements;
+        return this.decrements;
     }
 
     @Override
     public @NotNull String toDebugLog() {
         return "StockDecreaseEvent{" +
-                "stockholderUuid=" + getStockHolder().getUUID() +
-                ", stockHolderName=" + getStockHolder().getName() +
-                ", stockHolderClass=" + getStockHolder().getClass().getSimpleName() +
-                ", item=" + getItem() +
-                ", decrements=" + decrements +
-                ", amount=" + getAmount() +
-                ", cause=" + getCause() +
+                "stockholderUuid=" + this.getStockHolder().getUUID() +
+                ", stockHolderName=" + this.getStockHolder().getName() +
+                ", stockHolderClass=" + this.getStockHolder().getClass().getSimpleName() +
+                ", item=" + this.getItem().getPlainName() +
+                ", decrements=" + this.decrements +
+                ", amount=" + this.getAmount() +
+                ", cause=" + this.getCause() +
                 '}';
     }
 
     @Override
     public String toString() {
         return "StockDecreaseEvent{" +
-                "stockholder=" + getStockHolder() +
-                ", item=" + getItem() +
-                ", decrements=" + decrements +
-                ", amount=" + getAmount() +
-                ", cause=" + getCause() +
+                "stockholder=" + this.getStockHolder() +
+                ", item=" + this.getItem() +
+                ", decrements=" + this.decrements +
+                ", amount=" + this.getAmount() +
+                ", cause=" + this.getCause() +
                 '}';
     }
 }

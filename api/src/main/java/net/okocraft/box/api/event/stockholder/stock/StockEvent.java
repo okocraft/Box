@@ -40,7 +40,7 @@ public class StockEvent extends StockHolderEvent {
      * @return the item of the stock
      */
     public @NotNull BoxItem getItem() {
-        return item;
+        return this.item;
     }
 
     /**
@@ -49,7 +49,7 @@ public class StockEvent extends StockHolderEvent {
      * @return the current amount of the stock
      */
     public int getAmount() {
-        return amount;
+        return this.amount;
     }
 
     /**
@@ -59,7 +59,7 @@ public class StockEvent extends StockHolderEvent {
      * @see Cause
      */
     public @NotNull Cause getCause() {
-        return cause;
+        return this.cause;
     }
 
     /**
