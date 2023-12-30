@@ -34,5 +34,6 @@ dependencies {
     testImplementation(libs.paper)
     testImplementation(libs.annotations)
     testImplementation(libs.fastutil)
+    testRuntimeOnly(libs.slf4j.simple)
     testRuntimeOnly(libs.snakeyaml)
 }
