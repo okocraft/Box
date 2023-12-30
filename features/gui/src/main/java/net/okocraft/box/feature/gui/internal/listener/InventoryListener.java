@@ -16,16 +16,13 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 public class InventoryListener implements Listener {
 
-    private final Set<UUID> clickProcessing = ConcurrentHashMap.newKeySet();
-    private final Map<UUID, Long> lastClickTime = new ConcurrentHashMap<>();
+    private static final long CLICK_COOLDOWN = TimeUnit.MILLISECONDS.toNanos(150);
+
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onClick(@NotNull InventoryClickEvent event) {
@@ -39,29 +36,20 @@ public class InventoryListener implements Listener {
 
         var clicked = event.getClickedInventory();
 
-        if (clicked == null) {
+        if (clicked == null || System.nanoTime() - topHolder.getLastClickTime() < CLICK_COOLDOWN) {
             return;
         }
 
-        var uuid = event.getWhoClicked().getUniqueId();
+        topHolder.updateLastClickTime();
 
-        if (clickProcessing.contains(uuid)) {
+        if (!topHolder.tryStartClickProcess()) {
             return;
         }
-
-        var lastClickTime = this.lastClickTime.get(uuid);
-
-        if (lastClickTime != null && System.currentTimeMillis() - lastClickTime < 150) {
-            return;
-        }
-
-        this.clickProcessing.add(uuid);
-        this.lastClickTime.put(uuid, System.currentTimeMillis());
 
         Runnable task;
 
         if (clicked.getHolder() instanceof BoxInventoryHolder holder) {
-            task = () -> holder.processClick(event.getSlot(), event.getClick(), clickProcessing::remove);
+            task = () -> holder.processClick(event.getSlot(), event.getClick());
         } else {
             task = () -> openCategoryMenu(topHolder, clicked.getItem(event.getSlot()));
         }
@@ -73,26 +61,32 @@ public class InventoryListener implements Listener {
         var boxItem = item != null ? BoxAPI.api().getItemManager().getBoxItem(item).orElse(null) : null;
 
         if (boxItem == null) {
+            holder.finishClickProcess();
             return;
         }
 
         var category = findCategory(boxItem).orElse(null);
 
         if (category == null) {
+            holder.finishClickProcess();
             return;
         }
 
         var menu = new CategoryMenu(category);
         int page = category.getItems().indexOf(boxItem) / menu.getIconsPerPage() + 1;
+        var session = holder.getSession();
 
         if (holder.getMenu() instanceof CategoryMenu categoryMenu &&
                 categoryMenu.getCategory() == category &&
-                PaginatedMenu.getCurrentPage(holder.getSession()) == page) { // Same menu, and same page.
+                PaginatedMenu.getCurrentPage(session) == page) { // Same menu, and same page.
+            holder.finishClickProcess();
             return;
         }
 
-        holder.getSession().putData(PaginatedMenu.CURRENT_PAGE_KEY, page);
-        MenuOpener.open(menu, holder.getSession(), clickProcessing::remove);
+        session.putData(PaginatedMenu.CURRENT_PAGE_KEY, page);
+        session.rememberMenu(holder.getMenu());
+        MenuOpener.open(menu, holder.getSession());
+        // No need to finish click process because the menu with new holder will open
     }
 
     private @NotNull Optional<Category> findCategory(@NotNull BoxItem item) {

@@ -31,7 +31,7 @@ public record BackOrCloseButton(int slot) implements Button {
     @Override
     public @NotNull ClickResult onClick(@NotNull PlayerSession session, @NotNull ClickType clickType) {
         if (session.hasPreviousMenu()) {
-            return ClickResult.changeMenu(session.backMenu());
+            return ClickResult.BACK_MENU;
         } else {
             return CloseButton.close(session);
         }

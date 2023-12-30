@@ -11,6 +11,7 @@ public sealed interface ClickResult permits ClickResult.ChangeMenu, ClickResult.
     ClickResult UPDATE_ICONS = new SimpleClickResult("update_menu");
     ClickResult UPDATE_BUTTON = new SimpleClickResult("update_button");
     ClickResult NO_UPDATE_NEEDED = new SimpleClickResult("no_update_needed");
+    ClickResult BACK_MENU = new SimpleClickResult("back_menu");
 
     static @NotNull ClickResult changeMenu(@NotNull Menu menu) {
         return new ChangeMenu(menu);

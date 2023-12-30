@@ -20,8 +20,7 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.UUID;
-import java.util.function.Consumer;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class BoxInventoryHolder implements InventoryHolder {
 
@@ -37,6 +36,8 @@ public class BoxInventoryHolder implements InventoryHolder {
     private final Inventory inventory;
     private final ItemStack[] icons;
     private final Int2ObjectMap<Button> buttonMap;
+    private final AtomicBoolean isClickProcessing = new AtomicBoolean(false);
+    private long lastClickTime;
 
     public BoxInventoryHolder(@NotNull Menu menu, @NotNull PlayerSession session) {
         this.menu = menu;
@@ -65,25 +66,40 @@ public class BoxInventoryHolder implements InventoryHolder {
         return menu;
     }
 
-    public void processClick(int slot, @NotNull ClickType clickType, @NotNull Consumer<UUID> onClickProcessed) {
+    public long getLastClickTime() {
+        return this.lastClickTime;
+    }
+
+    public void updateLastClickTime() {
+        this.lastClickTime = System.nanoTime();
+    }
+
+    public boolean tryStartClickProcess() {
+        return this.isClickProcessing.compareAndSet(false, true);
+    }
+
+    public void finishClickProcess() {
+        this.isClickProcessing.set(false);
+    }
+
+    public void processClick(int slot, @NotNull ClickType clickType) {
         try {
-            processClick0(slot, clickType, onClickProcessed);
+            processClick0(slot, clickType);
         } catch (Throwable e) {
             var viewer = session.getViewer();
             ERROR.apply(e).source(this.session.getMessageSource()).send(viewer);
             BoxLogger.logger().error("An error occurred while processing a click event ({})", viewer.getName(), e);
 
-            BoxAPI.api().getScheduler().runEntityTask(viewer, () -> {
-                viewer.closeInventory();
-                onClickProcessed.accept(viewer.getUniqueId());
-            });
+            BoxAPI.api().getScheduler().runEntityTask(viewer, viewer::closeInventory);
+            this.finishClickProcess();
         }
     }
 
-    private void processClick0(int slot, @NotNull ClickType clickType, @NotNull Consumer<UUID> onClickProcessed) {
+    private void processClick0(int slot, @NotNull ClickType clickType) {
         var button = buttonMap.get(slot);
 
         if (button == null) {
+            this.finishClickProcess();
             return;
         }
 
@@ -92,33 +108,39 @@ public class BoxInventoryHolder implements InventoryHolder {
         BoxAPI.api().getEventManager().call(event);
 
         if (event.isCancelled()) {
+            this.finishClickProcess();
             return;
         }
 
         var result = button.onClick(session, clickType);
 
         if (result instanceof ClickResult.WaitingTask waitingTask) {
-            waitingTask.onCompleted(r -> processClickResult(button, r, onClickProcessed));
+            waitingTask.onCompleted(r -> processClickResult(button, r));
         } else {
-            processClickResult(button, result, onClickProcessed);
+            processClickResult(button, result);
         }
     }
 
-    private void processClickResult(@NotNull Button button, @NotNull ClickResult clickResult, @NotNull Consumer<UUID> onClickProcessed) {
+    private void processClickResult(@NotNull Button button, @NotNull ClickResult clickResult) {
         if (clickResult instanceof ClickResult.WaitingTask) {
             throw new IllegalStateException("Nested waiting task");
         }
 
-        if (clickResult == ClickResult.UPDATE_ICONS) {
+        if (clickResult == ClickResult.NO_UPDATE_NEEDED) {
+            this.finishClickProcess();
+        } else if (clickResult == ClickResult.UPDATE_ICONS) {
             renderButtons();
             inventory.setContents(icons);
-            onClickProcessed.accept(session.getViewer().getUniqueId());
+            this.finishClickProcess();
         } else if (clickResult == ClickResult.UPDATE_BUTTON) {
             inventory.setItem(button.getSlot(), button.createIcon(session));
-            onClickProcessed.accept(session.getViewer().getUniqueId());
+            this.finishClickProcess();
+        } else if (clickResult == ClickResult.BACK_MENU) {
+            MenuOpener.open(this.session.backMenu(), this.session);
         } else if (clickResult instanceof ClickResult.ChangeMenu changeMenu) {
-            session.rememberMenu(menu);
-            MenuOpener.open(changeMenu.menu(), session, onClickProcessed);
+            this.session.rememberMenu(this.menu);
+            MenuOpener.open(changeMenu.menu(), this.session);
+            // No need to finish click process because the menu with new holder will open
         }
     }
 
