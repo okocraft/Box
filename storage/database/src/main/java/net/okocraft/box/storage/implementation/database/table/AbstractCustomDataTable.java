@@ -57,7 +57,7 @@ public abstract class AbstractCustomDataTable extends AbstractTable implements C
     public void visitData(@NotNull String namespace, @NotNull BiConsumer<Key, MapNode> consumer) throws Exception {
         try (var connection = database.getConnection();
              var statement = prepareStatement(connection, "SELECT `key`, `data` FROM `%table%` WHERE `key` LIKE ?")) {
-            statement.setString(1, namespace);
+            statement.setString(1, namespace + ":%");
 
             try (var resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
