@@ -1,6 +1,7 @@
 package net.okocraft.box.feature.gui.api.util;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -14,12 +15,15 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import java.util.regex.Pattern;
 
 public class ItemEditor<M extends ItemMeta> {
 
     private static final Style DEFAULT_STYLE = Style.style().color(NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, TextDecoration.State.FALSE).build();
+    private static final Pattern LINE_SEPARATORS = Pattern.compile("\\r\\n|\\n|\\r");
 
     @Contract("-> new")
     public static @NotNull ItemEditor<ItemMeta> create() {
@@ -75,26 +79,43 @@ public class ItemEditor<M extends ItemMeta> {
     }
 
     public @NotNull ItemEditor<M> loreLines(@NotNull Component lines) {
-        if (lines.children().isEmpty()) {
-           return this.loreLine(lines);
+        var builder = new LineBuilder();
+
+        this.buildLines(lines, builder);
+
+        if (builder.hasBuildingLine()) {
+            builder.buildLine(this::loreLine);
         }
 
-        var root = lines.children(Collections.emptyList());
-        var builder = Component.text();
+        return this;
+    }
 
-        builder.append(root.style(Style.empty()));
+    private void buildLines(@NotNull Component self, @NotNull ItemEditor.LineBuilder builder) {
+        this.splitContent(self, builder);
 
-        for (var child : lines.children()) {
-            if (child.equals(Component.newline())) {
-                this.loreLine(builder.build().applyFallbackStyle(root.style()));
-                builder = Component.text();
-            } else {
-                builder.append(child);
+        if (!self.children().isEmpty()) {
+            for (Component child : self.children()) {
+                this.buildLines(child, builder);
             }
         }
+    }
 
-        this.loreLine(builder.build().applyFallbackStyle(root.style()));
-        return this;
+    private void splitContent(Component component, @NotNull ItemEditor.LineBuilder builder) {
+        if (!(component instanceof TextComponent text)) {
+            builder.appendComponent(component);
+            return;
+        }
+
+        var lines = LINE_SEPARATORS.split(text.content());
+
+        if (lines.length == 1) {
+            builder.appendComponent(Component.text(lines[0], text.style()));
+        } else {
+            for (var line : lines) {
+                builder.appendComponent(Component.text(line, text.style()));
+                builder.buildLine(this::loreLine);
+            }
+        }
     }
 
     public @NotNull ItemEditor<M> loreLinesIf(boolean state, @NotNull Supplier<Component> lines) {
@@ -152,5 +173,26 @@ public class ItemEditor<M extends ItemMeta> {
             this.lore = new ArrayList<>();
         }
         return this.lore;
+    }
+
+    private static class LineBuilder {
+
+        private TextComponent.Builder builder = Component.text();
+
+        private void appendComponent(@NotNull Component component) {
+            if (this.builder == null) {
+                this.builder = Component.text();
+            }
+            this.builder.append(component);
+        }
+
+        private boolean hasBuildingLine() {
+            return this.builder != null;
+        }
+
+        private void buildLine(@NotNull Consumer<Component> consumer) {
+            consumer.accept(Objects.requireNonNull(this.builder).build());
+            this.builder = null;
+        }
     }
 }
