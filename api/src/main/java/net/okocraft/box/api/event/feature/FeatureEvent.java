@@ -65,14 +65,14 @@ public class FeatureEvent extends BoxEvent {
     public enum Type {
 
         /**
-         * The feature was registered
+         * The feature was enabled
          */
-        REGISTER,
+        ENABLE,
 
         /**
-         * The feature was unregistered
+         * The feature was disabled
          */
-        UNREGISTER,
+        DISABLE,
 
         /**
          * The feature was reloaded

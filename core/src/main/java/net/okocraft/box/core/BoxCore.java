@@ -281,7 +281,7 @@ public class BoxCore implements BoxAPI {
 
         for (var feature : features) {
             initializeFeature(feature, featureMap, context);
-            this.eventManager.call(new FeatureEvent(feature, FeatureEvent.Type.REGISTER));
+            this.eventManager.call(new FeatureEvent(feature, FeatureEvent.Type.ENABLE));
         }
 
         this.boxFeatureProvider = new BoxFeatureProvider(Collections.unmodifiableMap(featureMap));
@@ -328,7 +328,7 @@ public class BoxCore implements BoxAPI {
                 continue;
             }
 
-            this.eventManager.call(new FeatureEvent(feature, FeatureEvent.Type.UNREGISTER));
+            this.eventManager.call(new FeatureEvent(feature, FeatureEvent.Type.DISABLE));
             BoxLogger.logger().info("Feature '{}' has been disabled.", feature.getName());
         }
     }
