@@ -25,6 +25,7 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.UnaryOperator;
 
 public class BoxItemManager implements ItemManager {
 
@@ -188,5 +189,10 @@ public class BoxItemManager implements ItemManager {
     @Override
     public @NotNull ItemVersion getCurrentVersion() {
         return this.defaultItemProvider.version();
+    }
+
+    @Override
+    public @NotNull UnaryOperator<String> getItemNameConverter(@NotNull ItemVersion sourceVersion) {
+        return this.defaultItemProvider.itemNamePatcherFactory().create(sourceVersion)::renameIfNeeded;
     }
 }

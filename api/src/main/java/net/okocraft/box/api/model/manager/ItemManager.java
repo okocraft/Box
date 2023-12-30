@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.UnaryOperator;
 
 /**
  * An interface to manage {@link BoxItem}s.
@@ -132,4 +133,12 @@ public interface ItemManager {
      */
     @NotNull ItemVersion getCurrentVersion();
 
+    /**
+     * Get the {@link UnaryOperator} that converts the default item name
+     * from the specified {@link ItemVersion} to the current {@link ItemVersion}.
+     *
+     * @param sourceVersion the version of item names to be converted
+     * @return the {@link UnaryOperator} that converts the default item name
+     */
+    @NotNull UnaryOperator<String> getItemNameConverter(@NotNull ItemVersion sourceVersion);
 }
