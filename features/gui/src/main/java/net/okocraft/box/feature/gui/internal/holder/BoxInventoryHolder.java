@@ -126,22 +126,18 @@ public class BoxInventoryHolder implements InventoryHolder {
             throw new IllegalStateException("Nested waiting task");
         }
 
-        if (clickResult == ClickResult.NO_UPDATE_NEEDED) {
-            this.finishClickProcess();
-        } else if (clickResult == ClickResult.UPDATE_ICONS) {
+        if (clickResult == ClickResult.UPDATE_ICONS) {
             renderButtons();
             inventory.setContents(icons);
-            this.finishClickProcess();
         } else if (clickResult == ClickResult.UPDATE_BUTTON) {
             inventory.setItem(button.getSlot(), button.createIcon(session));
-            this.finishClickProcess();
         } else if (clickResult == ClickResult.BACK_MENU) {
             MenuOpener.open(this.session.backMenu(), this.session);
         } else if (clickResult instanceof ClickResult.ChangeMenu changeMenu) {
             this.session.rememberMenu(this.menu);
             MenuOpener.open(changeMenu.menu(), this.session);
-            // No need to finish click process because the menu with new holder will open
         }
+        this.finishClickProcess();
     }
 
     private void renderButtons() {
