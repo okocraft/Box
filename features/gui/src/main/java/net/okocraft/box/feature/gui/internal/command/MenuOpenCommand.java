@@ -132,7 +132,7 @@ public class MenuOpenCommand extends AbstractCommand {
 
         //noinspection ConstantValue
         if (1 <= page && menu instanceof PaginatedMenu paginatedMenu) {
-            session.putData(PaginatedMenu.CURRENT_PAGE_KEY, Math.min(page, paginatedMenu.getMaxPage()));
+            paginatedMenu.setCurrentPage(session, Math.min(page, paginatedMenu.getMaxPage()));
         }
 
         openMenu(session, menu);

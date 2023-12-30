@@ -11,6 +11,7 @@ import net.okocraft.box.feature.craft.model.RecipeHolder;
 import net.okocraft.box.feature.gui.api.button.Button;
 import net.okocraft.box.feature.gui.api.buttons.BackOrCloseButton;
 import net.okocraft.box.feature.gui.api.menu.paginate.AbstractPaginatedMenu;
+import net.okocraft.box.feature.gui.api.menu.paginate.PaginatedMenu;
 import net.okocraft.box.feature.gui.api.session.PlayerSession;
 import org.jetbrains.annotations.NotNull;
 
@@ -25,7 +26,7 @@ public class RecipeSelectorMenu extends AbstractPaginatedMenu<BoxItemRecipe> {
     private final RecipeHolder recipeHolder;
 
     public RecipeSelectorMenu(@NotNull BoxItem item, @NotNull RecipeHolder recipeHolder) {
-        super(6, recipeHolder.getRecipeList());
+        super(6, recipeHolder.getRecipeList(), PaginatedMenu.createCurrentPageKey("recipe_selector:" + item.getPlainName()));
         this.item = item;
         this.recipeHolder = recipeHolder;
     }

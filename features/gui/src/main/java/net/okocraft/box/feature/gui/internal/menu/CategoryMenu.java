@@ -13,6 +13,7 @@ import net.okocraft.box.feature.gui.api.buttons.amount.DecreaseAmountButton;
 import net.okocraft.box.feature.gui.api.buttons.amount.IncreaseAmountButton;
 import net.okocraft.box.feature.gui.api.buttons.amount.UnitChangeButton;
 import net.okocraft.box.feature.gui.api.menu.paginate.AbstractPaginatedMenu;
+import net.okocraft.box.feature.gui.api.menu.paginate.PaginatedMenu;
 import net.okocraft.box.feature.gui.api.session.Amount;
 import net.okocraft.box.feature.gui.api.session.PlayerSession;
 import net.okocraft.box.feature.gui.internal.button.BoxItemButton;
@@ -66,7 +67,7 @@ public class CategoryMenu extends AbstractPaginatedMenu<BoxItem> {
     private final Category category;
 
     public CategoryMenu(@NotNull Category category) {
-        super(6, category.getItems());
+        super(6, category.getItems(), PaginatedMenu.createCurrentPageKey("category_" + category.hashCode())); // We cannot get the name of category, so using hash code instead...
         this.category = category;
     }
 

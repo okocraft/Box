@@ -7,15 +7,16 @@ import org.jetbrains.annotations.NotNull;
 
 public interface PaginatedMenu extends Menu {
 
-    TypedKey<Integer> CURRENT_PAGE_KEY = TypedKey.of(Integer.class, "current_page");
-
-    static int getCurrentPage(@NotNull PlayerSession session) {
-        Integer data = session.getData(CURRENT_PAGE_KEY);
-        return data != null ? data : 1;
+    static @NotNull TypedKey<Integer> createCurrentPageKey(@NotNull String menuName) {
+        return TypedKey.of(Integer.class, "current_page:" + menuName);
     }
 
     int getMaxPage();
 
     int getIconsPerPage();
+
+    int getCurrentPage(@NotNull PlayerSession session);
+
+    void setCurrentPage(@NotNull PlayerSession session, int page);
 
 }

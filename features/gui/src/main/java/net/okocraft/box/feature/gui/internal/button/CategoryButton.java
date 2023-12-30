@@ -40,6 +40,7 @@ public class CategoryButton implements Button {
 
     @Override
     public @NotNull ClickResult onClick(@NotNull PlayerSession session, @NotNull ClickType clickType) {
-        return ClickResult.changeMenu(menu);
+        this.menu.setCurrentPage(session, 1);
+        return ClickResult.changeMenu(this.menu);
     }
 }

@@ -9,7 +9,9 @@ import net.okocraft.box.feature.category.api.registry.CategoryRegistry;
 import net.okocraft.box.feature.gui.api.button.Button;
 import net.okocraft.box.feature.gui.api.buttons.CloseButton;
 import net.okocraft.box.feature.gui.api.menu.paginate.AbstractPaginatedMenu;
+import net.okocraft.box.feature.gui.api.menu.paginate.PaginatedMenu;
 import net.okocraft.box.feature.gui.api.session.PlayerSession;
+import net.okocraft.box.feature.gui.api.session.TypedKey;
 import net.okocraft.box.feature.gui.internal.button.CategoryButton;
 import net.okocraft.box.feature.gui.internal.lang.DisplayKeys;
 import org.jetbrains.annotations.NotNull;
@@ -20,6 +22,7 @@ import java.util.List;
 
 public class CategorySelectorMenu extends AbstractPaginatedMenu<Category> {
 
+    private static final TypedKey<Integer> CURRENT_PAGE_KEY = PaginatedMenu.createCurrentPageKey("category_selector");
     private static final List<Button> FOOTER;
     private static final Arg1<StockHolder> TITLE = Arg1.arg1(DisplayKeys.CATEGORY_SELECTOR_MENU_TITLE, Placeholder.component("name", holder -> Component.text(holder.getName())));
 
@@ -38,7 +41,7 @@ public class CategorySelectorMenu extends AbstractPaginatedMenu<Category> {
     }
 
     public CategorySelectorMenu() {
-        super(6, CategoryRegistry.get().values());
+        super(6, CategoryRegistry.get().values(), CURRENT_PAGE_KEY);
     }
 
     @Override
