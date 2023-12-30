@@ -23,20 +23,7 @@ public interface StockEventCaller {
     @SuppressWarnings("unused")
     @Contract(value = "_ -> new", pure = true)
     static @NotNull StockEventCaller createDefault(@NotNull AsyncEventCaller<BoxEvent> eventCaller) {
-        return new DefaultStockEventCallers.Default(eventCaller);
-    }
-
-    /**
-     * Creates a {@link StockEventCaller} that passes a specified {@link StockHolderWrapper} to {@link StockEvent}.
-     *
-     * @param wrapper     a {@link StockHolderWrapper} that is passed to {@link StockEvent}
-     * @param eventCaller a {@link AsyncEventCaller} to call {@link StockEvent}s
-     * @return a new {@link StockEventCaller}
-     */
-    @SuppressWarnings("unused")
-    @Contract(value = "_, _ -> new", pure = true)
-    static @NotNull StockEventCaller useWrapper(@NotNull AsyncEventCaller<BoxEvent> eventCaller, @NotNull StockHolderWrapper wrapper) {
-        return new DefaultStockEventCallers.UsingWrapper(eventCaller, wrapper);
+        return new DefaultStockEventCaller(eventCaller);
     }
 
     /**
