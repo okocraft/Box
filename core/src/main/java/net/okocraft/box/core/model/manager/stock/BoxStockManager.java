@@ -21,6 +21,7 @@ import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.core.model.loader.LoadingPersonalStockHolder;
 import net.okocraft.box.core.model.loader.state.ChangeState;
 import net.okocraft.box.core.model.stock.StockHolderFactory;
+import net.okocraft.box.storage.api.model.stock.PartialSavingStockStorage;
 import net.okocraft.box.storage.api.model.stock.StockStorage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.VisibleForTesting;
@@ -116,6 +117,14 @@ public class BoxStockManager implements StockManager {
 
         this.loaderMap.values().forEach(this::closeLoader);
         this.loaderMap.clear();
+
+        if (this.stockStorage instanceof PartialSavingStockStorage storage) {
+            try {
+                storage.cleanupZeroStockData();
+            } catch (Exception e) {
+                BoxLogger.logger().error("Failed to clean up stock data.", e);
+            }
+        }
     }
 
     private void saveChangesAndCleanupOffline() {
