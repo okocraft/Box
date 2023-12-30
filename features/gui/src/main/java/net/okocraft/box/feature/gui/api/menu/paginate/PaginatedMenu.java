@@ -11,7 +11,7 @@ public interface PaginatedMenu extends Menu {
 
     static int getCurrentPage(@NotNull PlayerSession session) {
         Integer data = session.getData(CURRENT_PAGE_KEY);
-        return data != null ? data : 0;
+        return data != null ? data : 1;
     }
 
     int getMaxPage();
