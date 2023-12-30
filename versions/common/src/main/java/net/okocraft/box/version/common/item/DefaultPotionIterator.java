@@ -55,7 +55,7 @@ class DefaultPotionIterator extends DefaultItemIterator {
 
     private @NotNull DefaultItem createPotion(@NotNull Material material, @NotNull PotionType type) {
         var name = ItemNameGenerator.keys(material, type);
-        var potion = new ItemStack(material, 1);
+        var potion = new ItemStack(material);
 
         this.potionMeta.setBasePotionType(type);
         potion.setItemMeta(this.potionMeta);

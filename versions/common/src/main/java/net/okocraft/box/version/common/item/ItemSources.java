@@ -43,7 +43,7 @@ public final class ItemSources {
                 .map(enchantment -> {
                     var name = ItemNameGenerator.keys(Material.ENCHANTED_BOOK, enchantment);
 
-                    var book = new ItemStack(Material.ENCHANTED_BOOK, 0);
+                    var book = new ItemStack(Material.ENCHANTED_BOOK);
                     book.editMeta(EnchantmentStorageMeta.class, meta -> meta.addStoredEnchant(enchantment, enchantment.getMaxLevel(), false));
 
                     return new DefaultItem(name, book);
