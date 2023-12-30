@@ -14,7 +14,7 @@ public final class Paper_1_21 {
                 .append(
                         ItemSources.materials()
                                 .filter(ItemSources.NOT_GOAT_HORN)
-                                .filter(ItemSources.experimentalMaterialFilter(Bukkit.getWorlds().get(0)).negate())
+                                .filter(ItemSources.createEnabledItemFilter(Bukkit.getWorlds().get(0)))
                                 .map(ItemSources::toDefaultItem)
                 )
                 .append(ItemSources.potions())

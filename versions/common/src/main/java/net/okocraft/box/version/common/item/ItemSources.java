@@ -30,7 +30,7 @@ public final class ItemSources {
                 .filter(Predicate.not(material -> material.name().startsWith("LEGACY_")));
     }
 
-    public static @NotNull Predicate<Material> experimentalMaterialFilter(@NotNull World world) {
+    public static @NotNull Predicate<Material> createEnabledItemFilter(@NotNull World world) {
         return material -> material.isEnabledByFeature(world);
     }
 
