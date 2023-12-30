@@ -4,6 +4,7 @@ import net.okocraft.box.api.util.ItemNameGenerator;
 import net.okocraft.box.storage.api.util.item.DefaultItem;
 import org.bukkit.Material;
 import org.bukkit.Registry;
+import org.bukkit.World;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.FireworkMeta;
@@ -27,6 +28,10 @@ public final class ItemSources {
                 .filter(Predicate.not(Material::isAir))
                 .filter(Material::isItem)
                 .filter(Predicate.not(material -> material.name().startsWith("LEGACY_")));
+    }
+
+    public static @NotNull Predicate<Material> experimentalMaterialFilter(@NotNull World world) {
+        return material -> material.isEnabledByFeature(world);
     }
 
     public static @NotNull Stream<DefaultItem> potions() {
