@@ -1,6 +1,7 @@
 package net.okocraft.box.api.model.item;
 
 import net.okocraft.box.api.util.MCDataVersion;
+import net.okocraft.box.api.util.Version;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -10,44 +11,10 @@ import org.jetbrains.annotations.NotNull;
  * @param defaultItemVersion the version of the provider that generates {@link BoxDefaultItem}s
  */
 public record ItemVersion(@NotNull MCDataVersion dataVersion,
-                          int defaultItemVersion) implements Comparable<ItemVersion> {
-
-    /**
-     * Checks if this {@link ItemVersion} is after the specified {@link ItemVersion}.
-     *
-     * @param other the {@link ItemVersion} to compare
-     * @return {@code true} if this {@link ItemVersion} is after the specified {@link ItemVersion}, otherwise {@code false}
-     */
-    public boolean isAfter(@NotNull ItemVersion other) {
-        return 0 < this.compareTo(other);
-    }
-
-    /**
-     * Checks if this {@link ItemVersion} is same as the specified {@link ItemVersion}.
-     *
-     * @param other the {@link ItemVersion} to compare
-     * @return {@code true} if this {@link ItemVersion} is same as the specified {@link ItemVersion}, otherwise {@code false}
-     */
-    public boolean isSame(@NotNull ItemVersion other) {
-        return 0 == this.compareTo(other);
-    }
-
-    /**
-     * Checks if this {@link ItemVersion} is before the specified {@link ItemVersion}.
-     *
-     * @param other the {@link ItemVersion} to compare
-     * @return {@code true} if this {@link ItemVersion} is before the specified {@link ItemVersion}, otherwise {@code false}
-     */
-    public boolean isBefore(@NotNull ItemVersion other) {
-        return 0 > this.compareTo(other);
-    }
-
+                          int defaultItemVersion) implements Version<ItemVersion> {
     @Override
     public int compareTo(@NotNull ItemVersion other) {
-        if (this.dataVersion.isSame(other.dataVersion)) {
-            return Integer.compare(this.defaultItemVersion, other.defaultItemVersion);
-        }
-
-        return this.dataVersion.isAfter(other.dataVersion) ? 1 : -1;
+        int i = this.dataVersion.compareTo(other.dataVersion);
+        return i == 0 ? Integer.compare(this.defaultItemVersion, other.defaultItemVersion) : i;
     }
 }

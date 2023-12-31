@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
  * @param dataVersion the data version (<a href="https://minecraft.wiki/w/Data_version">Minecraft Wiki: Data version</a>)
  */
 @SuppressWarnings("unused")
-public record MCDataVersion(int dataVersion) {
+public record MCDataVersion(int dataVersion) implements Version<MCDataVersion> {
 
     /**
      * A {@link MCDataVersion} that represents the version of the server on which Box is currently running.
@@ -108,69 +108,9 @@ public record MCDataVersion(int dataVersion) {
         return new MCDataVersion(dataVersion);
     }
 
-    /**
-     * Checks if this {@link MCDataVersion} is before the given {@link MCDataVersion}.
-     *
-     * @param other the {@link MCDataVersion} to compare
-     * @return {@code true} if this {@link MCDataVersion} is before the given {@link MCDataVersion}, otherwise {@code false}
-     */
-    public boolean isBefore(@NotNull MCDataVersion other) {
-        return dataVersion < other.dataVersion;
-    }
-
-    /**
-     * Checks if this {@link MCDataVersion} is after the given {@link MCDataVersion}.
-     *
-     * @param other the {@link MCDataVersion} to compare
-     * @return {@code true} if this {@link MCDataVersion} is after the given {@link MCDataVersion}, otherwise {@code false}
-     */
-    public boolean isAfter(@NotNull MCDataVersion other) {
-        return dataVersion > other.dataVersion;
-    }
-
-    /**
-     * Checks if this {@link MCDataVersion} is same as the given {@link MCDataVersion}.
-     *
-     * @param other the {@link MCDataVersion} to compare
-     * @return {@code true} if this {@link MCDataVersion} is same as the given {@link MCDataVersion}, otherwise {@code false}
-     */
-    public boolean isSame(@NotNull MCDataVersion other) {
-        return dataVersion == other.dataVersion();
-    }
-
-    /**
-     * Checks if this {@link MCDataVersion} is the same as or earlier than the given {@link MCDataVersion}.
-     *
-     * @param other the {@link MCDataVersion} to compare
-     * @return {@code true} if this {@link MCDataVersion} is the same as or earlier than the given {@link MCDataVersion}, otherwise {@code false}
-     * @see #isBefore(MCDataVersion)
-     * @see #isSame(MCDataVersion)
-     */
-    public boolean isBeforeOrSame(@NotNull MCDataVersion other) {
-        return isBefore(other) || isSame(other);
-    }
-
-    /**
-     * Checks if this {@link MCDataVersion} is the same as or later than the given {@link MCDataVersion}.
-     *
-     * @param other the {@link MCDataVersion} to compare
-     * @return {@code true} if this {@link MCDataVersion} is the same as or later than the given {@link MCDataVersion}, otherwise {@code false}
-     * @see #isAfter(MCDataVersion)
-     * @see #isSame(MCDataVersion)
-     */
-    public boolean isAfterOrSame(@NotNull MCDataVersion other) {
-        return isAfter(other) || isSame(other);
-    }
-
-    /**
-     * Checks if this {@link MCDataVersion} is contained between the specified {@link MCDataVersion}s.
-     *
-     * @param startInclusive beginning of included {@link MCDataVersion}
-     * @param endInclusive   end of included {@link MCDataVersion}
-     * @return {@code true} if this {@link MCDataVersion} is contained between the specified {@link MCDataVersion}s, otherwise {@code false}
-     */
-    public boolean isBetween(@NotNull MCDataVersion startInclusive, @NotNull MCDataVersion endInclusive) {
-        return isAfterOrSame(startInclusive) && isBeforeOrSame(endInclusive);
+    @Override
+    public int compareTo(@NotNull MCDataVersion other) {
+        return Integer.compare(this.dataVersion, other.dataVersion);
     }
 
     @SuppressWarnings({"ConstantValue", "deprecation"})
