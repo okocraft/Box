@@ -23,7 +23,7 @@ import java.util.stream.Stream;
 public final class PlatformDependent {
 
     public static @NotNull BoxScheduler createScheduler(@NotNull Plugin plugin) throws NotSupportedException {
-        if (Folia.check() || MCDataVersion.CURRENT.isAfterOrSame(MCDataVersion.MC_1_20)) {
+        if (Folia.check() || MCDataVersion.current().isAfterOrSame(MCDataVersion.MC_1_20)) {
             return new FoliaSchedulerWrapper(plugin);
         }
 
@@ -31,7 +31,7 @@ public final class PlatformDependent {
     }
 
     public static @NotNull DefaultItemProvider createItemProvider() throws NotSupportedException {
-        if (MCDataVersion.CURRENT.isAfterOrSame(MCDataVersion.MC_1_20_4)) { // TODO: back to MC_1_21 after Minecraft 1.21 released
+        if (MCDataVersion.current().isAfterOrSame(MCDataVersion.MC_1_20_4)) { // TODO: back to MC_1_21 after Minecraft 1.21 released
             return new DefaultItemProviderImpl(new ItemVersion(MCDataVersion.MC_1_20_4, 0), Paper_1_21::defaultItems);
         }
         throw new NotSupportedException("Unsupported version: " + Bukkit.getVersion());

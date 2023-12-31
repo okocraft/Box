@@ -13,11 +13,6 @@ import org.jetbrains.annotations.NotNull;
 public record MCDataVersion(int dataVersion) implements Version<MCDataVersion> {
 
     /**
-     * A {@link MCDataVersion} that represents the version of the server on which Box is currently running.
-     */
-    public static final MCDataVersion CURRENT = getCurrent();
-
-    /**
      * A {@link MCDataVersion} that represents Minecraft 1.17
      */
     public static final MCDataVersion MC_1_17 = new MCDataVersion(2724);
@@ -108,14 +103,20 @@ public record MCDataVersion(int dataVersion) implements Version<MCDataVersion> {
         return new MCDataVersion(dataVersion);
     }
 
+    /**
+     * Gets {@link MCDataVersion} of the server on which Box is currently running.
+     *
+     * @return {@link MCDataVersion} of the server on which Box is currently running
+     */
+    @SuppressWarnings("deprecation")
+    @Contract("-> new")
+    public static @NotNull MCDataVersion current() {
+        return MCDataVersion.of(Bukkit.getUnsafe().getDataVersion());
+    }
+
     @Override
     public int compareTo(@NotNull MCDataVersion other) {
         return Integer.compare(this.dataVersion, other.dataVersion);
     }
 
-    @SuppressWarnings({"ConstantValue", "deprecation"})
-    private static @NotNull MCDataVersion getCurrent() {
-        var server = Bukkit.getServer();
-        return MCDataVersion.of(server != null ? server.getUnsafe().getDataVersion() : -1);
-    }
 }
