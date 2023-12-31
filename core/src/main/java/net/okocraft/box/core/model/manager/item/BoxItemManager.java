@@ -193,6 +193,6 @@ public class BoxItemManager implements ItemManager {
 
     @Override
     public @NotNull UnaryOperator<String> getItemNameConverter(@NotNull ItemVersion sourceVersion) {
-        return this.defaultItemProvider.itemNamePatcherFactory().create(sourceVersion)::renameIfNeeded;
+        return this.defaultItemProvider.itemNamePatcherFactory().create(sourceVersion, this.defaultItemProvider.version())::renameIfNeeded;
     }
 }

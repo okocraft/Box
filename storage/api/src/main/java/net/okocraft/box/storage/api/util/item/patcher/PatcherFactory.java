@@ -5,6 +5,6 @@ import org.jetbrains.annotations.NotNull;
 
 public interface PatcherFactory<P> {
 
-    @NotNull P create(@NotNull ItemVersion startingVersion);
+    @NotNull P create(@NotNull ItemVersion startingVersion, @NotNull ItemVersion currentVersion);
 
 }

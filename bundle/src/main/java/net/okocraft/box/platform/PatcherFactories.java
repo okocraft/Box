@@ -6,7 +6,6 @@ import net.okocraft.box.storage.api.util.item.patcher.ItemNamePatcher;
 import net.okocraft.box.version.common.item.LegacyVersionPatches;
 import org.jetbrains.annotations.NotNull;
 
-import static net.okocraft.box.api.util.MCDataVersion.CURRENT;
 import static net.okocraft.box.api.util.MCDataVersion.MC_1_19;
 import static net.okocraft.box.api.util.MCDataVersion.MC_1_19_4;
 import static net.okocraft.box.api.util.MCDataVersion.MC_1_20_3;
@@ -14,7 +13,7 @@ import static net.okocraft.box.api.util.MCDataVersion.MC_1_20_4;
 
 final class PatcherFactories {
 
-    static @NotNull ItemNamePatcher createItemNamePatcher(@NotNull ItemVersion startingVersion) {
+    static @NotNull ItemNamePatcher createItemNamePatcher(@NotNull ItemVersion startingVersion, @NotNull ItemVersion currentVersion) {
         var builder = new ItemNamePatcherBuilder();
         var dataVer = startingVersion.dataVersion();
         var itemVer = startingVersion.defaultItemVersion();
@@ -23,18 +22,18 @@ final class PatcherFactories {
             builder.append(LegacyVersionPatches::goatHornName);
         }
 
-        if (dataVer.isBefore(MC_1_20_3) && CURRENT.isAfterOrSame(MC_1_20_3)) {
+        if (dataVer.isBefore(MC_1_20_3) && currentVersion.dataVersion().isAfterOrSame(MC_1_20_3)) {
             builder.append(LegacyVersionPatches::shortGrassName);
         }
 
-        if (dataVer.isBefore(MC_1_20_4) && CURRENT.isAfterOrSame(MC_1_20_4)) { // TODO: back to MC_1_21 after Minecraft 1.21 released
+        if (dataVer.isBefore(MC_1_20_4) && currentVersion.dataVersion().isAfterOrSame(MC_1_20_4)) { // TODO: back to MC_1_21 after Minecraft 1.21 released
             builder.append(LegacyVersionPatches::potionName);
         }
 
         return builder.result;
     }
 
-    static @NotNull ItemDataPatcher createItemDataPatcher(@NotNull ItemVersion startingVersion) {
+    static @NotNull ItemDataPatcher createItemDataPatcher(@NotNull ItemVersion startingVersion, @NotNull ItemVersion ignoredCurrentVersion) {
         var builder = new ItemDataPatcherBuilder();
         var dataVer = startingVersion.dataVersion();
         var itemVer = startingVersion.defaultItemVersion();

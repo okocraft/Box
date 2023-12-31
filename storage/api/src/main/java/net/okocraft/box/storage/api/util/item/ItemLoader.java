@@ -10,7 +10,6 @@ import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.storage.api.factory.item.BoxItemFactory;
 import net.okocraft.box.storage.api.model.item.ItemData;
 import net.okocraft.box.storage.api.model.item.ItemStorage;
-import net.okocraft.box.storage.api.util.item.patcher.ItemDataPatcher;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -40,7 +39,7 @@ public class ItemLoader {
         } else if (currentVersion.equals(storageItemVersion.get())) {
             loadResult = loadItems(storage);
         } else {
-            loadResult = updateItems(storage, currentVersion, defaultItemProvider.itemDataPatcherFactory().create(storageItemVersion.get()), defaultItemProvider.provide());
+            loadResult = updateItems(storage, storageItemVersion.get(), defaultItemProvider);
         }
 
         return loadResult;
@@ -64,23 +63,24 @@ public class ItemLoader {
     }
 
     public static @NotNull ItemLoadResult updateItems(@NotNull ItemStorage storage,
-                                                      @NotNull ItemVersion currentVersion,
-                                                      @NotNull ItemDataPatcher itemDataPatcher,
-                                                      @NotNull Stream<DefaultItem> defaultItemStream) throws Exception {
+                                                      @NotNull ItemVersion storageItemVersion,
+                                                      @NotNull DefaultItemProvider defaultItemProvider) throws Exception {
         BoxLogger.logger().warn("Version upgrade detected. Updating default item data...");
-        var defaultItems = updateDefaultItems(storage, itemDataPatcher, defaultItemStream);
+        var defaultItems = updateDefaultItems(storage, storageItemVersion, defaultItemProvider);
 
         BoxLogger.logger().warn("Updating custom item data...");
         var customItems = storage.loadAllCustomItems(BoxItemFactory::createCustomItem);
         storage.updateCustomItems(customItems);
-        storage.saveItemVersion(currentVersion);
+        storage.saveItemVersion(defaultItemProvider.version());
         return new ItemLoadResult(defaultItems, customItems);
     }
 
     private static @NotNull List<BoxDefaultItem> updateDefaultItems(@NotNull ItemStorage storage,
-                                                                    @NotNull ItemDataPatcher itemDataPatcher,
-                                                                    @NotNull Stream<DefaultItem> defaultItemStream) throws Exception {
+                                                                    @NotNull ItemVersion storageItemVersion,
+                                                                    @NotNull DefaultItemProvider defaultItemProvider) throws Exception {
         var loadedItemData = storage.loadAllDefaultItems(Function.identity());
+        var itemDataPatcher = defaultItemProvider.itemDataPatcherFactory().create(storageItemVersion, defaultItemProvider.version());
+
         var oldItemMap = new HashMap<ItemStack, ItemData>();
 
         for (var itemData : loadedItemData) {
@@ -91,7 +91,7 @@ public class ItemLoader {
         var newItems = new ArrayList<DefaultItem>();
         var updatedItemMap = new Int2ObjectOpenHashMap<DefaultItem>();
 
-        defaultItemStream.forEach(item -> {
+        defaultItemProvider.provide().forEach(item -> {
             var oldItem = oldItemMap.remove(item.itemStack());
 
             if (oldItem == null) {

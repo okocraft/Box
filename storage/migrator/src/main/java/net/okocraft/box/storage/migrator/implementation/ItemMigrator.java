@@ -54,8 +54,9 @@ public class ItemMigrator extends AbstractDataMigrator<ItemMigrator.Result, Item
         }
 
         var patcherFactory = this.defaultItemProvider.itemNamePatcherFactory();
-        var sourceItemIdToNameMap = loadSourceDefaultItemIdToNameMap(source, patcherFactory.create(sourceItemVersion.get()));
-        var targetItemNameToIdMap = loadTargetDefaultItemIdToNameMap(target, patcherFactory.create(targetItemVersion.get()));
+        var currentVersion = this.defaultItemProvider.version();
+        var sourceItemIdToNameMap = loadSourceDefaultItemIdToNameMap(source, patcherFactory.create(sourceItemVersion.get(), currentVersion));
+        var targetItemNameToIdMap = loadTargetDefaultItemIdToNameMap(target, patcherFactory.create(targetItemVersion.get(), currentVersion));
 
         var itemIdMap = new Int2IntOpenHashMap();
 
