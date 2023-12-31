@@ -81,9 +81,14 @@ loadScripts(document, 'script');</script>
 <dt>Record Components:</dt>
 <dd><code><span id="param-dataVersion">dataVersion</span></code> - the data version (<a href="https://minecraft.wiki/w/Data_version">Minecraft Wiki: Data version</a>)</dd>
 </dl>
+<dl class="notes">
+<dt>All Implemented Interfaces:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Comparable.html" title="class or interface in java.lang" class="external-link">Comparable</a>&lt;<a href="MCDataVersion.html" title="class in net.okocraft.box.api.util">MCDataVersion</a>&gt;</code>, <code><a href="Version.html" title="interface in net.okocraft.box.api.util">Version</a>&lt;<a href="MCDataVersion.html" title="class in net.okocraft.box.api.util">MCDataVersion</a>&gt;</code></dd>
+</dl>
 <hr>
 <div class="type-signature"><span class="modifiers">public record </span><span class="element-name type-name-label">MCDataVersion</span>(int&nbsp;dataVersion)
-<span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Record.html" title="class or interface in java.lang" class="external-link">Record</a></span></div>
+<span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Record.html" title="class or interface in java.lang" class="external-link">Record</a>
+implements <a href="Version.html" title="interface in net.okocraft.box.api.util">Version</a>&lt;<a href="MCDataVersion.html" title="class in net.okocraft.box.api.util">MCDataVersion</a>&gt;</span></div>
 <div class="block">A class to get/compare Minecraft versions based on data version.</div>
 </section>
 <section class="summary">
@@ -98,88 +103,83 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Field</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color"><code>static final <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util">MCDataVersion</a></code></div>
-<div class="col-second even-row-color"><code><a href="#CURRENT" class="member-name-link">CURRENT</a></code></div>
+<div class="col-second even-row-color"><code><a href="#MC_1_17" class="member-name-link">MC_1_17</a></code></div>
 <div class="col-last even-row-color">
-<div class="block">A <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util"><code>MCDataVersion</code></a> that represents the version of the server on which Box is currently running.</div>
-</div>
-<div class="col-first odd-row-color"><code>static final <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util">MCDataVersion</a></code></div>
-<div class="col-second odd-row-color"><code><a href="#MC_1_17" class="member-name-link">MC_1_17</a></code></div>
-<div class="col-last odd-row-color">
 <div class="block">A <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util"><code>MCDataVersion</code></a> that represents Minecraft 1.17</div>
 </div>
-<div class="col-first even-row-color"><code>static final <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util">MCDataVersion</a></code></div>
-<div class="col-second even-row-color"><code><a href="#MC_1_17_1" class="member-name-link">MC_1_17_1</a></code></div>
-<div class="col-last even-row-color">
+<div class="col-first odd-row-color"><code>static final <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util">MCDataVersion</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#MC_1_17_1" class="member-name-link">MC_1_17_1</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">A <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util"><code>MCDataVersion</code></a> that represents Minecraft 1.17.1</div>
 </div>
-<div class="col-first odd-row-color"><code>static final <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util">MCDataVersion</a></code></div>
-<div class="col-second odd-row-color"><code><a href="#MC_1_18" class="member-name-link">MC_1_18</a></code></div>
-<div class="col-last odd-row-color">
+<div class="col-first even-row-color"><code>static final <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util">MCDataVersion</a></code></div>
+<div class="col-second even-row-color"><code><a href="#MC_1_18" class="member-name-link">MC_1_18</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">A <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util"><code>MCDataVersion</code></a> that represents Minecraft 1.18</div>
 </div>
-<div class="col-first even-row-color"><code>static final <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util">MCDataVersion</a></code></div>
-<div class="col-second even-row-color"><code><a href="#MC_1_18_1" class="member-name-link">MC_1_18_1</a></code></div>
-<div class="col-last even-row-color">
+<div class="col-first odd-row-color"><code>static final <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util">MCDataVersion</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#MC_1_18_1" class="member-name-link">MC_1_18_1</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">A <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util"><code>MCDataVersion</code></a> that represents Minecraft 1.18.1</div>
 </div>
-<div class="col-first odd-row-color"><code>static final <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util">MCDataVersion</a></code></div>
-<div class="col-second odd-row-color"><code><a href="#MC_1_18_2" class="member-name-link">MC_1_18_2</a></code></div>
-<div class="col-last odd-row-color">
+<div class="col-first even-row-color"><code>static final <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util">MCDataVersion</a></code></div>
+<div class="col-second even-row-color"><code><a href="#MC_1_18_2" class="member-name-link">MC_1_18_2</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">A <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util"><code>MCDataVersion</code></a> that represents Minecraft 1.18.2</div>
 </div>
-<div class="col-first even-row-color"><code>static final <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util">MCDataVersion</a></code></div>
-<div class="col-second even-row-color"><code><a href="#MC_1_19" class="member-name-link">MC_1_19</a></code></div>
-<div class="col-last even-row-color">
+<div class="col-first odd-row-color"><code>static final <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util">MCDataVersion</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#MC_1_19" class="member-name-link">MC_1_19</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">A <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util"><code>MCDataVersion</code></a> that represents Minecraft 1.19</div>
 </div>
-<div class="col-first odd-row-color"><code>static final <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util">MCDataVersion</a></code></div>
-<div class="col-second odd-row-color"><code><a href="#MC_1_19_1" class="member-name-link">MC_1_19_1</a></code></div>
-<div class="col-last odd-row-color">
+<div class="col-first even-row-color"><code>static final <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util">MCDataVersion</a></code></div>
+<div class="col-second even-row-color"><code><a href="#MC_1_19_1" class="member-name-link">MC_1_19_1</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">A <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util"><code>MCDataVersion</code></a> that represents Minecraft 1.19.1</div>
 </div>
-<div class="col-first even-row-color"><code>static final <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util">MCDataVersion</a></code></div>
-<div class="col-second even-row-color"><code><a href="#MC_1_19_2" class="member-name-link">MC_1_19_2</a></code></div>
-<div class="col-last even-row-color">
+<div class="col-first odd-row-color"><code>static final <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util">MCDataVersion</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#MC_1_19_2" class="member-name-link">MC_1_19_2</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">A <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util"><code>MCDataVersion</code></a> that represents Minecraft 1.19.2</div>
 </div>
-<div class="col-first odd-row-color"><code>static final <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util">MCDataVersion</a></code></div>
-<div class="col-second odd-row-color"><code><a href="#MC_1_19_3" class="member-name-link">MC_1_19_3</a></code></div>
-<div class="col-last odd-row-color">
+<div class="col-first even-row-color"><code>static final <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util">MCDataVersion</a></code></div>
+<div class="col-second even-row-color"><code><a href="#MC_1_19_3" class="member-name-link">MC_1_19_3</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">A <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util"><code>MCDataVersion</code></a> that represents Minecraft 1.19.3</div>
 </div>
-<div class="col-first even-row-color"><code>static final <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util">MCDataVersion</a></code></div>
-<div class="col-second even-row-color"><code><a href="#MC_1_19_4" class="member-name-link">MC_1_19_4</a></code></div>
-<div class="col-last even-row-color">
+<div class="col-first odd-row-color"><code>static final <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util">MCDataVersion</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#MC_1_19_4" class="member-name-link">MC_1_19_4</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">A <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util"><code>MCDataVersion</code></a> that represents Minecraft 1.19.4</div>
 </div>
-<div class="col-first odd-row-color"><code>static final <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util">MCDataVersion</a></code></div>
-<div class="col-second odd-row-color"><code><a href="#MC_1_20" class="member-name-link">MC_1_20</a></code></div>
-<div class="col-last odd-row-color">
+<div class="col-first even-row-color"><code>static final <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util">MCDataVersion</a></code></div>
+<div class="col-second even-row-color"><code><a href="#MC_1_20" class="member-name-link">MC_1_20</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">A <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util"><code>MCDataVersion</code></a> that represents Minecraft 1.20</div>
 </div>
-<div class="col-first even-row-color"><code>static final <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util">MCDataVersion</a></code></div>
-<div class="col-second even-row-color"><code><a href="#MC_1_20_1" class="member-name-link">MC_1_20_1</a></code></div>
-<div class="col-last even-row-color">
+<div class="col-first odd-row-color"><code>static final <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util">MCDataVersion</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#MC_1_20_1" class="member-name-link">MC_1_20_1</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">A <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util"><code>MCDataVersion</code></a> that represents Minecraft 1.20.1</div>
 </div>
-<div class="col-first odd-row-color"><code>static final <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util">MCDataVersion</a></code></div>
-<div class="col-second odd-row-color"><code><a href="#MC_1_20_2" class="member-name-link">MC_1_20_2</a></code></div>
-<div class="col-last odd-row-color">
+<div class="col-first even-row-color"><code>static final <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util">MCDataVersion</a></code></div>
+<div class="col-second even-row-color"><code><a href="#MC_1_20_2" class="member-name-link">MC_1_20_2</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">A <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util"><code>MCDataVersion</code></a> that represents Minecraft 1.20.2</div>
 </div>
-<div class="col-first even-row-color"><code>static final <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util">MCDataVersion</a></code></div>
-<div class="col-second even-row-color"><code><a href="#MC_1_20_3" class="member-name-link">MC_1_20_3</a></code></div>
-<div class="col-last even-row-color">
+<div class="col-first odd-row-color"><code>static final <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util">MCDataVersion</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#MC_1_20_3" class="member-name-link">MC_1_20_3</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">A <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util"><code>MCDataVersion</code></a> that represents Minecraft 1.20.3</div>
 </div>
-<div class="col-first odd-row-color"><code>static final <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util">MCDataVersion</a></code></div>
-<div class="col-second odd-row-color"><code><a href="#MC_1_20_4" class="member-name-link">MC_1_20_4</a></code></div>
-<div class="col-last odd-row-color">
+<div class="col-first even-row-color"><code>static final <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util">MCDataVersion</a></code></div>
+<div class="col-second even-row-color"><code><a href="#MC_1_20_4" class="member-name-link">MC_1_20_4</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">A <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util"><code>MCDataVersion</code></a> that represents Minecraft 1.20.4</div>
 </div>
-<div class="col-first even-row-color"><code>static final <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util">MCDataVersion</a></code></div>
-<div class="col-second even-row-color"><code><a href="#MC_1_21" class="member-name-link">MC_1_21</a></code></div>
-<div class="col-last even-row-color">
+<div class="col-first odd-row-color"><code>static final <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util">MCDataVersion</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#MC_1_21" class="member-name-link">MC_1_21</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">A <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util"><code>MCDataVersion</code></a> that represents Minecraft 1.21</div>
 </div>
 </div>
@@ -212,6 +212,14 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#compareTo(net.okocraft.box.api.util.MCDataVersion)" class="member-name-link">compareTo</a><wbr>(<a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/NotNull.html" title="class or interface in org.jetbrains.annotations" class="external-link">@NotNull</a> <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util">MCDataVersion</a>&nbsp;other)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/NotNull.html" title="class or interface in org.jetbrains.annotations" class="external-link">@NotNull</a> <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util">MCDataVersion</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#current()" class="member-name-link">current</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Gets <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util"><code>MCDataVersion</code></a> of the server on which Box is currently running.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#dataVersion()" class="member-name-link">dataVersion</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the value of the <a href="#param-dataVersion"><code>dataVersion</code></a> record component.</div>
@@ -225,37 +233,6 @@ loadScripts(document, 'script');</script>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#hashCode()" class="member-name-link">hashCode</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns a hash code value for this object.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isAfter(net.okocraft.box.api.util.MCDataVersion)" class="member-name-link">isAfter</a><wbr>(<a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/NotNull.html" title="class or interface in org.jetbrains.annotations" class="external-link">@NotNull</a> <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util">MCDataVersion</a>&nbsp;other)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Checks if this <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util"><code>MCDataVersion</code></a> is after the given <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util"><code>MCDataVersion</code></a>.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isAfterOrSame(net.okocraft.box.api.util.MCDataVersion)" class="member-name-link">isAfterOrSame</a><wbr>(<a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/NotNull.html" title="class or interface in org.jetbrains.annotations" class="external-link">@NotNull</a> <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util">MCDataVersion</a>&nbsp;other)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Checks if this <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util"><code>MCDataVersion</code></a> is the same as or later than the given <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util"><code>MCDataVersion</code></a>.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isBefore(net.okocraft.box.api.util.MCDataVersion)" class="member-name-link">isBefore</a><wbr>(<a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/NotNull.html" title="class or interface in org.jetbrains.annotations" class="external-link">@NotNull</a> <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util">MCDataVersion</a>&nbsp;other)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Checks if this <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util"><code>MCDataVersion</code></a> is before the given <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util"><code>MCDataVersion</code></a>.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isBeforeOrSame(net.okocraft.box.api.util.MCDataVersion)" class="member-name-link">isBeforeOrSame</a><wbr>(<a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/NotNull.html" title="class or interface in org.jetbrains.annotations" class="external-link">@NotNull</a> <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util">MCDataVersion</a>&nbsp;other)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Checks if this <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util"><code>MCDataVersion</code></a> is the same as or earlier than the given <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util"><code>MCDataVersion</code></a>.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isBetween(net.okocraft.box.api.util.MCDataVersion,net.okocraft.box.api.util.MCDataVersion)" class="member-name-link">isBetween</a><wbr>(<a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/NotNull.html" title="class or interface in org.jetbrains.annotations" class="external-link">@NotNull</a> <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util">MCDataVersion</a>&nbsp;startInclusive,
- <a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/NotNull.html" title="class or interface in org.jetbrains.annotations" class="external-link">@NotNull</a> <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util">MCDataVersion</a>&nbsp;endInclusive)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Checks if this <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util"><code>MCDataVersion</code></a> is contained between the specified <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util"><code>MCDataVersion</code></a>s.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isSame(net.okocraft.box.api.util.MCDataVersion)" class="member-name-link">isSame</a><wbr>(<a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/NotNull.html" title="class or interface in org.jetbrains.annotations" class="external-link">@NotNull</a> <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util">MCDataVersion</a>&nbsp;other)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Checks if this <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util"><code>MCDataVersion</code></a> is same as the given <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util"><code>MCDataVersion</code></a>.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/NotNull.html" title="class or interface in org.jetbrains.annotations" class="external-link">@NotNull</a> <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util">MCDataVersion</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#of(int)" class="member-name-link">of</a><wbr>(int&nbsp;dataVersion)</code></div>
@@ -273,6 +250,9 @@ loadScripts(document, 'script');</script>
 <div class="inherited-list">
 <h3 id="methods-inherited-from-class-java.lang.Object">Methods inherited from class&nbsp;java.lang.<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></h3>
 <code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#clone()" title="class or interface in java.lang" class="external-link">clone</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#finalize()" title="class or interface in java.lang" class="external-link">finalize</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#getClass()" title="class or interface in java.lang" class="external-link">getClass</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#notify()" title="class or interface in java.lang" class="external-link">notify</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#notifyAll()" title="class or interface in java.lang" class="external-link">notifyAll</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#wait()" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#wait(long)" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#wait(long,int)" title="class or interface in java.lang" class="external-link">wait</a></code></div>
+<div class="inherited-list">
+<h3 id="methods-inherited-from-class-net.okocraft.box.api.util.Version">Methods inherited from interface&nbsp;net.okocraft.box.api.util.<a href="Version.html" title="interface in net.okocraft.box.api.util">Version</a></h3>
+<code><a href="Version.html#isAfter(V)">isAfter</a>, <a href="Version.html#isAfterOrSame(V)">isAfterOrSame</a>, <a href="Version.html#isBefore(V)">isBefore</a>, <a href="Version.html#isBeforeOrSame(V)">isBeforeOrSame</a>, <a href="Version.html#isBetween(V,V)">isBetween</a>, <a href="Version.html#isSame(V)">isSame</a></code></div>
 </section>
 </li>
 </ul>
@@ -284,13 +264,6 @@ loadScripts(document, 'script');</script>
 <section class="field-details" id="field-detail">
 <h2>Field Details</h2>
 <ul class="member-list">
-<li>
-<section class="detail" id="CURRENT">
-<h3>CURRENT</h3>
-<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="MCDataVersion.html" title="class in net.okocraft.box.api.util">MCDataVersion</a></span>&nbsp;<span class="element-name">CURRENT</span></div>
-<div class="block">A <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util"><code>MCDataVersion</code></a> that represents the version of the server on which Box is currently running.</div>
-</section>
-</li>
 <li>
 <section class="detail" id="MC_1_17">
 <h3>MC_1_17</h3>
@@ -446,103 +419,26 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="isBefore(net.okocraft.box.api.util.MCDataVersion)">
-<h3>isBefore</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isBefore</span><wbr><span class="parameters">(<a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/NotNull.html" title="class or interface in org.jetbrains.annotations" class="external-link">@NotNull</a>
- <a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/NotNull.html" title="class or interface in org.jetbrains.annotations" class="external-link">@NotNull</a> <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util">MCDataVersion</a>&nbsp;other)</span></div>
-<div class="block">Checks if this <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util"><code>MCDataVersion</code></a> is before the given <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util"><code>MCDataVersion</code></a>.</div>
+<section class="detail" id="current()">
+<h3>current</h3>
+<div class="member-signature"><span class="annotations"><a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/Contract.html" title="class or interface in org.jetbrains.annotations" class="external-link">@Contract</a>("-&gt; new")
+<a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/NotNull.html" title="class or interface in org.jetbrains.annotations" class="external-link">@NotNull</a>
+</span><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/NotNull.html" title="class or interface in org.jetbrains.annotations" class="external-link">@NotNull</a> <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util">MCDataVersion</a></span>&nbsp;<span class="element-name">current</span>()</div>
+<div class="block">Gets <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util"><code>MCDataVersion</code></a> of the server on which Box is currently running.</div>
 <dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>other</code> - the <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util"><code>MCDataVersion</code></a> to compare</dd>
 <dt>Returns:</dt>
-<dd><code>true</code> if this <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util"><code>MCDataVersion</code></a> is before the given <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util"><code>MCDataVersion</code></a>, otherwise <code>false</code></dd>
+<dd><a href="MCDataVersion.html" title="class in net.okocraft.box.api.util"><code>MCDataVersion</code></a> of the server on which Box is currently running</dd>
 </dl>
 </section>
 </li>
 <li>
-<section class="detail" id="isAfter(net.okocraft.box.api.util.MCDataVersion)">
-<h3>isAfter</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isAfter</span><wbr><span class="parameters">(<a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/NotNull.html" title="class or interface in org.jetbrains.annotations" class="external-link">@NotNull</a>
+<section class="detail" id="compareTo(net.okocraft.box.api.util.MCDataVersion)">
+<h3>compareTo</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">compareTo</span><wbr><span class="parameters">(<a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/NotNull.html" title="class or interface in org.jetbrains.annotations" class="external-link">@NotNull</a>
  <a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/NotNull.html" title="class or interface in org.jetbrains.annotations" class="external-link">@NotNull</a> <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util">MCDataVersion</a>&nbsp;other)</span></div>
-<div class="block">Checks if this <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util"><code>MCDataVersion</code></a> is after the given <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util"><code>MCDataVersion</code></a>.</div>
 <dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>other</code> - the <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util"><code>MCDataVersion</code></a> to compare</dd>
-<dt>Returns:</dt>
-<dd><code>true</code> if this <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util"><code>MCDataVersion</code></a> is after the given <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util"><code>MCDataVersion</code></a>, otherwise <code>false</code></dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="isSame(net.okocraft.box.api.util.MCDataVersion)">
-<h3>isSame</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isSame</span><wbr><span class="parameters">(<a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/NotNull.html" title="class or interface in org.jetbrains.annotations" class="external-link">@NotNull</a>
- <a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/NotNull.html" title="class or interface in org.jetbrains.annotations" class="external-link">@NotNull</a> <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util">MCDataVersion</a>&nbsp;other)</span></div>
-<div class="block">Checks if this <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util"><code>MCDataVersion</code></a> is same as the given <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util"><code>MCDataVersion</code></a>.</div>
-<dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>other</code> - the <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util"><code>MCDataVersion</code></a> to compare</dd>
-<dt>Returns:</dt>
-<dd><code>true</code> if this <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util"><code>MCDataVersion</code></a> is same as the given <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util"><code>MCDataVersion</code></a>, otherwise <code>false</code></dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="isBeforeOrSame(net.okocraft.box.api.util.MCDataVersion)">
-<h3>isBeforeOrSame</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isBeforeOrSame</span><wbr><span class="parameters">(<a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/NotNull.html" title="class or interface in org.jetbrains.annotations" class="external-link">@NotNull</a>
- <a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/NotNull.html" title="class or interface in org.jetbrains.annotations" class="external-link">@NotNull</a> <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util">MCDataVersion</a>&nbsp;other)</span></div>
-<div class="block">Checks if this <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util"><code>MCDataVersion</code></a> is the same as or earlier than the given <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util"><code>MCDataVersion</code></a>.</div>
-<dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>other</code> - the <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util"><code>MCDataVersion</code></a> to compare</dd>
-<dt>Returns:</dt>
-<dd><code>true</code> if this <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util"><code>MCDataVersion</code></a> is the same as or earlier than the given <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util"><code>MCDataVersion</code></a>, otherwise <code>false</code></dd>
-<dt>See Also:</dt>
-<dd>
-<ul class="see-list">
-<li><a href="#isBefore(net.okocraft.box.api.util.MCDataVersion)"><code>isBefore(MCDataVersion)</code></a></li>
-<li><a href="#isSame(net.okocraft.box.api.util.MCDataVersion)"><code>isSame(MCDataVersion)</code></a></li>
-</ul>
-</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="isAfterOrSame(net.okocraft.box.api.util.MCDataVersion)">
-<h3>isAfterOrSame</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isAfterOrSame</span><wbr><span class="parameters">(<a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/NotNull.html" title="class or interface in org.jetbrains.annotations" class="external-link">@NotNull</a>
- <a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/NotNull.html" title="class or interface in org.jetbrains.annotations" class="external-link">@NotNull</a> <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util">MCDataVersion</a>&nbsp;other)</span></div>
-<div class="block">Checks if this <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util"><code>MCDataVersion</code></a> is the same as or later than the given <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util"><code>MCDataVersion</code></a>.</div>
-<dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>other</code> - the <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util"><code>MCDataVersion</code></a> to compare</dd>
-<dt>Returns:</dt>
-<dd><code>true</code> if this <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util"><code>MCDataVersion</code></a> is the same as or later than the given <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util"><code>MCDataVersion</code></a>, otherwise <code>false</code></dd>
-<dt>See Also:</dt>
-<dd>
-<ul class="see-list">
-<li><a href="#isAfter(net.okocraft.box.api.util.MCDataVersion)"><code>isAfter(MCDataVersion)</code></a></li>
-<li><a href="#isSame(net.okocraft.box.api.util.MCDataVersion)"><code>isSame(MCDataVersion)</code></a></li>
-</ul>
-</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="isBetween(net.okocraft.box.api.util.MCDataVersion,net.okocraft.box.api.util.MCDataVersion)">
-<h3>isBetween</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isBetween</span><wbr><span class="parameters">(<a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/NotNull.html" title="class or interface in org.jetbrains.annotations" class="external-link">@NotNull</a>
- <a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/NotNull.html" title="class or interface in org.jetbrains.annotations" class="external-link">@NotNull</a> <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util">MCDataVersion</a>&nbsp;startInclusive,
- <a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/NotNull.html" title="class or interface in org.jetbrains.annotations" class="external-link">@NotNull</a>
- <a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/NotNull.html" title="class or interface in org.jetbrains.annotations" class="external-link">@NotNull</a> <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util">MCDataVersion</a>&nbsp;endInclusive)</span></div>
-<div class="block">Checks if this <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util"><code>MCDataVersion</code></a> is contained between the specified <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util"><code>MCDataVersion</code></a>s.</div>
-<dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>startInclusive</code> - beginning of included <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util"><code>MCDataVersion</code></a></dd>
-<dd><code>endInclusive</code> - end of included <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util"><code>MCDataVersion</code></a></dd>
-<dt>Returns:</dt>
-<dd><code>true</code> if this <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util"><code>MCDataVersion</code></a> is contained between the specified <a href="MCDataVersion.html" title="class in net.okocraft.box.api.util"><code>MCDataVersion</code></a>s, otherwise <code>false</code></dd>
+<dt>Specified by:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Comparable.html#compareTo(T)" title="class or interface in java.lang" class="external-link">compareTo</a></code>&nbsp;in interface&nbsp;<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Comparable.html" title="class or interface in java.lang" class="external-link">Comparable</a>&lt;<a href="MCDataVersion.html" title="class in net.okocraft.box.api.util">MCDataVersion</a>&gt;</code></dd>
 </dl>
 </section>
 </li>
