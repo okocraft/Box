@@ -3,7 +3,6 @@ package net.okocraft.box.feature.stick.listener;
 import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.player.BoxPlayer;
-import net.okocraft.box.api.util.MCDataVersion;
 import net.okocraft.box.feature.stick.event.stock.StickCause;
 import net.okocraft.box.feature.stick.event.stock.StickCauses;
 import net.okocraft.box.feature.stick.function.container.BrewerOperator;
@@ -100,8 +99,7 @@ public class StickListener implements Listener {
             return;
         }
 
-        if (MCDataVersion.CURRENT.isBefore(MCDataVersion.MC_1_19_4) || // BlockData#getPlacementMaterial was added in Minecraft 1.19.4
-                !player.hasPermission("box.stick.blockitem")) {
+        if (!player.hasPermission("box.stick.blockitem")) {
             return;
         }
 
