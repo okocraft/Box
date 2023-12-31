@@ -1,7 +1,7 @@
 package net.okocraft.box.feature.category.internal.category.defaults;
 
 import com.github.siroshun09.configapi.format.yaml.YamlFormat;
-import net.okocraft.box.api.util.MCDataVersion;
+import net.okocraft.box.api.model.item.ItemVersion;
 import net.okocraft.box.feature.category.internal.category.defaults.DefaultCategories.ItemNameSet;
 import net.okocraft.box.feature.category.internal.category.defaults.DefaultCategories.VersionedItemName;
 import org.junit.jupiter.api.Assertions;
@@ -32,9 +32,9 @@ class DefaultCategoriesTest {
     @Test
     void testGetCurrentName() {
         Assertions.assertEquals(new ItemNameSet(UNKNOWN_VERSION, List.of(new VersionedItemName(UNKNOWN_VERSION, "GRASS"))), ItemNameSet.parse("GRASS"));
-        Assertions.assertEquals(new ItemNameSet(MCDataVersion.of(5), List.of(new VersionedItemName(MCDataVersion.of(5), "GRASS"))), ItemNameSet.parse("5:GRASS"));
-        Assertions.assertEquals(new ItemNameSet(UNKNOWN_VERSION, List.of(new VersionedItemName(UNKNOWN_VERSION, "GRASS"), new VersionedItemName(MCDataVersion.of(10), "SHORT_GRASS"))), ItemNameSet.parse("GRASS;10:SHORT_GRASS"));
-        Assertions.assertEquals(new ItemNameSet(MCDataVersion.of(5), List.of(new VersionedItemName(MCDataVersion.of(5), "GRASS"), new VersionedItemName(MCDataVersion.of(10), "SHORT_GRASS"))), ItemNameSet.parse("5:GRASS;10:SHORT_GRASS"));
+        Assertions.assertEquals(new ItemNameSet(ItemVersion.of(5), List.of(new VersionedItemName(ItemVersion.of(5), "GRASS"))), ItemNameSet.parse("5:GRASS"));
+        Assertions.assertEquals(new ItemNameSet(UNKNOWN_VERSION, List.of(new VersionedItemName(UNKNOWN_VERSION, "GRASS"), new VersionedItemName(ItemVersion.of(10), "SHORT_GRASS"))), ItemNameSet.parse("GRASS;10:SHORT_GRASS"));
+        Assertions.assertEquals(new ItemNameSet(ItemVersion.of(5), List.of(new VersionedItemName(ItemVersion.of(5), "GRASS"), new VersionedItemName(ItemVersion.of(10), "SHORT_GRASS"))), ItemNameSet.parse("5:GRASS;10:SHORT_GRASS"));
     }
 
     @Test
@@ -42,7 +42,7 @@ class DefaultCategoriesTest {
         var source = DefaultCategories.loadCategorizedItemNames(YamlFormat.DEFAULT.load(new StringReader(ITEM_LIST)));
 
         {
-            var categories = new ArrayList<>(collectCurrentDefaultCategories(MCDataVersion.of(10), source));
+            var categories = new ArrayList<>(collectCurrentDefaultCategories(ItemVersion.of(10), source));
             categories.removeIf(category -> category.itemNames().isEmpty());
             Assertions.assertEquals(3, categories.size());
             Assertions.assertEquals(List.of("DIRT", "GRASS_BLOCK"), categories.get(0).itemNames());
@@ -51,7 +51,7 @@ class DefaultCategoriesTest {
         }
 
         {
-            var categories = new ArrayList<>(collectCurrentDefaultCategories(MCDataVersion.of(5), source));
+            var categories = new ArrayList<>(collectCurrentDefaultCategories(ItemVersion.of(5), source));
             categories.removeIf(category -> category.itemNames().isEmpty());
             Assertions.assertEquals(2, categories.size());
             Assertions.assertEquals(List.of("DIRT", "GRASS_BLOCK"), categories.get(0).itemNames());
@@ -64,20 +64,20 @@ class DefaultCategoriesTest {
         var source = DefaultCategories.loadCategorizedItemNames(YamlFormat.DEFAULT.load(new StringReader(ITEM_LIST)));
 
         {
-            var categories = new ArrayList<>(collectNewItems(MCDataVersion.of(5), MCDataVersion.of(10), source));
+            var categories = new ArrayList<>(collectNewItems(ItemVersion.of(5), ItemVersion.of(10), source));
             categories.removeIf(category -> category.itemNames().isEmpty());
             Assertions.assertEquals(1, categories.size());
             Assertions.assertEquals(List.of("NEW_ITEM"), categories.get(0).itemNames());
         }
 
         {
-            var categories = new ArrayList<>(collectNewItems(MCDataVersion.of(10), MCDataVersion.of(10), source));
+            var categories = new ArrayList<>(collectNewItems(ItemVersion.of(10), ItemVersion.of(10), source));
             categories.removeIf(category -> category.itemNames().isEmpty());
             Assertions.assertTrue(categories.isEmpty());
         }
 
         {
-            var categories = new ArrayList<>(collectNewItems(MCDataVersion.of(5), MCDataVersion.of(7), source));
+            var categories = new ArrayList<>(collectNewItems(ItemVersion.of(5), ItemVersion.of(7), source));
             categories.removeIf(category -> category.itemNames().isEmpty());
             Assertions.assertTrue(categories.isEmpty());
         }

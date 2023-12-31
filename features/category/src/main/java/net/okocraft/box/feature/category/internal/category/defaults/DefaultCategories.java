@@ -2,6 +2,7 @@ package net.okocraft.box.feature.category.internal.category.defaults;
 
 import com.github.siroshun09.configapi.core.node.MapNode;
 import com.github.siroshun09.configapi.format.yaml.YamlFormat;
+import net.okocraft.box.api.model.item.ItemVersion;
 import net.okocraft.box.api.util.MCDataVersion;
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
@@ -18,22 +19,21 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.regex.Pattern;
 
 import static java.util.Locale.JAPANESE;
 
 public final class DefaultCategories {
 
-    public static @NotNull @Unmodifiable List<DefaultCategory> loadDefaultCategories(@NotNull MCDataVersion current) throws IOException {
+    public static @NotNull @Unmodifiable List<DefaultCategory> loadDefaultCategories(@NotNull ItemVersion current) throws IOException {
         return collectCurrentDefaultCategories(current, loadCategorizedItemNames(loadDefaultCategoriesFile()));
     }
 
-    public static @NotNull @Unmodifiable List<DefaultCategory> loadNewItems(@NotNull MCDataVersion version, @NotNull MCDataVersion current) throws IOException {
+    public static @NotNull @Unmodifiable List<DefaultCategory> loadNewItems(@NotNull ItemVersion version, @NotNull ItemVersion current) throws IOException {
         return collectNewItems(version, current, loadCategorizedItemNames(loadDefaultCategoriesFile()));
     }
 
     @VisibleForTesting
-    static List<DefaultCategory> collectCurrentDefaultCategories(@NotNull MCDataVersion current, @NotNull Map<String, List<ItemNameSet>> source) {
+    static List<DefaultCategory> collectCurrentDefaultCategories(@NotNull ItemVersion current, @NotNull Map<String, List<ItemNameSet>> source) {
         var result = new LinkedHashMap<String, List<String>>(source.size());
 
         for (var entry : source.entrySet()) {
@@ -47,13 +47,13 @@ public final class DefaultCategories {
     }
 
     @VisibleForTesting
-    static @NotNull @Unmodifiable List<DefaultCategory> collectNewItems(@NotNull MCDataVersion version, @NotNull MCDataVersion current, @NotNull Map<String, List<ItemNameSet>> source) {
+    static @NotNull @Unmodifiable List<DefaultCategory> collectNewItems(@NotNull ItemVersion version, @NotNull ItemVersion current, @NotNull Map<String, List<ItemNameSet>> source) {
         var result = new LinkedHashMap<String, List<String>>();
 
         for (var entry : source.entrySet()) {
             var items = new ArrayList<String>();
             for (var itemNameSet : entry.getValue()) {
-                if (version.isBefore(itemNameSet.since()) && current.isAfterOrSame(itemNameSet.since())) {
+                if (version.isBefore(itemNameSet.since()) && (current.isAfter(itemNameSet.since()) || current.isSame(itemNameSet.since()))) {
                     items.add(Objects.requireNonNull(itemNameSet.getCurrentName(current)));
                 }
             }
@@ -124,39 +124,44 @@ public final class DefaultCategories {
                 DefaultCategory.builder().key("music-discs").icon(Material.MUSIC_DISC_CAT).items(categorizedItemMap.get("music-discs")).addDefaultDisplayName("Music Discs").addDisplayName(JAPANESE, "ディスク").build(),
                 DefaultCategory.builder().key("spawn-eggs").icon(Material.COW_SPAWN_EGG).items(categorizedItemMap.get("spawn-eggs")).addDefaultDisplayName("Spawn Eggs").addDisplayName(JAPANESE, "スポーンエッグ").build(),
                 DefaultCategory.builder().key("unavailable").icon(Material.BEDROCK).items(categorizedItemMap.get("unavailable")).addDefaultDisplayName("Unavailable").addDisplayName(JAPANESE, "入手不可").build()
-                );
+        );
     }
 
-    record VersionedItemName(@NotNull MCDataVersion since, @NotNull String name) {
+    record VersionedItemName(@NotNull ItemVersion since, @NotNull String name) {
     }
 
-    record ItemNameSet(@NotNull MCDataVersion since, @NotNull Collection<VersionedItemName> list) {
+    record ItemNameSet(@NotNull ItemVersion since, @NotNull Collection<VersionedItemName> list) {
 
-        public static final MCDataVersion UNKNOWN_VERSION = MCDataVersion.of(-1);
-        private static final Pattern NAME_SEPARATOR = Pattern.compile(";", Pattern.LITERAL);
-        private static final Pattern VERSION_SEPARATOR = Pattern.compile(":", Pattern.LITERAL);
+        public static final ItemVersion UNKNOWN_VERSION = new ItemVersion(MCDataVersion.of(-1), -1);
 
         static @NotNull ItemNameSet parse(@NotNull String str) {
-            var names = NAME_SEPARATOR.split(str);
+            var names = split(str, ';');
             var result = new ArrayList<VersionedItemName>();
 
-            MCDataVersion minVer = null;
+            ItemVersion minVer = null;
 
             for (var name : names) {
                 if (name.isEmpty()) {
                     continue;
                 }
 
-                var elements = VERSION_SEPARATOR.split(name);
+                var elements = split(name, ':');
 
-                MCDataVersion version;
+                ItemVersion version;
                 String itemName;
 
                 if (elements.length == 1) {
                     version = UNKNOWN_VERSION;
                     itemName = elements[0];
                 } else {
-                    version = MCDataVersion.of(Integer.parseInt(elements[0]));
+                    var verElements = split(elements[0], ',');
+
+                    if (verElements.length == 1) {
+                        version = new ItemVersion(MCDataVersion.of(Integer.parseInt(verElements[0])), 0);
+                    } else {
+                        version = new ItemVersion(MCDataVersion.of(Integer.parseInt(verElements[0])), Integer.parseInt(verElements[1]));
+                    }
+
                     itemName = elements[1];
                 }
 
@@ -170,12 +175,17 @@ public final class DefaultCategories {
             return new ItemNameSet(minVer != null ? minVer : UNKNOWN_VERSION, Collections.unmodifiableList(result));
         }
 
-        @Nullable String getCurrentName(@NotNull MCDataVersion current) {
+        @Nullable String getCurrentName(@NotNull ItemVersion current) {
             return this.list.stream()
                     .filter(itemName -> current.isAfterOrSame(itemName.since()))
-                    .max(Comparator.comparingInt(item -> item.since().dataVersion()))
+                    .max(Comparator.comparing(VersionedItemName::since))
                     .map(VersionedItemName::name)
                     .orElse(null);
+        }
+
+        private static @NotNull String @NotNull [] split(@NotNull String str, char separator) {
+            int index = str.indexOf(separator);
+            return index == -1 ? new String[]{str} : new String[]{str.substring(0, index), str.substring(index + 1)};
         }
     }
 }

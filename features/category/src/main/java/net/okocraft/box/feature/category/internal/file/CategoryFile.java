@@ -121,12 +121,14 @@ public final class CategoryFile implements AutoCloseable {
         MapNode mapNode;
         List<DefaultCategory> defaultCategories;
 
+        var currentVersion = BoxAPI.api().getItemManager().getCurrentVersion();
+
         if (this.version == null) {
             mapNode = MapNode.create();
-            defaultCategories = DefaultCategories.loadDefaultCategories(MCDataVersion.CURRENT);
-        } else if (MCDataVersion.CURRENT.isAfter(this.version.dataVersion())) {
+            defaultCategories = DefaultCategories.loadDefaultCategories(currentVersion);
+        } else if (currentVersion.isAfter(this.version)) {
             mapNode = Objects.requireNonNull(this.loadedSource);
-            defaultCategories = DefaultCategories.loadNewItems(this.version.dataVersion(), MCDataVersion.CURRENT);
+            defaultCategories = DefaultCategories.loadNewItems(this.version, currentVersion);
         } else {
             return;
         }
@@ -151,7 +153,6 @@ public final class CategoryFile implements AutoCloseable {
             );
         }
 
-        var currentVersion = BoxAPI.api().getItemManager().getCurrentVersion();
         mapNode.set(DATA_VERSION_KEY, currentVersion.dataVersion().dataVersion());
         mapNode.set(DEFAULT_ITEM_VERSION_KEY, currentVersion.defaultItemVersion());
         YamlFormat.COMMENT_PROCESSING.save(mapNode, this.filepath);
