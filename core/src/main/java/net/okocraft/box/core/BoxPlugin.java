@@ -17,6 +17,7 @@ import net.okocraft.box.api.event.BoxEvent;
 import net.okocraft.box.api.event.feature.FeatureEvent;
 import net.okocraft.box.api.feature.BoxFeature;
 import net.okocraft.box.api.feature.Disableable;
+import net.okocraft.box.api.feature.FeatureContext;
 import net.okocraft.box.api.feature.Reloadable;
 import net.okocraft.box.api.model.data.CustomDataContainer;
 import net.okocraft.box.api.model.manager.ItemManager;
@@ -29,6 +30,7 @@ import net.okocraft.box.api.taskfactory.TaskFactory;
 import net.okocraft.box.core.command.BoxAdminCommandImpl;
 import net.okocraft.box.core.command.BoxCommandImpl;
 import net.okocraft.box.core.config.Settings;
+import net.okocraft.box.core.feature.BoxFeatureProvider;
 import net.okocraft.box.core.listener.DebugListener;
 import net.okocraft.box.core.listener.PlayerConnectionListener;
 import net.okocraft.box.core.message.ErrorMessages;
@@ -66,6 +68,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.jar.JarFile;
@@ -100,6 +103,7 @@ public class BoxPlugin implements BoxAPI {
     private BoxUserManager userManager;
     private BoxCustomDataContainer customDataContainer;
     private BoxPlayerMapImpl playerMap;
+    private final BoxFeatureProvider featureProvider = new BoxFeatureProvider(new ConcurrentHashMap<>());
 
     public BoxPlugin(@NotNull JavaPlugin plugin, @NotNull Path jarFile) {
         this.plugin = plugin;
@@ -309,7 +313,7 @@ public class BoxPlugin implements BoxAPI {
         for (var feature : features) {
             if (feature instanceof Reloadable reloadable) {
                 try {
-                    reloadable.reload(sender);
+                    reloadable.reload(new FeatureContext.Reloading(this.plugin, this.featureProvider, sender));
                     eventBus.callEvent(new FeatureEvent(feature, FeatureEvent.Type.RELOAD));
                 } catch (Throwable e) {
                     playerMessenger.accept(() -> ErrorMessages.ERROR_RELOAD_FAILURE.apply(feature.getName(), e));
@@ -392,6 +396,11 @@ public class BoxPlugin implements BoxAPI {
     }
 
     @Override
+    public @NotNull BoxFeatureProvider getFeatureProvider() {
+        return this.featureProvider;
+    }
+
+    @Override
     public @NotNull CustomDataContainer getCustomDataContainer() {
         return customDataContainer;
     }
@@ -461,7 +470,7 @@ public class BoxPlugin implements BoxAPI {
         }
 
         try {
-            boxFeature.enable();
+            boxFeature.enable(new FeatureContext.Enabling(this.plugin, this.featureProvider));
         } catch (Throwable throwable) {
             getLogger().log(
                     Level.SEVERE,
@@ -473,6 +482,7 @@ public class BoxPlugin implements BoxAPI {
         }
 
         features.add(boxFeature);
+        this.featureProvider.addFeature(boxFeature);
 
         eventBus.callEvent(new FeatureEvent(boxFeature, FeatureEvent.Type.REGISTER));
 
@@ -485,7 +495,7 @@ public class BoxPlugin implements BoxAPI {
         features.remove(boxFeature);
 
         try {
-            boxFeature.disable();
+            boxFeature.disable(new FeatureContext.Disabling(this.plugin, this.featureProvider));
         } catch (Throwable throwable) {
             getLogger().log(
                     Level.SEVERE,
@@ -493,6 +503,8 @@ public class BoxPlugin implements BoxAPI {
                     throwable
             );
         }
+
+        this.featureProvider.removeFeature(boxFeature);
 
         eventBus.callEvent(new FeatureEvent(boxFeature, FeatureEvent.Type.UNREGISTER));
     }

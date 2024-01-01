@@ -6,6 +6,7 @@ import net.okocraft.box.api.command.base.BoxAdminCommand;
 import net.okocraft.box.api.command.base.BoxCommand;
 import net.okocraft.box.api.event.BoxEvent;
 import net.okocraft.box.api.feature.BoxFeature;
+import net.okocraft.box.api.feature.FeatureProvider;
 import net.okocraft.box.api.model.data.CustomDataContainer;
 import net.okocraft.box.api.model.manager.ItemManager;
 import net.okocraft.box.api.model.manager.StockManager;
@@ -126,6 +127,13 @@ public interface BoxAPI {
     @NotNull BoxPlayerMap getBoxPlayerMap();
 
     /**
+     * Gets the {@link FeatureProvider}.
+     *
+     * @return the {@link FeatureProvider}
+     */
+    @NotNull FeatureProvider getFeatureProvider();
+
+    /**
      * Gets the {@link EventBus}.
      *
      * @return the {@link EventBus}
@@ -180,7 +188,10 @@ public interface BoxAPI {
      * Gets registered {@link BoxFeature}s.
      *
      * @return registered {@link BoxFeature}
+     * @deprecated use {@link FeatureProvider#getFeatures()}}
      */
+    @Deprecated(since = "5.5.2", forRemoval = true)
+    @ApiStatus.ScheduledForRemoval(inVersion = "6.0.0")
     @NotNull @Unmodifiable List<BoxFeature> getFeatures();
 
     /**
@@ -191,7 +202,10 @@ public interface BoxAPI {
      * @param clazz the feature class
      * @param <T>   the type of {@link BoxFeature}
      * @return if the {@link BoxFeature} is registered, returns its instance, otherwise {@link Optional#empty()}
+     * @deprecated use {@link FeatureProvider#getFeature(Class)}}
      */
+    @Deprecated(since = "5.5.2", forRemoval = true)
+    @ApiStatus.ScheduledForRemoval(inVersion = "6.0.0")
     <T extends BoxFeature> @NotNull Optional<T> getFeature(@NotNull Class<T> clazz);
 
     /**
