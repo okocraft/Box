@@ -4,6 +4,7 @@ import net.okocraft.box.api.event.AsyncEvent;
 import net.okocraft.box.api.event.stockholder.StockHolderEvent;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.model.stock.StockHolder;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -84,7 +85,11 @@ public class StockEvent extends StockHolderEvent implements AsyncEvent {
 
         /**
          * This is synonymous with "unknown" and is used when no {@link Cause} is passed when changing stock.
+         *
+         * @deprecated This will be removed in Box v6, the code that uses this must create own {@link Cause}.
          */
+        @Deprecated(forRemoval = true, since = "5.5.2")
+        @ApiStatus.ScheduledForRemoval(inVersion = "6.0.0")
         Cause API = create("api");
 
         /**
