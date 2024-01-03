@@ -1,6 +1,7 @@
 package net.okocraft.box.api.util;
 
 import org.bukkit.Bukkit;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,8 +15,11 @@ public record MCDataVersion(int dataVersion) {
 
     /**
      * A {@link MCDataVersion} that represents the version of the server on which Box is currently running.
+     *
+     * @deprecated use {@link #current()}. This constant makes {@link MCDataVersion} unusable in the test environment.
      */
-    @SuppressWarnings("deprecation")
+    @Deprecated(forRemoval = true, since = "5.5.2")
+    @ApiStatus.ScheduledForRemoval(inVersion = "6.0.0")
     public static final MCDataVersion CURRENT = new MCDataVersion(Bukkit.getUnsafe().getDataVersion());
 
     /**
@@ -102,6 +106,17 @@ public record MCDataVersion(int dataVersion) {
     @Contract("_ -> new")
     public static @NotNull MCDataVersion of(int dataVersion) {
         return new MCDataVersion(dataVersion);
+    }
+
+    /**
+     * Gets {@link MCDataVersion} of the server on which Box is currently running.
+     *
+     * @return {@link MCDataVersion} of the server on which Box is currently running
+     */
+    @SuppressWarnings("deprecation")
+    @Contract("-> new")
+    public static @NotNull MCDataVersion current() {
+        return MCDataVersion.of(Bukkit.getUnsafe().getDataVersion());
     }
 
     /**
