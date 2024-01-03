@@ -1,13 +1,12 @@
 package net.okocraft.box.api.util;
 
-import net.okocraft.box.api.BoxProvider;
+import net.okocraft.box.api.BoxAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.stream.Collectors;
 
 /**
@@ -22,12 +21,11 @@ public final class TabCompleter {
      * @return the list of item names that match the filter
      */
     public static @NotNull List<String> itemNames(@NotNull String filter) {
-        var itemNameFilter = filter.toLowerCase(Locale.ENGLISH);
-        return BoxProvider.get()
+        return BoxAPI.api()
                 .getItemManager()
                 .getItemNameList()
                 .stream()
-                .filter(itemName -> itemName.toLowerCase(Locale.ENGLISH).startsWith(itemNameFilter))
+                .filter(itemName -> startsWith(itemName, filter))
                 .collect(Collectors.toList());
     }
 
@@ -49,13 +47,25 @@ public final class TabCompleter {
      * @return the list of player names that match the filter
      */
     public static @NotNull List<String> players(@NotNull String filter, @Nullable String permissionNode) {
-        var playerNameFilter = filter.toLowerCase(Locale.ENGLISH);
-
         return Bukkit.getOnlinePlayers()
                 .stream()
                 .filter(player -> permissionNode == null || player.hasPermission(permissionNode))
                 .map(HumanEntity::getName)
-                .filter(playerName -> playerName.toLowerCase(Locale.ENGLISH).startsWith(playerNameFilter))
+                .filter(playerName -> startsWith(playerName, filter))
                 .collect(Collectors.toList());
+    }
+
+    private static boolean startsWith(@NotNull String str, @NotNull String prefix) {
+        if (prefix.isEmpty()) {
+            return true;
+        }
+
+        int prefixLength = prefix.length();
+
+        if (str.length() < prefixLength) {
+            return false;
+        }
+
+        return str.regionMatches(true, 0, prefix, 0, prefixLength);
     }
 }
