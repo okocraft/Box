@@ -25,7 +25,8 @@ public final class FeatureContext {
     /**
      * A context on enabling.
      *
-     * @param plugin a {@link Plugin} instance
+     * @param plugin          a {@link Plugin} instance
+     * @param featureProvider a {@link FeatureProvider} instance
      */
     public record Enabling(@NotNull Plugin plugin, @NotNull FeatureProvider featureProvider) {
     }
@@ -33,7 +34,8 @@ public final class FeatureContext {
     /**
      * A context on disabling.
      *
-     * @param plugin a {@link Plugin} instance
+     * @param plugin          a {@link Plugin} instance
+     * @param featureProvider a {@link FeatureProvider} instance
      */
     public record Disabling(@NotNull Plugin plugin, @NotNull FeatureProvider featureProvider) {
     }
@@ -41,8 +43,9 @@ public final class FeatureContext {
     /**
      * A context on reloading.
      *
-     * @param plugin        a {@link Plugin} instance
-     * @param commandSender a {@link CommandSender} who requests reloading
+     * @param plugin          a {@link Plugin} instance
+     * @param featureProvider a {@link FeatureProvider} instance
+     * @param commandSender   a {@link CommandSender} who requests reloading
      */
     public record Reloading(@NotNull Plugin plugin, @NotNull FeatureProvider featureProvider,
                             @NotNull CommandSender commandSender) {
