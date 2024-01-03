@@ -5,6 +5,7 @@ import it.unimi.dsi.fastutil.objects.ObjectImmutableList;
 import net.okocraft.box.api.model.item.BoxCustomItem;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.model.result.item.ItemRegistrationResult;
+import net.okocraft.box.api.model.result.item.ItemRenameResult;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -119,14 +120,14 @@ public interface ItemManager {
      * Renames a {@link BoxCustomItem}.
      * <p>
      * The rename process will be executed on different thread, and this method does not wait for that process to complete.
-     * The {@link Consumer} of {@link ItemRegistrationResult} will be called on that thread.
+     * The {@link Consumer} of {@link ItemRenameResult} will be called on that thread.
      *
      * @param item           a {@link BoxCustomItem} to rename
      * @param newName        a new name
      * @param resultConsumer a {@link Consumer}, which will be called when completed rename process
      * @throws IllegalArgumentException {@link BoxCustomItem} is not created by Box ({@link #isCustomItem(BoxItem)} returns {@code false})
      */
-    void renameCustomItem(@NotNull BoxCustomItem item, @NotNull String newName, @NotNull Consumer<ItemRegistrationResult> resultConsumer);
+    void renameCustomItem(@NotNull BoxCustomItem item, @NotNull String newName, @NotNull Consumer<ItemRenameResult> resultConsumer);
 
     /**
      * Registers item.
@@ -182,11 +183,11 @@ public interface ItemManager {
                 item,
                 newName,
                 result -> {
-                    if (result instanceof ItemRegistrationResult.Success success) {
+                    if (result instanceof ItemRenameResult.Success success) {
                         future.complete(success.customItem());
-                    } else if (result instanceof ItemRegistrationResult.DuplicateName duplicateName) {
+                    } else if (result instanceof ItemRenameResult.DuplicateName duplicateName) {
                         future.completeExceptionally(new IllegalStateException("The name is already used (name: " + duplicateName.name() + ")"));
-                    } else if (result instanceof ItemRegistrationResult.ExceptionOccurred exceptionOccurred) {
+                    } else if (result instanceof ItemRenameResult.ExceptionOccurred exceptionOccurred) {
                         future.completeExceptionally(exceptionOccurred.exception());
                     }
                 }

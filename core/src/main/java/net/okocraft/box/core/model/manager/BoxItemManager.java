@@ -9,6 +9,7 @@ import net.okocraft.box.api.model.item.BoxCustomItem;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.model.manager.ItemManager;
 import net.okocraft.box.api.model.result.item.ItemRegistrationResult;
+import net.okocraft.box.api.model.result.item.ItemRenameResult;
 import net.okocraft.box.core.util.executor.InternalExecutors;
 import net.okocraft.box.storage.api.factory.item.BoxItemFactory;
 import net.okocraft.box.storage.api.model.item.ItemStorage;
@@ -129,14 +130,14 @@ public class BoxItemManager implements ItemManager {
     }
 
     @Override
-    public void renameCustomItem(@NotNull BoxCustomItem item, @NotNull String newName, @NotNull Consumer<ItemRegistrationResult> resultConsumer) {
+    public void renameCustomItem(@NotNull BoxCustomItem item, @NotNull String newName, @NotNull Consumer<ItemRenameResult> resultConsumer) {
         if (!BoxItemFactory.checkCustomItem(item)) {
             throw new IllegalArgumentException("Could not rename item because the item is not created by box.");
         }
 
         executor.execute(() -> {
             if (itemNameMap.containsKey(newName)) {
-                resultConsumer.accept(new ItemRegistrationResult.DuplicateName(newName));
+                resultConsumer.accept(new ItemRenameResult.DuplicateName(newName));
                 return;
             }
 
@@ -148,14 +149,14 @@ public class BoxItemManager implements ItemManager {
             try {
                 result = itemStorage.rename(item, newName);
             } catch (Exception e) {
-                resultConsumer.accept(new ItemRegistrationResult.ExceptionOccurred(e));
+                resultConsumer.accept(new ItemRenameResult.ExceptionOccurred(e));
                 return;
             }
 
             addItem(item);
 
             BoxProvider.get().getEventBus().callEventAsync(new CustomItemRenameEvent(result, previousName));
-            resultConsumer.accept(new ItemRegistrationResult.Success(result));
+            resultConsumer.accept(new ItemRenameResult.Success(result, previousName));
         });
     }
 

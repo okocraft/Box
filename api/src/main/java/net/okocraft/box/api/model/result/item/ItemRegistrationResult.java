@@ -5,14 +5,14 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * An interface that represents a result of registering / renaming a custom item.
+ * An interface that represents a result of registering a custom item.
  */
 public sealed interface ItemRegistrationResult permits ItemRegistrationResult.DuplicateItem, ItemRegistrationResult.DuplicateName, ItemRegistrationResult.ExceptionOccurred, ItemRegistrationResult.Success {
 
     /**
      * A record of the {@link ItemRegistrationResult} that indicates success.
      *
-     * @param customItem a registered / renamed custom item
+     * @param customItem a registered custom item
      */
     record Success(@NotNull BoxCustomItem customItem) implements ItemRegistrationResult {
     }
