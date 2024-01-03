@@ -11,19 +11,17 @@ public final class BoxItemFactory {
 
     @Contract("_,_ -> new")
     public static @NotNull BoxItem createDefaultItem(@NotNull DefaultItem defaultItem, int internalId) {
-        return new BoxItemImpl(defaultItem.itemStack(), defaultItem.plainName(), internalId);
+        return new BoxDefaultItemImpl(internalId, defaultItem.plainName(), defaultItem.itemStack());
     }
 
     @Contract("_, _, _ -> new")
-    public static @NotNull BoxItem createDefaultItem(@NotNull ItemStack original,
-                                                     @NotNull String plainName, int internalId) {
-        return new BoxItemImpl(original, plainName, internalId);
+    public static @NotNull BoxItem createDefaultItem(@NotNull ItemStack original, @NotNull String plainName, int internalId) {
+        return new BoxDefaultItemImpl(internalId, plainName, original);
     }
 
     @Contract("_, _, _ -> new")
-    public static @NotNull BoxCustomItem createCustomItem(@NotNull ItemStack original,
-                                                          @NotNull String plainName, int internalId) {
-        return new BoxCustomItemImpl(original, plainName, internalId);
+    public static @NotNull BoxCustomItem createCustomItem(@NotNull ItemStack original, @NotNull String plainName, int internalId) {
+        return new BoxCustomItemImpl(internalId, plainName, original);
     }
 
     public static void renameCustomItem(@NotNull BoxCustomItem customItem, @NotNull String newName) {
