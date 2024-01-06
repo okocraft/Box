@@ -51,7 +51,7 @@ public class PlayerSession {
     }
 
     public @NotNull BoxItemClickMode getBoxItemClickMode() {
-        return Objects.requireNonNullElse(currentClickMode, getAvailableClickModes().get(0));
+        return Objects.requireNonNullElse(currentClickMode, getAvailableClickModes().getFirst());
     }
 
     public void setBoxItemClickMode(@Nullable BoxItemClickMode boxItemClickMode) {

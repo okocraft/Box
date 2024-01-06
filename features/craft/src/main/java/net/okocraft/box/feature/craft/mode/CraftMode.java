@@ -72,7 +72,7 @@ public class CraftMode implements BoxItemClickMode {
         Menu menu;
 
         if (recipes.getRecipeList().size() == 1) {
-            menu = CraftMenu.prepare(session, recipes.getRecipeList().get(0));
+            menu = CraftMenu.prepare(session, recipes.getRecipeList().getFirst());
         } else {
             menu = new RecipeSelectorMenu(item, recipes);
         }
