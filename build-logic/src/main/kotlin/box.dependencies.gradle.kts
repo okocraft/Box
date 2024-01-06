@@ -34,6 +34,7 @@ dependencies {
     testImplementation(libs.annotations)
     testImplementation(libs.configapi.test.shared.classes)
     testImplementation(libs.fastutil)
+    testImplementation(libs.mockito)
     testImplementation(libs.paper)
     testRuntimeOnly(libs.slf4j.simple)
     testRuntimeOnly(libs.snakeyaml)

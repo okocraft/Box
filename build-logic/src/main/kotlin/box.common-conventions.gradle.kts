@@ -28,6 +28,9 @@ tasks {
     }
 
     test {
+        // See https://github.com/mockito/mockito/issues/3037
+        jvmArgs("-XX:+EnableDynamicAgentLoading")
+
         useJUnitPlatform()
         testLogging {
             events("passed", "skipped", "failed")
