@@ -5,6 +5,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.VisibleForTesting;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -55,7 +56,8 @@ public final class TabCompleter {
                 .collect(Collectors.toList());
     }
 
-    private static boolean startsWith(@NotNull String str, @NotNull String prefix) {
+    @VisibleForTesting
+    static boolean startsWith(@NotNull String str, @NotNull String prefix) {
         if (prefix.isEmpty()) {
             return true;
         }
