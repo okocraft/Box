@@ -1,0 +1,172 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "net.okocraft.box",
+    "module": "box-storage-migrator",
+    "version": "6.0.0-SNAPSHOT",
+    "attributes": {
+      "org.gradle.status": "integration"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.5"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 17,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api"
+      },
+      "dependencies": [
+        {
+          "group": "com.github.siroshun09.configapi",
+          "module": "configapi-format-yaml",
+          "version": {
+            "requires": "5.0.0-alpha.5"
+          },
+          "excludes": [
+            {
+              "group": "org.yaml",
+              "module": "snakeyaml"
+            }
+          ]
+        },
+        {
+          "group": "com.github.siroshun09.event4j",
+          "module": "event4j",
+          "version": {
+            "requires": "4.0.0-rc.1"
+          }
+        },
+        {
+          "group": "com.github.siroshun09.messages",
+          "module": "messages-minimessage",
+          "version": {
+            "requires": "0.5.0"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "box-storage-migrator-6.0.0-SNAPSHOT.jar",
+          "url": "box-storage-migrator-6.0.0-SNAPSHOT.jar",
+          "size": 20356,
+          "sha512": "e3db1dd1c73a94b3c4bcea063e488087d17485da4eda6b6c59a20881c387b23f22c47cb1d58802328bce4207bba1ae04f03577e311d3c4b92d232689c27a4cea",
+          "sha256": "30c05e97a43a5d8a8a97129c62ac63156aeff15a3806ad38d071e61ac642dda9",
+          "sha1": "73a2e428b064225f4617ec1b7a148d56bc737e9e",
+          "md5": "ab385c4763124e135024b66ce4167f2c"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 17,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "dependencies": [
+        {
+          "group": "net.okocraft.box",
+          "module": "box-api",
+          "version": {
+            "requires": "6.0.0-SNAPSHOT"
+          }
+        },
+        {
+          "group": "net.okocraft.box",
+          "module": "box-storage-api",
+          "version": {
+            "requires": "6.0.0-SNAPSHOT"
+          }
+        },
+        {
+          "group": "com.github.siroshun09.configapi",
+          "module": "configapi-format-yaml",
+          "version": {
+            "requires": "5.0.0-alpha.5"
+          },
+          "excludes": [
+            {
+              "group": "org.yaml",
+              "module": "snakeyaml"
+            }
+          ]
+        },
+        {
+          "group": "com.github.siroshun09.event4j",
+          "module": "event4j",
+          "version": {
+            "requires": "4.0.0-rc.1"
+          }
+        },
+        {
+          "group": "com.github.siroshun09.messages",
+          "module": "messages-minimessage",
+          "version": {
+            "requires": "0.5.0"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "box-storage-migrator-6.0.0-SNAPSHOT.jar",
+          "url": "box-storage-migrator-6.0.0-SNAPSHOT.jar",
+          "size": 20356,
+          "sha512": "e3db1dd1c73a94b3c4bcea063e488087d17485da4eda6b6c59a20881c387b23f22c47cb1d58802328bce4207bba1ae04f03577e311d3c4b92d232689c27a4cea",
+          "sha256": "30c05e97a43a5d8a8a97129c62ac63156aeff15a3806ad38d071e61ac642dda9",
+          "sha1": "73a2e428b064225f4617ec1b7a148d56bc737e9e",
+          "md5": "ab385c4763124e135024b66ce4167f2c"
+        }
+      ]
+    },
+    {
+      "name": "javadocElements",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "javadoc",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "box-storage-migrator-6.0.0-SNAPSHOT-javadoc.jar",
+          "url": "box-storage-migrator-6.0.0-SNAPSHOT-javadoc.jar",
+          "size": 119509,
+          "sha512": "993cd6f2f0f3cb024803b7d31a120878e29cb6b9f691ff4f6fcbcc7efea752afa4dd061910c59e6254bd2e490232c4bf238a6160990772c6bf9e631cad947e77",
+          "sha256": "c75f161896a20060006305f77eb27d946d92a6c038c59d3192c0779e5dba83dd",
+          "sha1": "b49ab2db71d203d349d7636dac58e8ee71f28b12",
+          "md5": "e178cea6854514944cf68021a6cde720"
+        }
+      ]
+    },
+    {
+      "name": "sourcesElements",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "box-storage-migrator-6.0.0-SNAPSHOT-sources.jar",
+          "url": "box-storage-migrator-6.0.0-SNAPSHOT-sources.jar",
+          "size": 7897,
+          "sha512": "33ccd516d5ce74abfc23426e567fb085c7a3624b075cffb26950503fabf5ce1492bdddbd1cf82f8dfa0db920786dc4cd640f0e7533c9cf390ab05341d95b907d",
+          "sha256": "a5fff651cd52033fd9ea6ebd2d9152bed4ca26487b3ac2d19177e8b54e7413c4",
+          "sha1": "dc6a97be50bb748432feae33a648dee31995e09d",
+          "md5": "52226022af3d1ee186d6b48beb2aa975"
+        }
+      ]
+    }
+  ]
+}
