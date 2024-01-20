@@ -77,17 +77,20 @@ public class RegisterCommand extends AbstractCommand {
 
     private void consumeResult(@NotNull Player player, @NotNull ItemRegistrationResult result) {
         var msgSrc = BoxAPI.api().getMessageProvider().findSource(player);
-        if (result instanceof ItemRegistrationResult.Success successResult) {
-            this.success.apply(successResult.customItem().getOriginal(), successResult.customItem().getPlainName()).source(msgSrc).send(player);
-            this.renameTip.source(msgSrc).send(player);
-        } else if (result instanceof ItemRegistrationResult.DuplicateName duplicateNameResult) {
-            this.usedName.apply(duplicateNameResult.name()).source(msgSrc).send(player);
-        } else if (result instanceof ItemRegistrationResult.DuplicateItem duplicateItemResult) {
-            this.alreadyRegistered.apply(duplicateItemResult.item()).source(msgSrc).send(player);
-        } else if (result instanceof ItemRegistrationResult.ExceptionOccurred exceptionOccurredResult) {
-            var ex = exceptionOccurredResult.exception();
-            this.exceptionOccurred.apply(ex).source(msgSrc).send(player);
-            BoxLogger.logger().error("Could not register a new custom item.", ex);
+        switch (result) {
+            case ItemRegistrationResult.Success successResult -> {
+                this.success.apply(successResult.customItem().getOriginal(), successResult.customItem().getPlainName()).source(msgSrc).send(player);
+                this.renameTip.source(msgSrc).send(player);
+            }
+            case ItemRegistrationResult.DuplicateName duplicateNameResult ->
+                    this.usedName.apply(duplicateNameResult.name()).source(msgSrc).send(player);
+            case ItemRegistrationResult.DuplicateItem duplicateItemResult ->
+                    this.alreadyRegistered.apply(duplicateItemResult.item()).source(msgSrc).send(player);
+            case ItemRegistrationResult.ExceptionOccurred exceptionOccurredResult -> {
+                var ex = exceptionOccurredResult.exception();
+                this.exceptionOccurred.apply(ex).source(msgSrc).send(player);
+                BoxLogger.logger().error("Could not register a new custom item.", ex);
+            }
         }
     }
 }

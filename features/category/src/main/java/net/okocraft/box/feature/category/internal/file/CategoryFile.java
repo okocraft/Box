@@ -178,7 +178,7 @@ public final class CategoryFile implements AutoCloseable {
                     if (locale.equalsIgnoreCase(LOCALE_DEFAULT)) {
                         map.put(null, stringRepresentable.asString());
                     } else {
-                        map.put(new Locale(locale), stringRepresentable.asString());
+                        map.put(Locale.of(locale), stringRepresentable.asString());
                     }
                 }
             }

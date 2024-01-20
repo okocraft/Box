@@ -62,7 +62,7 @@ public final class IngredientRenderer {
             var ingredients =
                     recipe.ingredients()
                             .stream()
-                            .map(holder -> holder.getPatterns().get(0))
+                            .map(holder -> holder.getPatterns().getFirst())
                             .toList();
 
             render(editor, session, new SelectedRecipe(ingredients, recipe.result(), recipe.amount()), times);

@@ -92,14 +92,16 @@ public class RenameCommand extends AbstractCommand {
 
     private void consumeResult(@NotNull CommandSender sender, @NotNull ItemRenameResult result) {
         var msgSrc = BoxAPI.api().getMessageProvider().findSource(sender);
-        if (result instanceof ItemRenameResult.Success successResult) {
-            this.success.apply(successResult.customItem().getPlainName()).source(msgSrc).send(sender);
-        } else if (result instanceof ItemRenameResult.DuplicateName duplicateNameResult) {
-            this.usedName.apply(duplicateNameResult.name()).source(msgSrc).send(sender);
-        } else if (result instanceof ItemRenameResult.ExceptionOccurred exceptionOccurredResult) {
-            var ex = exceptionOccurredResult.exception();
-            this.exceptionOccurred.apply(ex).source(msgSrc).send(sender);
-            BoxLogger.logger().error("Could not rename a custom item.", ex);
+        switch (result) {
+            case ItemRenameResult.Success successResult ->
+                    this.success.apply(successResult.customItem().getPlainName()).source(msgSrc).send(sender);
+            case ItemRenameResult.DuplicateName duplicateNameResult ->
+                    this.usedName.apply(duplicateNameResult.name()).source(msgSrc).send(sender);
+            case ItemRenameResult.ExceptionOccurred exceptionOccurredResult -> {
+                var ex = exceptionOccurredResult.exception();
+                this.exceptionOccurred.apply(ex).source(msgSrc).send(sender);
+                BoxLogger.logger().error("Could not rename a custom item.", ex);
+            }
         }
     }
 }
