@@ -3,12 +3,12 @@ package net.okocraft.box.storage.implementation.database.table;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.okocraft.box.api.model.item.BoxCustomItem;
 import net.okocraft.box.api.model.item.BoxDefaultItem;
+import net.okocraft.box.api.model.item.ItemVersion;
 import net.okocraft.box.api.util.ItemNameGenerator;
 import net.okocraft.box.storage.api.factory.item.BoxItemFactory;
 import net.okocraft.box.storage.api.model.item.ItemData;
 import net.okocraft.box.storage.api.model.item.ItemStorage;
 import net.okocraft.box.storage.api.util.item.DefaultItem;
-import net.okocraft.box.api.model.item.ItemVersion;
 import net.okocraft.box.storage.implementation.database.database.Database;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -16,12 +16,12 @@ import org.jetbrains.annotations.Nullable;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 // | id | name | item_data | is_default_item
 public class ItemTable extends AbstractTable implements ItemStorage {
@@ -88,6 +88,17 @@ public class ItemTable extends AbstractTable implements ItemStorage {
                 statement.executeBatch();
             }
 
+            int maxId;
+
+            try (var statement = prepareStatement(connection, "SELECT MAX(`id`) FROM `%table%`");
+                 var resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    maxId = resultSet.getInt(1);
+                } else {
+                    throw new IllegalStateException("Could not get maximum item id.");
+                }
+            }
+
             try (var statement = prepareStatement(connection, "INSERT INTO `%table%` (`name`, `item_data`, `is_default_item`) VALUES(?,?,?)")) {
                 for (var item : newItems) {
                     statement.setString(1, item.plainName());
@@ -96,13 +107,18 @@ public class ItemTable extends AbstractTable implements ItemStorage {
 
                     statement.addBatch();
                 }
+                statement.executeBatch();
+            }
 
-                int[] updateCounts = statement.executeBatch();
+            var nameToItemMap = newItems.stream().collect(Collectors.toMap(DefaultItem::plainName, Function.identity()));
 
-                try (var generatedKeys = statement.getGeneratedKeys()) {
-                    for (int i = 0; i < updateCounts.length; i++) {
-                        if (updateCounts[i] == Statement.RETURN_GENERATED_KEYS) {
-                            result.add(BoxItemFactory.createDefaultItem(generatedKeys.getInt(1), newItems.get(i)));
+            try (var statement = prepareStatement(connection, "SELECT `id`, `name` FROM `%table%` WHERE `id` > ?")) {
+                statement.setInt(1, maxId);
+                try(var resultSet = statement.executeQuery()) {
+                    while (resultSet.next()) {
+                        var item = nameToItemMap.get(resultSet.getString("name"));
+                        if (item != null) {
+                            result.add(BoxItemFactory.createDefaultItem(resultSet.getInt("id"), item));
                         }
                     }
                 }
