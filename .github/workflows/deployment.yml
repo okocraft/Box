@@ -20,13 +20,13 @@ jobs:
         uses: gradle/wrapper-validation-action@v1.1.0
       - run: chmod +x ./gradlew
       - name: Publish artifacts
-        uses: gradle/gradle-build-action@v2.11.1
+        uses: gradle/gradle-build-action@v2.12.0
         with:
           arguments: |
             clean
             publish -P box.release=${{ startsWith(github.ref, 'refs/tags/') }}
       - name: Generate Javadocs
-        uses: gradle/gradle-build-action@v2.11.1
+        uses: gradle/gradle-build-action@v2.12.0
         with:
           arguments: aggregateJavadoc -P box.release=${{ startsWith(github.ref, 'refs/tags/') }}
       - name: Create top and not-found pages
