@@ -8,7 +8,7 @@ import net.okocraft.box.api.model.stock.StockHolder;
 import net.okocraft.box.core.model.loader.state.ChangeState;
 import net.okocraft.box.storage.api.model.stock.StockStorage;
 import net.okocraft.box.test.shared.model.item.DummyItem;
-import net.okocraft.box.test.shared.model.stock.StockEventCollector;
+import net.okocraft.box.test.shared.event.StockEventCollector;
 import net.okocraft.box.test.shared.model.stock.TestStockHolder;
 import net.okocraft.box.test.shared.model.user.TestUser;
 import net.okocraft.box.test.shared.storage.memory.stock.MemoryPartialSavingStockStorage;

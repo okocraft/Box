@@ -20,7 +20,6 @@ public interface StockEventCaller {
      * @param eventCaller a {@link AsyncEventCaller} to call {@link StockEvent}s
      * @return a new {@link StockEventCaller}
      */
-    @SuppressWarnings("unused")
     @Contract(value = "_ -> new", pure = true)
     static @NotNull StockEventCaller createDefault(@NotNull AsyncEventCaller<BoxEvent> eventCaller) {
         return new DefaultStockEventCaller(eventCaller);

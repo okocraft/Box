@@ -1,14 +1,16 @@
 package net.okocraft.box.core.model.stock;
 
+import com.github.siroshun09.event4j.caller.AsyncEventCaller;
 import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2IntLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMaps;
+import net.okocraft.box.api.event.BoxEvent;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.model.stock.StockData;
 import net.okocraft.box.api.model.stock.StockEventCaller;
 import net.okocraft.box.api.model.stock.StockHolder;
 import net.okocraft.box.test.shared.model.item.DummyItem;
-import net.okocraft.box.test.shared.model.stock.StockEventCollector;
+import net.okocraft.box.test.shared.event.StockEventCollector;
 import net.okocraft.box.test.shared.model.stock.TestStockHolder;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
@@ -45,7 +47,7 @@ class StockHolderTest {
         //   current amount: 5
         stockHolder.setAmount(ITEM_1, 5, StockEventCollector.TEST_CAUSE);
         Assertions.assertEquals(5, stockHolder.getAmount(ITEM_1));
-        collector.checkSetEvent(stockHolder, ITEM_1, 0, 5);
+        collector.checkSetEvent(stockHolder, ITEM_1, 5, 0);
 
         // Set the amount to 25 (existing stock, the amount is 5)
         // #getAmount: 25
@@ -54,7 +56,7 @@ class StockHolderTest {
         //   current amount: 25
         stockHolder.setAmount(ITEM_1, 25, StockEventCollector.TEST_CAUSE);
         Assertions.assertEquals(25, stockHolder.getAmount(ITEM_1));
-        collector.checkSetEvent(stockHolder, ITEM_1, 5, 25);
+        collector.checkSetEvent(stockHolder, ITEM_1, 25, 5);
 
         // Set the amount to 25 (same amount of stock)
         // #getAmount: 25
@@ -70,7 +72,7 @@ class StockHolderTest {
         //   current amount: 0
         stockHolder.setAmount(ITEM_1, 0, StockEventCollector.TEST_CAUSE);
         Assertions.assertEquals(0, stockHolder.getAmount(ITEM_1));
-        collector.checkSetEvent(stockHolder, ITEM_1, 25, 0);
+        collector.checkSetEvent(stockHolder, ITEM_1, 0, 25);
 
         // Set the amount to 0 (new stock)
         // #getAmount: 0
@@ -168,7 +170,7 @@ class StockHolderTest {
         //   current amount: 10
         stockHolder.setAmount(ITEM_1, 10, StockEventCollector.TEST_CAUSE);
         Assertions.assertEquals(10, stockHolder.getAmount(ITEM_1));
-        collector.checkSetEvent(stockHolder, ITEM_1, 0, 10);
+        collector.checkSetEvent(stockHolder, ITEM_1, 10, 0);
 
         // Decrease the amount by 7 (existing stock, the amount is 10)
         // #getAmount and returning value: 3
@@ -186,7 +188,7 @@ class StockHolderTest {
         //   current amount: 10
         stockHolder.setAmount(ITEM_2, 10, StockEventCollector.TEST_CAUSE);
         Assertions.assertEquals(10, stockHolder.getAmount(ITEM_2));
-        collector.checkSetEvent(stockHolder, ITEM_2, 0, 10);
+        collector.checkSetEvent(stockHolder, ITEM_2, 10, 0);
 
         // Decrease the amount by 15 (existing stock, the amount is 10)
         // #getAmount and returning value: 0
@@ -231,7 +233,7 @@ class StockHolderTest {
         //   current amount: 10
         stockHolder.setAmount(ITEM_1, 10, StockEventCollector.TEST_CAUSE);
         Assertions.assertEquals(10, stockHolder.getAmount(ITEM_1));
-        collector.checkSetEvent(stockHolder, ITEM_1, 0, 10);
+        collector.checkSetEvent(stockHolder, ITEM_1, 10, 0);
 
         // Decrease the amount by 7 (existing stock, the amount is 10)
         // Returning value: 7
@@ -250,7 +252,7 @@ class StockHolderTest {
         //   current amount: 10
         stockHolder.setAmount(ITEM_2, 10, StockEventCollector.TEST_CAUSE);
         Assertions.assertEquals(10, stockHolder.getAmount(ITEM_2));
-        collector.checkSetEvent(stockHolder, ITEM_2, 0, 10);
+        collector.checkSetEvent(stockHolder, ITEM_2, 10, 0);
 
         // Decrease the amount by 15 (existing stock, the amount is 10)
         // Returning value: 10
@@ -299,7 +301,7 @@ class StockHolderTest {
         //   current amount: 10
         stockHolder.setAmount(ITEM_1, 10, StockEventCollector.TEST_CAUSE);
         Assertions.assertEquals(10, stockHolder.getAmount(ITEM_1));
-        collector.checkSetEvent(stockHolder, ITEM_1, 0, 10);
+        collector.checkSetEvent(stockHolder, ITEM_1, 10, 0);
 
         // Decrease the amount by 7 (existing stock, the amount is 10)
         // #getAmount and returning value: 3
@@ -342,7 +344,7 @@ class StockHolderTest {
         //   current amount: 10
         stockHolder.setAmount(ITEM_2, 10, StockEventCollector.TEST_CAUSE);
         Assertions.assertEquals(10, stockHolder.getAmount(ITEM_2));
-        collector.checkSetEvent(stockHolder, ITEM_2, 0, 10);
+        collector.checkSetEvent(stockHolder, ITEM_2, 10, 0);
 
         // Decrease the amount by 15 (existing stock, but the amount is less than 15)
         // Returning value: -1
@@ -373,7 +375,7 @@ class StockHolderTest {
         //   current amount: 10
         stockHolder.setAmount(ITEM_1, 10, StockEventCollector.TEST_CAUSE);
         Assertions.assertEquals(10, stockHolder.getAmount(ITEM_1));
-        collector.checkSetEvent(stockHolder, ITEM_1, 0, 10);
+        collector.checkSetEvent(stockHolder, ITEM_1, 10, 0);
 
         // Set the amount to 10 (new stock)
         // #getAmount: 10
@@ -382,7 +384,7 @@ class StockHolderTest {
         //   current amount: 10
         stockHolder.setAmount(ITEM_2, 10, StockEventCollector.TEST_CAUSE);
         Assertions.assertEquals(10, stockHolder.getAmount(ITEM_2));
-        collector.checkSetEvent(stockHolder, ITEM_2, 0, 10);
+        collector.checkSetEvent(stockHolder, ITEM_2, 10, 0);
 
         // Decrease test_item_1 by 5 and test_item_2 by 7
         // Returning value: true
@@ -501,7 +503,7 @@ class StockHolderTest {
         //   current amount: 10
         stockHolder.setAmount(ITEM_1, 10, StockEventCollector.TEST_CAUSE);
         Assertions.assertEquals(10, stockHolder.getAmount(ITEM_1));
-        collector.checkSetEvent(stockHolder, ITEM_1, 0, 10);
+        collector.checkSetEvent(stockHolder, ITEM_1, 10, 0);
 
         // Set the amount to 10 (new stock)
         // #getAmount: 10
@@ -510,7 +512,7 @@ class StockHolderTest {
         //   current amount: 10
         stockHolder.setAmount(ITEM_2, 10, StockEventCollector.TEST_CAUSE);
         Assertions.assertEquals(10, stockHolder.getAmount(ITEM_2));
-        collector.checkSetEvent(stockHolder, ITEM_2, 0, 10);
+        collector.checkSetEvent(stockHolder, ITEM_2, 10, 0);
 
         // Reset the stockholder
         // Expected event:
@@ -584,7 +586,7 @@ class StockHolderTest {
         Assertions.assertEquals(0, stockHolder.getAmount(ITEM_2));
     }
 
-    private static @NotNull StockHolder createStockHolder(@NotNull StockEventCaller eventCaller) {
-        return TestStockHolder.create(eventCaller, TO_BOX_ITEM);
+    private static @NotNull StockHolder createStockHolder(@NotNull AsyncEventCaller<BoxEvent> eventCaller) {
+        return TestStockHolder.create(StockEventCaller.createDefault(eventCaller), TO_BOX_ITEM);
     }
 }

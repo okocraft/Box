@@ -33,6 +33,17 @@ public class EventCollector implements AsyncEventCaller<BoxEvent> {
     }
 
     public <E extends BoxEvent> void checkEvent(@NotNull Class<E> eventClass, @NotNull Consumer<E> checker) {
-        checker.accept(Assertions.assertInstanceOf(eventClass, this.calledEvents.poll()));
+        checker.accept(Assertions.assertInstanceOf(eventClass, this.nextEvent()));
+    }
+
+    public void checkNoEvent() {
+        var event = this.calledEvents.poll();
+        Assertions.assertNull(event);
+    }
+
+    protected @NotNull BoxEvent nextEvent() {
+        var event = this.calledEvents.poll();
+        Assertions.assertNotNull(event);
+        return event;
     }
 }
