@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.VisibleForTesting;
 
 import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.Component.translatable;
 import static net.kyori.adventure.text.format.NamedTextColor.AQUA;
 import static net.kyori.adventure.text.format.NamedTextColor.DARK_GRAY;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
@@ -61,15 +62,15 @@ public final class NotificationFactory {
         var player = Bukkit.getPlayer(target.getUUID());
 
         if (player != null) {
-            player.sendActionBar(this.createNotification());
+            player.sendActionBar(this.createNotification(translatable(this.item.getOriginal())));
         }
     }
 
     @VisibleForTesting
-    @NotNull Component createNotification() {
+    @NotNull Component createNotification(@NotNull Component itemDisplay) {
         var builder = text();
 
-        builder.append(this.item.getDisplayName()); // <display name of item>
+        builder.append(itemDisplay); // <display name of item>
         builder.append(COMMON_PARTS_1).append(text(this.current, WHITE)); // - <current stock>
 
         if (this.diff != 0) {

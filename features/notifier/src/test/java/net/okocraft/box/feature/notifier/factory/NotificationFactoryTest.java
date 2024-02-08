@@ -23,7 +23,7 @@ class NotificationFactoryTest {
     void testIncrements() {
         Assertions.assertEquals(
                 EXPECTED_INCREASED_NOTIFICATION,
-                new NotificationFactory(ITEM, 10).increments(5).createNotification()
+                new NotificationFactory(ITEM, 10).increments(5).createNotification(ITEM.getDisplayName())
         );
     }
 
@@ -31,7 +31,7 @@ class NotificationFactoryTest {
     void testDecrements() {
         Assertions.assertEquals(
                 EXPECTED_DECREASED_NOTIFICATION,
-                new NotificationFactory(ITEM, 10).decrements(5).createNotification()
+                new NotificationFactory(ITEM, 10).decrements(5).createNotification(ITEM.getDisplayName())
         );
     }
 
@@ -39,12 +39,12 @@ class NotificationFactoryTest {
     void testPrevious() {
         Assertions.assertEquals(
                 EXPECTED_INCREASED_NOTIFICATION,
-                new NotificationFactory(ITEM, 10).previous(5).createNotification()
+                new NotificationFactory(ITEM, 10).previous(5).createNotification(ITEM.getDisplayName())
         );
 
         Assertions.assertEquals(
                 EXPECTED_DECREASED_NOTIFICATION,
-                new NotificationFactory(ITEM, 10).previous(15).createNotification()
+                new NotificationFactory(ITEM, 10).previous(15).createNotification(ITEM.getDisplayName())
         );
     }
 }
