@@ -4,12 +4,15 @@ import net.okocraft.box.api.event.stockholder.StockHolderLoadEvent;
 import net.okocraft.box.api.event.stockholder.stock.StockIncreaseEvent;
 import net.okocraft.box.api.model.stock.StockData;
 import net.okocraft.box.api.model.stock.StockEventCaller;
+import net.okocraft.box.core.model.loader.state.ChangeState;
+import net.okocraft.box.storage.api.model.stock.StockStorage;
 import net.okocraft.box.test.shared.event.EventCollector;
+import net.okocraft.box.test.shared.event.StockEventCollector;
 import net.okocraft.box.test.shared.model.item.DummyItem;
-import net.okocraft.box.test.shared.model.stock.StockEventCollector;
 import net.okocraft.box.test.shared.model.user.TestUser;
 import net.okocraft.box.test.shared.scheduler.ScheduledTask;
 import net.okocraft.box.test.shared.scheduler.TestScheduler;
+import net.okocraft.box.test.shared.storage.memory.stock.MemoryPartialSavingStockStorage;
 import net.okocraft.box.test.shared.storage.memory.stock.MemoryStockStorage;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
@@ -81,6 +84,46 @@ class BoxStockManagerTest {
         Assertions.assertEquals(3, BoxStockManager.computeInterval(3, 0));
         Assertions.assertEquals(3, BoxStockManager.computeInterval(3, 3));
         Assertions.assertEquals(6, BoxStockManager.computeInterval(12, 18));
+    }
+
+    @Test
+    void testStateUpdatingStockEventCaller() {
+        testStateUpdatingStockEventCaller(new MemoryStockStorage());
+        testStateUpdatingStockEventCaller(new MemoryPartialSavingStockStorage());
+    }
+
+    private static void testStateUpdatingStockEventCaller(@NotNull StockStorage storage) {
+        var eventCollector = new StockEventCollector();
+        var manager = new BoxStockManager(storage, eventCollector, id -> null, 0, 0, TimeUnit.SECONDS);
+
+        var loader = manager.getPersonalStockHolder(TestUser.USER);
+        var stockEventCaller = manager.createStockEventCaller(loader);
+
+        stockEventCaller.callSetEvent(loader, ITEM, 1, 0, StockEventCollector.TEST_CAUSE);
+        eventCollector.checkSetEvent(loader, ITEM, 1, 0);
+        checkChangeState(loader.getChangeState());
+
+        stockEventCaller.callIncreaseEvent(loader, ITEM, 1, 2, StockEventCollector.TEST_CAUSE);
+        eventCollector.checkIncreaseEvent(loader, ITEM, 1, 2);
+        checkChangeState(loader.getChangeState());
+
+        stockEventCaller.callOverflowEvent(loader, ITEM, 1, 1, StockEventCollector.TEST_CAUSE);
+        eventCollector.checkOverflowEvent(loader, ITEM, 1, 1);
+        checkChangeState(loader.getChangeState());
+
+        stockEventCaller.callDecreaseEvent(loader, ITEM, 1, 1, StockEventCollector.TEST_CAUSE);
+        eventCollector.checkDecreaseEvent(loader, ITEM, 1, 1);
+        checkChangeState(loader.getChangeState());
+
+        var stockData = List.of(new StockData(ITEM.getInternalId(), 1));
+        stockEventCaller.callResetEvent(loader, stockData);
+        eventCollector.checkResetEvent(loader, stockData);
+        checkChangeState(loader.getChangeState());
+    }
+
+    private static void checkChangeState(@NotNull ChangeState state) {
+        Assertions.assertTrue(state.forgetIfRemembered(ITEM.getInternalId()));
+        Assertions.assertFalse(state.forgetIfRemembered(ITEM.getInternalId())); // Check if the id has cleared
     }
 
     @Test

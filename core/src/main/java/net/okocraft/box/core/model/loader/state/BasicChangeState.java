@@ -52,6 +52,11 @@ class BasicChangeState implements ChangeState {
         }
     }
 
+    @Override
+    public boolean forgetIfRemembered(int itemId) {
+        return this.hasChanges.compareAndSet(true, false);
+    }
+
     @TestOnly
     boolean hasChanges() {
         return this.hasChanges.get();

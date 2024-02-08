@@ -128,6 +128,17 @@ class PerItemChangeState implements ChangeState {
         }
     }
 
+    @Override
+    public boolean forgetIfRemembered(int itemId) {
+        long stamp = this.lock.writeLock();
+
+        try {
+            return this.itemIdSet.remove(itemId);
+        } finally {
+            this.lock.unlockWrite(stamp);
+        }
+    }
+
     @TestOnly
     @NotNull IntSet getChangedItemIds() {
         return this.itemIdSet;

@@ -5,6 +5,7 @@ import net.okocraft.box.api.model.stock.StockHolder;
 import net.okocraft.box.storage.api.model.stock.PartialSavingStockStorage;
 import net.okocraft.box.storage.api.model.stock.StockStorage;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.TestOnly;
 
 import java.util.Collection;
 import java.util.function.Supplier;
@@ -31,4 +32,8 @@ public interface ChangeState {
     long lastSave();
 
     void saveChanges(@NotNull StockHolder stockHolder) throws Exception;
+
+    @TestOnly
+    boolean forgetIfRemembered(int itemId);
+
 }

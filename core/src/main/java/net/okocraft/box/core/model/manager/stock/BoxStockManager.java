@@ -85,7 +85,7 @@ public class BoxStockManager implements StockManager {
             throw new RuntimeException("Could not load user's stock holder (" + user.getUUID() + ")", e);
         }
 
-        var eventCaller = new StateUpdatingStockEventCaller(loader, this.eventCaller);
+        var eventCaller = this.createStockEventCaller(loader);
         var stockHolder = StockHolderFactory.create(user, eventCaller, stockData, this.toBoxItem);
 
         this.eventCaller.callAsync(new StockHolderLoadEvent(loader));
@@ -131,12 +131,18 @@ public class BoxStockManager implements StockManager {
         this.loaderMap.values().forEach(this::autoSaveOrUnload);
     }
 
+    @VisibleForTesting
     static long computeInterval(long unloadTime, long saveInterval) {
         if (unloadTime == 0 && saveInterval == 0) {
             return TimeUnit.SECONDS.toNanos(1);
         } else {
             return BigInteger.valueOf(unloadTime).gcd(BigInteger.valueOf(saveInterval)).longValue();
         }
+    }
+
+    @VisibleForTesting
+    @NotNull StockEventCaller createStockEventCaller(@NotNull LoadingPersonalStockHolder loader) {
+        return new StateUpdatingStockEventCaller(loader, this.eventCaller);
     }
 
     @VisibleForTesting
