@@ -4,4 +4,5 @@ plugins {
 
 dependencies {
     compileOnly(projects.boxApi)
+    testImplementation(projects.boxTestSharedClasses)
 }

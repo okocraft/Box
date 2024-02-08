@@ -36,7 +36,7 @@ public record DummyItem(int internalId, @NotNull String plainName) implements Bo
 
     @Override
     public @NotNull Component getDisplayName() {
-        throw new UnsupportedOperationException();
+        return Component.text(this.plainName);
     }
 
     @Contract("_ -> new")

@@ -7,9 +7,9 @@ import net.okocraft.box.api.model.user.BoxUser;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.VisibleForTesting;
 
 import static net.kyori.adventure.text.Component.text;
-import static net.kyori.adventure.text.Component.translatable;
 import static net.kyori.adventure.text.format.NamedTextColor.AQUA;
 import static net.kyori.adventure.text.format.NamedTextColor.DARK_GRAY;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
@@ -17,9 +17,12 @@ import static net.kyori.adventure.text.format.NamedTextColor.WHITE;
 
 public class NotificationFactory {
 
-    private static final Component COMMON_PARTS_1 = text(" - ", DARK_GRAY);
-    private static final Component COMMON_PARTS_2 = text(" (", DARK_GRAY);
-    private static final Component COMMON_PARTS_3 = text(")", DARK_GRAY);
+    @VisibleForTesting
+    static final Component COMMON_PARTS_1 = text(" - ", DARK_GRAY);
+    @VisibleForTesting
+    static final Component COMMON_PARTS_2 = text(" (", DARK_GRAY);
+    @VisibleForTesting
+    static final Component COMMON_PARTS_3 = text(")", DARK_GRAY);
 
     @Contract(value = "_ -> new", pure = true)
     public static @NotNull NotificationFactory create(@NotNull StockEvent event) {
@@ -30,7 +33,8 @@ public class NotificationFactory {
     private final int current;
     private int diff;
 
-    private NotificationFactory(@NotNull BoxItem item, int current) {
+    @VisibleForTesting
+    NotificationFactory(@NotNull BoxItem item, int current) {
         this.item = item;
         this.current = current;
     }
@@ -61,14 +65,15 @@ public class NotificationFactory {
         }
     }
 
-    private @NotNull Component createNotification() {
-        var builder =
-                translatable()
-                        .key(this.item.getOriginal())
-                        .append(COMMON_PARTS_1)
-                        .append(text(this.current, WHITE));
+    @VisibleForTesting
+    @NotNull Component createNotification() {
+        var builder = text();
+
+        builder.append(this.item.getDisplayName()); // <display name of item>
+        builder.append(COMMON_PARTS_1).append(text(this.current, WHITE)); // - <current stock>
 
         if (this.diff != 0) {
+            // (<+-diff>)
             builder.append(COMMON_PARTS_2)
                     .append(0 <= this.diff ? text("+" + this.diff, AQUA) : text(this.diff, RED))
                     .append(COMMON_PARTS_3);
