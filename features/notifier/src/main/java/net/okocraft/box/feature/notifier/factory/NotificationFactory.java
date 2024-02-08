@@ -15,7 +15,7 @@ import static net.kyori.adventure.text.format.NamedTextColor.DARK_GRAY;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
 import static net.kyori.adventure.text.format.NamedTextColor.WHITE;
 
-public class NotificationFactory {
+public final class NotificationFactory {
 
     @VisibleForTesting
     static final Component COMMON_PARTS_1 = text(" - ", DARK_GRAY);

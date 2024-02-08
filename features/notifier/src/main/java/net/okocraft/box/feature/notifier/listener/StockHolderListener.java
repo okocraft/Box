@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class StockHolderListener {
+public final class StockHolderListener {
 
     private static final Key STOCK_EVENT_LISTENER_KEY = Key.key("box", "feature/notifier/stock_event_listener");
 
@@ -45,5 +45,9 @@ public class StockHolderListener {
         if (event.getStockHolder() instanceof PersonalStockHolder stockHolder) {
             NotificationFactory.create(event).previous(event.getPreviousAmount()).showActionBar(stockHolder.getUser());
         }
+    }
+
+    private StockHolderListener() {
+        throw new UnsupportedOperationException();
     }
 }
