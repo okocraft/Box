@@ -100,7 +100,8 @@ public class BoxCore implements BoxAPI {
             return false;
         }
 
-        this.stockManager = new BoxStockManager(storage.getStockStorage(), this.eventManager, this.itemManager::getBoxItemOrNull, 300, 15, TimeUnit.SECONDS); // TODO: configurable
+        var stockDataSetting = this.context.config().coreSetting().stockData();
+        this.stockManager = new BoxStockManager(storage.getStockStorage(), this.eventManager, this.itemManager::getBoxItemOrNull, stockDataSetting.unloadTime(), stockDataSetting.saveInterval(), TimeUnit.SECONDS);
 
         this.customDataManager = new BoxCustomDataManager(storage.getCustomDataStorage());
 

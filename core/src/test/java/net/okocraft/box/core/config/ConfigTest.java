@@ -1,10 +1,10 @@
 package net.okocraft.box.core.config;
 
 import net.okocraft.box.storage.api.registry.StorageRegistry;
-import net.okocraft.box.test.shared.storage.memory.MemoryStorage;
-import net.okocraft.box.test.shared.storage.memory.MemoryStorageSetting;
 import net.okocraft.box.test.shared.storage.dummy.DummyStorage;
 import net.okocraft.box.test.shared.storage.dummy.DummyStorageSetting;
+import net.okocraft.box.test.shared.storage.memory.MemoryStorage;
+import net.okocraft.box.test.shared.storage.memory.MemoryStorageSetting;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -23,6 +23,12 @@ class ConfigTest {
                     # The core settings of Box.
                     #
                     core:
+                      # Settings related to player stock data.
+                      stock-data:
+                        # Number of seconds to unload the player's stock data after logging out.
+                        unload-time: 300
+                        # Interval in seconds to save player stock data.
+                        save-interval: 15
                       # The list of worlds where Box cannot be used.
                       disabled-worlds: []
                       # Whether to enable debug mode or not.
@@ -41,6 +47,9 @@ class ConfigTest {
     private static final String CUSTOM_CORE_SETTING =
             """
                     core:
+                      stock-data:
+                        unload-time: 100
+                        save-interval: 10
                       disabled-worlds:
                         - example_world_1
                         - example_world_2
@@ -50,6 +59,9 @@ class ConfigTest {
     private static final String CUSTOM_EDITED_CORE_SETTING =
             """
                     core:
+                      stock-data:
+                        unload-time: 500
+                        save-interval: 20
                       disabled-worlds:
                         - example_world_1
                       debug: false
@@ -89,7 +101,7 @@ class ConfigTest {
         var storage = Assertions.assertInstanceOf(MemoryStorage.class, config.loadAndCreateStorage(registry));
 
         Assertions.assertNotNull(config.coreSetting());
-        Assertions.assertEquals(config.coreSetting(), new CoreSetting(Collections.emptySet(), false));
+        Assertions.assertEquals(config.coreSetting(), new CoreSetting(new StockDataSetting(300, 15), Collections.emptySet(), false));
         Assertions.assertEquals(storage.getSetting(), new MemoryStorageSetting(true, 10));
 
         Assertions.assertEquals(EXPECTED_DEFAULT_CONFIG, Files.readString(config.filepath()));
@@ -101,11 +113,11 @@ class ConfigTest {
         Files.writeString(config.filepath(), CUSTOM_CORE_SETTING);
         config.loadAndCreateStorage(storageRegistry());
 
-        Assertions.assertEquals(new CoreSetting(Set.of("example_world_1", "example_world_2"), true), config.coreSetting());
+        Assertions.assertEquals(new CoreSetting(new StockDataSetting(100, 10), Set.of("example_world_1", "example_world_2"), true), config.coreSetting());
 
         Files.writeString(config.filepath(), CUSTOM_EDITED_CORE_SETTING);
         config.reload();
-        Assertions.assertEquals(new CoreSetting(Set.of("example_world_1"), false), config.coreSetting());
+        Assertions.assertEquals(new CoreSetting(new StockDataSetting(500, 20), Set.of("example_world_1"), false), config.coreSetting());
     }
 
     @Test
