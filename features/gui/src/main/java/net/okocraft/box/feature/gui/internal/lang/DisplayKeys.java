@@ -23,6 +23,13 @@ public final class DisplayKeys {
     public static final String CHANGE_UNIT = "box.gui.menus.category.buttons.transaction-amount.change-unit.display-name";
     public static final String RESET_TRANSACTION_AMOUNT = "box.gui.menus.category.buttons.transaction-amount.click-to-reset";
 
+    public static final String STORAGE_MODE_DISPLAY_NAME = "box.gui.storage-mode.display-name";
+    public static final String STORAGE_MODE_DEPOSIT = "box.gui.storage-mode.deposit";
+    public static final String STORAGE_MODE_WITHDRAW = "box.gui.storage-mode.withdraw";
+    public static final String STORAGE_MODE_CURRENT_STOCK = "box.gui.storage-mode.current-stock";
+    public static final String STORAGE_MODE_DEPOSIT_ALL_DISPLAY_NAME = "box.gui.storage-mode.deposit-all.display-name";
+    public static final String STORAGE_MODE_DEPOSIT_ALL_LORE = "box.gui.storage-mode.deposit-all.lore";
+
     public static void addDefaults(@NotNull DefaultMessageCollector collector) {
         collector.add(BACK, "<gold>Back");
         collector.add(CLOSE, "<gold>Close");
@@ -41,5 +48,12 @@ public final class DisplayKeys {
         collector.add(SET_TRANSACTION_AMOUNT_LORE, "<gray>Click to set transaction amount to <aqua><amount>");
         collector.add(CHANGE_UNIT, "<gold>Change unit");
         collector.add(RESET_TRANSACTION_AMOUNT, "<gray>Shift + click to reset transaction amount");
+
+        collector.add(STORAGE_MODE_DISPLAY_NAME, "Storage mode");
+        collector.add(STORAGE_MODE_DEPOSIT, "<gray>Press LMB to deposit <aqua><amount><gray> items");
+        collector.add(STORAGE_MODE_WITHDRAW, "<gray>Press RMB to withdraw <aqua><amount><gray> items");
+        collector.add(STORAGE_MODE_CURRENT_STOCK, "<gray>Current stock: <aqua><current>");
+        collector.add(STORAGE_MODE_DEPOSIT_ALL_DISPLAY_NAME, "<gold>Deposits items in inventory");
+        collector.add(STORAGE_MODE_DEPOSIT_ALL_LORE, "<gray>Shift + click to deposit<newline><gray>all items in your inventory");
     }
 }

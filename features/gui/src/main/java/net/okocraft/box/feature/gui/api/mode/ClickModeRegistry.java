@@ -9,7 +9,7 @@ import java.util.List;
 
 public final class ClickModeRegistry {
 
-    private static final StorageMode STORAGE_MODE = new StorageMode((key, ignoredValue) -> key);
+    private static final StorageMode STORAGE_MODE = new StorageMode();
     private static final List<BoxItemClickMode> REGISTERED_BOX_ITEM_CLICK_MODE = new ArrayList<>(List.of(STORAGE_MODE));
 
     // Because ClickModeRegistry#getModes is called frequently,

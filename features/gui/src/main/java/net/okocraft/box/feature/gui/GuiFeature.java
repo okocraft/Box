@@ -12,7 +12,6 @@ import net.okocraft.box.feature.gui.internal.command.MenuOpenCommand;
 import net.okocraft.box.feature.gui.internal.holder.BoxInventoryHolder;
 import net.okocraft.box.feature.gui.internal.lang.DisplayKeys;
 import net.okocraft.box.feature.gui.internal.listener.InventoryListener;
-import net.okocraft.box.feature.gui.internal.mode.StorageMode;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
@@ -30,9 +29,8 @@ public class GuiFeature extends AbstractBoxFeature implements Reloadable {
 
     public GuiFeature(@NotNull FeatureContext.Registration context) {
         super("gui");
-        DisplayKeys.addDefaults(context.defaultMessageCollector());
-        new StorageMode(context.defaultMessageCollector()); // TODO
         this.command = new MenuOpenCommand(context.defaultMessageCollector());
+        DisplayKeys.addDefaults(context.defaultMessageCollector());
         BoxInventoryHolder.addDefaultErrorMessage(context.defaultMessageCollector());
     }
 

@@ -3,7 +3,6 @@ package net.okocraft.box.feature.gui.internal.mode;
 import com.github.siroshun09.messages.minimessage.arg.Arg1;
 import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
 import net.kyori.adventure.text.Component;
-import net.okocraft.box.api.message.DefaultMessageCollector;
 import net.okocraft.box.api.message.Placeholders;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.player.BoxPlayer;
@@ -13,6 +12,7 @@ import net.okocraft.box.feature.gui.api.mode.AbstractStorageMode;
 import net.okocraft.box.feature.gui.api.session.Amount;
 import net.okocraft.box.feature.gui.api.session.PlayerSession;
 import net.okocraft.box.feature.gui.api.util.ItemEditor;
+import net.okocraft.box.feature.gui.internal.lang.DisplayKeys;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -32,13 +32,13 @@ public final class StorageMode extends AbstractStorageMode {
     private final MiniMessageBase depositAllDisplayName;
     private final MiniMessageBase depositAllLore;
 
-    public StorageMode(@NotNull DefaultMessageCollector collector) {
-        this.displayName = messageKey(collector.add("box.gui.storage-mode.display-name", "Storage mode"));
-        this.leftClickToDeposit = arg1(collector.add("box.gui.storage-mode.deposit", "<gray>Press LMB to deposit <aqua><amount><gray> items"), Placeholders.AMOUNT);
-        this.rightClickToWithdraw = arg1(collector.add("box.gui.storage-mode.withdraw", "<gray>Press RMB to withdraw <aqua><amount><gray> items"), Placeholders.AMOUNT);
-        this.currentStock = arg1(collector.add("box.gui.storage-mode.current-stock", "<gray>Current stock: <aqua><current>"), Placeholders.CURRENT);
-        this.depositAllDisplayName = messageKey(collector.add("box.gui.storage-mode.deposit-all.display-name", "<gold>Deposits items in inventory"));
-        this.depositAllLore = messageKey(collector.add("box.gui.storage-mode.deposit-all.lore", "<gray>Shift + click to deposit<newline><gray>all items in your inventory"));
+    public StorageMode() {
+        this.displayName = messageKey(DisplayKeys.STORAGE_MODE_DISPLAY_NAME);
+        this.leftClickToDeposit = arg1(DisplayKeys.STORAGE_MODE_DEPOSIT, Placeholders.AMOUNT);
+        this.rightClickToWithdraw = arg1(DisplayKeys.STORAGE_MODE_WITHDRAW, Placeholders.AMOUNT);
+        this.currentStock = arg1(DisplayKeys.STORAGE_MODE_CURRENT_STOCK, Placeholders.CURRENT);
+        this.depositAllDisplayName = messageKey(DisplayKeys.STORAGE_MODE_DEPOSIT_ALL_DISPLAY_NAME);
+        this.depositAllLore = messageKey(DisplayKeys.STORAGE_MODE_DEPOSIT_ALL_LORE);
     }
 
     @Override
