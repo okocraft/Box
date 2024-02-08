@@ -1,17 +1,21 @@
 package net.okocraft.box.test.shared.util;
 
+import net.okocraft.box.api.util.BoxLogger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Assertions;
+import org.slf4j.Logger;
 import org.slf4j.Marker;
 import org.slf4j.event.Level;
 import org.slf4j.helpers.AbstractLogger;
+import org.slf4j.helpers.SubstituteLogger;
 
 import java.util.LinkedList;
 
 public class LogCollector extends AbstractLogger {
 
     private final LinkedList<Log> collectedLogs = new LinkedList<>();
+    private Logger originalLogger;
 
     @Override
     protected String getFullyQualifiedCallerName() {
@@ -82,12 +86,37 @@ public class LogCollector extends AbstractLogger {
 
     public void checkLog(@NotNull Level level, @NotNull String pattern, @Nullable Object @NotNull ... arguments) {
         var log = this.collectedLogs.poll();
+
         Assertions.assertNotNull(log);
         Assertions.assertEquals(level, log.level);
         Assertions.assertEquals(pattern, log.messagePattern);
-        Assertions.assertArrayEquals(arguments, log.arguments);
+
+        if (log.throwable != null) {
+            var actualArguments = new Object[log.arguments.length + 1];
+            System.arraycopy(log.arguments, 0, actualArguments, 0, log.arguments.length);
+            actualArguments[actualArguments.length - 1] = log.throwable;
+            Assertions.assertArrayEquals(arguments, actualArguments);
+        } else {
+            Assertions.assertArrayEquals(arguments, log.arguments);
+        }
     }
 
     public record Log(Level level, Marker marker, String messagePattern, Object[] arguments, Throwable throwable) {
+    }
+
+    public void injectToBoxLogger() {
+        var substituteLogger = ((SubstituteLogger) BoxLogger.logger());
+        this.originalLogger = substituteLogger.delegate();
+        substituteLogger.setDelegate(this);
+    }
+
+    public void ejectFromBoxLogger() {
+        var substituteLogger = ((SubstituteLogger) BoxLogger.logger());
+
+        if (this.originalLogger == null || substituteLogger.delegate() != this) {
+            throw new IllegalStateException("This logger is not injected.");
+        }
+
+        substituteLogger.setDelegate(this.originalLogger);
     }
 }
