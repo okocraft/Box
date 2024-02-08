@@ -1,7 +1,10 @@
 package net.okocraft.box.feature.notifier.factory;
 
 import net.kyori.adventure.text.Component;
+import net.okocraft.box.api.event.stockholder.stock.StockEvent;
 import net.okocraft.box.api.model.item.BoxItem;
+import net.okocraft.box.api.model.user.BoxUser;
+import org.bukkit.Bukkit;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,22 +22,17 @@ public class NotificationFactory {
     private static final Component COMMON_PARTS_3 = text(")", DARK_GRAY);
 
     @Contract(value = "_ -> new", pure = true)
-    public static @NotNull NotificationFactory create(@NotNull BoxItem item) {
-        return new NotificationFactory(item);
+    public static @NotNull NotificationFactory create(@NotNull StockEvent event) {
+        return new NotificationFactory(event.getItem(), event.getAmount());
     }
 
     private final BoxItem item;
-    private int current;
+    private final int current;
     private int diff;
 
-    private NotificationFactory(@NotNull BoxItem item) {
+    private NotificationFactory(@NotNull BoxItem item, int current) {
         this.item = item;
-    }
-
-    @Contract("_ -> this")
-    public @NotNull NotificationFactory current(int current) {
         this.current = current;
-        return this;
     }
 
     @Contract("_ -> this")
@@ -51,23 +49,31 @@ public class NotificationFactory {
 
     @Contract("_ -> this")
     public @NotNull NotificationFactory previous(int previous) {
-        this.diff += current - previous;
+        this.diff += this.current - previous;
         return this;
     }
 
-    public @NotNull Component build() {
-        var notification =
-                translatable()
-                        .key(item.getOriginal())
-                        .append(COMMON_PARTS_1)
-                        .append(text(current, WHITE));
+    public void showActionBar(@NotNull BoxUser target) {
+        var player = Bukkit.getPlayer(target.getUUID());
 
-        if (diff != 0) {
-            notification.append(COMMON_PARTS_2)
-                    .append(0 <= diff ? text("+" + diff, AQUA) : text(diff, RED))
+        if (player != null) {
+            player.sendActionBar(this.createNotification());
+        }
+    }
+
+    private @NotNull Component createNotification() {
+        var builder =
+                translatable()
+                        .key(this.item.getOriginal())
+                        .append(COMMON_PARTS_1)
+                        .append(text(this.current, WHITE));
+
+        if (this.diff != 0) {
+            builder.append(COMMON_PARTS_2)
+                    .append(0 <= this.diff ? text("+" + this.diff, AQUA) : text(this.diff, RED))
                     .append(COMMON_PARTS_3);
         }
 
-        return notification.build();
+        return builder.build();
     }
 }
