@@ -184,7 +184,7 @@ public class BoxCore implements BoxAPI {
             BoxLogger.logger().error("Could not reload messages", e);
         }
 
-        var featureReloadContext = new FeatureContext.Reloading(this.context.plugin(), this.boxFeatureProvider, sender);
+        var featureReloadContext = new FeatureContext.Reloading(this.context.plugin(), sender);
 
         for (var feature : this.boxFeatureProvider.getFeatures()) {
             if (feature instanceof Reloadable reloadable) {
@@ -272,14 +272,14 @@ public class BoxCore implements BoxAPI {
         BoxLogger.logger().info("Enabling features...");
 
         var featureMap = new LinkedHashMap<Class<? extends BoxFeature>, BoxFeature>();
-        var context = new FeatureContext.Enabling(this.context.plugin(), new BoxFeatureProvider(featureMap));
+        this.boxFeatureProvider = new BoxFeatureProvider(Collections.unmodifiableMap(featureMap));
+
+        var context = new FeatureContext.Enabling(this.context.plugin());
 
         for (var feature : features) {
             initializeFeature(feature, featureMap, context);
             this.eventManager.call(new FeatureEvent(feature, FeatureEvent.Type.ENABLE));
         }
-
-        this.boxFeatureProvider = new BoxFeatureProvider(Collections.unmodifiableMap(featureMap));
     }
 
     private static void initializeFeature(@NotNull BoxFeature feature, @NotNull Map<Class<? extends BoxFeature>, BoxFeature> registry, @NotNull FeatureContext.Enabling context) {
@@ -313,7 +313,7 @@ public class BoxCore implements BoxAPI {
         }
 
         BoxLogger.logger().info("Disabling features...");
-        var context = new FeatureContext.Disabling(this.context.plugin(), this.boxFeatureProvider);
+        var context = new FeatureContext.Disabling(this.context.plugin());
 
         for (var feature : features) {
             try {

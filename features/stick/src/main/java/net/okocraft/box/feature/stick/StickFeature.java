@@ -43,7 +43,7 @@ public class StickFeature extends AbstractBoxFeature {
 
     @Override
     public void enable(@NotNull FeatureContext.Enabling context) {
-        if (context.featureProvider().getFeature(GuiFeature.class).isPresent()) {
+        if (BoxAPI.api().getFeatureProvider().getFeature(GuiFeature.class).isPresent()) {
             this.boxStickItem.onRightClick(this::defaultRightClickAction);
         }
 

@@ -25,30 +25,26 @@ public final class FeatureContext {
     /**
      * A context on enabling.
      *
-     * @param plugin          a {@link Plugin} instance
-     * @param featureProvider a {@link FeatureProvider} instance
+     * @param plugin a {@link Plugin} instance
      */
-    public record Enabling(@NotNull Plugin plugin, @NotNull FeatureProvider featureProvider) {
+    public record Enabling(@NotNull Plugin plugin) {
     }
 
     /**
      * A context on disabling.
      *
-     * @param plugin          a {@link Plugin} instance
-     * @param featureProvider a {@link FeatureProvider} instance
+     * @param plugin a {@link Plugin} instance
      */
-    public record Disabling(@NotNull Plugin plugin, @NotNull FeatureProvider featureProvider) {
+    public record Disabling(@NotNull Plugin plugin) {
     }
 
     /**
      * A context on reloading.
      *
-     * @param plugin          a {@link Plugin} instance
-     * @param featureProvider a {@link FeatureProvider} instance
-     * @param commandSender   a {@link CommandSender} who requests reloading
+     * @param plugin        a {@link Plugin} instance
+     * @param commandSender a {@link CommandSender} who requests reloading
      */
-    public record Reloading(@NotNull Plugin plugin, @NotNull FeatureProvider featureProvider,
-                            @NotNull CommandSender commandSender) {
+    public record Reloading(@NotNull Plugin plugin, @NotNull CommandSender commandSender) {
 
         /**
          * Converts this context to {@link Enabling}.
@@ -57,7 +53,7 @@ public final class FeatureContext {
          */
         @Contract(" -> new")
         public @NotNull Enabling asEnabling() {
-            return new Enabling(this.plugin, this.featureProvider);
+            return new Enabling(this.plugin);
         }
 
         /**
@@ -67,7 +63,7 @@ public final class FeatureContext {
          */
         @Contract(" -> new")
         public @NotNull Disabling asDisabling() {
-            return new Disabling(this.plugin, this.featureProvider);
+            return new Disabling(this.plugin);
         }
 
     }
