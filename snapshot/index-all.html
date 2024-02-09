@@ -30,7 +30,6 @@ loadScripts(document, 'script');</script>
 <li>Package</li>
 <li>Class</li>
 <li><a href="overview-tree.html">Tree</a></li>
-<li><a href="deprecated-list.html">Deprecated</a></li>
 <li class="nav-bar-cell1-rev">Index</li>
 <li><a href="help-doc.html#index">Help</a></li>
 </ul>
@@ -204,7 +203,7 @@ loadScripts(document, 'script');</script>
 <dl class="index">
 <dt><a href="net/okocraft/box/feature/gui/api/button/ClickResult.html#BACK_MENU" class="member-name-link">BACK_MENU</a> - Static variable in interface net.okocraft.box.feature.gui.api.button.<a href="net/okocraft/box/feature/gui/api/button/ClickResult.html" title="interface in net.okocraft.box.feature.gui.api.button">ClickResult</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="net/okocraft/box/feature/gui/api/session/PlayerSession.html#backMenu()" class="member-name-link">backMenu()</a> - Method in class net.okocraft.box.feature.gui.api.session.<a href="net/okocraft/box/feature/gui/api/session/PlayerSession.html" title="class in net.okocraft.box.feature.gui.api.session">PlayerSession</a></dt>
+<dt><a href="net/okocraft/box/feature/gui/api/session/MenuHistoryHolder.html#backMenu()" class="member-name-link">backMenu()</a> - Method in class net.okocraft.box.feature.gui.api.session.<a href="net/okocraft/box/feature/gui/api/session/MenuHistoryHolder.html" title="class in net.okocraft.box.feature.gui.api.session">MenuHistoryHolder</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/okocraft/box/feature/gui/api/buttons/BackOrCloseButton.html" class="type-name-link" title="class in net.okocraft.box.feature.gui.api.buttons">BackOrCloseButton</a> - Record Class in <a href="net/okocraft/box/feature/gui/api/buttons/package-summary.html">net.okocraft.box.feature.gui.api.buttons</a></dt>
 <dd>&nbsp;</dd>
@@ -375,7 +374,7 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">A message sent when the player cannot use Box.</div>
 </dd>
-<dt><a href="net/okocraft/box/feature/gui/api/mode/BoxItemClickMode.html#canUse(org.bukkit.entity.Player,net.okocraft.box.api.player.BoxPlayer)" class="member-name-link">canUse(Player, BoxPlayer)</a> - Method in interface net.okocraft.box.feature.gui.api.mode.<a href="net/okocraft/box/feature/gui/api/mode/BoxItemClickMode.html" title="interface in net.okocraft.box.feature.gui.api.mode">BoxItemClickMode</a></dt>
+<dt><a href="net/okocraft/box/feature/gui/api/mode/BoxItemClickMode.html#canUse(net.okocraft.box.feature.gui.api.session.PlayerSession)" class="member-name-link">canUse(PlayerSession)</a> - Method in interface net.okocraft.box.feature.gui.api.mode.<a href="net/okocraft/box/feature/gui/api/mode/BoxItemClickMode.html" title="interface in net.okocraft.box.feature.gui.api.mode">BoxItemClickMode</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/okocraft/box/api/BoxAPI.html#canUseBox(org.bukkit.entity.Player)" class="member-name-link">canUseBox(Player)</a> - Method in interface net.okocraft.box.api.<a href="net/okocraft/box/api/BoxAPI.html" title="interface in net.okocraft.box.api">BoxAPI</a></dt>
 <dd>
@@ -431,6 +430,12 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Returns the value of the <a href="./net/okocraft/box/feature/gui/api/event/stock/GuiCauses.Withdraw.html#param-clicker"><code>clicker</code></a> record component.</div>
 </dd>
+<dt><a href="net/okocraft/box/feature/gui/api/event/mode/ClickModeCheckEvent.html" class="type-name-link" title="class in net.okocraft.box.feature.gui.api.event.mode">ClickModeCheckEvent</a> - Class in <a href="net/okocraft/box/feature/gui/api/event/mode/package-summary.html">net.okocraft.box.feature.gui.api.event.mode</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="net/okocraft/box/feature/gui/api/event/mode/ClickModeCheckEvent.html#%3Cinit%3E(net.okocraft.box.feature.gui.api.session.PlayerSession,net.okocraft.box.feature.gui.api.mode.BoxItemClickMode,boolean)" class="member-name-link">ClickModeCheckEvent(PlayerSession, BoxItemClickMode, boolean)</a> - Constructor for class net.okocraft.box.feature.gui.api.event.mode.<a href="net/okocraft/box/feature/gui/api/event/mode/ClickModeCheckEvent.html" title="class in net.okocraft.box.feature.gui.api.event.mode">ClickModeCheckEvent</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="net/okocraft/box/feature/gui/api/session/ClickModeHolder.html" class="type-name-link" title="class in net.okocraft.box.feature.gui.api.session">ClickModeHolder</a> - Class in <a href="net/okocraft/box/feature/gui/api/session/package-summary.html">net.okocraft.box.feature.gui.api.session</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="net/okocraft/box/feature/gui/api/mode/ClickModeRegistry.html" class="type-name-link" title="class in net.okocraft.box.feature.gui.api.mode">ClickModeRegistry</a> - Class in <a href="net/okocraft/box/feature/gui/api/mode/package-summary.html">net.okocraft.box.feature.gui.api.mode</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/okocraft/box/feature/gui/api/mode/ClickModeRegistry.html#%3Cinit%3E()" class="member-name-link">ClickModeRegistry()</a> - Constructor for class net.okocraft.box.feature.gui.api.mode.<a href="net/okocraft/box/feature/gui/api/mode/ClickModeRegistry.html" title="class in net.okocraft.box.feature.gui.api.mode">ClickModeRegistry</a></dt>
@@ -502,6 +507,8 @@ loadScripts(document, 'script');</script>
 <dt><a href="net/okocraft/box/feature/gui/api/button/ClickResult.WaitingTask.html#complete(net.okocraft.box.feature.gui.api.button.ClickResult)" class="member-name-link">complete(ClickResult)</a> - Method in class net.okocraft.box.feature.gui.api.button.<a href="net/okocraft/box/feature/gui/api/button/ClickResult.WaitingTask.html" title="class in net.okocraft.box.feature.gui.api.button">ClickResult.WaitingTask</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/okocraft/box/feature/gui/api/button/ClickResult.WaitingTask.html#completeAsync(net.okocraft.box.feature.gui.api.button.ClickResult)" class="member-name-link">completeAsync(ClickResult)</a> - Method in class net.okocraft.box.feature.gui.api.button.<a href="net/okocraft/box/feature/gui/api/button/ClickResult.WaitingTask.html" title="class in net.okocraft.box.feature.gui.api.button">ClickResult.WaitingTask</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="net/okocraft/box/feature/gui/api/session/PlayerSession.html#computeDataIfAbsent(net.okocraft.box.feature.gui.api.session.TypedKey,java.util.function.Supplier)" class="member-name-link">computeDataIfAbsent(TypedKey&lt;T&gt;, Supplier&lt;? extends T&gt;)</a> - Method in class net.okocraft.box.feature.gui.api.session.<a href="net/okocraft/box/feature/gui/api/session/PlayerSession.html" title="class in net.okocraft.box.feature.gui.api.session">PlayerSession</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/okocraft/box/feature/stick/event/stock/StickCauses.Container.html#%3Cinit%3E(net.okocraft.box.api.player.BoxPlayer,org.bukkit.Location)" class="member-name-link">Container(BoxPlayer, Location)</a> - Constructor for record class net.okocraft.box.feature.stick.event.stock.<a href="net/okocraft/box/feature/stick/event/stock/StickCauses.Container.html" title="class in net.okocraft.box.feature.stick.event.stock">StickCauses.Container</a></dt>
 <dd>
@@ -1111,7 +1118,7 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Gets a <a href="net/okocraft/box/feature/autostore/AutoStoreSettingProvider.html" title="interface in net.okocraft.box.feature.autostore"><code>AutoStoreSettingProvider</code></a>.</div>
 </dd>
-<dt><a href="net/okocraft/box/feature/gui/api/session/PlayerSession.html#getAvailableClickModes()" class="member-name-link">getAvailableClickModes()</a> - Method in class net.okocraft.box.feature.gui.api.session.<a href="net/okocraft/box/feature/gui/api/session/PlayerSession.html" title="class in net.okocraft.box.feature.gui.api.session">PlayerSession</a></dt>
+<dt><a href="net/okocraft/box/feature/gui/api/session/ClickModeHolder.html#getAvailableModes()" class="member-name-link">getAvailableModes()</a> - Method in class net.okocraft.box.feature.gui.api.session.<a href="net/okocraft/box/feature/gui/api/session/ClickModeHolder.html" title="class in net.okocraft.box.feature.gui.api.session">ClickModeHolder</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/okocraft/box/api/BoxAPI.html#getBoxAdminCommand()" class="member-name-link">getBoxAdminCommand()</a> - Method in interface net.okocraft.box.api.<a href="net/okocraft/box/api/BoxAPI.html" title="interface in net.okocraft.box.api">BoxAPI</a></dt>
 <dd>
@@ -1133,8 +1140,6 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Gets the <a href="net/okocraft/box/api/model/item/BoxItem.html" title="interface in net.okocraft.box.api.model.item"><code>BoxItem</code></a> of the specified item if it exists.</div>
 </dd>
-<dt><a href="net/okocraft/box/feature/gui/api/session/PlayerSession.html#getBoxItemClickMode()" class="member-name-link">getBoxItemClickMode()</a> - Method in class net.okocraft.box.feature.gui.api.session.<a href="net/okocraft/box/feature/gui/api/session/PlayerSession.html" title="class in net.okocraft.box.feature.gui.api.session">PlayerSession</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="net/okocraft/box/api/model/manager/ItemManager.html#getBoxItemOrNull(int)" class="member-name-link">getBoxItemOrNull(int)</a> - Method in interface net.okocraft.box.api.model.manager.<a href="net/okocraft/box/api/model/manager/ItemManager.html" title="interface in net.okocraft.box.api.model.manager">ItemManager</a></dt>
 <dd>
 <div class="block">Gets the <a href="net/okocraft/box/api/model/item/BoxItem.html" title="interface in net.okocraft.box.api.model.item"><code>BoxItem</code></a> of the specified id if it exists.</div>
@@ -1175,6 +1180,8 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Gets the player who is trying to craft.</div>
 </dd>
+<dt><a href="net/okocraft/box/feature/gui/api/session/ClickModeHolder.html#getCurrentMode()" class="member-name-link">getCurrentMode()</a> - Method in class net.okocraft.box.feature.gui.api.session.<a href="net/okocraft/box/feature/gui/api/session/ClickModeHolder.html" title="class in net.okocraft.box.feature.gui.api.session">ClickModeHolder</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="net/okocraft/box/feature/gui/api/menu/paginate/AbstractPaginatedMenu.html#getCurrentPage(net.okocraft.box.feature.gui.api.session.PlayerSession)" class="member-name-link">getCurrentPage(PlayerSession)</a> - Method in class net.okocraft.box.feature.gui.api.menu.paginate.<a href="net/okocraft/box/feature/gui/api/menu/paginate/AbstractPaginatedMenu.html" title="class in net.okocraft.box.feature.gui.api.menu.paginate">AbstractPaginatedMenu</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/okocraft/box/feature/gui/api/menu/paginate/PaginatedMenu.html#getCurrentPage(net.okocraft.box.feature.gui.api.session.PlayerSession)" class="member-name-link">getCurrentPage(PlayerSession)</a> - Method in interface net.okocraft.box.feature.gui.api.menu.paginate.<a href="net/okocraft/box/feature/gui/api/menu/paginate/PaginatedMenu.html" title="interface in net.okocraft.box.feature.gui.api.menu.paginate">PaginatedMenu</a></dt>
@@ -1206,10 +1213,6 @@ loadScripts(document, 'script');</script>
 <dt><a href="net/okocraft/box/api/model/item/BoxItem.html#getDisplayName()" class="member-name-link">getDisplayName()</a> - Method in interface net.okocraft.box.api.model.item.<a href="net/okocraft/box/api/model/item/BoxItem.html" title="interface in net.okocraft.box.api.model.item">BoxItem</a></dt>
 <dd>
 <div class="block">Gets the display name of this item as a <a href="https://jd.advntr.dev/api/4.15.0/net/kyori/adventure/text/Component.html" title="class or interface in net.kyori.adventure.text" class="external-link"><code>Component</code></a>.</div>
-</dd>
-<dt><a href="net/okocraft/box/feature/gui/api/mode/BoxItemClickMode.html#getDisplayName()" class="member-name-link">getDisplayName()</a> - Method in interface net.okocraft.box.feature.gui.api.mode.<a href="net/okocraft/box/feature/gui/api/mode/BoxItemClickMode.html" title="interface in net.okocraft.box.feature.gui.api.mode">BoxItemClickMode</a></dt>
-<dd>
-<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span></div>
 </dd>
 <dt><a href="net/okocraft/box/feature/gui/api/mode/BoxItemClickMode.html#getDisplayName(net.okocraft.box.feature.gui.api.session.PlayerSession)" class="member-name-link">getDisplayName(PlayerSession)</a> - Method in interface net.okocraft.box.feature.gui.api.mode.<a href="net/okocraft/box/feature/gui/api/mode/BoxItemClickMode.html" title="interface in net.okocraft.box.feature.gui.api.mode">BoxItemClickMode</a></dt>
 <dd>&nbsp;</dd>
@@ -1245,6 +1248,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Gets all registered <a href="net/okocraft/box/api/feature/BoxFeature.html" title="interface in net.okocraft.box.api.feature"><code>BoxFeature</code></a>s.</div>
 </dd>
+<dt><a href="net/okocraft/box/feature/gui/api/session/ClickModeHolder.html#getFromSession(net.okocraft.box.feature.gui.api.session.PlayerSession)" class="member-name-link">getFromSession(PlayerSession)</a> - Static method in class net.okocraft.box.feature.gui.api.session.<a href="net/okocraft/box/feature/gui/api/session/ClickModeHolder.html" title="class in net.okocraft.box.feature.gui.api.session">ClickModeHolder</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="net/okocraft/box/feature/gui/api/session/MenuHistoryHolder.html#getFromSession(net.okocraft.box.feature.gui.api.session.PlayerSession)" class="member-name-link">getFromSession(PlayerSession)</a> - Static method in class net.okocraft.box.feature.gui.api.session.<a href="net/okocraft/box/feature/gui/api/session/MenuHistoryHolder.html" title="class in net.okocraft.box.feature.gui.api.session">MenuHistoryHolder</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="net/okocraft/box/api/command/Command.html#getHelp(com.github.siroshun09.messages.minimessage.source.MiniMessageSource)" class="member-name-link">getHelp(MiniMessageSource)</a> - Method in interface net.okocraft.box.api.command.<a href="net/okocraft/box/api/command/Command.html" title="interface in net.okocraft.box.api.command">Command</a></dt>
 <dd>
 <div class="block">Gets the helps.</div>
@@ -1328,6 +1335,8 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="net/okocraft/box/feature/gui/api/session/PlayerSession.html#getMessageSource()" class="member-name-link">getMessageSource()</a> - Method in class net.okocraft.box.feature.gui.api.session.<a href="net/okocraft/box/feature/gui/api/session/PlayerSession.html" title="class in net.okocraft.box.feature.gui.api.session">PlayerSession</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="net/okocraft/box/feature/gui/api/event/mode/ClickModeCheckEvent.html#getMode()" class="member-name-link">getMode()</a> - Method in class net.okocraft.box.feature.gui.api.event.mode.<a href="net/okocraft/box/feature/gui/api/event/mode/ClickModeCheckEvent.html" title="class in net.okocraft.box.feature.gui.api.event.mode">ClickModeCheckEvent</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="net/okocraft/box/feature/gui/api/mode/ClickModeRegistry.html#getModes()" class="member-name-link">getModes()</a> - Static method in class net.okocraft.box.feature.gui.api.mode.<a href="net/okocraft/box/feature/gui/api/mode/ClickModeRegistry.html" title="class in net.okocraft.box.feature.gui.api.mode">ClickModeRegistry</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/okocraft/box/api/command/AbstractCommand.html#getName()" class="member-name-link">getName()</a> - Method in class net.okocraft.box.api.command.<a href="net/okocraft/box/api/command/AbstractCommand.html" title="class in net.okocraft.box.api.command">AbstractCommand</a></dt>
@@ -1366,6 +1375,8 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Gets the original <a href="https://jd.papermc.io/paper/1.20/org/bukkit/inventory/ItemStack.html" title="class or interface in org.bukkit.inventory" class="external-link"><code>ItemStack</code></a>.</div>
 </dd>
+<dt><a href="net/okocraft/box/feature/gui/api/event/mode/ClickModeCheckEvent.html#getOriginalResult()" class="member-name-link">getOriginalResult()</a> - Method in class net.okocraft.box.feature.gui.api.event.mode.<a href="net/okocraft/box/feature/gui/api/event/mode/ClickModeCheckEvent.html" title="class in net.okocraft.box.feature.gui.api.event.mode">ClickModeCheckEvent</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="net/okocraft/box/feature/autostore/AutoStoreSettingProvider.html#getOrLoad(java.util.UUID)" class="member-name-link">getOrLoad(UUID)</a> - Method in interface net.okocraft.box.feature.autostore.<a href="net/okocraft/box/feature/autostore/AutoStoreSettingProvider.html" title="interface in net.okocraft.box.feature.autostore">AutoStoreSettingProvider</a></dt>
 <dd>
 <div class="block">Gets or load the player's <a href="net/okocraft/box/feature/autostore/setting/AutoStoreSetting.html" title="class in net.okocraft.box.feature.autostore.setting"><code>AutoStoreSetting</code></a>.</div>
@@ -1454,6 +1465,8 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="net/okocraft/box/feature/gui/api/event/MenuEvent.html#getSession()" class="member-name-link">getSession()</a> - Method in class net.okocraft.box.feature.gui.api.event.<a href="net/okocraft/box/feature/gui/api/event/MenuEvent.html" title="class in net.okocraft.box.feature.gui.api.event">MenuEvent</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="net/okocraft/box/feature/gui/api/event/mode/ClickModeCheckEvent.html#getSession()" class="member-name-link">getSession()</a> - Method in class net.okocraft.box.feature.gui.api.event.mode.<a href="net/okocraft/box/feature/gui/api/event/mode/ClickModeCheckEvent.html" title="class in net.okocraft.box.feature.gui.api.event.mode">ClickModeCheckEvent</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="net/okocraft/box/feature/craft/model/IngredientHolder.html#getSlot()" class="member-name-link">getSlot()</a> - Method in class net.okocraft.box.feature.craft.model.<a href="net/okocraft/box/feature/craft/model/IngredientHolder.html" title="class in net.okocraft.box.feature.craft.model">IngredientHolder</a></dt>
 <dd>
 <div class="block">Returns the position in the crafting table (0-8).</div>
@@ -1472,7 +1485,9 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="net/okocraft/box/feature/gui/api/mode/AbstractStorageMode.AbstractDepositAllButton.html#getSlot()" class="member-name-link">getSlot()</a> - Method in class net.okocraft.box.feature.gui.api.mode.<a href="net/okocraft/box/feature/gui/api/mode/AbstractStorageMode.AbstractDepositAllButton.html" title="class in net.okocraft.box.feature.gui.api.mode">AbstractStorageMode.AbstractDepositAllButton</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="net/okocraft/box/feature/gui/api/session/PlayerSession.html#getSource()" class="member-name-link">getSource()</a> - Method in class net.okocraft.box.feature.gui.api.session.<a href="net/okocraft/box/feature/gui/api/session/PlayerSession.html" title="class in net.okocraft.box.feature.gui.api.session">PlayerSession</a></dt>
+<dt><a href="net/okocraft/box/feature/gui/api/session/PlayerSession.html#getSourceStockHolder()" class="member-name-link">getSourceStockHolder()</a> - Method in class net.okocraft.box.feature.gui.api.session.<a href="net/okocraft/box/feature/gui/api/session/PlayerSession.html" title="class in net.okocraft.box.feature.gui.api.session">PlayerSession</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="net/okocraft/box/feature/gui/api/session/PlayerSession.html#getSourceUser()" class="member-name-link">getSourceUser()</a> - Method in class net.okocraft.box.feature.gui.api.session.<a href="net/okocraft/box/feature/gui/api/session/PlayerSession.html" title="class in net.okocraft.box.feature.gui.api.session">PlayerSession</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/okocraft/box/api/event/stockholder/StockHolderResetEvent.html#getStockDataBeforeReset()" class="member-name-link">getStockDataBeforeReset()</a> - Method in class net.okocraft.box.api.event.stockholder.<a href="net/okocraft/box/api/event/stockholder/StockHolderResetEvent.html" title="class in net.okocraft.box.api.event.stockholder">StockHolderResetEvent</a></dt>
 <dd>
@@ -1488,8 +1503,6 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Gets the stockholder.</div>
 </dd>
-<dt><a href="net/okocraft/box/feature/gui/api/session/PlayerSession.html#getStockHolder()" class="member-name-link">getStockHolder()</a> - Method in class net.okocraft.box.feature.gui.api.session.<a href="net/okocraft/box/feature/gui/api/session/PlayerSession.html" title="class in net.okocraft.box.feature.gui.api.session">PlayerSession</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="net/okocraft/box/api/BoxAPI.html#getStockManager()" class="member-name-link">getStockManager()</a> - Method in interface net.okocraft.box.api.<a href="net/okocraft/box/api/BoxAPI.html" title="interface in net.okocraft.box.api">BoxAPI</a></dt>
 <dd>
 <div class="block">Gets the <a href="net/okocraft/box/api/model/manager/StockManager.html" title="interface in net.okocraft.box.api.model.manager"><code>StockManager</code></a>.</div>
@@ -1751,7 +1764,7 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="net/okocraft/box/feature/stick/item/BoxStickItem.html#hashCode()" class="member-name-link">hashCode()</a> - Method in class net.okocraft.box.feature.stick.item.<a href="net/okocraft/box/feature/stick/item/BoxStickItem.html" title="class in net.okocraft.box.feature.stick.item">BoxStickItem</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="net/okocraft/box/feature/gui/api/session/PlayerSession.html#hasPreviousMenu()" class="member-name-link">hasPreviousMenu()</a> - Method in class net.okocraft.box.feature.gui.api.session.<a href="net/okocraft/box/feature/gui/api/session/PlayerSession.html" title="class in net.okocraft.box.feature.gui.api.session">PlayerSession</a></dt>
+<dt><a href="net/okocraft/box/feature/gui/api/session/MenuHistoryHolder.html#hasPreviousMenu()" class="member-name-link">hasPreviousMenu()</a> - Method in class net.okocraft.box.feature.gui.api.session.<a href="net/okocraft/box/feature/gui/api/session/MenuHistoryHolder.html" title="class in net.okocraft.box.feature.gui.api.session">MenuHistoryHolder</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/okocraft/box/feature/craft/RecipeRegistry.html#hasRecipe(net.okocraft.box.api.model.item.BoxItem)" class="member-name-link">hasRecipe(BoxItem)</a> - Static method in class net.okocraft.box.feature.craft.<a href="net/okocraft/box/feature/craft/RecipeRegistry.html" title="class in net.okocraft.box.feature.craft">RecipeRegistry</a></dt>
 <dd>
@@ -1812,6 +1825,8 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Whether the current auto-store mode is all mode.</div>
 </dd>
+<dt><a href="net/okocraft/box/feature/gui/api/event/mode/ClickModeCheckEvent.html#isAllowed()" class="member-name-link">isAllowed()</a> - Method in class net.okocraft.box.feature.gui.api.event.mode.<a href="net/okocraft/box/feature/gui/api/event/mode/ClickModeCheckEvent.html" title="class in net.okocraft.box.feature.gui.api.event.mode">ClickModeCheckEvent</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="net/okocraft/box/api/util/Version.html#isBefore(V)" class="member-name-link">isBefore(V)</a> - Method in interface net.okocraft.box.api.util.<a href="net/okocraft/box/api/util/Version.html" title="interface in net.okocraft.box.api.util">Version</a></dt>
 <dd>
 <div class="block">Checks if this <a href="net/okocraft/box/api/util/Version.html" title="interface in net.okocraft.box.api.util"><code>Version</code></a> is before the given <a href="net/okocraft/box/api/util/Version.html" title="interface in net.okocraft.box.api.util"><code>Version</code></a>.</div>
@@ -2155,6 +2170,8 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="net/okocraft/box/feature/gui/api/event/MenuEvent.html#%3Cinit%3E(net.okocraft.box.feature.gui.api.menu.Menu,net.okocraft.box.feature.gui.api.session.PlayerSession)" class="member-name-link">MenuEvent(Menu, PlayerSession)</a> - Constructor for class net.okocraft.box.feature.gui.api.event.<a href="net/okocraft/box/feature/gui/api/event/MenuEvent.html" title="class in net.okocraft.box.feature.gui.api.event">MenuEvent</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="net/okocraft/box/feature/gui/api/session/MenuHistoryHolder.html" class="type-name-link" title="class in net.okocraft.box.feature.gui.api.session">MenuHistoryHolder</a> - Class in <a href="net/okocraft/box/feature/gui/api/session/package-summary.html">net.okocraft.box.feature.gui.api.session</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="net/okocraft/box/feature/gui/api/util/MenuOpener.html" class="type-name-link" title="class in net.okocraft.box.feature.gui.api.util">MenuOpener</a> - Class in <a href="net/okocraft/box/feature/gui/api/util/package-summary.html">net.okocraft.box.feature.gui.api.util</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/okocraft/box/feature/gui/api/event/MenuOpenEvent.html" class="type-name-link" title="class in net.okocraft.box.feature.gui.api.event">MenuOpenEvent</a> - Class in <a href="net/okocraft/box/feature/gui/api/event/package-summary.html">net.okocraft.box.feature.gui.api.event</a></dt>
@@ -2358,6 +2375,8 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="net/okocraft/box/feature/gui/api/event/package-summary.html">net.okocraft.box.feature.gui.api.event</a> - package net.okocraft.box.feature.gui.api.event</dt>
 <dd>&nbsp;</dd>
+<dt><a href="net/okocraft/box/feature/gui/api/event/mode/package-summary.html">net.okocraft.box.feature.gui.api.event.mode</a> - package net.okocraft.box.feature.gui.api.event.mode</dt>
+<dd>&nbsp;</dd>
 <dt><a href="net/okocraft/box/feature/gui/api/event/stock/package-summary.html">net.okocraft.box.feature.gui.api.event.stock</a> - package net.okocraft.box.feature.gui.api.event.stock</dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/okocraft/box/feature/gui/api/lang/package-summary.html">net.okocraft.box.feature.gui.api.lang</a> - package net.okocraft.box.feature.gui.api.lang</dt>
@@ -2386,7 +2405,7 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="net/okocraft/box/feature/gui/api/session/PlayerSession.html#newSession(org.bukkit.entity.Player)" class="member-name-link">newSession(Player)</a> - Static method in class net.okocraft.box.feature.gui.api.session.<a href="net/okocraft/box/feature/gui/api/session/PlayerSession.html" title="class in net.okocraft.box.feature.gui.api.session">PlayerSession</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="net/okocraft/box/feature/gui/api/session/PlayerSession.html#newSession(org.bukkit.entity.Player,net.okocraft.box.api.player.BoxPlayer)" class="member-name-link">newSession(Player, BoxPlayer)</a> - Static method in class net.okocraft.box.feature.gui.api.session.<a href="net/okocraft/box/feature/gui/api/session/PlayerSession.html" title="class in net.okocraft.box.feature.gui.api.session">PlayerSession</a></dt>
+<dt><a href="net/okocraft/box/feature/gui/api/session/PlayerSession.html#newSession(org.bukkit.entity.Player,net.okocraft.box.api.model.user.BoxUser)" class="member-name-link">newSession(Player, BoxUser)</a> - Static method in class net.okocraft.box.feature.gui.api.session.<a href="net/okocraft/box/feature/gui/api/session/PlayerSession.html" title="class in net.okocraft.box.feature.gui.api.session">PlayerSession</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/okocraft/box/feature/craft/model/IngredientHolder.SelectableIngredients.html#next()" class="member-name-link">next()</a> - Method in class net.okocraft.box.feature.craft.model.<a href="net/okocraft/box/feature/craft/model/IngredientHolder.SelectableIngredients.html" title="class in net.okocraft.box.feature.craft.model">IngredientHolder.SelectableIngredients</a></dt>
 <dd>
@@ -2594,8 +2613,6 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="net/okocraft/box/feature/gui/api/session/PlayerSession.html" class="type-name-link" title="class in net.okocraft.box.feature.gui.api.session">PlayerSession</a> - Class in <a href="net/okocraft/box/feature/gui/api/session/package-summary.html">net.okocraft.box.feature.gui.api.session</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="net/okocraft/box/feature/gui/api/session/PlayerSession.html#%3Cinit%3E(org.bukkit.entity.Player,net.okocraft.box.api.player.BoxPlayer,java.util.List)" class="member-name-link">PlayerSession(Player, BoxPlayer, List&lt;BoxItemClickMode&gt;)</a> - Constructor for class net.okocraft.box.feature.gui.api.session.<a href="net/okocraft/box/feature/gui/api/session/PlayerSession.html" title="class in net.okocraft.box.feature.gui.api.session">PlayerSession</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="net/okocraft/box/api/event/player/PlayerStockHolderChangeEvent.html" class="type-name-link" title="class in net.okocraft.box.api.event.player">PlayerStockHolderChangeEvent</a> - Class in <a href="net/okocraft/box/api/event/player/package-summary.html">net.okocraft.box.api.event.player</a></dt>
 <dd>
 <div class="block">A <a href="net/okocraft/box/api/event/player/PlayerEvent.html" title="class in net.okocraft.box.api.event.player"><code>PlayerEvent</code></a> called when the player changed the <a href="net/okocraft/box/api/model/stock/StockHolder.html" title="interface in net.okocraft.box.api.model.stock"><code>StockHolder</code></a>.</div>
@@ -2721,7 +2738,7 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Creates an instance of a <code>Reloading</code> record class.</div>
 </dd>
-<dt><a href="net/okocraft/box/feature/gui/api/session/PlayerSession.html#rememberMenu(net.okocraft.box.feature.gui.api.menu.Menu)" class="member-name-link">rememberMenu(Menu)</a> - Method in class net.okocraft.box.feature.gui.api.session.<a href="net/okocraft/box/feature/gui/api/session/PlayerSession.html" title="class in net.okocraft.box.feature.gui.api.session">PlayerSession</a></dt>
+<dt><a href="net/okocraft/box/feature/gui/api/session/MenuHistoryHolder.html#rememberMenu(net.okocraft.box.feature.gui.api.menu.Menu)" class="member-name-link">rememberMenu(Menu)</a> - Method in class net.okocraft.box.feature.gui.api.session.<a href="net/okocraft/box/feature/gui/api/session/MenuHistoryHolder.html" title="class in net.okocraft.box.feature.gui.api.session">MenuHistoryHolder</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/okocraft/box/feature/gui/api/session/PlayerSession.html#removeData(net.okocraft.box.feature.gui.api.session.TypedKey)" class="member-name-link">removeData(TypedKey&lt;T&gt;)</a> - Method in class net.okocraft.box.feature.gui.api.session.<a href="net/okocraft/box/feature/gui/api/session/PlayerSession.html" title="class in net.okocraft.box.feature.gui.api.session">PlayerSession</a></dt>
 <dd>&nbsp;</dd>
@@ -2832,16 +2849,14 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Sets the auto-store mode to all mode or per-item mode.</div>
 </dd>
+<dt><a href="net/okocraft/box/feature/gui/api/event/mode/ClickModeCheckEvent.html#setAllowed(boolean)" class="member-name-link">setAllowed(boolean)</a> - Method in class net.okocraft.box.feature.gui.api.event.mode.<a href="net/okocraft/box/feature/gui/api/event/mode/ClickModeCheckEvent.html" title="class in net.okocraft.box.feature.gui.api.event.mode">ClickModeCheckEvent</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="net/okocraft/box/api/model/stock/StockHolderWrapper.html#setAmount(net.okocraft.box.api.model.item.BoxItem,int,net.okocraft.box.api.event.stockholder.stock.StockEvent.Cause)" class="member-name-link">setAmount(BoxItem, int, StockEvent.Cause)</a> - Method in interface net.okocraft.box.api.model.stock.<a href="net/okocraft/box/api/model/stock/StockHolderWrapper.html" title="interface in net.okocraft.box.api.model.stock">StockHolderWrapper</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/okocraft/box/api/model/stock/StockHolder.html#setAmount(net.okocraft.box.api.model.item.BoxItem,int,net.okocraft.box.api.event.stockholder.stock.StockEvent.Cause)" class="member-name-link">setAmount(BoxItem, int, StockEvent.Cause)</a> - Method in interface net.okocraft.box.api.model.stock.<a href="net/okocraft/box/api/model/stock/StockHolder.html" title="interface in net.okocraft.box.api.model.stock">StockHolder</a></dt>
 <dd>
 <div class="block">Sets the stock quantity of the specified item.</div>
 </dd>
-<dt><a href="net/okocraft/box/feature/gui/api/session/PlayerSession.html#setAvailableClickModes(java.util.List)" class="member-name-link">setAvailableClickModes(List&lt;BoxItemClickMode&gt;)</a> - Method in class net.okocraft.box.feature.gui.api.session.<a href="net/okocraft/box/feature/gui/api/session/PlayerSession.html" title="class in net.okocraft.box.feature.gui.api.session">PlayerSession</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="net/okocraft/box/feature/gui/api/session/PlayerSession.html#setBoxItemClickMode(net.okocraft.box.feature.gui.api.mode.BoxItemClickMode)" class="member-name-link">setBoxItemClickMode(BoxItemClickMode)</a> - Method in class net.okocraft.box.feature.gui.api.session.<a href="net/okocraft/box/feature/gui/api/session/PlayerSession.html" title="class in net.okocraft.box.feature.gui.api.session">PlayerSession</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="net/okocraft/box/api/event/Cancellable.html#setCancelled(boolean)" class="member-name-link">setCancelled(boolean)</a> - Method in interface net.okocraft.box.api.event.<a href="net/okocraft/box/api/event/Cancellable.html" title="interface in net.okocraft.box.api.event">Cancellable</a></dt>
 <dd>
 <div class="block">Sets the cancel status of the event.</div>
@@ -2851,6 +2866,8 @@ loadScripts(document, 'script');</script>
 <dt><a href="net/okocraft/box/feature/gui/api/event/MenuClickEvent.html#setCancelled(boolean)" class="member-name-link">setCancelled(boolean)</a> - Method in class net.okocraft.box.feature.gui.api.event.<a href="net/okocraft/box/feature/gui/api/event/MenuClickEvent.html" title="class in net.okocraft.box.feature.gui.api.event">MenuClickEvent</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/okocraft/box/feature/gui/api/event/MenuOpenEvent.html#setCancelled(boolean)" class="member-name-link">setCancelled(boolean)</a> - Method in class net.okocraft.box.feature.gui.api.event.<a href="net/okocraft/box/feature/gui/api/event/MenuOpenEvent.html" title="class in net.okocraft.box.feature.gui.api.event">MenuOpenEvent</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="net/okocraft/box/feature/gui/api/session/ClickModeHolder.html#setCurrentMode(net.okocraft.box.feature.gui.api.mode.BoxItemClickMode)" class="member-name-link">setCurrentMode(BoxItemClickMode)</a> - Method in class net.okocraft.box.feature.gui.api.session.<a href="net/okocraft/box/feature/gui/api/session/ClickModeHolder.html" title="class in net.okocraft.box.feature.gui.api.session">ClickModeHolder</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/okocraft/box/feature/gui/api/menu/paginate/AbstractPaginatedMenu.html#setCurrentPage(net.okocraft.box.feature.gui.api.session.PlayerSession,int)" class="member-name-link">setCurrentPage(PlayerSession, int)</a> - Method in class net.okocraft.box.feature.gui.api.menu.paginate.<a href="net/okocraft/box/feature/gui/api/menu/paginate/AbstractPaginatedMenu.html" title="class in net.okocraft.box.feature.gui.api.menu.paginate">AbstractPaginatedMenu</a></dt>
 <dd>&nbsp;</dd>
@@ -2872,8 +2889,6 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Enables or disables the auto-store of the specified <a href="net/okocraft/box/api/model/item/BoxItem.html" title="interface in net.okocraft.box.api.model.item"><code>BoxItem</code></a>.</div>
 </dd>
-<dt><a href="net/okocraft/box/feature/gui/api/session/PlayerSession.html#setStockHolder(net.okocraft.box.api.model.stock.StockHolder)" class="member-name-link">setStockHolder(StockHolder)</a> - Method in class net.okocraft.box.feature.gui.api.session.<a href="net/okocraft/box/feature/gui/api/session/PlayerSession.html" title="class in net.okocraft.box.feature.gui.api.session">PlayerSession</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="net/okocraft/box/feature/gui/api/session/Amount.html#setValue(int)" class="member-name-link">setValue(int)</a> - Method in class net.okocraft.box.feature.gui.api.session.<a href="net/okocraft/box/feature/gui/api/session/Amount.html" title="class in net.okocraft.box.feature.gui.api.session">Amount</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/okocraft/box/feature/gui/api/session/Amount.html#SHARED_DATA_KEY" class="member-name-link">SHARED_DATA_KEY</a> - Static variable in class net.okocraft.box.feature.gui.api.session.<a href="net/okocraft/box/feature/gui/api/session/Amount.html" title="class in net.okocraft.box.feature.gui.api.session">Amount</a></dt>
@@ -3175,6 +3190,8 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="net/okocraft/box/feature/gui/api/event/MenuOpenEvent.html#toDebugLog()" class="member-name-link">toDebugLog()</a> - Method in class net.okocraft.box.feature.gui.api.event.<a href="net/okocraft/box/feature/gui/api/event/MenuOpenEvent.html" title="class in net.okocraft.box.feature.gui.api.event">MenuOpenEvent</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="net/okocraft/box/feature/gui/api/event/mode/ClickModeCheckEvent.html#toDebugLog()" class="member-name-link">toDebugLog()</a> - Method in class net.okocraft.box.feature.gui.api.event.mode.<a href="net/okocraft/box/feature/gui/api/event/mode/ClickModeCheckEvent.html" title="class in net.okocraft.box.feature.gui.api.event.mode">ClickModeCheckEvent</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="net/okocraft/box/feature/autostore/setting/PerItemSetting.html#toggleEnabled(net.okocraft.box.api.model.item.BoxItem)" class="member-name-link">toggleEnabled(BoxItem)</a> - Method in class net.okocraft.box.feature.autostore.setting.<a href="net/okocraft/box/feature/autostore/setting/PerItemSetting.html" title="class in net.okocraft.box.feature.autostore.setting">PerItemSetting</a></dt>
 <dd>
 <div class="block">Toggles the auto-store of the specified <a href="net/okocraft/box/api/model/item/BoxItem.html" title="interface in net.okocraft.box.api.model.item"><code>BoxItem</code></a>.</div>
@@ -3342,6 +3359,8 @@ loadScripts(document, 'script');</script>
 <dt><a href="net/okocraft/box/feature/gui/api/event/MenuClickEvent.html#toString()" class="member-name-link">toString()</a> - Method in class net.okocraft.box.feature.gui.api.event.<a href="net/okocraft/box/feature/gui/api/event/MenuClickEvent.html" title="class in net.okocraft.box.feature.gui.api.event">MenuClickEvent</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/okocraft/box/feature/gui/api/event/MenuOpenEvent.html#toString()" class="member-name-link">toString()</a> - Method in class net.okocraft.box.feature.gui.api.event.<a href="net/okocraft/box/feature/gui/api/event/MenuOpenEvent.html" title="class in net.okocraft.box.feature.gui.api.event">MenuOpenEvent</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="net/okocraft/box/feature/gui/api/event/mode/ClickModeCheckEvent.html#toString()" class="member-name-link">toString()</a> - Method in class net.okocraft.box.feature.gui.api.event.mode.<a href="net/okocraft/box/feature/gui/api/event/mode/ClickModeCheckEvent.html" title="class in net.okocraft.box.feature.gui.api.event.mode">ClickModeCheckEvent</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/okocraft/box/feature/gui/api/event/stock/GuiCauses.Deposit.html#toString()" class="member-name-link">toString()</a> - Method in record class net.okocraft.box.feature.gui.api.event.stock.<a href="net/okocraft/box/feature/gui/api/event/stock/GuiCauses.Deposit.html" title="class in net.okocraft.box.feature.gui.api.event.stock">GuiCauses.Deposit</a></dt>
 <dd>
