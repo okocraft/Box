@@ -49,7 +49,7 @@ public class StickFeature extends AbstractBoxFeature {
 
         BoxAPI.api().getBoxCommand().getSubCommandHolder().register(this.stickCommand);
         BoxAPI.api().getBoxAdminCommand().getSubCommandHolder().register(this.customStickCommand);
-        Bukkit.getPluginManager().registerEvents(this.stickListener, BoxAPI.api().getPluginInstance());
+        Bukkit.getPluginManager().registerEvents(this.stickListener, context.plugin());
     }
 
     @Override

@@ -5,7 +5,6 @@ import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.event.stockholder.stock.StockEvent;
 import net.okocraft.box.feature.autostore.AutoStoreSettingProvider;
 import net.okocraft.box.feature.autostore.integration.CoreProtectIntegration;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Boss;
@@ -13,7 +12,6 @@ import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
@@ -30,15 +28,6 @@ public class ItemListener implements Listener {
 
     public ItemListener(@NotNull AutoStoreSettingProvider container) {
         this.container = container;
-    }
-
-    public void register() {
-        var plugin = BoxAPI.api().getPluginInstance();
-        Bukkit.getPluginManager().registerEvents(this, plugin);
-    }
-
-    public void unregister() {
-        HandlerList.unregisterAll(this);
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)

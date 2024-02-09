@@ -15,7 +15,6 @@ import net.okocraft.box.api.scheduler.BoxScheduler;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
@@ -43,15 +42,6 @@ public interface BoxAPI {
     static boolean isLoaded() {
         return BoxProvider.API != null;
     }
-
-    /**
-     * Gets the instance of Box.
-     * <p>
-     * This is intended for operations that require a plugin instance.
-     *
-     * @return the plugin instance
-     */
-    @NotNull Plugin getPluginInstance();
 
     /**
      * Gets the path of the plugin directory.

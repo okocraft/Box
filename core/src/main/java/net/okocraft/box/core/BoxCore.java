@@ -36,7 +36,6 @@ import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
@@ -202,11 +201,6 @@ public class BoxCore implements BoxAPI {
         if (!(sender instanceof ConsoleCommandSender)) {
             BoxLogger.logger().info("Successfully reloaded!");
         }
-    }
-
-    @Override
-    public @NotNull Plugin getPluginInstance() {
-        return context.plugin();
     }
 
     @Override

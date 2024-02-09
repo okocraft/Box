@@ -11,6 +11,7 @@ import net.okocraft.box.feature.autostore.listener.AutoSaveListener;
 import net.okocraft.box.feature.autostore.listener.ItemListener;
 import net.okocraft.box.feature.gui.api.mode.ClickModeRegistry;
 import org.bukkit.Bukkit;
+import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,7 +35,7 @@ public class AutoStoreFeature extends AbstractBoxFeature {
 
     /**
      * The constructor of {@link AutoStoreFeature}.
-
+     *
      * @param context a context of {@link net.okocraft.box.api.feature.FeatureContext.Registration}
      */
     @ApiStatus.Internal
@@ -54,7 +55,7 @@ public class AutoStoreFeature extends AbstractBoxFeature {
         this.settingContainer.registerBoxPlayerListener(this.loadErrorMessage);
         this.autoSaveListener.register(AUTO_SAVE_LISTENER_KEY);
 
-        this.itemListener.register();
+        Bukkit.getPluginManager().registerEvents(this.itemListener, context.plugin());
 
         BoxAPI.api().getBoxCommand().getSubCommandHolder().register(this.autoStoreCommand);
         ClickModeRegistry.register(this.autoStoreClickMode);
@@ -69,7 +70,7 @@ public class AutoStoreFeature extends AbstractBoxFeature {
         BoxAPI.api().getBoxCommand().getSubCommandHolder().unregister(this.autoStoreCommand);
         ClickModeRegistry.unregister(this.autoStoreClickMode);
 
-        this.itemListener.unregister();
+        HandlerList.unregisterAll(this.itemListener);
 
         this.autoSaveListener.unregister(AUTO_SAVE_LISTENER_KEY);
         this.settingContainer.unregisterBoxPlayerListener();
