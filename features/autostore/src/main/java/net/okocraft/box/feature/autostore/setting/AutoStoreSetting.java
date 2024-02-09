@@ -18,9 +18,9 @@ public class AutoStoreSetting {
 
     private final UUID uuid;
     private final PerItemSetting perItemSetting = new PerItemSetting();
-    private boolean enabled = false;
-    private boolean allMode = true;
-    private boolean direct = false;
+    private volatile boolean enabled = false;
+    private volatile boolean allMode = true;
+    private volatile boolean direct = false;
 
     /**
      * The constructor of the {@link AutoStoreSetting}.
@@ -46,7 +46,7 @@ public class AutoStoreSetting {
      * @return the {@link PerItemSetting}
      */
     public @NotNull PerItemSetting getPerItemModeSetting() {
-        return perItemSetting;
+        return this.perItemSetting;
     }
 
     /**
@@ -55,7 +55,7 @@ public class AutoStoreSetting {
      * @return if {@code true}, the auto-store is enabled, or if {@code false}, it is disabled
      */
     public boolean isEnabled() {
-        return enabled;
+        return this.enabled;
     }
 
     /**
@@ -73,7 +73,7 @@ public class AutoStoreSetting {
      * @return if {@code true}, the mode is all mode, or if {@code false}, it is per-item mode
      */
     public boolean isAllMode() {
-        return allMode;
+        return this.allMode;
     }
 
     /**
@@ -114,7 +114,7 @@ public class AutoStoreSetting {
      * @return if {@code true}, the {@link BoxItem} should be auto-stored, or if {@code false}, it should not be autos-stored
      */
     public boolean shouldAutoStore(@NotNull BoxItem item) {
-        return allMode || perItemSetting.isEnabled(item);
+        return this.allMode || this.perItemSetting.isEnabled(item);
     }
 
     @Override
@@ -122,22 +122,22 @@ public class AutoStoreSetting {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AutoStoreSetting that = (AutoStoreSetting) o;
-        return uuid.equals(that.uuid);
+        return this.uuid.equals(that.uuid);
     }
 
     @Override
     public int hashCode() {
-        return uuid.hashCode();
+        return this.uuid.hashCode();
     }
 
     @Override
     public String toString() {
         return "AutoStoreSetting{" +
-                "uuid=" + uuid +
-                ", enabled=" + enabled +
-                ", allMode=" + allMode +
-                ", direct=" + direct +
-                ", perItemModeSetting=" + perItemSetting +
+                "uuid=" + this.uuid +
+                ", enabled=" + this.enabled +
+                ", allMode=" + this.allMode +
+                ", direct=" + this.direct +
+                ", perItemModeSetting=" + this.perItemSetting +
                 '}';
     }
 }
