@@ -93,7 +93,6 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Record Components:</dt>
 <dd><code><span id="param-plugin">plugin</span></code> - a <a href="https://jd.papermc.io/paper/1.20/org/bukkit/plugin/Plugin.html" title="class or interface in org.bukkit.plugin" class="external-link"><code>Plugin</code></a> instance</dd>
-<dd><code><span id="param-featureProvider">featureProvider</span></code> - a <a href="FeatureProvider.html" title="interface in net.okocraft.box.api.feature"><code>FeatureProvider</code></a> instance</dd>
 <dd><code><span id="param-commandSender">commandSender</span></code> - a <a href="https://jd.papermc.io/paper/1.20/org/bukkit/command/CommandSender.html" title="class or interface in org.bukkit.command" class="external-link"><code>CommandSender</code></a> who requests reloading</dd>
 </dl>
 <dl class="notes">
@@ -101,7 +100,7 @@ loadScripts(document, 'script');</script>
 <dd><code><a href="FeatureContext.html" title="class in net.okocraft.box.api.feature">FeatureContext</a></code></dd>
 </dl>
 <hr>
-<div class="type-signature"><span class="modifiers">public static record </span><span class="element-name type-name-label">FeatureContext.Reloading</span>(<a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/NotNull.html" title="class or interface in org.jetbrains.annotations" class="external-link">@NotNull</a> <a href="https://jd.papermc.io/paper/1.20/org/bukkit/plugin/Plugin.html" title="class or interface in org.bukkit.plugin" class="external-link">Plugin</a>&nbsp;plugin, <a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/NotNull.html" title="class or interface in org.jetbrains.annotations" class="external-link">@NotNull</a> <a href="FeatureProvider.html" title="interface in net.okocraft.box.api.feature">FeatureProvider</a>&nbsp;featureProvider, <a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/NotNull.html" title="class or interface in org.jetbrains.annotations" class="external-link">@NotNull</a> <a href="https://jd.papermc.io/paper/1.20/org/bukkit/command/CommandSender.html" title="class or interface in org.bukkit.command" class="external-link">CommandSender</a>&nbsp;commandSender)
+<div class="type-signature"><span class="modifiers">public static record </span><span class="element-name type-name-label">FeatureContext.Reloading</span>(<a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/NotNull.html" title="class or interface in org.jetbrains.annotations" class="external-link">@NotNull</a> <a href="https://jd.papermc.io/paper/1.20/org/bukkit/plugin/Plugin.html" title="class or interface in org.bukkit.plugin" class="external-link">Plugin</a>&nbsp;plugin, <a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/NotNull.html" title="class or interface in org.jetbrains.annotations" class="external-link">@NotNull</a> <a href="https://jd.papermc.io/paper/1.20/org/bukkit/command/CommandSender.html" title="class or interface in org.bukkit.command" class="external-link">CommandSender</a>&nbsp;commandSender)
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Record.html" title="class or interface in java.lang" class="external-link">Record</a></span></div>
 <div class="block">A context on reloading.</div>
 </section>
@@ -115,8 +114,7 @@ loadScripts(document, 'script');</script>
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Constructor</div>
 <div class="table-header col-last">Description</div>
-<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(org.bukkit.plugin.Plugin,net.okocraft.box.api.feature.FeatureProvider,org.bukkit.command.CommandSender)" class="member-name-link">Reloading</a><wbr>(<a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/NotNull.html" title="class or interface in org.jetbrains.annotations" class="external-link">@NotNull</a> <a href="https://jd.papermc.io/paper/1.20/org/bukkit/plugin/Plugin.html" title="class or interface in org.bukkit.plugin" class="external-link">Plugin</a>&nbsp;plugin,
- <a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/NotNull.html" title="class or interface in org.jetbrains.annotations" class="external-link">@NotNull</a> <a href="FeatureProvider.html" title="interface in net.okocraft.box.api.feature">FeatureProvider</a>&nbsp;featureProvider,
+<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(org.bukkit.plugin.Plugin,org.bukkit.command.CommandSender)" class="member-name-link">Reloading</a><wbr>(<a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/NotNull.html" title="class or interface in org.jetbrains.annotations" class="external-link">@NotNull</a> <a href="https://jd.papermc.io/paper/1.20/org/bukkit/plugin/Plugin.html" title="class or interface in org.bukkit.plugin" class="external-link">Plugin</a>&nbsp;plugin,
  <a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/NotNull.html" title="class or interface in org.jetbrains.annotations" class="external-link">@NotNull</a> <a href="https://jd.papermc.io/paper/1.20/org/bukkit/command/CommandSender.html" title="class or interface in org.bukkit.command" class="external-link">CommandSender</a>&nbsp;commandSender)</code></div>
 <div class="col-last even-row-color">
 <div class="block">Creates an instance of a <code>Reloading</code> record class.</div>
@@ -155,24 +153,19 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Indicates whether some other object is "equal to" this one.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/NotNull.html" title="class or interface in org.jetbrains.annotations" class="external-link">@NotNull</a> <a href="FeatureProvider.html" title="interface in net.okocraft.box.api.feature">FeatureProvider</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#featureProvider()" class="member-name-link">featureProvider</a>()</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final int</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#hashCode()" class="member-name-link">hashCode</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Returns the value of the <a href="#param-featureProvider"><code>featureProvider</code></a> record component.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final int</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#hashCode()" class="member-name-link">hashCode</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns a hash code value for this object.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/NotNull.html" title="class or interface in org.jetbrains.annotations" class="external-link">@NotNull</a> <a href="https://jd.papermc.io/paper/1.20/org/bukkit/plugin/Plugin.html" title="class or interface in org.bukkit.plugin" class="external-link">Plugin</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#plugin()" class="member-name-link">plugin</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/NotNull.html" title="class or interface in org.jetbrains.annotations" class="external-link">@NotNull</a> <a href="https://jd.papermc.io/paper/1.20/org/bukkit/plugin/Plugin.html" title="class or interface in org.bukkit.plugin" class="external-link">Plugin</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#plugin()" class="member-name-link">plugin</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the value of the <a href="#param-plugin"><code>plugin</code></a> record component.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toString()" class="member-name-link">toString</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toString()" class="member-name-link">toString</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns a string representation of this record class.</div>
 </div>
 </div>
@@ -193,19 +186,16 @@ loadScripts(document, 'script');</script>
 <h2>Constructor Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="&lt;init&gt;(org.bukkit.plugin.Plugin,net.okocraft.box.api.feature.FeatureProvider,org.bukkit.command.CommandSender)">
+<section class="detail" id="&lt;init&gt;(org.bukkit.plugin.Plugin,org.bukkit.command.CommandSender)">
 <h3>Reloading</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">Reloading</span><wbr><span class="parameters">(<a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/NotNull.html" title="class or interface in org.jetbrains.annotations" class="external-link">@NotNull</a>
  <a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/NotNull.html" title="class or interface in org.jetbrains.annotations" class="external-link">@NotNull</a> <a href="https://jd.papermc.io/paper/1.20/org/bukkit/plugin/Plugin.html" title="class or interface in org.bukkit.plugin" class="external-link">Plugin</a>&nbsp;plugin,
- <a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/NotNull.html" title="class or interface in org.jetbrains.annotations" class="external-link">@NotNull</a>
- <a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/NotNull.html" title="class or interface in org.jetbrains.annotations" class="external-link">@NotNull</a> <a href="FeatureProvider.html" title="interface in net.okocraft.box.api.feature">FeatureProvider</a>&nbsp;featureProvider,
  <a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/NotNull.html" title="class or interface in org.jetbrains.annotations" class="external-link">@NotNull</a>
  <a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/NotNull.html" title="class or interface in org.jetbrains.annotations" class="external-link">@NotNull</a> <a href="https://jd.papermc.io/paper/1.20/org/bukkit/command/CommandSender.html" title="class or interface in org.bukkit.command" class="external-link">CommandSender</a>&nbsp;commandSender)</span></div>
 <div class="block">Creates an instance of a <code>Reloading</code> record class.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>plugin</code> - the value for the <a href="#param-plugin"><code>plugin</code></a> record component</dd>
-<dd><code>featureProvider</code> - the value for the <a href="#param-featureProvider"><code>featureProvider</code></a> record component</dd>
 <dd><code>commandSender</code> - the value for the <a href="#param-commandSender"><code>commandSender</code></a> record component</dd>
 </dl>
 </section>
@@ -294,18 +284,6 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the value of the <a href="#param-plugin"><code>plugin</code></a> record component</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="featureProvider()">
-<h3>featureProvider</h3>
-<div class="member-signature"><span class="annotations"><a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/NotNull.html" title="class or interface in org.jetbrains.annotations" class="external-link">@NotNull</a>
-</span><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://javadoc.io/doc/org.jetbrains/annotations/24.1.0/org/jetbrains/annotations/NotNull.html" title="class or interface in org.jetbrains.annotations" class="external-link">@NotNull</a> <a href="FeatureProvider.html" title="interface in net.okocraft.box.api.feature">FeatureProvider</a></span>&nbsp;<span class="element-name">featureProvider</span>()</div>
-<div class="block">Returns the value of the <a href="#param-featureProvider"><code>featureProvider</code></a> record component.</div>
-<dl class="notes">
-<dt>Returns:</dt>
-<dd>the value of the <a href="#param-featureProvider"><code>featureProvider</code></a> record component</dd>
 </dl>
 </section>
 </li>
