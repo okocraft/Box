@@ -41,7 +41,7 @@ public final class IngredientRenderer {
             var item = ingredient.getKey();
             int need = ingredient.getValue() * times;
 
-            int current = session.getStockHolder().getAmount(item);
+            int current = session.getSourceStockHolder().getAmount(item);
             var style = need <= current ? Styles.NO_DECORATION_AQUA : Styles.NO_DECORATION_RED;
 
             editor.loreLine(

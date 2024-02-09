@@ -46,7 +46,7 @@ public class CategorySelectorMenu extends AbstractPaginatedMenu<Category> {
 
     @Override
     public @NotNull Component getTitle(@NotNull PlayerSession session) {
-        return TITLE.apply(session.getStockHolder()).create(session.getMessageSource());
+        return TITLE.apply(session.getSourceStockHolder()).create(session.getMessageSource());
     }
 
     @Override

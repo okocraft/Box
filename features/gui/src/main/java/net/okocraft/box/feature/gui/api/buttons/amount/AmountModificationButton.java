@@ -22,14 +22,6 @@ abstract class AmountModificationButton implements Button {
     }
 
     protected final @NotNull Amount getOrCreateAmount(@NotNull PlayerSession session) {
-        var amount = session.getData(dataKey);
-
-        if (amount != null) {
-            return amount;
-        } else {
-            var newAmount = new Amount();
-            session.putData(dataKey, newAmount);
-            return newAmount;
-        }
+        return session.computeDataIfAbsent(this.dataKey, Amount::new);
     }
 }

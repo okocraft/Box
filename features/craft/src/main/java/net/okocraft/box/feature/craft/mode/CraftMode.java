@@ -4,7 +4,6 @@ import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
 import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.message.DefaultMessageCollector;
 import net.okocraft.box.api.model.item.BoxItem;
-import net.okocraft.box.api.player.BoxPlayer;
 import net.okocraft.box.feature.craft.RecipeRegistry;
 import net.okocraft.box.feature.craft.gui.menu.CraftMenu;
 import net.okocraft.box.feature.craft.gui.menu.RecipeSelectorMenu;
@@ -16,7 +15,6 @@ import net.okocraft.box.feature.gui.api.session.PlayerSession;
 import net.okocraft.box.feature.gui.api.util.ItemEditor;
 import net.okocraft.box.feature.gui.api.util.SoundBase;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -91,7 +89,7 @@ public class CraftMode implements BoxItemClickMode {
     }
 
     @Override
-    public boolean canUse(@NotNull Player viewer, @NotNull BoxPlayer source) {
-        return viewer.hasPermission("box.craft");
+    public boolean canUse(@NotNull PlayerSession session) {
+        return session.getViewer().hasPermission("box.craft");
     }
 }

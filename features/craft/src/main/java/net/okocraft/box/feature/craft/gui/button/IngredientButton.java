@@ -44,7 +44,7 @@ public record IngredientButton(int slot, int ingredientPos) implements Button {
                             .append(Component.text(" > "))
                             .append(Component.translatable(ingredient.item().getOriginal()))
                             .append(Component.space())
-                            .append(Component.text("(" + session.getStockHolder().getAmount(ingredient.item()) + ")"))
+                            .append(Component.text("(" + session.getSourceStockHolder().getAmount(ingredient.item()) + ")"))
                             .style(ingredient == ingredients.getSelected() ? Styles.NO_DECORATION_AQUA : Styles.NO_DECORATION_GRAY)
                             .build()
             );

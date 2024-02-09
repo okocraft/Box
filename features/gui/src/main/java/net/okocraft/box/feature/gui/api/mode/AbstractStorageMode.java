@@ -32,7 +32,7 @@ public abstract class AbstractStorageMode implements BoxItemClickMode {
         BoxAPI.api().getScheduler().runEntityTask(viewer, () -> {
             var resultList =
                     StockHolderTransaction
-                            .create(session.getStockHolder())
+                            .create(session.getSourceStockHolder())
                             .deposit(item, amount)
                             .fromInventory(viewer.getInventory(), new GuiCauses.Deposit(viewer));
 
@@ -48,7 +48,7 @@ public abstract class AbstractStorageMode implements BoxItemClickMode {
         var amountData = session.getData(Amount.SHARED_DATA_KEY);
         int limit = amountData != null ? amountData.getValue() : 1;
 
-        var stockHolder = session.getStockHolder();
+        var stockHolder = session.getSourceStockHolder();
         var currentStock = stockHolder.getAmount(item);
 
         if (currentStock < 1) {
@@ -62,7 +62,7 @@ public abstract class AbstractStorageMode implements BoxItemClickMode {
         BoxAPI.api().getScheduler().runEntityTask(viewer, () -> {
             var withdrawn =
                     StockHolderTransaction
-                            .create(session.getStockHolder())
+                            .create(session.getSourceStockHolder())
                             .withdraw(item, amount)
                             .toInventory(viewer.getInventory(), new GuiCauses.Withdraw(viewer)).amount();
 
@@ -113,7 +113,7 @@ public abstract class AbstractStorageMode implements BoxItemClickMode {
                 scheduler.runEntityTask(viewer, () -> {
                     var resultList =
                             StockHolderTransaction
-                                    .create(session.getStockHolder())
+                                    .create(session.getSourceStockHolder())
                                     .depositAll()
                                     .fromInventory(viewer.getInventory(), new GuiCauses.Deposit(viewer));
                     finishTransaction(!resultList.isEmpty(), viewer, DEPOSIT_ALL_SOUND, result);

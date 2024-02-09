@@ -11,6 +11,7 @@ import net.okocraft.box.feature.gui.api.button.Button;
 import net.okocraft.box.feature.gui.api.button.ClickResult;
 import net.okocraft.box.feature.gui.api.event.MenuClickEvent;
 import net.okocraft.box.feature.gui.api.menu.Menu;
+import net.okocraft.box.feature.gui.api.session.MenuHistoryHolder;
 import net.okocraft.box.feature.gui.api.session.PlayerSession;
 import net.okocraft.box.feature.gui.api.util.MenuOpener;
 import org.bukkit.Bukkit;
@@ -133,9 +134,9 @@ public class BoxInventoryHolder implements InventoryHolder {
         } else if (clickResult == ClickResult.UPDATE_BUTTON) {
             inventory.setItem(button.getSlot(), button.createIcon(session));
         } else if (clickResult == ClickResult.BACK_MENU) {
-            MenuOpener.open(this.session.backMenu(), this.session);
+            MenuOpener.open(MenuHistoryHolder.getFromSession(this.session).backMenu(), this.session);
         } else if (clickResult instanceof ClickResult.ChangeMenu changeMenu) {
-            this.session.rememberMenu(this.menu);
+            MenuHistoryHolder.getFromSession(this.session).rememberMenu(changeMenu.menu());
             MenuOpener.open(changeMenu.menu(), this.session);
         }
         this.finishClickProcess();

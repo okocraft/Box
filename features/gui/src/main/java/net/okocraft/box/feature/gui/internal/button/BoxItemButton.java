@@ -3,6 +3,7 @@ package net.okocraft.box.feature.gui.internal.button;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.feature.gui.api.button.Button;
 import net.okocraft.box.feature.gui.api.button.ClickResult;
+import net.okocraft.box.feature.gui.api.session.ClickModeHolder;
 import net.okocraft.box.feature.gui.api.session.PlayerSession;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
@@ -25,11 +26,11 @@ public class BoxItemButton implements Button {
 
     @Override
     public @NotNull ItemStack createIcon(@NotNull PlayerSession session) {
-        return session.getBoxItemClickMode().createItemIcon(session, item);
+        return ClickModeHolder.getFromSession(session).getCurrentMode().createItemIcon(session, item);
     }
 
     @Override
     public @NotNull ClickResult onClick(@NotNull PlayerSession session, @NotNull ClickType clickType) {
-        return session.getBoxItemClickMode().onClick(session, item, clickType);
+        return ClickModeHolder.getFromSession(session).getCurrentMode().onClick(session, item, clickType);
     }
 }

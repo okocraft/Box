@@ -51,7 +51,7 @@ public class ItemCrafter {
     public static void craft(@NotNull PlayerSession session, int times, @NotNull ClickResult.WaitingTask waitingTask) {
         var crafter = session.getViewer();
         var recipe = session.getDataOrThrow(CurrentRecipe.DATA_KEY).getSelectedRecipe();
-        var stockHolder = session.getStockHolder();
+        var stockHolder = session.getSourceStockHolder();
 
         var event = new BoxCraftEvent(crafter, recipe, times);
         BoxAPI.api().getEventManager().call(event);

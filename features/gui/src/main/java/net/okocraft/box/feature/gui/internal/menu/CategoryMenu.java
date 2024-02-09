@@ -15,6 +15,7 @@ import net.okocraft.box.feature.gui.api.buttons.amount.UnitChangeButton;
 import net.okocraft.box.feature.gui.api.menu.paginate.AbstractPaginatedMenu;
 import net.okocraft.box.feature.gui.api.menu.paginate.PaginatedMenu;
 import net.okocraft.box.feature.gui.api.session.Amount;
+import net.okocraft.box.feature.gui.api.session.ClickModeHolder;
 import net.okocraft.box.feature.gui.api.session.PlayerSession;
 import net.okocraft.box.feature.gui.internal.button.BoxItemButton;
 import net.okocraft.box.feature.gui.internal.button.ModeButton;
@@ -85,7 +86,7 @@ public class CategoryMenu extends AbstractPaginatedMenu<BoxItem> {
     protected void addAdditionalButtons(@NotNull PlayerSession session, @NotNull List<Button> buttons) {
         buttons.addAll(SHARED_BUTTONS);
 
-        var mode = session.getBoxItemClickMode();
+        var mode = ClickModeHolder.getFromSession(session).getCurrentMode();
         if (mode.hasAdditionalButton()) {
             buttons.add(mode.createAdditionalButton(session, 52));
         }

@@ -6,7 +6,6 @@ import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.message.DefaultMessageCollector;
 import net.okocraft.box.api.message.Placeholders;
 import net.okocraft.box.api.model.item.BoxItem;
-import net.okocraft.box.api.player.BoxPlayer;
 import net.okocraft.box.feature.bemode.util.BEPlayerChecker;
 import net.okocraft.box.feature.gui.api.button.Button;
 import net.okocraft.box.feature.gui.api.button.ClickResult;
@@ -15,7 +14,6 @@ import net.okocraft.box.feature.gui.api.session.Amount;
 import net.okocraft.box.feature.gui.api.session.PlayerSession;
 import net.okocraft.box.feature.gui.api.util.ItemEditor;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -52,13 +50,13 @@ public class StorageWithdrawMode extends AbstractStorageMode {
                 .loreEmptyLine()
                 .loreLine(this.clickToWithdraw.apply(amountData != null ? amountData.getValue() : 1).create(session.getMessageSource()))
                 .loreEmptyLine()
-                .loreLine(this.currentStock.apply(session.getStockHolder().getAmount(item)).create(session.getMessageSource()))
+                .loreLine(this.currentStock.apply(session.getSourceStockHolder().getAmount(item)).create(session.getMessageSource()))
                 .applyTo(icon);
     }
 
     @Override
-    public boolean canUse(@NotNull Player viewer, @NotNull BoxPlayer source) {
-        return BEPlayerChecker.isBEPlayer(viewer);
+    public boolean canUse(@NotNull PlayerSession session) {
+        return BEPlayerChecker.isBEPlayer(session.getViewer());
     }
 
     @Override

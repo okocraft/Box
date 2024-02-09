@@ -64,7 +64,7 @@ public class CraftButton implements Button {
 
         IngredientRenderer.render(editor.loreEmptyLine(), session, recipe, times);
 
-        boolean canCraft = ItemCrafter.canCraft(session.getStockHolder(), recipe, times);
+        boolean canCraft = ItemCrafter.canCraft(session.getSourceStockHolder(), recipe, times);
 
         return editor.loreEmptyLine()
                 .loreLine(
@@ -75,7 +75,7 @@ public class CraftButton implements Button {
                                 .append(text(recipe.amount() * times, NO_DECORATION_AQUA))
                 )
                 .loreEmptyLine()
-                .loreLine(CURRENT_STOCK.apply(session.getStockHolder().getAmount(recipe.result())).create(session.getMessageSource()))
+                .loreLine(CURRENT_STOCK.apply(session.getSourceStockHolder().getAmount(recipe.result())).create(session.getMessageSource()))
                 .createItem(
                         this.customTimes ?
                                 canCraft ? Material.GLOWSTONE_DUST : Material.GUNPOWDER :

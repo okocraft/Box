@@ -4,6 +4,7 @@ import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.feature.category.api.category.Category;
 import net.okocraft.box.feature.category.api.registry.CategoryRegistry;
+import net.okocraft.box.feature.gui.api.session.MenuHistoryHolder;
 import net.okocraft.box.feature.gui.api.util.MenuOpener;
 import net.okocraft.box.feature.gui.internal.holder.BoxInventoryHolder;
 import net.okocraft.box.feature.gui.internal.menu.CategoryMenu;
@@ -83,7 +84,7 @@ public class InventoryListener implements Listener {
         }
 
         menu.setCurrentPage(session, page);
-        session.rememberMenu(holder.getMenu());
+        MenuHistoryHolder.getFromSession(session).rememberMenu(holder.getMenu());
         MenuOpener.open(menu, holder.getSession());
         // No need to finish click process because the menu with new holder will open
     }

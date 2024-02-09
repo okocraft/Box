@@ -4,7 +4,6 @@ import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
 import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.message.DefaultMessageCollector;
 import net.okocraft.box.api.model.item.BoxItem;
-import net.okocraft.box.api.player.BoxPlayer;
 import net.okocraft.box.feature.autostore.AutoStoreSettingProvider;
 import net.okocraft.box.feature.autostore.gui.buttons.BulkEditingButton;
 import net.okocraft.box.feature.autostore.gui.buttons.DirectButton;
@@ -21,7 +20,6 @@ import net.okocraft.box.feature.gui.api.util.ItemEditor;
 import net.okocraft.box.feature.gui.api.util.SoundBase;
 import org.bukkit.Material;
 import org.bukkit.Sound;
-import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -64,11 +62,11 @@ public class AutoStoreClickMode implements BoxItemClickMode {
 
     @Override
     public @NotNull ItemStack createItemIcon(@NotNull PlayerSession session, @NotNull BoxItem item) {
-        var icon = item.getClonedItem();
         var setting = session.getData(AutoStoreSetting.KEY);
         if (setting == null) {
             return new ItemStack(Material.AIR);
         } else {
+            var icon = item.getClonedItem();
             return ItemEditor.create()
                     .copyLoreFrom(icon)
                     .loreEmptyLine()
@@ -80,21 +78,14 @@ public class AutoStoreClickMode implements BoxItemClickMode {
 
     @Override
     public void onSelect(@NotNull PlayerSession session) {
-        var setting = this.container.getIfLoaded(session.getSource().getUUID());
+        var setting = this.container.getIfLoaded(session.getSourceUser().getUUID());
         if (setting != null) {
             session.putData(AutoStoreSetting.KEY, setting);
-        } else {
-            var viewerSetting = this.container.getIfLoaded(session.getViewer().getUniqueId());
-            if (viewerSetting != null) {
-                session.putData(AutoStoreSetting.KEY, viewerSetting);
-            }
         }
     }
 
     @Override
     public @NotNull ClickResult onClick(@NotNull PlayerSession session, @NotNull BoxItem item, @NotNull ClickType clickType) {
-        var player = session.getViewer();
-
         var playerSetting = session.getData(AutoStoreSetting.KEY);
 
         if (playerSetting == null) {
@@ -110,7 +101,7 @@ public class AutoStoreClickMode implements BoxItemClickMode {
         playerSetting.setEnabled(true);
         playerSetting.setAllMode(false);
 
-        (enabled ? ENABLE_SOUND : DISABLE_SOUND).play(player);
+        (enabled ? ENABLE_SOUND : DISABLE_SOUND).play(session.getViewer());
 
         return ClickResult.UPDATE_BUTTON;
     }
@@ -121,9 +112,9 @@ public class AutoStoreClickMode implements BoxItemClickMode {
     }
 
     @Override
-    public boolean canUse(@NotNull Player viewer, @NotNull BoxPlayer source) {
-        if (viewer.hasPermission("box.autostore")) {
-            return this.container.isLoaded(source.getPlayer().getUniqueId()) || this.container.isLoaded(viewer.getUniqueId());
+    public boolean canUse(@NotNull PlayerSession session) {
+        if (session.getViewer().hasPermission("box.autostore")) {
+            return this.container.isLoaded(session.getSourceUser().getUUID());
         } else {
             return false;
         }

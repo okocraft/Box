@@ -5,7 +5,6 @@ import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
 import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.message.Placeholders;
 import net.okocraft.box.api.model.item.BoxItem;
-import net.okocraft.box.api.player.BoxPlayer;
 import net.okocraft.box.feature.gui.api.button.Button;
 import net.okocraft.box.feature.gui.api.button.ClickResult;
 import net.okocraft.box.feature.gui.api.mode.AbstractStorageMode;
@@ -14,7 +13,6 @@ import net.okocraft.box.feature.gui.api.session.PlayerSession;
 import net.okocraft.box.feature.gui.api.util.ItemEditor;
 import net.okocraft.box.feature.gui.internal.lang.DisplayKeys;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -54,7 +52,7 @@ public final class StorageMode extends AbstractStorageMode {
     @Override
     public @NotNull ItemStack createItemIcon(@NotNull PlayerSession session, @NotNull BoxItem item) {
         var amountData = session.getData(Amount.SHARED_DATA_KEY);
-        int currentStock = session.getStockHolder().getAmount(item);
+        int currentStock = session.getSourceStockHolder().getAmount(item);
         int transactionAmount = amountData != null ? amountData.getValue() : 1;
 
         return ItemEditor.create()
@@ -68,7 +66,7 @@ public final class StorageMode extends AbstractStorageMode {
     }
 
     @Override
-    public boolean canUse(@NotNull Player viewer, @NotNull BoxPlayer source) {
+    public boolean canUse(@NotNull PlayerSession session) {
         return true; // This is the default mode, so it must always be available to the player.
     }
 

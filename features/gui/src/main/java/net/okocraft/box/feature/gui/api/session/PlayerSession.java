@@ -3,109 +3,63 @@ package net.okocraft.box.feature.gui.api.session;
 import com.github.siroshun09.messages.minimessage.source.MiniMessageSource;
 import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.model.stock.StockHolder;
-import net.okocraft.box.api.player.BoxPlayer;
-import net.okocraft.box.feature.gui.api.menu.Menu;
-import net.okocraft.box.feature.gui.api.mode.BoxItemClickMode;
-import net.okocraft.box.feature.gui.api.mode.ClickModeRegistry;
+import net.okocraft.box.api.model.user.BoxUser;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.Unmodifiable;
 
-import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
 
-public class PlayerSession {
+public final class PlayerSession {
 
-    public static @NotNull PlayerSession newSession(@NotNull Player player) {
-        return newSession(player, BoxAPI.api().getBoxPlayerMap().get(player));
+    public static @NotNull PlayerSession newSession(@NotNull Player viewer) {
+        var boxPlayer = BoxAPI.api().getBoxPlayerMap().get(viewer);
+        return new PlayerSession(viewer, boxPlayer.asUser(), boxPlayer.getCurrentStockHolder());
     }
 
-    public static @NotNull PlayerSession newSession(@NotNull Player player, @NotNull BoxPlayer source) {
-        var modes = ClickModeRegistry.getModes().stream().filter(mode -> mode.canUse(player, source)).toList();
-        return new PlayerSession(player, source, modes);
+    public static @NotNull PlayerSession newSession(@NotNull Player viewer, @NotNull BoxUser sourceUser) {
+        return new PlayerSession(viewer, sourceUser, BoxAPI.api().getStockManager().getPersonalStockHolder(sourceUser));
     }
+
+    private final Player viewer;
+    private final BoxUser sourceUser;
+    private final StockHolder sourceStockHolder;
+    private final MiniMessageSource messageSource;
 
     private final Map<TypedKey<?>, Object> dataMap = new ConcurrentHashMap<>();
 
-    private final Player viewer;
-    private final MiniMessageSource messageSource;
-    private final BoxPlayer source;
-
-    private List<BoxItemClickMode> availableClickModes;
-    private @Nullable BoxItemClickMode currentClickMode;
-    private @Nullable StockHolder stockHolder;
-    private @Nullable PreviousMenu previousMenu;
-
-    public PlayerSession(@NotNull Player viewer, @NotNull BoxPlayer source, @NotNull List<BoxItemClickMode> availableClickModes) {
+    private PlayerSession(@NotNull Player viewer, @NotNull BoxUser sourceUser, @NotNull StockHolder sourceStockHolder) {
         this.viewer = viewer;
+        this.sourceUser = sourceUser;
+        this.sourceStockHolder = sourceStockHolder;
         this.messageSource = BoxAPI.api().getMessageProvider().findSource(viewer);
-        this.source = source;
-        this.availableClickModes = availableClickModes;
-
-        if (this.availableClickModes.isEmpty()) {
-            throw new IllegalStateException("No click mode available.");
-        }
-    }
-
-    public @NotNull BoxItemClickMode getBoxItemClickMode() {
-        return Objects.requireNonNullElse(currentClickMode, getAvailableClickModes().getFirst());
-    }
-
-    public void setBoxItemClickMode(@Nullable BoxItemClickMode boxItemClickMode) {
-        this.currentClickMode = boxItemClickMode;
-    }
-
-    public @NotNull StockHolder getStockHolder() {
-        return stockHolder != null ? stockHolder : source.getCurrentStockHolder();
-    }
-
-    public void setStockHolder(@Nullable StockHolder stockHolder) {
-        this.stockHolder = stockHolder;
-    }
-
-    public @NotNull @Unmodifiable List<BoxItemClickMode> getAvailableClickModes() {
-        return availableClickModes;
-    }
-
-    public void setAvailableClickModes(@NotNull List<BoxItemClickMode> availableClickModes) {
-        if (availableClickModes.isEmpty()) {
-            throw new IllegalStateException("No click mode available.");
-        }
-
-        this.availableClickModes = availableClickModes;
     }
 
     public @NotNull Player getViewer() {
-        return viewer;
+        return this.viewer;
+    }
+
+    public @NotNull BoxUser getSourceUser() {
+        return this.sourceUser;
+    }
+
+    public @NotNull StockHolder getSourceStockHolder() {
+        return this.sourceStockHolder;
     }
 
     public @NotNull MiniMessageSource getMessageSource() {
         return this.messageSource;
     }
 
-    public @NotNull BoxPlayer getSource() {
-        return source;
-    }
-
-    public <T> void putData(@NotNull TypedKey<T> key, @NotNull T data) {
-        dataMap.put(key, data);
-    }
-
     public <T> @Nullable T getData(@NotNull TypedKey<T> key) {
-        var data = dataMap.get(key);
+        var data = this.dataMap.get(key);
         return key.clazz().isInstance(data) ? key.clazz().cast(data) : null;
     }
 
-    public <T> @Nullable T removeData(@NotNull TypedKey<T> key) {
-        var removed = dataMap.remove(key);
-        return key.clazz().isInstance(removed) ? key.clazz().cast(removed) : null;
-    }
-
     public <T> @NotNull T getDataOrThrow(@NotNull TypedKey<T> key) {
-        var data = getData(key);
+        var data = this.getData(key);
 
         if (data == null) {
             throw new IllegalStateException(key + " does not exist in this session (" + getViewer().getName() + ")");
@@ -114,25 +68,23 @@ public class PlayerSession {
         return data;
     }
 
-    public boolean hasPreviousMenu() {
-        return this.previousMenu != null;
+    public <T> void putData(@NotNull TypedKey<T> key, @NotNull T data) {
+        this.dataMap.put(key, data);
     }
 
-    public @NotNull Menu backMenu() {
-        if (this.previousMenu == null) {
-            throw new IllegalStateException("No previous menu.");
+    public <T> @NotNull T computeDataIfAbsent(@NotNull TypedKey<T> key, @NotNull Supplier<? extends T> supplier) {
+        var data = this.dataMap.computeIfAbsent(key, ignored -> supplier.get());
+        if (key.clazz().isInstance(data)) {
+            return key.clazz().cast(data);
+        } else {
+            var created = supplier.get();
+            this.dataMap.put(key, data);
+            return created;
         }
-
-        var menu = this.previousMenu.menu;
-        this.previousMenu = this.previousMenu.parent;
-
-        return menu;
     }
 
-    public void rememberMenu(@NotNull Menu menu) {
-        this.previousMenu = new PreviousMenu(menu, this.previousMenu);
-    }
-
-    private record PreviousMenu(@NotNull Menu menu, @Nullable PreviousMenu parent) {
+    public <T> @Nullable T removeData(@NotNull TypedKey<T> key) {
+        var removed = this.dataMap.remove(key);
+        return key.clazz().isInstance(removed) ? key.clazz().cast(removed) : null;
     }
 }
