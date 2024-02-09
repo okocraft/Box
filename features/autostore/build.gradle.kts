@@ -12,6 +12,10 @@ dependencies {
     compileOnly(projects.boxApi)
     compileOnly(projects.boxGuiFeature)
     compileOnly(libs.coreprotect)
+
+    testImplementation(projects.boxApi)
+    testImplementation(projects.boxGuiFeature)
+    testImplementation(projects.boxTestSharedClasses)
 }
 
 tasks.javadoc {
