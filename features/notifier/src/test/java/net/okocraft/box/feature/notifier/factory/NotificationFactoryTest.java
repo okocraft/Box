@@ -12,6 +12,8 @@ import static net.kyori.adventure.text.format.NamedTextColor.WHITE;
 import static net.okocraft.box.feature.notifier.factory.NotificationFactory.COMMON_PARTS_1;
 import static net.okocraft.box.feature.notifier.factory.NotificationFactory.COMMON_PARTS_2;
 import static net.okocraft.box.feature.notifier.factory.NotificationFactory.COMMON_PARTS_3;
+import static net.okocraft.box.feature.notifier.factory.NotificationFactory.MINUS_1;
+import static net.okocraft.box.feature.notifier.factory.NotificationFactory.PLUS_1;
 
 class NotificationFactoryTest {
 
@@ -45,6 +47,19 @@ class NotificationFactoryTest {
         Assertions.assertEquals(
                 EXPECTED_DECREASED_NOTIFICATION,
                 new NotificationFactory(ITEM, 10).previous(15).createNotification(ITEM.getDisplayName())
+        );
+    }
+
+    @Test
+    void testPlus1AndMinus1() {
+        Assertions.assertEquals(
+                text().append(ITEM.getDisplayName(), COMMON_PARTS_1, text(1, WHITE), PLUS_1).build(),
+                new NotificationFactory(ITEM, 1).increments(1).createNotification(ITEM.getDisplayName())
+        );
+
+        Assertions.assertEquals(
+                text().append(ITEM.getDisplayName(), COMMON_PARTS_1, text(0, WHITE), MINUS_1).build(),
+                new NotificationFactory(ITEM, 0).decrements(1).createNotification(ITEM.getDisplayName())
         );
     }
 }
