@@ -3,8 +3,11 @@ package net.okocraft.box.feature.autostore.setting;
 import it.unimi.dsi.fastutil.ints.IntCollection;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.ints.IntSet;
+import it.unimi.dsi.fastutil.ints.IntSets;
 import net.okocraft.box.api.model.item.BoxItem;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.concurrent.locks.StampedLock;
 
 /**
  * A class to hold the user's per-item settings.
@@ -12,8 +15,7 @@ import org.jetbrains.annotations.NotNull;
 public class PerItemSetting {
 
     private final IntSet enabledItemIds = new IntOpenHashSet();
-    private final Object lock = new Object();
-    private volatile IntSet snapshot = IntSet.of();
+    private final StampedLock lock = new StampedLock();
 
     /**
      * Checks if the {@link BoxItem} is enabled.
@@ -22,7 +24,22 @@ public class PerItemSetting {
      * @return if {@code true}, the {@link BoxItem} is enabled in this setting, or if {@code false}, it is disabled
      */
     public boolean isEnabled(@NotNull BoxItem item) {
-        return this.snapshot.contains(item.getInternalId());
+        {
+            long stamp = this.lock.tryOptimisticRead();
+            boolean result = this.enabledItemIds.contains(item.getInternalId());
+
+            if (this.lock.validate(stamp)) {
+                return result;
+            }
+        }
+
+        long stamp = this.lock.readLock();
+
+        try {
+            return this.enabledItemIds.contains(item.getInternalId());
+        } finally {
+            this.lock.unlockRead(stamp);
+        }
     }
 
     /**
@@ -32,13 +49,16 @@ public class PerItemSetting {
      * @param enabled {@code true} to enable, or {@code false} to disable
      */
     public void setEnabled(@NotNull BoxItem item, boolean enabled) {
-        synchronized (this.lock) {
+        long stamp = this.lock.writeLock();
+
+        try {
             if (enabled) {
                 this.enabledItemIds.add(item.getInternalId());
             } else {
                 this.enabledItemIds.remove(item.getInternalId());
             }
-            this.snapshot = IntSet.of(this.enabledItemIds.toIntArray());
+        } finally {
+            this.lock.unlockWrite(stamp);
         }
     }
 
@@ -49,8 +69,10 @@ public class PerItemSetting {
      * @return the current setting of the {@link BoxItem}
      */
     public boolean toggleEnabled(@NotNull BoxItem item) {
+        long stamp = this.lock.writeLock();
         boolean result;
-        synchronized (this.lock) {
+
+        try {
             if (this.enabledItemIds.contains(item.getInternalId())) {
                 this.enabledItemIds.remove(item.getInternalId());
                 result = false;
@@ -58,8 +80,10 @@ public class PerItemSetting {
                 this.enabledItemIds.add(item.getInternalId());
                 result = true;
             }
-            this.snapshot = IntSet.of(this.enabledItemIds.toIntArray());
+        } finally {
+            this.lock.unlockWrite(stamp);
         }
+
         return result;
     }
 
@@ -69,21 +93,26 @@ public class PerItemSetting {
      * @return all enabled item ids
      */
     public @NotNull IntSet getEnabledItems() {
-        return this.snapshot;
+        long stamp = this.lock.readLock();
+
+        try {
+            return IntSets.unmodifiable(new IntOpenHashSet(this.enabledItemIds));
+        } finally {
+            this.lock.unlockRead(stamp);
+        }
     }
 
     /**
-     * Clears and enables items.
+     * Clears and enables specified items.
      */
     public void clearAndEnableItems(@NotNull IntCollection itemIds) {
-        synchronized (this.lock) {
+        long stamp = this.lock.writeLock();
+
+        try {
             this.enabledItemIds.clear();
-            if (itemIds.isEmpty()) {
-                this.snapshot = IntSet.of();
-            } else {
-                this.enabledItemIds.addAll(itemIds);
-                this.snapshot = IntSet.of(this.enabledItemIds.toIntArray());
-            }
+            this.enabledItemIds.addAll(itemIds);
+        } finally {
+            this.lock.unlockWrite(stamp);
         }
     }
 
