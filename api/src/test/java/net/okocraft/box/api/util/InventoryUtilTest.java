@@ -25,7 +25,7 @@ import java.util.List;
 
 class InventoryUtilTest {
 
-    @ParameterizedTest(name = "")
+    @ParameterizedTest
     @MethodSource({"loadTestCases"})
     void test(TestCase testCase) {
         var contents = ArgumentCaptor.forClass(ItemStack[].class);
