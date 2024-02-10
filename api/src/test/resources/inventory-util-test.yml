@@ -1,0 +1,120 @@
+# 
+# Test cases for InventoryUtil#putItems(Inventory, ItemStack, int)
+#
+# - name: "Test name"
+#   putting-item:
+#     item: DIRT # org.bukkit.Material; Will be an ItemStack as the second argument of the method
+#     amount: 100 # Will be an amount of items as the third argument of the method
+#   inventory:
+#     size: 5
+#     initial: # Will be an inventory as the first argument of the method
+#       - item: DIRT # org.bukkit.Material
+#         amount: 64 # 1 ~ 64
+#         position: 0 # 0 ~ (size - 1)
+#       - item: GRASS_BLOCK
+#         amount: 32
+#         position: 1
+#       - item: DIRT
+#         amount: 64
+#         position: 2
+#     result: # The contents of inventory after putting items
+#       - item: DIRT
+#         amount: 64
+#         position: 0
+#       - item: DIRT
+#         amount: 36
+#         position: 1
+cases:
+  - name: "Empty inventory"
+    putting-item:
+      item: DIRT
+      amount: 100
+    inventory:
+      size: 5
+      initial: [ ]
+      result:
+        - item: DIRT
+          amount: 64
+          position: 0
+        - item: DIRT
+          amount: 36
+          position: 1
+    expected-return-value: 0
+  - name: "Small inventory"
+    putting-item:
+      item: DIRT
+      amount: 256
+    inventory:
+      size: 2
+      initial: [ ]
+      result:
+        - item: DIRT
+          amount: 64
+          position: 0
+        - item: DIRT
+          amount: 64
+          position: 1
+    expected-return-value: 128
+  - name: "Full inventory"
+    putting-item:
+      item: DIRT
+      amount: 256
+    inventory:
+      size: 3
+      initial:
+        - item: DIRT
+          amount: 64
+          position: 0
+        - item: GRASS_BLOCK
+          amount: 32
+          position: 1
+        - item: DIRT
+          amount: 64
+          position: 2
+      result:
+        - item: DIRT
+          amount: 64
+          position: 0
+        - item: GRASS_BLOCK
+          amount: 32
+          position: 1
+        - item: DIRT
+          amount: 64
+          position: 2
+    expected-return-value: 256
+  - name: "Jumbled inventory"
+    putting-item:
+      item: DIRT
+      amount: 128
+    inventory:
+      size: 5
+      initial:
+        - item: GRASS_BLOCK
+          amount: 32
+          position: 0
+        - item: DIRT
+          amount: 16
+          position: 1
+        - item: DIAMOND
+          amount: 1
+          position: 2
+        - item: DIRT
+          amount: 56
+          position: 4
+      result:
+        - item: GRASS_BLOCK
+          amount: 32
+          position: 0
+        - item: DIRT
+          amount: 64 # 16 -> 64 (48)
+          position: 1
+        - item: DIAMOND
+          amount: 1
+          position: 2
+        - item: DIRT
+          amount: 64 # 0 -> 64 (64)
+          position: 3
+        - item: DIRT
+          amount: 64 # 58 -> 64 (8)
+          position: 4
+    expected-return-value: 8
