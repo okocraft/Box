@@ -49,6 +49,12 @@ class InventoryUtilTest {
         }
     }
 
+    @SuppressWarnings("UnstableApiUsage")
+    private static @NotNull Collection<TestCase> readTestCases(@NotNull MapNode source) {
+        var deserializer = RecordDeserializer.create(TestCase.class, KeyGenerator.CAMEL_TO_KEBAB);
+        return source.getList("cases").asList(MapNode.class).stream().map(deserializer::deserialize).toList();
+    }
+
     private static @NotNull ItemStack createItemStack(@NotNull Material item, int amount) {
         if (amount < 1 || item.getMaxStackSize() < amount) {
             throw new IllegalArgumentException("Invalid amount: " + amount);
@@ -61,12 +67,6 @@ class InventoryUtilTest {
         Mockito.when(mock.asQuantity(Mockito.anyInt())).thenAnswer(invocation -> createItemStack(item, invocation.getArgument(0)));
         Mockito.when(mock.isSimilar(Mockito.any())).thenAnswer(invocation -> mock.getType() == invocation.<ItemStack>getArgument(0).getType());
         return mock;
-    }
-
-    @SuppressWarnings("UnstableApiUsage")
-    private static @NotNull Collection<TestCase> readTestCases(@NotNull MapNode source) {
-        var deserializer = RecordDeserializer.create(TestCase.class, KeyGenerator.CAMEL_TO_KEBAB);
-        return source.getList("cases").asList(MapNode.class).stream().map(deserializer::deserialize).toList();
     }
 
     private record TestCase(String name, PuttingItem puttingItem, InventoryInfo inventory, int expectedReturnValue) {
