@@ -9,9 +9,18 @@ import org.jetbrains.annotations.NotNull;
 
 public final class CoreProtectIntegration {
 
+    private static boolean forcedDisabled = false;
+
     public static void logItemPickup(@NotNull Player player, @NotNull Location location, @NotNull ItemStack item) {
-        if (Bukkit.getPluginManager().getPlugin("CoreProtect") != null) {
+        if (forcedDisabled || !Bukkit.getPluginManager().isPluginEnabled("CoreProtect")) {
+            return;
+        }
+
+        try {
             EntityPickupItemListener.onItemPickup(player, location, item);
+        } catch (Throwable e) {
+            forcedDisabled = true;
         }
     }
+
 }
