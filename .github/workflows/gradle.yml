@@ -6,11 +6,11 @@ jobs:
     uses: okocraft/workflows/.github/workflows/gradle.yml@v1
     with:
       java-version: '17'
-      build-arguments: "build -P box.upload=true"
+      build-arguments: "build"
       package-name: Box-Build-${{ github.run_number }}
   build-java-21:
     uses: okocraft/workflows/.github/workflows/gradle.yml@v1
     with:
       java-version: '21'
-      build-arguments: "build -P box.upload=true"
+      build-arguments: "build"
       package-name: Box-Build-${{ github.run_number }}
