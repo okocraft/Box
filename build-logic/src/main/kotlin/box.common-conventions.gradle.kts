@@ -15,12 +15,6 @@ java {
 }
 
 tasks {
-    build {
-        if (toUpload) {
-            buildDir = rootProject.buildDir.resolve(project.name)
-        }
-    }
-
     compileJava {
         options.encoding = Charsets.UTF_8.name()
         options.release.set(17)
