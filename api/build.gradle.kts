@@ -9,3 +9,7 @@ tasks.javadoc {
 afterEvaluate {
     collector.JavadocAggregator.addProject(this)
 }
+
+dependencies {
+    testImplementation(projects.boxTestSharedClasses)
+}
