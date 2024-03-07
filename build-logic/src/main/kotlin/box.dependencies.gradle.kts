@@ -36,6 +36,7 @@ dependencies {
     testImplementation(libs.fastutil)
     testImplementation(libs.mockito)
     testImplementation(libs.paper)
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testRuntimeOnly(libs.slf4j.simple)
     testRuntimeOnly(libs.snakeyaml)
 }
