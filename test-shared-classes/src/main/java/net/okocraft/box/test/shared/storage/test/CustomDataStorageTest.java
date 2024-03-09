@@ -1,7 +1,6 @@
 package net.okocraft.box.test.shared.storage.test;
 
 import com.github.siroshun09.configapi.core.node.MapNode;
-import com.github.siroshun09.configapi.test.shared.data.Samples;
 import com.github.siroshun09.configapi.test.shared.util.NodeAssertion;
 import net.kyori.adventure.key.Key;
 import net.okocraft.box.storage.api.model.data.CustomDataStorage;
@@ -10,6 +9,7 @@ import org.junit.jupiter.api.Assertions;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 
 public final class CustomDataStorageTest {
@@ -24,7 +24,7 @@ public final class CustomDataStorageTest {
         NodeAssertion.assertEquals(MapNode.empty(), storage.loadData(KEY_1));
         NodeAssertion.assertEquals(MapNode.empty(), storage.loadData(KEY_2));
 
-        var node = Samples.mapNode();
+        var node = mapNode();
 
         storage.saveData(KEY_1, node);
         NodeAssertion.assertEquals(node, storage.loadData(KEY_1));
@@ -39,14 +39,14 @@ public final class CustomDataStorageTest {
 
     public static void testLoadingFromNewlyCreatedStorage(@NotNull CustomDataStorage storage) throws Exception {
         storage.init();
-        NodeAssertion.assertEquals(Samples.mapNode(), storage.loadData(KEY_1));
+        NodeAssertion.assertEquals(mapNode(), storage.loadData(KEY_1));
         NodeAssertion.assertEquals(MapNode.create(Map.of("a", "b")), storage.loadData(KEY_2));
     }
 
     public static void testVisit(@NotNull CustomDataStorage storage, boolean saveNodes) throws Exception {
         storage.init();
 
-        var node = Samples.mapNode();
+        var node = mapNode();
 
         if (saveNodes) {
             storage.saveData(KEY_1, node);
@@ -75,5 +75,17 @@ public final class CustomDataStorageTest {
 
             Assertions.assertTrue(expectedKeys.isEmpty());
         }
+    }
+
+    private static @NotNull MapNode mapNode() {
+        var mapNode = MapNode.create();
+        mapNode.set("string", "value");
+        mapNode.set("integer", 100);
+        mapNode.set("double", 3.14);
+        mapNode.set("bool", true);
+        mapNode.set("list", List.of("A", "B", "C"));
+        mapNode.set("map", Map.of("key", "value"));
+        mapNode.set("nested", Map.of("map", Map.of("key", "value")));
+        return mapNode;
     }
 }
