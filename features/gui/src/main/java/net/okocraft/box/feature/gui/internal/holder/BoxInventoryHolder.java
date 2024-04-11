@@ -136,7 +136,7 @@ public class BoxInventoryHolder implements InventoryHolder {
         } else if (clickResult == ClickResult.BACK_MENU) {
             MenuOpener.open(MenuHistoryHolder.getFromSession(this.session).backMenu(), this.session);
         } else if (clickResult instanceof ClickResult.ChangeMenu changeMenu) {
-            MenuHistoryHolder.getFromSession(this.session).rememberMenu(changeMenu.menu());
+            MenuHistoryHolder.getFromSession(this.session).rememberMenu(this.menu);
             MenuOpener.open(changeMenu.menu(), this.session);
         }
         this.finishClickProcess();
