@@ -70,4 +70,8 @@ public final class TabCompleter {
 
         return str.regionMatches(true, 0, prefix, 0, prefixLength);
     }
+
+    private TabCompleter() {
+        throw new UnsupportedOperationException();
+    }
 }

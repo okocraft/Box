@@ -32,4 +32,8 @@ public final class Folia {
     public static boolean check() {
         return RUNNING;
     }
+
+    private Folia() {
+        throw new UnsupportedOperationException();
+    }
 }

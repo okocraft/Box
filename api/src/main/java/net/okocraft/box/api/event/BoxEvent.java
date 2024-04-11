@@ -8,6 +8,12 @@ import org.jetbrains.annotations.NotNull;
 public class BoxEvent {
 
     /**
+     * The constructor of {@link BoxEvent}.
+     */
+    public BoxEvent() {
+    }
+
+    /**
      * Creates the debug log from this event.
      *
      * @return the debug log

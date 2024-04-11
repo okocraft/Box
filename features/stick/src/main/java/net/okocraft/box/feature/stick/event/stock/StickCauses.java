@@ -13,7 +13,7 @@ public final class StickCauses {
     /**
      * A record of {@link StickCause} indicating that a Box Stick was used for getting the item of the block.
      *
-     * @param player          the player that used the Box Stick
+     * @param player        the player that used the Box Stick
      * @param blockLocation the {@link Location} of the block where the Box Stick was used
      */
     public record BlockItem(@NotNull BoxPlayer player, @NotNull Location blockLocation) implements StickCause {
@@ -142,7 +142,7 @@ public final class StickCauses {
     /**
      * A record of {@link StickCause} indicating that a Box Stick was used when the player launched the projectile.
      *
-     * @param player the player that used the Box Stick
+     * @param player     the player that used the Box Stick
      * @param entityType the {@link EntityType} that the player launched
      */
     public record ProjectileLaunch(@NotNull BoxPlayer player, @NotNull EntityType entityType) implements StickCause {
@@ -162,5 +162,9 @@ public final class StickCauses {
         public @NotNull String name() {
             return "stick_shoot_bow";
         }
+    }
+
+    private StickCauses() {
+        throw new UnsupportedOperationException();
     }
 }

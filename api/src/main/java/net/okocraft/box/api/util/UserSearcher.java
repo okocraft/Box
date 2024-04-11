@@ -39,4 +39,8 @@ public final class UserSearcher {
             return null;
         }
     }
+
+    private UserSearcher() {
+        throw new UnsupportedOperationException();
+    }
 }

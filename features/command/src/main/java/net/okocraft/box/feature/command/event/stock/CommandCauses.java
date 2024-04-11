@@ -98,4 +98,8 @@ public final class CommandCauses {
         }
     }
 
+    private CommandCauses() {
+        throw new UnsupportedOperationException();
+    }
+
 }
