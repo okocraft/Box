@@ -7,6 +7,7 @@ import com.github.siroshun09.messages.api.util.PropertiesFile;
 import io.papermc.paper.plugin.bootstrap.BootstrapContext;
 import net.okocraft.box.api.feature.BoxFeature;
 import net.okocraft.box.api.feature.FeatureContext;
+import net.okocraft.box.api.feature.FeatureFactory;
 import net.okocraft.box.core.message.BoxMessageProvider;
 import net.okocraft.box.core.model.manager.event.BoxEventManager;
 import net.okocraft.box.storage.api.registry.StorageRegistry;
@@ -21,7 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 public final class BoxBootstrapContext implements net.okocraft.box.api.bootstrap.BootstrapContext {
@@ -74,8 +74,8 @@ public final class BoxBootstrapContext implements net.okocraft.box.api.bootstrap
 
     @Override
     @Contract("_ -> this")
-    public @NotNull BoxBootstrapContext addFeature(@NotNull Function<FeatureContext.Registration, ? extends BoxFeature> featureFactory) {
-        this.boxFeatureList.add(featureFactory.apply(new FeatureContext.Registration(this.dataDirectory, this.defaultMessageCollector)));
+    public @NotNull BoxBootstrapContext addFeature(@NotNull FeatureFactory factory) {
+        this.boxFeatureList.add(factory.create(new FeatureContext.Registration(this.dataDirectory, this.defaultMessageCollector)));
         return this;
     }
 
