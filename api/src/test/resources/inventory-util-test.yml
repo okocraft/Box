@@ -2,9 +2,8 @@
 # Test cases for InventoryUtil#putItems(Inventory, ItemStack, int)
 #
 # - name: "Test name"
-#   putting-item:
-#     item: DIRT # org.bukkit.Material; Will be an ItemStack as the second argument of the method
-#     amount: 100 # Will be an amount of items as the third argument of the method
+#   item: DIRT # org.bukkit.Material; Will be an ItemStack as the second argument of the method
+#   amount: 100 # Will be an amount of items as the third argument of the method
 #   inventory:
 #     size: 5
 #     initial: # Will be an inventory as the first argument of the method
@@ -26,9 +25,8 @@
 #         position: 1
 cases:
   - name: "Empty inventory"
-    putting-item:
-      item: DIRT
-      amount: 100
+    item: DIRT
+    amount: 100
     inventory:
       size: 5
       initial: [ ]
@@ -41,9 +39,8 @@ cases:
           position: 1
     expected-return-value: 0
   - name: "Small inventory"
-    putting-item:
-      item: DIRT
-      amount: 256
+    item: DIRT
+    amount: 256
     inventory:
       size: 2
       initial: [ ]
@@ -56,9 +53,8 @@ cases:
           position: 1
     expected-return-value: 128
   - name: "Full inventory"
-    putting-item:
-      item: DIRT
-      amount: 256
+    item: DIRT
+    amount: 256
     inventory:
       size: 3
       initial:
@@ -83,9 +79,8 @@ cases:
           position: 2
     expected-return-value: 256
   - name: "Jumbled inventory"
-    putting-item:
-      item: DIRT
-      amount: 128
+    item: DIRT
+    amount: 128
     inventory:
       size: 5
       initial:
