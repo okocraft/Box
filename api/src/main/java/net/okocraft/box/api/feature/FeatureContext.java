@@ -1,6 +1,7 @@
 package net.okocraft.box.api.feature;
 
 import net.okocraft.box.api.message.DefaultMessageCollector;
+import net.okocraft.box.api.model.manager.EventManager;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.Contract;
@@ -18,8 +19,10 @@ public final class FeatureContext {
      *
      * @param dataDirectory           a plugin's data directory
      * @param defaultMessageCollector a {@link DefaultMessageCollector} to collect default messages
+     * @param eventManager            a {@link EventManager}
      */
-    public record Registration(@NotNull Path dataDirectory, @NotNull DefaultMessageCollector defaultMessageCollector) {
+    public record Registration(@NotNull Path dataDirectory, @NotNull DefaultMessageCollector defaultMessageCollector,
+                               @NotNull EventManager eventManager) {
     }
 
     /**

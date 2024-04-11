@@ -42,6 +42,7 @@ public final class BoxBootstrapContext implements net.okocraft.box.api.bootstrap
     private final BoxMessageProvider.Collector defaultMessageCollector;
     private final Map<Locale, Loader<Locale, Map<String, String>>> localizationLoaderMap = new HashMap<>();
     private final List<BoxFeature> boxFeatureList = new ArrayList<>();
+    private final FeatureContext.Registration featureRegistrationContext;
 
     @VisibleForTesting
     BoxBootstrapContext(@NotNull Path pluginDirectory, @NotNull String version) {
@@ -50,6 +51,7 @@ public final class BoxBootstrapContext implements net.okocraft.box.api.bootstrap
         this.storageRegistry = new StorageRegistry();
         this.eventManager = BoxEventManager.create();
         this.defaultMessageCollector = BoxMessageProvider.createCollector();
+        this.featureRegistrationContext = new FeatureContext.Registration(this.dataDirectory, this.defaultMessageCollector, this.eventManager);
     }
 
     @Override
@@ -75,7 +77,7 @@ public final class BoxBootstrapContext implements net.okocraft.box.api.bootstrap
     @Override
     @Contract("_ -> this")
     public @NotNull BoxBootstrapContext addFeature(@NotNull FeatureFactory factory) {
-        this.boxFeatureList.add(factory.create(new FeatureContext.Registration(this.dataDirectory, this.defaultMessageCollector)));
+        this.boxFeatureList.add(factory.create(this.featureRegistrationContext));
         return this;
     }
 
