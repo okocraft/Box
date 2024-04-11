@@ -30,9 +30,9 @@ public final class BoxBootstrap implements PluginBootstrap {
 
     @Override
     public void bootstrap(@NotNull BootstrapContext context) {
+        this.boxBootstrapContext = BoxBootstrapContext.create(context);
         BoxBootstrap.instance = this;
         ((SubstituteLogger) BoxLogger.logger()).setDelegate(context.getLogger());
-        boxBootstrapContext = BoxBootstrapContext.create(context);
 
         CoreMessages.addDefaultMessages(this.boxBootstrapContext.getDefaultMessageCollector());
         Builtin.features(this.boxBootstrapContext);
@@ -41,12 +41,12 @@ public final class BoxBootstrap implements PluginBootstrap {
     }
 
     @Override
-    public @NotNull JavaPlugin createPlugin(@NotNull PluginProviderContext context) { // PluginProviderContext is immutable, so this argument can be ignored.
+    public @NotNull JavaPlugin createPlugin(@NotNull PluginProviderContext context) {
         BoxBootstrap.instance = null;
-        return new BoxPlugin(boxBootstrapContext);
+        return new BoxPlugin(this.boxBootstrapContext);
     }
 
-    public @NotNull BoxBootstrapContext getBootstrapContext() { // This method exists for external access.
-        return boxBootstrapContext;
+    public @NotNull BoxBootstrapContext getContext() { // This method exists for external access.
+        return this.boxBootstrapContext;
     }
 }
