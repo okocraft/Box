@@ -50,7 +50,6 @@ import java.util.function.Supplier;
 public class BoxCore implements BoxAPI {
 
     private final PluginContext context;
-    private final BoxEventManager eventManager;
 
     private Storage storage;
     private BoxItemManager itemManager;
@@ -66,12 +65,11 @@ public class BoxCore implements BoxAPI {
 
     public BoxCore(@NotNull PluginContext context) {
         this.context = context;
-        this.eventManager = new BoxEventManager(context.eventServiceProvider(), context.scheduler());
     }
 
     public boolean enable(@NotNull Storage storage) {
         if (this.context.config().coreSetting().debug()) {
-            DebugListener.register(this.eventManager);
+            DebugListener.register(this.context.eventManager());
             BoxLogger.logger().info("Debug mode is ENABLED");
         }
 
@@ -93,18 +91,18 @@ public class BoxCore implements BoxAPI {
         try {
             var itemLoadResult = ItemLoader.load(storage.getItemStorage(), this.context.defaultItemProvider());
             itemLoadResult.logItemCount();
-            this.itemManager = new BoxItemManager(storage.getItemStorage(), this.eventManager, this.context.scheduler(), this.context.defaultItemProvider(), itemLoadResult.asIterator());
+            this.itemManager = new BoxItemManager(storage.getItemStorage(), this.context.eventManager(), this.context.scheduler(), this.context.defaultItemProvider(), itemLoadResult.asIterator());
         } catch (Exception e) {
             BoxLogger.logger().error("Could not load default/custom items", e);
             return false;
         }
 
         var stockDataSetting = this.context.config().coreSetting().stockData();
-        this.stockManager = new BoxStockManager(storage.getStockStorage(), this.eventManager, this.itemManager::getBoxItemOrNull, stockDataSetting.unloadTime(), stockDataSetting.saveInterval(), TimeUnit.SECONDS);
+        this.stockManager = new BoxStockManager(storage.getStockStorage(), this.context.eventManager(), this.itemManager::getBoxItemOrNull, stockDataSetting.unloadTime(), stockDataSetting.saveInterval(), TimeUnit.SECONDS);
 
         this.customDataManager = new BoxCustomDataManager(storage.getCustomDataStorage());
 
-        this.playerMap = new BoxPlayerMapImpl(this.userManager, this.stockManager, this.eventManager, this.context.scheduler(), this.context.messageProvider());
+        this.playerMap = new BoxPlayerMapImpl(this.userManager, this.stockManager, this.context.eventManager(), this.context.scheduler(), this.context.messageProvider());
         this.playerMap.loadAll();
 
         Bukkit.getPluginManager().registerEvents(new PlayerConnectionListener(this.playerMap), context.plugin());
@@ -131,7 +129,7 @@ public class BoxCore implements BoxAPI {
 
         stockManager.close();
 
-        DebugListener.unregister(this.eventManager);
+        DebugListener.unregister(this.context.eventManager());
 
         BoxLogger.logger().info("Closing the storage...");
 
@@ -157,7 +155,7 @@ public class BoxCore implements BoxAPI {
             }
         };
 
-        DebugListener.unregister(this.eventManager);
+        DebugListener.unregister(this.context.eventManager());
 
         if (!(sender instanceof ConsoleCommandSender)) {
             BoxLogger.logger().info("Reloading box...");
@@ -172,7 +170,7 @@ public class BoxCore implements BoxAPI {
         }
 
         if (this.context.config().coreSetting().debug()) {
-            DebugListener.register(this.eventManager);
+            DebugListener.register(this.context.eventManager());
             BoxLogger.logger().info("Debug mode is ENABLED");
         }
 
@@ -190,7 +188,7 @@ public class BoxCore implements BoxAPI {
             if (feature instanceof Reloadable reloadable) {
                 try {
                     reloadable.reload(featureReloadContext);
-                    this.eventManager.call(new FeatureEvent(feature, FeatureEvent.Type.RELOAD));
+                    this.context.eventManager().call(new FeatureEvent(feature, FeatureEvent.Type.RELOAD));
                 } catch (Throwable e) {
                     playerMessenger.accept(() -> CoreMessages.FEATURE_RELOAD_FAILURE.apply(feature, e).source(source).message());
                     BoxLogger.logger().error("Could not reload {}", feature.getName(), e);
@@ -215,7 +213,7 @@ public class BoxCore implements BoxAPI {
 
     @Override
     public @NotNull BoxEventManager getEventManager() {
-        return this.eventManager;
+        return this.context.eventManager();
     }
 
     @Override
@@ -278,7 +276,7 @@ public class BoxCore implements BoxAPI {
 
         for (var feature : features) {
             initializeFeature(feature, featureMap, context);
-            this.eventManager.call(new FeatureEvent(feature, FeatureEvent.Type.ENABLE));
+            this.context.eventManager().call(new FeatureEvent(feature, FeatureEvent.Type.ENABLE));
         }
     }
 
@@ -323,7 +321,7 @@ public class BoxCore implements BoxAPI {
                 continue;
             }
 
-            this.eventManager.call(new FeatureEvent(feature, FeatureEvent.Type.DISABLE));
+            this.context.eventManager().call(new FeatureEvent(feature, FeatureEvent.Type.DISABLE));
             BoxLogger.logger().info("Feature '{}' has been disabled.", feature.getName());
         }
     }

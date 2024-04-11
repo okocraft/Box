@@ -40,11 +40,11 @@ public final class BoxPlugin extends JavaPlugin {
             context = new PluginContext(
                     this,
                     boxBootstrapContext.getVersion(),
-                    boxBootstrapContext.getPluginDirectory(),
+                    boxBootstrapContext.getDataDirectory(),
                     PlatformDependent.createScheduler(this),
-                    boxBootstrapContext.getEventServiceProvider(),
+                    boxBootstrapContext.getEventManager(),
                     boxBootstrapContext.createMessageProvider(),
-                    new Config(boxBootstrapContext.getPluginDirectory()),
+                    new Config(boxBootstrapContext.getDataDirectory()),
                     PlatformDependent.createItemProvider(),
                     PlatformDependent.createCommandRegisterer(this.getName().toLowerCase(Locale.ENGLISH))
             );
@@ -72,6 +72,8 @@ public final class BoxPlugin extends JavaPlugin {
         }
 
         var start = Instant.now();
+
+        this.pluginContext.eventManager().initializeAsyncEventCaller(this.pluginContext.scheduler());
 
         try {
             StorageHolder.init(this.pluginContext.config().loadAndCreateStorage(this.storageRegistry));

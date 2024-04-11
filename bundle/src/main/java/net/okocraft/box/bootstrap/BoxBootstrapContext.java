@@ -1,17 +1,14 @@
 package net.okocraft.box.bootstrap;
 
-import com.github.siroshun09.event4j.priority.Priority;
-import com.github.siroshun09.event4j.simple.EventServiceProvider;
 import com.github.siroshun09.messages.api.directory.DirectorySource;
 import com.github.siroshun09.messages.api.source.StringMessageMap;
 import com.github.siroshun09.messages.api.util.Loader;
 import com.github.siroshun09.messages.api.util.PropertiesFile;
 import io.papermc.paper.plugin.bootstrap.BootstrapContext;
-import net.kyori.adventure.key.Key;
-import net.okocraft.box.api.event.BoxEvent;
 import net.okocraft.box.api.feature.BoxFeature;
 import net.okocraft.box.api.feature.FeatureContext;
 import net.okocraft.box.core.message.BoxMessageProvider;
+import net.okocraft.box.core.model.manager.event.BoxEventManager;
 import net.okocraft.box.storage.api.registry.StorageRegistry;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -27,7 +24,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public final class BoxBootstrapContext {
+public final class BoxBootstrapContext implements net.okocraft.box.api.bootstrap.BootstrapContext {
 
     @Contract("_ -> new")
     @SuppressWarnings("UnstableApiUsage")
@@ -41,7 +38,7 @@ public final class BoxBootstrapContext {
     private final Path dataDirectory;
     private final String version;
     private final StorageRegistry storageRegistry;
-    private final EventServiceProvider<Key, BoxEvent, Priority> eventServiceProvider;
+    private final BoxEventManager eventManager;
     private final BoxMessageProvider.Collector defaultMessageCollector;
     private final Map<Locale, Loader<Locale, Map<String, String>>> localizationLoaderMap = new HashMap<>();
     private final List<BoxFeature> boxFeatureList = new ArrayList<>();
@@ -51,28 +48,43 @@ public final class BoxBootstrapContext {
         this.dataDirectory = pluginDirectory;
         this.version = version;
         this.storageRegistry = new StorageRegistry();
-        this.eventServiceProvider = EventServiceProvider.factory().keyClass(Key.class).eventClass(BoxEvent.class).orderComparator(Priority.COMPARATOR, Priority.NORMAL).create();
+        this.eventManager = BoxEventManager.create();
         this.defaultMessageCollector = BoxMessageProvider.createCollector();
     }
 
-    public @NotNull Path getPluginDirectory() {
+    @Override
+    public @NotNull Path getDataDirectory() {
         return dataDirectory;
     }
 
+    @Override
     public @NotNull String getVersion() {
         return version;
+    }
+
+    @Override
+    public @NotNull BoxEventManager getEventManager() {
+        return this.eventManager;
+    }
+
+    @Override
+    public @NotNull BoxMessageProvider.Collector getDefaultMessageCollector() {
+        return this.defaultMessageCollector;
+    }
+
+    @Override
+    @Contract("_ -> this")
+    public @NotNull BoxBootstrapContext addFeature(@NotNull Function<FeatureContext.Registration, ? extends BoxFeature> featureFactory) {
+        this.boxFeatureList.add(featureFactory.apply(new FeatureContext.Registration(this.dataDirectory, this.defaultMessageCollector)));
+        return this;
     }
 
     public @NotNull StorageRegistry getStorageRegistry() {
         return storageRegistry;
     }
 
-    public @NotNull EventServiceProvider<Key, BoxEvent, Priority> getEventServiceProvider() {
-        return this.eventServiceProvider;
-    }
-
-    public @NotNull BoxMessageProvider.Collector getDefaultMessageCollector() {
-        return this.defaultMessageCollector;
+    public @NotNull List<BoxFeature> getBoxFeatureList() {
+        return this.boxFeatureList;
     }
 
     public void addLocalization(@NotNull Locale locale, @NotNull Supplier<Map<String, String>> defaultMessagesSupplier) {
@@ -98,15 +110,5 @@ public final class BoxBootstrapContext {
                     return loader != null ? loader.load(locale) : null;
                 }
         );
-    }
-
-    public @NotNull List<BoxFeature> getBoxFeatureList() {
-        return this.boxFeatureList;
-    }
-
-    @Contract("_ -> this")
-    public @NotNull BoxBootstrapContext addFeature(@NotNull Function<FeatureContext.Registration, ? extends BoxFeature> featureFactory) {
-        this.boxFeatureList.add(featureFactory.apply(new FeatureContext.Registration(this.dataDirectory, this.defaultMessageCollector)));
-        return this;
     }
 }
