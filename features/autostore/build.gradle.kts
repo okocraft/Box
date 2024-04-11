@@ -11,6 +11,7 @@ repositories {
 dependencies {
     compileOnly(projects.boxApi)
     compileOnly(projects.boxGuiFeature)
+    compileOnly(projects.boxStorageMigrator)
     compileOnly(libs.coreprotect)
 
     testImplementation(projects.boxApi)

@@ -8,12 +8,10 @@ import net.okocraft.box.bootstrap.BoxBootstrapContext;
 import net.okocraft.box.core.BoxCore;
 import net.okocraft.box.core.PluginContext;
 import net.okocraft.box.core.config.Config;
-import net.okocraft.box.datafixer.AutoStoreSettingDataFixer;
 import net.okocraft.box.platform.PlatformDependent;
 import net.okocraft.box.storage.api.holder.StorageHolder;
 import net.okocraft.box.storage.api.registry.StorageRegistry;
 import net.okocraft.box.storage.migrator.config.MigrationConfigLoader;
-import net.okocraft.box.storage.migrator.implementation.CustomDataMigrator;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -178,7 +176,6 @@ public final class BoxPlugin extends JavaPlugin {
 
             BoxLogger.logger().info("Initializing storages...");
             migrator.init();
-            CustomDataMigrator.addDataFixer(new AutoStoreSettingDataFixer());
 
             BoxLogger.logger().info("Migrating data...");
             migrator.run();

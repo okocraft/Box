@@ -1,4 +1,4 @@
-package net.okocraft.box.datafixer;
+package net.okocraft.box.feature.autostore.datafixer;
 
 import com.github.siroshun09.configapi.core.node.IntArray;
 import com.github.siroshun09.configapi.core.node.ListNode;

@@ -6,10 +6,12 @@ import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.feature.AbstractBoxFeature;
 import net.okocraft.box.api.feature.FeatureContext;
 import net.okocraft.box.feature.autostore.command.AutoStoreCommand;
+import net.okocraft.box.feature.autostore.datafixer.AutoStoreSettingDataFixer;
 import net.okocraft.box.feature.autostore.gui.AutoStoreClickMode;
 import net.okocraft.box.feature.autostore.listener.AutoSaveListener;
 import net.okocraft.box.feature.autostore.listener.ItemListener;
 import net.okocraft.box.feature.gui.api.mode.ClickModeRegistry;
+import net.okocraft.box.storage.migrator.implementation.CustomDataMigrator;
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.ApiStatus;
@@ -48,6 +50,7 @@ public class AutoStoreFeature extends AbstractBoxFeature {
         this.itemListener = new ItemListener(this.settingContainer);
         this.autoStoreCommand = new AutoStoreCommand(this.settingContainer, this.loadErrorMessage, collector);
         this.autoStoreClickMode = new AutoStoreClickMode(this.settingContainer, collector);
+        CustomDataMigrator.addDataFixer(new AutoStoreSettingDataFixer());
     }
 
     @Override
