@@ -13,7 +13,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -35,11 +34,6 @@ record DepositImpl(@NotNull StockHolder stockHolder, @NotNull BoxItem boxItem,
         Objects.requireNonNull(inventory);
         Objects.requireNonNull(cause);
 
-        if (limit < 1) {
-            return Collections.emptyList();
-        }
-
-        var result = new ArrayList<TransactionResult>();
         var contents = inventory.getStorageContents();
 
         int depositedAmount = 0;
@@ -55,27 +49,21 @@ record DepositImpl(@NotNull StockHolder stockHolder, @NotNull BoxItem boxItem,
             int itemAmount = item.getAmount();
 
             if (itemAmount <= remaining) {
-                depositedAmount += itemAmount;
-
                 stockHolder.increase(boxItem, itemAmount, cause);
+                depositedAmount += itemAmount;
                 contents[i] = null;
-
-                result.add(TransactionResult.create(boxItem, itemAmount));
             } else {
-                depositedAmount += remaining;
-
                 stockHolder.increase(boxItem, remaining, cause);
+                depositedAmount += remaining;
                 contents[i] = item.asQuantity(itemAmount - remaining);
-
-                result.add(TransactionResult.create(boxItem, remaining));
             }
         }
 
-        if (result.isEmpty()) {
-            return Collections.emptyList();
-        } else {
+        if (depositedAmount != 0) {
             inventory.setStorageContents(contents);
-            return Collections.unmodifiableList(result);
+            return List.of(TransactionResult.create(this.boxItem, depositedAmount));
+        } else {
+            return Collections.emptyList();
         }
     }
 

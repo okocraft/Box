@@ -92,7 +92,7 @@ public final class StockHolderTransaction {
          *
          * @param inventory an {@link Inventory} to pull out items
          * @param cause     a {@link StockEvent.Cause} that is passed to {@link StockHolder#increase(BoxItem, int, StockEvent.Cause)}
-         * @return a list of {@link TransactionResult}
+         * @return a list that contains {@link TransactionResult}s per item or {@link java.util.Collections#emptyList()} if no items are deposited
          * @throws NullPointerException if {@code inventory} or {@code cause} is null
          */
         @NotNull @Unmodifiable List<TransactionResult> fromInventory(@NotNull Inventory inventory, @NotNull StockEvent.Cause cause);
@@ -106,7 +106,7 @@ public final class StockHolderTransaction {
          *
          * @param view  an {@link InventoryView} to get top {@link Inventory}
          * @param cause a {@link StockEvent.Cause} that is passed to {@link StockHolder#increase(BoxItem, int, StockEvent.Cause)}
-         * @return a list of {@link TransactionResult}
+         * @return a list that contains {@link TransactionResult}s per item or {@link java.util.Collections#emptyList()} if no items are deposited
          * @throws NullPointerException if {@code view} or {@code cause} is null
          */
         @NotNull @Unmodifiable List<TransactionResult> fromTopInventory(@NotNull InventoryView view, @NotNull StockEvent.Cause cause);

@@ -1,5 +1,6 @@
 package net.okocraft.box.api.transaction;
 
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.event.stockholder.stock.StockEvent;
 import net.okocraft.box.api.model.item.BoxItem;
@@ -37,7 +38,7 @@ record DepositAllImpl(@NotNull StockHolder stockHolder,
         Objects.requireNonNull(inventory);
         Objects.requireNonNull(cause);
 
-        var result = new ArrayList<TransactionResult>();
+        var resultMap = new Object2IntOpenHashMap<BoxItem>();
         var contents = inventory.getStorageContents();
 
         for (int i = 0; i < contents.length; i++) {
@@ -58,13 +59,19 @@ record DepositAllImpl(@NotNull StockHolder stockHolder,
             stockHolder.increase(boxItem, itemAmount, cause);
             contents[i] = null;
 
-            result.add(TransactionResult.create(boxItem, itemAmount));
+            resultMap.mergeInt(boxItem, itemAmount, Integer::sum);
         }
 
-        if (result.isEmpty()) {
+        if (resultMap.isEmpty()) {
             return Collections.emptyList();
         } else {
             inventory.setStorageContents(contents);
+            var result = new ArrayList<TransactionResult>(resultMap.size());
+
+            for (var entry : resultMap.object2IntEntrySet()) {
+                result.add(TransactionResult.create(entry.getKey(), entry.getIntValue()));
+            }
+
             return Collections.unmodifiableList(result);
         }
     }
