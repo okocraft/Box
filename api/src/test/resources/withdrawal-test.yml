@@ -1,0 +1,102 @@
+cases:
+  - name: "Empty inventory"
+    item: DIRT
+    initial-amount: 100
+    inventory:
+      size: 5
+      initial: [ ]
+      result:
+        - item: DIRT
+          amount: 64
+          position: 0
+        - item: DIRT
+          amount: 36
+          position: 1
+    expected-withdrawn-amount: 100
+  - name: "Empty inventory with limit"
+    item: DIRT
+    initial-amount: 100
+    limit: 50
+    inventory:
+      size: 5
+      initial: [ ]
+      result:
+        - item: DIRT
+          amount: 50
+          position: 0
+    expected-withdrawn-amount: 50
+  - name: "Small inventory"
+    item: DIRT
+    initial-amount: 256
+    inventory:
+      size: 2
+      initial: [ ]
+      result:
+        - item: DIRT
+          amount: 64
+          position: 0
+        - item: DIRT
+          amount: 64
+          position: 1
+    expected-withdrawn-amount: 128
+  - name: "Full inventory"
+    item: DIRT
+    initial-amount: 256
+    inventory:
+      size: 3
+      initial:
+        - item: DIRT
+          amount: 64
+          position: 0
+        - item: GRASS_BLOCK
+          amount: 32
+          position: 1
+        - item: DIRT
+          amount: 64
+          position: 2
+      result:
+        - item: DIRT
+          amount: 64
+          position: 0
+        - item: GRASS_BLOCK
+          amount: 32
+          position: 1
+        - item: DIRT
+          amount: 64
+          position: 2
+    expected-withdrawn-amount: 0
+  - name: "Jumbled inventory"
+    item: DIRT
+    initial-amount: 128
+    inventory:
+      size: 5
+      initial:
+        - item: GRASS_BLOCK
+          amount: 32
+          position: 0
+        - item: DIRT
+          amount: 16
+          position: 1
+        - item: DIAMOND
+          amount: 1
+          position: 2
+        - item: DIRT
+          amount: 56
+          position: 4
+      result:
+        - item: GRASS_BLOCK
+          amount: 32
+          position: 0
+        - item: DIRT
+          amount: 64 # 16 -> 64 (48)
+          position: 1
+        - item: DIAMOND
+          amount: 1
+          position: 2
+        - item: DIRT
+          amount: 64 # 0 -> 64 (64)
+          position: 3
+        - item: DIRT
+          amount: 64 # 58 -> 64 (8)
+          position: 4
+    expected-withdrawn-amount: 120

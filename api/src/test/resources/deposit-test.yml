@@ -1,0 +1,78 @@
+cases:
+  - name: "Empty inventory"
+    item: DIRT
+    inventory:
+      size: 5
+      initial: [ ]
+      result: [ ]
+    expected-deposited-amount: 0
+  - name: "Deposit 100 dirt blocks"
+    item: DIRT
+    inventory:
+      size: 5
+      initial:
+        - item: DIRT
+          amount: 64
+          position: 0
+        - item: DIRT
+          amount: 36
+          position: 1
+      result: [ ]
+    expected-deposited-amount: 100
+  - name: "Full inventory"
+    item: DIRT
+    inventory:
+      size: 3
+      initial:
+        - item: DIRT
+          amount: 64
+          position: 0
+        - item: GRASS_BLOCK
+          amount: 32
+          position: 1
+        - item: DIRT
+          amount: 64
+          position: 2
+      result:
+        - item: GRASS_BLOCK
+          amount: 32
+          position: 1
+    expected-deposited-amount: 128
+  - name: "Jumbled inventory with deposit limit"
+    item: DIRT
+    limit: 50
+    inventory:
+      size: 5
+      initial:
+        - item: GRASS_BLOCK
+          amount: 32
+          position: 0
+        - item: DIRT
+          amount: 32
+          position: 1
+        - item: DIAMOND
+          amount: 1
+          position: 2
+        - item: DIRT
+          amount: 64
+          position: 3
+        - item: DIRT
+          amount: 32
+          position: 4
+      result:
+        - item: GRASS_BLOCK
+          amount: 32
+          position: 0
+       #- item: DIRT
+       #  amount: 0 # 32 -> 0 (32)
+       #  position: 1
+        - item: DIAMOND
+          amount: 1
+          position: 2
+        - item: DIRT
+          amount: 46 # 64 -> 46 (50)
+          position: 3
+        - item: DIRT
+          amount: 32 # no changes (8)
+          position: 4
+    expected-deposited-amount: 50

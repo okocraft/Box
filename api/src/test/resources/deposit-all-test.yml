@@ -1,0 +1,65 @@
+cases:
+  - name: "Empty inventory"
+    box-items: [ "DIRT" ]
+    inventory:
+      size: 5
+      initial: [ ]
+      result: [ ]
+    result-map: { }
+  - name: "Jumbled inventory"
+    box-items: [ "DIRT", "DIAMOND" ]
+    inventory:
+      size: 5
+      initial:
+        - item: GRASS_BLOCK
+          amount: 32
+          position: 0
+        - item: DIRT
+          amount: 32
+          position: 1
+        - item: DIAMOND
+          amount: 1
+          position: 2
+        - item: DIRT
+          amount: 64
+          position: 3
+        - item: DIRT
+          amount: 32
+          position: 4
+      result:
+        - item: GRASS_BLOCK
+          amount: 32
+          position: 0
+    result-map:
+      DIRT: 128
+      DIAMOND: 1
+  - name: "Jumbled inventory with filter"
+    box-items: [ "DIRT", "DIAMOND" ]
+    item-ignores: [ "DIAMOND" ]
+    inventory:
+      size: 5
+      initial:
+        - item: GRASS_BLOCK
+          amount: 32
+          position: 0
+        - item: DIRT
+          amount: 32
+          position: 1
+        - item: DIAMOND
+          amount: 1
+          position: 2
+        - item: DIRT
+          amount: 64
+          position: 3
+        - item: DIRT
+          amount: 32
+          position: 4
+      result:
+        - item: GRASS_BLOCK
+          amount: 32
+          position: 0
+        - item: DIAMOND
+          amount: 1
+          position: 2
+    result-map:
+      DIRT: 128
