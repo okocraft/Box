@@ -67,7 +67,7 @@ record WithdrawalImpl(@NotNull StockHolder stockHolder, @NotNull BoxItem boxItem
                     }
 
                     withdrawnAmount += withdrawn;
-                    item.setAmount(withdrawn < remaining ? item.getAmount() + withdrawn : maxStackSize);
+                    contents[i] = this.boxItem.getOriginal().asQuantity(withdrawn < remaining ? item.getAmount() + withdrawn : maxStackSize);
                 }
             }
         }

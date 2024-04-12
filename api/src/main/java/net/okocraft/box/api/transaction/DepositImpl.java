@@ -65,7 +65,7 @@ record DepositImpl(@NotNull StockHolder stockHolder, @NotNull BoxItem boxItem,
                 depositedAmount += remaining;
 
                 stockHolder.increase(boxItem, remaining, cause);
-                contents[i].setAmount(itemAmount - remaining);
+                contents[i] = item.asQuantity(itemAmount - remaining);
 
                 result.add(TransactionResult.create(boxItem, remaining));
             }
