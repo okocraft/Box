@@ -105,14 +105,13 @@ public class BoxPlayerMapImpl implements BoxPlayerMap {
     }
 
     public void unload(@NotNull Player player) {
-        Objects.requireNonNull(player);
-
-        if (!(this.playerMap instanceof BoxPlayerImpl boxPlayer)) {
-            return;
+        if (this.playerMap.get(Objects.requireNonNull(player)) instanceof BoxPlayerImpl boxPlayer) {
+            this.unload(boxPlayer);
         }
+    }
 
+    private void unload(@NotNull BoxPlayerImpl boxPlayer) {
         boxPlayer.getPersonalStockHolder().markAsOffline();
-
         this.eventCaller.call(new PlayerUnloadEvent(boxPlayer));
     }
 
@@ -124,6 +123,15 @@ public class BoxPlayerMapImpl implements BoxPlayerMap {
     }
 
     public void unloadAll() {
-        playerMap.clear();
+        var iterator = this.playerMap.values().iterator();
+
+        while (iterator.hasNext()) {
+            var player = iterator.next();
+            iterator.remove();
+
+            if (player instanceof BoxPlayerImpl boxPlayer) {
+                this.unload(boxPlayer);
+            }
+        }
     }
 }
