@@ -91,24 +91,17 @@ public class BoxPlayerMapImpl implements BoxPlayerMap {
             return;
         }
 
-        if (playerMap.get(player) != NOT_LOADED_YET) { // This prevents loading data twice.
-            return;
-        }
-
         var boxUser = this.userManager.createBoxUser(player.getUniqueId(), player.getName());
-
-        this.userManager.saveUsername(boxUser);
-
         var personal = this.stockManager.getPersonalStockHolder(boxUser);
-
-        personal.load();
-
         var boxPlayer = new BoxPlayerImpl(boxUser, player, personal, this.eventCaller);
 
-        boxPlayer.getPersonalStockHolder().markAsOnline();
-        this.playerMap.put(player, boxPlayer);
+        if (this.playerMap.replace(player, NOT_LOADED_YET, boxPlayer)) { // This prevents loading data twice.
+            personal.load();
+            personal.markAsOnline();
 
-        this.eventCaller.call(new PlayerLoadEvent(boxPlayer));
+            this.userManager.saveUsername(boxUser);
+            this.eventCaller.call(new PlayerLoadEvent(boxPlayer));
+        }
     }
 
     public void unload(@NotNull Player player) {
