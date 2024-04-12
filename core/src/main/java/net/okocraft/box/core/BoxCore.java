@@ -267,8 +267,6 @@ public class BoxCore implements BoxAPI {
             return;
         }
 
-        BoxLogger.logger().info("Enabling features...");
-
         var featureMap = new LinkedHashMap<Class<? extends BoxFeature>, BoxFeature>();
         this.boxFeatureProvider = new BoxFeatureProvider(Collections.unmodifiableMap(featureMap));
 
@@ -300,7 +298,6 @@ public class BoxCore implements BoxAPI {
         }
 
         registry.put(feature.getClass(), feature);
-        BoxLogger.logger().info("Feature '{}' has been enabled.", feature.getName());
     }
 
     public void disableAllFeatures() {
@@ -310,7 +307,6 @@ public class BoxCore implements BoxAPI {
             return;
         }
 
-        BoxLogger.logger().info("Disabling features...");
         var context = new FeatureContext.Disabling(this.context.plugin());
 
         for (var feature : features) {
@@ -322,7 +318,6 @@ public class BoxCore implements BoxAPI {
             }
 
             this.context.eventManager().call(new FeatureEvent(feature, FeatureEvent.Type.DISABLE));
-            BoxLogger.logger().info("Feature '{}' has been disabled.", feature.getName());
         }
     }
 
