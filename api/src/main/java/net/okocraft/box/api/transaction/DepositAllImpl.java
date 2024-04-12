@@ -4,6 +4,7 @@ import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.event.stockholder.stock.StockEvent;
 import net.okocraft.box.api.model.item.BoxItem;
+import net.okocraft.box.api.model.manager.ItemManager;
 import net.okocraft.box.api.model.stock.StockHolder;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryAction;
@@ -14,6 +15,7 @@ import org.bukkit.inventory.InventoryView;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
+import org.jetbrains.annotations.VisibleForTesting;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,15 +28,16 @@ record DepositAllImpl(@NotNull StockHolder stockHolder,
 
     @Override
     public @NotNull @Unmodifiable List<TransactionResult> fromInventory(@NotNull Inventory inventory, @NotNull StockEvent.Cause cause) {
-        return fromInventory(inventory, null, cause);
+        return this.fromInventory(inventory, null, BoxAPI.api().getItemManager(), cause);
     }
 
     @Override
     public @NotNull @Unmodifiable List<TransactionResult> fromTopInventory(@NotNull InventoryView view, @NotNull StockEvent.Cause cause) {
-        return fromInventory(view.getTopInventory(), view, cause);
+        return this.fromInventory(view.getTopInventory(), view, BoxAPI.api().getItemManager(), cause);
     }
 
-    private @NotNull @Unmodifiable List<TransactionResult> fromInventory(@NotNull Inventory inventory, @Nullable InventoryView view, @NotNull StockEvent.Cause cause) {
+    @VisibleForTesting
+    @NotNull @Unmodifiable List<TransactionResult> fromInventory(@NotNull Inventory inventory, @Nullable InventoryView view, @NotNull ItemManager itemManager, @NotNull StockEvent.Cause cause) {
         Objects.requireNonNull(inventory);
         Objects.requireNonNull(cause);
 
@@ -48,7 +51,7 @@ record DepositAllImpl(@NotNull StockHolder stockHolder,
                 continue;
             }
 
-            var boxItem = BoxAPI.api().getItemManager().getBoxItem(item).orElse(null);
+            var boxItem = itemManager.getBoxItem(item).orElse(null);
 
             if (boxItem == null || (filter != null && !filter.test(boxItem)) || (view != null && !checkClickEvent(view, i))) {
                 continue;
