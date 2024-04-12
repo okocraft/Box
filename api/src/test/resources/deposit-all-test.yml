@@ -1,3 +1,27 @@
+#
+# Test cases for StockHolderTransaction#depositAll(Predicate)
+#
+# - name: "Test name"
+#   box-items: [ "DIRT", "DIAMOND" ] # a list of org.bukkit.Material; The method will be collect items that are defined in this list
+#   item-ignores: [ "DIAMOND" ] # Specify items not to be collected from the list above
+#   inventory:
+#     size: 5 # The size of the inventory
+#     initial: # The contents before depositing
+#       - item: DIRT # org.bukkit.Material
+#         amount: 64 # 1 ~ 64
+#         position: 0 # 0 ~ (size - 1)
+#       - item: GRASS_BLOCK
+#         amount: 32
+#         position: 1
+#       - item: DIRT
+#         amount: 64
+#         position: 2
+#     result: # The contents of inventory after depositing
+#       - item: GRASS_BLOCK
+#         amount: 32
+#         position: 1
+#   result-map: # Name and number of items collected
+#     DIRT: 128
 cases:
   - name: "Empty inventory"
     box-items: [ "DIRT" ]

@@ -1,3 +1,30 @@
+#
+# Test cases for StockHolderTransaction#withdraw(BoxItem, int)
+#
+# - name: "Test name"
+#   item: DIRT # org.bukkit.Material; Will be withdrawn from Box to an inventory
+#   initial-amount: 128 # The amount of the item in the Box's stockholder
+#   limit: 100 # Limitation of the amount of the item
+#   inventory:
+#     size: 5 # The size of the inventory
+#     initial: # The contents before withdrawing
+#       - item: DIRT # org.bukkit.Material
+#         amount: 64 # 1 ~ 64
+#         position: 0 # 0 ~ (size - 1)
+#       - item: GRASS_BLOCK
+#         amount: 32
+#         position: 1
+#       - item: DIRT
+#         amount: 64
+#         position: 2
+#     result: # The contents after withdrawing
+#       - item: GRASS_BLOCK
+#         amount: 32
+#         position: 1
+#       - item: DIRT
+#         amount: 28
+#         position: 2
+#   expected-withdrawn-amount: 100
 cases:
   - name: "Empty inventory"
     item: DIRT
