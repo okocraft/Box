@@ -1,7 +1,5 @@
 package net.okocraft.box.storage.implementation.database.database.sqlite;
 
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
 import net.okocraft.box.storage.api.model.Storage;
 import net.okocraft.box.storage.api.registry.StorageContext;
 import net.okocraft.box.storage.implementation.database.DatabaseStorage;
@@ -17,6 +15,7 @@ import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Properties;
 
 public class SQLiteDatabase implements Database {
 
@@ -28,7 +27,7 @@ public class SQLiteDatabase implements Database {
     private final String tablePrefix;
     private final SchemaSet schemaSet;
     private final Path databasePath;
-    private HikariDataSource hikariDataSource;
+    private NonCloseableConnection connection;
 
     @VisibleForTesting
     SQLiteDatabase(@NotNull StorageContext<SQLiteSetting> context) {
@@ -43,25 +42,19 @@ public class SQLiteDatabase implements Database {
             createDatabaseFile();
         }
 
-        var config = new HikariConfig();
-        config.setPoolName("BoxSQLitePool");
-        config.setDriverClassName("org.sqlite.JDBC");
-        config.setJdbcUrl("jdbc:sqlite:" + databasePath.toAbsolutePath());
-        config.setConnectionTestQuery("SELECT 1");
-        config.setMaxLifetime(60000);
-        config.setMaximumPoolSize(50);
+        this.connection = new NonCloseableConnection(this.createConnection());
+        this.changePragma("journal_mode=" + this.journalMode.name());
 
-        hikariDataSource = new HikariDataSource(config);
     }
 
     @Override
     public void shutdown() throws Exception {
-        try (var connection = getConnection();
+        try (var connection = this.getConnection();
              var statement = connection.prepareStatement("VACUUM")) {
             statement.execute();
+        } finally {
+            this.connection.shutdown();
         }
-
-        hikariDataSource.close();
     }
 
     @Override
@@ -84,20 +77,37 @@ public class SQLiteDatabase implements Database {
 
     @Override
     public @NotNull Connection getConnection() throws SQLException {
-        if (hikariDataSource == null) {
-            throw new IllegalStateException("HikariDataSource is not initialized.");
+        if (this.connection == null) {
+            throw new IllegalStateException("This database is not initialized.");
         }
 
-        return hikariDataSource.getConnection();
+        return this.connection;
     }
 
     private void createDatabaseFile() throws IOException {
-        var parent = databasePath.getParent();
+        var parent = this.databasePath.getParent();
 
         if (parent != null) {
             Files.createDirectories(parent);
         }
 
-        Files.createFile(databasePath);
+        Files.createFile(this.databasePath);
+    }
+
+    private @NotNull Connection createConnection() throws ReflectiveOperationException {
+        var filepath = this.databasePath.toAbsolutePath();
+        return (Connection) Class.forName("org.sqlite.jdbc4.JDBC4Connection")
+                .getConstructor(String.class, String.class, Properties.class)
+                .newInstance("jdbc:sqlite:" + filepath, filepath.toString(), new Properties());
+    }
+
+    private void changePragma(String query) throws SQLException {
+        try (var statement = this.getConnection().prepareStatement("PRAGMA " + query)) {
+            statement.execute();
+        }
+    }
+
+    private enum JournalMode {
+        OFF, TRUNCATE
     }
 }
