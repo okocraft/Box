@@ -1,5 +1,7 @@
-package net.okocraft.box.version.paper_1_21;
+package net.okocraft.box.version.paper_1_20_5;
 
+import net.okocraft.box.api.model.item.ItemVersion;
+import net.okocraft.box.api.util.MCDataVersion;
 import net.okocraft.box.storage.api.util.item.DefaultItem;
 import net.okocraft.box.version.common.item.ItemSources;
 import org.bukkit.Bukkit;
@@ -7,7 +9,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.stream.Stream;
 
-public final class Paper_1_21 {
+public final class Paper_1_20_5 {
+
+    public static final ItemVersion VERSION = new ItemVersion(MCDataVersion.MC_1_20_5, 0);
 
     public static @NotNull Stream<DefaultItem> defaultItems() {
         return new ItemSources.Merger()
@@ -24,7 +28,7 @@ public final class Paper_1_21 {
                 .result();
     }
 
-    private Paper_1_21() {
+    private Paper_1_20_5() {
         throw new UnsupportedOperationException();
     }
 }

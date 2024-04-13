@@ -1,5 +1,6 @@
 package net.okocraft.box.version.common.item;
 
+import net.okocraft.box.api.model.item.ItemVersion;
 import net.okocraft.box.storage.api.model.item.ItemData;
 import org.bukkit.Material;
 import org.bukkit.MusicInstrument;
@@ -7,14 +8,31 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.MusicInstrumentMeta;
 import org.jetbrains.annotations.NotNull;
 
+import static net.okocraft.box.api.util.MCDataVersion.MC_1_19;
+import static net.okocraft.box.api.util.MCDataVersion.MC_1_19_4;
+import static net.okocraft.box.api.util.MCDataVersion.MC_1_20_3;
+import static net.okocraft.box.api.util.MCDataVersion.MC_1_20_5;
+
 public final class LegacyVersionPatches {
+
+    public static boolean shouldPatchGoatHorn(@NotNull ItemVersion version) {
+        return version.dataVersion().isBetween(MC_1_19, MC_1_19_4) && version.defaultItemVersion() == 0;
+    }
 
     public static @NotNull String goatHornName(@NotNull String original) {
         return original.equals("GOAT_HORN") ? "PONDER_GOAT_HORN" : original;
     }
 
+    public static boolean shouldPatchShortGrassName(@NotNull ItemVersion starting, @NotNull ItemVersion current) {
+        return starting.dataVersion().isBefore(MC_1_20_3) && current.dataVersion().isAfterOrSame(MC_1_20_3);
+    }
+
     public static @NotNull String shortGrassName(@NotNull String original) {
         return original.equals("GRASS") ? "SHORT_GRASS" : original;
+    }
+
+    public static boolean shouldPatchPotionName(@NotNull ItemVersion starting, @NotNull ItemVersion current) {
+        return starting.dataVersion().isBefore(MC_1_20_5) && current.dataVersion().isAfterOrSame(MC_1_20_5);
     }
 
     public static @NotNull String potionName(@NotNull String original) {

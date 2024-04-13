@@ -6,27 +6,20 @@ import net.okocraft.box.storage.api.util.item.patcher.ItemNamePatcher;
 import net.okocraft.box.version.common.item.LegacyVersionPatches;
 import org.jetbrains.annotations.NotNull;
 
-import static net.okocraft.box.api.util.MCDataVersion.MC_1_19;
-import static net.okocraft.box.api.util.MCDataVersion.MC_1_19_4;
-import static net.okocraft.box.api.util.MCDataVersion.MC_1_20_3;
-import static net.okocraft.box.api.util.MCDataVersion.MC_1_20_4;
-
 final class PatcherFactories {
 
     static @NotNull ItemNamePatcher createItemNamePatcher(@NotNull ItemVersion startingVersion, @NotNull ItemVersion currentVersion) {
         var builder = new ItemNamePatcherBuilder();
-        var dataVer = startingVersion.dataVersion();
-        var itemVer = startingVersion.defaultItemVersion();
 
-        if (dataVer.isBetween(MC_1_19, MC_1_19_4) && itemVer == 0) {
+        if (LegacyVersionPatches.shouldPatchGoatHorn(startingVersion)) {
             builder.append(LegacyVersionPatches::goatHornName);
         }
 
-        if (dataVer.isBefore(MC_1_20_3) && currentVersion.dataVersion().isAfterOrSame(MC_1_20_3)) {
+        if (LegacyVersionPatches.shouldPatchShortGrassName(startingVersion, currentVersion)) {
             builder.append(LegacyVersionPatches::shortGrassName);
         }
 
-        if (dataVer.isBefore(MC_1_20_4) && currentVersion.dataVersion().isAfterOrSame(MC_1_20_4)) { // TODO: back to MC_1_21 after Minecraft 1.21 released
+        if (true || LegacyVersionPatches.shouldPatchPotionName(startingVersion, currentVersion)) { // TODO: fix this after Minecraft 1.20.5 released
             builder.append(LegacyVersionPatches::potionName);
         }
 
@@ -35,10 +28,8 @@ final class PatcherFactories {
 
     static @NotNull ItemDataPatcher createItemDataPatcher(@NotNull ItemVersion startingVersion, @NotNull ItemVersion ignoredCurrentVersion) {
         var builder = new ItemDataPatcherBuilder();
-        var dataVer = startingVersion.dataVersion();
-        var itemVer = startingVersion.defaultItemVersion();
 
-        if (dataVer.isBetween(MC_1_19, MC_1_19_4) && itemVer == 0) {
+        if (LegacyVersionPatches.shouldPatchGoatHorn(startingVersion)) {
             builder.append(LegacyVersionPatches::goatHorn);
         }
 
