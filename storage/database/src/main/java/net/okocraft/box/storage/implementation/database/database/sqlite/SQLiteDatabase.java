@@ -27,6 +27,7 @@ public class SQLiteDatabase implements Database {
     private final String tablePrefix;
     private final SchemaSet schemaSet;
     private final Path databasePath;
+    private final JournalMode journalMode;
     private NonCloseableConnection connection;
 
     @VisibleForTesting
@@ -34,6 +35,7 @@ public class SQLiteDatabase implements Database {
         this.tablePrefix = context.setting().tablePrefix();
         this.schemaSet = SQLiteTableSchema.create(tablePrefix);
         this.databasePath = context.pluginDirectory().resolve(context.setting().filename());
+        this.journalMode = context.migrationMode() ? JournalMode.OFF : JournalMode.TRUNCATE ;
     }
 
     @Override
@@ -45,6 +47,9 @@ public class SQLiteDatabase implements Database {
         this.connection = new NonCloseableConnection(this.createConnection());
         this.changePragma("journal_mode=" + this.journalMode.name());
 
+        if (this.journalMode == JournalMode.OFF) {
+            this.changePragma("sync_mode=off");
+        }
     }
 
     @Override

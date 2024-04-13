@@ -33,8 +33,8 @@ public final class MigrationConfigLoader {
             return null;
         }
 
-        var sourceStorage = sourceStorageEntry.create(pluginDirectory, sourceStorageSetting.getMap(sourceStorageType.toLowerCase(Locale.ENGLISH)));
-        var targetStorage = targetStorageEntry.create(pluginDirectory, targetStorageSetting.getMap(targetStorageType.toLowerCase(Locale.ENGLISH)));
+        var sourceStorage = sourceStorageEntry.create(pluginDirectory, sourceStorageSetting.getMap(sourceStorageType.toLowerCase(Locale.ENGLISH)), true);
+        var targetStorage = targetStorageEntry.create(pluginDirectory, targetStorageSetting.getMap(targetStorageType.toLowerCase(Locale.ENGLISH)), true);
 
         printMigrationInfo(sourceStorage, targetStorage, logger);
 

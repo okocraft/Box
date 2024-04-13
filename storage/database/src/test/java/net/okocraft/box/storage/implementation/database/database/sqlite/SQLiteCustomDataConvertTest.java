@@ -14,7 +14,7 @@ class SQLiteCustomDataConvertTest {
 
     @Test
     void test(@TempDir Path dir) throws Exception {
-        var context = new StorageContext<>(dir, new SQLiteSetting("box_", "box-sqlite.db"));
+        var context = new StorageContext<>(dir, new SQLiteSetting("box_", "box-sqlite.db"), false);
 
         { // loading/saving custom data from/to legacy table
             var database = new SQLiteDatabase(context);

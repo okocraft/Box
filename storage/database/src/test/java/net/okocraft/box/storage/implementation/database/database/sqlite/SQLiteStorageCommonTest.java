@@ -159,7 +159,7 @@ class SQLiteStorageCommonTest {
     }
 
     private static @NotNull SQLiteDatabase setupDatabase(Path dir) throws Exception {
-        var database = new SQLiteDatabase(new StorageContext<>(dir, new SQLiteSetting("box_", "box-sqlite.db")));
+        var database = new SQLiteDatabase(new StorageContext<>(dir, new SQLiteSetting("box_", "box-sqlite.db"), false));
         database.prepare();
         return database;
     }
