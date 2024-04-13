@@ -4,11 +4,17 @@ import net.okocraft.box.api.model.user.BoxUser;
 import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.storage.api.model.Storage;
 import net.okocraft.box.storage.api.model.user.UserStorage;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 
 public class UserMigrator extends AbstractDataMigrator<UserMigrator.Result, UserStorage> {
+
+    @Contract(pure = true)
+    public static DataMigrator.@NotNull Base<Void, UserMigrator.Result> create() {
+        return result -> new UserMigrator();
+    }
 
     @Override
     public @NotNull UserStorage getDataStorage(@NotNull Storage storage) {

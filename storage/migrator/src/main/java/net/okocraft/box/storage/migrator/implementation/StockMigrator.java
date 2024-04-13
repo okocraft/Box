@@ -3,9 +3,15 @@ package net.okocraft.box.storage.migrator.implementation;
 import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.storage.api.model.Storage;
 import net.okocraft.box.storage.api.model.stock.StockStorage;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 public class StockMigrator extends AbstractDataMigrator<ItemMigrator.Result, StockStorage> {
+
+    @Contract(pure = true)
+    public static @NotNull DataMigrator.Base<ItemMigrator.Result, ItemMigrator.Result> create() {
+        return StockMigrator::new;
+    }
 
     private final ItemMigrator.Result itemMigratorResult;
 

@@ -15,6 +15,7 @@ import net.okocraft.box.storage.api.model.item.ItemStorage;
 import net.okocraft.box.storage.api.util.item.DefaultItemProvider;
 import net.okocraft.box.storage.api.util.item.patcher.ItemNamePatcher;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -22,6 +23,11 @@ import java.util.Set;
 import java.util.function.Function;
 
 public class ItemMigrator extends AbstractDataMigrator<ItemMigrator.Result, ItemStorage> {
+
+    @Contract(pure = true)
+    public static @NotNull DataMigrator.Base<UserMigrator.Result, ItemMigrator.Result> create(@NotNull DefaultItemProvider defaultItemProvider) {
+        return new Base(defaultItemProvider);
+    }
 
     private final UserMigrator.Result userMigratorResult;
     private final DefaultItemProvider defaultItemProvider;
@@ -139,10 +145,42 @@ public class ItemMigrator extends AbstractDataMigrator<ItemMigrator.Result, Item
         return Pair.of(itemStackToIdMap, itemNameSet);
     }
 
+    private static void logMigrated(@NotNull String itemName, int oldId, int newId) {
+        BoxLogger.logger().info("{}: {} -> {}", itemName, oldId, newId);
+    }
+
     public record Result(@NotNull Collection<BoxUser> users, @NotNull Int2IntMap itemIdMap) {
     }
 
-    private static void logMigrated(@NotNull String itemName, int oldId, int newId) {
-        BoxLogger.logger().info("{}: {} -> {}", itemName, oldId, newId);
+    private static class Base implements DataMigrator.Base<UserMigrator.Result, ItemMigrator.Result> {
+
+        private final DefaultItemProvider defaultItemProvider;
+
+        private Base(@NotNull DefaultItemProvider defaultItemProvider) {
+            this.defaultItemProvider = defaultItemProvider;
+        }
+
+        @Override
+        public @NotNull DataMigrator<Result> createMigrator(UserMigrator.Result previousResult) {
+            return new ItemMigrator(previousResult, this.defaultItemProvider);
+        }
+
+        @Override
+        public boolean checkRequirements(@NotNull Storage source, @NotNull Storage target) throws Exception {
+            var sourceItemVersion = source.getItemStorage().getItemVersion();
+            var targetItemVersion = target.getItemStorage().getItemVersion();
+
+            if (sourceItemVersion.isEmpty()) {
+                BoxLogger.logger().error("Cannot get the item version from the source storage.");
+                return false;
+            }
+
+            if (sourceItemVersion.get().isAfter(targetItemVersion.orElseGet(this.defaultItemProvider::version))) {
+                BoxLogger.logger().error("Cannot migrate item data to lower version.");
+                return false;
+            }
+
+            return true;
+        }
     }
 }

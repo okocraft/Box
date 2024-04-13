@@ -5,6 +5,7 @@ import net.kyori.adventure.key.Key;
 import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.storage.api.model.Storage;
 import net.okocraft.box.storage.api.model.data.CustomDataStorage;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 public class CustomDataMigrator extends AbstractDataMigrator<ItemMigrator.Result, CustomDataStorage> {
@@ -17,6 +18,11 @@ public class CustomDataMigrator extends AbstractDataMigrator<ItemMigrator.Result
         } else {
             CustomDataMigrator.dataFixer = dataFixer;
         }
+    }
+
+    @Contract(pure = true)
+    public static @NotNull DataMigrator.Base<ItemMigrator.Result, ItemMigrator.Result> create() {
+        return CustomDataMigrator::new;
     }
 
     private final ItemMigrator.Result itemMigratorResult;

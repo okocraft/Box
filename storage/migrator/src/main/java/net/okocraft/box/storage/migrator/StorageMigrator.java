@@ -3,6 +3,7 @@ package net.okocraft.box.storage.migrator;
 import net.okocraft.box.storage.api.model.Storage;
 import net.okocraft.box.storage.api.util.item.DefaultItemProvider;
 import net.okocraft.box.storage.migrator.implementation.CustomDataMigrator;
+import net.okocraft.box.storage.migrator.implementation.DataMigrator;
 import net.okocraft.box.storage.migrator.implementation.ItemMigrator;
 import net.okocraft.box.storage.migrator.implementation.StockMigrator;
 import net.okocraft.box.storage.migrator.implementation.UserMigrator;
@@ -28,15 +29,21 @@ public class StorageMigrator {
     }
 
     public void run() throws Exception {
-        new UserMigrator()
-                .next(result -> new ItemMigrator(result, this.defaultItemProvider))
-                .next(StockMigrator::new)
-                .next(CustomDataMigrator::new)
-                .migrate(this.sourceStorage, this.targetStorage, this.debug);
+        var base = this.createMigratorBase();
+        if (base.checkRequirements(this.sourceStorage, this.targetStorage)) {
+            base.createMigrator(null).migrate(this.sourceStorage, this.targetStorage, this.debug);
+        }
     }
 
     public void close() throws Exception {
         sourceStorage.close();
         targetStorage.close();
+    }
+
+    private @NotNull DataMigrator.Base<Void, ItemMigrator.Result> createMigratorBase() {
+        return UserMigrator.create()
+                .next(ItemMigrator.create(this.defaultItemProvider))
+                .next(StockMigrator.create())
+                .next(CustomDataMigrator.create());
     }
 }
