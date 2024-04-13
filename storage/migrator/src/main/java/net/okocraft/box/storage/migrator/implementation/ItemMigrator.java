@@ -8,11 +8,13 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import net.okocraft.box.api.model.item.ItemVersion;
 import net.okocraft.box.api.model.user.BoxUser;
 import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.storage.api.model.Storage;
 import net.okocraft.box.storage.api.model.item.ItemStorage;
 import net.okocraft.box.storage.api.util.item.DefaultItemProvider;
+import net.okocraft.box.storage.api.util.item.ItemLoader;
 import net.okocraft.box.storage.api.util.item.patcher.ItemNamePatcher;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Contract;
@@ -44,25 +46,23 @@ public class ItemMigrator extends AbstractDataMigrator<ItemMigrator.Result, Item
 
     @Override
     protected @NotNull ItemMigrator.Result migrateData(@NotNull ItemStorage source, @NotNull ItemStorage target, boolean debug) throws Exception {
-        var sourceItemVersion = source.getItemVersion();
-        var targetItemVersion = target.getItemVersion();
+        var sourceItemVersion = source.getItemVersion().orElseThrow();
+        ItemVersion targetItemVersion;
+        boolean initializeTargetStorage;
 
-        if (sourceItemVersion.isEmpty()) {
-            throw new IllegalStateException("Cannot get the item version from the source storage.");
-        }
-
-        if (targetItemVersion.isEmpty()) {
-            throw new IllegalStateException("Cannot get the item version from the target storage.");
-        }
-
-        if (sourceItemVersion.get().isAfter(targetItemVersion.get())) {
-            throw new IllegalStateException("Cannot migrate item data to lower version.");
+        {
+            var optionalVersion = target.getItemVersion();
+            targetItemVersion = optionalVersion.orElseGet(this.defaultItemProvider::version);
+            initializeTargetStorage = optionalVersion.isEmpty();
         }
 
         var patcherFactory = this.defaultItemProvider.itemNamePatcherFactory();
-        var currentVersion = this.defaultItemProvider.version();
-        var sourceItemIdToNameMap = loadSourceDefaultItemIdToNameMap(source, patcherFactory.create(sourceItemVersion.get(), currentVersion));
-        var targetItemNameToIdMap = loadTargetDefaultItemIdToNameMap(target, patcherFactory.create(targetItemVersion.get(), currentVersion));
+
+        var sourceItemIdToNameMap = loadSourceDefaultItemIdToNameMap(source, this.defaultItemProvider.itemNamePatcherFactory().create(sourceItemVersion, this.defaultItemProvider.version()));
+        var targetItemNameToIdMap =
+                initializeTargetStorage ?
+                        initializeTargetDefaultItems(target, this.defaultItemProvider) :
+                        loadTargetDefaultItemIdToNameMap(target, patcherFactory.create(targetItemVersion, this.defaultItemProvider.version()));
 
         var itemIdMap = new Int2IntOpenHashMap();
 
@@ -116,6 +116,17 @@ public class ItemMigrator extends AbstractDataMigrator<ItemMigrator.Result, Item
 
         for (var data : loaded) {
             map.put(data.internalId(), patcher.renameIfNeeded(data.plainName()));
+        }
+
+        return map;
+    }
+
+    private static @NotNull Object2IntMap<String> initializeTargetDefaultItems(@NotNull ItemStorage storage, @NotNull DefaultItemProvider defaultItemProvider) throws Exception {
+        var items = ItemLoader.initializeDefaultItems(storage, defaultItemProvider.version(), defaultItemProvider.provide()).defaultItems();
+        var map = new Object2IntOpenHashMap<String>(items.size());
+
+        for (var item : items) {
+            map.put(item.getPlainName(), item.getInternalId());
         }
 
         return map;
