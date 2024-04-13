@@ -1,6 +1,7 @@
 package net.okocraft.box.bundle;
 
 import net.okocraft.box.api.util.BoxLogger;
+import net.okocraft.box.api.util.MCDataVersion;
 import net.okocraft.box.core.BoxPlugin;
 import net.okocraft.box.storage.api.registry.StorageRegistry;
 import net.okocraft.box.storage.migrator.StorageMigrator;
@@ -18,6 +19,7 @@ public final class BoxBootstrap extends JavaPlugin {
 
     private BoxPlugin boxPlugin;
     private boolean isPaper;
+    private boolean isSupportedVersion;
     private boolean isLoaded;
 
     public BoxBootstrap() {
@@ -30,6 +32,8 @@ public final class BoxBootstrap extends JavaPlugin {
             isPaper = false;
             return;
         }
+
+        this.isSupportedVersion = MCDataVersion.current().isBeforeOrSame(MCDataVersion.MC_1_20_4);
 
         ((SubstituteLogger) BoxLogger.logger()).setDelegate(this.getComponentLogger());
         this.boxPlugin = new BoxPlugin(this, getFile().toPath());
@@ -49,6 +53,19 @@ public final class BoxBootstrap extends JavaPlugin {
         if (!isPaper) {
             getLogger().severe("Box only supports Paper or its fork.");
             getLogger().severe("Please change your Spigot server to Paper to use Box.");
+            getLogger().severe("");
+            getLogger().severe("Disabling box...");
+
+            disablePlugin();
+            return;
+        }
+
+        if (!isSupportedVersion) {
+            getLogger().severe("Box v5.x.x is supported up to Minecraft 1.20.4.");
+            getLogger().severe("If you want to use Minecraft 1.20.5 or later, please update to v6.x.x.");
+            getLogger().severe("");
+            getLogger().severe("Current Minecraft version: " + Bukkit.getMinecraftVersion());
+            getLogger().severe("Current Box version: " + this.boxPlugin.getPluginVersion());
             getLogger().severe("");
             getLogger().severe("Disabling box...");
 
@@ -95,7 +112,7 @@ public final class BoxBootstrap extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        if (isPaper && isLoaded) {
+        if (isPaper && isSupportedVersion && isLoaded) {
             Bundled.features().forEach(boxPlugin::unregister);
             boxPlugin.disable();
             BoxLogger.logger().info("Successfully disabled. Goodbye!");

@@ -535,7 +535,7 @@ public class BoxPlugin implements BoxAPI {
     }
 
     @SuppressWarnings("deprecation")
-    private @NotNull String getPluginVersion() { // Preparation for future Paper Plugin support.
+    public @NotNull String getPluginVersion() { // Preparation for future Paper Plugin support.
         return plugin.getDescription().getVersion();
     }
 }
