@@ -62,7 +62,7 @@ public final class IngredientRenderer {
             var ingredients =
                     recipe.ingredients()
                             .stream()
-                            .map(holder -> holder.getPatterns().getFirst())
+                            .map(holder -> holder.patterns().getFirst())
                             .toList();
 
             render(editor, session, new SelectedRecipe(ingredients, recipe.result(), recipe.amount()), times);
@@ -88,7 +88,7 @@ public final class IngredientRenderer {
             int need = ingredient.getValue() * times;
 
             var itemNames =
-                    holder.getPatterns().stream()
+                    holder.patterns().stream()
                             .map(BoxIngredientItem::item)
                             .map(BoxItem::getOriginal)
                             .map(Component::translatable)

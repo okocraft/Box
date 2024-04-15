@@ -1,39 +1,35 @@
 package net.okocraft.box.feature.craft.gui;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.okocraft.box.api.model.item.BoxItem;
+import net.okocraft.box.feature.craft.model.BoxIngredientItem;
 import net.okocraft.box.feature.craft.model.BoxItemRecipe;
-import net.okocraft.box.feature.craft.model.IngredientHolder;
 import net.okocraft.box.feature.craft.model.SelectedRecipe;
 import net.okocraft.box.feature.gui.api.session.TypedKey;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Map;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 public class CurrentRecipe {
 
     public static final TypedKey<CurrentRecipe> DATA_KEY = TypedKey.of(CurrentRecipe.class, "current_recipe");
-    public static final TypedKey<Boolean> CHANGE_PER_INGREDIENT = TypedKey.of(Boolean.class, "change_per_ingredient");
 
     private final BoxItemRecipe source;
-    private final Map<Integer, IngredientHolder.SelectableIngredients> ingredientsMap;
+    private final Int2ObjectMap<SelectableIngredients> ingredientsMap = new Int2ObjectOpenHashMap<>();
 
     private SelectedRecipe selectedRecipe;
+    private Comparator<BoxIngredientItem> ingredientSorter;
 
     public CurrentRecipe(@NotNull BoxItemRecipe source) {
         this.source = source;
-        this.ingredientsMap =
-                source.ingredients().stream()
-                        .filter(Predicate.not(ingredients -> ingredients.getPatterns().isEmpty()))
-                        .collect(Collectors.toUnmodifiableMap(
-                                IngredientHolder::getSlot,
-                                IngredientHolder::toSelectableIngredients
-                        ));
 
-        updateSelectedRecipe();
+        this.resetIngredientMap();
+        this.updateSelectedRecipe();
     }
 
     public @NotNull BoxItem getResult() {
@@ -64,14 +60,14 @@ public class CurrentRecipe {
         updateSelectedRecipe();
     }
 
-    public @Nullable IngredientHolder.SelectableIngredients getIngredients(int pos) {
+    public @Nullable SelectableIngredients getIngredients(int pos) {
         return ingredientsMap.get(pos);
     }
 
     public void updateSelectedRecipe() {
         this.selectedRecipe =
                 new SelectedRecipe(
-                        ingredientsMap.values().stream().map(IngredientHolder.SelectableIngredients::getSelected).toList(),
+                        ingredientsMap.values().stream().map(SelectableIngredients::getSelected).toList(),
                         source.result(),
                         source.amount()
                 );
@@ -79,5 +75,30 @@ public class CurrentRecipe {
 
     public @NotNull SelectedRecipe getSelectedRecipe() {
         return selectedRecipe;
+    }
+
+    public void changeIngredientSorter(Comparator<BoxIngredientItem> ingredientSorter) {
+        this.ingredientSorter = ingredientSorter;
+        this.resetIngredientMap();
+        this.updateSelectedRecipe();
+    }
+
+    private void resetIngredientMap() {
+        for (var holder : this.source.ingredients()) {
+            if (holder.patterns().isEmpty()) {
+                continue;
+            }
+
+            List<BoxIngredientItem> patterns;
+
+            if (this.ingredientSorter != null) {
+                patterns = new ArrayList<>(holder.patterns());
+                patterns.sort(this.ingredientSorter);
+            } else {
+                patterns = holder.patterns();
+            }
+
+            this.ingredientsMap.put(holder.slot(), new SelectableIngredients(holder, patterns));
+        }
     }
 }

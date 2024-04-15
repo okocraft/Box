@@ -1,5 +1,6 @@
 package net.okocraft.box.feature.craft.model;
 
+import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.model.item.BoxItem;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -7,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 
 final class ModelCache {
@@ -31,7 +33,14 @@ final class ModelCache {
     }
 
     static @NotNull IngredientHolder getIngredientHolder(int slot, @NotNull List<ItemStack> patterns) {
-        var holder = new IngredientHolder(slot, patterns);
+        var holder = new IngredientHolder(
+                slot,
+                patterns.stream().map(item ->
+                        BoxAPI.api().getItemManager().getBoxItem(item)
+                                .map(value -> getIngredientItem(value, item.getAmount()))
+                ).filter(Optional::isPresent).map(Optional::get).toList()
+        );
+
         return INGREDIENT_HOLDER_CACHE != null ?
                 INGREDIENT_HOLDER_CACHE.computeIfAbsent(holder, Function.identity()) :
                 holder;

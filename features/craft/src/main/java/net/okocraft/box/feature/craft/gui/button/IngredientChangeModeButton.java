@@ -1,7 +1,6 @@
 package net.okocraft.box.feature.craft.gui.button;
 
 import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
-import net.okocraft.box.feature.craft.gui.CurrentRecipe;
 import net.okocraft.box.feature.craft.lang.DisplayKeys;
 import net.okocraft.box.feature.gui.api.button.Button;
 import net.okocraft.box.feature.gui.api.button.ClickResult;
@@ -31,7 +30,7 @@ public class IngredientChangeModeButton implements Button {
 
     @Override
     public @NotNull ItemStack createIcon(@NotNull PlayerSession session) {
-        boolean changePerIngredientMode = session.getData(CurrentRecipe.CHANGE_PER_INGREDIENT) != null;
+        boolean changePerIngredientMode = session.getData(IngredientButton.CHANGE_PER_INGREDIENT) != null;
         return ItemEditor.create()
                 .displayName((changePerIngredientMode ? EACH_INGREDIENT_MODE : ALL_INGREDIENT_MODE).create(session.getMessageSource()))
                 .createItem(changePerIngredientMode ? Material.FIREWORK_STAR : Material.FIRE_CHARGE);
@@ -39,8 +38,8 @@ public class IngredientChangeModeButton implements Button {
 
     @Override
     public @NotNull ClickResult onClick(@NotNull PlayerSession session, @NotNull ClickType clickType) {
-        if (session.removeData(CurrentRecipe.CHANGE_PER_INGREDIENT) == null) {
-            session.putData(CurrentRecipe.CHANGE_PER_INGREDIENT, Boolean.TRUE);
+        if (session.removeData(IngredientButton.CHANGE_PER_INGREDIENT) == null) {
+            session.putData(IngredientButton.CHANGE_PER_INGREDIENT, Boolean.TRUE);
         }
 
         SoundBase.CLICK.play(session.getViewer());

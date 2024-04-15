@@ -134,7 +134,7 @@ final class Processor {
             } else if (choice instanceof RecipeChoice.ExactChoice exactChoice) {
                 var ingredientItem = IngredientHolder.fromExactChoice(slot, exactChoice);
 
-                if (ingredientItem.getPatterns().isEmpty()) {
+                if (ingredientItem.patterns().isEmpty()) {
                     return;
                 } else {
                     ingredients.add(IngredientHolder.fromExactChoice(slot, exactChoice));
@@ -161,7 +161,7 @@ final class Processor {
             } else if (choice instanceof RecipeChoice.ExactChoice exactChoice) {
                 var ingredientItem = IngredientHolder.fromExactChoice(slot, exactChoice);
 
-                if (ingredientItem.getPatterns().isEmpty()) {
+                if (ingredientItem.patterns().isEmpty()) {
                     return;
                 } else {
                     ingredients.add(IngredientHolder.fromExactChoice(slot, exactChoice));

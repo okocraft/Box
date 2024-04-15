@@ -12,6 +12,7 @@ import net.okocraft.box.feature.gui.api.button.ClickResult;
 import net.okocraft.box.feature.gui.api.lang.Styles;
 import net.okocraft.box.feature.gui.api.menu.Menu;
 import net.okocraft.box.feature.gui.api.session.PlayerSession;
+import net.okocraft.box.feature.gui.api.session.TypedKey;
 import net.okocraft.box.feature.gui.api.util.ItemEditor;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.ClickType;
@@ -20,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 
 public record IngredientButton(int slot, int ingredientPos) implements Button {
 
+    public static final TypedKey<Boolean> CHANGE_PER_INGREDIENT = TypedKey.of(Boolean.class, "change_per_ingredient");
     private static final MiniMessageBase CLICK_TO_SHOW_RECIPES = MiniMessageBase.messageKey(DisplayKeys.INGREDIENT_BUTTON_CLICK_TO_SHOW_RECIPES);
 
     @Override
@@ -89,7 +91,7 @@ public record IngredientButton(int slot, int ingredientPos) implements Button {
 
             return ClickResult.changeMenu(menu);
         } else {
-            currentRecipe.nextRecipe(ingredientPos, session.getData(CurrentRecipe.CHANGE_PER_INGREDIENT) == null);
+            currentRecipe.nextRecipe(ingredientPos, session.getData(CHANGE_PER_INGREDIENT) == null);
             return ClickResult.UPDATE_ICONS;
         }
     }
