@@ -42,7 +42,7 @@ public final class DisplayKeys {
         collector.add(CLICK_TO_SHOW_DETAILS, "<gray>Shift + click to show details");
 
         collector.add(CRAFT_MENU_TITLE, "<black>Craft of <item>");
-        collector.add(CRAFT_BUTTON, "<aqua>Craft <time> times");
+        collector.add(CRAFT_BUTTON, "<aqua>Craft <times> times");
         collector.add(CRAFT_BUTTON_CURRENT_STOCK, "<gray>Current stock: <aqua><current>");
         collector.add(INGREDIENT_BUTTON_CLICK_TO_SHOW_RECIPES, "<gray>Shift + Click to show recipes");
         collector.add(EACH_INGREDIENT_MODE, "<gold>Each Ingredient Change Mode");
