@@ -3,6 +3,7 @@ package net.okocraft.box.feature.stick.listener;
 import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.player.BoxPlayer;
+import net.okocraft.box.api.util.ItemNameGenerator;
 import net.okocraft.box.feature.stick.event.stock.StickCause;
 import net.okocraft.box.feature.stick.event.stock.StickCauses;
 import net.okocraft.box.feature.stick.function.container.BrewerOperator;
@@ -244,21 +245,21 @@ public class StickListener implements Listener {
 
         event.setReplacement(mainHandItem.clone());
 
-        var defaultReplacementMaterialName = switch (event.getItem().getType()) {
-            case MUSHROOM_STEW, RABBIT_STEW, BEETROOT_SOUP, SUSPICIOUS_STEW ->
-                    Material.BOWL.name(); // BowlFoodItem#finishUsingItem L15 / SuspiciousStewItem#finishUsingItem L75
-            case HONEY_BOTTLE, POTION ->
-                    Material.GLASS_BOTTLE.name(); // HoneyBottleItem#finishUsingItem L35 / PotionItem#finishUsingItem L89
-            case MILK_BUCKET -> Material.BUCKET.name(); // MilkBucketItem#finishUsingItem L37
+        // @formatter:off
+        var defaultReplacementMaterial = switch (event.getItem().getType()) {
+            case MUSHROOM_STEW, RABBIT_STEW, BEETROOT_SOUP, SUSPICIOUS_STEW -> Material.BOWL; // BowlFoodItem#finishUsingItem L15 / SuspiciousStewItem#finishUsingItem L75
+            case HONEY_BOTTLE, POTION -> Material.GLASS_BOTTLE; // HoneyBottleItem#finishUsingItem L35 / PotionItem#finishUsingItem L89
+            case MILK_BUCKET -> Material.BUCKET; // MilkBucketItem#finishUsingItem L37
             default -> null;
         };
+        // @formatter:on
 
-        if (defaultReplacementMaterialName == null) {
+        if (defaultReplacementMaterial == null) {
             return;
         }
 
         BoxAPI.api().getItemManager()
-                .getBoxItem(defaultReplacementMaterialName)
+                .getBoxItem(ItemNameGenerator.key(defaultReplacementMaterial))
                 .ifPresent(defaultReplacementItem -> boxPlayer.getCurrentStockHolder().increase(defaultReplacementItem, 1, cause));
     }
 
