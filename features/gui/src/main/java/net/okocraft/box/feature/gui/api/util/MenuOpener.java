@@ -14,6 +14,8 @@ public final class MenuOpener {
     private static final SoundBase NORMAL_SOUND = SoundBase.builder().sound(Sound.ENTITY_EXPERIENCE_ORB_PICKUP).pitch(2.0f).build();
 
     public static void open(@NotNull Menu menu, @NotNull PlayerSession session) {
+        menu.onOpen(session);
+
         var holder = new BoxInventoryHolder(menu, session);
         var viewer = session.getViewer();
 

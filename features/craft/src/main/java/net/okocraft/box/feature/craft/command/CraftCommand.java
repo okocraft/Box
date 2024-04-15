@@ -72,7 +72,7 @@ public class CraftCommand extends AbstractCommand {
         var session = PlayerSession.newSession(player);
 
         if (recipeHolder.getRecipeList().size() == 1) {
-            menu = CraftMenu.prepare(session, recipeHolder.getRecipeList().getFirst());
+            menu = CraftMenu.prepare(recipeHolder.getRecipeList().getFirst());
         } else {
             menu = new RecipeSelectorMenu(item.get(), recipeHolder);
         }

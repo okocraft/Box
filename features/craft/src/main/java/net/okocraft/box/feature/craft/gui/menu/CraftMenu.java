@@ -107,14 +107,19 @@ public class CraftMenu implements Menu {
         SHARED_BUTTONS = Collections.unmodifiableList(buttons);
     }
 
-    private static final CraftMenu INSTANCE = new CraftMenu();
+    private final CurrentRecipe currentRecipe;
 
-    public static @NotNull CraftMenu prepare(@NotNull PlayerSession session, @NotNull BoxItemRecipe recipe) {
-        session.putData(CurrentRecipe.DATA_KEY, new CurrentRecipe(recipe));
-        return INSTANCE;
+    public static @NotNull CraftMenu prepare(@NotNull BoxItemRecipe recipe) {
+        return new CraftMenu(new CurrentRecipe(recipe));
     }
 
-    private CraftMenu() {
+    private CraftMenu(@NotNull CurrentRecipe currentRecipe) {
+        this.currentRecipe = currentRecipe;
+    }
+
+    @Override
+    public void onOpen(@NotNull PlayerSession session) {
+        session.putData(CurrentRecipe.DATA_KEY, this.currentRecipe);
     }
 
     @Override

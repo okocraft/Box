@@ -9,6 +9,9 @@ import java.util.List;
 
 public interface Menu {
 
+    default void onOpen(@NotNull PlayerSession session) {
+    }
+
     int getRows();
 
     @NotNull Component getTitle(@NotNull PlayerSession session);

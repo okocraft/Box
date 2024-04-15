@@ -75,7 +75,7 @@ public class RecipeSelectButton implements Button {
 
             return ClickResult.UPDATE_ICONS;
         } else {
-            var menu = CraftMenu.prepare(session, recipe);
+            var menu = CraftMenu.prepare(recipe);
             return ClickResult.changeMenu(menu);
         }
     }

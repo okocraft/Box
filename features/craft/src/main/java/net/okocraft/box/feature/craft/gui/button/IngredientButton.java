@@ -80,7 +80,7 @@ public record IngredientButton(int slot, int ingredientPos) implements Button {
             Menu menu;
 
             if (recipes.getRecipeList().size() == 1) {
-                menu = CraftMenu.prepare(session, recipes.getRecipeList().getFirst());
+                menu = CraftMenu.prepare(recipes.getRecipeList().getFirst());
             } else {
                 menu = new RecipeSelectorMenu(item, recipes);
             }
