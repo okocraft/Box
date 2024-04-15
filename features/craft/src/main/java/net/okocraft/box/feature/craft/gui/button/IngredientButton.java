@@ -38,16 +38,18 @@ public record IngredientButton(int slot, int ingredientPos) implements Button {
 
         var editor = ItemEditor.create();
 
-        for (var ingredient : ingredients.get()) {
-            editor.loreLine(
-                    Component.text()
-                            .append(Component.text(" > "))
-                            .append(Component.translatable(ingredient.item().getOriginal()))
-                            .append(Component.space())
-                            .append(Component.text("(" + session.getSourceStockHolder().getAmount(ingredient.item()) + ")"))
-                            .style(ingredient == ingredients.getSelected() ? Styles.NO_DECORATION_AQUA : Styles.NO_DECORATION_GRAY)
-                            .build()
-            );
+        if (ingredients.size() != 1) {
+            for (var ingredient : ingredients.get()) {
+                editor.loreLine(
+                        Component.text()
+                                .append(Component.text(" > "))
+                                .append(Component.translatable(ingredient.item().getOriginal()))
+                                .append(Component.space())
+                                .append(Component.text("(" + session.getSourceStockHolder().getAmount(ingredient.item()) + ")"))
+                                .style(ingredient == ingredients.getSelected() ? Styles.NO_DECORATION_AQUA : Styles.NO_DECORATION_GRAY)
+                                .build()
+                );
+            }
         }
 
         if (RecipeRegistry.hasRecipe(ingredients.getSelected().item())) {
