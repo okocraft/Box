@@ -27,6 +27,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemBreakEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
@@ -38,7 +39,11 @@ import org.bukkit.inventory.meta.Damageable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.EnumSet;
+
 public class StickListener implements Listener {
+
+    private static final EnumSet<InventoryType> CONTAINERS = EnumSet.of(InventoryType.BARREL, InventoryType.CHEST, InventoryType.DISPENSER, InventoryType.DROPPER, InventoryType.HOPPER, InventoryType.SHULKER_BOX);
 
     private final BoxStickItem boxStickItem;
 
@@ -164,7 +169,13 @@ public class StickListener implements Listener {
         var inventory = container.getInventory();
         ContainerOperation<?> operation;
 
-        if (inventory instanceof FurnaceInventory furnaceInventory) { // BlastFurnace, Furnace, and Smoker
+        if (CONTAINERS.contains(inventory.getType())) {
+            operation = new ContainerOperation<>(
+                    ContainerOperation.createContext(boxPlayer, operationType, inventory, clickedBlockLocation),
+                    ContainerOperator::process,
+                    "container"
+            );
+        } else if (inventory instanceof FurnaceInventory furnaceInventory) { // BlastFurnace, Furnace, and Smoker
             operation = new ContainerOperation<>(
                     ContainerOperation.createContext(boxPlayer, operationType, furnaceInventory, clickedBlockLocation),
                     FurnaceOperator::process,
@@ -176,12 +187,8 @@ public class StickListener implements Listener {
                     BrewerOperator::process,
                     "brewer"
             );
-        } else { // other containers (Barrel, Chest, Dispenser, Dropper, Hopper, and ShulkerBox)
-            operation = new ContainerOperation<>(
-                    ContainerOperation.createContext(boxPlayer, operationType, inventory, clickedBlockLocation),
-                    ContainerOperator::process,
-                    "container"
-            );
+        } else {
+            return;
         }
 
         if (!player.hasPermission("box.stick." + operation.permissionSuffix()) ||
