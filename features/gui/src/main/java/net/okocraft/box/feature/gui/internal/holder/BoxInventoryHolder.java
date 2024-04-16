@@ -21,7 +21,6 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class BoxInventoryHolder implements InventoryHolder {
@@ -35,8 +34,8 @@ public class BoxInventoryHolder implements InventoryHolder {
 
     private final Menu menu;
     private final PlayerSession session;
+    private final int maxIcons;
     private final Inventory inventory;
-    private final ItemStack[] icons;
     private final Int2ObjectMap<Button> buttonMap;
     private final AtomicBoolean isClickProcessing = new AtomicBoolean(false);
     private long lastClickTime;
@@ -44,15 +43,12 @@ public class BoxInventoryHolder implements InventoryHolder {
     public BoxInventoryHolder(@NotNull Menu menu, @NotNull PlayerSession session) {
         this.menu = menu;
         this.session = session;
+        this.maxIcons = menu.getRows() * 9;
 
-        int maxIcons = menu.getRows() * 9;
+        this.inventory = Bukkit.createInventory(this, this.maxIcons, menu.getTitle(session));
+        this.buttonMap = new Int2ObjectOpenHashMap<>(this.maxIcons);
 
-        this.inventory = Bukkit.createInventory(this, maxIcons, menu.getTitle(session));
-        this.icons = new ItemStack[maxIcons];
-        this.buttonMap = new Int2ObjectOpenHashMap<>(maxIcons);
-
-        renderButtons();
-        inventory.setContents(icons);
+        this.renderButtons();
     }
 
     @Override
@@ -129,8 +125,7 @@ public class BoxInventoryHolder implements InventoryHolder {
         }
 
         if (clickResult == ClickResult.UPDATE_ICONS) {
-            renderButtons();
-            inventory.setContents(icons);
+            this.renderButtons();
         } else if (clickResult == ClickResult.UPDATE_BUTTON) {
             inventory.setItem(button.getSlot(), button.createIcon(session));
         } else if (clickResult == ClickResult.BACK_MENU) {
@@ -142,8 +137,8 @@ public class BoxInventoryHolder implements InventoryHolder {
         this.finishClickProcess();
     }
 
-    private void renderButtons() {
-        Arrays.fill(this.icons, null);
+    public void renderButtons() {
+        var icons = new ItemStack[this.maxIcons];
 
         for (var button : menu.getButtons(session)) {
             int slot = button.getSlot();
@@ -153,5 +148,7 @@ public class BoxInventoryHolder implements InventoryHolder {
                 icons[slot] = button.createIcon(session);
             }
         }
+
+        this.inventory.setContents(icons);
     }
 }
