@@ -51,7 +51,7 @@ public final class Placeholders {
     public static final Placeholder<String> ARG = Placeholder.component("arg", Component::text);
 
     private static @NotNull Component render(@NotNull BoxItem item) {
-        return item.getDisplayName().hoverEvent(item.getOriginal());
+        return item.getDisplayName().color(null).hoverEvent(item.getOriginal());
     }
 
     private Placeholders() {
