@@ -87,7 +87,7 @@ public class SelectableIngredients {
      * @return {@code true} if two {@link SelectableIngredients} are same, otherwise {@code false}
      */
     public boolean isSameIngredient(@NotNull SelectableIngredients other) {
-        return this.ingredientHolder.equals(other.ingredientHolder);
+        return this.ingredientHolder.patterns().equals(other.ingredientHolder.patterns());
     }
 
     public void sortPatterns(@Nullable Comparator<BoxIngredientItem> sorter) {
@@ -112,7 +112,7 @@ public class SelectableIngredients {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof SelectableIngredients that)) return false;
-        return this.isSameIngredient(that);
+        return this.ingredientHolder.equals(that.ingredientHolder);
     }
 
     @Override
