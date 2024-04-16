@@ -1,5 +1,6 @@
 package net.okocraft.box.feature.category.internal.category.defaults;
 
+import com.github.siroshun09.configapi.core.node.BooleanValue;
 import com.github.siroshun09.configapi.core.node.MapNode;
 import net.okocraft.box.api.model.manager.ItemManager;
 import net.okocraft.box.feature.category.api.category.Category;
@@ -33,6 +34,7 @@ public record DefaultCategory(@NotNull String key,
     }
 
     public void storeToMapNode(@NotNull MapNode mapNode) {
+        mapNode.set(CategoryFile.DISABLED_CATEGORY, BooleanValue.FALSE);
         mapNode.set(CategoryFile.ICON_KEY, this.icon.name());
 
         var displayName = mapNode.createMap(CategoryFile.DISPLAY_NAME_KEY);

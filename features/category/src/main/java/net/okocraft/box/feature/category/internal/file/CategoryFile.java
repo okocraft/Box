@@ -39,6 +39,7 @@ public final class CategoryFile implements AutoCloseable {
     public static final String ICON_KEY = "icon";
     public static final String DISPLAY_NAME_KEY = "display-name";
     public static final String LOCALE_DEFAULT = "default";
+    public static final String DISABLED_CATEGORY = "disabled";
 
     private final Path filepath;
     private final CategoryRegistry registry;
@@ -103,7 +104,7 @@ public final class CategoryFile implements AutoCloseable {
         for (var entry : this.loadedSource.value().entrySet()) {
             var key = String.valueOf(entry.getKey());
             if (!key.startsWith("$") && entry.getValue() instanceof MapNode section) {
-                this.registry.register(key, loadCategory(key, section, BoxAPI.api().getItemManager().getItemNameConverter(this.version)));
+                this.loadAndRegisterCategory(key, section, BoxAPI.api().getItemManager().getItemNameConverter(this.version));
             }
         }
 
@@ -165,7 +166,11 @@ public final class CategoryFile implements AutoCloseable {
         YamlFormat.COMMENT_PROCESSING.save(mapNode, this.filepath);
     }
 
-    private static LoadedCategory loadCategory(@NotNull String key, @NotNull MapNode source, @NotNull UnaryOperator<String> itemNameConverter) {
+    private void loadAndRegisterCategory(@NotNull String key, @NotNull MapNode source, @NotNull UnaryOperator<String> itemNameConverter) {
+        if (source.getBoolean(DISABLED_CATEGORY)) {
+            return;
+        }
+
         Material iconMaterial;
 
         try {
@@ -204,7 +209,7 @@ public final class CategoryFile implements AutoCloseable {
 
         var category = new LoadedCategory(iconMaterial, displayNameMap);
         category.addItems(items);
-        return category;
+        this.registry.register(key, category);
     }
 
     private @NotNull Collection<BoxItem> toBoxItems(@NotNull List<String> itemNames) {
