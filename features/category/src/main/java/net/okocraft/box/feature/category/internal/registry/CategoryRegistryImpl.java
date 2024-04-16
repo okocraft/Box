@@ -16,7 +16,7 @@ import java.util.Optional;
 public class CategoryRegistryImpl implements CategoryRegistry {
 
     private final Map<String, Category> registry = new LinkedHashMap<>();
-    private final CustomItemCategory customItemCategory = new CustomItemCategory();
+    private final CustomItemCategory customItemCategory = new CustomItemCategory(this);
     private final Object lock = new Object();
 
     private List<Category> snapshot = Collections.emptyList();

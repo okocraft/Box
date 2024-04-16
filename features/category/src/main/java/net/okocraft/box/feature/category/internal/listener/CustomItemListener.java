@@ -7,9 +7,9 @@ import net.okocraft.box.api.event.item.CustomItemRegisterEvent;
 import net.okocraft.box.api.event.item.CustomItemRenameEvent;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.util.BoxLogger;
+import net.okocraft.box.feature.category.api.registry.CategoryRegistry;
 import net.okocraft.box.feature.category.internal.category.CustomItemCategory;
 import net.okocraft.box.feature.category.internal.file.CategoryFile;
-import net.okocraft.box.feature.category.internal.registry.CategoryRegistryImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,9 +21,9 @@ import java.util.List;
 public class CustomItemListener {
 
     private final Path filepath;
-    private final CategoryRegistryImpl registry;
+    private final CategoryRegistry registry;
 
-    public CustomItemListener(@NotNull Path filepath, @NotNull CategoryRegistryImpl registry) {
+    public CustomItemListener(@NotNull Path filepath, @NotNull CategoryRegistry registry) {
         this.filepath = filepath;
         this.registry = registry;
     }
@@ -40,10 +40,6 @@ public class CustomItemListener {
 
     private void processEvent(@NotNull CustomItemRegisterEvent event) {
         this.registry.getCustomItemCategory().addItem(event.getItem());
-
-        if (this.registry.getByName(CustomItemCategory.REGISTRY_KEY).isEmpty()) {
-            this.registry.register(CustomItemCategory.REGISTRY_KEY, this.registry.getCustomItemCategory());
-        }
 
         try {
             this.addItemToCustomItems(event.getItem());

@@ -23,7 +23,7 @@ public class CategoryFeature extends AbstractBoxFeature implements Reloadable {
     private static final Key ITEM_INFO_COLLECT_EVENT_LISTENER_KEY = Key.key("box", "feature/category/item_info_collect_event");
 
     private final Path filepath;
-    private final CategoryRegistryImpl categoryRegistry = new CategoryRegistryImpl();
+    private final CategoryRegistry categoryRegistry = new CategoryRegistryImpl();
     private final CustomItemListener customItemListener;
     private final ItemInfoEventListener itemInfoEventListener;
     private final MiniMessageBase reloaded;
