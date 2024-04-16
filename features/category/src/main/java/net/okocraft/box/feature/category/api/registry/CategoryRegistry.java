@@ -89,6 +89,11 @@ public interface CategoryRegistry {
      */
     @NotNull @Unmodifiable Map<String, Category> asMap();
 
+    /**
+     * Gets the {@link Category} for custom items.
+     *
+     * @return the {@link Category} for custom items
+     */
     @NotNull Category getCustomItemCategory();
 
 }
