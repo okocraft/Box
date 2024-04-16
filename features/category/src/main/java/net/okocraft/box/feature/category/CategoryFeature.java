@@ -23,8 +23,7 @@ public class CategoryFeature extends AbstractBoxFeature implements Reloadable {
     private static final Key ITEM_INFO_COLLECT_EVENT_LISTENER_KEY = Key.key("box", "feature/category/item_info_collect_event");
 
     private final Path filepath;
-    private final CategoryRegistry categoryRegistry = new CategoryRegistryImpl();
-    private final CustomItemCategory customItemCategory = new CustomItemCategory();
+    private final CategoryRegistryImpl categoryRegistry = new CategoryRegistryImpl();
     private final CustomItemListener customItemListener;
     private final ItemInfoEventListener itemInfoEventListener;
     private final MiniMessageBase reloaded;
@@ -32,7 +31,7 @@ public class CategoryFeature extends AbstractBoxFeature implements Reloadable {
     public CategoryFeature(@NotNull FeatureContext.Registration context) {
         super("category");
         this.filepath = context.dataDirectory().resolve("categories.yml");
-        this.customItemListener = new CustomItemListener(this.filepath, this.customItemCategory);
+        this.customItemListener = new CustomItemListener(this.filepath, this.categoryRegistry);
         this.itemInfoEventListener = new ItemInfoEventListener(this.categoryRegistry, context.defaultMessageCollector());
         CustomItemCategory.addDefaultCategoryName(context.defaultMessageCollector());
         this.reloaded = MiniMessageBase.messageKey(context.defaultMessageCollector().add("box.category.reloaded", "<gray>Categories have been reloaded."));
@@ -44,11 +43,10 @@ public class CategoryFeature extends AbstractBoxFeature implements Reloadable {
             file.loadFile()
                     .convertIfUnknownVersion()
                     .readCategoriesIfExists()
-                    .readCustomItemsIfExists(this.customItemCategory)
+                    .readCustomItemsIfExists()
                     .addNewDefaultItemsIfNeeded();
         }
 
-        this.categoryRegistry.register("custom-items", this.customItemCategory);
         this.customItemListener.register(CUSTOM_ITEM_LISTENER_KEY);
         this.itemInfoEventListener.register(ITEM_INFO_COLLECT_EVENT_LISTENER_KEY);
     }

@@ -80,7 +80,7 @@ public final class CategoryFile implements AutoCloseable {
             if (key.equals("icons")) {
                 continue;
             } else if (key.equals("custom-items")) {
-                var newList = mapNode.createList(CustomItemCategory.KEY);
+                var newList = mapNode.createList(CustomItemCategory.CONFIG_KEY);
                 this.loadedSource.getList(key).value().forEach(newList::add);
                 continue;
             }
@@ -110,10 +110,17 @@ public final class CategoryFile implements AutoCloseable {
         return this;
     }
 
-    public CategoryFile readCustomItemsIfExists(@NotNull CustomItemCategory category) {
+    public CategoryFile readCustomItemsIfExists() {
+        var category = this.registry.getCustomItemCategory();
+
         if (this.loadedSource != null) {
-            category.addItems(this.toBoxItems(this.loadedSource.getList(CustomItemCategory.KEY).asList(String.class)));
+            category.addItems(this.toBoxItems(this.loadedSource.getList(CustomItemCategory.CONFIG_KEY).asList(String.class)));
         }
+
+        if (!category.getItems().isEmpty()) {
+            this.registry.register(CustomItemCategory.REGISTRY_KEY, category);
+        }
+
         return this;
     }
 

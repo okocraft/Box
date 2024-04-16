@@ -2,6 +2,7 @@ package net.okocraft.box.feature.category.internal.registry;
 
 import net.okocraft.box.feature.category.api.category.Category;
 import net.okocraft.box.feature.category.api.registry.CategoryRegistry;
+import net.okocraft.box.feature.category.internal.category.CustomItemCategory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
@@ -15,6 +16,7 @@ import java.util.Optional;
 public class CategoryRegistryImpl implements CategoryRegistry {
 
     private final Map<String, Category> registry = new LinkedHashMap<>();
+    private final CustomItemCategory customItemCategory = new CustomItemCategory();
     private final Object lock = new Object();
 
     private List<Category> snapshot = Collections.emptyList();
@@ -23,6 +25,10 @@ public class CategoryRegistryImpl implements CategoryRegistry {
     public void register(@NotNull String name, @NotNull Category category) {
         Objects.requireNonNull(name);
         Objects.requireNonNull(category);
+
+        if (name.equals(CustomItemCategory.REGISTRY_KEY) && category != this.customItemCategory) {
+            throw new IllegalArgumentException("Cannot register an unknown custom item category.");
+        }
 
         synchronized (lock) {
             registry.put(name, category);
@@ -113,5 +119,10 @@ public class CategoryRegistryImpl implements CategoryRegistry {
         }
 
         return Collections.unmodifiableMap(categoryMap);
+    }
+
+    @Override
+    public @NotNull CustomItemCategory getCustomItemCategory() {
+        return this.customItemCategory;
     }
 }

@@ -9,6 +9,7 @@ import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.feature.category.internal.category.CustomItemCategory;
 import net.okocraft.box.feature.category.internal.file.CategoryFile;
+import net.okocraft.box.feature.category.internal.registry.CategoryRegistryImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,11 +21,11 @@ import java.util.List;
 public class CustomItemListener {
 
     private final Path filepath;
-    private final CustomItemCategory category;
+    private final CategoryRegistryImpl registry;
 
-    public CustomItemListener(@NotNull Path filepath, @NotNull CustomItemCategory category) {
+    public CustomItemListener(@NotNull Path filepath, @NotNull CategoryRegistryImpl registry) {
         this.filepath = filepath;
-        this.category = category;
+        this.registry = registry;
     }
 
     public void register(@NotNull Key listenerKey) {
@@ -38,7 +39,11 @@ public class CustomItemListener {
     }
 
     private void processEvent(@NotNull CustomItemRegisterEvent event) {
-        this.category.addItem(event.getItem());
+        this.registry.getCustomItemCategory().addItem(event.getItem());
+
+        if (this.registry.getByName(CustomItemCategory.REGISTRY_KEY).isEmpty()) {
+            this.registry.register(CustomItemCategory.REGISTRY_KEY, this.registry.getCustomItemCategory());
+        }
 
         try {
             this.addItemToCustomItems(event.getItem());
@@ -59,7 +64,7 @@ public class CustomItemListener {
         var mapNode = YamlFormat.COMMENT_PROCESSING.load(this.filepath);
 
         for (var key : mapNode.value().keySet()) {
-            if (key.equals(CustomItemCategory.KEY)) {
+            if (key.equals(CustomItemCategory.CONFIG_KEY)) {
                 var newList = renameItem(oldName, newName, mapNode.getList(key).asList(String.class));
 
                 if (newList != null) {
@@ -99,7 +104,7 @@ public class CustomItemListener {
 
     private void addItemToCustomItems(@NotNull BoxItem item) throws IOException {
         var loaded = YamlFormat.COMMENT_PROCESSING.load(this.filepath);
-        loaded.getOrCreateList(CustomItemCategory.KEY).add(item.getPlainName());
+        loaded.getOrCreateList(CustomItemCategory.CONFIG_KEY).add(item.getPlainName());
         YamlFormat.COMMENT_PROCESSING.save(loaded, this.filepath);
     }
 }

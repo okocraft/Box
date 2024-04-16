@@ -88,4 +88,7 @@ public interface CategoryRegistry {
      * @return the {@link Map} of this registry
      */
     @NotNull @Unmodifiable Map<String, Category> asMap();
+
+    @NotNull Category getCustomItemCategory();
+
 }

@@ -10,7 +10,8 @@ import org.jetbrains.annotations.NotNull;
 
 public final class CustomItemCategory extends AbstractCategory {
 
-    public static final String KEY = "$custom-items";
+    public static final String CONFIG_KEY = "$custom-items";
+    public static final String REGISTRY_KEY = "custom-items";
     private static final String DISPLAY_NAME_KEY = "box.category.name.custom-items";
 
     public static void addDefaultCategoryName(@NotNull DefaultMessageCollector collector) {
