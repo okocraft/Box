@@ -16,6 +16,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -68,17 +69,27 @@ public class InventoryListener implements Listener {
         }
 
         if (clickType.isLeftClick() && clickType.isShiftClick()) {
-            this.depositClickedItem(holder, inventory, slot, item.getAmount(), boxItem);
+            this.depositClickedItem(holder, inventory, slot, item, boxItem);
         } else {
             this.openCategoryMenu(holder, boxItem);
         }
     }
 
-    private void depositClickedItem(@NotNull BoxInventoryHolder holder, @NotNull Inventory inventory, int slot, int amount, @NotNull BoxItem boxItem) {
+    private void depositClickedItem(@NotNull BoxInventoryHolder holder, @NotNull Inventory inventory, int slot, @NotNull ItemStack item, @NotNull BoxItem boxItem) {
         var viewer = holder.getSession().getViewer();
-        holder.getSession().getSourceStockHolder().increase(boxItem, amount, new GuiCauses.Deposit(viewer));
+        var amount = item.getAmount();
 
-        inventory.setItem(slot, null);
+        var stockHolder = holder.getSession().getSourceStockHolder();
+        var cause = new GuiCauses.Deposit(viewer);
+
+        if (amount == 1) {
+            inventory.setItem(slot, null);
+            stockHolder.increase(boxItem, 1, cause);
+        } else {
+            item.setAmount(1);
+            stockHolder.increase(boxItem, amount - 1, cause);
+        }
+
         viewer.playSound(viewer, Sound.ENTITY_ITEM_PICKUP, 100f, 1.0f);
 
         if (holder.getMenu() instanceof CategoryMenu categoryMenu && categoryMenu.getCategory().containsItem(boxItem)) {
