@@ -11,9 +11,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.List;
 
 public class CurrentRecipe {
 
@@ -23,12 +21,11 @@ public class CurrentRecipe {
     private final Int2ObjectMap<SelectableIngredients> ingredientsMap = new Int2ObjectOpenHashMap<>();
 
     private SelectedRecipe selectedRecipe;
-    private Comparator<BoxIngredientItem> ingredientSorter;
 
     public CurrentRecipe(@NotNull BoxItemRecipe source) {
         this.source = source;
 
-        this.resetIngredientMap();
+        this.sortIngredients(null);
         this.updateSelectedRecipe();
     }
 
@@ -77,28 +74,26 @@ public class CurrentRecipe {
         return selectedRecipe;
     }
 
-    public void changeIngredientSorter(Comparator<BoxIngredientItem> ingredientSorter) {
-        this.ingredientSorter = ingredientSorter;
-        this.resetIngredientMap();
+    public void selectFirstIngredients() {
+        this.ingredientsMap.values().forEach(ingredients -> ingredients.select(0));
         this.updateSelectedRecipe();
     }
 
-    private void resetIngredientMap() {
+    public void sortIngredients(@Nullable Comparator<BoxIngredientItem> sorter) {
         for (var holder : this.source.ingredients()) {
             if (holder.patterns().isEmpty()) {
                 continue;
             }
 
-            List<BoxIngredientItem> patterns;
+            var existing = this.ingredientsMap.get(holder.slot());
 
-            if (this.ingredientSorter != null) {
-                patterns = new ArrayList<>(holder.patterns());
-                patterns.sort(this.ingredientSorter);
+            if (existing != null) {
+                existing.sortPatterns(sorter);
             } else {
-                patterns = holder.patterns();
+                var ingredients = new SelectableIngredients(holder);
+                ingredients.sortPatterns(sorter);
+                this.ingredientsMap.put(holder.slot(), ingredients);
             }
-
-            this.ingredientsMap.put(holder.slot(), new SelectableIngredients(holder, patterns));
         }
     }
 }

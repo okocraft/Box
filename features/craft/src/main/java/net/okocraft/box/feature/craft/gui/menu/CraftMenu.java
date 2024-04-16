@@ -9,10 +9,12 @@ import net.okocraft.box.feature.craft.gui.CurrentRecipe;
 import net.okocraft.box.feature.craft.gui.button.CraftButton;
 import net.okocraft.box.feature.craft.gui.button.IngredientButton;
 import net.okocraft.box.feature.craft.gui.button.IngredientChangeModeButton;
+import net.okocraft.box.feature.craft.gui.button.IngredientOrderButton;
 import net.okocraft.box.feature.craft.gui.button.ResultButton;
 import net.okocraft.box.feature.craft.gui.button.ToggleDestinationButton;
 import net.okocraft.box.feature.craft.lang.CraftPlaceholders;
 import net.okocraft.box.feature.craft.lang.DisplayKeys;
+import net.okocraft.box.feature.craft.model.BoxIngredientItem;
 import net.okocraft.box.feature.craft.model.BoxItemRecipe;
 import net.okocraft.box.feature.gui.api.button.Button;
 import net.okocraft.box.feature.gui.api.button.ClickResult;
@@ -25,9 +27,11 @@ import net.okocraft.box.feature.gui.api.session.Amount;
 import net.okocraft.box.feature.gui.api.session.PlayerSession;
 import net.okocraft.box.feature.gui.api.session.TypedKey;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import static com.github.siroshun09.messages.minimessage.arg.Arg1.arg1;
@@ -36,6 +40,7 @@ import static com.github.siroshun09.messages.minimessage.base.MiniMessageBase.me
 public class CraftMenu implements Menu {
 
     private static final TypedKey<Amount> KEY = TypedKey.of(Amount.class, "craft-times");
+    public static final TypedKey<IngredientOrder> INGREDIENT_ORDER_KEY = TypedKey.of(IngredientOrder.class, "ingredient-order");
 
     private static final Arg1<BoxItem> TITLE = arg1(DisplayKeys.CRAFT_MENU_TITLE, Placeholders.ITEM);
     private static final List<Button> SHARED_BUTTONS;
@@ -46,8 +51,9 @@ public class CraftMenu implements Menu {
 
         var reservedSlots = new IntOpenHashSet(recipeSlots);
 
-        reservedSlots.add(18);
+        reservedSlots.add(9);
         reservedSlots.add(24);
+        reservedSlots.add(27);
 
         for (int slot = 0; slot < 45; slot++) {
             if (!reservedSlots.contains(slot)) {
@@ -59,8 +65,9 @@ public class CraftMenu implements Menu {
             buttons.add(new IngredientButton(recipeSlots[i], i));
         }
 
-        buttons.add(new IngredientChangeModeButton(18));
+        buttons.add(new IngredientChangeModeButton(9));
         buttons.add(new ResultButton(24));
+        buttons.add(new IngredientOrderButton(27));
 
         buttons.add(
                 new DecreaseAmountButton(
@@ -120,6 +127,9 @@ public class CraftMenu implements Menu {
     @Override
     public void onOpen(@NotNull PlayerSession session) {
         session.putData(CurrentRecipe.DATA_KEY, this.currentRecipe);
+
+        var order = session.getData(INGREDIENT_ORDER_KEY);
+        this.currentRecipe.sortIngredients(order != null ? order.createSorter(session) : null);
     }
 
     @Override
@@ -135,5 +145,13 @@ public class CraftMenu implements Menu {
     @Override
     public @NotNull List<? extends Button> getButtons(@NotNull PlayerSession session) {
         return SHARED_BUTTONS;
+    }
+
+    public interface IngredientOrder {
+
+        IngredientOrder NORMAL = ignored -> null;
+        IngredientOrder STOCK_AMOUNT = session -> Comparator.<BoxIngredientItem>comparingInt(ingredient -> session.getSourceStockHolder().getAmount(ingredient.item())).reversed();
+
+        @Nullable Comparator<BoxIngredientItem> createSorter(@NotNull PlayerSession session);
     }
 }

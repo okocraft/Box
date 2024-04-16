@@ -18,6 +18,9 @@ public final class DisplayKeys {
     public static final String EACH_INGREDIENT_MODE = "box.craft.menu.craft-menu.buttons.change-mode.each-ingredient";
     public static final String ALL_INGREDIENT_MODE = "box.craft.menu.craft-menu.buttons.change-mode.all-ingredient";
 
+    public static final String INGREDIENT_ORDER_NORMAL = "box.craft.menu.craft-menu.buttons.ingredient-order.normal";
+    public static final String INGREDIENT_ORDER_STOCK_AMOUNT = "box.craft.menu.craft-menu.buttons.ingredient-order.stock-amount";
+
     public static final String DESTINATION_BUTTON = "box.craft.menu.craft-menu.buttons.destination.display-name";
     public static final String INVENTORY = "box.craft.menu.craft-menu.buttons.destination.inventory";
     public static final String BOX = "box.craft.menu.craft-menu.buttons.destination.box";
@@ -47,6 +50,8 @@ public final class DisplayKeys {
         collector.add(INGREDIENT_BUTTON_CLICK_TO_SHOW_RECIPES, "<gray>Shift + Click to show recipes");
         collector.add(EACH_INGREDIENT_MODE, "<gold>Each Ingredient Change Mode");
         collector.add(ALL_INGREDIENT_MODE, "<gold>All Ingredient Change Mode");
+        collector.add(INGREDIENT_ORDER_NORMAL, "<gold>Normal Ingredient Order");
+        collector.add(INGREDIENT_ORDER_STOCK_AMOUNT, "<gold>Sort Ingredients by Stock Amount");
         collector.add(DESTINATION_BUTTON, "<gold>Destination of items");
         collector.add(INVENTORY, "<gray>Inventory");
         collector.add(BOX, "<gray>Box");

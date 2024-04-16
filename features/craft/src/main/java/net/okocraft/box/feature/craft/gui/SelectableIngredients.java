@@ -3,8 +3,11 @@ package net.okocraft.box.feature.craft.gui;
 import net.okocraft.box.feature.craft.model.BoxIngredientItem;
 import net.okocraft.box.feature.craft.model.IngredientHolder;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -13,13 +16,13 @@ import java.util.List;
 public class SelectableIngredients {
 
     private final IngredientHolder ingredientHolder;
-    private final List<BoxIngredientItem> patterns;
 
+    private List<BoxIngredientItem> sortedPatterns;
     private int selected;
 
-    public SelectableIngredients(@NotNull IngredientHolder ingredientHolder, @NotNull List<BoxIngredientItem> patterns) {
+    public SelectableIngredients(@NotNull IngredientHolder ingredientHolder) {
         this.ingredientHolder = ingredientHolder;
-        this.patterns = patterns;
+        this.sortedPatterns = ingredientHolder.patterns();
     }
 
     /**
@@ -28,7 +31,7 @@ public class SelectableIngredients {
      * @return the currently selected {@link BoxIngredientItem}
      */
     public @NotNull BoxIngredientItem getSelected() {
-        return patterns.get(selected);
+        return this.sortedPatterns.get(this.selected);
     }
 
     /**
@@ -37,13 +40,13 @@ public class SelectableIngredients {
      * @return the position of the selected {@link BoxIngredientItem}
      */
     public int next() {
-        selected++;
+        this.selected++;
 
-        if (patterns.size() <= selected) {
-            selected = 0;
+        if (this.sortedPatterns.size() <= this.selected) {
+            this.selected = 0;
         }
 
-        return selected;
+        return this.selected;
     }
 
     /**
@@ -52,10 +55,10 @@ public class SelectableIngredients {
      * @param num the position
      */
     public void select(int num) {
-        selected = num;
+        this.selected = num;
 
-        if (patterns.size() <= selected) {
-            selected = 0;
+        if (this.sortedPatterns.size() <= this.selected) {
+            this.selected = 0;
         }
     }
 
@@ -65,7 +68,7 @@ public class SelectableIngredients {
      * @return the {@link IngredientHolder#patterns()}
      */
     public @NotNull @Unmodifiable List<BoxIngredientItem> get() {
-        return patterns;
+        return this.sortedPatterns;
     }
 
     /**
@@ -74,7 +77,7 @@ public class SelectableIngredients {
      * @return the number of {@link BoxIngredientItem}s
      */
     public int size() {
-        return patterns.size();
+        return this.sortedPatterns.size();
     }
 
     /**
@@ -85,6 +88,24 @@ public class SelectableIngredients {
      */
     public boolean isSameIngredient(@NotNull SelectableIngredients other) {
         return this.ingredientHolder.equals(other.ingredientHolder);
+    }
+
+    public void sortPatterns(@Nullable Comparator<BoxIngredientItem> sorter) {
+        if (!(this.sortedPatterns instanceof ArrayList)) {
+            if (sorter == null) {
+                return;
+            } else {
+                this.sortedPatterns = new ArrayList<>(this.ingredientHolder.patterns());
+            }
+        }
+
+        if (sorter == null) {
+            for (int i = 0, size = this.ingredientHolder.patterns().size(); i < size; i++) {
+                this.sortedPatterns.set(i, this.ingredientHolder.patterns().get(i));
+            }
+        } else {
+            this.sortedPatterns.sort(sorter);
+        }
     }
 
     @Override
