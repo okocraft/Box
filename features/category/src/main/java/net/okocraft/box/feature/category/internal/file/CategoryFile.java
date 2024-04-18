@@ -210,10 +210,11 @@ public final class CategoryFile implements AutoCloseable {
     }
 
     private static Object renameKey(@NotNull Object key) {
-        if (key.equals("woods")) {
-            return "woods-1";
-        }
-        return key;
+        return switch (String.valueOf(key)) {
+            case "woods" -> "woods-1";
+            case "horse" -> "mob-equipment";
+            default -> key;
+        };
     }
 
     private static void addDefaultDisplayName(@NotNull String key, @NotNull MapNode target) {
@@ -233,7 +234,7 @@ public final class CategoryFile implements AutoCloseable {
             case "farms" -> Map.of(LOCALE_DEFAULT, "Farms", "ja", "農業・食料");
             case "flowers" -> Map.of(LOCALE_DEFAULT, "Flowers", "ja", "草花");
             case "glasses" -> Map.of(LOCALE_DEFAULT, "Glasses", "ja", "ガラス");
-            case "horse" -> Map.of(LOCALE_DEFAULT, "Horse", "ja", "馬");
+            case "horse" -> Map.of(LOCALE_DEFAULT, "Mob Equipment", "ja", "モブ用装備");
             case "misc" -> Map.of(LOCALE_DEFAULT, "Misc", "ja", "その他");
             case "mob-drops" -> Map.of(LOCALE_DEFAULT, "Mob Drops", "ja", "モブドロップ品");
             case "mushrooms" -> Map.of(LOCALE_DEFAULT, "Mushrooms", "ja", "きのこ");

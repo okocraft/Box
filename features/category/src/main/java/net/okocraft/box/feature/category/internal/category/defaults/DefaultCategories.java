@@ -120,7 +120,7 @@ public final class DefaultCategories {
                 DefaultCategory.builder().key("armors").icon(Material.LEATHER_HELMET).items(categorizedItemMap.get("armors")).addDefaultDisplayName("Armors").addDisplayName(JAPANESE, "防具").build(),
                 DefaultCategory.builder().key("enchanted-books").icon(Material.ENCHANTED_BOOK).items(categorizedItemMap.get("enchanted-books")).addDefaultDisplayName("Enchanted Books").addDisplayName(JAPANESE, "エンチャント本").build(),
                 DefaultCategory.builder().key("potions").icon(Material.POTION).items(categorizedItemMap.get("potions")).addDefaultDisplayName("Potions").addDisplayName(JAPANESE, "ポーション").build(),
-                DefaultCategory.builder().key("horse").icon(Material.SADDLE).items(categorizedItemMap.get("horse")).addDefaultDisplayName("Horse").addDisplayName(JAPANESE, "馬").build(),
+                DefaultCategory.builder().key("mob-equipment").icon(Material.SADDLE).items(categorizedItemMap.get("horse")).addDefaultDisplayName("Mob Equipment").addDisplayName(JAPANESE, "モブ用装備").build(),
                 DefaultCategory.builder().key("music-discs").icon(Material.MUSIC_DISC_CAT).items(categorizedItemMap.get("music-discs")).addDefaultDisplayName("Music Discs").addDisplayName(JAPANESE, "ディスク").build(),
                 DefaultCategory.builder().key("spawn-eggs").icon(Material.COW_SPAWN_EGG).items(categorizedItemMap.get("spawn-eggs")).addDefaultDisplayName("Spawn Eggs").addDisplayName(JAPANESE, "スポーンエッグ").build(),
                 DefaultCategory.builder().key("unavailable").icon(Material.BEDROCK).items(categorizedItemMap.get("unavailable")).addDefaultDisplayName("Unavailable").addDisplayName(JAPANESE, "入手不可").build()
