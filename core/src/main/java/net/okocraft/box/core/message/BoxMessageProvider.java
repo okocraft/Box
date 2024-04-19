@@ -1,7 +1,7 @@
 package net.okocraft.box.core.message;
 
 import com.github.siroshun09.messages.api.directory.DirectorySource;
-import com.github.siroshun09.messages.api.directory.LoadedMessageSource;
+import com.github.siroshun09.messages.api.directory.MessageProcessors;
 import com.github.siroshun09.messages.api.source.StringMessageMap;
 import com.github.siroshun09.messages.api.util.Loader;
 import com.github.siroshun09.messages.api.util.PropertiesFile;
@@ -13,7 +13,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 
 import java.io.IOException;
@@ -51,35 +50,16 @@ public class BoxMessageProvider implements MessageProvider {
             this.localization.clearSources();
         }
 
-        this.directorySource.load(this::processLoadedMessages);
+        this.directorySource
+                .messageProcessor(MessageProcessors.appendMissingStringMessages(this.defaultMessageMapLoader, PropertiesFile.DEFAULT_APPENDER))
+                .messageProcessor(MessageProcessors.appendMissingStringMessages(ignored -> this.collector.collectedMessages, PropertiesFile.DEFAULT_APPENDER))
+                .messageProcessor(loaded -> MiniMessageSource.create(loaded.messageSource()))
+                .load(loaded -> this.localization.addSource(loaded.locale(), loaded.messageSource()));
     }
 
     public void unload() {
         if (this.localization != null) {
             this.localization.clearSources();
-        }
-    }
-
-    private @Nullable Void processLoadedMessages(@NotNull LoadedMessageSource<StringMessageMap> loadedSource) throws IOException {
-        var locale = loadedSource.locale();
-
-        var defaultMessageMap = this.defaultMessageMapLoader.load(locale);
-
-        if (defaultMessageMap != null) {
-            putMissingMessages(loadedSource, defaultMessageMap);
-        }
-
-        putMissingMessages(loadedSource, this.collector.collectedMessages);
-
-        this.localization.addSource(locale, MiniMessageSource.create(loadedSource.messageSource()));
-        return null;
-    }
-
-    private static void putMissingMessages(@NotNull LoadedMessageSource<StringMessageMap> loadedSource, Map<String, String> defaultMessageMap) throws IOException {
-        var missingMessages = loadedSource.messageSource().mergeAndCollectMissingMessages(defaultMessageMap);
-
-        if (!missingMessages.isEmpty()) {
-            PropertiesFile.append(loadedSource.filepath(), missingMessages);
         }
     }
 
