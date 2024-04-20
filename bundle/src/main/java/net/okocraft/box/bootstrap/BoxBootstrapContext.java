@@ -1,9 +1,7 @@
 package net.okocraft.box.bootstrap;
 
 import com.github.siroshun09.messages.api.directory.DirectorySource;
-import com.github.siroshun09.messages.api.source.StringMessageMap;
 import com.github.siroshun09.messages.api.util.Loader;
-import com.github.siroshun09.messages.api.util.PropertiesFile;
 import io.papermc.paper.plugin.bootstrap.BootstrapContext;
 import net.okocraft.box.api.feature.BoxFeature;
 import net.okocraft.box.api.feature.FeatureContext;
@@ -102,11 +100,7 @@ public final class BoxBootstrapContext implements net.okocraft.box.api.bootstrap
     public @NotNull BoxMessageProvider createMessageProvider() {
         return new BoxMessageProvider(
                 this.defaultMessageCollector,
-                DirectorySource.<StringMessageMap>create(this.dataDirectory.resolve("languages"))
-                        .fileExtension(PropertiesFile.FILE_EXTENSION)
-                        .defaultLocale(Locale.ENGLISH)
-                        .defaultLocale(this.localizationLoaderMap.keySet())
-                        .messageLoader(PropertiesFile.DEFAULT_LOADER),
+                DirectorySource.propertiesFiles(this.dataDirectory.resolve("languages")).defaultLocale(this.localizationLoaderMap.keySet()),
                 locale -> {
                     var loader = this.localizationLoaderMap.get(locale);
                     return loader != null ? loader.load(locale) : null;
