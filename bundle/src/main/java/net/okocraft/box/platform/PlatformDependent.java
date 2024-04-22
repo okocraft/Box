@@ -2,7 +2,6 @@ package net.okocraft.box.platform;
 
 import net.okocraft.box.api.model.item.ItemVersion;
 import net.okocraft.box.api.scheduler.BoxScheduler;
-import net.okocraft.box.api.util.Folia;
 import net.okocraft.box.api.util.MCDataVersion;
 import net.okocraft.box.core.command.CommandRegisterer;
 import net.okocraft.box.storage.api.util.item.DefaultItem;
@@ -25,7 +24,7 @@ public final class PlatformDependent {
     private static final ItemVersion TESTING_VERSION = new ItemVersion(MCDataVersion.MC_1_20_4, 1); // TODO: remove this after Minecraft 1.20.5 released
 
     public static @NotNull BoxScheduler createScheduler(@NotNull Plugin plugin) throws NotSupportedException {
-        if (Folia.check() || MCDataVersion.current().isAfterOrSame(MCDataVersion.MC_1_20)) {
+        if (MCDataVersion.current().isAfterOrSame(MCDataVersion.MC_1_20)) {
             return new FoliaSchedulerWrapper(plugin);
         }
 
@@ -72,6 +71,7 @@ public final class PlatformDependent {
 
     public static final class NotSupportedException extends Exception {
         public final String reason;
+
         private NotSupportedException(@NotNull String reason) {
             super(reason, null, true, false);
             this.reason = reason;
