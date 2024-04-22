@@ -21,26 +21,18 @@ import java.util.stream.Stream;
 
 public final class PlatformDependent {
 
-    private static final ItemVersion TESTING_VERSION = new ItemVersion(MCDataVersion.MC_1_20_4, 1); // TODO: remove this after Minecraft 1.20.5 released
-
-    public static @NotNull BoxScheduler createScheduler(@NotNull Plugin plugin) throws NotSupportedException {
-        if (MCDataVersion.current().isAfterOrSame(MCDataVersion.MC_1_20)) {
-            return new FoliaSchedulerWrapper(plugin);
+    public static void checkVersionRequirement() throws NotSupportedException {
+        if (MCDataVersion.current().isBefore(MCDataVersion.MC_1_20_5)) {
+            throw new NotSupportedException("Unsupported version: " + Bukkit.getVersion());
         }
-
-        throw new NotSupportedException("Unsupported version: " + Bukkit.getVersion());
     }
 
-    public static @NotNull DefaultItemProvider createItemProvider() throws NotSupportedException {
-        if (MCDataVersion.current().isSame(TESTING_VERSION.dataVersion())) {
-            return new DefaultItemProviderImpl(TESTING_VERSION, Paper_1_20_5::defaultItems);
-        }
+    public static @NotNull BoxScheduler createScheduler(@NotNull Plugin plugin) {
+        return new FoliaSchedulerWrapper(plugin);
+    }
 
-        if (MCDataVersion.current().isSame(MCDataVersion.MC_1_20_5)) {
-            return new DefaultItemProviderImpl(Paper_1_20_5.VERSION, Paper_1_20_5::defaultItems);
-        }
-
-        throw new NotSupportedException("Unsupported version: " + Bukkit.getVersion());
+    public static @NotNull DefaultItemProvider createItemProvider() {
+        return new DefaultItemProviderImpl(Paper_1_20_5.VERSION, Paper_1_20_5::defaultItems);
     }
 
     public static @NotNull CommandRegisterer createCommandRegisterer(@NotNull String fallbackPrefix) {

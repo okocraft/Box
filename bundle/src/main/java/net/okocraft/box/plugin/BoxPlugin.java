@@ -32,20 +32,8 @@ public final class BoxPlugin extends JavaPlugin {
     private Status status = Status.NOT_LOADED;
 
     public BoxPlugin(@NotNull BoxBootstrapContext boxBootstrapContext) {
-        PluginContext context;
-
         try {
-            context = new PluginContext(
-                    this,
-                    boxBootstrapContext.getVersion(),
-                    boxBootstrapContext.getDataDirectory(),
-                    PlatformDependent.createScheduler(this),
-                    boxBootstrapContext.getEventManager(),
-                    boxBootstrapContext.createMessageProvider(),
-                    new Config(boxBootstrapContext.getDataDirectory()),
-                    PlatformDependent.createItemProvider(),
-                    PlatformDependent.createCommandRegisterer(this.getName().toLowerCase(Locale.ENGLISH))
-            );
+            PlatformDependent.checkVersionRequirement();
         } catch (PlatformDependent.NotSupportedException e) {
             this.pluginContext = null;
             this.boxCore = null;
@@ -56,8 +44,19 @@ public final class BoxPlugin extends JavaPlugin {
             return;
         }
 
-        this.pluginContext = context;
-        this.boxCore = new BoxCore(context);
+        this.pluginContext = new PluginContext(
+                this,
+                boxBootstrapContext.getVersion(),
+                boxBootstrapContext.getDataDirectory(),
+                PlatformDependent.createScheduler(this),
+                boxBootstrapContext.getEventManager(),
+                boxBootstrapContext.createMessageProvider(),
+                new Config(boxBootstrapContext.getDataDirectory()),
+                PlatformDependent.createItemProvider(),
+                PlatformDependent.createCommandRegisterer(this.getName().toLowerCase(Locale.ENGLISH))
+        );
+
+        this.boxCore = new BoxCore(this.pluginContext);
         this.storageRegistry = boxBootstrapContext.getStorageRegistry();
         this.features = boxBootstrapContext.getBoxFeatureList();
     }
