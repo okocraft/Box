@@ -29,16 +29,18 @@ public class BoxInventoryHolder implements InventoryHolder {
 
     private static final String ERROR_KEY = "box.gui.click-error";
     private static final Arg1<Throwable> ERROR = Arg1.arg1(ERROR_KEY, Placeholders.ERROR);
-    private static final Class<?> CRAFT_INVENTORY_CUSTOM_CLASS;
 
-    static {
-        // In Folia, some Inventory#getHolder implementation checks if the current thread is a correct tick thread, and it may fail.
-        // Before calling Inventory#getHolder, we need to check if the inventory is CraftInventoryCustom, which does not check the thread.
-        CRAFT_INVENTORY_CUSTOM_CLASS = Bukkit.createInventory(null, 54, Component.empty()).getClass();
-    }
+    // In Folia, some Inventory#getHolder implementation checks if the current thread is a correct tick thread, and it may fail.
+    // Before calling Inventory#getHolder, we need to check if the inventory is CraftInventoryCustom, which does not check the thread.
+    private static Class<?> craftInventoryCustomClass;
 
     public static void addDefaultErrorMessage(@NotNull DefaultMessageCollector collector) {
         collector.add(ERROR_KEY, "<red>An error occurred while click process. Error message: <white><error>");
+    }
+
+    // Initialize later to avoid calling Bukkit#getServer in the test environment.
+    public static void initializeCraftInventoryCustomClass() {
+        craftInventoryCustomClass = Bukkit.createInventory(null, 54, Component.empty()).getClass();
     }
 
     public static boolean isBoxMenu(@Nullable Inventory inventory) {
@@ -46,7 +48,7 @@ public class BoxInventoryHolder implements InventoryHolder {
     }
 
     public static @Nullable BoxInventoryHolder getFromInventory(@Nullable Inventory inventory) {
-        return CRAFT_INVENTORY_CUSTOM_CLASS.isInstance(inventory) && inventory.getHolder() instanceof BoxInventoryHolder holder ? holder : null;
+        return craftInventoryCustomClass.isInstance(inventory) && inventory.getHolder() instanceof BoxInventoryHolder holder ? holder : null;
     }
 
     private final Menu menu;

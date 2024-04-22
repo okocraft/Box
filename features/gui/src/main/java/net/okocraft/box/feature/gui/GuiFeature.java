@@ -31,6 +31,8 @@ public class GuiFeature extends AbstractBoxFeature implements Reloadable {
 
     @Override
     public void enable(@NotNull FeatureContext.Enabling context) {
+        BoxInventoryHolder.initializeCraftInventoryCustomClass();
+
         var boxCommand = BoxAPI.api().getBoxCommand();
 
         boxCommand.changeNoArgumentCommand(command);
