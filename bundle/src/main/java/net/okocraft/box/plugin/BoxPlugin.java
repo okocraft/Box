@@ -98,7 +98,6 @@ public final class BoxPlugin extends JavaPlugin {
     public void onEnable() {
         if (this.status != Status.LOADED) {
             BoxLogger.logger().error("Cannot enable Box ({})", this.status);
-            getServer().getPluginManager().disablePlugin(this);
             return;
         }
 
@@ -114,7 +113,6 @@ public final class BoxPlugin extends JavaPlugin {
 
         if (!this.boxCore.enable(StorageHolder.getStorage())) {
             this.status = Status.EXCEPTION_OCCURRED;
-            this.getServer().getPluginManager().disablePlugin(this);
             return;
         }
 
@@ -124,7 +122,6 @@ public final class BoxPlugin extends JavaPlugin {
             this.boxCore.initializeFeatures(this.features);
         } catch (IllegalStateException e) {
             BoxLogger.logger().error("An exception occurred while initializing features", e);
-            getServer().getPluginManager().disablePlugin(this);
             return;
         }
 
