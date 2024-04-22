@@ -124,9 +124,9 @@ public final class BoxPlugin extends JavaPlugin {
             BoxLogger.logger().error("An exception occurred while initializing features", e);
             APISetter.unset();
             return;
+        } finally {
+            this.features.clear();
         }
-
-        this.features.clear();
 
         this.status = Status.ENABLED;
 
