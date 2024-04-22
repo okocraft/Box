@@ -122,6 +122,7 @@ public final class BoxPlugin extends JavaPlugin {
             this.boxCore.initializeFeatures(this.features);
         } catch (IllegalStateException e) {
             BoxLogger.logger().error("An exception occurred while initializing features", e);
+            APISetter.unset();
             return;
         }
 
