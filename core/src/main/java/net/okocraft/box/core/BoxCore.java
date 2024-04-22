@@ -51,7 +51,6 @@ public class BoxCore implements BoxAPI {
 
     private final PluginContext context;
 
-    private Storage storage;
     private BoxItemManager itemManager;
     private BoxStockManager stockManager;
     private BoxUserManager userManager;
@@ -73,7 +72,6 @@ public class BoxCore implements BoxAPI {
             BoxLogger.logger().info("Debug mode is ENABLED");
         }
 
-        this.storage = storage;
         BoxLogger.logger().info("Initializing {} storage...", storage.getName());
 
         try {
@@ -130,17 +128,6 @@ public class BoxCore implements BoxAPI {
         stockManager.close();
 
         DebugListener.unregister(this.context.eventManager());
-
-        BoxLogger.logger().info("Closing the storage...");
-
-        try {
-            storage.close();
-        } catch (Exception e) {
-            BoxLogger.logger().error("Could not close the storage.", e);
-        }
-
-        BoxLogger.logger().info("Unloading messages...");
-        this.context.messageProvider().unload();
     }
 
     @Override

@@ -2,6 +2,7 @@ package net.okocraft.box.plugin;
 
 import com.github.siroshun09.configapi.format.yaml.YamlFormat;
 import net.okocraft.box.api.APISetter;
+import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.feature.BoxFeature;
 import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.bootstrap.BoxBootstrapContext;
@@ -10,6 +11,7 @@ import net.okocraft.box.core.PluginContext;
 import net.okocraft.box.core.config.Config;
 import net.okocraft.box.platform.PlatformDependent;
 import net.okocraft.box.storage.api.holder.StorageHolder;
+import net.okocraft.box.storage.api.model.Storage;
 import net.okocraft.box.storage.api.registry.StorageRegistry;
 import net.okocraft.box.storage.migrator.config.MigrationConfigLoader;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -30,6 +32,7 @@ public final class BoxPlugin extends JavaPlugin {
     private final List<BoxFeature> features;
 
     private Status status = Status.NOT_LOADED;
+    private Storage storage;
 
     public BoxPlugin(@NotNull BoxBootstrapContext boxBootstrapContext) {
         try {
@@ -73,7 +76,7 @@ public final class BoxPlugin extends JavaPlugin {
         this.pluginContext.eventManager().initializeAsyncEventCaller(this.pluginContext.scheduler());
 
         try {
-            StorageHolder.init(this.pluginContext.config().loadAndCreateStorage(this.storageRegistry));
+            this.storage = this.pluginContext.config().loadAndCreateStorage(this.storageRegistry);
         } catch (IOException e) {
             BoxLogger.logger().error("Could not load config.yml", e);
             this.status = Status.EXCEPTION_OCCURRED;
@@ -85,6 +88,7 @@ public final class BoxPlugin extends JavaPlugin {
         } catch (IOException e) {
             BoxLogger.logger().error("Could not load messages.", e);
             this.status = Status.EXCEPTION_OCCURRED;
+            this.unload();
             return;
         }
 
@@ -106,23 +110,26 @@ public final class BoxPlugin extends JavaPlugin {
         } catch (Exception e) {
             BoxLogger.logger().error("An exception occurred while migrating data.", e);
             this.status = Status.EXCEPTION_OCCURRED;
+            this.unload();
             return;
         }
 
         var start = Instant.now();
 
-        if (!this.boxCore.enable(StorageHolder.getStorage())) {
+        if (!this.boxCore.enable(this.storage)) {
             this.status = Status.EXCEPTION_OCCURRED;
+            this.unload();
             return;
         }
 
         APISetter.set(this.boxCore);
+        StorageHolder.init(this.storage);
 
         try {
             this.boxCore.initializeFeatures(this.features);
         } catch (IllegalStateException e) {
             BoxLogger.logger().error("An exception occurred while initializing features", e);
-            APISetter.unset();
+            this.unload();
             return;
         } finally {
             this.features.clear();
@@ -142,9 +149,10 @@ public final class BoxPlugin extends JavaPlugin {
         }
 
         this.boxCore.disableAllFeatures();
-        APISetter.unset();
-
         this.boxCore.disable();
+
+        this.unload();
+
         this.status = Status.DISABLED;
 
         BoxLogger.logger().info("Successfully disabled. Goodbye!");
@@ -183,6 +191,31 @@ public final class BoxPlugin extends JavaPlugin {
                 BoxLogger.logger().info("Migration is completed. ({}ms)", Duration.between(start, finish).toMillis());
             }
         }
+    }
+
+    private void unload() { // This method is for releasing resources correctly in any state.
+        if (BoxAPI.isLoaded()) {
+            APISetter.unset();
+        }
+
+        if (this.storage != null) {
+            BoxLogger.logger().info("Closing the storage...");
+
+            if (StorageHolder.isInitialized()) {
+                StorageHolder.unset();
+            }
+
+            try {
+                this.storage.close();
+            } catch (Exception e) {
+                BoxLogger.logger().error("Could not close the storage.", e);
+            } finally {
+                this.storage = null;
+            }
+        }
+
+        BoxLogger.logger().info("Unloading messages...");
+        this.pluginContext.messageProvider().unload();
     }
 
     public enum Status {

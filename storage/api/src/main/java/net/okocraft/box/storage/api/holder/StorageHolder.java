@@ -18,6 +18,14 @@ public final class StorageHolder {
         }
     }
 
+    public static void unset() {
+        if (isInitialized()) {
+            StorageHolder.storage = null;
+        } else {
+            throw new IllegalStateException("StorageHolder is not initialized.");
+        }
+    }
+
     public static boolean isInitialized() {
         return StorageHolder.storage != null;
     }
