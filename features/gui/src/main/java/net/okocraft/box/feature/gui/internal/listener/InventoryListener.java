@@ -26,16 +26,15 @@ public class InventoryListener implements Listener {
 
     private static final long CLICK_COOLDOWN = TimeUnit.MILLISECONDS.toNanos(150);
 
-
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onClick(@NotNull InventoryClickEvent event) {
-        var inventoryView = event.getView();
+        var topHolder = BoxInventoryHolder.getFromInventory(event.getView().getTopInventory());
 
-        if (inventoryView.getTopInventory().getHolder() instanceof BoxInventoryHolder topHolder) {
-            event.setCancelled(true);
-        } else {
+        if (topHolder == null) {
             return;
         }
+
+        event.setCancelled(true);
 
         var clicked = event.getClickedInventory();
 
@@ -49,8 +48,8 @@ public class InventoryListener implements Listener {
             return;
         }
 
-        if (clicked.getHolder() instanceof BoxInventoryHolder holder) {
-            BoxAPI.api().getScheduler().runAsyncTask(() -> holder.processClick(event.getSlot(), event.getClick()));
+        if (BoxInventoryHolder.isBoxMenu(clicked)) {
+            BoxAPI.api().getScheduler().runAsyncTask(() -> topHolder.processClick(event.getSlot(), event.getClick()));
         } else {
             try {
                 this.onClickPlayerInventory(topHolder, clicked, event.getSlot(), event.getClick());

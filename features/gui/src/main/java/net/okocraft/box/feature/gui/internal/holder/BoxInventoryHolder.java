@@ -3,6 +3,7 @@ package net.okocraft.box.feature.gui.internal.holder;
 import com.github.siroshun09.messages.minimessage.arg.Arg1;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.message.DefaultMessageCollector;
 import net.okocraft.box.api.message.Placeholders;
@@ -20,6 +21,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -27,9 +29,24 @@ public class BoxInventoryHolder implements InventoryHolder {
 
     private static final String ERROR_KEY = "box.gui.click-error";
     private static final Arg1<Throwable> ERROR = Arg1.arg1(ERROR_KEY, Placeholders.ERROR);
+    private static final Class<?> CRAFT_INVENTORY_CUSTOM_CLASS;
+
+    static {
+        // In Folia, some Inventory#getHolder implementation checks if the current thread is a correct tick thread, and it may fail.
+        // Before calling Inventory#getHolder, we need to check if the inventory is CraftInventoryCustom, which does not check the thread.
+        CRAFT_INVENTORY_CUSTOM_CLASS = Bukkit.createInventory(null, 54, Component.empty()).getClass();
+    }
 
     public static void addDefaultErrorMessage(@NotNull DefaultMessageCollector collector) {
         collector.add(ERROR_KEY, "<red>An error occurred while click process. Error message: <white><error>");
+    }
+
+    public static boolean isBoxMenu(@Nullable Inventory inventory) {
+        return getFromInventory(inventory) != null;
+    }
+
+    public static @Nullable BoxInventoryHolder getFromInventory(@Nullable Inventory inventory) {
+        return CRAFT_INVENTORY_CUSTOM_CLASS.isInstance(inventory) && inventory.getHolder() instanceof BoxInventoryHolder holder ? holder : null;
     }
 
     private final Menu menu;

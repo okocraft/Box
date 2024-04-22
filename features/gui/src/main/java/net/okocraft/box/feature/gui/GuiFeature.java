@@ -1,25 +1,20 @@
 package net.okocraft.box.feature.gui;
 
-import it.unimi.dsi.fastutil.objects.ObjectList;
 import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.feature.AbstractBoxFeature;
 import net.okocraft.box.api.feature.BoxFeature;
 import net.okocraft.box.api.feature.FeatureContext;
 import net.okocraft.box.api.feature.Reloadable;
-import net.okocraft.box.api.util.Folia;
 import net.okocraft.box.feature.category.CategoryFeature;
 import net.okocraft.box.feature.gui.internal.command.MenuOpenCommand;
 import net.okocraft.box.feature.gui.internal.holder.BoxInventoryHolder;
 import net.okocraft.box.feature.gui.internal.lang.DisplayKeys;
 import net.okocraft.box.feature.gui.internal.listener.InventoryListener;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 public class GuiFeature extends AbstractBoxFeature implements Reloadable {
@@ -51,46 +46,21 @@ public class GuiFeature extends AbstractBoxFeature implements Reloadable {
         boxCommand.changeNoArgumentCommand(null);
         boxCommand.getSubCommandHolder().unregister(command);
 
+        this.closeMenus();
         HandlerList.unregisterAll(listener);
     }
 
     @Override
     public void reload(@NotNull FeatureContext.Reloading context) {
-        List<Player> schedulingPlayers = null;
-
-        if (Folia.check()) {
-            var players = Bukkit.getOnlinePlayers().toArray(Player[]::new);
-
-            for (var player : players) {
-                if (Bukkit.isOwnedByCurrentRegion(player)) {
-                    closeMenu(player);
-                } else {
-                    if (schedulingPlayers == null) {
-                        schedulingPlayers = new ArrayList<>(players.length);
-                    }
-
-                    schedulingPlayers.add(player);
-                }
-            }
-        } else {
-            if (Bukkit.isPrimaryThread()) {
-                Bukkit.getOnlinePlayers().forEach(this::closeMenu);
-            } else {
-                schedulingPlayers = ObjectList.of(Bukkit.getOnlinePlayers().toArray(Player[]::new));
-            }
-        }
-
-        if (schedulingPlayers != null && !schedulingPlayers.isEmpty()) {
-            for (var player : schedulingPlayers) {
-                BoxAPI.api().getScheduler().runEntityTask(player, () -> closeMenu(player));
-            }
-        }
+        this.closeMenus();
     }
 
-    private void closeMenu(@NotNull Player player) {
-        if (player.getOpenInventory().getTopInventory().getHolder() instanceof BoxInventoryHolder) {
-            player.closeInventory();
-        }
+    private void closeMenus() {
+        Bukkit.getOnlinePlayers().forEach(player -> {
+            if (BoxInventoryHolder.isBoxMenu(player.getOpenInventory().getTopInventory())) {
+                player.closeInventory();
+            }
+        });
     }
 
     @Override
