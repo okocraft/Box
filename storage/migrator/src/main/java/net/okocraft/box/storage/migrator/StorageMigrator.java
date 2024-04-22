@@ -9,12 +9,13 @@ import net.okocraft.box.storage.migrator.implementation.StockMigrator;
 import net.okocraft.box.storage.migrator.implementation.UserMigrator;
 import org.jetbrains.annotations.NotNull;
 
-public class StorageMigrator {
+public class StorageMigrator implements AutoCloseable {
 
     private final Storage sourceStorage;
     private final Storage targetStorage;
     private final DefaultItemProvider defaultItemProvider;
     private final boolean debug;
+    private boolean closed;
 
     public StorageMigrator(@NotNull Storage source, @NotNull Storage target, @NotNull DefaultItemProvider defaultItemProvider, boolean debug) {
         this.sourceStorage = source;
@@ -35,9 +36,13 @@ public class StorageMigrator {
         }
     }
 
+    @Override
     public void close() throws Exception {
-        sourceStorage.close();
-        targetStorage.close();
+        if (!this.closed) {
+            this.closed = true;
+            sourceStorage.close();
+            targetStorage.close();
+        }
     }
 
     private @NotNull DataMigrator.Base<Void, ItemMigrator.Result> createMigratorBase() {

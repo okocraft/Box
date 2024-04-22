@@ -166,22 +166,22 @@ public final class BoxPlugin extends JavaPlugin {
             return;
         }
 
-        var migrator = MigrationConfigLoader.prepare(loadedMigrationSetting, this.storageRegistry, this.pluginContext.dataDirectory(), this.pluginContext.defaultItemProvider());
+        try (var migrator = MigrationConfigLoader.prepare(loadedMigrationSetting, this.storageRegistry, this.pluginContext.dataDirectory(), this.pluginContext.defaultItemProvider())) {
+            if (migrator != null) {
+                var start = Instant.now();
 
-        if (migrator != null) {
-            var start = Instant.now();
+                BoxLogger.logger().info("Initializing storages...");
+                migrator.init();
 
-            BoxLogger.logger().info("Initializing storages...");
-            migrator.init();
+                BoxLogger.logger().info("Migrating data...");
+                migrator.run();
 
-            BoxLogger.logger().info("Migrating data...");
-            migrator.run();
+                BoxLogger.logger().info("Shutting down storages...");
+                migrator.close();
 
-            BoxLogger.logger().info("Shutting down storages...");
-            migrator.close();
-
-            var finish = Instant.now();
-            BoxLogger.logger().info("Migration is completed. ({}ms)", Duration.between(start, finish).toMillis());
+                var finish = Instant.now();
+                BoxLogger.logger().info("Migration is completed. ({}ms)", Duration.between(start, finish).toMillis());
+            }
         }
     }
 
