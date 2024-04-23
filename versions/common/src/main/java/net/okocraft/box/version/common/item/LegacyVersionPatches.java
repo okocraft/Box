@@ -23,6 +23,17 @@ public final class LegacyVersionPatches {
         return original.equals("GOAT_HORN") ? "PONDER_GOAT_HORN" : original;
     }
 
+    public static @NotNull ItemData goatHorn(@NotNull ItemData itemData) {
+        if (itemData.plainName().equals("GOAT_HORN")) {
+            var goatHorn = new ItemStack(Material.GOAT_HORN);
+            goatHorn.editMeta(MusicInstrumentMeta.class, meta -> meta.setInstrument(MusicInstrument.PONDER));
+
+            return new ItemData(itemData.internalId(), "PONDER_GOAT_HORN", goatHorn.serializeAsBytes());
+        } else {
+            return itemData;
+        }
+    }
+
     public static boolean shouldPatchShortGrassName(@NotNull ItemVersion starting, @NotNull ItemVersion current) {
         return starting.dataVersion().isBefore(MC_1_20_3) && current.dataVersion().isAfterOrSame(MC_1_20_3);
     }
@@ -103,17 +114,6 @@ public final class LegacyVersionPatches {
 
     public static @NotNull String turtleScute(@NotNull String original) {
         return original.equals("SCUTE") ? "TURTLE_SCUTE" : original;
-    }
-
-    public static @NotNull ItemData goatHorn(@NotNull ItemData itemData) {
-        if (itemData.plainName().equals("GOAT_HORN")) {
-            var goatHorn = new ItemStack(Material.GOAT_HORN);
-            goatHorn.editMeta(MusicInstrumentMeta.class, meta -> meta.setInstrument(MusicInstrument.PONDER));
-
-            return new ItemData(itemData.internalId(), "PONDER_GOAT_HORN", goatHorn.serializeAsBytes());
-        } else {
-            return itemData;
-        }
     }
 
     private LegacyVersionPatches() {
