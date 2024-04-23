@@ -323,6 +323,7 @@ public class StickListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onShoot(@NotNull EntityShootBowEvent event) {
+        if (true) return; // FIXME: EntityShootBowEvent#setConsumeItem is not working in 1.20.5
         if (event.getHand() != EquipmentSlot.HAND ||
                 !(event.getEntity() instanceof Player player) || !(event.getProjectile() instanceof Arrow arrow) ||
                 event.getBow() == null || event.getBow().getType() != Material.BOW ||
