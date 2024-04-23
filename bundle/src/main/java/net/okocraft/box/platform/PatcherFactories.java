@@ -19,7 +19,7 @@ final class PatcherFactories {
             builder.append(LegacyVersionPatches::shortGrassName);
         }
 
-        if (true || LegacyVersionPatches.shouldPatchPotionName(startingVersion, currentVersion)) { // TODO: fix this after Minecraft 1.20.5 released
+        if (LegacyVersionPatches.shouldPatchPotionName(startingVersion, currentVersion)) {
             builder.append(LegacyVersionPatches::potionName);
         }
 
