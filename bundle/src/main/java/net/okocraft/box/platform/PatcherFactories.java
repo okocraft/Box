@@ -23,6 +23,10 @@ final class PatcherFactories {
             builder.append(LegacyVersionPatches::potionName);
         }
 
+        if (LegacyVersionPatches.shouldPatchTurtleScuteName(startingVersion, currentVersion)) {
+            builder.append(LegacyVersionPatches::turtleScute);
+        }
+
         return builder.result;
     }
 

@@ -97,6 +97,14 @@ public final class LegacyVersionPatches {
         }
     }
 
+    public static boolean shouldPatchTurtleScuteName(@NotNull ItemVersion starting, @NotNull ItemVersion current) {
+        return starting.dataVersion().isBefore(MC_1_20_5) && current.dataVersion().isAfterOrSame(MC_1_20_5);
+    }
+
+    public static @NotNull String turtleScute(@NotNull String original) {
+        return original.equals("SCUTE") ? "TURTLE_SCUTE" : original;
+    }
+
     public static @NotNull ItemData goatHorn(@NotNull ItemData itemData) {
         if (itemData.plainName().equals("GOAT_HORN")) {
             var goatHorn = new ItemStack(Material.GOAT_HORN);
