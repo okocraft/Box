@@ -9,6 +9,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.MusicInstrumentMeta;
+import org.bukkit.potion.PotionType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -34,8 +35,8 @@ public final class ItemSources {
         return material -> material.isEnabledByFeature(world);
     }
 
-    public static @NotNull Stream<DefaultItem> potions() {
-        return toStream(new DefaultPotionIterator());
+    public static @NotNull Stream<DefaultItem> potions(@NotNull Registry<PotionType> registry) {
+        return toStream(new DefaultPotionIterator(registry));
     }
 
     public static @NotNull Stream<DefaultItem> enchantedBooks() {

@@ -5,6 +5,7 @@ import net.okocraft.box.api.util.MCDataVersion;
 import net.okocraft.box.storage.api.util.item.DefaultItem;
 import net.okocraft.box.version.common.item.ItemSources;
 import org.bukkit.Bukkit;
+import org.bukkit.Registry;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.stream.Stream;
@@ -21,7 +22,7 @@ public final class Paper_1_20_5 {
                                 .filter(ItemSources.createEnabledItemFilter(Bukkit.getWorlds().getFirst()))
                                 .map(ItemSources::toDefaultItem)
                 )
-                .append(ItemSources.potions())
+                .append(ItemSources.potions(Registry.POTION))
                 .append(ItemSources.enchantedBooks())
                 .append(ItemSources.fireworks())
                 .append(ItemSources.goatHorns())

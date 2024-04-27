@@ -3,21 +3,27 @@ package net.okocraft.box.version.common.item;
 import net.okocraft.box.api.util.ItemNameGenerator;
 import net.okocraft.box.storage.api.util.item.DefaultItem;
 import org.bukkit.Material;
+import org.bukkit.Registry;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionType;
 import org.jetbrains.annotations.NotNull;
 
-class DefaultPotionIterator extends DefaultItemIterator {
+import java.util.Iterator;
 
-    private static final PotionType[] POTION_TYPES = PotionType.values();
+class DefaultPotionIterator implements Iterator<DefaultItem> {
+
     private static final Material[] ITEMS = {Material.POTION, Material.SPLASH_POTION, Material.LINGERING_POTION, Material.TIPPED_ARROW};
 
-    private final PotionMeta potionMeta = createItemMeta(Material.POTION, PotionMeta.class);
+    private final PotionType[] potionTypes;
 
     private int potionTypeIndex = 0;
     private int itemIndex = 0;
     private boolean hasNext = true;
+
+    DefaultPotionIterator(@NotNull Registry<PotionType> registry) {
+        this.potionTypes = registry.stream().toArray(PotionType[]::new);
+    }
 
     @Override
     public boolean hasNext() {
@@ -26,11 +32,11 @@ class DefaultPotionIterator extends DefaultItemIterator {
 
     @Override
     public @NotNull DefaultItem next() {
-        var potionType = POTION_TYPES[this.potionTypeIndex];
+        var potionType = this.potionTypes[this.potionTypeIndex];
         var item = ITEMS[this.itemIndex];
 
         if (++this.itemIndex == ITEMS.length) {
-            if (++potionTypeIndex == POTION_TYPES.length) {
+            if (++potionTypeIndex == this.potionTypes.length) {
                 this.hasNext = false;
             } else {
                 this.itemIndex = 0;
@@ -44,8 +50,7 @@ class DefaultPotionIterator extends DefaultItemIterator {
         var name = ItemNameGenerator.keys(material, type);
         var potion = new ItemStack(material);
 
-        this.potionMeta.setBasePotionType(type);
-        potion.setItemMeta(this.potionMeta);
+        potion.editMeta(PotionMeta.class, meta -> meta.setBasePotionType(type));
 
         return new DefaultItem(name, potion);
     }
