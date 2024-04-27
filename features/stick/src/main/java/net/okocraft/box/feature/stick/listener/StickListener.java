@@ -300,10 +300,10 @@ public class StickListener implements Listener {
                 switch (entityType) {
                     case EGG -> "egg";
                     case ENDER_PEARL -> "enderpearl";
-                    case FIREWORK -> "firework";
+                    case FIREWORK_ROCKET -> "firework";
                     case SNOWBALL -> "snowball";
-                    case SPLASH_POTION -> "potion";
-                    case THROWN_EXP_BOTTLE -> "expbottle";
+                    case POTION -> "potion";
+                    case EXPERIENCE_BOTTLE -> "expbottle";
                     default -> null;
                 };
 
