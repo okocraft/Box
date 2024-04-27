@@ -10,21 +10,8 @@ import org.jetbrains.annotations.NotNull;
 
 class DefaultPotionIterator extends DefaultItemIterator {
 
-    private static final PotionType[] POTION_TYPES;
+    private static final PotionType[] POTION_TYPES = PotionType.values();
     private static final Material[] ITEMS = {Material.POTION, Material.SPLASH_POTION, Material.LINGERING_POTION, Material.TIPPED_ARROW};
-
-    static {
-        int index = 0;
-        var values = PotionType.values();
-        POTION_TYPES = new PotionType[values.length - 1];
-
-        for (var potionType : values) {
-            if (potionType == PotionType.UNCRAFTABLE) {
-                continue;
-            }
-            POTION_TYPES[index++] = potionType;
-        }
-    }
 
     private final PotionMeta potionMeta = createItemMeta(Material.POTION, PotionMeta.class);
 
