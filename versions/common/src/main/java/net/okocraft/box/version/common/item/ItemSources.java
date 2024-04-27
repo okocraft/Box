@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.function.Predicate;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -52,7 +53,7 @@ public final class ItemSources {
     }
 
     public static @NotNull Stream<DefaultItem> fireworks() {
-        return Stream.of(1, 2, 3).map(power -> {
+        return IntStream.of(1, 2, 3).mapToObj(power -> {
             var name = ItemNameGenerator.key(Material.FIREWORK_ROCKET) + "_" + power;
             var firework = new ItemStack(Material.FIREWORK_ROCKET);
             firework.editMeta(FireworkMeta.class, meta -> meta.setPower(power));
