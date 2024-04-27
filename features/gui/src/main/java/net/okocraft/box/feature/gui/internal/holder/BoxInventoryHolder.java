@@ -158,6 +158,7 @@ public class BoxInventoryHolder implements InventoryHolder {
 
     public void renderButtons() {
         var icons = new ItemStack[this.maxIcons];
+        this.buttonMap.clear();
 
         for (var button : menu.getButtons(session)) {
             int slot = button.getSlot();
