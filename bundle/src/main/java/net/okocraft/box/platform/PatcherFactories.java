@@ -38,6 +38,10 @@ final class PatcherFactories {
             builder.append(LegacyVersionPatches::goatHorn);
         }
 
+        if (startingVersion.isBefore(Paper_1_20_5.VERSION)) {
+            builder.append(Paper_1_20_5::writtenBook);
+        }
+
         return builder.result;
     }
 
