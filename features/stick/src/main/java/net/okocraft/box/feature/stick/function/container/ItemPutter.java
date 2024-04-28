@@ -33,7 +33,7 @@ final class ItemPutter {
         }
 
         int currentAmount = currentItem != null ? currentItem.getAmount() : 0;
-        int maxStackSize = boxItem.getOriginal().getType().getMaxStackSize();
+        int maxStackSize = boxItem.getOriginal().getMaxStackSize();
         int fuelStock = boxPlayer.getCurrentStockHolder().getAmount(boxItem);
         int newAmount = fuelStock < maxStackSize - currentAmount ? fuelStock + currentAmount : maxStackSize; // This has the same **meaning** as Math.min(fuelStock + currentAmount, 64), but when fuelStock + currentAmount overflows, the way using Math.min causes a bug.
         int consumption = newAmount - currentAmount;
