@@ -16,7 +16,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Container;
-import org.bukkit.entity.AbstractArrow;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -323,10 +323,9 @@ public class StickListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onShoot(@NotNull EntityShootBowEvent event) {
-        if (true) return; // FIXME: EntityShootBowEvent#setConsumeItem is not working in 1.20.5
         if (event.getHand() != EquipmentSlot.HAND ||
-                !(event.getEntity() instanceof Player player) || !(event.getProjectile() instanceof Arrow arrow) ||
-                event.getBow() == null || event.getBow().getType() != Material.BOW ||
+                !(event.getEntity() instanceof Player player) || !(event.getProjectile() instanceof Arrow) ||
+                event.getBow() == null || event.getBow().getType() != Material.BOW || event.getBow().containsEnchantment(Enchantment.INFINITY) ||
                 !event.shouldConsumeItem()) {
             return;
         }
@@ -340,12 +339,7 @@ public class StickListener implements Listener {
         var arrowItem = event.getConsumable();
 
         if (arrowItem != null && !isIllegalStack(arrowItem) && tryConsumingStock(boxPlayer, arrowItem, new StickCauses.ShootBow(boxPlayer))) {
-            event.setConsumeItem(false);
-            player.updateInventory();
-
-            // If setConsumeItem is set to false, the arrow will not be picked up.
-            // This task overwrites it after 1 tick.
-            BoxAPI.api().getScheduler().runEntityTask(arrow, () -> arrow.setPickupStatus(AbstractArrow.PickupStatus.ALLOWED));
+            player.getInventory().addItem(arrowItem.asOne());
         }
     }
 
