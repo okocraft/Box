@@ -4,6 +4,7 @@ import net.okocraft.box.api.model.item.ItemVersion;
 import net.okocraft.box.storage.api.util.item.patcher.ItemDataPatcher;
 import net.okocraft.box.storage.api.util.item.patcher.ItemNamePatcher;
 import net.okocraft.box.version.common.item.LegacyVersionPatches;
+import net.okocraft.box.version.paper_1_20_5.Paper_1_20_5;
 import org.jetbrains.annotations.NotNull;
 
 final class PatcherFactories {
@@ -23,8 +24,8 @@ final class PatcherFactories {
             builder.append(LegacyVersionPatches::potionName);
         }
 
-        if (LegacyVersionPatches.shouldPatchTurtleScuteName(startingVersion, currentVersion)) {
-            builder.append(LegacyVersionPatches::turtleScute);
+        if (startingVersion.isBefore(Paper_1_20_5.VERSION)) {
+            builder.append(Paper_1_20_5::turtleScute);
         }
 
         return builder.result;

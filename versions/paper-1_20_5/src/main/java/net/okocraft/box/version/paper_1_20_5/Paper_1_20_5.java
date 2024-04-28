@@ -29,6 +29,10 @@ public final class Paper_1_20_5 {
                 .result();
     }
 
+    public static @NotNull String turtleScute(@NotNull String original) {
+        return original.equals("SCUTE") ? "TURTLE_SCUTE" : original;
+    }
+
     private Paper_1_20_5() {
         throw new UnsupportedOperationException();
     }
