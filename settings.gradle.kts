@@ -10,6 +10,7 @@ val boxPrefix = rootProject.name
 sequenceOf(
     "api",
     "core",
+    "annotation-processor",
     "test-shared-classes"
 ).forEach {
     include("$boxPrefix-$it")

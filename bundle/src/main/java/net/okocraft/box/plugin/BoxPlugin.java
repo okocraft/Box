@@ -5,15 +5,19 @@ import net.okocraft.box.api.APISetter;
 import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.feature.BoxFeature;
 import net.okocraft.box.api.util.BoxLogger;
+import net.okocraft.box.api.util.MCDataVersion;
 import net.okocraft.box.bootstrap.BoxBootstrapContext;
+import net.okocraft.box.bundle.VersionedImpls;
 import net.okocraft.box.core.BoxCore;
 import net.okocraft.box.core.PluginContext;
 import net.okocraft.box.core.config.Config;
-import net.okocraft.box.platform.PlatformDependent;
 import net.okocraft.box.storage.api.holder.StorageHolder;
 import net.okocraft.box.storage.api.model.Storage;
 import net.okocraft.box.storage.api.registry.StorageRegistry;
 import net.okocraft.box.storage.migrator.config.MigrationConfigLoader;
+import net.okocraft.box.version.common.command.BukkitCommandRegisterer;
+import net.okocraft.box.version.common.scheduler.FoliaSchedulerWrapper;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,15 +39,15 @@ public final class BoxPlugin extends JavaPlugin {
     private Storage storage;
 
     public BoxPlugin(@NotNull BoxBootstrapContext boxBootstrapContext) {
-        try {
-            PlatformDependent.checkVersionRequirement();
-        } catch (PlatformDependent.NotSupportedException e) {
+        var versionedImpls = VersionedImpls.load(this.getClassLoader());
+
+        if (versionedImpls.leastVersion().dataVersion().isAfter(MCDataVersion.current())) {
             this.pluginContext = null;
             this.boxCore = null;
             this.storageRegistry = null;
             this.features = null;
             this.status = Status.UNSUPPORTED_PLATFORM;
-            BoxLogger.logger().error(e.reason);
+            BoxLogger.logger().error("Unsupported version: {}", Bukkit.getVersion());
             return;
         }
 
@@ -51,12 +55,12 @@ public final class BoxPlugin extends JavaPlugin {
                 this,
                 boxBootstrapContext.getVersion(),
                 boxBootstrapContext.getDataDirectory(),
-                PlatformDependent.createScheduler(this),
+                new FoliaSchedulerWrapper(this),
                 boxBootstrapContext.getEventManager(),
                 boxBootstrapContext.createMessageProvider(),
                 new Config(boxBootstrapContext.getDataDirectory()),
-                PlatformDependent.createItemProvider(),
-                PlatformDependent.createCommandRegisterer(this.getName().toLowerCase(Locale.ENGLISH))
+                versionedImpls.createDefaultItemProvider(MCDataVersion.current()),
+                command -> BukkitCommandRegisterer.register(this.getName().toLowerCase(Locale.ENGLISH), command)
         );
 
         this.boxCore = new BoxCore(this.pluginContext);

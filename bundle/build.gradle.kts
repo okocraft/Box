@@ -5,6 +5,7 @@ plugins {
 
 dependencies {
     rootProject.childProjects.values
+        .filterNot { project -> project.name == "box-annotation-processor" }
         .filterNot { project -> project.name == "box-bundle" }
         .filterNot { project -> project.name == "box-test-shared-classes" }
         .forEach { project -> implementation(project) }
@@ -30,6 +31,10 @@ tasks {
         filesMatching(listOf("paper-plugin.yml")) {
             expand("projectVersion" to project.version)
         }
+    }
+
+    shadowJar {
+        mergeServiceFiles()
     }
 }
 

@@ -3,7 +3,6 @@ plugins {
 }
 
 dependencies {
+    implementation(projects.boxApi)
     implementation(projects.boxVersionCommon)
-    compileOnly(projects.boxAnnotationProcessor)
-    annotationProcessor(projects.boxAnnotationProcessor)
 }

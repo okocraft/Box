@@ -1,5 +1,10 @@
 package net.okocraft.box.version.paper_1_20_5;
 
+import net.okocraft.box.ap.annotation.patch.ItemDataPatch;
+import net.okocraft.box.ap.annotation.patch.ItemNamePatch;
+import net.okocraft.box.ap.annotation.source.DefaultItemSource;
+import net.okocraft.box.ap.annotation.version.DefaultItemVersion;
+import net.okocraft.box.ap.annotation.version.VersionSpecific;
 import net.okocraft.box.api.model.item.ItemVersion;
 import net.okocraft.box.api.util.MCDataVersion;
 import net.okocraft.box.storage.api.model.item.ItemData;
@@ -13,10 +18,14 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.stream.Stream;
 
+@VersionSpecific
 public final class Paper_1_20_5 {
 
+    @DefaultItemVersion
+    @ItemNamePatch.Rename(oldName = "SCUTE", newName = "TURTLE_SCUTE")
     public static final ItemVersion VERSION = new ItemVersion(MCDataVersion.MC_1_20_5, 0);
 
+    @DefaultItemSource
     public static @NotNull Stream<DefaultItem> defaultItems() {
         return new ItemSources.Merger()
                 .append(
@@ -32,16 +41,9 @@ public final class Paper_1_20_5 {
                 .result();
     }
 
-    public static @NotNull String turtleScute(@NotNull String original) {
-        return original.equals("SCUTE") ? "TURTLE_SCUTE" : original;
-    }
-
+    @ItemDataPatch.UpdateItemData(targets = "WRITTEN_BOOK")
     public static @NotNull ItemData writtenBook(@NotNull ItemData itemData) {
-        if (itemData.plainName().equals("WRITTEN_BOOK")) {
-            return new ItemData(itemData.internalId(), "WRITTEN_BOOK", new ItemStack(Material.WRITTEN_BOOK).serializeAsBytes());
-        } else {
-            return itemData;
-        }
+        return new ItemData(itemData.internalId(), itemData.plainName(), new ItemStack(Material.WRITTEN_BOOK).serializeAsBytes());
     }
 
     private Paper_1_20_5() {
