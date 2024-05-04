@@ -1,0 +1,172 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "net.okocraft.box",
+    "module": "box-craft-feature",
+    "version": "6.0.0-SNAPSHOT",
+    "attributes": {
+      "org.gradle.status": "integration"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.7"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 21,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api"
+      },
+      "dependencies": [
+        {
+          "group": "com.github.siroshun09.configapi",
+          "module": "configapi-format-yaml",
+          "version": {
+            "requires": "5.0.0-beta.2"
+          },
+          "excludes": [
+            {
+              "group": "org.yaml",
+              "module": "snakeyaml"
+            }
+          ]
+        },
+        {
+          "group": "com.github.siroshun09.event4j",
+          "module": "event4j",
+          "version": {
+            "requires": "4.0.0-rc.1"
+          }
+        },
+        {
+          "group": "com.github.siroshun09.messages",
+          "module": "messages-minimessage",
+          "version": {
+            "requires": "0.7.0"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "box-craft-feature-6.0.0-SNAPSHOT.jar",
+          "url": "box-craft-feature-6.0.0-SNAPSHOT.jar",
+          "size": 72065,
+          "sha512": "c944bd29e26a039ad93dbb82339ae67ddfa7015fb8c504870ab85f538abb76ed828cb59968c9f2f37957af203315e39cbe81c303aa1417e193630f416b182778",
+          "sha256": "2eb948945f0c2ef4503d23cd5aa188c7feeeefc1cfdb2b61a92d346167632afb",
+          "sha1": "e968a822c0c0ebffe2e7e668e604e21f162d9414",
+          "md5": "25b9556e9806ebcc6004dc780ec2c6bd"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 21,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "dependencies": [
+        {
+          "group": "net.okocraft.box",
+          "module": "box-api",
+          "version": {
+            "requires": "6.0.0-SNAPSHOT"
+          }
+        },
+        {
+          "group": "net.okocraft.box",
+          "module": "box-gui-feature",
+          "version": {
+            "requires": "6.0.0-SNAPSHOT"
+          }
+        },
+        {
+          "group": "com.github.siroshun09.configapi",
+          "module": "configapi-format-yaml",
+          "version": {
+            "requires": "5.0.0-beta.2"
+          },
+          "excludes": [
+            {
+              "group": "org.yaml",
+              "module": "snakeyaml"
+            }
+          ]
+        },
+        {
+          "group": "com.github.siroshun09.event4j",
+          "module": "event4j",
+          "version": {
+            "requires": "4.0.0-rc.1"
+          }
+        },
+        {
+          "group": "com.github.siroshun09.messages",
+          "module": "messages-minimessage",
+          "version": {
+            "requires": "0.7.0"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "box-craft-feature-6.0.0-SNAPSHOT.jar",
+          "url": "box-craft-feature-6.0.0-SNAPSHOT.jar",
+          "size": 72065,
+          "sha512": "c944bd29e26a039ad93dbb82339ae67ddfa7015fb8c504870ab85f538abb76ed828cb59968c9f2f37957af203315e39cbe81c303aa1417e193630f416b182778",
+          "sha256": "2eb948945f0c2ef4503d23cd5aa188c7feeeefc1cfdb2b61a92d346167632afb",
+          "sha1": "e968a822c0c0ebffe2e7e668e604e21f162d9414",
+          "md5": "25b9556e9806ebcc6004dc780ec2c6bd"
+        }
+      ]
+    },
+    {
+      "name": "javadocElements",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "javadoc",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "box-craft-feature-6.0.0-SNAPSHOT-javadoc.jar",
+          "url": "box-craft-feature-6.0.0-SNAPSHOT-javadoc.jar",
+          "size": 136066,
+          "sha512": "225c71ea7296958e7d1cb6e12648c713eac337dc3004bfe7736384f96638a38b830632928d318dced322bad5461b5214ed56e294a7ff84896bc97b2c04a0adf8",
+          "sha256": "55803a76804c75ad7be83362621815ea0c40a82631840fb6249d7259ea0d577e",
+          "sha1": "45af78e56eeee9910ffdb6aee717e044ed4cff1f",
+          "md5": "50329fad2e85f0b4d08626ae8fdda443"
+        }
+      ]
+    },
+    {
+      "name": "sourcesElements",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "box-craft-feature-6.0.0-SNAPSHOT-sources.jar",
+          "url": "box-craft-feature-6.0.0-SNAPSHOT-sources.jar",
+          "size": 35107,
+          "sha512": "c5b33cc11a7f7871eb18b19b2f8311a93b022540b9352734b7609a5202a826ae3b31d31f6a67b289a88cdf2dd198d3ac6cc5fc67a0820533bd25f75b6ddfa821",
+          "sha256": "8cf8c7070267d9fa4073e6608c26aa122e13b37bfd5de786712b7074441f55e7",
+          "sha1": "a2182a30ec2a34d69eefdf6dcc8da9cdca6c1fbe",
+          "md5": "c4404c888a22436177a62eb611adcadf"
+        }
+      ]
+    }
+  ]
+}
