@@ -91,7 +91,7 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">InventoryUtil</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">A utility class for an <a href="https://jd.papermc.io/paper/1.20/org/bukkit/inventory/Inventory.html" title="class or interface in org.bukkit.inventory" class="external-link"><code>Inventory</code></a>.</div>
+<div class="block">A utility class for an <code>Inventory</code>.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -107,11 +107,11 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static int</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#putItems(org.bukkit.inventory.Inventory,org.bukkit.inventory.ItemStack,int)" class="member-name-link">putItems</a><wbr>(@NotNull <a href="https://jd.papermc.io/paper/1.20/org/bukkit/inventory/Inventory.html" title="class or interface in org.bukkit.inventory" class="external-link">Inventory</a>&nbsp;inventory,
- @NotNull <a href="https://jd.papermc.io/paper/1.20/org/bukkit/inventory/ItemStack.html" title="class or interface in org.bukkit.inventory" class="external-link">ItemStack</a>&nbsp;item,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#putItems(org.bukkit.inventory.Inventory,org.bukkit.inventory.ItemStack,int)" class="member-name-link">putItems</a><wbr>(@NotNull org.bukkit.inventory.Inventory&nbsp;inventory,
+ @NotNull org.bukkit.inventory.ItemStack&nbsp;item,
  int&nbsp;amount)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Puts items in the <a href="https://jd.papermc.io/paper/1.20/org/bukkit/inventory/Inventory.html" title="class or interface in org.bukkit.inventory" class="external-link"><code>Inventory</code></a>.</div>
+<div class="block">Puts items in the <code>Inventory</code>.</div>
 </div>
 </div>
 </div>
@@ -134,18 +134,18 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="putItems(org.bukkit.inventory.Inventory,org.bukkit.inventory.ItemStack,int)">
 <h3>putItems</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">putItems</span><wbr><span class="parameters">(@NotNull
- @NotNull <a href="https://jd.papermc.io/paper/1.20/org/bukkit/inventory/Inventory.html" title="class or interface in org.bukkit.inventory" class="external-link">Inventory</a>&nbsp;inventory,
+ @NotNull org.bukkit.inventory.Inventory&nbsp;inventory,
  @NotNull
- @NotNull <a href="https://jd.papermc.io/paper/1.20/org/bukkit/inventory/ItemStack.html" title="class or interface in org.bukkit.inventory" class="external-link">ItemStack</a>&nbsp;item,
+ @NotNull org.bukkit.inventory.ItemStack&nbsp;item,
  int&nbsp;amount)</span></div>
-<div class="block">Puts items in the <a href="https://jd.papermc.io/paper/1.20/org/bukkit/inventory/Inventory.html" title="class or interface in org.bukkit.inventory" class="external-link"><code>Inventory</code></a>.</div>
+<div class="block">Puts items in the <code>Inventory</code>.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>inventory</code> - an <a href="https://jd.papermc.io/paper/1.20/org/bukkit/inventory/Inventory.html" title="class or interface in org.bukkit.inventory" class="external-link"><code>Inventory</code></a> to put items in</dd>
-<dd><code>item</code> - <a href="https://jd.papermc.io/paper/1.20/org/bukkit/inventory/ItemStack.html" title="class or interface in org.bukkit.inventory" class="external-link"><code>ItemStack</code></a> to put</dd>
+<dd><code>inventory</code> - an <code>Inventory</code> to put items in</dd>
+<dd><code>item</code> - <code>ItemStack</code> to put</dd>
 <dd><code>amount</code> - amount of items to put</dd>
 <dt>Returns:</dt>
-<dd>amount of items that could not be put in the <a href="https://jd.papermc.io/paper/1.20/org/bukkit/inventory/Inventory.html" title="class or interface in org.bukkit.inventory" class="external-link"><code>Inventory</code></a> because it was full</dd>
+<dd>amount of items that could not be put in the <code>Inventory</code> because it was full</dd>
 <dt>Throws:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/NullPointerException.html" title="class or interface in java.lang" class="external-link">NullPointerException</a></code> - if <code>inventory</code> or <code>item</code> is null</dd>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if <code>amount</code> is negative</dd>

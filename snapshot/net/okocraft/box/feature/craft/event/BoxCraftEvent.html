@@ -98,7 +98,7 @@ loadScripts(document, 'script');</script>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">BoxCraftEvent</span>
 <span class="extends-implements">extends <a href="../../../api/event/BoxEvent.html" title="class in net.okocraft.box.api.event">BoxEvent</a>
 implements <a href="../../../api/event/Cancellable.html" title="interface in net.okocraft.box.api.event">Cancellable</a></span></div>
-<div class="block">An event that called when the <a href="https://jd.papermc.io/paper/1.20/org/bukkit/entity/Player.html" title="class or interface in org.bukkit.entity" class="external-link"><code>Player</code></a> is crafting items in Box.</div>
+<div class="block">An event that called when the <code>Player</code> is crafting items in Box.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -110,7 +110,7 @@ implements <a href="../../../api/event/Cancellable.html" title="interface in net
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Constructor</div>
 <div class="table-header col-last">Description</div>
-<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(org.bukkit.entity.Player,net.okocraft.box.feature.craft.model.SelectedRecipe,int)" class="member-name-link">BoxCraftEvent</a><wbr>(@NotNull <a href="https://jd.papermc.io/paper/1.20/org/bukkit/entity/Player.html" title="class or interface in org.bukkit.entity" class="external-link">Player</a>&nbsp;crafter,
+<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(org.bukkit.entity.Player,net.okocraft.box.feature.craft.model.SelectedRecipe,int)" class="member-name-link">BoxCraftEvent</a><wbr>(@NotNull org.bukkit.entity.Player&nbsp;crafter,
  @NotNull <a href="../model/SelectedRecipe.html" title="class in net.okocraft.box.feature.craft.model">SelectedRecipe</a>&nbsp;selectedRecipe,
  int&nbsp;times)</code></div>
 <div class="col-last even-row-color">
@@ -130,7 +130,7 @@ implements <a href="../../../api/event/Cancellable.html" title="interface in net
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NotNull <a href="https://jd.papermc.io/paper/1.20/org/bukkit/entity/Player.html" title="class or interface in org.bukkit.entity" class="external-link">Player</a></code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NotNull org.bukkit.entity.Player</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getCrafter()" class="member-name-link">getCrafter</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Gets the player who is trying to craft.</div>
@@ -184,14 +184,14 @@ implements <a href="../../../api/event/Cancellable.html" title="interface in net
 <section class="detail" id="&lt;init&gt;(org.bukkit.entity.Player,net.okocraft.box.feature.craft.model.SelectedRecipe,int)">
 <h3>BoxCraftEvent</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">BoxCraftEvent</span><wbr><span class="parameters">(@NotNull
- @NotNull <a href="https://jd.papermc.io/paper/1.20/org/bukkit/entity/Player.html" title="class or interface in org.bukkit.entity" class="external-link">Player</a>&nbsp;crafter,
+ @NotNull org.bukkit.entity.Player&nbsp;crafter,
  @NotNull
  @NotNull <a href="../model/SelectedRecipe.html" title="class in net.okocraft.box.feature.craft.model">SelectedRecipe</a>&nbsp;selectedRecipe,
  int&nbsp;times)</span></div>
 <div class="block">The constructor of <a href="BoxCraftEvent.html" title="class in net.okocraft.box.feature.craft.event"><code>BoxCraftEvent</code></a>.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>crafter</code> - the <a href="https://jd.papermc.io/paper/1.20/org/bukkit/entity/Player.html" title="class or interface in org.bukkit.entity" class="external-link"><code>Player</code></a> who craft items</dd>
+<dd><code>crafter</code> - the <code>Player</code> who craft items</dd>
 <dd><code>selectedRecipe</code> - the <a href="../model/SelectedRecipe.html" title="class in net.okocraft.box.feature.craft.model"><code>SelectedRecipe</code></a> used to craft items</dd>
 <dd><code>times</code> - the number of times crafted</dd>
 </dl>
@@ -209,7 +209,7 @@ implements <a href="../../../api/event/Cancellable.html" title="interface in net
 <section class="detail" id="getCrafter()">
 <h3>getCrafter</h3>
 <div class="member-signature"><span class="annotations">@NotNull
-</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NotNull <a href="https://jd.papermc.io/paper/1.20/org/bukkit/entity/Player.html" title="class or interface in org.bukkit.entity" class="external-link">Player</a></span>&nbsp;<span class="element-name">getCrafter</span>()</div>
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NotNull org.bukkit.entity.Player</span>&nbsp;<span class="element-name">getCrafter</span>()</div>
 <div class="block">Gets the player who is trying to craft.</div>
 <dl class="notes">
 <dt>Returns:</dt>

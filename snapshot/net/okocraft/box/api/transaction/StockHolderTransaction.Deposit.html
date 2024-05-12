@@ -107,16 +107,16 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>@NotNull @Unmodifiable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="TransactionResult.html" title="class in net.okocraft.box.api.transaction">TransactionResult</a>&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#fromInventory(org.bukkit.inventory.Inventory,net.okocraft.box.api.event.stockholder.stock.StockEvent.Cause)" class="member-name-link">fromInventory</a><wbr>(@NotNull <a href="https://jd.papermc.io/paper/1.20/org/bukkit/inventory/Inventory.html" title="class or interface in org.bukkit.inventory" class="external-link">Inventory</a>&nbsp;inventory,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#fromInventory(org.bukkit.inventory.Inventory,net.okocraft.box.api.event.stockholder.stock.StockEvent.Cause)" class="member-name-link">fromInventory</a><wbr>(@NotNull org.bukkit.inventory.Inventory&nbsp;inventory,
  <a href="../event/stockholder/stock/StockEvent.Cause.html" title="interface in net.okocraft.box.api.event.stockholder.stock">StockEvent.Cause</a>&nbsp;cause)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-<div class="block">Deposits items from <a href="https://jd.papermc.io/paper/1.20/org/bukkit/inventory/Inventory.html" title="class or interface in org.bukkit.inventory" class="external-link"><code>Inventory</code></a>.</div>
+<div class="block">Deposits items from <code>Inventory</code>.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>@NotNull @Unmodifiable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="TransactionResult.html" title="class in net.okocraft.box.api.transaction">TransactionResult</a>&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#fromTopInventory(org.bukkit.inventory.InventoryView,net.okocraft.box.api.event.stockholder.stock.StockEvent.Cause)" class="member-name-link">fromTopInventory</a><wbr>(@NotNull <a href="https://jd.papermc.io/paper/1.20/org/bukkit/inventory/InventoryView.html" title="class or interface in org.bukkit.inventory" class="external-link">InventoryView</a>&nbsp;view,
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#fromTopInventory(org.bukkit.inventory.InventoryView,net.okocraft.box.api.event.stockholder.stock.StockEvent.Cause)" class="member-name-link">fromTopInventory</a><wbr>(@NotNull org.bukkit.inventory.InventoryView&nbsp;view,
  <a href="../event/stockholder/stock/StockEvent.Cause.html" title="interface in net.okocraft.box.api.event.stockholder.stock">StockEvent.Cause</a>&nbsp;cause)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-<div class="block">Deposits items from <a href="https://jd.papermc.io/paper/1.20/org/bukkit/inventory/InventoryView.html#getTopInventory()" title="class or interface in org.bukkit.inventory" class="external-link"><code>InventoryView.getTopInventory()</code></a>.</div>
+<div class="block">Deposits items from <code>InventoryView.getTopInventory()</code>.</div>
 </div>
 </div>
 </div>
@@ -137,15 +137,15 @@ loadScripts(document, 'script');</script>
 <h3>fromInventory</h3>
 <div class="member-signature"><span class="annotations">@NotNull
 </span><span class="return-type">@NotNull @Unmodifiable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="TransactionResult.html" title="class in net.okocraft.box.api.transaction">TransactionResult</a>&gt;</span>&nbsp;<span class="element-name">fromInventory</span><wbr><span class="parameters">(@NotNull
- @NotNull <a href="https://jd.papermc.io/paper/1.20/org/bukkit/inventory/Inventory.html" title="class or interface in org.bukkit.inventory" class="external-link">Inventory</a>&nbsp;inventory,
+ @NotNull org.bukkit.inventory.Inventory&nbsp;inventory,
  @NotNull
  <a href="../event/stockholder/stock/StockEvent.Cause.html" title="interface in net.okocraft.box.api.event.stockholder.stock">StockEvent.Cause</a>&nbsp;cause)</span></div>
-<div class="block">Deposits items from <a href="https://jd.papermc.io/paper/1.20/org/bukkit/inventory/Inventory.html" title="class or interface in org.bukkit.inventory" class="external-link"><code>Inventory</code></a>.
+<div class="block">Deposits items from <code>Inventory</code>.
  <p>
  If no items are deposited, this method returns <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collections.html#emptyList()" title="class or interface in java.util" class="external-link"><code>Collections.emptyList()</code></a></div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>inventory</code> - an <a href="https://jd.papermc.io/paper/1.20/org/bukkit/inventory/Inventory.html" title="class or interface in org.bukkit.inventory" class="external-link"><code>Inventory</code></a> to pull out items</dd>
+<dd><code>inventory</code> - an <code>Inventory</code> to pull out items</dd>
 <dd><code>cause</code> - a <a href="../event/stockholder/stock/StockEvent.Cause.html" title="interface in net.okocraft.box.api.event.stockholder.stock"><code>StockEvent.Cause</code></a> that is passed to <a href="../model/stock/StockHolder.html#increase(net.okocraft.box.api.model.item.BoxItem,int,net.okocraft.box.api.event.stockholder.stock.StockEvent.Cause)"><code>StockHolder.increase(BoxItem, int, StockEvent.Cause)</code></a></dd>
 <dt>Returns:</dt>
 <dd>a list that contains <a href="TransactionResult.html" title="class in net.okocraft.box.api.transaction"><code>TransactionResult</code></a>s per item or <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collections.html#emptyList()" title="class or interface in java.util" class="external-link"><code>Collections.emptyList()</code></a> if no items are deposited</dd>
@@ -159,17 +159,17 @@ loadScripts(document, 'script');</script>
 <h3>fromTopInventory</h3>
 <div class="member-signature"><span class="annotations">@NotNull
 </span><span class="return-type">@NotNull @Unmodifiable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="TransactionResult.html" title="class in net.okocraft.box.api.transaction">TransactionResult</a>&gt;</span>&nbsp;<span class="element-name">fromTopInventory</span><wbr><span class="parameters">(@NotNull
- @NotNull <a href="https://jd.papermc.io/paper/1.20/org/bukkit/inventory/InventoryView.html" title="class or interface in org.bukkit.inventory" class="external-link">InventoryView</a>&nbsp;view,
+ @NotNull org.bukkit.inventory.InventoryView&nbsp;view,
  @NotNull
  <a href="../event/stockholder/stock/StockEvent.Cause.html" title="interface in net.okocraft.box.api.event.stockholder.stock">StockEvent.Cause</a>&nbsp;cause)</span></div>
-<div class="block">Deposits items from <a href="https://jd.papermc.io/paper/1.20/org/bukkit/inventory/InventoryView.html#getTopInventory()" title="class or interface in org.bukkit.inventory" class="external-link"><code>InventoryView.getTopInventory()</code></a>.
+<div class="block">Deposits items from <code>InventoryView.getTopInventory()</code>.
  <p>
  If no items are deposited, this method returns <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collections.html#emptyList()" title="class or interface in java.util" class="external-link"><code>Collections.emptyList()</code></a>
  <p>
- This method calls <a href="https://jd.papermc.io/paper/1.20/org/bukkit/event/inventory/InventoryClickEvent.html" title="class or interface in org.bukkit.event.inventory" class="external-link"><code>InventoryClickEvent</code></a>s before pulling out the item.</div>
+ This method calls <code>InventoryClickEvent</code>s before pulling out the item.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>view</code> - an <a href="https://jd.papermc.io/paper/1.20/org/bukkit/inventory/InventoryView.html" title="class or interface in org.bukkit.inventory" class="external-link"><code>InventoryView</code></a> to get top <a href="https://jd.papermc.io/paper/1.20/org/bukkit/inventory/Inventory.html" title="class or interface in org.bukkit.inventory" class="external-link"><code>Inventory</code></a></dd>
+<dd><code>view</code> - an <code>InventoryView</code> to get top <code>Inventory</code></dd>
 <dd><code>cause</code> - a <a href="../event/stockholder/stock/StockEvent.Cause.html" title="interface in net.okocraft.box.api.event.stockholder.stock"><code>StockEvent.Cause</code></a> that is passed to <a href="../model/stock/StockHolder.html#increase(net.okocraft.box.api.model.item.BoxItem,int,net.okocraft.box.api.event.stockholder.stock.StockEvent.Cause)"><code>StockHolder.increase(BoxItem, int, StockEvent.Cause)</code></a></dd>
 <dt>Returns:</dt>
 <dd>a list that contains <a href="TransactionResult.html" title="class in net.okocraft.box.api.transaction"><code>TransactionResult</code></a>s per item or <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collections.html#emptyList()" title="class or interface in java.util" class="external-link"><code>Collections.emptyList()</code></a> if no items are deposited</dd>

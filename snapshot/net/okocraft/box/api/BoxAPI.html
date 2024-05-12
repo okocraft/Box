@@ -108,9 +108,9 @@ loadScripts(document, 'script');</script>
 <div class="block">Gets an instance of <a href="BoxAPI.html" title="interface in net.okocraft.box.api"><code>BoxAPI</code></a>.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#canUseBox(org.bukkit.entity.Player)" class="member-name-link">canUseBox</a><wbr>(@NotNull <a href="https://jd.papermc.io/paper/1.20/org/bukkit/entity/Player.html" title="class or interface in org.bukkit.entity" class="external-link">Player</a>&nbsp;player)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#canUseBox(org.bukkit.entity.Player)" class="member-name-link">canUseBox</a><wbr>(@NotNull org.bukkit.entity.Player&nbsp;player)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-<div class="block">Checks if the specified <a href="https://jd.papermc.io/paper/1.20/org/bukkit/entity/Player.html" title="class or interface in org.bukkit.entity" class="external-link"><code>Player</code></a> can use Box.</div>
+<div class="block">Checks if the specified <code>Player</code> can use Box.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>@NotNull <a href="command/base/BoxAdminCommand.html" title="interface in net.okocraft.box.api.command.base">BoxAdminCommand</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getBoxAdminCommand()" class="member-name-link">getBoxAdminCommand</a>()</code></div>
@@ -178,7 +178,7 @@ loadScripts(document, 'script');</script>
 <div class="block">Checks if Box is not available in the specified world name.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#isDisabledWorld(org.bukkit.World)" class="member-name-link">isDisabledWorld</a><wbr>(@NotNull <a href="https://jd.papermc.io/paper/1.20/org/bukkit/World.html" title="class or interface in org.bukkit" class="external-link">World</a>&nbsp;world)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#isDisabledWorld(org.bukkit.World)" class="member-name-link">isDisabledWorld</a><wbr>(@NotNull org.bukkit.World&nbsp;world)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Checks if Box is not available in the specified world.</div>
 </div>
@@ -188,7 +188,7 @@ loadScripts(document, 'script');</script>
 <div class="block">Checks if <a href="BoxAPI.html" title="interface in net.okocraft.box.api"><code>BoxAPI</code></a> is available.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#reload(org.bukkit.command.CommandSender)" class="member-name-link">reload</a><wbr>(@NotNull <a href="https://jd.papermc.io/paper/1.20/org/bukkit/command/CommandSender.html" title="class or interface in org.bukkit.command" class="external-link">CommandSender</a>&nbsp;sender)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#reload(org.bukkit.command.CommandSender)" class="member-name-link">reload</a><wbr>(@NotNull org.bukkit.command.CommandSender&nbsp;sender)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Reloads box and registered <a href="feature/BoxFeature.html" title="interface in net.okocraft.box.api.feature"><code>BoxFeature</code></a>s.</div>
 </div>
@@ -379,7 +379,7 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="reload(org.bukkit.command.CommandSender)">
 <h3>reload</h3>
 <div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">reload</span><wbr><span class="parameters">(@NotNull
- @NotNull <a href="https://jd.papermc.io/paper/1.20/org/bukkit/command/CommandSender.html" title="class or interface in org.bukkit.command" class="external-link">CommandSender</a>&nbsp;sender)</span></div>
+ @NotNull org.bukkit.command.CommandSender&nbsp;sender)</span></div>
 <div class="block">Reloads box and registered <a href="feature/BoxFeature.html" title="interface in net.okocraft.box.api.feature"><code>BoxFeature</code></a>s.
  <p>
  This method reloads some settings of Box (such as language and disabled world)
@@ -394,13 +394,13 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="canUseBox(org.bukkit.entity.Player)">
 <h3>canUseBox</h3>
 <div class="member-signature"><span class="return-type">boolean</span>&nbsp;<span class="element-name">canUseBox</span><wbr><span class="parameters">(@NotNull
- @NotNull <a href="https://jd.papermc.io/paper/1.20/org/bukkit/entity/Player.html" title="class or interface in org.bukkit.entity" class="external-link">Player</a>&nbsp;player)</span></div>
-<div class="block">Checks if the specified <a href="https://jd.papermc.io/paper/1.20/org/bukkit/entity/Player.html" title="class or interface in org.bukkit.entity" class="external-link"><code>Player</code></a> can use Box.</div>
+ @NotNull org.bukkit.entity.Player&nbsp;player)</span></div>
+<div class="block">Checks if the specified <code>Player</code> can use Box.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>player</code> - the <a href="https://jd.papermc.io/paper/1.20/org/bukkit/entity/Player.html" title="class or interface in org.bukkit.entity" class="external-link"><code>Player</code></a> to check</dd>
+<dd><code>player</code> - the <code>Player</code> to check</dd>
 <dt>Returns:</dt>
-<dd><code>true</code> if the <a href="https://jd.papermc.io/paper/1.20/org/bukkit/entity/Player.html" title="class or interface in org.bukkit.entity" class="external-link"><code>Player</code></a> can use Box, otherwise <code>false</code></dd>
+<dd><code>true</code> if the <code>Player</code> can use Box, otherwise <code>false</code></dd>
 </dl>
 </section>
 </li>
@@ -408,7 +408,7 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="isDisabledWorld(org.bukkit.World)">
 <h3>isDisabledWorld</h3>
 <div class="member-signature"><span class="return-type">boolean</span>&nbsp;<span class="element-name">isDisabledWorld</span><wbr><span class="parameters">(@NotNull
- @NotNull <a href="https://jd.papermc.io/paper/1.20/org/bukkit/World.html" title="class or interface in org.bukkit" class="external-link">World</a>&nbsp;world)</span></div>
+ @NotNull org.bukkit.World&nbsp;world)</span></div>
 <div class="block">Checks if Box is not available in the specified world.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
