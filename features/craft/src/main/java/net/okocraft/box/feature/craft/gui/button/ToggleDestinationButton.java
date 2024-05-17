@@ -1,6 +1,8 @@
 package net.okocraft.box.feature.craft.gui.button;
 
+import com.github.siroshun09.messages.minimessage.arg.Arg1;
 import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
+import com.github.siroshun09.messages.minimessage.base.Placeholder;
 import net.okocraft.box.feature.craft.gui.util.ItemCrafter;
 import net.okocraft.box.feature.craft.lang.DisplayKeys;
 import net.okocraft.box.feature.gui.api.button.Button;
@@ -15,9 +17,9 @@ import org.jetbrains.annotations.NotNull;
 
 public class ToggleDestinationButton implements Button {
 
-    private static final MiniMessageBase DISPLAY_NAME = MiniMessageBase.messageKey(DisplayKeys.DESTINATION_BUTTON);
     private static final MiniMessageBase INVENTORY = MiniMessageBase.messageKey(DisplayKeys.INVENTORY);
     private static final MiniMessageBase BOX = MiniMessageBase.messageKey(DisplayKeys.BOX);
+    private static final Arg1<Boolean> DISPLAY_NAME = Arg1.arg1(DisplayKeys.DESTINATION_BUTTON, Placeholder.messageBase("destination", state -> state ? INVENTORY: BOX));
     private static final MiniMessageBase CHANGE_TO_INVENTORY = MiniMessageBase.messageKey(DisplayKeys.CHANGE_TO_INVENTORY);
     private static final MiniMessageBase CHANGE_TO_BOX = MiniMessageBase.messageKey(DisplayKeys.CHANGE_TO_BOX);
 
@@ -36,9 +38,7 @@ public class ToggleDestinationButton implements Button {
     public @NotNull ItemStack createIcon(@NotNull PlayerSession session) {
         boolean currentState = session.getData(ItemCrafter.PUT_CRAFTED_ITEMS_INTO_INVENTORY) != null;
         return ItemEditor.create()
-                .displayName(DISPLAY_NAME.create(session.getMessageSource()))
-                .loreEmptyLine()
-                .loreLine((currentState ? INVENTORY : BOX).create(session.getMessageSource()))
+                .displayName(DISPLAY_NAME.apply(currentState).create(session.getMessageSource()))
                 .loreEmptyLine()
                 .loreLine((currentState ? CHANGE_TO_BOX : CHANGE_TO_INVENTORY).create(session.getMessageSource()))
                 .loreEmptyLine()

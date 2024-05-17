@@ -52,9 +52,9 @@ public final class DisplayKeys {
         collector.add(ALL_INGREDIENT_MODE, "<gold>All Ingredient Change Mode");
         collector.add(INGREDIENT_ORDER_NORMAL, "<gold>Normal Ingredient Order");
         collector.add(INGREDIENT_ORDER_STOCK_AMOUNT, "<gold>Sort Ingredients by Stock Amount");
-        collector.add(DESTINATION_BUTTON, "<gold>Destination of items");
-        collector.add(INVENTORY, "<gray>Inventory");
-        collector.add(BOX, "<gray>Box");
+        collector.add(DESTINATION_BUTTON, "<gold>Destination of items<gray>: <aqua><destination>");
+        collector.add(INVENTORY, "Inventory");
+        collector.add(BOX, "Box");
         collector.add(CHANGE_TO_INVENTORY, "<gray>Click to change to <aqua>inventory");
         collector.add(CHANGE_TO_BOX, "<gray>Click to change to <aqua>Box");
         collector.add(CURRENT_CRAFT_TIMES, "<gray>Current craft times: <aqua><times>");
