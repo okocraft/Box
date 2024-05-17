@@ -1,0 +1,158 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "net.okocraft.box",
+    "module": "box-autostore-feature",
+    "version": "6.0.0-SNAPSHOT",
+    "attributes": {
+      "org.gradle.status": "integration"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.7"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 21,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api"
+      },
+      "dependencies": [
+        {
+          "group": "com.github.siroshun09.configapi",
+          "module": "configapi-format-yaml",
+          "version": {
+            "requires": "5.0.0-beta.2"
+          },
+          "excludes": [
+            {
+              "group": "org.yaml",
+              "module": "snakeyaml"
+            }
+          ]
+        },
+        {
+          "group": "com.github.siroshun09.event4j",
+          "module": "event4j",
+          "version": {
+            "requires": "4.0.0-rc.1"
+          }
+        },
+        {
+          "group": "com.github.siroshun09.messages",
+          "module": "messages-minimessage",
+          "version": {
+            "requires": "0.8.0"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "box-autostore-feature-6.0.0-SNAPSHOT.jar",
+          "url": "box-autostore-feature-6.0.0-SNAPSHOT.jar",
+          "size": 54269,
+          "sha512": "82179fbd95b01555dcfdb9bfd3ff55b32a57fc44f2e044ecfa2bfebcbf70d36f4ad9924aafe4aba99b3bdd97758cb02f2b5f9e3e0b885d45c60bd85dfd2dc64f",
+          "sha256": "ca2f2a7e51ce4100cd57aa8e6c87916f277821a8c9a7764b84f2be63a23c2db4",
+          "sha1": "f7023659eaa6d7685b938de2d1c4562742ca37e8",
+          "md5": "606a0c29012e8649a3434cd0b8779762"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 21,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "dependencies": [
+        {
+          "group": "com.github.siroshun09.configapi",
+          "module": "configapi-format-yaml",
+          "version": {
+            "requires": "5.0.0-beta.2"
+          },
+          "excludes": [
+            {
+              "group": "org.yaml",
+              "module": "snakeyaml"
+            }
+          ]
+        },
+        {
+          "group": "com.github.siroshun09.event4j",
+          "module": "event4j",
+          "version": {
+            "requires": "4.0.0-rc.1"
+          }
+        },
+        {
+          "group": "com.github.siroshun09.messages",
+          "module": "messages-minimessage",
+          "version": {
+            "requires": "0.8.0"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "box-autostore-feature-6.0.0-SNAPSHOT.jar",
+          "url": "box-autostore-feature-6.0.0-SNAPSHOT.jar",
+          "size": 54269,
+          "sha512": "82179fbd95b01555dcfdb9bfd3ff55b32a57fc44f2e044ecfa2bfebcbf70d36f4ad9924aafe4aba99b3bdd97758cb02f2b5f9e3e0b885d45c60bd85dfd2dc64f",
+          "sha256": "ca2f2a7e51ce4100cd57aa8e6c87916f277821a8c9a7764b84f2be63a23c2db4",
+          "sha1": "f7023659eaa6d7685b938de2d1c4562742ca37e8",
+          "md5": "606a0c29012e8649a3434cd0b8779762"
+        }
+      ]
+    },
+    {
+      "name": "javadocElements",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "javadoc",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "box-autostore-feature-6.0.0-SNAPSHOT-javadoc.jar",
+          "url": "box-autostore-feature-6.0.0-SNAPSHOT-javadoc.jar",
+          "size": 110344,
+          "sha512": "3960d3188c52fb0d80626925589b7eb31f1f919a35264f5e1ba25a0162a2fa98ad18a6d4c7d0d9ac3cf0e27d29dbc33c28a222d0a93264bdd9f615865bb60c5e",
+          "sha256": "a7702e1f5926fb063faa5109ec7c45bf42bc8994c80220c1d73ef3bc8130619a",
+          "sha1": "ae64e3ddcee1169ba29283718ce0f06a55fb0ab3",
+          "md5": "f871d89d18dedb6c05052c243decced1"
+        }
+      ]
+    },
+    {
+      "name": "sourcesElements",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "box-autostore-feature-6.0.0-SNAPSHOT-sources.jar",
+          "url": "box-autostore-feature-6.0.0-SNAPSHOT-sources.jar",
+          "size": 27446,
+          "sha512": "82c091ce76a8fdaab8f27ac198646f83c06d1d95f1850190958f2d61769cb1601b6507a7c58ff065ab78c9f077148330709dc06e8a3b11bb46597f0d56a83d05",
+          "sha256": "7e7538c747715cf8b4c2d0568df9197a26653e1d970f99fd135ab69f75548e83",
+          "sha1": "6b730b1b24b657bbc6b1025f0df2266cdedb072b",
+          "md5": "851851ddc55905d4a5269d8f588ca2dd"
+        }
+      ]
+    }
+  ]
+}
