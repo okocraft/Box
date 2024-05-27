@@ -25,7 +25,7 @@ public class IngredientChangeModeButton implements Button {
 
     @Override
     public int getSlot() {
-        return slot;
+        return this.slot;
     }
 
     @Override

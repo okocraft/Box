@@ -236,19 +236,19 @@ public class SharedStockListCommand {
         }
 
         private @NotNull String getLongArg() {
-            return longArg;
+            return this.longArg;
         }
 
         private @NotNull String getShortArg() {
-            return shortArg;
+            return this.shortArg;
         }
 
         private @NotNull BiConsumer<String, Context> getContextConsumer() {
-            return contextConsumer;
+            return this.contextConsumer;
         }
 
         private @NotNull Function<String, List<String>> getTabCompleter() {
-            return tabCompleter;
+            return this.tabCompleter;
         }
     }
 
@@ -280,7 +280,7 @@ public class SharedStockListCommand {
 
             @Override
             public int compare(BoxItem item, BoxItem other) {
-                return comparator.compare(item.getPlainName(), other.getPlainName());
+                return this.comparator.compare(item.getPlainName(), other.getPlainName());
             }
 
         }
@@ -295,7 +295,7 @@ public class SharedStockListCommand {
 
             @Override
             public int compare(int k1, int k2) {
-                return comparator.compare(k1, k2);
+                return this.comparator.compare(k1, k2);
             }
         }
     }

@@ -40,7 +40,7 @@ public class FeatureEvent extends BoxEvent {
      * @return the {@link Type} of this event
      */
     public @NotNull Type getType() {
-        return type;
+        return this.type;
     }
 
     @Override

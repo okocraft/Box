@@ -38,7 +38,7 @@ public class RecipeSelectorMenu extends AbstractPaginatedMenu<BoxItemRecipe> {
 
     @Override
     protected @NotNull Button createButton(@NotNull BoxItemRecipe instance, int slot) {
-        return new RecipeSelectButton(slot, instance, recipeHolder.getRecipeList().indexOf(instance) + 1);
+        return new RecipeSelectButton(slot, instance, this.recipeHolder.getRecipeList().indexOf(instance) + 1);
     }
 
     @Override

@@ -37,7 +37,7 @@ public class AutoStoreSetting {
      * @return the user's {@link UUID}
      */
     public @NotNull UUID getUuid() {
-        return uuid;
+        return this.uuid;
     }
 
     /**

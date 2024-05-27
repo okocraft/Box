@@ -26,13 +26,13 @@ public record IngredientButton(int slot, int ingredientPos) implements Button {
 
     @Override
     public int getSlot() {
-        return slot;
+        return this.slot;
     }
 
     @Override
     public @NotNull ItemStack createIcon(@NotNull PlayerSession session) {
         var currentRecipe = session.getDataOrThrow(CurrentRecipe.DATA_KEY);
-        var ingredients = currentRecipe.getIngredients(ingredientPos);
+        var ingredients = currentRecipe.getIngredients(this.ingredientPos);
 
         if (ingredients == null) {
             return new ItemStack(Material.AIR);
@@ -68,7 +68,7 @@ public record IngredientButton(int slot, int ingredientPos) implements Button {
         var currentRecipe = session.getDataOrThrow(CurrentRecipe.DATA_KEY);
 
         if (clickType.isShiftClick()) {
-            var ingredients = currentRecipe.getIngredients(ingredientPos);
+            var ingredients = currentRecipe.getIngredients(this.ingredientPos);
 
             if (ingredients == null) {
                 return ClickResult.NO_UPDATE_NEEDED;
@@ -91,7 +91,7 @@ public record IngredientButton(int slot, int ingredientPos) implements Button {
 
             return ClickResult.changeMenu(menu);
         } else {
-            currentRecipe.nextRecipe(ingredientPos, session.getData(CHANGE_PER_INGREDIENT) == null);
+            currentRecipe.nextRecipe(this.ingredientPos, session.getData(CHANGE_PER_INGREDIENT) == null);
             return ClickResult.UPDATE_ICONS;
         }
     }

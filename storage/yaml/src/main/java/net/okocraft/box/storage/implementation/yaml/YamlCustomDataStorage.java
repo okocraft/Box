@@ -27,7 +27,7 @@ public class YamlCustomDataStorage implements CustomDataStorage {
 
     @Override
     public void init() throws Exception {
-        Files.createDirectories(customDataDirectory);
+        Files.createDirectories(this.customDataDirectory);
     }
 
     @Override

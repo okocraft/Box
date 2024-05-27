@@ -19,22 +19,22 @@ class BoxStickInventoryView extends InventoryView {
 
     @Override
     public @NotNull Inventory getTopInventory() {
-        return inventory;
+        return this.inventory;
     }
 
     @Override
     public @NotNull Inventory getBottomInventory() {
-        return player.getInventory();
+        return this.player.getInventory();
     }
 
     @Override
     public @NotNull HumanEntity getPlayer() {
-        return player;
+        return this.player;
     }
 
     @Override
     public @NotNull InventoryType getType() {
-        return inventory.getType();
+        return this.inventory.getType();
     }
 
     @Override

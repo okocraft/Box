@@ -28,7 +28,7 @@ public class CategoryButton implements Button {
 
     @Override
     public int getSlot() {
-        return slot;
+        return this.slot;
     }
 
     @Override

@@ -79,7 +79,7 @@ class StockHolderImpl implements StockHolder {
             stock = this.getStockOrPutNewStock(internalId, amount);
 
             if (stock == null) {
-                eventCaller.callSetEvent(this, item, amount, 0, cause);
+                this.eventCaller.callSetEvent(this, item, amount, 0, cause);
                 return;
             }
         }
@@ -87,7 +87,7 @@ class StockHolderImpl implements StockHolder {
         int previousAmount = stock.set(amount);
 
         if (previousAmount != amount) {
-            eventCaller.callSetEvent(this, item, amount, previousAmount, cause);
+            this.eventCaller.callSetEvent(this, item, amount, previousAmount, cause);
         }
     }
 
@@ -112,7 +112,7 @@ class StockHolderImpl implements StockHolder {
             stock = this.getStockOrPutNewStock(internalId, increment);
 
             if (stock == null) {
-                eventCaller.callIncreaseEvent(this, item, increment, increment, cause);
+                this.eventCaller.callIncreaseEvent(this, item, increment, increment, cause);
                 return increment;
             }
         }
@@ -120,11 +120,11 @@ class StockHolderImpl implements StockHolder {
         var result = stock.add(increment);
 
         if (result.getClass() == Stock.ModifyResult.Success.class) {
-            eventCaller.callIncreaseEvent(this, item, increment, result.newValue(), cause);
+            this.eventCaller.callIncreaseEvent(this, item, increment, result.newValue(), cause);
             return result.newValue();
         } else {
             int excess = ((Stock.ModifyResult.Overflow) result).excess();
-            eventCaller.callOverflowEvent(this, item, increment - excess, excess, cause);
+            this.eventCaller.callOverflowEvent(this, item, increment - excess, excess, cause);
             return Integer.MAX_VALUE;
         }
     }
@@ -166,7 +166,7 @@ class StockHolderImpl implements StockHolder {
         if (result.oldValue() != 0) {
             int decrement = result.oldValue() - result.newValue();
 
-            eventCaller.callDecreaseEvent(this, item, decrement, result.newValue(), cause);
+            this.eventCaller.callDecreaseEvent(this, item, decrement, result.newValue(), cause);
 
             if (returnType == RETURN_NEW_AMOUNT) {
                 return result.newValue();
@@ -204,7 +204,7 @@ class StockHolderImpl implements StockHolder {
             return -1;
         }
 
-        eventCaller.callDecreaseEvent(this, item, decrement, result.newValue(), cause);
+        this.eventCaller.callDecreaseEvent(this, item, decrement, result.newValue(), cause);
         return result.newValue();
     }
 
@@ -230,7 +230,7 @@ class StockHolderImpl implements StockHolder {
         }
 
         for (var entry : newAmountMap.object2IntEntrySet()) {
-            eventCaller.callDecreaseEvent(this, entry.getKey(), decrementMap.getInt(entry.getKey()), entry.getIntValue(), cause);
+            this.eventCaller.callDecreaseEvent(this, entry.getKey(), decrementMap.getInt(entry.getKey()), entry.getIntValue(), cause);
         }
 
         return true;
@@ -285,12 +285,12 @@ class StockHolderImpl implements StockHolder {
 
         try {
             stockDataCollection = this.createStockDataAtUnsynchronized();
-            stockMap.clear();
+            this.stockMap.clear();
         } finally {
             this.lock.unlockWrite(stamp);
         }
 
-        eventCaller.callResetEvent(this, stockDataCollection);
+        this.eventCaller.callResetEvent(this, stockDataCollection);
 
         return stockDataCollection;
     }
@@ -328,7 +328,7 @@ class StockHolderImpl implements StockHolder {
         long stamp = this.lock.readLock();
 
         try {
-            ObjectSet<Int2ObjectMap.Entry<Stock>> entrySet = stockMap.int2ObjectEntrySet();
+            ObjectSet<Int2ObjectMap.Entry<Stock>> entrySet = this.stockMap.int2ObjectEntrySet();
             stockDataCollection = new ObjectArrayList<>(entrySet.size());
 
             for (var entry : entrySet) {

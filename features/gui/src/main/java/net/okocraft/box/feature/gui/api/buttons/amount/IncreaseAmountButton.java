@@ -54,7 +54,7 @@ public class IncreaseAmountButton extends AmountModificationButton {
     }
 
     private @NotNull Arg1<Integer> getClickToLore(int unit, int amount) {
-        return unit != 1 && amount == 1 ? clickToSetLore : clickToIncreaseLore;
+        return unit != 1 && amount == 1 ? this.clickToSetLore : this.clickToIncreaseLore;
     }
 
     @Override

@@ -25,8 +25,8 @@ public class StorageMigrator implements AutoCloseable {
     }
 
     public void init() throws Exception {
-        sourceStorage.init();
-        targetStorage.init();
+        this.sourceStorage.init();
+        this.targetStorage.init();
     }
 
     public void run() throws Exception {
@@ -40,8 +40,8 @@ public class StorageMigrator implements AutoCloseable {
     public void close() throws Exception {
         if (!this.closed) {
             this.closed = true;
-            sourceStorage.close();
-            targetStorage.close();
+            this.sourceStorage.close();
+            this.targetStorage.close();
         }
     }
 

@@ -45,7 +45,7 @@ public abstract class BaseCommand implements Command, SubCommandHoldable, Listen
         }
 
         if (args.length == 0) {
-            if (commandOfNoArgument != null && sender.hasPermission(commandOfNoArgument.getPermissionNode())) {
+            if (this.commandOfNoArgument != null && sender.hasPermission(this.commandOfNoArgument.getPermissionNode())) {
                 this.scheduler.runAsyncTask(() -> this.commandOfNoArgument.onCommand(sender, args));
             } else {
                 ErrorMessages.NOT_ENOUGH_ARGUMENT.source(source).send(sender);
@@ -54,7 +54,7 @@ public abstract class BaseCommand implements Command, SubCommandHoldable, Listen
             return;
         }
 
-        var optionalSubCommand = subCommandHolder.search(args[0]);
+        var optionalSubCommand = this.subCommandHolder.search(args[0]);
 
         if (optionalSubCommand.isEmpty()) {
             if (!args[0].equalsIgnoreCase("help")) {
@@ -89,14 +89,14 @@ public abstract class BaseCommand implements Command, SubCommandHoldable, Listen
         }
 
         if (args.length == 1) {
-            return subCommandHolder.getSubCommands().stream()
+            return this.subCommandHolder.getSubCommands().stream()
                     .filter(cmd -> sender.hasPermission(cmd.getPermissionNode()))
                     .map(Command::getName)
                     .filter(cmdName -> cmdName.startsWith(args[0].toLowerCase(Locale.ROOT)))
                     .toList();
         }
 
-        return subCommandHolder.search(args[0])
+        return this.subCommandHolder.search(args[0])
                 .filter(cmd -> sender.hasPermission(cmd.getPermissionNode()))
                 .map(cmd -> cmd.onTabComplete(sender, args))
                 .orElse(Collections.emptyList());
@@ -104,7 +104,7 @@ public abstract class BaseCommand implements Command, SubCommandHoldable, Listen
 
     @Override
     public @NotNull SubCommandHolder getSubCommandHolder() {
-        return subCommandHolder;
+        return this.subCommandHolder;
     }
 
     @Override
@@ -113,7 +113,7 @@ public abstract class BaseCommand implements Command, SubCommandHoldable, Listen
     }
 
     public void changeNoArgumentCommand(@Nullable Command command) {
-        commandOfNoArgument = command;
+        this.commandOfNoArgument = command;
     }
 
     @EventHandler

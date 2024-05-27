@@ -33,14 +33,14 @@ public class SQLiteDatabase implements Database {
     @VisibleForTesting
     SQLiteDatabase(@NotNull StorageContext<SQLiteSetting> context) {
         this.tablePrefix = context.setting().tablePrefix();
-        this.schemaSet = SQLiteTableSchema.create(tablePrefix);
+        this.schemaSet = SQLiteTableSchema.create(this.tablePrefix);
         this.databasePath = context.pluginDirectory().resolve(context.setting().filename());
         this.journalMode = context.migrationMode() ? JournalMode.OFF : JournalMode.TRUNCATE ;
     }
 
     @Override
     public void prepare() throws Exception {
-        if (!Files.exists(databasePath)) {
+        if (!Files.exists(this.databasePath)) {
             createDatabaseFile();
         }
 
@@ -70,14 +70,14 @@ public class SQLiteDatabase implements Database {
     @Override
     public @NotNull List<Storage.Property> getInfo() {
         return List.of(
-                Storage.Property.of("table-prefix", tablePrefix),
-                Storage.Property.of("database-filename", databasePath.getFileName().toString())
+                Storage.Property.of("table-prefix", this.tablePrefix),
+                Storage.Property.of("database-filename", this.databasePath.getFileName().toString())
         );
     }
 
     @Override
     public @NotNull SchemaSet getSchemaSet() {
-        return schemaSet;
+        return this.schemaSet;
     }
 
     @Override

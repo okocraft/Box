@@ -18,7 +18,7 @@ abstract class AmountModificationButton implements Button {
 
     @Override
     public final int getSlot() {
-        return slot;
+        return this.slot;
     }
 
     protected final @NotNull Amount getOrCreateAmount(@NotNull PlayerSession session) {

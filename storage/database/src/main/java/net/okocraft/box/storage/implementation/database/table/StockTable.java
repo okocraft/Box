@@ -108,9 +108,9 @@ public class StockTable extends AbstractTable implements PartialSavingStockStora
     }
 
     private @NotNull String insertOrUpdateStockDataStatement() {
-        if (database instanceof MySQLDatabase) {
+        if (this.database instanceof MySQLDatabase) {
             return "INSERT INTO `%table%` (`uuid`, `item_id`, `amount`) VALUES (?, ?, ?) AS new ON DUPLICATE KEY UPDATE `amount` = new.amount";
-        } else if (database instanceof SQLiteDatabase) {
+        } else if (this.database instanceof SQLiteDatabase) {
             return "INSERT INTO `%table%` (`uuid`, `item_id`, `amount`) VALUES (?, ?, ?) ON CONFLICT (`uuid`, `item_id`) DO UPDATE SET `amount` = excluded.amount";
         } else {
             throw new UnsupportedOperationException();

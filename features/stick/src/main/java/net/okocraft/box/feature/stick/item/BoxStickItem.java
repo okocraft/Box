@@ -35,7 +35,7 @@ public final class BoxStickItem {
      * @param target the target {@link PersistentDataContainer}
      */
     public void saveBoxStickKey(@NotNull PersistentDataContainer target) {
-        target.set(key, PersistentDataType.BYTE, (byte) 1);
+        target.set(this.key, PersistentDataType.BYTE, (byte) 1);
     }
 
     /**
@@ -93,13 +93,13 @@ public final class BoxStickItem {
 
     @Override
     public int hashCode() {
-        return Objects.hash(key);
+        return Objects.hash(this.key);
     }
 
     @Override
     public String toString() {
         return "BoxStickItem[" +
-                "key=" + key +
+                "key=" + this.key +
                 ']';
     }
 }

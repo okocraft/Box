@@ -113,7 +113,7 @@ public class AutoStoreCommand extends AbstractCommand {
     }
 
     private @NotNull Optional<AutoStoreSubCommand> matchSubCommand(@NotNull String nameOrAlias) {
-        return Stream.of(allCommand, directCommand, itemCommand)
+        return Stream.of(this.allCommand, this.directCommand, this.itemCommand)
                 .filter(command -> command.getName().charAt(0) == nameOrAlias.charAt(0))
                 .findAny();
     }

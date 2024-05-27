@@ -84,7 +84,7 @@ public class BoxCore implements BoxAPI {
 
         BoxLogger.logger().info("Initializing managers...");
 
-        userManager = new BoxUserManager(storage.getUserStorage());
+        this.userManager = new BoxUserManager(storage.getUserStorage());
 
         try {
             var itemLoadResult = ItemLoader.load(storage.getItemStorage(), this.context.defaultItemProvider());
@@ -103,9 +103,9 @@ public class BoxCore implements BoxAPI {
         this.playerMap = new BoxPlayerMapImpl(this.userManager, this.stockManager, this.context.eventManager(), this.context.scheduler(), this.context.messageProvider());
         this.playerMap.loadAll();
 
-        Bukkit.getPluginManager().registerEvents(new PlayerConnectionListener(this.playerMap), context.plugin());
+        Bukkit.getPluginManager().registerEvents(new PlayerConnectionListener(this.playerMap), this.context.plugin());
 
-        stockManager.schedulerAutoSaveTask(this.context.scheduler());
+        this.stockManager.schedulerAutoSaveTask(this.context.scheduler());
 
         BoxLogger.logger().info("Registering commands...");
 
@@ -121,11 +121,11 @@ public class BoxCore implements BoxAPI {
     }
 
     public void disable() {
-        if (playerMap != null) {
-            playerMap.unloadAll();
+        if (this.playerMap != null) {
+            this.playerMap.unloadAll();
         }
 
-        stockManager.close();
+        this.stockManager.close();
 
         DebugListener.unregister(this.context.eventManager());
     }
@@ -190,7 +190,7 @@ public class BoxCore implements BoxAPI {
 
     @Override
     public @NotNull Path getPluginDirectory() {
-        return context.dataDirectory();
+        return this.context.dataDirectory();
     }
 
     @Override
@@ -205,17 +205,17 @@ public class BoxCore implements BoxAPI {
 
     @Override
     public @NotNull UserManager getUserManager() {
-        return userManager;
+        return this.userManager;
     }
 
     @Override
     public @NotNull ItemManager getItemManager() {
-        return itemManager;
+        return this.itemManager;
     }
 
     @Override
     public @NotNull StockManager getStockManager() {
-        return stockManager;
+        return this.stockManager;
     }
 
     @Override
@@ -235,17 +235,17 @@ public class BoxCore implements BoxAPI {
 
     @Override
     public @NotNull BoxPlayerMap getBoxPlayerMap() {
-        return playerMap;
+        return this.playerMap;
     }
 
     @Override
     public @NotNull BoxCommand getBoxCommand() {
-        return boxCommand;
+        return this.boxCommand;
     }
 
     @Override
     public @NotNull BoxAdminCommand getBoxAdminCommand() {
-        return boxAdminCommand;
+        return this.boxAdminCommand;
     }
 
     public void initializeFeatures(@NotNull List<BoxFeature> features) {

@@ -33,7 +33,7 @@ public interface Storage {
         }
 
         public @NotNull String asString() {
-            return key + ": " + value;
+            return this.key + ": " + this.value;
         }
     }
 }

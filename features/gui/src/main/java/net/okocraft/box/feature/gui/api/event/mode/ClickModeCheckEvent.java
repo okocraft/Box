@@ -20,15 +20,15 @@ public class ClickModeCheckEvent extends BoxEvent {
     }
 
     public @NotNull PlayerSession getSession() {
-        return session;
+        return this.session;
     }
 
     public @NotNull BoxItemClickMode getMode() {
-        return mode;
+        return this.mode;
     }
 
     public boolean getOriginalResult() {
-        return originalResult;
+        return this.originalResult;
     }
 
     public boolean isAllowed() {

@@ -53,13 +53,13 @@ record DepositAllImpl(@NotNull StockHolder stockHolder,
 
             var boxItem = itemManager.getBoxItem(item).orElse(null);
 
-            if (boxItem == null || (filter != null && !filter.test(boxItem)) || (view != null && !checkClickEvent(view, i))) {
+            if (boxItem == null || (this.filter != null && !this.filter.test(boxItem)) || (view != null && !checkClickEvent(view, i))) {
                 continue;
             }
 
             int itemAmount = item.getAmount();
 
-            stockHolder.increase(boxItem, itemAmount, cause);
+            this.stockHolder.increase(boxItem, itemAmount, cause);
             contents[i] = null;
 
             resultMap.mergeInt(boxItem, itemAmount, Integer::sum);

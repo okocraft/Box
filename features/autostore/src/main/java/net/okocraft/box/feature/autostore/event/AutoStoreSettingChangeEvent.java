@@ -26,13 +26,13 @@ public class AutoStoreSettingChangeEvent extends BoxEvent {
      * @return the changed {@link AutoStoreSetting}
      */
     public @NotNull AutoStoreSetting getSetting() {
-        return setting;
+        return this.setting;
     }
 
     @Override
     public String toString() {
         return "AutoStoreSettingChangeEvent{" +
-                "setting=" + setting +
+                "setting=" + this.setting +
                 '}';
     }
 }

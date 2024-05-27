@@ -19,14 +19,14 @@ public class MenuEvent extends BoxEvent {
     }
 
     public @NotNull Menu getMenu() {
-        return menu;
+        return this.menu;
     }
 
     public @NotNull PlayerSession getSession() {
-        return session;
+        return this.session;
     }
 
     public @NotNull Player getViewer() {
-        return session.getViewer();
+        return this.session.getViewer();
     }
 }

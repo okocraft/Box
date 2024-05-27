@@ -38,22 +38,22 @@ record DepositImpl(@NotNull StockHolder stockHolder, @NotNull BoxItem boxItem,
 
         int depositedAmount = 0;
 
-        for (int i = 0; i < contents.length && depositedAmount < limit; i++) {
+        for (int i = 0; i < contents.length && depositedAmount < this.limit; i++) {
             var item = contents[i];
 
-            if (item == null || !boxItem.getOriginal().isSimilar(item) || (view != null && !checkClickEvent(view, i))) {
+            if (item == null || !this.boxItem.getOriginal().isSimilar(item) || (view != null && !checkClickEvent(view, i))) {
                 continue;
             }
 
-            int remaining = limit - depositedAmount;
+            int remaining = this.limit - depositedAmount;
             int itemAmount = item.getAmount();
 
             if (itemAmount <= remaining) {
-                stockHolder.increase(boxItem, itemAmount, cause);
+                this.stockHolder.increase(this.boxItem, itemAmount, cause);
                 depositedAmount += itemAmount;
                 contents[i] = null;
             } else {
-                stockHolder.increase(boxItem, remaining, cause);
+                this.stockHolder.increase(this.boxItem, remaining, cause);
                 depositedAmount += remaining;
                 contents[i] = item.asQuantity(itemAmount - remaining);
             }

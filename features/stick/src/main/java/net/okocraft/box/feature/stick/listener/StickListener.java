@@ -98,7 +98,7 @@ public class StickListener implements Listener {
         var inv = player.getInventory();
         var offHand = inv.getItemInOffHand();
 
-        boolean isStickInOffhand = boxStickItem.check(offHand);
+        boolean isStickInOffhand = this.boxStickItem.check(offHand);
 
         if (isStickInOffhand && block.getState() instanceof Container container) {
             clickContainer(event, boxPlayer, container, block.getLocation().clone());
@@ -119,7 +119,7 @@ public class StickListener implements Listener {
         BoxItem offHandBoxItem;
         boolean moveStickToOffHand;
 
-        if (boxStickItem.check(mainHand)) {
+        if (this.boxStickItem.check(mainHand)) {
             if (!offHand.getType().isAir()) {
                 var optionalOffHandBoxItem = BoxAPI.api().getItemManager().getBoxItem(offHand);
 
@@ -371,7 +371,7 @@ public class StickListener implements Listener {
     }
 
     private boolean hasBoxStickInOffHand(@NotNull Player player) {
-        return boxStickItem.check(player.getInventory().getItemInOffHand());
+        return this.boxStickItem.check(player.getInventory().getItemInOffHand());
     }
 
     private boolean isIllegalStack(@NotNull ItemStack itemStack) {

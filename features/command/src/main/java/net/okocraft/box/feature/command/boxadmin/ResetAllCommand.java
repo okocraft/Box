@@ -63,8 +63,8 @@ public class ResetAllCommand extends AbstractCommand {
             return;
         }
 
-        if (CONFIRM.equalsIgnoreCase(args[1]) && confirmationMap.containsKey(sender)) {
-            var target = confirmationMap.remove(sender);
+        if (CONFIRM.equalsIgnoreCase(args[1]) && this.confirmationMap.containsKey(sender)) {
+            var target = this.confirmationMap.remove(sender);
 
             BoxAPI.api().getStockManager().getPersonalStockHolder(target).reset();
 
@@ -83,7 +83,7 @@ public class ResetAllCommand extends AbstractCommand {
             return;
         }
 
-        if (CANCEL.equalsIgnoreCase(args[1]) && confirmationMap.remove(sender) != null) {
+        if (CANCEL.equalsIgnoreCase(args[1]) && this.confirmationMap.remove(sender) != null) {
             this.cancel.source(msgSrc).send(sender);
             return;
         }
@@ -91,7 +91,7 @@ public class ResetAllCommand extends AbstractCommand {
         var target = UserSearcher.search(args[1]);
 
         if (target != null) {
-            confirmationMap.put(sender, target);
+            this.confirmationMap.put(sender, target);
             this.confirmation.apply(target.getName().orElseGet(target.getUUID()::toString)).source(msgSrc).send(sender);
         } else {
             ErrorMessages.PLAYER_NOT_FOUND.apply(args[1]).source(msgSrc).send(sender);
@@ -104,7 +104,7 @@ public class ResetAllCommand extends AbstractCommand {
             return Collections.emptyList();
         }
 
-        if (confirmationMap.containsKey(sender)) {
+        if (this.confirmationMap.containsKey(sender)) {
             var secondArgument = args[1].toLowerCase(Locale.ROOT);
 
             if (secondArgument.isEmpty() ||

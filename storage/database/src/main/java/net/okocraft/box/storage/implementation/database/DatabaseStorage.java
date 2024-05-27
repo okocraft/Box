@@ -30,61 +30,61 @@ public class DatabaseStorage implements Storage {
         this.database = database;
         this.metaTable = new MetaTable(database);
         this.userTable = new UserTable(database);
-        this.itemTable = new ItemTable(database, metaTable);
+        this.itemTable = new ItemTable(database, this.metaTable);
         this.stockTable = new StockTable(database);
-        this.customDataTable = new CustomDataTable(database, metaTable);
+        this.customDataTable = new CustomDataTable(database, this.metaTable);
     }
 
     @Override
     public @NotNull String getName() {
-        return database.getType().getName();
+        return this.database.getType().getName();
     }
 
     @Override
     public @NotNull List<Property> getInfo() {
         var result = new ArrayList<Property>();
-        result.add(Property.of("database-type", database.getType().getName()));
-        result.addAll(database.getInfo());
+        result.add(Property.of("database-type", this.database.getType().getName()));
+        result.addAll(this.database.getInfo());
         return Collections.unmodifiableList(result);
     }
 
     @Override
     public void init() throws Exception {
-        database.prepare();
+        this.database.prepare();
 
-        metaTable.init();
-        userTable.init();
-        itemTable.init();
-        stockTable.init();
-        customDataTable.init();
+        this.metaTable.init();
+        this.userTable.init();
+        this.itemTable.init();
+        this.stockTable.init();
+        this.customDataTable.init();
     }
 
     @Override
     public void close() throws Exception {
-        database.shutdown();
+        this.database.shutdown();
     }
 
     @Override
     public @NotNull ItemStorage getItemStorage() {
-        return itemTable;
+        return this.itemTable;
     }
 
     @Override
     public @NotNull UserStorage getUserStorage() {
-        return userTable;
+        return this.userTable;
     }
 
     @Override
     public @NotNull StockStorage getStockStorage() {
-        return stockTable;
+        return this.stockTable;
     }
 
     @Override
     public @NotNull CustomDataStorage getCustomDataStorage() {
-        return customDataTable;
+        return this.customDataTable;
     }
 
     public @NotNull Database getDatabase() {
-        return database;
+        return this.database;
     }
 }

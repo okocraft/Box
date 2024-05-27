@@ -28,7 +28,7 @@ public class UserTable extends AbstractTable implements UserStorage {
 
     @Override
     public @NotNull BoxUser loadBoxUser(@NotNull UUID uuid) throws Exception {
-        try (var connection = database.getConnection();
+        try (var connection = this.database.getConnection();
              var statement = prepareStatement(connection, "SELECT `username` FROM `%table%` WHERE `uuid`=? LIMIT 1")) {
             statement.setString(1, uuid.toString());
 
@@ -41,7 +41,7 @@ public class UserTable extends AbstractTable implements UserStorage {
 
     @Override
     public void saveBoxUser(@NotNull UUID uuid, @Nullable String name) throws Exception {
-        try (var connection = database.getConnection();
+        try (var connection = this.database.getConnection();
              var statement = this.prepareStatement(connection, insertOrUpdateUsernameStatement())) {
             statement.setString(1, uuid.toString());
             statement.setString(2, name != null ? name : "");
@@ -51,7 +51,7 @@ public class UserTable extends AbstractTable implements UserStorage {
 
     @Override
     public @Nullable BoxUser searchByName(@NotNull String name) throws Exception {
-        try (var connection = database.getConnection();
+        try (var connection = this.database.getConnection();
              var statement = prepareStatement(connection, "SELECT * FROM `%table%` WHERE `username` LIKE ?")) {
             statement.setString(1, name);
 
@@ -74,7 +74,7 @@ public class UserTable extends AbstractTable implements UserStorage {
     public @NotNull Collection<BoxUser> loadAllBoxUsers() throws Exception {
         var result = new ArrayList<BoxUser>();
 
-        try (var connection = database.getConnection();
+        try (var connection = this.database.getConnection();
              var statement = prepareStatement(connection, "SELECT * FROM `%table%`")) {
             try (var resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
@@ -93,7 +93,7 @@ public class UserTable extends AbstractTable implements UserStorage {
 
     @Override
     public void saveBoxUsers(@NotNull Collection<BoxUser> users) throws Exception {
-        try (var connection = database.getConnection();
+        try (var connection = this.database.getConnection();
              var statement = prepareStatement(connection, insertOrUpdateUsernameStatement())) {
             for (var user : users) {
                 statement.setString(1, user.getUUID().toString());
@@ -106,9 +106,9 @@ public class UserTable extends AbstractTable implements UserStorage {
     }
 
     private @NotNull String insertOrUpdateUsernameStatement() {
-        if (database instanceof MySQLDatabase) {
+        if (this.database instanceof MySQLDatabase) {
             return "INSERT INTO `%table%` (`uuid`, `username`) VALUES (?, ?) AS new ON DUPLICATE KEY UPDATE `username` = new.username";
-        } else if (database instanceof SQLiteDatabase) {
+        } else if (this.database instanceof SQLiteDatabase) {
             return "INSERT INTO `%table%` (`uuid`, `username`) VALUES (?, ?) ON CONFLICT (`uuid`) DO UPDATE SET `username` = excluded.username";
         } else {
             throw new UnsupportedOperationException();

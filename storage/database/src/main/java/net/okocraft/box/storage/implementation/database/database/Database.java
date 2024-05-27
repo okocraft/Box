@@ -33,7 +33,7 @@ public interface Database {
         }
 
         public @NotNull String getName() {
-            return name;
+            return this.name;
         }
     }
 }

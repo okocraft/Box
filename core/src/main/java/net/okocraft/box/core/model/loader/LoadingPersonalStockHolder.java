@@ -148,7 +148,7 @@ public class LoadingPersonalStockHolder implements PersonalStockHolder {
 
     @VisibleForTesting
     boolean isClosed() {
-        return closed;
+        return this.closed;
     }
 
     @Override

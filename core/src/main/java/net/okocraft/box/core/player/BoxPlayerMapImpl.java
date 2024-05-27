@@ -46,19 +46,19 @@ public class BoxPlayerMapImpl implements BoxPlayerMap {
 
     @Override
     public boolean isLoaded(@NotNull Player player) {
-        var boxPlayer = playerMap.get(player);
+        var boxPlayer = this.playerMap.get(player);
         return boxPlayer != null && boxPlayer != NOT_LOADED_YET;
     }
 
     @Override
     public boolean isScheduledLoading(@NotNull Player player) {
-        return playerMap.get(player) == NOT_LOADED_YET;
+        return this.playerMap.get(player) == NOT_LOADED_YET;
     }
 
     @Override
     public @NotNull BoxPlayer get(@NotNull Player player) {
         Objects.requireNonNull(player);
-        var boxPlayer = playerMap.get(player);
+        var boxPlayer = this.playerMap.get(player);
 
         if (boxPlayer == null || boxPlayer == NOT_LOADED_YET) {
             throw new IllegalStateException("player is not loaded (" + player.getName() + ")");
@@ -79,7 +79,7 @@ public class BoxPlayerMapImpl implements BoxPlayerMap {
         try {
             loadBoxPlayer(player);
         } catch (Exception e) {
-            playerMap.remove(player);
+            this.playerMap.remove(player);
             BoxLogger.logger().error("Could not load a player ({})", player.getName(), e);
             CoreMessages.LOAD_FAILURE_ON_JOIN.source(this.messageProvider.findSource(player)).send(player);
         }
@@ -87,7 +87,7 @@ public class BoxPlayerMapImpl implements BoxPlayerMap {
 
     private void loadBoxPlayer(@NotNull Player player) {
         if (!player.isOnline()) { // The player is no longer online, so remove it from the map.
-            playerMap.remove(player);
+            this.playerMap.remove(player);
             return;
         }
 

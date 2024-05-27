@@ -33,22 +33,22 @@ public abstract class AbstractPaginatedMenu<T> implements PaginatedMenu {
         this.list = list;
         this.currentPageKey = currentPageKey;
         this.iconsPerPage = (getRows() - 1) * 9;
-        this.maxPage = (list.size() + iconsPerPage - 1) / iconsPerPage;
+        this.maxPage = (list.size() + this.iconsPerPage - 1) / this.iconsPerPage;
     }
 
     @Override
     public final int getRows() {
-        return rows;
+        return this.rows;
     }
 
     @Override
     public final int getMaxPage() {
-        return maxPage;
+        return this.maxPage;
     }
 
     @Override
     public final int getIconsPerPage() {
-        return iconsPerPage;
+        return this.iconsPerPage;
     }
 
     @Override
@@ -67,11 +67,11 @@ public abstract class AbstractPaginatedMenu<T> implements PaginatedMenu {
         var buttons = new ArrayList<Button>();
         int currentPage = this.getCurrentPage(session);
 
-        int start = (currentPage - 1) * iconsPerPage;
-        int end = start + iconsPerPage;
+        int start = (currentPage - 1) * this.iconsPerPage;
+        int end = start + this.iconsPerPage;
 
-        for (int i = start, limit = list.size(), slot = 0; i < limit && i < end; i++, slot++) {
-            buttons.add(createButton(list.get(i), slot));
+        for (int i = start, limit = this.list.size(), slot = 0; i < limit && i < end; i++, slot++) {
+            buttons.add(createButton(this.list.get(i), slot));
         }
 
         if (currentPage < this.maxPage) {
@@ -99,7 +99,7 @@ public abstract class AbstractPaginatedMenu<T> implements PaginatedMenu {
 
         @Override
         public int getSlot() {
-            return next ? rows * 9 - 1 : (rows - 1) * 9;
+            return this.next ? this.rows * 9 - 1 : (this.rows - 1) * 9;
         }
 
         @Override

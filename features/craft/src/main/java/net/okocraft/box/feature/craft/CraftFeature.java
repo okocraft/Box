@@ -49,15 +49,15 @@ public class CraftFeature extends AbstractBoxFeature implements Reloadable {
 
         BoxLogger.logger().info("{} recipes are imported!", recipeMap.size());
 
-        ClickModeRegistry.register(craftMode);
+        ClickModeRegistry.register(this.craftMode);
 
-        BoxAPI.api().getBoxCommand().getSubCommandHolder().register(craftCommand);
+        BoxAPI.api().getBoxCommand().getSubCommandHolder().register(this.craftCommand);
     }
 
     @Override
     public void disable(@NotNull FeatureContext.Disabling context) {
-        ClickModeRegistry.unregister(craftMode);
-        BoxAPI.api().getBoxCommand().getSubCommandHolder().unregister(craftCommand);
+        ClickModeRegistry.unregister(this.craftMode);
+        BoxAPI.api().getBoxCommand().getSubCommandHolder().unregister(this.craftCommand);
     }
 
     @Override

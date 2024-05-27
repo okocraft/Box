@@ -18,7 +18,7 @@ public class RecipeHolder {
      * @param recipe the {@link BoxItemRecipe} to add
      */
     public void addRecipe(@NotNull BoxItemRecipe recipe) {
-        recipeList.add(recipe);
+        this.recipeList.add(recipe);
     }
 
     /**
@@ -27,6 +27,6 @@ public class RecipeHolder {
      * @return the {@link BoxItemRecipe} list
      */
     public @NotNull List<BoxItemRecipe> getRecipeList() {
-        return recipeList;
+        return this.recipeList;
     }
 }

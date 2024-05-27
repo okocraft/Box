@@ -195,9 +195,9 @@ class BoxItemMap {
     }
 
     void rebuildCache() {
-        this.copiedItemIdListCache = IntImmutableList.of(itemNameToId.values().toIntArray());
-        this.copiedItemNameListCache = ObjectImmutableList.of(itemNameToId.keySet().toArray(String[]::new));
-        this.copiedBoxItemListCache = ObjectImmutableList.of(idToBoxItem.values().toArray(BoxItem[]::new));
+        this.copiedItemIdListCache = IntImmutableList.of(this.itemNameToId.values().toIntArray());
+        this.copiedItemNameListCache = ObjectImmutableList.of(this.itemNameToId.keySet().toArray(String[]::new));
+        this.copiedBoxItemListCache = ObjectImmutableList.of(this.idToBoxItem.values().toArray(BoxItem[]::new));
     }
 
     private @Nullable BoxItem getByItemNameAtUnsynchronized(@NotNull String itemName) {
@@ -205,14 +205,14 @@ class BoxItemMap {
     }
 
     private @NotNull IntImmutableList getItemIdListAtUnsynchronized() {
-        return copiedItemIdListCache;
+        return this.copiedItemIdListCache;
     }
 
     private @NotNull ObjectImmutableList<String> getItemNameListAtUnsynchronized() {
-        return copiedItemNameListCache;
+        return this.copiedItemNameListCache;
     }
 
     private @NotNull ObjectImmutableList<BoxItem> getBoxItemListAtUnsynchronized() {
-        return copiedBoxItemListCache;
+        return this.copiedBoxItemListCache;
     }
 }

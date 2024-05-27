@@ -49,15 +49,15 @@ public class CommandFeature extends AbstractBoxFeature {
     @Override
     public void enable(@NotNull FeatureContext.Enabling context) {
         var api = BoxAPI.api();
-        boxSubCommands.forEach(api.getBoxCommand().getSubCommandHolder()::register);
-        boxAdminSubCommands.forEach(api.getBoxAdminCommand().getSubCommandHolder()::register);
+        this.boxSubCommands.forEach(api.getBoxCommand().getSubCommandHolder()::register);
+        this.boxAdminSubCommands.forEach(api.getBoxAdminCommand().getSubCommandHolder()::register);
     }
 
     @Override
     public void disable(@NotNull FeatureContext.Disabling context) {
         var api = BoxAPI.api();
-        boxSubCommands.forEach(api.getBoxCommand().getSubCommandHolder()::unregister);
-        boxAdminSubCommands.forEach(api.getBoxAdminCommand().getSubCommandHolder()::unregister);
+        this.boxSubCommands.forEach(api.getBoxCommand().getSubCommandHolder()::unregister);
+        this.boxAdminSubCommands.forEach(api.getBoxAdminCommand().getSubCommandHolder()::unregister);
     }
 
     @SafeVarargs

@@ -28,13 +28,13 @@ public class RecipeImportEvent extends BoxEvent {
      * @return the imported {@link BoxItemRecipe}
      */
     public @NotNull BoxItemRecipe getRecipe() {
-        return recipe;
+        return this.recipe;
     }
 
     @Override
     public String toString() {
         return "RecipeImportEvent{" +
-                "recipe=" + recipe +
+                "recipe=" + this.recipe +
                 '}';
     }
 }

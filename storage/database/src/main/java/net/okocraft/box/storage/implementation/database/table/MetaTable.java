@@ -33,7 +33,7 @@ public class MetaTable extends AbstractTable {
         var version = getVersion(ITEM_DATA_VERSION_KEY);
 
         if (version != null) {
-            hasItemDataVersion = true;
+            this.hasItemDataVersion = true;
             return MCDataVersion.of(version);
         } else {
             return null;
@@ -41,25 +41,25 @@ public class MetaTable extends AbstractTable {
     }
 
     public void saveItemDataVersion(int dataVersion) throws SQLException {
-        saveVersion(ITEM_DATA_VERSION_KEY, dataVersion, hasItemDataVersion);
+        saveVersion(ITEM_DATA_VERSION_KEY, dataVersion, this.hasItemDataVersion);
     }
 
     public int getDefaultItemProviderVersion() throws SQLException {
         var version = getVersion(DEFAULT_ITEM_VERSION_KEY);
 
         if (version != null) {
-            hasDefaultItemVersion = true;
+            this.hasDefaultItemVersion = true;
         }
 
         return Objects.requireNonNullElse(version, 0);
     }
 
     public void saveDefaultItemVersion(int version) throws SQLException {
-        saveVersion(DEFAULT_ITEM_VERSION_KEY, version, hasDefaultItemVersion);
+        saveVersion(DEFAULT_ITEM_VERSION_KEY, version, this.hasDefaultItemVersion);
     }
 
     private @Nullable Integer getVersion(@NotNull String key) throws SQLException {
-        try (var connection = database.getConnection();
+        try (var connection = this.database.getConnection();
              var statement = prepareStatement(connection, "SELECT `value` FROM `%table%` WHERE `key`=? LIMIT 1")) {
             statement.setString(1, key);
 
@@ -78,7 +78,7 @@ public class MetaTable extends AbstractTable {
                 "UPDATE `%table%` SET value=? WHERE `key`=?" :
                 "INSERT INTO `%table%` (`key`, `value`) VALUES(?,?)";
 
-        try (var connection = database.getConnection();
+        try (var connection = this.database.getConnection();
              var statement = prepareStatement(connection, sql)) {
             if (exists) {
                 statement.setInt(1, version);
@@ -93,7 +93,7 @@ public class MetaTable extends AbstractTable {
     }
 
     public boolean isCurrentCustomDataFormat() throws SQLException {
-        try (var connection = database.getConnection();
+        try (var connection = this.database.getConnection();
              var statement = prepareStatement(connection, "SELECT `value` FROM `%table%` WHERE `key`=? LIMIT 1")) {
             statement.setString(1, CUSTOM_DATA_FORMAT_KEY);
 
@@ -108,7 +108,7 @@ public class MetaTable extends AbstractTable {
     }
 
     public void saveCurrentCustomDataFormat() throws SQLException {
-        try (var connection = database.getConnection();
+        try (var connection = this.database.getConnection();
              var statement = prepareStatement(connection, this.upsertCurrentCustomDataFormatStatement())) {
             statement.setString(1, CUSTOM_DATA_FORMAT_KEY);
             statement.setString(2, CUSTOM_DATA_FORMAT_KEY);
@@ -117,9 +117,9 @@ public class MetaTable extends AbstractTable {
     }
 
     private @NotNull String upsertCurrentCustomDataFormatStatement() {
-        if (database instanceof MySQLDatabase) {
+        if (this.database instanceof MySQLDatabase) {
             return "INSERT INTO `%table%` (`key`, `data`) VALUES (?, ?) AS new ON DUPLICATE KEY UPDATE `data` = new.data";
-        } else if (database instanceof SQLiteDatabase) {
+        } else if (this.database instanceof SQLiteDatabase) {
             return "INSERT INTO `%table%` (`key`, `data`) VALUES (?, ?) ON CONFLICT (`key`) DO UPDATE SET `data` = excluded.data";
         } else {
             throw new UnsupportedOperationException();

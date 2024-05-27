@@ -93,6 +93,6 @@ public class CategoryMenu extends AbstractPaginatedMenu<BoxItem> {
     }
 
     public @NotNull Category getCategory() {
-        return category;
+        return this.category;
     }
 }

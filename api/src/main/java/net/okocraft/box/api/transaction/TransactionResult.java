@@ -50,7 +50,7 @@ public record TransactionResult(@NotNull BoxItem item, int amount) {
      */
     @ApiStatus.Obsolete
     public @NotNull BoxItem getItem() {
-        return item;
+        return this.item;
     }
 
     /**
@@ -60,6 +60,6 @@ public record TransactionResult(@NotNull BoxItem item, int amount) {
      */
     @ApiStatus.Obsolete
     public int getAmount() {
-        return amount;
+        return this.amount;
     }
 }

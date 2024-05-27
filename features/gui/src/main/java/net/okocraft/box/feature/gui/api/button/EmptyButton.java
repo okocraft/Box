@@ -12,7 +12,7 @@ record EmptyButton(Material material, int slot) implements Button {
 
     @Override
     public int getSlot() {
-        return slot;
+        return this.slot;
     }
 
     @Override

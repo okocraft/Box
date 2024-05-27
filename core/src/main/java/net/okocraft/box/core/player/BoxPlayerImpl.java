@@ -33,38 +33,38 @@ public class BoxPlayerImpl implements BoxPlayer {
 
     @Override
     public @NotNull BoxUser asUser() {
-        return user;
+        return this.user;
     }
 
     @Override
     public @NotNull Player getPlayer() {
-        return player;
+        return this.player;
     }
 
     @Override
     public @NotNull LoadingPersonalStockHolder getPersonalStockHolder() {
-        return personalStockHolder;
+        return this.personalStockHolder;
     }
 
     @Override
     public @NotNull StockHolder getCurrentStockHolder() {
-        return currentHolder;
+        return this.currentHolder;
     }
 
     @Override
     public void setCurrentStockHolder(@NotNull StockHolder stockHolder) {
-        var previous = currentHolder;
-        currentHolder = Objects.requireNonNull(stockHolder);
+        var previous = this.currentHolder;
+        this.currentHolder = Objects.requireNonNull(stockHolder);
         this.eventCaller.callAsync(new PlayerStockHolderChangeEvent(this, previous));
     }
 
     @Override
     public @NotNull UUID getUUID() {
-        return player.getUniqueId();
+        return this.player.getUniqueId();
     }
 
     @Override
     public @NotNull String getName() {
-        return player.getName();
+        return this.player.getName();
     }
 }

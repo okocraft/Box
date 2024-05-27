@@ -21,16 +21,16 @@ public class BoxItemButton implements Button {
 
     @Override
     public int getSlot() {
-        return slot;
+        return this.slot;
     }
 
     @Override
     public @NotNull ItemStack createIcon(@NotNull PlayerSession session) {
-        return ClickModeHolder.getFromSession(session).getCurrentMode().createItemIcon(session, item);
+        return ClickModeHolder.getFromSession(session).getCurrentMode().createItemIcon(session, this.item);
     }
 
     @Override
     public @NotNull ClickResult onClick(@NotNull PlayerSession session, @NotNull ClickType clickType) {
-        return ClickModeHolder.getFromSession(session).getCurrentMode().onClick(session, item, clickType);
+        return ClickModeHolder.getFromSession(session).getCurrentMode().onClick(session, this.item, clickType);
     }
 }

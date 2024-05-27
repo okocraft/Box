@@ -46,7 +46,7 @@ final class Processor {
             return;
         }
 
-        var result = itemManager.getBoxItem(recipe.getResult());
+        var result = this.itemManager.getBoxItem(recipe.getResult());
 
         if (result.isEmpty()) {
             return;
@@ -115,7 +115,7 @@ final class Processor {
     }
 
     @NotNull Map<BoxItem, RecipeHolder> result() {
-        return recipeMap;
+        return this.recipeMap;
     }
 
     private void processShapedRecipe(@NotNull ShapedRecipe recipe, @NotNull BoxItem result) {
@@ -205,7 +205,7 @@ final class Processor {
 
     private void addRecipe(@NotNull List<IngredientHolder> ingredients, @NotNull BoxItem result, int amount) {
         var recipe = new BoxItemRecipe(ingredients, result, amount);
-        recipeMap.computeIfAbsent(result, i -> new RecipeHolder()).addRecipe(recipe);
+        this.recipeMap.computeIfAbsent(result, i -> new RecipeHolder()).addRecipe(recipe);
         BoxAPI.api().getEventManager().call(new RecipeImportEvent(recipe));
     }
 }

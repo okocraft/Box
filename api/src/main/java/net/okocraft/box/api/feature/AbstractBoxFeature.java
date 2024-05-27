@@ -22,7 +22,7 @@ public abstract class AbstractBoxFeature implements BoxFeature {
 
     @Override
     public @NotNull String getName() {
-        return name;
+        return this.name;
     }
 
 }

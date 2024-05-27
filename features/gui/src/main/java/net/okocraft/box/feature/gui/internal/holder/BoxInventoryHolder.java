@@ -72,15 +72,15 @@ public class BoxInventoryHolder implements InventoryHolder {
 
     @Override
     public @NotNull Inventory getInventory() {
-        return inventory;
+        return this.inventory;
     }
 
     public @NotNull PlayerSession getSession() {
-        return session;
+        return this.session;
     }
 
     public @NotNull Menu getMenu() {
-        return menu;
+        return this.menu;
     }
 
     public long getLastClickTime() {
@@ -103,7 +103,7 @@ public class BoxInventoryHolder implements InventoryHolder {
         try {
             processClick0(slot, clickType);
         } catch (Throwable e) {
-            var viewer = session.getViewer();
+            var viewer = this.session.getViewer();
             ERROR.apply(e).source(this.session.getMessageSource()).send(viewer);
             BoxLogger.logger().error("An error occurred while processing a click event ({})", viewer.getName(), e);
 
@@ -113,14 +113,14 @@ public class BoxInventoryHolder implements InventoryHolder {
     }
 
     private void processClick0(int slot, @NotNull ClickType clickType) {
-        var button = buttonMap.get(slot);
+        var button = this.buttonMap.get(slot);
 
         if (button == null) {
             this.finishClickProcess();
             return;
         }
 
-        var event = new MenuClickEvent(menu, session, button, clickType);
+        var event = new MenuClickEvent(this.menu, this.session, button, clickType);
 
         BoxAPI.api().getEventManager().call(event);
 
@@ -129,7 +129,7 @@ public class BoxInventoryHolder implements InventoryHolder {
             return;
         }
 
-        var result = button.onClick(session, clickType);
+        var result = button.onClick(this.session, clickType);
 
         if (result instanceof ClickResult.WaitingTask waitingTask) {
             waitingTask.onCompleted(r -> processClickResult(button, r));
@@ -146,7 +146,7 @@ public class BoxInventoryHolder implements InventoryHolder {
         if (clickResult == ClickResult.UPDATE_ICONS) {
             this.renderButtons();
         } else if (clickResult == ClickResult.UPDATE_BUTTON) {
-            inventory.setItem(button.getSlot(), button.createIcon(session));
+            this.inventory.setItem(button.getSlot(), button.createIcon(this.session));
         } else if (clickResult == ClickResult.BACK_MENU) {
             MenuOpener.open(MenuHistoryHolder.getFromSession(this.session).backMenu(), this.session);
         } else if (clickResult instanceof ClickResult.ChangeMenu changeMenu) {
@@ -160,12 +160,12 @@ public class BoxInventoryHolder implements InventoryHolder {
         var icons = new ItemStack[this.maxIcons];
         this.buttonMap.clear();
 
-        for (var button : menu.getButtons(session)) {
+        for (var button : this.menu.getButtons(this.session)) {
             int slot = button.getSlot();
 
             if (slot < icons.length) {
-                buttonMap.put(slot, button);
-                icons[slot] = button.createIcon(session);
+                this.buttonMap.put(slot, button);
+                icons[slot] = button.createIcon(this.session);
             }
         }
 

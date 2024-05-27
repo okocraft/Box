@@ -13,7 +13,7 @@ final class SimpleClickResult implements ClickResult {
     @Override
     public String toString() {
         return "SimpleClickResult{" +
-                "name='" + name + '\'' +
+                "name='" + this.name + '\'' +
                 '}';
     }
 }

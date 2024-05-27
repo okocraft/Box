@@ -17,7 +17,7 @@ public record ContainerOperation<I extends Inventory>(@NotNull ContainerOperatio
     }
 
     public boolean run() {
-        return operator.process(context);
+        return this.operator.process(this.context);
     }
 
     public interface Operator<I extends Inventory> {

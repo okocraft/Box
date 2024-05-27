@@ -10,7 +10,7 @@ public final class Amount {
     private Unit unit = Unit.UNIT_1;
 
     public int getValue() {
-        return value;
+        return this.value;
     }
 
     public void setValue(int amount) {
@@ -18,27 +18,27 @@ public final class Amount {
     }
 
     public void increase() {
-        value += unit.amount;
+        this.value += this.unit.amount;
 
-        if (value < 1) {
-            value = 1;
+        if (this.value < 1) {
+            this.value = 1;
         }
     }
 
     public void decrease() {
-        value -= unit.amount;
+        this.value -= this.unit.amount;
 
-        if (value < 1) {
-            value = 1;
+        if (this.value < 1) {
+            this.value = 1;
         }
     }
 
     public @NotNull Unit getUnit() {
-        return unit;
+        return this.unit;
     }
 
     public void nextUnit() {
-        this.unit = unit.next();
+        this.unit = this.unit.next();
     }
 
     public enum Unit {
@@ -56,7 +56,7 @@ public final class Amount {
         }
 
         public int getAmount() {
-            return amount;
+            return this.amount;
         }
 
         public @NotNull Unit next() {

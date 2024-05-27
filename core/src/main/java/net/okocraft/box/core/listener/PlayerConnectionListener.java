@@ -17,11 +17,11 @@ public class PlayerConnectionListener implements Listener {
 
     @EventHandler
     public void onJoin(@NotNull PlayerJoinEvent event) {
-        playerMap.scheduleLoadingData(event.getPlayer());
+        this.playerMap.scheduleLoadingData(event.getPlayer());
     }
 
     @EventHandler
     public void onQuit(@NotNull PlayerQuitEvent event) {
-        playerMap.unload(event.getPlayer());
+        this.playerMap.unload(event.getPlayer());
     }
 }

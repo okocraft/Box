@@ -132,7 +132,7 @@ public class InfinityCommand extends AbstractCommand {
 
         @Override
         public @NotNull UUID getUUID() {
-            return uuid;
+            return this.uuid;
         }
 
         @Override

@@ -15,7 +15,7 @@ public abstract class AbstractTableSchema implements TableSchema {
 
     @Override
     public @NotNull String tableName() {
-        return tableName;
+        return this.tableName;
     }
 
     @Override

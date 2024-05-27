@@ -100,12 +100,12 @@ public abstract class AbstractStorageMode implements BoxItemClickMode {
 
         @Override
         public int getSlot() {
-            return slot;
+            return this.slot;
         }
 
         @Override
         public @NotNull ClickResult onClick(@NotNull PlayerSession session, @NotNull ClickType clickType) {
-            if (canDepositAll.test(session, clickType)) {
+            if (this.canDepositAll.test(session, clickType)) {
                 var viewer = session.getViewer();
                 var scheduler = BoxAPI.api().getScheduler();
                 var result = ClickResult.waitingTask();
@@ -121,7 +121,7 @@ public abstract class AbstractStorageMode implements BoxItemClickMode {
 
                 return result;
             } else {
-                return cancelledResult;
+                return this.cancelledResult;
             }
         }
     }

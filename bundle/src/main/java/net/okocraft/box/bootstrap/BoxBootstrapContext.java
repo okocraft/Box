@@ -54,12 +54,12 @@ public final class BoxBootstrapContext implements net.okocraft.box.api.bootstrap
 
     @Override
     public @NotNull Path getDataDirectory() {
-        return dataDirectory;
+        return this.dataDirectory;
     }
 
     @Override
     public @NotNull String getVersion() {
-        return version;
+        return this.version;
     }
 
     @Override
@@ -80,7 +80,7 @@ public final class BoxBootstrapContext implements net.okocraft.box.api.bootstrap
     }
 
     public @NotNull StorageRegistry getStorageRegistry() {
-        return storageRegistry;
+        return this.storageRegistry;
     }
 
     public @NotNull List<BoxFeature> getBoxFeatureList() {

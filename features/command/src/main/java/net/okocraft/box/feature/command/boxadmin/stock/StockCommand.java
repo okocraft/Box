@@ -44,7 +44,7 @@ public class StockCommand extends AbstractCommand implements SubCommandHoldable 
             return;
         }
 
-        var optionalSubCommand = subCommandHolder.search(args[1]);
+        var optionalSubCommand = this.subCommandHolder.search(args[1]);
 
         if (optionalSubCommand.isEmpty()) {
             if (!args[1].equalsIgnoreCase("help")) {
@@ -66,13 +66,13 @@ public class StockCommand extends AbstractCommand implements SubCommandHoldable 
     @Override
     public @NotNull List<String> onTabComplete(@NotNull CommandSender sender, @NotNull String[] args) {
         if (args.length == 2) {
-            return subCommandHolder.getSubCommands().stream()
+            return this.subCommandHolder.getSubCommands().stream()
                     .filter(cmd -> sender.hasPermission(cmd.getPermissionNode()))
                     .map(Command::getName)
                     .filter(cmdName -> cmdName.startsWith(args[1].toLowerCase(Locale.ROOT)))
                     .toList();
         } else {
-            return subCommandHolder.search(args[1])
+            return this.subCommandHolder.search(args[1])
                     .filter(cmd -> sender.hasPermission(cmd.getPermissionNode()))
                     .map(cmd -> cmd.onTabComplete(sender, args))
                     .orElse(Collections.emptyList());
@@ -92,6 +92,6 @@ public class StockCommand extends AbstractCommand implements SubCommandHoldable 
 
     @Override
     public @NotNull SubCommandHolder getSubCommandHolder() {
-        return subCommandHolder;
+        return this.subCommandHolder;
     }
 }

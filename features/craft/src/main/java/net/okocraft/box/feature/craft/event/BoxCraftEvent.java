@@ -37,7 +37,7 @@ public class BoxCraftEvent extends BoxEvent implements Cancellable {
      * @return the player who is trying to craft
      */
     public @NotNull Player getCrafter() {
-        return crafter;
+        return this.crafter;
     }
 
     /**
@@ -46,7 +46,7 @@ public class BoxCraftEvent extends BoxEvent implements Cancellable {
      * @return the recipe to craft
      */
     public @NotNull SelectedRecipe getSelectedRecipe() {
-        return selectedRecipe;
+        return this.selectedRecipe;
     }
 
     /**
@@ -55,12 +55,12 @@ public class BoxCraftEvent extends BoxEvent implements Cancellable {
      * @return the number of times to craft
      */
     public int getTimes() {
-        return times;
+        return this.times;
     }
 
     @Override
     public boolean isCancelled() {
-        return cancelled;
+        return this.cancelled;
     }
 
     @Override
@@ -71,20 +71,20 @@ public class BoxCraftEvent extends BoxEvent implements Cancellable {
     @Override
     public String toString() {
         return "BoxCraftEvent{" +
-                "crafter=" + crafter +
-                ", selectedRecipe=" + selectedRecipe +
-                ", times=" + times +
-                ", cancelled=" + cancelled +
+                "crafter=" + this.crafter +
+                ", selectedRecipe=" + this.selectedRecipe +
+                ", times=" + this.times +
+                ", cancelled=" + this.cancelled +
                 '}';
     }
 
     @Override
     public @NotNull String toDebugLog() {
         return "BoxCraftEvent{" +
-                "crafterUuid=" + crafter.getUniqueId() +
-                ", crafterName=" + crafter.getName() +
-                ", selectedRecipe=" + selectedRecipe +
-                ", times=" + times +
+                "crafterUuid=" + this.crafter.getUniqueId() +
+                ", crafterName=" + this.crafter.getName() +
+                ", selectedRecipe=" + this.selectedRecipe +
+                ", times=" + this.times +
                 '}';
     }
 }

@@ -66,7 +66,7 @@ public class StickFeature extends AbstractBoxFeature {
      * @return the {@link BoxStickItem}
      */
     public @NotNull BoxStickItem getBoxStickItem() {
-        return boxStickItem;
+        return this.boxStickItem;
     }
 
     private void defaultRightClickAction(@NotNull Player player) {

@@ -45,7 +45,7 @@ public final class StockHolderTransaction {
      * @throws NullPointerException if {@code item} is null
      */
     public @NotNull Deposit deposit(@NotNull BoxItem item, int limit) {
-        return new DepositImpl(stockHolder, Objects.requireNonNull(item), limit);
+        return new DepositImpl(this.stockHolder, Objects.requireNonNull(item), limit);
     }
 
     /**
@@ -54,7 +54,7 @@ public final class StockHolderTransaction {
      * @return a {@link Deposit} instance
      */
     public @NotNull Deposit depositAll() {
-        return new DepositAllImpl(stockHolder, null);
+        return new DepositAllImpl(this.stockHolder, null);
     }
 
     /**
@@ -65,7 +65,7 @@ public final class StockHolderTransaction {
      * @throws NullPointerException if {@code filter} is null
      */
     public @NotNull Deposit depositAll(@NotNull Predicate<BoxItem> filter) {
-        return new DepositAllImpl(stockHolder, Objects.requireNonNull(filter));
+        return new DepositAllImpl(this.stockHolder, Objects.requireNonNull(filter));
     }
 
     /**
@@ -77,7 +77,7 @@ public final class StockHolderTransaction {
      * @throws NullPointerException if {@code item} is null
      */
     public @NotNull Withdrawal withdraw(@NotNull BoxItem item, int limit) {
-        return new WithdrawalImpl(stockHolder, Objects.requireNonNull(item), limit);
+        return new WithdrawalImpl(this.stockHolder, Objects.requireNonNull(item), limit);
     }
 
     /**

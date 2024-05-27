@@ -36,7 +36,7 @@ class DefaultPotionIterator implements Iterator<DefaultItem> {
         var item = ITEMS[this.itemIndex];
 
         if (++this.itemIndex == ITEMS.length) {
-            if (++potionTypeIndex == this.potionTypes.length) {
+            if (++this.potionTypeIndex == this.potionTypes.length) {
                 this.hasNext = false;
             } else {
                 this.itemIndex = 0;

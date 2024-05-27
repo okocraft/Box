@@ -99,7 +99,7 @@ public class CustomDataTable extends AbstractCustomDataTable {
     }
 
     private boolean legacyTableExists() throws SQLException {
-        try (var connection = database.getConnection()) {
+        try (var connection = this.database.getConnection()) {
             var metaData = connection.getMetaData();
             var tableName = this.database.getSchemaSet().legacyCustomDataTable().tableName();
             try (var resultSet = metaData.getTables(null, null, tableName, null)) {

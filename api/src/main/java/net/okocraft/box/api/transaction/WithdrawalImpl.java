@@ -31,12 +31,12 @@ record WithdrawalImpl(@NotNull StockHolder stockHolder, @NotNull BoxItem boxItem
         Objects.requireNonNull(inventory);
         Objects.requireNonNull(cause);
 
-        int maxStackSize = boxItem.getOriginal().getMaxStackSize();
+        int maxStackSize = this.boxItem.getOriginal().getMaxStackSize();
         int withdrawnAmount = 0;
 
         var contents = inventory.getStorageContents();
 
-        for (int i = 0; i < contents.length && withdrawnAmount < limit; i++) {
+        for (int i = 0; i < contents.length && withdrawnAmount < this.limit; i++) {
             var item = contents[i];
 
             if (item == null) {
@@ -44,15 +44,15 @@ record WithdrawalImpl(@NotNull StockHolder stockHolder, @NotNull BoxItem boxItem
                     continue;
                 }
 
-                int withdrawn = stockHolder.decreaseToZero(boxItem, Math.min(limit - withdrawnAmount, maxStackSize), cause);
+                int withdrawn = this.stockHolder.decreaseToZero(this.boxItem, Math.min(this.limit - withdrawnAmount, maxStackSize), cause);
 
                 if (withdrawn < 1) {
                     break;
                 }
 
                 withdrawnAmount += withdrawn;
-                contents[i] = boxItem.getOriginal().asQuantity(withdrawn);
-            } else if (item.isSimilar(boxItem.getOriginal())) {
+                contents[i] = this.boxItem.getOriginal().asQuantity(withdrawn);
+            } else if (item.isSimilar(this.boxItem.getOriginal())) {
                 if (view != null && !checkClickEvent(view, i)) {
                     continue;
                 }
@@ -60,7 +60,7 @@ record WithdrawalImpl(@NotNull StockHolder stockHolder, @NotNull BoxItem boxItem
                 int remaining = maxStackSize - item.getAmount();
 
                 if (0 < remaining) {
-                    int withdrawn = stockHolder.decreaseToZero(boxItem, Math.min(limit - withdrawnAmount, remaining), cause);
+                    int withdrawn = this.stockHolder.decreaseToZero(this.boxItem, Math.min(this.limit - withdrawnAmount, remaining), cause);
 
                     if (withdrawn < 1) {
                         break;
@@ -76,7 +76,7 @@ record WithdrawalImpl(@NotNull StockHolder stockHolder, @NotNull BoxItem boxItem
             inventory.setStorageContents(contents);
         }
 
-        return TransactionResult.create(boxItem, withdrawnAmount);
+        return TransactionResult.create(this.boxItem, withdrawnAmount);
     }
 
     private static boolean checkClickEvent(@NotNull InventoryView view, int slot) {

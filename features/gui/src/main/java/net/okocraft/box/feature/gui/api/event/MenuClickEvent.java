@@ -24,7 +24,7 @@ public class MenuClickEvent extends MenuEvent implements Cancellable {
 
     @Override
     public boolean isCancelled() {
-        return cancelled;
+        return this.cancelled;
     }
 
     @Override
@@ -33,11 +33,11 @@ public class MenuClickEvent extends MenuEvent implements Cancellable {
     }
 
     public @NotNull Button getClickedButton() {
-        return clickedButton;
+        return this.clickedButton;
     }
 
     public @NotNull ClickType getClickType() {
-        return clickType;
+        return this.clickType;
     }
 
     @Override

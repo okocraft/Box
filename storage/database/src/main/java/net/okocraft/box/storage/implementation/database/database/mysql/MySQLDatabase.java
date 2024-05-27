@@ -30,7 +30,7 @@ public class MySQLDatabase implements Database {
 
     public MySQLDatabase(@NotNull StorageContext<MySQLSetting> context) {
         this.mySQLSetting = context.setting();
-        this.schemaSet = MySQLTableSchema.create(mySQLSetting.tablePrefix());
+        this.schemaSet = MySQLTableSchema.create(this.mySQLSetting.tablePrefix());
     }
 
     @Override
@@ -39,9 +39,9 @@ public class MySQLDatabase implements Database {
 
         var config = new HikariConfig();
 
-        config.setJdbcUrl("jdbc:mysql://" + mySQLSetting.address() + ":" + mySQLSetting.port() + "/" + mySQLSetting.databaseName());
-        config.setUsername(mySQLSetting.username());
-        config.setPassword(mySQLSetting.password());
+        config.setJdbcUrl("jdbc:mysql://" + this.mySQLSetting.address() + ":" + this.mySQLSetting.port() + "/" + this.mySQLSetting.databaseName());
+        config.setUsername(this.mySQLSetting.username());
+        config.setPassword(this.mySQLSetting.password());
 
         config.setPoolName("BoxMySQLPool");
         config.setDriverClassName("com.mysql.cj.jdbc.Driver");
@@ -51,12 +51,12 @@ public class MySQLDatabase implements Database {
 
         configureDataSourceProperties(config.getDataSourceProperties());
 
-        hikariDataSource = new HikariDataSource(config);
+        this.hikariDataSource = new HikariDataSource(config);
     }
 
     @Override
     public void shutdown() {
-        hikariDataSource.close();
+        this.hikariDataSource.close();
     }
 
     @Override
@@ -68,8 +68,8 @@ public class MySQLDatabase implements Database {
     public @NotNull List<Storage.Property> getInfo() {
         var result = new ArrayList<Storage.Property>();
 
-        result.add(Storage.Property.of("database-name", mySQLSetting.databaseName()));
-        result.add(Storage.Property.of("table-prefix", mySQLSetting.tablePrefix()));
+        result.add(Storage.Property.of("database-name", this.mySQLSetting.databaseName()));
+        result.add(Storage.Property.of("table-prefix", this.mySQLSetting.tablePrefix()));
 
         var ping = ping();
         if (0 < ping) {
@@ -81,16 +81,16 @@ public class MySQLDatabase implements Database {
 
     @Override
     public @NotNull SchemaSet getSchemaSet() {
-        return schemaSet;
+        return this.schemaSet;
     }
 
     @Override
     public @NotNull Connection getConnection() throws SQLException {
-        if (hikariDataSource == null) {
+        if (this.hikariDataSource == null) {
             throw new IllegalStateException("HikariDataSource is not initialized.");
         }
 
-        return hikariDataSource.getConnection();
+        return this.hikariDataSource.getConnection();
     }
 
     private void configureDataSourceProperties(@NotNull Properties properties) {
@@ -113,7 +113,7 @@ public class MySQLDatabase implements Database {
     }
 
     private long ping() {
-        if (hikariDataSource == null) {
+        if (this.hikariDataSource == null) {
             return -1;
         }
 

@@ -134,21 +134,21 @@ public class ItemLoader {
 
         @Override
         public boolean hasNext() {
-            if (firstIterator) {
-                if (defaultItemIterator.hasNext()) {
+            if (this.firstIterator) {
+                if (this.defaultItemIterator.hasNext()) {
                     return true;
                 }
-                firstIterator = false;
+                this.firstIterator = false;
             }
-            return customItemIterator.hasNext();
+            return this.customItemIterator.hasNext();
         }
 
         @Override
         public BoxItem next() {
-            if (firstIterator) {
-                return defaultItemIterator.next();
+            if (this.firstIterator) {
+                return this.defaultItemIterator.next();
             } else {
-                return customItemIterator.next();
+                return this.customItemIterator.next();
             }
         }
     }

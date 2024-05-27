@@ -10,14 +10,14 @@ interface NameHolder {
     record Value(@NotNull String name) implements NameHolder {
         @Override
         public @NotNull String get() {
-            return name;
+            return this.name;
         }
     }
 
     record FromBoxUser(@NotNull BoxUser user) implements NameHolder {
         @Override
         public @NotNull String get() {
-            return user.getName().orElse("Unknown");
+            return this.user.getName().orElse("Unknown");
         }
     }
 }

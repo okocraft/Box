@@ -25,10 +25,10 @@ public class YamlStorage implements Storage {
 
     public YamlStorage(@NotNull StorageContext<Setting> context) {
         this.rootDirectory = context.pluginDirectory().resolve(context.setting().directoryName());
-        this.userStorage = new YamlUserStorage(rootDirectory);
-        this.itemStorage = new YamlItemStorage(rootDirectory);
-        this.stockStorage = new YamlStockStorage(rootDirectory);
-        this.customDataStorage = new YamlCustomDataStorage(rootDirectory);
+        this.userStorage = new YamlUserStorage(this.rootDirectory);
+        this.itemStorage = new YamlItemStorage(this.rootDirectory);
+        this.stockStorage = new YamlStockStorage(this.rootDirectory);
+        this.customDataStorage = new YamlCustomDataStorage(this.rootDirectory);
     }
 
     @Override
@@ -39,18 +39,18 @@ public class YamlStorage implements Storage {
     @Override
     public @NotNull List<Property> getInfo() {
         return List.of(
-                Property.of("directory-name", rootDirectory.getFileName().toString())
+                Property.of("directory-name", this.rootDirectory.getFileName().toString())
         );
     }
 
     @Override
     public void init() throws Exception {
-        Files.createDirectories(rootDirectory);
+        Files.createDirectories(this.rootDirectory);
 
-        userStorage.init();
-        itemStorage.init();
-        stockStorage.init();
-        customDataStorage.init();
+        this.userStorage.init();
+        this.itemStorage.init();
+        this.stockStorage.init();
+        this.customDataStorage.init();
     }
 
     @Override
@@ -59,22 +59,22 @@ public class YamlStorage implements Storage {
 
     @Override
     public @NotNull ItemStorage getItemStorage() {
-        return itemStorage;
+        return this.itemStorage;
     }
 
     @Override
     public @NotNull UserStorage getUserStorage() {
-        return userStorage;
+        return this.userStorage;
     }
 
     @Override
     public @NotNull StockStorage getStockStorage() {
-        return stockStorage;
+        return this.stockStorage;
     }
 
     @Override
     public @NotNull CustomDataStorage getCustomDataStorage() {
-        return customDataStorage;
+        return this.customDataStorage;
     }
 
     public record Setting(@DefaultString("data") String directoryName) {

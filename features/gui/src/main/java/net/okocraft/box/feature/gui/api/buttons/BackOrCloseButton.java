@@ -19,7 +19,7 @@ public record BackOrCloseButton(int slot) implements Button {
 
     @Override
     public int getSlot() {
-        return slot;
+        return this.slot;
     }
 
     @Override

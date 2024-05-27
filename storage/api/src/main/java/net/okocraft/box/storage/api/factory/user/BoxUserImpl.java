@@ -21,12 +21,12 @@ class BoxUserImpl implements BoxUser {
 
     @Override
     public @NotNull UUID getUUID() {
-        return uuid;
+        return this.uuid;
     }
 
     @Override
     public @NotNull Optional<String> getName() {
-        return Optional.ofNullable(name);
+        return Optional.ofNullable(this.name);
     }
 
     public void setName(@NotNull String name) {
@@ -36,19 +36,19 @@ class BoxUserImpl implements BoxUser {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        return o instanceof BoxUserImpl boxUser && uuid.equals(boxUser.uuid);
+        return o instanceof BoxUserImpl boxUser && this.uuid.equals(boxUser.uuid);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(uuid);
+        return Objects.hash(this.uuid);
     }
 
     @Override
     public String toString() {
         return "BoxUserImpl{" +
-                "uuid=" + uuid +
-                ", name='" + name + '\'' +
+                "uuid=" + this.uuid +
+                ", name='" + this.name + '\'' +
                 '}';
     }
 }

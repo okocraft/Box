@@ -30,15 +30,15 @@ public class CurrentRecipe {
     }
 
     public @NotNull BoxItem getResult() {
-        return source.result();
+        return this.source.result();
     }
 
     public @NotNull ItemStack getResultPreview() {
-        return source.result().getOriginal().asQuantity(source.amount());
+        return this.source.result().getOriginal().asQuantity(this.source.amount());
     }
 
     public void nextRecipe(int pos, boolean sameIngredient) {
-        var recipe = ingredientsMap.get(pos);
+        var recipe = this.ingredientsMap.get(pos);
 
         if (recipe == null) {
             return;
@@ -47,7 +47,7 @@ public class CurrentRecipe {
         var selected = recipe.next();
 
         if (sameIngredient) {
-            for (var other : ingredientsMap.values()) {
+            for (var other : this.ingredientsMap.values()) {
                 if (recipe != other && recipe.isSameIngredient(other)) {
                     other.select(selected);
                 }
@@ -58,20 +58,20 @@ public class CurrentRecipe {
     }
 
     public @Nullable SelectableIngredients getIngredients(int pos) {
-        return ingredientsMap.get(pos);
+        return this.ingredientsMap.get(pos);
     }
 
     public void updateSelectedRecipe() {
         this.selectedRecipe =
                 new SelectedRecipe(
-                        ingredientsMap.values().stream().map(SelectableIngredients::getSelected).toList(),
-                        source.result(),
-                        source.amount()
+                        this.ingredientsMap.values().stream().map(SelectableIngredients::getSelected).toList(),
+                        this.source.result(),
+                        this.source.amount()
                 );
     }
 
     public @NotNull SelectedRecipe getSelectedRecipe() {
-        return selectedRecipe;
+        return this.selectedRecipe;
     }
 
     public void selectFirstIngredients() {

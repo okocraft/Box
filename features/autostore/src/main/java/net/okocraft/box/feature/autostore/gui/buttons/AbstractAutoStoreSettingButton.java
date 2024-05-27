@@ -16,7 +16,7 @@ abstract class AbstractAutoStoreSettingButton implements Button {
 
     @Override
     public int getSlot() {
-        return slot;
+        return this.slot;
     }
 
     protected void callAutoStoreSettingChangeEvent(@NotNull AutoStoreSetting setting) {

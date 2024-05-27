@@ -30,9 +30,9 @@ public class CategoryRegistryImpl implements CategoryRegistry {
             throw new IllegalArgumentException("Cannot register an unknown custom item category.");
         }
 
-        synchronized (lock) {
-            registry.put(name, category);
-            snapshot = List.copyOf(registry.values());
+        synchronized (this.lock) {
+            this.registry.put(name, category);
+            this.snapshot = List.copyOf(this.registry.values());
         }
     }
 
@@ -40,9 +40,9 @@ public class CategoryRegistryImpl implements CategoryRegistry {
     public void unregister(@NotNull String name) {
         Objects.requireNonNull(name);
 
-        synchronized (lock) {
-            registry.remove(name);
-            snapshot = List.copyOf(registry.values());
+        synchronized (this.lock) {
+            this.registry.remove(name);
+            this.snapshot = List.copyOf(this.registry.values());
         }
     }
 
@@ -50,24 +50,24 @@ public class CategoryRegistryImpl implements CategoryRegistry {
     public void unregister(@NotNull Category category) {
         Objects.requireNonNull(category);
 
-        synchronized (lock) {
-            registry.values().removeIf(value -> value == category); // Removes only the specified instance.
-            snapshot = List.copyOf(registry.values());
+        synchronized (this.lock) {
+            this.registry.values().removeIf(value -> value == category); // Removes only the specified instance.
+            this.snapshot = List.copyOf(this.registry.values());
         }
     }
 
     @Override
     public void unregisterAll() {
-        synchronized (lock) {
-            registry.clear();
-            snapshot = Collections.emptyList();
+        synchronized (this.lock) {
+            this.registry.clear();
+            this.snapshot = Collections.emptyList();
         }
     }
 
     @Override
     public @NotNull Optional<Category> getByName(@NotNull String name) {
         Objects.requireNonNull(name);
-        return Optional.ofNullable(registry.get(name));
+        return Optional.ofNullable(this.registry.get(name));
     }
 
     @Override
@@ -75,8 +75,8 @@ public class CategoryRegistryImpl implements CategoryRegistry {
         Objects.requireNonNull(category);
         Map<String, Category> snapshot;
 
-        synchronized (lock) {
-            snapshot = Map.copyOf(registry);
+        synchronized (this.lock) {
+            snapshot = Map.copyOf(this.registry);
         }
 
         for (var entry : snapshot.entrySet()) {
@@ -92,8 +92,8 @@ public class CategoryRegistryImpl implements CategoryRegistry {
     public @NotNull @Unmodifiable List<String> names() {
         List<String> names;
 
-        synchronized (lock) {
-            names = List.copyOf(registry.keySet());
+        synchronized (this.lock) {
+            names = List.copyOf(this.registry.keySet());
         }
 
         return names;
@@ -103,8 +103,8 @@ public class CategoryRegistryImpl implements CategoryRegistry {
     public @NotNull @Unmodifiable List<Category> values() {
         List<Category> result;
 
-        synchronized (lock) {
-            result = snapshot;
+        synchronized (this.lock) {
+            result = this.snapshot;
         }
 
         return result;
@@ -114,7 +114,7 @@ public class CategoryRegistryImpl implements CategoryRegistry {
     public @NotNull @Unmodifiable Map<String, Category> asMap() {
         Map<String, Category> categoryMap;
 
-        synchronized (lock) {
+        synchronized (this.lock) {
             categoryMap = new LinkedHashMap<>(this.registry);
         }
 

@@ -41,13 +41,13 @@ public class RecipeSelectButton implements Button {
 
     @Override
     public int getSlot() {
-        return slot;
+        return this.slot;
     }
 
     @Override
     public @NotNull ItemStack createIcon(@NotNull PlayerSession session) {
         var editor = ItemEditor.create()
-                .displayName(translatable(this.recipe.result().getOriginal()).decoration(ITALIC, State.FALSE).append(space()).append(text("#" + number, NO_DECORATION_YELLOW)))
+                .displayName(translatable(this.recipe.result().getOriginal()).decoration(ITALIC, State.FALSE).append(space()).append(text("#" + this.number, NO_DECORATION_YELLOW)))
                 .loreEmptyLine();
 
         boolean simple = session.getData(SHOW_DETAILS) == null;
@@ -56,10 +56,10 @@ public class RecipeSelectButton implements Button {
         return editor.loreEmptyLine()
                 .loreLine(
                         text(" -> ", NO_DECORATION_GRAY)
-                                .append(translatable(recipe.result().getOriginal(), recipe.result().getDisplayName().style()))
+                                .append(translatable(this.recipe.result().getOriginal(), this.recipe.result().getDisplayName().style()))
                                 .append(space())
                                 .append(text("x", NO_DECORATION_GRAY))
-                                .append(text(recipe.amount(), NO_DECORATION_AQUA))
+                                .append(text(this.recipe.amount(), NO_DECORATION_AQUA))
                 )
                 .loreEmptyLineIf(simple)
                 .loreLineIf(simple, () -> CLICK_TO_SHOW_DETAILS.create(session.getMessageSource()))
@@ -75,7 +75,7 @@ public class RecipeSelectButton implements Button {
 
             return ClickResult.UPDATE_ICONS;
         } else {
-            var menu = CraftMenu.prepare(recipe);
+            var menu = CraftMenu.prepare(this.recipe);
             return ClickResult.changeMenu(menu);
         }
     }

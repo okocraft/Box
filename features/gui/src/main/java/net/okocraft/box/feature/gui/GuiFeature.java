@@ -35,8 +35,8 @@ public class GuiFeature extends AbstractBoxFeature implements Reloadable {
 
         var boxCommand = BoxAPI.api().getBoxCommand();
 
-        boxCommand.changeNoArgumentCommand(command);
-        boxCommand.getSubCommandHolder().register(command);
+        boxCommand.changeNoArgumentCommand(this.command);
+        boxCommand.getSubCommandHolder().register(this.command);
 
         Bukkit.getPluginManager().registerEvents(this.listener, context.plugin());
     }
@@ -46,10 +46,10 @@ public class GuiFeature extends AbstractBoxFeature implements Reloadable {
         var boxCommand = BoxAPI.api().getBoxCommand();
 
         boxCommand.changeNoArgumentCommand(null);
-        boxCommand.getSubCommandHolder().unregister(command);
+        boxCommand.getSubCommandHolder().unregister(this.command);
 
         this.closeMenus();
-        HandlerList.unregisterAll(listener);
+        HandlerList.unregisterAll(this.listener);
     }
 
     @Override
