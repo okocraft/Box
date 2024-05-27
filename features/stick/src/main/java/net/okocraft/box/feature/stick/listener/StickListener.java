@@ -55,7 +55,7 @@ public class StickListener implements Listener {
     public void onInteract(@NotNull PlayerInteractEvent event) {
         var player = event.getPlayer();
 
-        if (event.getAction() == Action.PHYSICAL || !canUseBox(player)) {
+        if (event.getAction() == Action.PHYSICAL || !this.canUseBox(player)) {
             return;
         }
 
@@ -88,7 +88,7 @@ public class StickListener implements Listener {
         }
 
         var player = event.getPlayer();
-        var boxPlayer = getBoxPlayerOrNull(player);
+        var boxPlayer = this.getBoxPlayerOrNull(player);
         var block = event.getClickedBlock();
 
         if (boxPlayer == null || !player.isSneaking() || block == null) {
@@ -101,7 +101,7 @@ public class StickListener implements Listener {
         boolean isStickInOffhand = this.boxStickItem.check(offHand);
 
         if (isStickInOffhand && block.getState() instanceof Container container) {
-            clickContainer(event, boxPlayer, container, block.getLocation().clone());
+            this.clickContainer(event, boxPlayer, container, block.getLocation().clone());
             return;
         }
 
@@ -220,7 +220,7 @@ public class StickListener implements Listener {
         }
 
         var player = event.getPlayer();
-        var boxPlayer = checkPlayerAndGetBoxPlayer(player, "box.stick.block");
+        var boxPlayer = this.checkPlayerAndGetBoxPlayer(player, "box.stick.block");
 
         if (boxPlayer == null) {
             return;
@@ -228,8 +228,8 @@ public class StickListener implements Listener {
 
         var mainHandItem = player.getInventory().getItemInMainHand();
 
-        if (!isIllegalStack(mainHandItem) && event.getItemInHand().equals(mainHandItem) &&
-                tryConsumingStock(boxPlayer, mainHandItem, new StickCauses.BlockPlace(boxPlayer, block.getLocation().clone()))) {
+        if (!this.isIllegalStack(mainHandItem) && event.getItemInHand().equals(mainHandItem) &&
+                this.tryConsumingStock(boxPlayer, mainHandItem, new StickCauses.BlockPlace(boxPlayer, block.getLocation().clone()))) {
             player.getInventory().setItemInMainHand(mainHandItem.clone());
         }
     }
@@ -237,7 +237,7 @@ public class StickListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onItemConsume(@NotNull PlayerItemConsumeEvent event) {
         var player = event.getPlayer();
-        var boxPlayer = checkPlayerAndGetBoxPlayer(player, "box.stick.food");
+        var boxPlayer = this.checkPlayerAndGetBoxPlayer(player, "box.stick.food");
 
         if (boxPlayer == null) {
             return;
@@ -246,7 +246,7 @@ public class StickListener implements Listener {
         var mainHandItem = player.getInventory().getItemInMainHand();
         var cause = new StickCauses.ItemConsume(boxPlayer);
 
-        if (isIllegalStack(mainHandItem) || !event.getItem().equals(mainHandItem) || !tryConsumingStock(boxPlayer, mainHandItem, cause)) {
+        if (this.isIllegalStack(mainHandItem) || !event.getItem().equals(mainHandItem) || !this.tryConsumingStock(boxPlayer, mainHandItem, cause)) {
             return;
         }
 
@@ -273,10 +273,10 @@ public class StickListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onItemBreak(@NotNull PlayerItemBreakEvent event) {
         var player = event.getPlayer();
-        var boxPlayer = checkPlayerAndGetBoxPlayer(player, "box.stick.tool");
+        var boxPlayer = this.checkPlayerAndGetBoxPlayer(player, "box.stick.tool");
         var original = event.getBrokenItem();
 
-        if (boxPlayer == null || isIllegalStack(original)) {
+        if (boxPlayer == null || this.isIllegalStack(original)) {
             return;
         }
 
@@ -284,7 +284,7 @@ public class StickListener implements Listener {
 
         copied.editMeta(Damageable.class, meta -> meta.setDamage(0));
 
-        if (tryConsumingStock(boxPlayer, copied, new StickCauses.ItemBreak(boxPlayer))) {
+        if (this.tryConsumingStock(boxPlayer, copied, new StickCauses.ItemBreak(boxPlayer))) {
             original.setAmount(2);
         }
     }
@@ -307,7 +307,7 @@ public class StickListener implements Listener {
                     default -> null;
                 };
 
-        var boxPlayer = permissionNodeSuffix != null ? checkPlayerAndGetBoxPlayer(player, "box.stick." + permissionNodeSuffix) : null;
+        var boxPlayer = permissionNodeSuffix != null ? this.checkPlayerAndGetBoxPlayer(player, "box.stick." + permissionNodeSuffix) : null;
 
         if (boxPlayer == null) {
             return;
@@ -315,7 +315,7 @@ public class StickListener implements Listener {
 
         var mainHandItem = player.getInventory().getItemInMainHand();
 
-        if (!isIllegalStack(mainHandItem) && tryConsumingStock(boxPlayer, mainHandItem, new StickCauses.ProjectileLaunch(boxPlayer, entityType))) {
+        if (!this.isIllegalStack(mainHandItem) && this.tryConsumingStock(boxPlayer, mainHandItem, new StickCauses.ProjectileLaunch(boxPlayer, entityType))) {
             mainHandItem.setAmount(mainHandItem.getAmount() + 1);
             player.updateInventory();
         }
@@ -330,7 +330,7 @@ public class StickListener implements Listener {
             return;
         }
 
-        var boxPlayer = checkPlayerAndGetBoxPlayer(player, "box.stick.arrow");
+        var boxPlayer = this.checkPlayerAndGetBoxPlayer(player, "box.stick.arrow");
 
         if (boxPlayer == null) {
             return;
@@ -338,7 +338,7 @@ public class StickListener implements Listener {
 
         var arrowItem = event.getConsumable();
 
-        if (arrowItem != null && !isIllegalStack(arrowItem) && tryConsumingStock(boxPlayer, arrowItem, new StickCauses.ShootBow(boxPlayer))) {
+        if (arrowItem != null && !this.isIllegalStack(arrowItem) && this.tryConsumingStock(boxPlayer, arrowItem, new StickCauses.ShootBow(boxPlayer))) {
             player.getInventory().addItem(arrowItem.asOne());
         }
     }
@@ -354,9 +354,9 @@ public class StickListener implements Listener {
     }
 
     private @Nullable BoxPlayer checkPlayerAndGetBoxPlayer(@NotNull Player player, @NotNull String permissionNode) {
-        if (isSurvivalOrAdventure(player) && canUseBox(player) &&
-                player.hasPermission(permissionNode) && hasBoxStickInOffHand(player)) {
-            return getBoxPlayerOrNull(player);
+        if (this.isSurvivalOrAdventure(player) && this.canUseBox(player) &&
+                player.hasPermission(permissionNode) && this.hasBoxStickInOffHand(player)) {
+            return this.getBoxPlayerOrNull(player);
         } else {
             return null;
         }

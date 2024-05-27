@@ -36,7 +36,7 @@ public class ItemListener implements Listener {
             return;
         }
 
-        if (processEvent(player, event.getItem().getLocation(), event.getItem().getItemStack(), false)) {
+        if (this.processEvent(player, event.getItem().getLocation(), event.getItem().getItemStack(), false)) {
             event.setCancelled(true);
             event.getItem().remove();
         }
@@ -45,7 +45,7 @@ public class ItemListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onBlockDropItem(@NotNull BlockDropItemEvent event) {
         var location = event.getBlock().getLocation();
-        event.getItems().removeIf(item -> processEvent(event.getPlayer(), location, item.getItemStack(), true));
+        event.getItems().removeIf(item -> this.processEvent(event.getPlayer(), location, item.getItemStack(), true));
     }
 
     /**
@@ -58,7 +58,7 @@ public class ItemListener implements Listener {
         var killed = event.getEntity();
         if (killed instanceof Mob && !(killed instanceof Boss) && killed.getKiller() != null) {
             var location = killed.getLocation();
-            event.getDrops().removeIf(item -> processEvent(killed.getKiller(), location, item, true));
+            event.getDrops().removeIf(item -> this.processEvent(killed.getKiller(), location, item, true));
         }
     }
 
@@ -70,7 +70,7 @@ public class ItemListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onHarvestBlock(@NotNull PlayerHarvestBlockEvent event) {
         var location = event.getHarvestedBlock().getLocation();
-        event.getItemsHarvested().removeIf(item -> processEvent(event.getPlayer(), location, item, true));
+        event.getItemsHarvested().removeIf(item -> this.processEvent(event.getPlayer(), location, item, true));
     }
 
     /**
@@ -81,12 +81,12 @@ public class ItemListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onShearBlock(@NotNull PlayerShearBlockEvent event) {
         var location = event.getBlock().getLocation();
-        event.getDrops().removeIf(item -> processEvent(event.getPlayer(), location, item, true));
+        event.getDrops().removeIf(item -> this.processEvent(event.getPlayer(), location, item, true));
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onArrowPickup(@NotNull PlayerPickupArrowEvent event) {
-        if (processEvent(event.getPlayer(), event.getArrow().getLocation(), event.getArrow().getItemStack(), false)) {
+        if (this.processEvent(event.getPlayer(), event.getArrow().getLocation(), event.getArrow().getItemStack(), false)) {
             event.setCancelled(true);
             event.getArrow().remove();
         }

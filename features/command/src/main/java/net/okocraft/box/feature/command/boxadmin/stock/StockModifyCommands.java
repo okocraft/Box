@@ -88,7 +88,7 @@ abstract class StockModifyCommands extends AbstractCommand {
         }
 
         var stockHolder = BoxAPI.api().getStockManager().getPersonalStockHolder(target);
-        int current = modifyStock(sender, stockHolder, item.get(), amount);
+        int current = this.modifyStock(sender, stockHolder, item.get(), amount);
 
         this.successSender.apply(target.getName().orElseGet(target.getUUID()::toString), item.get(), amount, current).source(msgSrc).send(sender);
 

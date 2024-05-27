@@ -53,12 +53,12 @@ final class Processor {
         }
 
         if (recipe instanceof ShapedRecipe shapedRecipe) {
-            processShapedRecipe(shapedRecipe, result.get());
+            this.processShapedRecipe(shapedRecipe, result.get());
             return;
         }
 
         if (recipe instanceof ShapelessRecipe shapelessRecipe) {
-            processShapelessRecipe(shapelessRecipe, result.get());
+            this.processShapelessRecipe(shapelessRecipe, result.get());
         }
     }
 
@@ -109,7 +109,7 @@ final class Processor {
             }
 
             if (process) {
-                processCustomRecipe(ingredients, resultItem.get(), Math.max(1, customRecipe.amount()));
+                this.processCustomRecipe(ingredients, resultItem.get(), Math.max(1, customRecipe.amount()));
             }
         }
     }
@@ -126,7 +126,7 @@ final class Processor {
         var ingredients = new ArrayList<IngredientHolder>();
 
         for (var entry : recipe.getChoiceMap().entrySet()) {
-            var slot = getPosition(entry.getKey(), recipe.getShape());
+            var slot = this.getPosition(entry.getKey(), recipe.getShape());
             var choice = entry.getValue();
 
             if (choice instanceof RecipeChoice.MaterialChoice materialChoice) {
@@ -144,7 +144,7 @@ final class Processor {
             }
         }
 
-        addRecipe(ingredients, result, recipe.getResult().getAmount());
+        this.addRecipe(ingredients, result, recipe.getResult().getAmount());
     }
 
     private void processShapelessRecipe(@NotNull ShapelessRecipe recipe, @NotNull BoxItem result) {
@@ -173,7 +173,7 @@ final class Processor {
             slot++;
         }
 
-        addRecipe(ingredients, result, recipe.getResult().getAmount());
+        this.addRecipe(ingredients, result, recipe.getResult().getAmount());
     }
 
     private void processCustomRecipe(@Nullable BoxItem @NotNull [] ingredients, @NotNull BoxItem result, int amount) {
@@ -186,7 +186,7 @@ final class Processor {
             }
         }
 
-        addRecipe(ingredientHolders, result, amount);
+        this.addRecipe(ingredientHolders, result, amount);
     }
 
     @Contract(pure = true)

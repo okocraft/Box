@@ -110,7 +110,7 @@ public final class BoxPlugin extends JavaPlugin {
         }
 
         try {
-            runMigratorIfNeeded();
+            this.runMigratorIfNeeded();
         } catch (Exception e) {
             BoxLogger.logger().error("An exception occurred while migrating data.", e);
             this.status = Status.EXCEPTION_OCCURRED;

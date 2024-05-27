@@ -310,12 +310,12 @@ public class BoxCore implements BoxAPI {
 
     @Override
     public boolean canUseBox(@NotNull Player player) {
-        return !isDisabledWorld(player.getWorld()) || player.hasPermission("box.admin.ignore-disabled-world");
+        return !this.isDisabledWorld(player.getWorld()) || player.hasPermission("box.admin.ignore-disabled-world");
     }
 
     @Override
     public boolean isDisabledWorld(@NotNull World world) {
-        return isDisabledWorld(world.getName());
+        return this.isDisabledWorld(world.getName());
     }
 
     @Override

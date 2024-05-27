@@ -52,7 +52,7 @@ public class ToggleButton extends AbstractAutoStoreSettingButton {
 
         setting.setEnabled(!setting.isEnabled());
         SoundBase.CLICK.play(session.getViewer());
-        callAutoStoreSettingChangeEvent(setting);
+        this.callAutoStoreSettingChangeEvent(setting);
 
         return ClickResult.UPDATE_BUTTON;
     }

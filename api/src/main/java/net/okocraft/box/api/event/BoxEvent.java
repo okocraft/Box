@@ -19,7 +19,7 @@ public class BoxEvent {
      * @return the debug log
      */
     public @NotNull String toDebugLog() {
-        return toString();
+        return this.toString();
     }
 
 }

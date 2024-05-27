@@ -65,7 +65,7 @@ public class StorageWithdrawMode extends AbstractStorageMode {
 
     @Override
     public @NotNull ClickResult onClick(@NotNull PlayerSession session, @NotNull BoxItem item, @NotNull ClickType clickType) {
-        return processWithdraw(session, item);
+        return this.processWithdraw(session, item);
     }
 
     @Override

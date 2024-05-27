@@ -26,11 +26,11 @@ public class MetaTable extends AbstractTable {
     }
 
     public void init() throws Exception {
-        createTableAndIndex();
+        this.createTableAndIndex();
     }
 
     public @Nullable MCDataVersion getItemDataVersion() throws SQLException {
-        var version = getVersion(ITEM_DATA_VERSION_KEY);
+        var version = this.getVersion(ITEM_DATA_VERSION_KEY);
 
         if (version != null) {
             this.hasItemDataVersion = true;
@@ -41,11 +41,11 @@ public class MetaTable extends AbstractTable {
     }
 
     public void saveItemDataVersion(int dataVersion) throws SQLException {
-        saveVersion(ITEM_DATA_VERSION_KEY, dataVersion, this.hasItemDataVersion);
+        this.saveVersion(ITEM_DATA_VERSION_KEY, dataVersion, this.hasItemDataVersion);
     }
 
     public int getDefaultItemProviderVersion() throws SQLException {
-        var version = getVersion(DEFAULT_ITEM_VERSION_KEY);
+        var version = this.getVersion(DEFAULT_ITEM_VERSION_KEY);
 
         if (version != null) {
             this.hasDefaultItemVersion = true;
@@ -55,12 +55,12 @@ public class MetaTable extends AbstractTable {
     }
 
     public void saveDefaultItemVersion(int version) throws SQLException {
-        saveVersion(DEFAULT_ITEM_VERSION_KEY, version, this.hasDefaultItemVersion);
+        this.saveVersion(DEFAULT_ITEM_VERSION_KEY, version, this.hasDefaultItemVersion);
     }
 
     private @Nullable Integer getVersion(@NotNull String key) throws SQLException {
         try (var connection = this.database.getConnection();
-             var statement = prepareStatement(connection, "SELECT `value` FROM `%table%` WHERE `key`=? LIMIT 1")) {
+             var statement = this.prepareStatement(connection, "SELECT `value` FROM `%table%` WHERE `key`=? LIMIT 1")) {
             statement.setString(1, key);
 
             try (var resultSet = statement.executeQuery()) {
@@ -79,7 +79,7 @@ public class MetaTable extends AbstractTable {
                 "INSERT INTO `%table%` (`key`, `value`) VALUES(?,?)";
 
         try (var connection = this.database.getConnection();
-             var statement = prepareStatement(connection, sql)) {
+             var statement = this.prepareStatement(connection, sql)) {
             if (exists) {
                 statement.setInt(1, version);
                 statement.setString(2, key);
@@ -94,7 +94,7 @@ public class MetaTable extends AbstractTable {
 
     public boolean isCurrentCustomDataFormat() throws SQLException {
         try (var connection = this.database.getConnection();
-             var statement = prepareStatement(connection, "SELECT `value` FROM `%table%` WHERE `key`=? LIMIT 1")) {
+             var statement = this.prepareStatement(connection, "SELECT `value` FROM `%table%` WHERE `key`=? LIMIT 1")) {
             statement.setString(1, CUSTOM_DATA_FORMAT_KEY);
 
             try (var resultSet = statement.executeQuery()) {
@@ -109,7 +109,7 @@ public class MetaTable extends AbstractTable {
 
     public void saveCurrentCustomDataFormat() throws SQLException {
         try (var connection = this.database.getConnection();
-             var statement = prepareStatement(connection, this.upsertCurrentCustomDataFormatStatement())) {
+             var statement = this.prepareStatement(connection, this.upsertCurrentCustomDataFormatStatement())) {
             statement.setString(1, CUSTOM_DATA_FORMAT_KEY);
             statement.setString(2, CUSTOM_DATA_FORMAT_KEY);
             statement.execute();

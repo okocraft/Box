@@ -77,7 +77,7 @@ public class BoxPlayerMapImpl implements BoxPlayerMap {
 
     private void load(@NotNull Player player) {
         try {
-            loadBoxPlayer(player);
+            this.loadBoxPlayer(player);
         } catch (Exception e) {
             this.playerMap.remove(player);
             BoxLogger.logger().error("Could not load a player ({})", player.getName(), e);
@@ -118,7 +118,7 @@ public class BoxPlayerMapImpl implements BoxPlayerMap {
     public void loadAll() {
         Bukkit.getOnlinePlayers().forEach(player -> {
             this.playerMap.put(player, NOT_LOADED_YET);
-            load(player);
+            this.load(player);
         });
     }
 

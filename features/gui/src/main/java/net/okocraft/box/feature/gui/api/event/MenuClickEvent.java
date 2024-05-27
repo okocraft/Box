@@ -43,23 +43,23 @@ public class MenuClickEvent extends MenuEvent implements Cancellable {
     @Override
     public @NotNull String toDebugLog() {
         return "MenuClickEvent{" +
-                "viewerUuid=" + getViewer().getUniqueId() +
-                ", viewerName=" + getViewer().getName() +
-                ", menuClass=" + getMenu().getClass().getSimpleName() +
-                ", buttonClass=" + getClickedButton().getClass().getSimpleName() +
-                ", clickType=" + getClickType() +
-                ", cancelled=" + isCancelled() +
+                "viewerUuid=" + this.getViewer().getUniqueId() +
+                ", viewerName=" + this.getViewer().getName() +
+                ", menuClass=" + this.getMenu().getClass().getSimpleName() +
+                ", buttonClass=" + this.getClickedButton().getClass().getSimpleName() +
+                ", clickType=" + this.getClickType() +
+                ", cancelled=" + this.isCancelled() +
                 '}';
     }
 
     @Override
     public String toString() {
         return "MenuClickEvent{" +
-                "viewer=" + getViewer() +
-                ", menu=" + getMenu() +
-                ", clickedButton=" + getClickedButton() +
-                ", clickType=" + getClickType() +
-                ", cancelled=" + isCancelled() +
+                "viewer=" + this.getViewer() +
+                ", menu=" + this.getMenu() +
+                ", clickedButton=" + this.getClickedButton() +
+                ", clickType=" + this.getClickType() +
+                ", cancelled=" + this.isCancelled() +
                 '}';
     }
 }

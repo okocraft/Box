@@ -50,7 +50,7 @@ class BoxItemMap {
         Objects.requireNonNull(itemName);
         {
             long readAttempt = this.lock.tryOptimisticRead();
-            boolean result = checkItemNameAtUnsynchronized(itemName);
+            boolean result = this.checkItemNameAtUnsynchronized(itemName);
 
             if (this.lock.validate(readAttempt)) {
                 return result;
@@ -60,7 +60,7 @@ class BoxItemMap {
         this.lock.readLock();
 
         try {
-            return checkItemNameAtUnsynchronized(itemName);
+            return this.checkItemNameAtUnsynchronized(itemName);
         } finally {
             this.lock.tryUnlockRead();
         }
@@ -70,7 +70,7 @@ class BoxItemMap {
         Objects.requireNonNull(itemName);
         {
             long readAttempt = this.lock.tryOptimisticRead();
-            var boxItem = getByItemNameAtUnsynchronized(itemName);
+            var boxItem = this.getByItemNameAtUnsynchronized(itemName);
 
             if (this.lock.validate(readAttempt)) {
                 return boxItem;
@@ -80,7 +80,7 @@ class BoxItemMap {
         this.lock.readLock();
 
         try {
-            return getByItemNameAtUnsynchronized(itemName);
+            return this.getByItemNameAtUnsynchronized(itemName);
         } finally {
             this.lock.tryUnlockRead();
         }
@@ -93,7 +93,7 @@ class BoxItemMap {
 
         {
             long readAttempt = this.lock.tryOptimisticRead();
-            var boxItem = getByIdAtUnsynchronized(id);
+            var boxItem = this.getByIdAtUnsynchronized(id);
 
             if (this.lock.validate(readAttempt)) {
                 return boxItem;
@@ -103,7 +103,7 @@ class BoxItemMap {
         this.lock.readLock();
 
         try {
-            return getByIdAtUnsynchronized(id);
+            return this.getByIdAtUnsynchronized(id);
         } finally {
             this.lock.tryUnlockRead();
         }
@@ -112,7 +112,7 @@ class BoxItemMap {
     @NotNull IntImmutableList getItemIdList() {
         {
             long readAttempt = this.lock.tryOptimisticRead();
-            var list = getItemIdListAtUnsynchronized();
+            var list = this.getItemIdListAtUnsynchronized();
 
             if (this.lock.validate(readAttempt)) {
                 return list;
@@ -122,7 +122,7 @@ class BoxItemMap {
         this.lock.readLock();
 
         try {
-            return getItemIdListAtUnsynchronized();
+            return this.getItemIdListAtUnsynchronized();
         } finally {
             this.lock.tryUnlockRead();
         }
@@ -131,7 +131,7 @@ class BoxItemMap {
     @NotNull ObjectImmutableList<String> getItemNameList() {
         {
             long readAttempt = this.lock.tryOptimisticRead();
-            var list = getItemNameListAtUnsynchronized();
+            var list = this.getItemNameListAtUnsynchronized();
 
             if (this.lock.validate(readAttempt)) {
                 return list;
@@ -141,7 +141,7 @@ class BoxItemMap {
         this.lock.readLock();
 
         try {
-            return getItemNameListAtUnsynchronized();
+            return this.getItemNameListAtUnsynchronized();
         } finally {
             this.lock.tryUnlockRead();
         }
@@ -150,7 +150,7 @@ class BoxItemMap {
     @NotNull ObjectImmutableList<BoxItem> getItemList() {
         {
             long readAttempt = this.lock.tryOptimisticRead();
-            var list = getBoxItemListAtUnsynchronized();
+            var list = this.getBoxItemListAtUnsynchronized();
 
             if (this.lock.validate(readAttempt)) {
                 return list;
@@ -160,7 +160,7 @@ class BoxItemMap {
         this.lock.readLock();
 
         try {
-            return getBoxItemListAtUnsynchronized();
+            return this.getBoxItemListAtUnsynchronized();
         } finally {
             this.lock.tryUnlockRead();
         }
@@ -201,7 +201,7 @@ class BoxItemMap {
     }
 
     private @Nullable BoxItem getByItemNameAtUnsynchronized(@NotNull String itemName) {
-        return getByIdAtUnsynchronized(this.itemNameToId.getInt(itemName));
+        return this.getByIdAtUnsynchronized(this.itemNameToId.getInt(itemName));
     }
 
     private @NotNull IntImmutableList getItemIdListAtUnsynchronized() {

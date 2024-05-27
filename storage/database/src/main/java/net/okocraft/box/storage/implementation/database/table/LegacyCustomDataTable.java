@@ -36,7 +36,7 @@ public class LegacyCustomDataTable extends AbstractCustomDataTable {
     }
 
     protected @NotNull MapNode readDataFromResultSet(@NotNull ResultSet resultSet) throws Exception {
-        try (var in = new ByteArrayInputStream(readBytesFromResultSet(resultSet, "data"));
+        try (var in = new ByteArrayInputStream(this.readBytesFromResultSet(resultSet, "data"));
              var reader = new InputStreamReader(in, StandardCharsets.UTF_8)) {
             return YamlFormat.DEFAULT.load(reader);
         }

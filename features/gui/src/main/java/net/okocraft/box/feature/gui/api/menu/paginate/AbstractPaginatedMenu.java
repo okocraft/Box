@@ -32,7 +32,7 @@ public abstract class AbstractPaginatedMenu<T> implements PaginatedMenu {
         this.rows = rows;
         this.list = list;
         this.currentPageKey = currentPageKey;
-        this.iconsPerPage = (getRows() - 1) * 9;
+        this.iconsPerPage = (this.getRows() - 1) * 9;
         this.maxPage = (list.size() + this.iconsPerPage - 1) / this.iconsPerPage;
     }
 
@@ -71,7 +71,7 @@ public abstract class AbstractPaginatedMenu<T> implements PaginatedMenu {
         int end = start + this.iconsPerPage;
 
         for (int i = start, limit = this.list.size(), slot = 0; i < limit && i < end; i++, slot++) {
-            buttons.add(createButton(this.list.get(i), slot));
+            buttons.add(this.createButton(this.list.get(i), slot));
         }
 
         if (currentPage < this.maxPage) {
@@ -82,7 +82,7 @@ public abstract class AbstractPaginatedMenu<T> implements PaginatedMenu {
             buttons.add(new PageSwitchButton(this.rows, currentPage - 1, false, this.currentPageKey));
         }
 
-        addAdditionalButtons(session, buttons);
+        this.addAdditionalButtons(session, buttons);
 
         return buttons;
     }

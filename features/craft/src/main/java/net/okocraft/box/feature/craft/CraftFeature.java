@@ -62,8 +62,8 @@ public class CraftFeature extends AbstractBoxFeature implements Reloadable {
 
     @Override
     public void reload(@NotNull FeatureContext.Reloading context) throws IOException {
-        disable(context.asDisabling());
-        enable(context.asEnabling());
+        this.disable(context.asDisabling());
+        this.enable(context.asEnabling());
         this.reloaded.source(BoxAPI.api().getMessageProvider().findSource(context.commandSender())).send(context.commandSender());
     }
 

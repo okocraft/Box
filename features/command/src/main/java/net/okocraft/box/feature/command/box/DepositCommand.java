@@ -70,7 +70,7 @@ public class DepositCommand extends AbstractCommand {
         }
 
         if (args.length == 1) {
-            depositItemInMainHand(player, Integer.MAX_VALUE, msgSrc);
+            this.depositItemInMainHand(player, Integer.MAX_VALUE, msgSrc);
             return;
         }
 
@@ -80,22 +80,22 @@ public class DepositCommand extends AbstractCommand {
             var arg = args[1];
 
             if (arg.equalsIgnoreCase("all")) {
-                depositAll(player, msgSrc);
+                this.depositAll(player, msgSrc);
                 return;
             }
 
             try {
-                depositItemInMainHand(player, Math.max(Integer.parseInt(arg), 1), msgSrc);
+                this.depositItemInMainHand(player, Math.max(Integer.parseInt(arg), 1), msgSrc);
                 return;
             } catch (NumberFormatException ignored) {
             }
 
             itemManager.getBoxItem(arg).ifPresentOrElse(
-                    boxItem -> depositItem(player, msgSrc, boxItem, Integer.MAX_VALUE),
+                    boxItem -> this.depositItem(player, msgSrc, boxItem, Integer.MAX_VALUE),
                     () -> {
                         if (!arg.isEmpty() && arg.length() < 4 &&
                                 (arg.charAt(0) == 'a' || arg.charAt(0) == 'A')) {
-                            depositAll(player, msgSrc);
+                            this.depositAll(player, msgSrc);
                         } else {
                             ErrorMessages.ITEM_NOT_FOUND.apply(arg).source(msgSrc).send(sender);
                         }
@@ -122,7 +122,7 @@ public class DepositCommand extends AbstractCommand {
                 return;
             }
 
-            depositItem(player, msgSrc, boxItem.get(), amount);
+            this.depositItem(player, msgSrc, boxItem.get(), amount);
         }
     }
 

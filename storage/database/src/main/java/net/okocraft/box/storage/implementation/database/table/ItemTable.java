@@ -56,7 +56,7 @@ public class ItemTable extends AbstractTable implements ItemStorage {
         var result = new ArrayList<I>(1000); // The number of default items is currently around 1400, so this should only need to be expanded once.
 
         try (var connection = this.database.getConnection();
-             var statement = prepareStatement(connection, "SELECT `id`, `name`, `item_data` FROM `%table%` WHERE `is_default_item`=TRUE")) {
+             var statement = this.prepareStatement(connection, "SELECT `id`, `name`, `item_data` FROM `%table%` WHERE `is_default_item`=TRUE")) {
             try (var rs = statement.executeQuery()) {
                 while (rs.next()) {
                     result.add(function.apply(this.toItemData(rs)));
@@ -72,13 +72,13 @@ public class ItemTable extends AbstractTable implements ItemStorage {
         var result = new ArrayList<BoxDefaultItem>(newItems.size() + updatedItemMap.size());
 
         try (var connection = this.database.getConnection()) {
-            try (var statement = prepareStatement(connection, "UPDATE `%table%` SET `name`=?, `item_data`=? WHERE `id`=?")) {
+            try (var statement = this.prepareStatement(connection, "UPDATE `%table%` SET `name`=?, `item_data`=? WHERE `id`=?")) {
                 for (var entry : updatedItemMap.int2ObjectEntrySet()) {
                     int internalId = entry.getIntKey();
                     var item = entry.getValue();
 
                     statement.setString(1, item.plainName());
-                    writeBytesToStatement(statement, 2, item.itemStack().serializeAsBytes());
+                    this.writeBytesToStatement(statement, 2, item.itemStack().serializeAsBytes());
                     statement.setInt(3, internalId);
 
                     statement.addBatch();
@@ -90,7 +90,7 @@ public class ItemTable extends AbstractTable implements ItemStorage {
 
             int maxId;
 
-            try (var statement = prepareStatement(connection, "SELECT MAX(`id`) FROM `%table%`");
+            try (var statement = this.prepareStatement(connection, "SELECT MAX(`id`) FROM `%table%`");
                  var resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
                     maxId = resultSet.getInt(1);
@@ -99,10 +99,10 @@ public class ItemTable extends AbstractTable implements ItemStorage {
                 }
             }
 
-            try (var statement = prepareStatement(connection, "INSERT INTO `%table%` (`name`, `item_data`, `is_default_item`) VALUES(?,?,?)")) {
+            try (var statement = this.prepareStatement(connection, "INSERT INTO `%table%` (`name`, `item_data`, `is_default_item`) VALUES(?,?,?)")) {
                 for (var item : newItems) {
                     statement.setString(1, item.plainName());
-                    writeBytesToStatement(statement, 2, item.itemStack().serializeAsBytes());
+                    this.writeBytesToStatement(statement, 2, item.itemStack().serializeAsBytes());
                     statement.setBoolean(3, true);
 
                     statement.addBatch();
@@ -112,7 +112,7 @@ public class ItemTable extends AbstractTable implements ItemStorage {
 
             var nameToItemMap = newItems.stream().collect(Collectors.toMap(DefaultItem::plainName, Function.identity()));
 
-            try (var statement = prepareStatement(connection, "SELECT `id`, `name` FROM `%table%` WHERE `id` > ?")) {
+            try (var statement = this.prepareStatement(connection, "SELECT `id`, `name` FROM `%table%` WHERE `id` > ?")) {
                 statement.setInt(1, maxId);
                 try(var resultSet = statement.executeQuery()) {
                     while (resultSet.next()) {
@@ -133,7 +133,7 @@ public class ItemTable extends AbstractTable implements ItemStorage {
         var result = new ArrayList<I>();
 
         try (var connection = this.database.getConnection();
-             var statement = prepareStatement(connection, "SELECT `id`, `name`, `item_data` FROM `%table%` WHERE `is_default_item`=FALSE")) {
+             var statement = this.prepareStatement(connection, "SELECT `id`, `name`, `item_data` FROM `%table%` WHERE `is_default_item`=FALSE")) {
             try (var rs = statement.executeQuery()) {
                 while (rs.next()) {
                     result.add(function.apply(this.toItemData(rs)));
@@ -147,11 +147,11 @@ public class ItemTable extends AbstractTable implements ItemStorage {
     @Override
     public void updateCustomItems(@NotNull Collection<BoxCustomItem> items) throws Exception {
         try (var connection = this.database.getConnection();
-             var statement = prepareStatement(connection, "UPDATE `%table%` SET `name`=?, `item_data`=? WHERE `id`=?")) {
+             var statement = this.prepareStatement(connection, "UPDATE `%table%` SET `name`=?, `item_data`=? WHERE `id`=?")) {
 
             for (var item : items) {
                 statement.setString(1, item.getPlainName());
-                writeBytesToStatement(statement, 2, item.getOriginal().serializeAsBytes());
+                this.writeBytesToStatement(statement, 2, item.getOriginal().serializeAsBytes());
                 statement.setInt(3, item.getInternalId());
 
                 statement.addBatch();
@@ -167,9 +167,9 @@ public class ItemTable extends AbstractTable implements ItemStorage {
             var itemBytes = item.serializeAsBytes();
             var name = itemName != null ? itemName : ItemNameGenerator.itemStack(item.getType(), itemBytes);
 
-            try (var statement = prepareStatement(connection, "INSERT INTO `%table%` (`name`, `item_data`, `is_default_item`) VALUES(?,?,?)")) {
+            try (var statement = this.prepareStatement(connection, "INSERT INTO `%table%` (`name`, `item_data`, `is_default_item`) VALUES(?,?,?)")) {
                 statement.setString(1, name);
-                writeBytesToStatement(statement, 2, itemBytes);
+                this.writeBytesToStatement(statement, 2, itemBytes);
                 statement.setBoolean(3, false);
 
                 statement.executeUpdate();
@@ -188,7 +188,7 @@ public class ItemTable extends AbstractTable implements ItemStorage {
     @Override
     public @NotNull BoxCustomItem renameCustomItem(@NotNull BoxCustomItem item, @NotNull String newName) throws Exception {
         try (var connection = this.database.getConnection();
-             var statement = prepareStatement(connection, "UPDATE `%table%` SET `name`=? WHERE `id`=?")) {
+             var statement = this.prepareStatement(connection, "UPDATE `%table%` SET `name`=? WHERE `id`=?")) {
 
             statement.setString(1, newName);
             statement.setInt(2, item.getInternalId());
@@ -203,7 +203,7 @@ public class ItemTable extends AbstractTable implements ItemStorage {
     private @NotNull ItemData toItemData(@NotNull ResultSet resultSet) throws SQLException {
         int id = resultSet.getInt("id");
         var name = resultSet.getString("name");
-        var itemData = readBytesFromResultSet(resultSet, "item_data");
+        var itemData = this.readBytesFromResultSet(resultSet, "item_data");
 
         return new ItemData(id, name, itemData);
     }

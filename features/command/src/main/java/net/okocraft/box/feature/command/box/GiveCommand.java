@@ -83,7 +83,7 @@ public class GiveCommand extends AbstractCommand {
             return;
         }
 
-        if (!target.hasPermission(getPermissionNode())) {
+        if (!target.hasPermission(this.getPermissionNode())) {
             this.targetNoPermission.apply(target.getName(), this.getPermissionNode()).source(msgSrc).send(sender);
             return;
         }
@@ -159,7 +159,7 @@ public class GiveCommand extends AbstractCommand {
         }
 
         if (args.length == 2) {
-            return TabCompleter.players(args[1], getPermissionNode());
+            return TabCompleter.players(args[1], this.getPermissionNode());
         }
 
         if (args.length == 3) {

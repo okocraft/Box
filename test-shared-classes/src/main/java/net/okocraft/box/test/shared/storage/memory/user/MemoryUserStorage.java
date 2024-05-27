@@ -70,7 +70,7 @@ public class MemoryUserStorage implements UserStorage {
         this.throwExceptionIfEnabled();
 
         for (var user : users) {
-            saveBoxUser(user.getUUID(), user.getName().orElse(null));
+            this.saveBoxUser(user.getUUID(), user.getName().orElse(null));
         }
     }
 

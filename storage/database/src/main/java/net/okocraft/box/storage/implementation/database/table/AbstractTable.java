@@ -37,7 +37,7 @@ public abstract class AbstractTable {
     }
 
     protected @NotNull PreparedStatement prepareStatement(@NotNull Connection connection, @NotNull String sql) throws SQLException {
-        var tableNameReplaced = replaceTableName(sql);
+        var tableNameReplaced = this.replaceTableName(sql);
         return connection.prepareStatement(tableNameReplaced);
     }
 

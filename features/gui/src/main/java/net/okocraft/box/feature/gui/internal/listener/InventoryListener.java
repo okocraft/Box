@@ -101,7 +101,7 @@ public class InventoryListener implements Listener {
             return;
         }
 
-        var category = findCategory(boxItem).orElse(null);
+        var category = this.findCategory(boxItem).orElse(null);
 
         if (category == null) {
             return;

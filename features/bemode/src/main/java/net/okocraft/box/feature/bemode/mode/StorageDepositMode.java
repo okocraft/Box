@@ -75,7 +75,7 @@ public class StorageDepositMode extends AbstractStorageMode {
 
     @Override
     public @NotNull ClickResult onClick(@NotNull PlayerSession session, @NotNull BoxItem item, @NotNull ClickType clickType) {
-        return processDeposit(session, item);
+        return this.processDeposit(session, item);
     }
 
     @Override

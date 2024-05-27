@@ -82,7 +82,7 @@ public class AutoStoreCommand extends AbstractCommand {
             }
         }
 
-        var subCommand = matchSubCommand(args[1]);
+        var subCommand = this.matchSubCommand(args[1]);
 
         if (subCommand.isPresent()) {
             subCommand.get().runCommand(sender, args, msgSrc, setting);
@@ -107,7 +107,7 @@ public class AutoStoreCommand extends AbstractCommand {
                     .collect(Collectors.toList());
         }
 
-        return matchSubCommand(args[1])
+        return this.matchSubCommand(args[1])
                 .map(cmd -> cmd.runTabComplete(sender, args))
                 .orElse(Collections.emptyList());
     }

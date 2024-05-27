@@ -61,7 +61,7 @@ public final class Amount {
 
         public @NotNull Unit next() {
             var values = values();
-            var index = ordinal() + 1;
+            var index = this.ordinal() + 1;
 
             if (index == values.length) {
                 index = 0;

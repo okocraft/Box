@@ -22,12 +22,12 @@ record DepositImpl(@NotNull StockHolder stockHolder, @NotNull BoxItem boxItem,
 
     @Override
     public @NotNull @Unmodifiable List<TransactionResult> fromInventory(@NotNull Inventory inventory, @NotNull StockEvent.Cause cause) {
-        return fromInventory(inventory, null, cause);
+        return this.fromInventory(inventory, null, cause);
     }
 
     @Override
     public @NotNull @Unmodifiable List<TransactionResult> fromTopInventory(@NotNull InventoryView view, @NotNull StockEvent.Cause cause) {
-        return fromInventory(view.getTopInventory(), view, cause);
+        return this.fromInventory(view.getTopInventory(), view, cause);
     }
 
     private @NotNull List<TransactionResult> fromInventory(@NotNull Inventory inventory, @Nullable InventoryView view, @NotNull StockEvent.Cause cause) {

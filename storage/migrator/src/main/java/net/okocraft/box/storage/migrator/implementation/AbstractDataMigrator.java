@@ -8,7 +8,7 @@ abstract class AbstractDataMigrator<R, ST> implements DataMigrator<R> {
 
     @Override
     public @NotNull R migrate(@NotNull Storage source, @NotNull Storage target, boolean debug) throws Exception {
-        BoxLogger.logger().info("Starting {}...", getClass().getSimpleName());
+        BoxLogger.logger().info("Starting {}...", this.getClass().getSimpleName());
         return this.migrateData(this.getDataStorage(source), this.getDataStorage(target), debug);
     }
 

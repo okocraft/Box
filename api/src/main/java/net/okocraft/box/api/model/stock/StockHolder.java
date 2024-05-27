@@ -42,7 +42,7 @@ public interface StockHolder {
      * @throws NullPointerException if {@code item} is {@code null}
      */
     default int getAmount(@NotNull BoxItem item) {
-        return getAmount(item.getInternalId());
+        return this.getAmount(item.getInternalId());
     }
 
     /**
@@ -152,7 +152,7 @@ public interface StockHolder {
             map.put(entry.getKey(), entry.getValue().intValue());
         }
 
-        return decreaseIfPossible(map, cause);
+        return this.decreaseIfPossible(map, cause);
     }
 
     /**

@@ -67,7 +67,7 @@ class YamlUserStorage implements UserStorage {
         this.userMap.putUUIDAndUsername(uuid, name != null ? name : "");
 
         synchronized (this) {
-            saveUserMap();
+            this.saveUserMap();
         }
     }
 
@@ -89,7 +89,7 @@ class YamlUserStorage implements UserStorage {
         }
 
         synchronized (this) {
-            saveUserMap();
+            this.saveUserMap();
         }
     }
 
@@ -251,7 +251,7 @@ class YamlUserStorage implements UserStorage {
             @Override
             public boolean equals(Object object) {
                 if (this == object) return true;
-                if (object == null || getClass() != object.getClass()) return false;
+                if (object == null || this.getClass() != object.getClass()) return false;
                 NameKey other = (NameKey) object;
                 return this.lowercase.equals(other.lowercase);
             }

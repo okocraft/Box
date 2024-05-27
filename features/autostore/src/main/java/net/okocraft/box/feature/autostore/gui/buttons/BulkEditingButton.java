@@ -98,7 +98,7 @@ public class BulkEditingButton extends AbstractAutoStoreSettingButton {
         }
 
         sound.play(session.getViewer());
-        callAutoStoreSettingChangeEvent(setting);
+        this.callAutoStoreSettingChangeEvent(setting);
 
         return result;
     }

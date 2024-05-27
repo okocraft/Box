@@ -52,8 +52,8 @@ class AutoStoreSettingContainer implements AutoStoreSettingProvider {
 
     void registerBoxPlayerListener(@NotNull MiniMessageBase loadErrorMessage) {
         BoxAPI.api().getEventManager().subscribeAll(List.of(
-                new ListenerBase<>(PlayerLoadEvent.class, PLAYER_LISTENER_KEY, event -> load(event.getBoxPlayer().getPlayer(), loadErrorMessage), Priority.NORMAL),
-                new ListenerBase<>(PlayerUnloadEvent.class, PLAYER_LISTENER_KEY, event -> unload(event.getBoxPlayer().getPlayer()), Priority.NORMAL)
+                new ListenerBase<>(PlayerLoadEvent.class, PLAYER_LISTENER_KEY, event -> this.load(event.getBoxPlayer().getPlayer(), loadErrorMessage), Priority.NORMAL),
+                new ListenerBase<>(PlayerUnloadEvent.class, PLAYER_LISTENER_KEY, event -> this.unload(event.getBoxPlayer().getPlayer()), Priority.NORMAL)
         ));
     }
 

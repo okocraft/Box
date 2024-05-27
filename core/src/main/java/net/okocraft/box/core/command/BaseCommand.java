@@ -39,7 +39,7 @@ public abstract class BaseCommand implements Command, SubCommandHoldable, Listen
 
         var source = this.messageProvider.findSource(sender);
 
-        if (!sender.hasPermission(getPermissionNode())) {
+        if (!sender.hasPermission(this.getPermissionNode())) {
             ErrorMessages.NO_PERMISSION.apply(this.getPermissionNode()).source(source).send(sender);
             return;
         }
@@ -49,7 +49,7 @@ public abstract class BaseCommand implements Command, SubCommandHoldable, Listen
                 this.scheduler.runAsyncTask(() -> this.commandOfNoArgument.onCommand(sender, args));
             } else {
                 ErrorMessages.NOT_ENOUGH_ARGUMENT.source(source).send(sender);
-                sendHelp(sender, source);
+                this.sendHelp(sender, source);
             }
             return;
         }
@@ -60,7 +60,7 @@ public abstract class BaseCommand implements Command, SubCommandHoldable, Listen
             if (!args[0].equalsIgnoreCase("help")) {
                 ErrorMessages.SUB_COMMAND_NOT_FOUND.source(source).send(sender);
             }
-            sendHelp(sender, source);
+            this.sendHelp(sender, source);
             return;
         }
 
@@ -84,7 +84,7 @@ public abstract class BaseCommand implements Command, SubCommandHoldable, Listen
         Objects.requireNonNull(sender);
         Objects.requireNonNull(args);
 
-        if (args.length == 0 || !sender.hasPermission(getPermissionNode())) {
+        if (args.length == 0 || !sender.hasPermission(this.getPermissionNode())) {
             return Collections.emptyList();
         }
 
@@ -139,13 +139,13 @@ public abstract class BaseCommand implements Command, SubCommandHoldable, Listen
 
         var label = buffer.substring(0, firstSpace).toLowerCase(Locale.ROOT);
 
-        if (!getName().equals(label) && !getAliases().contains(label)) {
+        if (!this.getName().equals(label) && !this.getAliases().contains(label)) {
             return;
         }
 
         String[] args = buffer.substring(firstSpace + 1).split(" ", -1);
 
-        event.setCompletions(onTabComplete(event.getSender(), args));
+        event.setCompletions(this.onTabComplete(event.getSender(), args));
         event.setHandled(true);
     }
 

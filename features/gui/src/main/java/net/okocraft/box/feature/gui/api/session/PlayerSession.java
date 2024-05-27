@@ -62,7 +62,7 @@ public final class PlayerSession {
         var data = this.getData(key);
 
         if (data == null) {
-            throw new IllegalStateException(key + " does not exist in this session (" + getViewer().getName() + ")");
+            throw new IllegalStateException(key + " does not exist in this session (" + this.getViewer().getName() + ")");
         }
 
         return data;

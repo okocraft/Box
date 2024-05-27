@@ -21,7 +21,7 @@ public abstract class AbstractCustomDataTable extends AbstractTable implements C
     @Override
     public @NotNull MapNode loadData(@NotNull Key key) throws Exception {
         try (var connection = this.database.getConnection();
-             var statement = prepareStatement(connection, "SELECT `data` FROM `%table%` WHERE `key`=? LIMIT 1")) {
+             var statement = this.prepareStatement(connection, "SELECT `data` FROM `%table%` WHERE `key`=? LIMIT 1")) {
             statement.setString(1, key.asString());
 
             try (var resultSet = statement.executeQuery()) {
@@ -38,13 +38,13 @@ public abstract class AbstractCustomDataTable extends AbstractTable implements C
     public void saveData(@NotNull Key key, @NotNull MapNode mapNode) throws Exception {
         if (mapNode.value().isEmpty()) {
             try (var connection = this.database.getConnection();
-                 var statement = prepareStatement(connection, "DELETE FROM `%table%` WHERE `key`=?")) {
+                 var statement = this.prepareStatement(connection, "DELETE FROM `%table%` WHERE `key`=?")) {
                 statement.setString(1, key.asString());
                 statement.execute();
             }
         } else {
             try (var connection = this.database.getConnection();
-                 var statement = prepareStatement(connection, this.insertOrUpdateDataStatement())) {
+                 var statement = this.prepareStatement(connection, this.insertOrUpdateDataStatement())) {
                 statement.setString(1, key.asString());
                 this.writeBytesToStatement(statement, 2, this.toBytes(mapNode));
                 statement.execute();
@@ -56,12 +56,12 @@ public abstract class AbstractCustomDataTable extends AbstractTable implements C
     @Override
     public void visitData(@NotNull String namespace, @NotNull BiConsumer<Key, MapNode> consumer) throws Exception {
         try (var connection = this.database.getConnection();
-             var statement = prepareStatement(connection, "SELECT `key`, `data` FROM `%table%` WHERE `key` LIKE ?")) {
+             var statement = this.prepareStatement(connection, "SELECT `key`, `data` FROM `%table%` WHERE `key` LIKE ?")) {
             statement.setString(1, namespace + ":%");
 
             try (var resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
-                    consumer.accept(Key.key(resultSet.getString("key")), readDataFromResultSet(resultSet));
+                    consumer.accept(Key.key(resultSet.getString("key")), this.readDataFromResultSet(resultSet));
                 }
             }
         }
@@ -71,10 +71,10 @@ public abstract class AbstractCustomDataTable extends AbstractTable implements C
     @Override
     public void visitAllData(@NotNull BiConsumer<Key, MapNode> consumer) throws Exception {
         try (var connection = this.database.getConnection();
-             var statement = prepareStatement(connection, "SELECT `key`, `data` FROM `%table%`")) {
+             var statement = this.prepareStatement(connection, "SELECT `key`, `data` FROM `%table%`")) {
             try (var resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
-                    consumer.accept(Key.key(resultSet.getString("key")), readDataFromResultSet(resultSet));
+                    consumer.accept(Key.key(resultSet.getString("key")), this.readDataFromResultSet(resultSet));
                 }
             }
         }

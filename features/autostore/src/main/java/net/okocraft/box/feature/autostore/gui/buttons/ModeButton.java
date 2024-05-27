@@ -59,7 +59,7 @@ public class ModeButton extends AbstractAutoStoreSettingButton {
         }
 
         SoundBase.CLICK.play(session.getViewer());
-        callAutoStoreSettingChangeEvent(setting);
+        this.callAutoStoreSettingChangeEvent(setting);
 
         return result;
     }

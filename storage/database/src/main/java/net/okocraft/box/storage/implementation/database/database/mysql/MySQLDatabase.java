@@ -49,7 +49,7 @@ public class MySQLDatabase implements Database {
         config.setMaxLifetime(60000);
         config.setMaximumPoolSize(50);
 
-        configureDataSourceProperties(config.getDataSourceProperties());
+        this.configureDataSourceProperties(config.getDataSourceProperties());
 
         this.hikariDataSource = new HikariDataSource(config);
     }
@@ -71,7 +71,7 @@ public class MySQLDatabase implements Database {
         result.add(Storage.Property.of("database-name", this.mySQLSetting.databaseName()));
         result.add(Storage.Property.of("table-prefix", this.mySQLSetting.tablePrefix()));
 
-        var ping = ping();
+        var ping = this.ping();
         if (0 < ping) {
             result.add(Storage.Property.of("ping", ping + "ms"));
         }
@@ -119,7 +119,7 @@ public class MySQLDatabase implements Database {
 
         long start = System.currentTimeMillis();
 
-        try (var connection = getConnection(); var statement = connection.createStatement()) {
+        try (var connection = this.getConnection(); var statement = connection.createStatement()) {
             statement.execute("SELECT 1");
         } catch (Exception ignored) {
             return -1;

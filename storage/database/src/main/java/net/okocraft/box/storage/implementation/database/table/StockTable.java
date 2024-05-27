@@ -76,7 +76,7 @@ public class StockTable extends AbstractTable implements PartialSavingStockStora
         try (var connection = this.database.getConnection()) {
             var strUuid = uuid.toString();
 
-            try (var statement = this.prepareStatement(connection, insertOrUpdateStockDataStatement())) {
+            try (var statement = this.prepareStatement(connection, this.insertOrUpdateStockDataStatement())) {
                 for (var data : stockData) {
                     statement.setString(1, strUuid);
                     statement.setInt(2, data.itemId());
@@ -92,7 +92,7 @@ public class StockTable extends AbstractTable implements PartialSavingStockStora
     @Override
     public void cleanupZeroStockData() throws Exception {
         try (var connection = this.database.getConnection();
-             var statement = prepareStatement(connection, "DELETE FROM `%table%` WHERE `amount`=?")) {
+             var statement = this.prepareStatement(connection, "DELETE FROM `%table%` WHERE `amount`=?")) {
             statement.setInt(1, 0);
             statement.execute();
         }
@@ -101,7 +101,7 @@ public class StockTable extends AbstractTable implements PartialSavingStockStora
     @Override
     public boolean hasZeroStock() throws Exception {
         try (var connection = this.database.getConnection();
-             var statement = prepareStatement(connection, "SELECT COUNT(*) FROM `%table%` WHERE `amount`=0");
+             var statement = this.prepareStatement(connection, "SELECT COUNT(*) FROM `%table%` WHERE `amount`=0");
              var result = statement.executeQuery()) {
             return result.next() && 0 < result.getInt(1);
         }

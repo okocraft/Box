@@ -25,7 +25,7 @@ public class CustomDataTable extends AbstractCustomDataTable {
 
     @Override
     public void init() throws Exception {
-        createTableAndIndex();
+        this.createTableAndIndex();
 
         if (!this.metaTable.isCurrentCustomDataFormat() && this.legacyTableExists()) {
             this.legacyCustomDataTable = new LegacyCustomDataTable(this.database, false);
@@ -93,7 +93,7 @@ public class CustomDataTable extends AbstractCustomDataTable {
     }
 
     protected @NotNull MapNode readDataFromResultSet(@NotNull ResultSet resultSet) throws Exception {
-        try (var in = new ByteArrayInputStream(readBytesFromResultSet(resultSet, "data"))) {
+        try (var in = new ByteArrayInputStream(this.readBytesFromResultSet(resultSet, "data"))) {
             return BinaryFormat.DEFAULT.load(in) instanceof MapNode mapNode ? mapNode : MapNode.create();
         }
     }

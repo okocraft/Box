@@ -77,9 +77,9 @@ public final class StorageMode extends AbstractStorageMode {
     @Override
     public @NotNull ClickResult onClick(@NotNull PlayerSession session, @NotNull BoxItem item, @NotNull ClickType clickType) {
         if (clickType.isLeftClick()) {
-            return processDeposit(session, item);
+            return this.processDeposit(session, item);
         } else if (clickType.isRightClick()) {
-            return processWithdraw(session, item);
+            return this.processWithdraw(session, item);
         }
 
         return ClickResult.NO_UPDATE_NEEDED;

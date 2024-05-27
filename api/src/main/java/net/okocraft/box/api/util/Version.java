@@ -70,7 +70,7 @@ public interface Version<V extends Version<V>> extends Comparable<V> {
      * @return {@code true} if this {@link Version} is contained between the specified {@link Version}s, otherwise {@code false}
      */
     default boolean isBetween(@NotNull V startInclusive, @NotNull V endInclusive) {
-        return isAfterOrSame(startInclusive) && isBeforeOrSame(endInclusive);
+        return this.isAfterOrSame(startInclusive) && this.isBeforeOrSame(endInclusive);
     }
 
 }

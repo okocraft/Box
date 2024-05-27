@@ -54,7 +54,7 @@ public class CurrentRecipe {
             }
         }
 
-        updateSelectedRecipe();
+        this.updateSelectedRecipe();
     }
 
     public @Nullable SelectableIngredients getIngredients(int pos) {

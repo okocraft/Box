@@ -40,7 +40,7 @@ class BukkitBoxItemMap extends BoxItemMap {
 
         {
             long readAttempt = this.lock.tryOptimisticRead();
-            boolean result = checkItemAtUnsynchronized(itemStack);
+            boolean result = this.checkItemAtUnsynchronized(itemStack);
 
             if (this.lock.validate(readAttempt)) {
                 return result;
@@ -50,7 +50,7 @@ class BukkitBoxItemMap extends BoxItemMap {
         this.lock.readLock();
 
         try {
-            return checkItemAtUnsynchronized(itemStack);
+            return this.checkItemAtUnsynchronized(itemStack);
         } finally {
             this.lock.tryUnlockRead();
         }
@@ -60,14 +60,14 @@ class BukkitBoxItemMap extends BoxItemMap {
         Objects.requireNonNull(item);
 
         if (!item.hasItemMeta()) {
-            return getByItemName(item.getType().name());
+            return this.getByItemName(item.getType().name());
         }
 
         var one = item.asOne();
 
         {
             long readAttempt = this.lock.tryOptimisticRead();
-            var boxItem = getByItemStackAtUnsynchronized(one);
+            var boxItem = this.getByItemStackAtUnsynchronized(one);
 
             if (this.lock.validate(readAttempt)) {
                 return boxItem;
@@ -77,7 +77,7 @@ class BukkitBoxItemMap extends BoxItemMap {
         this.lock.readLock();
 
         try {
-            return getByItemStackAtUnsynchronized(one);
+            return this.getByItemStackAtUnsynchronized(one);
         } finally {
             this.lock.tryUnlockRead();
         }
@@ -100,6 +100,6 @@ class BukkitBoxItemMap extends BoxItemMap {
     }
 
     private @Nullable BoxItem getByItemStackAtUnsynchronized(@NotNull ItemStack item) {
-        return getByIdAtUnsynchronized(this.itemToId.getInt(item));
+        return this.getByIdAtUnsynchronized(this.itemToId.getInt(item));
     }
 }

@@ -101,7 +101,7 @@ public class BoxInventoryHolder implements InventoryHolder {
 
     public void processClick(int slot, @NotNull ClickType clickType) {
         try {
-            processClick0(slot, clickType);
+            this.processClick0(slot, clickType);
         } catch (Throwable e) {
             var viewer = this.session.getViewer();
             ERROR.apply(e).source(this.session.getMessageSource()).send(viewer);
@@ -132,9 +132,9 @@ public class BoxInventoryHolder implements InventoryHolder {
         var result = button.onClick(this.session, clickType);
 
         if (result instanceof ClickResult.WaitingTask waitingTask) {
-            waitingTask.onCompleted(r -> processClickResult(button, r));
+            waitingTask.onCompleted(r -> this.processClickResult(button, r));
         } else {
-            processClickResult(button, result);
+            this.processClickResult(button, result);
         }
     }
 

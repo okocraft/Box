@@ -26,19 +26,19 @@ public class MenuOpenEvent extends MenuEvent implements Cancellable {
     @Override
     public @NotNull String toDebugLog() {
         return "MenuOpenEvent{" +
-                "viewerUuid=" + getViewer().getUniqueId() +
-                ", viewerName=" + getViewer().getName() +
-                ", menuClass=" + getMenu().getClass().getSimpleName() +
-                ", cancelled=" + isCancelled() +
+                "viewerUuid=" + this.getViewer().getUniqueId() +
+                ", viewerName=" + this.getViewer().getName() +
+                ", menuClass=" + this.getMenu().getClass().getSimpleName() +
+                ", cancelled=" + this.isCancelled() +
                 '}';
     }
 
     @Override
     public String toString() {
         return "MenuOpenEvent{" +
-                "viewer=" + getViewer() +
-                ", menu=" + getMenu() +
-                ", cancelled=" + isCancelled() +
+                "viewer=" + this.getViewer() +
+                ", menu=" + this.getMenu() +
+                ", cancelled=" + this.isCancelled() +
                 '}';
     }
 }

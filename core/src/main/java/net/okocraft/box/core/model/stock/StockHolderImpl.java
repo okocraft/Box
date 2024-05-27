@@ -313,8 +313,8 @@ class StockHolderImpl implements StockHolder {
     @Override
     public String toString() {
         var builder =
-                new StringBuilder(getClass().getSimpleName())
-                        .append("{name=").append(getName())
+                new StringBuilder(this.getClass().getSimpleName())
+                        .append("{name=").append(this.getName())
                         .append(", uuid=").append(this.uuid)
                         .append(", stockMap={");
         this.writeStockMap(builder);

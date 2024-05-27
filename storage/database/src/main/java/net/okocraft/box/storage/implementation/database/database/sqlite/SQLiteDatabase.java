@@ -41,7 +41,7 @@ public class SQLiteDatabase implements Database {
     @Override
     public void prepare() throws Exception {
         if (!Files.exists(this.databasePath)) {
-            createDatabaseFile();
+            this.createDatabaseFile();
         }
 
         this.connection = new NonCloseableConnection(this.createConnection());

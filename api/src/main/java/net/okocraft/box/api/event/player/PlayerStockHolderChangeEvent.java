@@ -37,8 +37,8 @@ public class PlayerStockHolderChangeEvent extends PlayerEvent {
     @Override
     public @NotNull String toDebugLog() {
         return "PlayerStockHolderChangeEvent{" +
-                "uuid=" + getBoxPlayer().getUUID() +
-                ", name=" + getBoxPlayer().getName() +
+                "uuid=" + this.getBoxPlayer().getUUID() +
+                ", name=" + this.getBoxPlayer().getName() +
                 ", previousStockholderUuid=" + this.previous.getUUID() +
                 ", previousStockHolderName=" + this.previous.getName() +
                 ", previousStockHolderClass=" + this.previous.getClass().getSimpleName() +

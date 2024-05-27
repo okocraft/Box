@@ -19,12 +19,12 @@ record WithdrawalImpl(@NotNull StockHolder stockHolder, @NotNull BoxItem boxItem
 
     @Override
     public @NotNull TransactionResult toInventory(@NotNull Inventory inventory, @NotNull StockEvent.Cause cause) {
-        return toInventory(inventory, null, cause);
+        return this.toInventory(inventory, null, cause);
     }
 
     @Override
     public @NotNull TransactionResult toTopInventory(@NotNull InventoryView view, @NotNull StockEvent.Cause cause) {
-        return toInventory(view.getTopInventory(), view, cause);
+        return this.toInventory(view.getTopInventory(), view, cause);
     }
 
     private @NotNull TransactionResult toInventory(@NotNull Inventory inventory, @Nullable InventoryView view, @NotNull StockEvent.Cause cause) {

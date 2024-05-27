@@ -55,7 +55,7 @@ class AutoStoreItemCommand extends AutoStoreSubCommand {
         var optionalBoxItem = itemManager.getBoxItem(args[2]);
 
         if (optionalBoxItem.isEmpty()) {
-            if (args.length < 4 || !isAll(args[2])) {
+            if (args.length < 4 || !this.isAll(args[2])) {
                 ErrorMessages.ITEM_NOT_FOUND.apply(args[2]).source(msgSrc).send(sender);
                 return;
             }
@@ -67,7 +67,7 @@ class AutoStoreItemCommand extends AutoStoreSubCommand {
             }
 
             AutoStoreCommandUtil.changeAutoStore(setting, sender, msgSrc, true, false);
-            changeToPerItemMode(setting, sender, msgSrc);
+            this.changeToPerItemMode(setting, sender, msgSrc);
 
             perItemModeSetting.clearAndEnableItems(result ? itemManager.getItemIdList() : IntSet.of());
             (result ? this.allEnabled : this.allDisabled).source(msgSrc).send(sender);
@@ -95,7 +95,7 @@ class AutoStoreItemCommand extends AutoStoreSubCommand {
         }
 
         AutoStoreCommandUtil.changeAutoStore(setting, sender, msgSrc, true, false);
-        changeToPerItemMode(setting, sender, msgSrc);
+        this.changeToPerItemMode(setting, sender, msgSrc);
 
         (result ? this.itemEnabled : this.itemDisabled).apply(boxItem).source(msgSrc).send(sender);
         AutoStoreCommandUtil.callEvent(setting);

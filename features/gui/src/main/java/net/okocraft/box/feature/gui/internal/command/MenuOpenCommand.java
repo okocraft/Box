@@ -63,12 +63,12 @@ public class MenuOpenCommand extends AbstractCommand {
         }
 
         if (args.length < 2) {
-            openMenu(PlayerSession.newSession(player), new CategorySelectorMenu());
+            this.openMenu(PlayerSession.newSession(player), new CategorySelectorMenu());
             return;
         }
 
         if (!args[1].startsWith("-")) {
-            legacyBehavior(player, args);
+            this.legacyBehavior(player, args);
             return;
         }
 
@@ -127,7 +127,7 @@ public class MenuOpenCommand extends AbstractCommand {
             paginatedMenu.setCurrentPage(session, Math.min(page, paginatedMenu.getMaxPage()));
         }
 
-        openMenu(session, menu);
+        this.openMenu(session, menu);
     }
 
     @Override
