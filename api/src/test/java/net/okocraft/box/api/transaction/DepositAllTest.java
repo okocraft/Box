@@ -63,7 +63,7 @@ class DepositAllTest {
             Mockito.when(mock.getBoxItem((ItemStack) Mockito.any())).thenAnswer(args -> {
                 var type = args.<ItemStack>getArgument(0).getType();
                 int index = this.boxItems.indexOf(ItemNameGenerator.key(type));
-                return Optional.ofNullable(index != -1 ? new ItemType(type).asBoxItem(index) : null);
+                return Optional.ofNullable(index != -1 ? new ItemType(type, type.getMaxStackSize()).asBoxItem(index) : null);
             });
             return mock;
         }

@@ -1,5 +1,6 @@
 package net.okocraft.box.test.shared.model.item;
 
+import com.github.siroshun09.configapi.core.serialization.annotation.DefaultInt;
 import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.util.ItemNameGenerator;
@@ -8,10 +9,10 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-public record ItemType(Material item) {
+public record ItemType(Material item, @DefaultInt(64) int maxStackSize) {
 
     public @NotNull ItemStack toItemStack(int amount) {
-        return ItemStackMock.createItemStack(this.item, amount);
+        return ItemStackMock.createItemStack(this.item, amount, this.maxStackSize);
     }
 
     public @NotNull BoxItem asBoxItem(int id) {
