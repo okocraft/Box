@@ -4,7 +4,7 @@ plugins {
 }
 
 val libs = extensions.getByType(org.gradle.accessors.dm.LibrariesForLibs::class)
-val enableSnapshotRepo = true // For updating Box when a newer Minecraft version is released.
+val enableSnapshotRepo = false // For updating Box when a newer Minecraft version is released.
 
 repositories {
     mavenCentral()
