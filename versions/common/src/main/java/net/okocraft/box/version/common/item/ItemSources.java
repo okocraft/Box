@@ -3,8 +3,10 @@ package net.okocraft.box.version.common.item;
 import net.okocraft.box.api.util.ItemNameGenerator;
 import net.okocraft.box.storage.api.util.item.DefaultItem;
 import org.bukkit.Material;
+import org.bukkit.MusicInstrument;
 import org.bukkit.Registry;
 import org.bukkit.World;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.FireworkMeta;
@@ -12,21 +14,16 @@ import org.bukkit.inventory.meta.MusicInstrumentMeta;
 import org.bukkit.potion.PotionType;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.Spliterator;
-import java.util.Spliterators;
 import java.util.function.Predicate;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 public final class ItemSources {
 
     public static final Predicate<Material> NOT_GOAT_HORN = Predicate.not(material -> material.name().equals("GOAT_HORN"));
 
-    public static @NotNull Stream<Material> materials() {
-        return Arrays.stream(Material.values())
+    public static @NotNull Stream<Material> materials(@NotNull Registry<Material> registry) {
+        return registry.stream()
                 .filter(Predicate.not(Material::isAir))
                 .filter(Material::isItem)
                 .filter(Predicate.not(material -> material.name().startsWith("LEGACY_")));
@@ -37,11 +34,11 @@ public final class ItemSources {
     }
 
     public static @NotNull Stream<DefaultItem> potions(@NotNull Registry<PotionType> registry) {
-        return toStream(new DefaultPotionIterator(registry));
+        return new DefaultPotionIterator(registry).toStream();
     }
 
-    public static @NotNull Stream<DefaultItem> enchantedBooks() {
-        return toStream(Registry.ENCHANTMENT.iterator())
+    public static @NotNull Stream<DefaultItem> enchantedBooks(Registry<Enchantment> registry) {
+        return registry.stream()
                 .map(enchantment -> {
                     var name = ItemNameGenerator.keys(Material.ENCHANTED_BOOK, enchantment);
 
@@ -62,8 +59,8 @@ public final class ItemSources {
         });
     }
 
-    public static @NotNull Stream<DefaultItem> goatHorns() {
-        return Registry.INSTRUMENT.stream()
+    public static @NotNull Stream<DefaultItem> goatHorns(@NotNull Registry<MusicInstrument> registry) {
+        return registry.stream()
                 .map(instrument -> {
                     var name = ItemNameGenerator.key(instrument);
                     var goatHorn = new ItemStack(Material.GOAT_HORN);
@@ -74,10 +71,6 @@ public final class ItemSources {
 
     public static @NotNull DefaultItem toDefaultItem(@NotNull Material material) {
         return new DefaultItem(ItemNameGenerator.key(material), new ItemStack(material, 1));
-    }
-
-    private static <T> @NotNull Stream<T> toStream(@NotNull Iterator<? extends T> iterator) {
-        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, Spliterator.ORDERED | Spliterator.DISTINCT), false);
     }
 
     public static class Merger {

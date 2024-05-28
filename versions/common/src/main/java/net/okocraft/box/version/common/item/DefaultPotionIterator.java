@@ -10,6 +10,9 @@ import org.bukkit.potion.PotionType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
+import java.util.Spliterators;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 class DefaultPotionIterator implements Iterator<DefaultItem> {
 
@@ -44,6 +47,10 @@ class DefaultPotionIterator implements Iterator<DefaultItem> {
         }
 
         return this.createPotion(item, potionType);
+    }
+
+    public @NotNull Stream<DefaultItem> toStream() {
+        return StreamSupport.stream(Spliterators.spliterator(this, (long) ITEMS.length * this.potionTypes.length, 0), false);
     }
 
     private @NotNull DefaultItem createPotion(@NotNull Material material, @NotNull PotionType type) {

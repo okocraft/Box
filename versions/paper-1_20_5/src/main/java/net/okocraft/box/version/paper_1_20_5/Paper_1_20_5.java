@@ -29,15 +29,15 @@ public final class Paper_1_20_5 {
     public static @NotNull Stream<DefaultItem> defaultItems() {
         return new ItemSources.Merger()
                 .append(
-                        ItemSources.materials()
+                        ItemSources.materials(Registry.MATERIAL)
                                 .filter(ItemSources.NOT_GOAT_HORN)
                                 .filter(ItemSources.createEnabledItemFilter(Bukkit.getWorlds().getFirst()))
                                 .map(ItemSources::toDefaultItem)
                 )
                 .append(ItemSources.potions(Registry.POTION))
-                .append(ItemSources.enchantedBooks())
+                .append(ItemSources.enchantedBooks(Registry.ENCHANTMENT))
                 .append(ItemSources.fireworks())
-                .append(ItemSources.goatHorns())
+                .append(ItemSources.goatHorns(Registry.INSTRUMENT))
                 .result();
     }
 
