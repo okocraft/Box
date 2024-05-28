@@ -34,7 +34,7 @@ public final class ItemSources {
     }
 
     public static @NotNull Stream<DefaultItem> potions(@NotNull Registry<PotionType> registry) {
-        return new DefaultPotionIterator(registry).toStream();
+        return DefaultPotionItems.stream(registry);
     }
 
     public static @NotNull Stream<DefaultItem> enchantedBooks(Registry<Enchantment> registry) {
