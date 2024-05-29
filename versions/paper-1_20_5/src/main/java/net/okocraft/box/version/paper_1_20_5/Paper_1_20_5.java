@@ -31,6 +31,7 @@ public final class Paper_1_20_5 {
                 .append(
                         ItemSources.materials(Registry.MATERIAL)
                                 .filter(ItemSources.NOT_GOAT_HORN)
+                                .filter(ItemSources.NOT_FIREWORK)
                                 .filter(ItemSources.createEnabledItemFilter(Bukkit.getWorlds().getFirst()))
                                 .map(ItemSources::toDefaultItem)
                 )

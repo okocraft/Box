@@ -21,6 +21,7 @@ import java.util.stream.Stream;
 public final class ItemSources {
 
     public static final Predicate<Material> NOT_GOAT_HORN = Predicate.not(material -> material.name().equals("GOAT_HORN"));
+    public static final Predicate<Material> NOT_FIREWORK = Predicate.not(material -> material.name().equals("FIREWORK_ROCKET"));
 
     public static @NotNull Stream<Material> materials(@NotNull Registry<Material> registry) {
         return registry.stream()
