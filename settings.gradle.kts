@@ -54,7 +54,8 @@ val versionSuffix = "version"
 // versions
 sequenceOf(
     "common",
-    "paper-1_20_5"
+    "paper-1_20_5",
+    "paper-1_21"
 ).forEach {
     include("$boxPrefix-$versionSuffix-$it")
     project(":$boxPrefix-$versionSuffix-$it").projectDir = file("./versions/$it")
