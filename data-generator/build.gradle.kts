@@ -27,9 +27,10 @@ repositories {
 dependencies {
     compileOnly("io.papermc.paper:paper-api:$minecraftVersion-R0.1-SNAPSHOT")
 
-    implementation(projects.boxVersionPaper1205)
+    rootProject.childProjects.values
+        .filter { project -> project.name.startsWith("box-version-paper") }
+        .forEach { project -> implementation(project) }
 }
-
 
 tasks {
     build {
@@ -56,6 +57,7 @@ tasks {
 
     shadowJar {
         archiveFileName = "BoxDataGenerator-$version.jar"
+        mergeServiceFiles()
     }
 
     runServer {
