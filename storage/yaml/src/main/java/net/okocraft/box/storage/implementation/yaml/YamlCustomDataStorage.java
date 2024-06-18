@@ -25,8 +25,7 @@ public class YamlCustomDataStorage implements CustomDataStorage {
         this.customDataDirectory = rootDirectory.resolve("custom-data");
     }
 
-    @Override
-    public void init() throws Exception {
+    public void init() throws IOException {
         Files.createDirectories(this.customDataDirectory);
     }
 
@@ -58,6 +57,10 @@ public class YamlCustomDataStorage implements CustomDataStorage {
 
     @Override
     public void visitData(@NotNull String namespace, @NotNull BiConsumer<Key, MapNode> consumer) throws Exception {
+        if (!Key.parseableNamespace(namespace)) {
+            throw new IllegalArgumentException("Invalid namespace: " + namespace);
+        }
+
         try (var listStream = Files.list(this.customDataDirectory)) {
             listStream.filter(Files::isDirectory)
                     .filter(path -> path.getFileName().toString().equals(namespace))

@@ -1,12 +1,13 @@
 package net.okocraft.box.api.model.manager;
 
+import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import it.unimi.dsi.fastutil.ints.IntImmutableList;
 import it.unimi.dsi.fastutil.objects.ObjectImmutableList;
 import net.okocraft.box.api.model.item.BoxCustomItem;
 import net.okocraft.box.api.model.item.BoxItem;
-import net.okocraft.box.api.model.item.ItemVersion;
 import net.okocraft.box.api.model.result.item.ItemRegistrationResult;
 import net.okocraft.box.api.model.result.item.ItemRenameResult;
+import net.okocraft.box.api.util.MCDataVersion;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -127,18 +128,20 @@ public interface ItemManager {
     void renameCustomItem(@NotNull BoxCustomItem item, @NotNull String newName, @NotNull Consumer<ItemRenameResult> resultConsumer);
 
     /**
-     * Returns the current {@link ItemVersion}.
-     *
-     * @return the current {@link ItemVersion}
-     */
-    @NotNull ItemVersion getCurrentVersion();
-
-    /**
      * Get the {@link UnaryOperator} that converts the default item name
-     * from the specified {@link ItemVersion} to the current {@link ItemVersion}.
+     * from the specified {@link MCDataVersion} to the current {@link MCDataVersion}.
      *
      * @param sourceVersion the version of item names to be converted
      * @return the {@link UnaryOperator} that converts the default item name
      */
-    @NotNull UnaryOperator<String> getItemNameConverter(@NotNull ItemVersion sourceVersion);
+    @NotNull UnaryOperator<String> getItemNameConverter(@NotNull MCDataVersion sourceVersion);
+
+    /**
+     * Get the remapped item ids.
+     *
+     * @return the remapped item ids
+     */
+    @NotNull
+    Int2IntMap getRemappedItemIds();
+
 }

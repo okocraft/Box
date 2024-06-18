@@ -20,10 +20,6 @@ public class MemoryUserStorage implements UserStorage {
     private RuntimeException thrownException = null;
 
     @Override
-    public void init() {
-    }
-
-    @Override
     public @NotNull BoxUser loadBoxUser(@NotNull UUID uuid) {
         this.throwExceptionIfEnabled();
         return BoxUserFactory.create(uuid, this.uuidToNameMap.get(uuid));

@@ -1,6 +1,5 @@
 package net.okocraft.box.test.shared.storage.memory.stock;
 
-import it.unimi.dsi.fastutil.ints.Int2IntFunction;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import it.unimi.dsi.fastutil.ints.IntCollection;
@@ -20,10 +19,6 @@ public class MemoryPartialSavingStockStorage implements PartialSavingStockStorag
     private final Map<UUID, Int2IntMap> stockDataMap = new HashMap<>();
 
     @Override
-    public void init() {
-    }
-
-    @Override
     public @NotNull Collection<StockData> loadStockData(@NotNull UUID uuid) {
         var map = this.stockDataMap.get(uuid);
 
@@ -41,14 +36,23 @@ public class MemoryPartialSavingStockStorage implements PartialSavingStockStorag
     }
 
     @Override
-    public void saveStockData(@NotNull UUID uuid, @NotNull Collection<StockData> stockData, @NotNull Int2IntFunction itemIdRemapper) {
+    public void saveStockData(@NotNull UUID uuid, @NotNull Collection<StockData> stockData) {
         var map = new Int2IntOpenHashMap(stockData.size());
 
         for (var data : stockData) {
-            map.put(itemIdRemapper.applyAsInt(data.itemId()), data.amount());
+            map.put(data.itemId(), data.amount());
         }
 
         this.stockDataMap.put(uuid, map);
+    }
+
+    @Override
+    public void remapItemIds(@NotNull Int2IntMap remappedIdMap) {
+        for (var map : this.stockDataMap.values()) {
+            new Int2IntOpenHashMap(map)
+                    .int2IntEntrySet()
+                    .forEach(entry -> map.put(remappedIdMap.getOrDefault(entry.getIntKey(), entry.getIntValue()), entry.getIntValue()));
+        }
     }
 
     @Override

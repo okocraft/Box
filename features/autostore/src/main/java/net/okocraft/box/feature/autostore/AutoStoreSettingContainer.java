@@ -8,11 +8,13 @@ import com.github.siroshun09.event4j.listener.ListenerBase;
 import com.github.siroshun09.event4j.priority.Priority;
 import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 import net.kyori.adventure.key.Key;
 import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.event.player.PlayerLoadEvent;
 import net.okocraft.box.api.event.player.PlayerUnloadEvent;
 import net.okocraft.box.api.util.BoxLogger;
+import net.okocraft.box.api.util.MCDataVersion;
 import net.okocraft.box.feature.autostore.setting.AutoStoreSetting;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -105,6 +107,8 @@ class AutoStoreSettingContainer implements AutoStoreSettingProvider {
     private static @NotNull MapNode serialize(@NotNull AutoStoreSetting setting) {
         var data = MapNode.create();
 
+        data.set("data-version", MCDataVersion.current().dataVersion());
+
         if (setting.isEnabled()) data.set("enable", true);
         if (setting.isAllMode()) data.set("all-mode", true);
         if (setting.isDirect()) data.set("direct", true);
@@ -122,15 +126,27 @@ class AutoStoreSettingContainer implements AutoStoreSettingProvider {
         setting.setAllMode(data.getBoolean("all-mode"));
         setting.setDirect(data.getBoolean("direct"));
 
+        var dataVersion = data.getInteger("data-version", MCDataVersion.MC_1_20_4.dataVersion());
+
         var enabledItemsNode = data.get("enabled-items");
+        IntList enabledItemIds;
 
         if (enabledItemsNode instanceof IntArray array) {
-            setting.getPerItemModeSetting().clearAndEnableItems(IntArrayList.of(array.value()));
+            enabledItemIds = IntArrayList.of(array.value());
         } else if (enabledItemsNode instanceof ListNode list) {
-            setting.getPerItemModeSetting().clearAndEnableItems(IntArrayList.toList(
+            enabledItemIds = IntArrayList.toList(
                     list.asList(NumberValue.class).stream().mapToInt(NumberValue::asInt)
-            ));
+            );
+        } else {
+            enabledItemIds = IntList.of();
         }
+
+        if (!enabledItemIds.isEmpty() && dataVersion != MCDataVersion.current().dataVersion()) {
+            var idMap = BoxAPI.api().getItemManager().getRemappedItemIds();
+            enabledItemIds = IntArrayList.toList(enabledItemIds.intStream().map(id -> idMap.getOrDefault(id, id)));
+        }
+
+        setting.getPerItemModeSetting().clearAndEnableItems(enabledItemIds);
 
         return setting;
     }

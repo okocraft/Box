@@ -6,13 +6,14 @@ import net.okocraft.box.storage.api.model.Storage;
 import net.okocraft.box.storage.api.registry.StorageContext;
 import net.okocraft.box.storage.implementation.database.DatabaseStorage;
 import net.okocraft.box.storage.implementation.database.database.Database;
-import net.okocraft.box.storage.implementation.database.schema.SchemaSet;
+import net.okocraft.box.storage.implementation.database.operator.OperatorProvider;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
@@ -24,13 +25,13 @@ public class MySQLDatabase implements Database {
         return new DatabaseStorage(new MySQLDatabase(context));
     }
 
-    private final SchemaSet schemaSet;
+    private final OperatorProvider operators;
     private final MySQLSetting mySQLSetting;
     private HikariDataSource hikariDataSource;
 
     public MySQLDatabase(@NotNull StorageContext<MySQLSetting> context) {
         this.mySQLSetting = context.setting();
-        this.schemaSet = MySQLTableSchema.create(this.mySQLSetting.tablePrefix());
+        this.operators = MySQLOperators.create(this.mySQLSetting.tablePrefix());
     }
 
     @Override
@@ -60,28 +61,19 @@ public class MySQLDatabase implements Database {
     }
 
     @Override
-    public @NotNull Type getType() {
-        return Type.MYSQL;
-    }
-
-    @Override
     public @NotNull List<Storage.Property> getInfo() {
         var result = new ArrayList<Storage.Property>();
 
+        result.add(Storage.Property.of("type", "mysql"));
         result.add(Storage.Property.of("database-name", this.mySQLSetting.databaseName()));
         result.add(Storage.Property.of("table-prefix", this.mySQLSetting.tablePrefix()));
 
         var ping = this.ping();
-        if (0 < ping) {
+        if (0 <= ping) {
             result.add(Storage.Property.of("ping", ping + "ms"));
         }
 
-        return result;
-    }
-
-    @Override
-    public @NotNull SchemaSet getSchemaSet() {
-        return this.schemaSet;
+        return Collections.unmodifiableList(result);
     }
 
     @Override
@@ -91,6 +83,11 @@ public class MySQLDatabase implements Database {
         }
 
         return this.hikariDataSource.getConnection();
+    }
+
+    @Override
+    public @NotNull OperatorProvider operators() {
+        return this.operators;
     }
 
     private void configureDataSourceProperties(@NotNull Properties properties) {

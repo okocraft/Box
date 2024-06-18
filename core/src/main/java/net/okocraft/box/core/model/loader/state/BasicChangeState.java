@@ -1,6 +1,5 @@
 package net.okocraft.box.core.model.loader.state;
 
-import it.unimi.dsi.fastutil.ints.Int2IntFunction;
 import net.okocraft.box.api.model.stock.StockData;
 import net.okocraft.box.api.model.stock.StockHolder;
 import net.okocraft.box.storage.api.model.stock.StockStorage;
@@ -45,7 +44,7 @@ class BasicChangeState implements ChangeState {
         }
 
         try {
-            this.storage.saveStockData(stockHolder.getUUID(), stockHolder.toStockDataCollection(), Int2IntFunction.identity());
+            this.storage.saveStockData(stockHolder.getUUID(), stockHolder.toStockDataCollection());
         } catch (Exception e) {
             this.hasChanges.set(true);
             throw e;

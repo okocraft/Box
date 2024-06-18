@@ -12,7 +12,7 @@ import java.util.function.Function;
 public record StorageType<R extends Record>(@NotNull String name, @NotNull Class<R> settingClass,
                                             @NotNull Function<StorageContext<R>, Storage> storageFunction) {
     @SuppressWarnings("UnstableApiUsage")
-    public @NotNull Storage create(@NotNull Path pluginDirectory, @NotNull MapNode section, boolean migrationMode) {
-        return this.storageFunction.apply(new StorageContext<>(pluginDirectory, RecordDeserializer.create(this.settingClass, KeyGenerator.CAMEL_TO_KEBAB).deserialize(section), migrationMode));
+    public @NotNull Storage create(@NotNull Path pluginDirectory, @NotNull MapNode section) {
+        return this.storageFunction.apply(new StorageContext<>(pluginDirectory, RecordDeserializer.create(this.settingClass, KeyGenerator.CAMEL_TO_KEBAB).deserialize(section)));
     }
 }
