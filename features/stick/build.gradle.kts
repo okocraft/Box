@@ -6,6 +6,9 @@ repositories {
     maven {
         url = uri("https://repo.codemc.io/repository/maven-public/")
     }
+    maven {
+        url = uri("https://maven.enginehub.org/repo/")
+    }
 }
 
 dependencies {
@@ -14,6 +17,7 @@ dependencies {
     compileOnly(libs.lwc)
     compileOnly(libs.bolt.bukkit)
     compileOnly(libs.bolt.common)
+    compileOnly(libs.worldguard)
 }
 
 tasks.javadoc {
