@@ -4,10 +4,6 @@ import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.feature.stick.event.stock.StickCause;
 import net.okocraft.box.feature.stick.event.stock.StickCauses;
 import org.bukkit.Material;
-import org.bukkit.event.inventory.ClickType;
-import org.bukkit.event.inventory.InventoryAction;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.BrewerInventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -46,13 +42,6 @@ public final class BrewerOperator {
             var boxItem = BoxAPI.api().getItemManager().getBoxItem(potion);
 
             if (boxItem.isEmpty()) {
-                continue;
-            }
-
-            var clickEvent = new InventoryClickEvent(context.view(), InventoryType.SlotType.CRAFTING, i, ClickType.LEFT, InventoryAction.PICKUP_ALL);
-            boolean cancelled = !clickEvent.callEvent();
-
-            if (cancelled) {
                 continue;
             }
 
@@ -98,9 +87,7 @@ public final class BrewerOperator {
             }
 
             if (0 < stockHolder.getAmount(item)) {
-                var clickEvent = new InventoryClickEvent(context.view(), InventoryType.SlotType.CRAFTING, i, ClickType.LEFT, InventoryAction.PLACE_ALL);
-
-                if (clickEvent.callEvent() && stockHolder.decreaseIfPossible(item, 1, cause) != -1) {
+                if (stockHolder.decreaseIfPossible(item, 1, cause) != -1) {
                     context.inventory().setItem(i, item.getClonedItem());
                     result = true;
                 }
@@ -119,7 +106,6 @@ public final class BrewerOperator {
                 context.player(),
                 context.inventory().getFuel(),
                 item -> item.getType() == Material.BLAZE_POWDER,
-                () -> new InventoryClickEvent(context.view(), InventoryType.SlotType.CRAFTING, 4, ClickType.LEFT, InventoryAction.PLACE_ALL),
                 context.inventory()::setFuel,
                 () -> new StickCauses.Brewer(context.player(), context.blockLocation(), StickCauses.Brewer.Type.PUT_BLAZE_POWDER)
         );
