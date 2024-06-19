@@ -11,6 +11,7 @@ import net.okocraft.box.feature.stick.function.container.ChestAccessChecker;
 import net.okocraft.box.feature.stick.function.container.ContainerOperation;
 import net.okocraft.box.feature.stick.function.container.ContainerOperator;
 import net.okocraft.box.feature.stick.function.container.FurnaceOperator;
+import net.okocraft.box.feature.stick.integration.CoreProtectIntegration;
 import net.okocraft.box.feature.stick.item.BoxStickItem;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -196,8 +197,13 @@ public class StickListener implements Listener {
             return;
         }
 
-        if (operation.run() || player.getGameMode() == GameMode.CREATIVE) { // This prevents the instant breaking of blocks in creative mode.
-            event.setCancelled(true);
+        try {
+            CoreProtectIntegration.logContainerTransaction(player, container);
+            if (operation.run() || player.getGameMode() == GameMode.CREATIVE) { // This prevents the instant breaking of blocks in creative mode.
+                event.setCancelled(true);
+            }
+        } finally {
+            CoreProtectIntegration.logContainerTransaction(player, container);
         }
     }
 
