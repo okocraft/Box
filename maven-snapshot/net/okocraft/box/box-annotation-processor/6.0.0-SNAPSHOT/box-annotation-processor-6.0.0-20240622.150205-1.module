@@ -1,0 +1,172 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "net.okocraft.box",
+    "module": "box-annotation-processor",
+    "version": "6.0.0-SNAPSHOT",
+    "attributes": {
+      "org.gradle.status": "integration"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.8"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 21,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api"
+      },
+      "dependencies": [
+        {
+          "group": "com.github.siroshun09.configapi",
+          "module": "configapi-format-yaml",
+          "version": {
+            "requires": "5.0.0-beta.2"
+          },
+          "excludes": [
+            {
+              "group": "org.yaml",
+              "module": "snakeyaml"
+            }
+          ]
+        },
+        {
+          "group": "com.github.siroshun09.event4j",
+          "module": "event4j",
+          "version": {
+            "requires": "4.0.0-rc.1"
+          }
+        },
+        {
+          "group": "com.github.siroshun09.messages",
+          "module": "messages-minimessage",
+          "version": {
+            "requires": "0.8.0"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "box-annotation-processor-6.0.0-SNAPSHOT.jar",
+          "url": "box-annotation-processor-6.0.0-SNAPSHOT.jar",
+          "size": 8876,
+          "sha512": "a3b06b63b902ae09c456af06550c4e598f55874adca9e18015000b309338706f5f1c7d04221e3adf492d9122bdf21037c51bf93a329093db6b75804e14b290c1",
+          "sha256": "9ab4b4e0bc42e3ca1c05b72fdc5ccea52928253371ee3d40b45f104f7704435b",
+          "sha1": "eae648f053c7d27cada6f299c0fa7dc0cb22c262",
+          "md5": "2fbfd13918666c80b39e7c0eaebc5fd4"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 21,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "dependencies": [
+        {
+          "group": "net.okocraft.box",
+          "module": "box-api",
+          "version": {
+            "requires": "6.0.0-SNAPSHOT"
+          }
+        },
+        {
+          "group": "net.okocraft.box",
+          "module": "box-version-common",
+          "version": {
+            "requires": "6.0.0-SNAPSHOT"
+          }
+        },
+        {
+          "group": "com.github.siroshun09.configapi",
+          "module": "configapi-format-yaml",
+          "version": {
+            "requires": "5.0.0-beta.2"
+          },
+          "excludes": [
+            {
+              "group": "org.yaml",
+              "module": "snakeyaml"
+            }
+          ]
+        },
+        {
+          "group": "com.github.siroshun09.event4j",
+          "module": "event4j",
+          "version": {
+            "requires": "4.0.0-rc.1"
+          }
+        },
+        {
+          "group": "com.github.siroshun09.messages",
+          "module": "messages-minimessage",
+          "version": {
+            "requires": "0.8.0"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "box-annotation-processor-6.0.0-SNAPSHOT.jar",
+          "url": "box-annotation-processor-6.0.0-SNAPSHOT.jar",
+          "size": 8876,
+          "sha512": "a3b06b63b902ae09c456af06550c4e598f55874adca9e18015000b309338706f5f1c7d04221e3adf492d9122bdf21037c51bf93a329093db6b75804e14b290c1",
+          "sha256": "9ab4b4e0bc42e3ca1c05b72fdc5ccea52928253371ee3d40b45f104f7704435b",
+          "sha1": "eae648f053c7d27cada6f299c0fa7dc0cb22c262",
+          "md5": "2fbfd13918666c80b39e7c0eaebc5fd4"
+        }
+      ]
+    },
+    {
+      "name": "javadocElements",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "javadoc",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "box-annotation-processor-6.0.0-SNAPSHOT-javadoc.jar",
+          "url": "box-annotation-processor-6.0.0-SNAPSHOT-javadoc.jar",
+          "size": 109895,
+          "sha512": "0618a86b81e6d145220981cd69e568967a3e5268bfe4dcd31a1c1c04c7b7e3976c4b108d8b096ec21dd2f288d771c78e7bcab366a286776fece0521eeca3248b",
+          "sha256": "558adc5db830bfcc13a6b06b13e2e6fb331e1f1ee4a126339b57eac04ed8b014",
+          "sha1": "091fb17442607c3008406c4f4b01d9793624b90e",
+          "md5": "0db2cfbcd858bc5f4a8b7ace931e8dfb"
+        }
+      ]
+    },
+    {
+      "name": "sourcesElements",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "box-annotation-processor-6.0.0-SNAPSHOT-sources.jar",
+          "url": "box-annotation-processor-6.0.0-SNAPSHOT-sources.jar",
+          "size": 4219,
+          "sha512": "cf2af2363849220eaad41b111f7717db2a3b0702da2466453f5c2cea7416124033fdd59c3b7189ff2760f08e26918e01974d4b37e110ec5d7c07076c238c3c37",
+          "sha256": "b71ca89ccbfae2c01c12ebcc4590888e437f1f0f4ad949d890151ea495941f2b",
+          "sha1": "1d5dbbfe2280b9a34337b2684104377cb3cb4b3f",
+          "md5": "c465b51e29b889b62f474c6093f34c47"
+        }
+      ]
+    }
+  ]
+}
