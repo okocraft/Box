@@ -4,7 +4,6 @@ import net.okocraft.box.ap.annotation.version.VersionSpecific;
 import net.okocraft.box.api.util.MCDataVersion;
 import net.okocraft.box.storage.api.model.item.provider.DefaultItem;
 import net.okocraft.box.version.common.item.ItemSources;
-import org.bukkit.Bukkit;
 import org.bukkit.Registry;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,7 +22,6 @@ public final class Paper_1_20_5 {
                         ItemSources.materials(Registry.MATERIAL)
                                 .filter(ItemSources.NOT_GOAT_HORN)
                                 .filter(ItemSources.NOT_FIREWORK)
-                                .filter(ItemSources.createEnabledItemFilter(Bukkit.getWorlds().getFirst()))
                                 .map(ItemSources::toDefaultItem)
                 )
                 .append(ItemSources.potions(Registry.POTION))
