@@ -3,12 +3,14 @@ package net.okocraft.box.storage.implementation.database.table;
 import com.github.siroshun09.configapi.core.file.java.binary.BinaryFormat;
 import com.github.siroshun09.configapi.core.node.MapNode;
 import net.kyori.adventure.key.Key;
+import net.okocraft.box.api.util.BoxLogger;
+import net.okocraft.box.storage.api.util.SneakyThrow;
 import net.okocraft.box.storage.implementation.database.database.Database;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.sql.ResultSet;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.function.BiConsumer;
 
@@ -19,28 +21,28 @@ public class CustomDataTable extends AbstractCustomDataTable {
     private LegacyCustomDataTable legacyCustomDataTable;
 
     public CustomDataTable(@NotNull Database database, @NotNull MetaTable metaTable) {
-        super(database, database.getSchemaSet().customDataTable());
+        super(database, database.operators().customDataTable());
         this.metaTable = metaTable;
     }
 
-    @Override
-    public void init() throws Exception {
-        this.createTableAndIndex();
+    public void init(@NotNull Connection connection) throws Exception {
+        this.operator.initTable(connection);
 
         if (!this.metaTable.isCurrentCustomDataFormat() && this.legacyTableExists()) {
             this.legacyCustomDataTable = new LegacyCustomDataTable(this.database, false);
-            this.legacyCustomDataTable.init();
+            this.legacyCustomDataTable.init(connection);
         }
     }
 
     @Override
     public void updateFormatIfNeeded() throws Exception {
         if (this.legacyCustomDataTable != null) {
+            BoxLogger.logger().info("Updating custom data format...");
             this.legacyCustomDataTable.visitAllData((key, mapNode) -> {
                 try {
                     this.saveData0(key, mapNode);
                 } catch (Exception e) {
-                    sneakyThrow(e);
+                    SneakyThrow.sneaky(e);
                 }
             });
             this.legacyCustomDataTable = null;
@@ -85,6 +87,13 @@ public class CustomDataTable extends AbstractCustomDataTable {
     }
 
     @Override
+    protected @NotNull MapNode fromBytes(byte[] data) throws Exception {
+        try (var in = new ByteArrayInputStream(data)) {
+            return BinaryFormat.DEFAULT.load(in) instanceof MapNode mapNode ? mapNode : MapNode.create();
+        }
+    }
+
+    @Override
     protected byte @NotNull [] toBytes(@NotNull MapNode node) throws Exception {
         try (var out = new ByteArrayOutputStream()) {
             BinaryFormat.DEFAULT.save(node, out);
@@ -92,24 +101,13 @@ public class CustomDataTable extends AbstractCustomDataTable {
         }
     }
 
-    protected @NotNull MapNode readDataFromResultSet(@NotNull ResultSet resultSet) throws Exception {
-        try (var in = new ByteArrayInputStream(this.readBytesFromResultSet(resultSet, "data"))) {
-            return BinaryFormat.DEFAULT.load(in) instanceof MapNode mapNode ? mapNode : MapNode.create();
-        }
-    }
-
     private boolean legacyTableExists() throws SQLException {
         try (var connection = this.database.getConnection()) {
             var metaData = connection.getMetaData();
-            var tableName = this.database.getSchemaSet().legacyCustomDataTable().tableName();
+            var tableName = this.database.operators().legacyCustomDataTable().tableName();
             try (var resultSet = metaData.getTables(null, null, tableName, null)) {
                 return resultSet.next();
             }
         }
-    }
-
-    @SuppressWarnings("unchecked")
-    private static <T extends Throwable> void sneakyThrow(@NotNull Throwable exception) throws T {
-        throw (T) exception;
     }
 }

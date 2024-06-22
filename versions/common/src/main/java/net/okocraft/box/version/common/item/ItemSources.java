@@ -1,7 +1,7 @@
 package net.okocraft.box.version.common.item;
 
 import net.okocraft.box.api.util.ItemNameGenerator;
-import net.okocraft.box.storage.api.util.item.DefaultItem;
+import net.okocraft.box.storage.api.model.item.provider.DefaultItem;
 import org.bukkit.Material;
 import org.bukkit.MusicInstrument;
 import org.bukkit.Registry;

@@ -5,7 +5,7 @@ import net.okocraft.box.core.command.CommandRegisterer;
 import net.okocraft.box.core.config.Config;
 import net.okocraft.box.core.message.BoxMessageProvider;
 import net.okocraft.box.core.model.manager.event.BoxEventManager;
-import net.okocraft.box.storage.api.util.item.DefaultItemProvider;
+import net.okocraft.box.storage.api.model.item.provider.DefaultItemProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 

@@ -9,21 +9,28 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.sql.ResultSet;
+import java.sql.Connection;
 
 public class LegacyCustomDataTable extends AbstractCustomDataTable {
 
     private final boolean createTable;
 
     public LegacyCustomDataTable(@NotNull Database database, boolean createTable) {
-        super(database, database.getSchemaSet().legacyCustomDataTable());
+        super(database, database.operators().legacyCustomDataTable());
         this.createTable = createTable;
     }
 
-    @Override
-    public void init() throws Exception {
+    public void init(@NotNull Connection connection) throws Exception {
         if (this.createTable) {
-            this.createTableAndIndex();
+            this.operator.initTable(connection);
+        }
+    }
+
+    @Override
+    protected @NotNull MapNode fromBytes(byte[] data) throws Exception {
+        try (var in = new ByteArrayInputStream(data);
+             var reader = new InputStreamReader(in, StandardCharsets.UTF_8)) {
+            return YamlFormat.DEFAULT.load(reader);
         }
     }
 
@@ -32,13 +39,6 @@ public class LegacyCustomDataTable extends AbstractCustomDataTable {
         try (var out = new ByteArrayOutputStream()) {
             YamlFormat.DEFAULT.save(node, out);
             return out.toByteArray();
-        }
-    }
-
-    protected @NotNull MapNode readDataFromResultSet(@NotNull ResultSet resultSet) throws Exception {
-        try (var in = new ByteArrayInputStream(this.readBytesFromResultSet(resultSet, "data"));
-             var reader = new InputStreamReader(in, StandardCharsets.UTF_8)) {
-            return YamlFormat.DEFAULT.load(reader);
         }
     }
 }

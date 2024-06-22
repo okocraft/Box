@@ -55,6 +55,6 @@ abstract class AbstractCategory implements Category {
 
     private void recreateSnapshots() {
         this.snapshot = List.copyOf(this.items);
-        this.itemIds = IntSet.of(this.items.stream().mapToInt(BoxItem::getInternalId).toArray());
+        this.itemIds = IntSet.of(this.items.stream().mapToInt(BoxItem::getInternalId).distinct().toArray());
     }
 }

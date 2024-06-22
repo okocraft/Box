@@ -103,7 +103,8 @@ public class Config {
             }
 
             if (storageType.equals(name)) {
-                storage = type.create(this.directory, section, false);
+                BoxLogger.logger().info("Using {} storage.", name);
+                storage = type.create(this.directory, section);
             }
         }
 
@@ -111,7 +112,7 @@ public class Config {
             var defaultEntry = registry.getDefault();
             BoxLogger.logger().warn("The storage type '{}' not found.", storageType);
             BoxLogger.logger().warn("Using the default storage type... ({})", defaultEntry.name());
-            storage = defaultEntry.create(this.directory, storageSection.getMap(defaultEntry.name().toLowerCase(Locale.ENGLISH)), false);
+            storage = defaultEntry.create(this.directory, storageSection.getMap(defaultEntry.name().toLowerCase(Locale.ENGLISH)));
         }
 
         return storage;

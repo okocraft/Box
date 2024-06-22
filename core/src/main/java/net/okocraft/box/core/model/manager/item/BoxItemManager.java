@@ -1,6 +1,8 @@
 package net.okocraft.box.core.model.manager.item;
 
 import com.github.siroshun09.event4j.caller.AsyncEventCaller;
+import it.unimi.dsi.fastutil.ints.Int2IntMap;
+import it.unimi.dsi.fastutil.ints.Int2IntMaps;
 import it.unimi.dsi.fastutil.ints.IntImmutableList;
 import it.unimi.dsi.fastutil.objects.ObjectImmutableList;
 import net.okocraft.box.api.event.BoxEvent;
@@ -8,14 +10,15 @@ import net.okocraft.box.api.event.item.CustomItemRegisterEvent;
 import net.okocraft.box.api.event.item.CustomItemRenameEvent;
 import net.okocraft.box.api.model.item.BoxCustomItem;
 import net.okocraft.box.api.model.item.BoxItem;
-import net.okocraft.box.api.model.item.ItemVersion;
 import net.okocraft.box.api.model.manager.ItemManager;
 import net.okocraft.box.api.model.result.item.ItemRegistrationResult;
 import net.okocraft.box.api.model.result.item.ItemRenameResult;
 import net.okocraft.box.api.scheduler.BoxScheduler;
+import net.okocraft.box.api.util.ItemNameGenerator;
+import net.okocraft.box.api.util.MCDataVersion;
 import net.okocraft.box.storage.api.factory.item.BoxItemFactory;
-import net.okocraft.box.storage.api.model.item.ItemStorage;
-import net.okocraft.box.storage.api.util.item.DefaultItemProvider;
+import net.okocraft.box.storage.api.model.item.CustomItemStorage;
+import net.okocraft.box.storage.api.model.item.provider.DefaultItemProvider;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -29,19 +32,22 @@ import java.util.function.UnaryOperator;
 
 public class BoxItemManager implements ItemManager {
 
-    private final ItemStorage itemStorage;
+    private final CustomItemStorage itemStorage;
     private final AsyncEventCaller<BoxEvent> eventCaller;
     private final BoxScheduler scheduler;
     private final DefaultItemProvider defaultItemProvider;
     private final BukkitBoxItemMap boxItemMap;
+    private final Int2IntMap remapItemIds;
 
-    public BoxItemManager(@NotNull ItemStorage itemStorage, @NotNull AsyncEventCaller<BoxEvent> eventCaller,
-                          @NotNull BoxScheduler scheduler, @NotNull DefaultItemProvider defaultItemProvider, @NotNull Iterator<BoxItem> initialBoxItemIterator) {
+    public BoxItemManager(@NotNull CustomItemStorage itemStorage, @NotNull AsyncEventCaller<BoxEvent> eventCaller,
+                          @NotNull BoxScheduler scheduler, @NotNull DefaultItemProvider defaultItemProvider, @NotNull Iterator<BoxItem> initialBoxItemIterator,
+                          @NotNull Int2IntMap remapItemIds) {
         this.itemStorage = itemStorage;
         this.eventCaller = eventCaller;
         this.scheduler = scheduler;
         this.defaultItemProvider = defaultItemProvider;
         this.boxItemMap = BukkitBoxItemMap.withItems(initialBoxItemIterator, eventCaller);
+        this.remapItemIds = Int2IntMaps.unmodifiable(remapItemIds);
     }
 
     @Override
@@ -131,12 +137,14 @@ public class BoxItemManager implements ItemManager {
             return new ItemRegistrationResult.DuplicateItem(original);
         }
 
-        var customItem = this.itemStorage.saveNewCustomItem(original, plainName);
+        var name = plainName != null ? plainName : ItemNameGenerator.itemStack(original);
+        var id = this.itemStorage.newCustomItem(name, original.serializeAsBytes());
+        var result = BoxItemFactory.createCustomItem(id, name, original);
 
-        this.boxItemMap.addItemAtUnsynchronized(customItem);
+        this.boxItemMap.addItemAtUnsynchronized(result);
         this.boxItemMap.rebuildCache();
 
-        return new ItemRegistrationResult.Success(customItem);
+        return new ItemRegistrationResult.Success(result);
     }
 
     @Override
@@ -178,21 +186,22 @@ public class BoxItemManager implements ItemManager {
         this.boxItemMap.removeItemAtUnsynchronized(item);
 
         var previousName = item.getPlainName();
-        var customItem = this.itemStorage.renameCustomItem(item, newName);
+        this.itemStorage.renameCustomItem(item.getInternalId(), newName);
+        BoxItemFactory.renameCustomItem(item, newName);
 
-        this.boxItemMap.addItemAtUnsynchronized(customItem);
+        this.boxItemMap.addItemAtUnsynchronized(item);
         this.boxItemMap.rebuildCache();
 
-        return new ItemRenameResult.Success(customItem, previousName);
+        return new ItemRenameResult.Success(item, previousName);
     }
 
     @Override
-    public @NotNull ItemVersion getCurrentVersion() {
-        return this.defaultItemProvider.version();
+    public @NotNull UnaryOperator<String> getItemNameConverter(@NotNull MCDataVersion sourceVersion) {
+        return this.defaultItemProvider.itemNameConvertor(sourceVersion, this.defaultItemProvider.version());
     }
 
     @Override
-    public @NotNull UnaryOperator<String> getItemNameConverter(@NotNull ItemVersion sourceVersion) {
-        return this.defaultItemProvider.itemNamePatcherFactory().create(sourceVersion, this.defaultItemProvider.version())::renameIfNeeded;
+    public @NotNull Int2IntMap getRemappedItemIds() {
+        return this.remapItemIds;
     }
 }

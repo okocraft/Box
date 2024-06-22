@@ -1,6 +1,13 @@
 package net.okocraft.box.storage.api.model.item;
 
-public record ItemData(int internalId, String plainName, byte[] itemData) {
+import org.jetbrains.annotations.NotNull;
+
+public record ItemData(int internalId, String plainName, byte[] itemData) implements NamedItem<byte[]> {
+
+    @Override
+    public byte @NotNull [] item() {
+        return this.itemData;
+    }
 
     @Override
     public boolean equals(Object o) {

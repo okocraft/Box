@@ -9,8 +9,6 @@ import java.util.UUID;
 
 public interface UserStorage {
 
-    void init() throws Exception;
-
     @NotNull BoxUser loadBoxUser(@NotNull UUID uuid) throws Exception;
 
     void saveBoxUser(@NotNull UUID uuid, @Nullable String name) throws Exception;

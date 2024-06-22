@@ -9,6 +9,7 @@ import net.okocraft.box.storage.api.util.uuid.UUIDParser;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -27,8 +28,7 @@ class YamlUserStorage implements UserStorage {
         this.filepath = rootDirectory.resolve("users.yml");
     }
 
-    @Override
-    public void init() throws Exception {
+    void init() throws IOException {
         if (!Files.isRegularFile(this.filepath)) {
             this.userMap = new UserMap();
             return;

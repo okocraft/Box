@@ -10,6 +10,6 @@ class VersionedImplsTest {
     void testMC_1_20_5() {
         var impls = VersionedImpls.load(this.getClass().getClassLoader());
         var provider = impls.createDefaultItemProvider(MCDataVersion.MC_1_20_5);
-        assertEquals(MCDataVersion.MC_1_20_5, provider.version().dataVersion());
+        assertEquals(MCDataVersion.MC_1_20_5, provider.version());
     }
 }

@@ -22,7 +22,6 @@ val storagePrefix = "$boxPrefix-storage"
 // storage
 sequenceOf(
     "api",
-    "migrator",
 
     // implementations
     "database",

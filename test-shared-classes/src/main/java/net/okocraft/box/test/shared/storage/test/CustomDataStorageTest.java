@@ -6,46 +6,21 @@ import net.kyori.adventure.key.Key;
 import net.okocraft.box.storage.api.model.data.CustomDataStorage;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
-public final class CustomDataStorageTest {
+public abstract class CustomDataStorageTest<S> extends AbstractStorageTest<S>{
 
     private static final Key KEY_1 = Key.key("box", "test");
     private static final Key KEY_2 = Key.key("box", "path/to/test");
     private static final Key KEY_3 = Key.key("unbox", "test");
 
-    public static void testLoadingAndSaving(@NotNull CustomDataStorage storage) throws Exception {
-        storage.init();
-
-        NodeAssertion.assertEquals(MapNode.empty(), storage.loadData(KEY_1));
-        NodeAssertion.assertEquals(MapNode.empty(), storage.loadData(KEY_2));
-
-        var node = mapNode();
-
-        storage.saveData(KEY_1, node);
-        NodeAssertion.assertEquals(node, storage.loadData(KEY_1));
-
-        storage.saveData(KEY_2, node);
-        NodeAssertion.assertEquals(node, storage.loadData(KEY_2));
-
-        var newNode = MapNode.create(Map.of("a", "b"));
-        storage.saveData(KEY_2, newNode); // overwrite
-        NodeAssertion.assertEquals(newNode, storage.loadData(KEY_2));
-    }
-
-    public static void testLoadingFromNewlyCreatedStorage(@NotNull CustomDataStorage storage) throws Exception {
-        storage.init();
-        NodeAssertion.assertEquals(mapNode(), storage.loadData(KEY_1));
-        NodeAssertion.assertEquals(MapNode.create(Map.of("a", "b")), storage.loadData(KEY_2));
-    }
-
-    public static void testVisit(@NotNull CustomDataStorage storage, boolean saveNodes) throws Exception {
-        storage.init();
-
+    private static void testVisit(@NotNull CustomDataStorage storage, boolean saveNodes) throws Exception {
         var node = mapNode();
 
         if (saveNodes) {
@@ -88,4 +63,69 @@ public final class CustomDataStorageTest {
         mapNode.set("nested", Map.of("map", Map.of("key", "value")));
         return mapNode;
     }
+
+    @Test
+    void testLoadingAndSaving() throws Exception {
+        var storage = this.newStorage();
+        var customDataStorage = this.newCustomDataStorage(storage);
+
+        try {
+            NodeAssertion.assertEquals(MapNode.empty(), customDataStorage.loadData(KEY_1));
+            NodeAssertion.assertEquals(MapNode.empty(), customDataStorage.loadData(KEY_2));
+
+            var node = mapNode();
+
+            customDataStorage.saveData(KEY_1, node);
+            NodeAssertion.assertEquals(node, customDataStorage.loadData(KEY_1));
+
+            customDataStorage.saveData(KEY_2, node);
+            NodeAssertion.assertEquals(node, customDataStorage.loadData(KEY_2));
+
+            var newNode = MapNode.create(Map.of("a", "b"));
+            customDataStorage.saveData(KEY_2, newNode); // overwrite
+            NodeAssertion.assertEquals(newNode, customDataStorage.loadData(KEY_2));
+        } finally {
+            this.closeStorage(storage);
+        }
+    }
+
+    @Test
+    void testVisit() throws Exception {
+        var storage = this.newStorage();
+        var customDataStorage = this.newCustomDataStorage(storage);
+
+        try {
+            testVisit(customDataStorage, true);
+        } finally {
+            this.closeStorage(storage);
+        }
+    }
+
+    @Test
+    void testConvert() throws Exception {
+        var storage = this.newStorage();
+
+        try {
+            var legacy = this.newLegacyCustomDataStorage(storage);
+
+            if (legacy.isEmpty()) {
+                return;
+            }
+
+            CustomDataStorageTest.testVisit(legacy.get(), true);
+
+            var table = this.newCustomDataStorage(storage);
+            table.updateFormatIfNeeded();
+            CustomDataStorageTest.testVisit(table, false);
+        } finally {
+            this.closeStorage(storage);
+        }
+    }
+
+    protected abstract @NotNull CustomDataStorage newCustomDataStorage(@NotNull S storage) throws Exception;
+
+    protected @NotNull Optional<CustomDataStorage> newLegacyCustomDataStorage(@NotNull S storage) throws Exception {
+        return Optional.empty();
+    }
+
 }

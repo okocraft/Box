@@ -4,5 +4,5 @@ import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
 
-public record StorageContext<R>(@NotNull Path pluginDirectory, @NotNull R setting, boolean migrationMode) {
+public record StorageContext<R>(@NotNull Path pluginDirectory, @NotNull R setting) {
 }

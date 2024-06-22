@@ -1,20 +1,19 @@
 package net.okocraft.box.bundle;
 
-import net.okocraft.box.api.model.item.ItemVersion;
 import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.api.util.MCDataVersion;
-import net.okocraft.box.storage.api.util.item.DefaultItem;
-import net.okocraft.box.storage.api.util.item.DefaultItemProvider;
-import net.okocraft.box.storage.api.util.item.patcher.ItemDataPatcher;
-import net.okocraft.box.storage.api.util.item.patcher.ItemNamePatcher;
-import net.okocraft.box.storage.api.util.item.patcher.PatcherFactory;
-import net.okocraft.box.version.common.item.LegacyVersionPatches;
+import net.okocraft.box.storage.api.model.item.provider.DefaultItem;
+import net.okocraft.box.storage.api.model.item.provider.DefaultItemProvider;
 import net.okocraft.box.version.common.version.Versioned;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.Map;
+import java.util.function.BiFunction;
 import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public final class VersionedImpls {
@@ -31,128 +30,64 @@ public final class VersionedImpls {
         this.impls = impls;
     }
 
-    public @NotNull ItemVersion leastVersion() {
+    public @NotNull MCDataVersion leastVersion() {
         return this.impls.stream()
-                .min(Comparator.comparing(Versioned::defaultItemVersion))
-                .map(Versioned::defaultItemVersion)
+                .min(Comparator.comparing(Versioned::version))
+                .map(Versioned::version)
                 .orElseThrow();
     }
 
     public @NotNull DefaultItemProvider createDefaultItemProvider(@NotNull MCDataVersion current) {
         var latest = this.findLatest(current);
         this.debugVersion("Latest", latest);
-        return new DefaultItemProviderImpl(latest.defaultItemVersion(), latest::defaultItems, this.createItemNamePatcherFactory(), this.createItemDataPatcherFactory());
+        return new DefaultItemProviderImpl(latest.version(), latest::defaultItems, this::getRenamedItems, this::createItemNameConvertor);
     }
 
     private @NotNull Versioned findLatest(@NotNull MCDataVersion current) {
         return this.impls.stream()
-                .filter(impl -> impl.defaultItemVersion().dataVersion().isBeforeOrSame(current))
-                .max(Comparator.comparing(Versioned::defaultItemVersion))
+                .filter(impl -> impl.version().isBeforeOrSame(current))
+                .max(Comparator.comparing(Versioned::version))
                 .orElseThrow();
     }
 
-    private void addNeededItemNamePatches(@NotNull ItemVersion starting, @NotNull ItemNamePatcherBuilder builder) {
-        this.impls.stream()
-                .filter(impl -> starting.isBefore(impl.defaultItemVersion()))
-                .sorted(Comparator.comparing(Versioned::defaultItemVersion))
+    private Map<String, String> getRenamedItems(@NotNull MCDataVersion startingVersion, @NotNull MCDataVersion currentVersion) {
+        return this.impls.stream()
+                .filter(impl -> startingVersion.isBefore(impl.version()) && currentVersion.isAfterOrSame(impl.version()))
+                .sorted(Comparator.comparing(Versioned::version))
                 .peek(impl -> this.debugVersion("ItemNamePatches", impl))
-                .flatMap(Versioned::itemNamePatchers)
-                .forEach(builder::append);
+                .flatMap(impl -> impl.loadRenamedItems().entrySet().stream())
+                .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue, (older, newer) -> newer));
     }
 
-    private void addNeededItemDataPatches(@NotNull ItemVersion starting, @NotNull ItemDataPatcherBuilder builder) {
-        this.impls.stream()
-                .filter(impl -> starting.isBefore(impl.defaultItemVersion()))
-                .sorted(Comparator.comparing(Versioned::defaultItemVersion))
-                .peek(impl -> this.debugVersion("ItemDataPatches", impl))
-                .flatMap(Versioned::itemDataPatchers)
-                .forEach(builder::append);
-    }
-
-    private PatcherFactory<ItemNamePatcher> createItemNamePatcherFactory() {
-        return (startingVersion, currentVersion) -> {
-            var builder = new ItemNamePatcherBuilder();
-
-            if (LegacyVersionPatches.shouldPatchGoatHorn(startingVersion)) {
-                builder.append(LegacyVersionPatches::goatHornName);
-            }
-
-            if (LegacyVersionPatches.shouldPatchShortGrassName(startingVersion, currentVersion)) {
-                builder.append(LegacyVersionPatches::shortGrassName);
-            }
-
-            if (LegacyVersionPatches.shouldPatchPotionName(startingVersion, currentVersion)) {
-                builder.append(LegacyVersionPatches::potionName);
-            }
-
-            this.addNeededItemNamePatches(startingVersion, builder);
-
-            return builder.result;
-        };
-    }
-
-    private PatcherFactory<ItemDataPatcher> createItemDataPatcherFactory() {
-        return (startingVersion, currentVersion) -> {
-            var builder = new ItemDataPatcherBuilder();
-
-            if (LegacyVersionPatches.shouldPatchGoatHorn(startingVersion)) {
-                builder.append(LegacyVersionPatches::goatHorn);
-            }
-
-            this.addNeededItemDataPatches(startingVersion, builder);
-
-            return builder.result;
-        };
+    private @NotNull UnaryOperator<String> createItemNameConvertor(@NotNull MCDataVersion startingVersion, @NotNull MCDataVersion currentVersion) {
+        var renameMap = this.getRenamedItems(startingVersion, currentVersion);
+        return name -> renameMap.getOrDefault(name, name);
     }
 
     private void debugVersion(@NotNull String name, @NotNull Versioned impl) {
         if (PRINT_VERSION) {
-            var version = impl.defaultItemVersion();
-            BoxLogger.logger().info("{}: {}, {} ({})", name, version.dataVersion(), version.defaultItemVersion(), impl.getClass().getSimpleName());
+            var version = impl.version();
+            BoxLogger.logger().info("{}: {} ({})", name, version.dataVersion(), impl.getClass().getSimpleName());
         }
     }
 
-    private record DefaultItemProviderImpl(@NotNull ItemVersion version,
+    private record DefaultItemProviderImpl(@NotNull MCDataVersion version,
                                            @NotNull Supplier<Stream<DefaultItem>> defaultItemProvider,
-                                           @NotNull PatcherFactory<ItemNamePatcher> itemNamePatcherFactory,
-                                           @NotNull PatcherFactory<ItemDataPatcher> itemDataPatcherFactory) implements DefaultItemProvider {
+                                           @NotNull BiFunction<MCDataVersion, MCDataVersion, Map<String, String>> renamedItemsProvider,
+                                           @NotNull BiFunction<MCDataVersion, MCDataVersion, UnaryOperator<String>> itemNameConvertorFactory) implements DefaultItemProvider {
         @Override
         public @NotNull Stream<DefaultItem> provide() {
             return this.defaultItemProvider.get();
         }
-    }
 
-    private static class ItemNamePatcherBuilder {
-        private ItemNamePatcher result = ItemNamePatcher.NOOP;
-
-        private void append(@NotNull ItemNamePatcher other) {
-            if (other == ItemNamePatcher.NOOP) {
-                return;
-            }
-
-            if (this.result == ItemNamePatcher.NOOP) {
-                this.result = other;
-            } else {
-                var current = this.result;
-                this.result = original -> other.renameIfNeeded(current.renameIfNeeded(original));
-            }
+        @Override
+        public @NotNull Map<String, String> renamedItems(@NotNull MCDataVersion startingVersion, @NotNull MCDataVersion currentVersion) {
+            return this.renamedItemsProvider.apply(startingVersion, currentVersion);
         }
-    }
 
-    private static class ItemDataPatcherBuilder {
-        private ItemDataPatcher result = ItemDataPatcher.NOOP;
-
-        private void append(@NotNull ItemDataPatcher other) {
-            if (other == ItemDataPatcher.NOOP) {
-                return;
-            }
-
-            if (this.result == ItemDataPatcher.NOOP) {
-                this.result = other;
-            } else {
-                var current = this.result;
-                this.result = original -> other.patch(current.patch(original));
-            }
+        @Override
+        public @NotNull UnaryOperator<String> itemNameConvertor(@NotNull MCDataVersion startingVersion, @NotNull MCDataVersion currentVersion) {
+            return this.itemNameConvertorFactory.apply(startingVersion, currentVersion);
         }
     }
 }

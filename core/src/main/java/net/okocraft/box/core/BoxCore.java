@@ -29,8 +29,9 @@ import net.okocraft.box.core.model.manager.item.BoxItemManager;
 import net.okocraft.box.core.model.manager.stock.BoxStockManager;
 import net.okocraft.box.core.model.manager.user.BoxUserManager;
 import net.okocraft.box.core.player.BoxPlayerMapImpl;
+import net.okocraft.box.storage.api.loader.StorageLoader;
+import net.okocraft.box.storage.api.loader.item.ItemLoader;
 import net.okocraft.box.storage.api.model.Storage;
-import net.okocraft.box.storage.api.util.item.ItemLoader;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
@@ -72,13 +73,9 @@ public class BoxCore implements BoxAPI {
             BoxLogger.logger().info("Debug mode is ENABLED");
         }
 
-        BoxLogger.logger().info("Initializing {} storage...", storage.getName());
+        BoxLogger.logger().info("Initializing the storage...");
 
-        try {
-            storage.init();
-            storage.getCustomDataStorage().updateFormatIfNeeded(); // Update data format on database
-        } catch (Exception e) {
-            BoxLogger.logger().error("Could not initialize {} storage.", storage.getName(), e);
+        if (!StorageLoader.initialize(storage)) {
             return false;
         }
 
@@ -87,9 +84,10 @@ public class BoxCore implements BoxAPI {
         this.userManager = new BoxUserManager(storage.getUserStorage());
 
         try {
-            var itemLoadResult = ItemLoader.load(storage.getItemStorage(), this.context.defaultItemProvider());
+            var itemLoadResult = ItemLoader.fromStorage(this.context.defaultItemProvider(), storage);
+            var remapItemIds = ItemLoader.loadRemappedItemIds(storage.remappedItemStorage());
             itemLoadResult.logItemCount();
-            this.itemManager = new BoxItemManager(storage.getItemStorage(), this.context.eventManager(), this.context.scheduler(), this.context.defaultItemProvider(), itemLoadResult.asIterator());
+            this.itemManager = new BoxItemManager(storage.customItemStorage(), this.context.eventManager(), this.context.scheduler(), this.context.defaultItemProvider(), itemLoadResult.asIterator(), remapItemIds);
         } catch (Exception e) {
             BoxLogger.logger().error("Could not load default/custom items", e);
             return false;

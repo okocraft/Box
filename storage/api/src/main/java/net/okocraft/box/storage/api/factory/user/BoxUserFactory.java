@@ -16,7 +16,7 @@ public final class BoxUserFactory {
 
     @Contract("_, _ -> new")
     public static @NotNull BoxUser create(@NotNull UUID uuid, @Nullable String username) {
-        return new BoxUserImpl(uuid, username);
+        return new BoxUserImpl(uuid, username == null || username.isEmpty() ? null : username);
     }
 
     private BoxUserFactory() {
