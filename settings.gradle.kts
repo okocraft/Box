@@ -11,6 +11,7 @@ sequenceOf(
     "api",
     "core",
     "annotation-processor",
+    "data-generator",
     "test-shared-classes"
 ).forEach {
     include("$boxPrefix-$it")
