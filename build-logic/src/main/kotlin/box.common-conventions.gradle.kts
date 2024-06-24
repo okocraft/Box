@@ -1,39 +1,13 @@
 plugins {
     `java-library`
-    id("box.dependencies")
+    id("box.base-conventions")
+    id("box.paper-repository")
     id("box.publication")
 }
 
-java {
-    sourceCompatibility = JavaVersion.VERSION_21
-    targetCompatibility = JavaVersion.VERSION_21
-}
+val libs = extensions.getByType(org.gradle.accessors.dm.LibrariesForLibs::class)
 
-tasks {
-    compileJava {
-        options.encoding = Charsets.UTF_8.name()
-        options.release.set(21)
-    }
-
-    processResources {
-        filteringCharset = Charsets.UTF_8.name()
-    }
-
-    jar {
-        manifest {
-            attributes(
-                "Implementation-Version" to project.version.toString()
-            )
-        }
-    }
-
-    test {
-        // See https://github.com/mockito/mockito/issues/3037
-        jvmArgs("-XX:+EnableDynamicAgentLoading")
-
-        useJUnitPlatform()
-        testLogging {
-            events("passed", "skipped", "failed")
-        }
-    }
+dependencies {
+    compileOnly(libs.paper)
+    testImplementation(libs.paper)
 }

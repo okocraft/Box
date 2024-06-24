@@ -20,7 +20,7 @@ public final class ContainerOperator {
         var resultList =
                 StockHolderTransaction.create(context.player().getCurrentStockHolder())
                         .depositAll()
-                        .fromTopInventory(context.view(), new StickCauses.Container(context.player(), context.blockLocation()));
+                        .fromInventory(context.inventory(), new StickCauses.Container(context.player(), context.blockLocation()));
 
         if (!resultList.isEmpty()) {
             SoundPlayer.playDepositSound(context.player().getPlayer());
@@ -41,7 +41,7 @@ public final class ContainerOperator {
         var result =
                 StockHolderTransaction.create(stockHolder)
                         .withdraw(boxItem, Integer.MAX_VALUE)
-                        .toTopInventory(context.view(), new StickCauses.Container(context.player(), context.blockLocation()));
+                        .toInventory(context.inventory(), new StickCauses.Container(context.player(), context.blockLocation()));
 
         if (0 < result.amount()) {
             SoundPlayer.playWithdrawalSound(context.player().getPlayer());
