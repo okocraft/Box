@@ -1,0 +1,283 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "net.okocraft.box",
+    "module": "box-bundle",
+    "version": "6.0.0-SNAPSHOT",
+    "attributes": {
+      "org.gradle.status": "integration"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.8"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 21,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api"
+      },
+      "dependencies": [
+        {
+          "group": "com.github.siroshun09.configapi",
+          "module": "configapi-format-yaml",
+          "version": {
+            "requires": "5.0.0-beta.2"
+          },
+          "excludes": [
+            {
+              "group": "org.yaml",
+              "module": "snakeyaml"
+            }
+          ]
+        },
+        {
+          "group": "com.github.siroshun09.event4j",
+          "module": "event4j",
+          "version": {
+            "requires": "4.0.0-rc.1"
+          }
+        },
+        {
+          "group": "com.github.siroshun09.messages",
+          "module": "messages-minimessage",
+          "version": {
+            "requires": "0.8.0"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "box-bundle-6.0.0-SNAPSHOT.jar",
+          "url": "box-bundle-6.0.0-SNAPSHOT.jar",
+          "size": 22924,
+          "sha512": "e28de91ae0e9e89d5e4965881b83bd1bc3136d78cfbaa1ebfbb77ad046b69dd45cac12373b3385e6f8eedecafc1eada2defa60cdb0d1102a93836cbc169d0d7e",
+          "sha256": "4100b950a484b2d7535750bd42d563b28a987248256005081a5fdc999a076978",
+          "sha1": "2d2b7682f4e495bc5073706422c2b5e2d02b443a",
+          "md5": "280874409e91e2d8e82274e3d9f25d3b"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 21,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "dependencies": [
+        {
+          "group": "net.okocraft.box",
+          "module": "box-storage-yaml",
+          "version": {
+            "requires": "6.0.0-SNAPSHOT"
+          }
+        },
+        {
+          "group": "net.okocraft.box",
+          "module": "box-version-paper-1_20_5",
+          "version": {
+            "requires": "6.0.0-SNAPSHOT"
+          }
+        },
+        {
+          "group": "net.okocraft.box",
+          "module": "box-api",
+          "version": {
+            "requires": "6.0.0-SNAPSHOT"
+          }
+        },
+        {
+          "group": "net.okocraft.box",
+          "module": "box-gui-feature",
+          "version": {
+            "requires": "6.0.0-SNAPSHOT"
+          }
+        },
+        {
+          "group": "net.okocraft.box",
+          "module": "box-storage-database",
+          "version": {
+            "requires": "6.0.0-SNAPSHOT"
+          }
+        },
+        {
+          "group": "net.okocraft.box",
+          "module": "box-stick-feature",
+          "version": {
+            "requires": "6.0.0-SNAPSHOT"
+          }
+        },
+        {
+          "group": "net.okocraft.box",
+          "module": "box-command-feature",
+          "version": {
+            "requires": "6.0.0-SNAPSHOT"
+          }
+        },
+        {
+          "group": "net.okocraft.box",
+          "module": "box-notifier-feature",
+          "version": {
+            "requires": "6.0.0-SNAPSHOT"
+          }
+        },
+        {
+          "group": "net.okocraft.box",
+          "module": "box-storage-api",
+          "version": {
+            "requires": "6.0.0-SNAPSHOT"
+          }
+        },
+        {
+          "group": "net.okocraft.box",
+          "module": "box-bemode-feature",
+          "version": {
+            "requires": "6.0.0-SNAPSHOT"
+          }
+        },
+        {
+          "group": "net.okocraft.box",
+          "module": "box-craft-feature",
+          "version": {
+            "requires": "6.0.0-SNAPSHOT"
+          }
+        },
+        {
+          "group": "net.okocraft.box",
+          "module": "box-autostore-feature",
+          "version": {
+            "requires": "6.0.0-SNAPSHOT"
+          }
+        },
+        {
+          "group": "net.okocraft.box",
+          "module": "box-core",
+          "version": {
+            "requires": "6.0.0-SNAPSHOT"
+          }
+        },
+        {
+          "group": "net.okocraft.box",
+          "module": "box-version-common",
+          "version": {
+            "requires": "6.0.0-SNAPSHOT"
+          }
+        },
+        {
+          "group": "net.okocraft.box",
+          "module": "box-category-feature",
+          "version": {
+            "requires": "6.0.0-SNAPSHOT"
+          }
+        },
+        {
+          "group": "com.github.siroshun09.configapi",
+          "module": "configapi-format-yaml",
+          "version": {
+            "requires": "5.0.0-beta.2"
+          },
+          "excludes": [
+            {
+              "group": "org.yaml",
+              "module": "snakeyaml"
+            }
+          ]
+        },
+        {
+          "group": "com.github.siroshun09.event4j",
+          "module": "event4j",
+          "version": {
+            "requires": "4.0.0-rc.1"
+          }
+        },
+        {
+          "group": "com.github.siroshun09.messages",
+          "module": "messages-minimessage",
+          "version": {
+            "requires": "0.8.0"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "box-bundle-6.0.0-SNAPSHOT.jar",
+          "url": "box-bundle-6.0.0-SNAPSHOT.jar",
+          "size": 22924,
+          "sha512": "e28de91ae0e9e89d5e4965881b83bd1bc3136d78cfbaa1ebfbb77ad046b69dd45cac12373b3385e6f8eedecafc1eada2defa60cdb0d1102a93836cbc169d0d7e",
+          "sha256": "4100b950a484b2d7535750bd42d563b28a987248256005081a5fdc999a076978",
+          "sha1": "2d2b7682f4e495bc5073706422c2b5e2d02b443a",
+          "md5": "280874409e91e2d8e82274e3d9f25d3b"
+        }
+      ]
+    },
+    {
+      "name": "javadocElements",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "javadoc",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "box-bundle-6.0.0-SNAPSHOT-javadoc.jar",
+          "url": "box-bundle-6.0.0-SNAPSHOT-javadoc.jar",
+          "size": 122959,
+          "sha512": "a63398664370828bacc1d890f5958d4e532430934bfe1acecf08cc327804c9826370e5e9c3976656f3cc9dd052d069796b3e82414c4e7ea9fbcff134dc56e56b",
+          "sha256": "d2446b54a803ae65ab23441223beea55a660b3e33df45d9cc58161e539201303",
+          "sha1": "bb9e11af22b23d19aacc5b55dcc428bb34da62c5",
+          "md5": "78618e6e3da91b4687b62c6640e95880"
+        }
+      ]
+    },
+    {
+      "name": "sourcesElements",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "box-bundle-6.0.0-SNAPSHOT-sources.jar",
+          "url": "box-bundle-6.0.0-SNAPSHOT-sources.jar",
+          "size": 12493,
+          "sha512": "070a61e9b560a9fc4e8221ff2887c27a8662b527fba6c589af52992c9d1b92c32fe685f2454639a117d68d6cf1198b1719549e3d463b054591c3ee268a73d028",
+          "sha256": "317ed8d4b1c23fb2b5b9b3bcc724fad1a369bbee0aa4491a2c4f782eb88499b2",
+          "sha1": "a7ec9370ef443409b48cdcf295d55cc8daf53482",
+          "md5": "f200f5e92bcaca205c28b1c772bf9fe3"
+        }
+      ]
+    },
+    {
+      "name": "shadowRuntimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "shadowed",
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "box-bundle-6.0.0-SNAPSHOT-all.jar",
+          "url": "box-bundle-6.0.0-SNAPSHOT-all.jar",
+          "size": 1282096,
+          "sha512": "93e7476c6fd859e16f230b5b1fef8745ec57ea30ac91655433f7a3ee945545ff99bbe4c0d127bc7f55c7080f3895f999d9b2ff62d9d6666c54fb9113d093298b",
+          "sha256": "537473cde2da69a61a96c960f8dc9f19b46abc17f48ef7c4eb15a55d4f49280b",
+          "sha1": "9c648ea09869f73028828d5c01e059366aaa3323",
+          "md5": "731f5cdac567a8bd40b159aa4137a974"
+        }
+      ]
+    }
+  ]
+}
