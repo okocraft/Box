@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 class DataGenerator {
 
     private final List<String> defaultItems;
-    private final Map<String, String > renamedItems;
+    private final Map<String, String> renamedItems;
 
     DataGenerator(@NotNull Versioned impl) {
         this.defaultItems = impl.defaultItems().map(DefaultItem::plainName).distinct().sorted().toList();
@@ -34,13 +34,13 @@ class DataGenerator {
     public void defaultItems(@NotNull Path dir) throws IOException {
         try (var writer = Files.newBufferedWriter(dir.resolve(Bukkit.getMinecraftVersion() + ".txt"))) {
             this.defaultItems.forEach(name -> {
-                        try {
-                            writer.write(name);
-                            writer.newLine();
-                        } catch (IOException e) {
-                            SneakyThrow.sneaky(e);
-                        }
-                    });
+                try {
+                    writer.write(name);
+                    writer.newLine();
+                } catch (IOException e) {
+                    SneakyThrow.sneaky(e);
+                }
+            });
         }
     }
 
@@ -101,7 +101,6 @@ class DataGenerator {
                             SneakyThrow.sneaky(e);
                         }
                     });
-
         }
     }
 }
