@@ -1,6 +1,7 @@
 plugins {
     id("box.common-conventions")
     alias(libs.plugins.shadow)
+    alias(libs.plugins.run.server)
 }
 
 dependencies {
@@ -36,6 +37,12 @@ tasks {
 
     shadowJar {
         mergeServiceFiles()
+    }
+
+    runServer {
+        minecraftVersion("1.21")
+        systemProperty("com.mojang.eula.agree", "true")
+        systemProperty("paper.disablePluginRemapping", "true")
     }
 }
 
