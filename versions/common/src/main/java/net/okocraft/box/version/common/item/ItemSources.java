@@ -2,12 +2,13 @@ package net.okocraft.box.version.common.item;
 
 import net.okocraft.box.api.util.ItemNameGenerator;
 import net.okocraft.box.storage.api.model.item.provider.DefaultItem;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.MusicInstrument;
 import org.bukkit.Registry;
-import org.bukkit.World;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.ItemType;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.MusicInstrumentMeta;
@@ -23,15 +24,13 @@ public final class ItemSources {
     public static final Predicate<Material> NOT_GOAT_HORN = Predicate.not(material -> material.name().equals("GOAT_HORN"));
     public static final Predicate<Material> NOT_FIREWORK = Predicate.not(material -> material.name().equals("FIREWORK_ROCKET"));
 
-    public static @NotNull Stream<Material> materials(@NotNull Registry<Material> registry) {
+    @SuppressWarnings("deprecation")
+    public static @NotNull Stream<DefaultItem> itemTypes(@NotNull Registry<ItemType> registry) {
+        var world = Bukkit.getWorlds().getFirst();
         return registry.stream()
-                .filter(Predicate.not(Material::isAir))
-                .filter(Material::isItem)
-                .filter(Predicate.not(material -> material.name().startsWith("LEGACY_")));
-    }
-
-    public static @NotNull Predicate<Material> createEnabledItemFilter(@NotNull World world) {
-        return material -> material.isEnabledByFeature(world);
+                .filter(type -> type != ItemType.AIR && type != ItemType.GOAT_HORN && type != ItemType.FIREWORK_ROCKET)
+                .filter(type -> type.isEnabledByFeature(world))
+                .map(type -> new DefaultItem(ItemNameGenerator.key(type) , ItemStack.of(type.asMaterial(), 1))); // FIXME: remove asMaterial in the future
     }
 
     public static @NotNull Stream<DefaultItem> potions(@NotNull Registry<PotionType> registry) {
@@ -68,10 +67,6 @@ public final class ItemSources {
                     goatHorn.editMeta(MusicInstrumentMeta.class, meta -> meta.setInstrument(instrument));
                     return new DefaultItem(name, goatHorn);
                 });
-    }
-
-    public static @NotNull DefaultItem toDefaultItem(@NotNull Material material) {
-        return new DefaultItem(ItemNameGenerator.key(material), new ItemStack(material, 1));
     }
 
     public static class Merger {

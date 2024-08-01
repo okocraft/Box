@@ -1,28 +1,11 @@
 plugins {
     `java-library`
-    `maven-publish`
 }
 
 val libs = extensions.getByType(org.gradle.accessors.dm.LibrariesForLibs::class)
-val enableSnapshotRepo = false // For updating Box when a newer Minecraft version is released.
 
 repositories {
     mavenCentral()
-
-    if (enableSnapshotRepo) {
-        sequenceOf(
-            "https://oss.sonatype.org/content/repositories/snapshots/",
-            "https://s01.oss.sonatype.org/content/repositories/snapshots/"
-        ).forEach {
-            maven {
-                url = uri(it)
-            }
-        }
-    }
-
-    maven {
-        url = uri("https://repo.papermc.io/repository/maven-public/")
-    }
 }
 
 dependencies {
@@ -32,7 +15,6 @@ dependencies {
     api(libs.event4j)
     api(libs.messages)
 
-    compileOnly(libs.paper)
     compileOnly(libs.annotations)
 
     testImplementation(platform(libs.junit.bom))
@@ -41,8 +23,42 @@ dependencies {
     testImplementation(libs.configapi.test.shared.classes)
     testImplementation(libs.fastutil)
     testImplementation(libs.mockito)
-    testImplementation(libs.paper)
+
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testRuntimeOnly(libs.slf4j.simple)
     testRuntimeOnly(libs.snakeyaml)
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+
+tasks {
+    compileJava {
+        options.encoding = Charsets.UTF_8.name()
+        options.release.set(21)
+    }
+
+    processResources {
+        filteringCharset = Charsets.UTF_8.name()
+    }
+
+    jar {
+        manifest {
+            attributes(
+                "Implementation-Version" to project.version.toString()
+            )
+        }
+    }
+
+    test {
+        // See https://github.com/mockito/mockito/issues/3037
+        jvmArgs("-XX:+EnableDynamicAgentLoading")
+
+        useJUnitPlatform()
+        testLogging {
+            events("passed", "skipped", "failed")
+        }
+    }
 }

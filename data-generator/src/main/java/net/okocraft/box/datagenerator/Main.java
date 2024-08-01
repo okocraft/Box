@@ -61,6 +61,8 @@ public class Main extends JavaPlugin {
             if (PREVIOUS_VERSION != null) {
                 generator.newDefaultItems(dir, PREVIOUS_VERSION);
             }
+
+            generator.uncategorizedItems(dir);
         } catch (IOException | UncheckedIOException e) {
             this.getSLF4JLogger().error("Failed to generate data", e);
         }
