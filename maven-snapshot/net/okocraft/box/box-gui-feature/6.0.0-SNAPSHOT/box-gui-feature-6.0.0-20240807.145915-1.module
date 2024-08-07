@@ -1,0 +1,158 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "net.okocraft.box",
+    "module": "box-gui-feature",
+    "version": "6.0.0-SNAPSHOT",
+    "attributes": {
+      "org.gradle.status": "integration"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.9"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 21,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api"
+      },
+      "dependencies": [
+        {
+          "group": "com.github.siroshun09.configapi",
+          "module": "configapi-format-yaml",
+          "version": {
+            "requires": "5.0.0-beta.2"
+          },
+          "excludes": [
+            {
+              "group": "org.yaml",
+              "module": "snakeyaml"
+            }
+          ]
+        },
+        {
+          "group": "com.github.siroshun09.event4j",
+          "module": "event4j",
+          "version": {
+            "requires": "4.0.0-rc.1"
+          }
+        },
+        {
+          "group": "com.github.siroshun09.messages",
+          "module": "messages-minimessage",
+          "version": {
+            "requires": "0.8.0"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "box-gui-feature-6.0.0-SNAPSHOT.jar",
+          "url": "box-gui-feature-6.0.0-SNAPSHOT.jar",
+          "size": 99952,
+          "sha512": "40c6d3b8942249fac32ffb036b48ce8e8d80baeb187402e67b4f6f6cc1920f455c3db767cbe4d13055954e0a8834c3484efe8ff27be5432f844e20ee6cd731b5",
+          "sha256": "9a55b895e4949206d6e0b42002df595544be31cdd9946237561c63ddb9c7e699",
+          "sha1": "4cfaf16bd2206fcea735f1f6edd680b753834ea6",
+          "md5": "eb940e702ebdffd157df4273d28bf302"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 21,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "dependencies": [
+        {
+          "group": "com.github.siroshun09.configapi",
+          "module": "configapi-format-yaml",
+          "version": {
+            "requires": "5.0.0-beta.2"
+          },
+          "excludes": [
+            {
+              "group": "org.yaml",
+              "module": "snakeyaml"
+            }
+          ]
+        },
+        {
+          "group": "com.github.siroshun09.event4j",
+          "module": "event4j",
+          "version": {
+            "requires": "4.0.0-rc.1"
+          }
+        },
+        {
+          "group": "com.github.siroshun09.messages",
+          "module": "messages-minimessage",
+          "version": {
+            "requires": "0.8.0"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "box-gui-feature-6.0.0-SNAPSHOT.jar",
+          "url": "box-gui-feature-6.0.0-SNAPSHOT.jar",
+          "size": 99952,
+          "sha512": "40c6d3b8942249fac32ffb036b48ce8e8d80baeb187402e67b4f6f6cc1920f455c3db767cbe4d13055954e0a8834c3484efe8ff27be5432f844e20ee6cd731b5",
+          "sha256": "9a55b895e4949206d6e0b42002df595544be31cdd9946237561c63ddb9c7e699",
+          "sha1": "4cfaf16bd2206fcea735f1f6edd680b753834ea6",
+          "md5": "eb940e702ebdffd157df4273d28bf302"
+        }
+      ]
+    },
+    {
+      "name": "javadocElements",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "javadoc",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "box-gui-feature-6.0.0-SNAPSHOT-javadoc.jar",
+          "url": "box-gui-feature-6.0.0-SNAPSHOT-javadoc.jar",
+          "size": 241360,
+          "sha512": "ba56c45bc9ce717a715337a17813402c227cb360090cb1606762ddc4d54e68939b55f7804c0355269fdd1a078a463eb3bcfa7f46f1a5a2d1e6ce747fa435898e",
+          "sha256": "aa4bfd5cc3956eb73a0af9c53280361ba78ee1d1cf6a242cf349ffb502a7dba9",
+          "sha1": "2fb4815bcbb4c9aa672a1c40d4756f253e3145f5",
+          "md5": "0e3608452a0f02963a37dfe1c1b6c168"
+        }
+      ]
+    },
+    {
+      "name": "sourcesElements",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "box-gui-feature-6.0.0-SNAPSHOT-sources.jar",
+          "url": "box-gui-feature-6.0.0-SNAPSHOT-sources.jar",
+          "size": 42918,
+          "sha512": "f45c71206677d61cb179be2b2cbd0028a8c1909ba39d715e40e96edbcdbe635b65a2c035a857db408d0ef0fa2dabcd84cc37689a0cf913cb9f015431dca5fba4",
+          "sha256": "7bb8c7d1b6b0a4b3a1855607ef84246a69276e6223f011a09bea439686e34373",
+          "sha1": "8cd2c15f8c746416ecdd4963c40c1312999e70a6",
+          "md5": "caf876bee883e94e86bd2d6f70dc452b"
+        }
+      ]
+    }
+  ]
+}
