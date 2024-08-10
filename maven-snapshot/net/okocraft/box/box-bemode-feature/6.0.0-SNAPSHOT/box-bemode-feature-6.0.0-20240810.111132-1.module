@@ -1,0 +1,158 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "net.okocraft.box",
+    "module": "box-bemode-feature",
+    "version": "6.0.0-SNAPSHOT",
+    "attributes": {
+      "org.gradle.status": "integration"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.9"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 21,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api"
+      },
+      "dependencies": [
+        {
+          "group": "com.github.siroshun09.configapi",
+          "module": "configapi-format-yaml",
+          "version": {
+            "requires": "5.0.0-beta.2"
+          },
+          "excludes": [
+            {
+              "group": "org.yaml",
+              "module": "snakeyaml"
+            }
+          ]
+        },
+        {
+          "group": "com.github.siroshun09.event4j",
+          "module": "event4j",
+          "version": {
+            "requires": "4.0.0-rc.1"
+          }
+        },
+        {
+          "group": "com.github.siroshun09.messages",
+          "module": "messages-minimessage",
+          "version": {
+            "requires": "0.8.0"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "box-bemode-feature-6.0.0-SNAPSHOT.jar",
+          "url": "box-bemode-feature-6.0.0-SNAPSHOT.jar",
+          "size": 12212,
+          "sha512": "83d506b98d5e75382a0750e1d08189b84be32a4c2fcca82d4dc2e9ec98fb94b23832d9bf22cc4ceb860ede1e258a6ce997434d7290928e9d69c7bf86fc9e7db9",
+          "sha256": "c0e7bba01ab60e5f8ee2b3c9b25debea45a66949826f63fac704dfd9f1c129e5",
+          "sha1": "29fc1752183aa69c929f087afd6b690a0633f251",
+          "md5": "9f4272929f15a34674133b838ef7b1b4"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 21,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "dependencies": [
+        {
+          "group": "com.github.siroshun09.configapi",
+          "module": "configapi-format-yaml",
+          "version": {
+            "requires": "5.0.0-beta.2"
+          },
+          "excludes": [
+            {
+              "group": "org.yaml",
+              "module": "snakeyaml"
+            }
+          ]
+        },
+        {
+          "group": "com.github.siroshun09.event4j",
+          "module": "event4j",
+          "version": {
+            "requires": "4.0.0-rc.1"
+          }
+        },
+        {
+          "group": "com.github.siroshun09.messages",
+          "module": "messages-minimessage",
+          "version": {
+            "requires": "0.8.0"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "box-bemode-feature-6.0.0-SNAPSHOT.jar",
+          "url": "box-bemode-feature-6.0.0-SNAPSHOT.jar",
+          "size": 12212,
+          "sha512": "83d506b98d5e75382a0750e1d08189b84be32a4c2fcca82d4dc2e9ec98fb94b23832d9bf22cc4ceb860ede1e258a6ce997434d7290928e9d69c7bf86fc9e7db9",
+          "sha256": "c0e7bba01ab60e5f8ee2b3c9b25debea45a66949826f63fac704dfd9f1c129e5",
+          "sha1": "29fc1752183aa69c929f087afd6b690a0633f251",
+          "md5": "9f4272929f15a34674133b838ef7b1b4"
+        }
+      ]
+    },
+    {
+      "name": "javadocElements",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "javadoc",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "box-bemode-feature-6.0.0-SNAPSHOT-javadoc.jar",
+          "url": "box-bemode-feature-6.0.0-SNAPSHOT-javadoc.jar",
+          "size": 117321,
+          "sha512": "d2e532acb08a4e21b1fd4f1d036289c9bccff2957f26dbae6c665c6dbcfd19e0dd6d343eb24086000131a20ac379f4a564d85edb7b8674ff87c49e87585ee5d7",
+          "sha256": "bf78b741912dce4da05d36ca4e80d41a31ae6c9d157f3de4c8f78977bd15e295",
+          "sha1": "75fdb3dadbddf698db0f1a90fd23a57c0d085801",
+          "md5": "3f958a62811e4e6348a0d322595f2ad4"
+        }
+      ]
+    },
+    {
+      "name": "sourcesElements",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "box-bemode-feature-6.0.0-SNAPSHOT-sources.jar",
+          "url": "box-bemode-feature-6.0.0-SNAPSHOT-sources.jar",
+          "size": 5985,
+          "sha512": "d4fe9640f519d454b5f7f90146f0676fe4e41f60ba6f7d30b8ea8adb7c2d325c969b367f7560abd03ddd6fcf90fb25936c90d4ced905afa082773a40236b990a",
+          "sha256": "50ba55eeae3f9f28cc766916afc43e80d99faa5800e0a1fdc0cf3a93a298d974",
+          "sha1": "1ad61715b1097320c86cca0a557e0cb6d7204e4d",
+          "md5": "31173cf3c22251916b9b5ea865d67cbe"
+        }
+      ]
+    }
+  ]
+}
