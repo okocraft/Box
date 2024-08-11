@@ -15,14 +15,10 @@ import org.bukkit.inventory.meta.MusicInstrumentMeta;
 import org.bukkit.potion.PotionType;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.function.Predicate;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public final class ItemSources {
-
-    public static final Predicate<Material> NOT_GOAT_HORN = Predicate.not(material -> material.name().equals("GOAT_HORN"));
-    public static final Predicate<Material> NOT_FIREWORK = Predicate.not(material -> material.name().equals("FIREWORK_ROCKET"));
 
     @SuppressWarnings("deprecation")
     public static @NotNull Stream<DefaultItem> itemTypes(@NotNull Registry<ItemType> registry) {
