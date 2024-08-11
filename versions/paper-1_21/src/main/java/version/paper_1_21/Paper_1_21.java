@@ -26,6 +26,7 @@ public final class Paper_1_21 {
                 .append(ItemSources.enchantedBooks(registry(RegistryKey.ENCHANTMENT)))
                 .append(ItemSources.fireworks())
                 .append(ItemSources.goatHorns(registry(RegistryKey.INSTRUMENT)))
+                .append(ItemSources.ominousBottles())
                 .result();
     }
 

@@ -12,9 +12,12 @@ import org.bukkit.inventory.ItemType;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.MusicInstrumentMeta;
+import org.bukkit.inventory.meta.OminousBottleMeta;
 import org.bukkit.potion.PotionType;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -23,8 +26,9 @@ public final class ItemSources {
     @SuppressWarnings("deprecation")
     public static @NotNull Stream<DefaultItem> itemTypes(@NotNull Registry<ItemType> registry) {
         var world = Bukkit.getWorlds().getFirst();
+        var excludedTypes = Set.of(ItemType.AIR, ItemType.GOAT_HORN, ItemType.FIREWORK_ROCKET, ItemType.OMINOUS_BOTTLE);
         return registry.stream()
-                .filter(type -> type != ItemType.AIR && type != ItemType.GOAT_HORN && type != ItemType.FIREWORK_ROCKET)
+                .filter(Predicate.not(excludedTypes::contains))
                 .filter(type -> type.isEnabledByFeature(world))
                 .map(type -> new DefaultItem(ItemNameGenerator.key(type) , ItemStack.of(type.asMaterial(), 1))); // FIXME: remove asMaterial in the future
     }
@@ -63,6 +67,16 @@ public final class ItemSources {
                     goatHorn.editMeta(MusicInstrumentMeta.class, meta -> meta.setInstrument(instrument));
                     return new DefaultItem(name, goatHorn);
                 });
+    }
+
+    public static @NotNull Stream<DefaultItem> ominousBottles() {
+        return IntStream.rangeClosed(1, 5).mapToObj(level -> {
+            var name = ItemNameGenerator.key(Material.OMINOUS_BOTTLE) + "_" + level;
+            var bottle = new ItemStack(Material.OMINOUS_BOTTLE);
+            bottle.editMeta(OminousBottleMeta.class, meta -> meta.setAmplifier(level - 1));
+
+            return new DefaultItem(name, bottle);
+        });
     }
 
     public static class Merger {
