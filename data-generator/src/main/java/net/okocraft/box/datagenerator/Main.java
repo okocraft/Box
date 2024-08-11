@@ -2,7 +2,10 @@ package net.okocraft.box.datagenerator;
 
 import net.okocraft.box.api.util.MCDataVersion;
 import net.okocraft.box.version.common.version.Versioned;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -17,6 +20,18 @@ public class Main extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        this.generateData();
+    }
+
+    @Override
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+        if (sender.isOp()) {
+            this.generateData();
+        }
+        return true;
+    }
+
+    private void generateData() {
         var dir = FILE_LOCATION != null ? Path.of(FILE_LOCATION) : this.getDataFolder().toPath().resolve("generated");
 
         if (Files.isDirectory(dir)) {
