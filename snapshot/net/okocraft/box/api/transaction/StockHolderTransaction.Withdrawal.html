@@ -107,16 +107,16 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>@NotNull <a href="TransactionResult.html" title="class in net.okocraft.box.api.transaction">TransactionResult</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#toInventory(org.bukkit.inventory.Inventory,net.okocraft.box.api.event.stockholder.stock.StockEvent.Cause)" class="member-name-link">toInventory</a><wbr>(@NotNull <a href="https://jd.papermc.io/paper/1.21/org/bukkit/inventory/Inventory.html" title="class or interface in org.bukkit.inventory" class="external-link">Inventory</a>&nbsp;inventory,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#toInventory(org.bukkit.inventory.Inventory,net.okocraft.box.api.event.stockholder.stock.StockEvent.Cause)" class="member-name-link">toInventory</a><wbr>(@NotNull org.bukkit.inventory.Inventory&nbsp;inventory,
  <a href="../event/stockholder/stock/StockEvent.Cause.html" title="interface in net.okocraft.box.api.event.stockholder.stock">StockEvent.Cause</a>&nbsp;cause)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-<div class="block">Withdraws items to <a href="https://jd.papermc.io/paper/1.21/org/bukkit/inventory/Inventory.html" title="class or interface in org.bukkit.inventory" class="external-link"><code>Inventory</code></a>.</div>
+<div class="block">Withdraws items to <code>Inventory</code>.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>@NotNull <a href="TransactionResult.html" title="class in net.okocraft.box.api.transaction">TransactionResult</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#toTopInventory(org.bukkit.inventory.InventoryView,net.okocraft.box.api.event.stockholder.stock.StockEvent.Cause)" class="member-name-link">toTopInventory</a><wbr>(@NotNull <a href="https://jd.papermc.io/paper/1.21/org/bukkit/inventory/InventoryView.html" title="class or interface in org.bukkit.inventory" class="external-link">InventoryView</a>&nbsp;view,
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#toTopInventory(org.bukkit.inventory.InventoryView,net.okocraft.box.api.event.stockholder.stock.StockEvent.Cause)" class="member-name-link">toTopInventory</a><wbr>(@NotNull org.bukkit.inventory.InventoryView&nbsp;view,
  <a href="../event/stockholder/stock/StockEvent.Cause.html" title="interface in net.okocraft.box.api.event.stockholder.stock">StockEvent.Cause</a>&nbsp;cause)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-<div class="block">Withdraws items to <a href="https://jd.papermc.io/paper/1.21/org/bukkit/inventory/InventoryView.html#getTopInventory()" title="class or interface in org.bukkit.inventory" class="external-link"><code>InventoryView.getTopInventory()</code></a>.</div>
+<div class="block">Withdraws items to <code>InventoryView.getTopInventory()</code>.</div>
 </div>
 </div>
 </div>
@@ -137,13 +137,13 @@ loadScripts(document, 'script');</script>
 <h3>toInventory</h3>
 <div class="member-signature"><span class="annotations">@NotNull
 </span><span class="return-type">@NotNull <a href="TransactionResult.html" title="class in net.okocraft.box.api.transaction">TransactionResult</a></span>&nbsp;<span class="element-name">toInventory</span><wbr><span class="parameters">(@NotNull
- @NotNull <a href="https://jd.papermc.io/paper/1.21/org/bukkit/inventory/Inventory.html" title="class or interface in org.bukkit.inventory" class="external-link">Inventory</a>&nbsp;inventory,
+ @NotNull org.bukkit.inventory.Inventory&nbsp;inventory,
  @NotNull
  <a href="../event/stockholder/stock/StockEvent.Cause.html" title="interface in net.okocraft.box.api.event.stockholder.stock">StockEvent.Cause</a>&nbsp;cause)</span></div>
-<div class="block">Withdraws items to <a href="https://jd.papermc.io/paper/1.21/org/bukkit/inventory/Inventory.html" title="class or interface in org.bukkit.inventory" class="external-link"><code>Inventory</code></a>.</div>
+<div class="block">Withdraws items to <code>Inventory</code>.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>inventory</code> - an <a href="https://jd.papermc.io/paper/1.21/org/bukkit/inventory/Inventory.html" title="class or interface in org.bukkit.inventory" class="external-link"><code>Inventory</code></a> to put items in</dd>
+<dd><code>inventory</code> - an <code>Inventory</code> to put items in</dd>
 <dd><code>cause</code> - a <a href="../event/stockholder/stock/StockEvent.Cause.html" title="interface in net.okocraft.box.api.event.stockholder.stock"><code>StockEvent.Cause</code></a> that is passed to <a href="../model/stock/StockHolder.html#decrease(net.okocraft.box.api.model.item.BoxItem,int,net.okocraft.box.api.event.stockholder.stock.StockEvent.Cause)"><code>StockHolder.decrease(BoxItem, int, StockEvent.Cause)</code></a></dd>
 <dt>Returns:</dt>
 <dd>a <a href="TransactionResult.html" title="class in net.okocraft.box.api.transaction"><code>TransactionResult</code></a></dd>
@@ -157,15 +157,15 @@ loadScripts(document, 'script');</script>
 <h3>toTopInventory</h3>
 <div class="member-signature"><span class="annotations">@NotNull
 </span><span class="return-type">@NotNull <a href="TransactionResult.html" title="class in net.okocraft.box.api.transaction">TransactionResult</a></span>&nbsp;<span class="element-name">toTopInventory</span><wbr><span class="parameters">(@NotNull
- @NotNull <a href="https://jd.papermc.io/paper/1.21/org/bukkit/inventory/InventoryView.html" title="class or interface in org.bukkit.inventory" class="external-link">InventoryView</a>&nbsp;view,
+ @NotNull org.bukkit.inventory.InventoryView&nbsp;view,
  @NotNull
  <a href="../event/stockholder/stock/StockEvent.Cause.html" title="interface in net.okocraft.box.api.event.stockholder.stock">StockEvent.Cause</a>&nbsp;cause)</span></div>
-<div class="block">Withdraws items to <a href="https://jd.papermc.io/paper/1.21/org/bukkit/inventory/InventoryView.html#getTopInventory()" title="class or interface in org.bukkit.inventory" class="external-link"><code>InventoryView.getTopInventory()</code></a>.
+<div class="block">Withdraws items to <code>InventoryView.getTopInventory()</code>.
  <p>
- This method calls <a href="https://jd.papermc.io/paper/1.21/org/bukkit/event/inventory/InventoryClickEvent.html" title="class or interface in org.bukkit.event.inventory" class="external-link"><code>InventoryClickEvent</code></a>s before putting the item in.</div>
+ This method calls <code>InventoryClickEvent</code>s before putting the item in.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>view</code> - an <a href="https://jd.papermc.io/paper/1.21/org/bukkit/inventory/InventoryView.html" title="class or interface in org.bukkit.inventory" class="external-link"><code>InventoryView</code></a> to put items in</dd>
+<dd><code>view</code> - an <code>InventoryView</code> to put items in</dd>
 <dd><code>cause</code> - a <a href="../event/stockholder/stock/StockEvent.Cause.html" title="interface in net.okocraft.box.api.event.stockholder.stock"><code>StockEvent.Cause</code></a> that is passed to <a href="../model/stock/StockHolder.html#decrease(net.okocraft.box.api.model.item.BoxItem,int,net.okocraft.box.api.event.stockholder.stock.StockEvent.Cause)"><code>StockHolder.decrease(BoxItem, int, StockEvent.Cause)</code></a></dd>
 <dt>Returns:</dt>
 <dd>a <a href="TransactionResult.html" title="class in net.okocraft.box.api.transaction"><code>TransactionResult</code></a></dd>

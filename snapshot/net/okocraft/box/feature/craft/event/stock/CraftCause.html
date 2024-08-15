@@ -92,7 +92,7 @@ loadScripts(document, 'script');</script>
 <section class="class-description" id="class-description">
 <dl class="notes">
 <dt>Record Components:</dt>
-<dd><code><span id="param-crafter">crafter</span></code> - the <a href="https://jd.papermc.io/paper/1.21/org/bukkit/entity/Player.html" title="class or interface in org.bukkit.entity" class="external-link"><code>Player</code></a> who craft items</dd>
+<dd><code><span id="param-crafter">crafter</span></code> - the <code>Player</code> who craft items</dd>
 <dd><code><span id="param-selectedRecipe">selectedRecipe</span></code> - the <a href="../../model/SelectedRecipe.html" title="class in net.okocraft.box.feature.craft.model"><code>SelectedRecipe</code></a> used to craft items</dd>
 </dl>
 <dl class="notes">
@@ -100,7 +100,7 @@ loadScripts(document, 'script');</script>
 <dd><code><a href="../../../../api/event/stockholder/stock/StockEvent.Cause.html" title="interface in net.okocraft.box.api.event.stockholder.stock">StockEvent.Cause</a></code></dd>
 </dl>
 <hr>
-<div class="type-signature"><span class="modifiers">public record </span><span class="element-name type-name-label">CraftCause</span>(@NotNull <a href="https://jd.papermc.io/paper/1.21/org/bukkit/entity/Player.html" title="class or interface in org.bukkit.entity" class="external-link">Player</a>&nbsp;crafter, @NotNull <a href="../../model/SelectedRecipe.html" title="class in net.okocraft.box.feature.craft.model">SelectedRecipe</a>&nbsp;selectedRecipe)
+<div class="type-signature"><span class="modifiers">public record </span><span class="element-name type-name-label">CraftCause</span>(@NotNull org.bukkit.entity.Player&nbsp;crafter, @NotNull <a href="../../model/SelectedRecipe.html" title="class in net.okocraft.box.feature.craft.model">SelectedRecipe</a>&nbsp;selectedRecipe)
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Record.html" title="class or interface in java.lang" class="external-link">Record</a>
 implements <a href="../../../../api/event/stockholder/stock/StockEvent.Cause.html" title="interface in net.okocraft.box.api.event.stockholder.stock">StockEvent.Cause</a></span></div>
 <div class="block">A <a href="../../../../api/event/stockholder/stock/StockEvent.Cause.html" title="interface in net.okocraft.box.api.event.stockholder.stock"><code>StockEvent.Cause</code></a> implementation indicating that the amount of stock has been modified by crafting.</div>
@@ -115,7 +115,7 @@ implements <a href="../../../../api/event/stockholder/stock/StockEvent.Cause.htm
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Constructor</div>
 <div class="table-header col-last">Description</div>
-<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(org.bukkit.entity.Player,net.okocraft.box.feature.craft.model.SelectedRecipe)" class="member-name-link">CraftCause</a><wbr>(@NotNull <a href="https://jd.papermc.io/paper/1.21/org/bukkit/entity/Player.html" title="class or interface in org.bukkit.entity" class="external-link">Player</a>&nbsp;crafter,
+<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(org.bukkit.entity.Player,net.okocraft.box.feature.craft.model.SelectedRecipe)" class="member-name-link">CraftCause</a><wbr>(@NotNull org.bukkit.entity.Player&nbsp;crafter,
  @NotNull <a href="../../model/SelectedRecipe.html" title="class in net.okocraft.box.feature.craft.model">SelectedRecipe</a>&nbsp;selectedRecipe)</code></div>
 <div class="col-last even-row-color">
 <div class="block">Creates an instance of a <code>CraftCause</code> record class.</div>
@@ -134,7 +134,7 @@ implements <a href="../../../../api/event/stockholder/stock/StockEvent.Cause.htm
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NotNull <a href="https://jd.papermc.io/paper/1.21/org/bukkit/entity/Player.html" title="class or interface in org.bukkit.entity" class="external-link">Player</a></code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NotNull org.bukkit.entity.Player</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#crafter()" class="member-name-link">crafter</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the value of the <a href="#param-crafter"><code>crafter</code></a> record component.</div>
@@ -185,7 +185,7 @@ implements <a href="../../../../api/event/stockholder/stock/StockEvent.Cause.htm
 <section class="detail" id="&lt;init&gt;(org.bukkit.entity.Player,net.okocraft.box.feature.craft.model.SelectedRecipe)">
 <h3>CraftCause</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">CraftCause</span><wbr><span class="parameters">(@NotNull
- @NotNull <a href="https://jd.papermc.io/paper/1.21/org/bukkit/entity/Player.html" title="class or interface in org.bukkit.entity" class="external-link">Player</a>&nbsp;crafter,
+ @NotNull org.bukkit.entity.Player&nbsp;crafter,
  @NotNull
  @NotNull <a href="../../model/SelectedRecipe.html" title="class in net.okocraft.box.feature.craft.model">SelectedRecipe</a>&nbsp;selectedRecipe)</span></div>
 <div class="block">Creates an instance of a <code>CraftCause</code> record class.</div>
@@ -268,7 +268,7 @@ implements <a href="../../../../api/event/stockholder/stock/StockEvent.Cause.htm
 <section class="detail" id="crafter()">
 <h3>crafter</h3>
 <div class="member-signature"><span class="annotations">@NotNull
-</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NotNull <a href="https://jd.papermc.io/paper/1.21/org/bukkit/entity/Player.html" title="class or interface in org.bukkit.entity" class="external-link">Player</a></span>&nbsp;<span class="element-name">crafter</span>()</div>
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NotNull org.bukkit.entity.Player</span>&nbsp;<span class="element-name">crafter</span>()</div>
 <div class="block">Returns the value of the <a href="#param-crafter"><code>crafter</code></a> record component.</div>
 <dl class="notes">
 <dt>Returns:</dt>

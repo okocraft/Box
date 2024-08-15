@@ -93,7 +93,7 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Record Components:</dt>
 <dd><code><span id="param-player">player</span></code> - the player that used the Box Stick</dd>
-<dd><code><span id="param-brewerLocation">brewerLocation</span></code> - the <a href="https://jd.papermc.io/paper/1.21/org/bukkit/Location.html" title="class or interface in org.bukkit" class="external-link"><code>Location</code></a> of the brewer where the Box Stick was used</dd>
+<dd><code><span id="param-brewerLocation">brewerLocation</span></code> - the <code>Location</code> of the brewer where the Box Stick was used</dd>
 <dd><code><span id="param-type">type</span></code> - the function used for the brewer</dd>
 </dl>
 <dl class="notes">
@@ -105,7 +105,7 @@ loadScripts(document, 'script');</script>
 <dd><code><a href="StickCauses.html" title="class in net.okocraft.box.feature.stick.event.stock">StickCauses</a></code></dd>
 </dl>
 <hr>
-<div class="type-signature"><span class="modifiers">public static record </span><span class="element-name type-name-label">StickCauses.Brewer</span>(@NotNull <a href="../../../../api/player/BoxPlayer.html" title="interface in net.okocraft.box.api.player">BoxPlayer</a>&nbsp;player, @NotNull <a href="https://jd.papermc.io/paper/1.21/org/bukkit/Location.html" title="class or interface in org.bukkit" class="external-link">Location</a>&nbsp;brewerLocation, @NotNull <a href="StickCauses.Brewer.Type.html" title="enum class in net.okocraft.box.feature.stick.event.stock">StickCauses.Brewer.Type</a>&nbsp;type)
+<div class="type-signature"><span class="modifiers">public static record </span><span class="element-name type-name-label">StickCauses.Brewer</span>(@NotNull <a href="../../../../api/player/BoxPlayer.html" title="interface in net.okocraft.box.api.player">BoxPlayer</a>&nbsp;player, @NotNull org.bukkit.Location&nbsp;brewerLocation, @NotNull <a href="StickCauses.Brewer.Type.html" title="enum class in net.okocraft.box.feature.stick.event.stock">StickCauses.Brewer.Type</a>&nbsp;type)
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Record.html" title="class or interface in java.lang" class="external-link">Record</a>
 implements <a href="StickCause.html" title="interface in net.okocraft.box.feature.stick.event.stock">StickCause</a></span></div>
 <div class="block">A record of <a href="StickCause.html" title="interface in net.okocraft.box.feature.stick.event.stock"><code>StickCause</code></a> indicating that a Box Stick was used for the brewer.</div>
@@ -138,7 +138,7 @@ implements <a href="StickCause.html" title="interface in net.okocraft.box.featur
 <div class="table-header col-first">Constructor</div>
 <div class="table-header col-last">Description</div>
 <div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(net.okocraft.box.api.player.BoxPlayer,org.bukkit.Location,net.okocraft.box.feature.stick.event.stock.StickCauses.Brewer.Type)" class="member-name-link">Brewer</a><wbr>(@NotNull <a href="../../../../api/player/BoxPlayer.html" title="interface in net.okocraft.box.api.player">BoxPlayer</a>&nbsp;player,
- @NotNull <a href="https://jd.papermc.io/paper/1.21/org/bukkit/Location.html" title="class or interface in org.bukkit" class="external-link">Location</a>&nbsp;brewerLocation,
+ @NotNull org.bukkit.Location&nbsp;brewerLocation,
  @NotNull <a href="StickCauses.Brewer.Type.html" title="enum class in net.okocraft.box.feature.stick.event.stock">StickCauses.Brewer.Type</a>&nbsp;type)</code></div>
 <div class="col-last even-row-color">
 <div class="block">Creates an instance of a <code>Brewer</code> record class.</div>
@@ -157,7 +157,7 @@ implements <a href="StickCause.html" title="interface in net.okocraft.box.featur
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NotNull <a href="https://jd.papermc.io/paper/1.21/org/bukkit/Location.html" title="class or interface in org.bukkit" class="external-link">Location</a></code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NotNull org.bukkit.Location</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#brewerLocation()" class="member-name-link">brewerLocation</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the value of the <a href="#param-brewerLocation"><code>brewerLocation</code></a> record component.</div>
@@ -215,7 +215,7 @@ implements <a href="StickCause.html" title="interface in net.okocraft.box.featur
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">Brewer</span><wbr><span class="parameters">(@NotNull
  @NotNull <a href="../../../../api/player/BoxPlayer.html" title="interface in net.okocraft.box.api.player">BoxPlayer</a>&nbsp;player,
  @NotNull
- @NotNull <a href="https://jd.papermc.io/paper/1.21/org/bukkit/Location.html" title="class or interface in org.bukkit" class="external-link">Location</a>&nbsp;brewerLocation,
+ @NotNull org.bukkit.Location&nbsp;brewerLocation,
  @NotNull
  @NotNull <a href="StickCauses.Brewer.Type.html" title="enum class in net.okocraft.box.feature.stick.event.stock">StickCauses.Brewer.Type</a>&nbsp;type)</span></div>
 <div class="block">Creates an instance of a <code>Brewer</code> record class.</div>
@@ -313,7 +313,7 @@ implements <a href="StickCause.html" title="interface in net.okocraft.box.featur
 <section class="detail" id="brewerLocation()">
 <h3>brewerLocation</h3>
 <div class="member-signature"><span class="annotations">@NotNull
-</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NotNull <a href="https://jd.papermc.io/paper/1.21/org/bukkit/Location.html" title="class or interface in org.bukkit" class="external-link">Location</a></span>&nbsp;<span class="element-name">brewerLocation</span>()</div>
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NotNull org.bukkit.Location</span>&nbsp;<span class="element-name">brewerLocation</span>()</div>
 <div class="block">Returns the value of the <a href="#param-brewerLocation"><code>brewerLocation</code></a> record component.</div>
 <dl class="notes">
 <dt>Returns:</dt>
