@@ -310,6 +310,7 @@ public class StickListener implements Listener {
                     case SNOWBALL -> "snowball";
                     case POTION -> "potion";
                     case EXPERIENCE_BOTTLE -> "expbottle";
+                    case WIND_CHARGE -> "wind_charge";
                     default -> null;
                 };
 
