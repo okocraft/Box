@@ -40,7 +40,7 @@ tasks {
     }
 
     runServer {
-        minecraftVersion("1.21")
+        minecraftVersion("1.21.1")
         systemProperty("com.mojang.eula.agree", "true")
         systemProperty("paper.disablePluginRemapping", "true")
     }

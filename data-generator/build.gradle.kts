@@ -8,7 +8,7 @@ group = "net.okocraft.box.datagenerator"
 version = "1.0"
 
 val previousMinecraftVersion = "1.20.6"
-val minecraftVersion = "1.21"
+val minecraftVersion = "1.21.1"
 val javaVersion = JavaVersion.VERSION_21
 
 java {
