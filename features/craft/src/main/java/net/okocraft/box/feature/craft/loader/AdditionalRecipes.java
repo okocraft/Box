@@ -1,35 +1,46 @@
 package net.okocraft.box.feature.craft.loader;
 
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.Recipe;
-import org.bukkit.inventory.ShapelessRecipe;
-import org.bukkit.inventory.meta.FireworkMeta;
+import net.okocraft.box.api.BoxAPI;
+import net.okocraft.box.api.util.BoxLogger;
+import net.okocraft.box.feature.craft.model.BoxIngredientItem;
+import net.okocraft.box.feature.craft.model.IngredientHolder;
+import org.bukkit.inventory.ItemType;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 
 final class AdditionalRecipes {
 
-    static @NotNull List<Recipe> getFireworkRocketRecipes() {
-        return List.of(fireworkRocket(2), fireworkRocket(3));
-    }
+    static void addFireworkRocketRecipes(@NotNull Processor processor) {
+        var itemManager = BoxAPI.api().getItemManager();
 
-    private static @NotNull Recipe fireworkRocket(int power) {
-        var firework = new ItemStack(Material.FIREWORK_ROCKET, 3);
+        var paper = itemManager.getBoxItem("PAPER").orElse(null);
+        var gunpowder = itemManager.getBoxItem("GUNPOWDER").orElse(null);
 
-        if (firework.getItemMeta() instanceof FireworkMeta meta) {
-            meta.setPower(power);
-            firework.setItemMeta(meta);
+        if (paper == null || gunpowder == null) {
+            BoxLogger.logger().warn("Cannot create firework rocket recipes because PAPER or GUNPOWDER is not found");
+            return;
         }
 
-        return new ShapelessRecipe(createFireworkRecipeKey(power), firework)
-                .addIngredient(power, Material.GUNPOWDER)
-                .addIngredient(1, Material.PAPER);
-    }
+        var gunpowderIngredientItems = List.of(new BoxIngredientItem(gunpowder, 1));
+        var paperIngredientItems = List.of(new BoxIngredientItem(paper, 1));
 
-    private static @NotNull NamespacedKey createFireworkRecipeKey(int power) {
-        return new NamespacedKey("box", "recipe_firework_rocket_" + power);
+        IntStream.of(2, 3).forEach(power -> {
+            var firework = itemManager.getBoxItem(ItemType.FIREWORK_ROCKET.createItemStack(1, meta -> meta.setPower(power))).orElse(null);
+            if (firework == null) {
+                BoxLogger.logger().warn("Cannot create firework rocket recipes because firework (power {}) is not found", power);
+                return;
+            }
+
+            var ingredients = new ArrayList<IngredientHolder>(power + 1);
+            for (int i = 0; i < power; i++) {
+                ingredients.add(IngredientHolder.create(i, gunpowderIngredientItems));
+            }
+            ingredients.add(IngredientHolder.create(power, paperIngredientItems));
+
+            processor.addRecipe(ingredients, firework, 3);
+        });
     }
 }

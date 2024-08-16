@@ -41,6 +41,10 @@ final class ModelCache {
                 ).filter(Optional::isPresent).map(Optional::get).toList()
         );
 
+        return getIngredientHolder(holder);
+    }
+
+    static @NotNull IngredientHolder getIngredientHolder(@NotNull IngredientHolder holder) {
         return INGREDIENT_HOLDER_CACHE != null ?
                 INGREDIENT_HOLDER_CACHE.computeIfAbsent(holder, Function.identity()) :
                 holder;

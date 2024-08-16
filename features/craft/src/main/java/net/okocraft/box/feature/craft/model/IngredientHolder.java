@@ -32,6 +32,10 @@ public record IngredientHolder(int slot, @NotNull @Unmodifiable List<BoxIngredie
         ModelCache.clearCache();
     }
 
+    public static @NotNull IngredientHolder create(int slot, @NotNull @Unmodifiable List<BoxIngredientItem> patterns) {
+        return ModelCache.getIngredientHolder(new IngredientHolder(slot, patterns));
+    }
+
     /**
      * Creates a {@link IngredientHolder} from {@link org.bukkit.inventory.RecipeChoice.MaterialChoice}.
      *

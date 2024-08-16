@@ -190,7 +190,7 @@ final class Processor {
         return 8;
     }
 
-    private void addRecipe(@NotNull List<IngredientHolder> ingredients, @NotNull BoxItem result, int amount) {
+    void addRecipe(@NotNull List<IngredientHolder> ingredients, @NotNull BoxItem result, int amount) {
         var recipe = new BoxItemRecipe(ingredients, result, amount);
         this.recipeMap.computeIfAbsent(result, i -> new RecipeHolder()).addRecipe(recipe);
         BoxAPI.api().getEventManager().call(new RecipeImportEvent(recipe));

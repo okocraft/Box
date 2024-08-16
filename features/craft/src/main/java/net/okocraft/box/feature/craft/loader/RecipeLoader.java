@@ -32,9 +32,7 @@ public final class RecipeLoader {
 
         var processor = new Processor(config);
 
-        Bukkit.recipeIterator().forEachRemaining(processor::processRecipe);
-
-        AdditionalRecipes.getFireworkRocketRecipes().forEach(processor::processRecipe);
+        AdditionalRecipes.addFireworkRocketRecipes(processor);
 
         processor.processCustomRecipes();
 
