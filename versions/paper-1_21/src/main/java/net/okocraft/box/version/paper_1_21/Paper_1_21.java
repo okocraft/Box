@@ -1,4 +1,4 @@
-package version.paper_1_21;
+package net.okocraft.box.version.paper_1_21;
 
 import io.papermc.paper.registry.RegistryAccess;
 import io.papermc.paper.registry.RegistryKey;
