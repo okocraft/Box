@@ -64,7 +64,7 @@ class BukkitBoxItemMap extends BoxItemMap {
             return this.getByItemName(item.getType().name());
         }
 
-        var one = item.asOne();
+        var one = item.getAmount() == 1 ? item : item.asOne();
 
         {
             long readAttempt = this.lock.tryOptimisticRead();
