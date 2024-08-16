@@ -31,6 +31,13 @@ public final class RecipeLoader {
         }
 
         var processor = new Processor(config);
+        var iterator = Bukkit.recipeIterator();
+        while (iterator.hasNext()) {
+            try {
+                processor.processRecipe(iterator.next());
+            } catch (IllegalArgumentException ignored) {
+            }
+        }
 
         AdditionalRecipes.addFireworkRocketRecipes(processor);
 
