@@ -1,35 +1,27 @@
 package net.okocraft.box.test.shared.event;
 
-import com.github.siroshun09.event4j.caller.AsyncEventCaller;
+import dev.siroshun.event4j.api.caller.EventCaller;
 import net.okocraft.box.api.event.BoxEvent;
+import net.okocraft.box.api.event.caller.EventCallerProvider;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Assertions;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Consumer;
 
-public class EventCollector implements AsyncEventCaller<BoxEvent> {
+public class EventCollector implements EventCallerProvider {
 
     private final ConcurrentLinkedQueue<BoxEvent> calledEvents = new ConcurrentLinkedQueue<>();
+    private final EventCaller<BoxEvent> caller = this.calledEvents::add;
 
     @Override
-    public <T extends BoxEvent> void call(@NotNull T event) {
-        this.calledEvents.add(event);
+    public @NotNull EventCaller<BoxEvent> sync() {
+        return this.caller;
     }
 
     @Override
-    public <T extends BoxEvent> void callAsync(@NotNull T event) {
-        this.calledEvents.add(event);
-    }
-
-    @Override
-    public <T extends BoxEvent> void callAsync(@NotNull T event, @Nullable Consumer<? super T> consumer) {
-        this.calledEvents.add(event);
-
-        if (consumer != null) {
-            consumer.accept(event);
-        }
+    public @NotNull EventCaller<BoxEvent> async() {
+        return this.caller;
     }
 
     public <E extends BoxEvent> void checkEvent(@NotNull Class<E> eventClass, @NotNull Consumer<E> checker) {

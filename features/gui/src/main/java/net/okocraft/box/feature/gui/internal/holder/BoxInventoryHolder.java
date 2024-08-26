@@ -122,7 +122,7 @@ public class BoxInventoryHolder implements InventoryHolder {
 
         var event = new MenuClickEvent(this.menu, this.session, button, clickType);
 
-        BoxAPI.api().getEventManager().call(event);
+        BoxAPI.api().getEventCallers().sync().call(event);
 
         if (event.isCancelled()) {
             this.finishClickProcess();

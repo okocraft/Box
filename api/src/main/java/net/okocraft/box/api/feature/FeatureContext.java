@@ -1,7 +1,11 @@
 package net.okocraft.box.api.feature;
 
+import dev.siroshun.event4j.api.caller.EventCaller;
+import dev.siroshun.event4j.api.listener.ListenerSubscriber;
+import dev.siroshun.event4j.api.priority.Priority;
+import net.kyori.adventure.key.Key;
+import net.okocraft.box.api.event.BoxEvent;
 import net.okocraft.box.api.message.DefaultMessageCollector;
-import net.okocraft.box.api.model.manager.EventManager;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.Contract;
@@ -19,10 +23,11 @@ public final class FeatureContext {
      *
      * @param dataDirectory           a plugin's data directory
      * @param defaultMessageCollector a {@link DefaultMessageCollector} to collect default messages
-     * @param eventManager            a {@link EventManager}
+     * @param eventCaller             a {@link EventCaller}
+     * @param listenerSubscriber      a {@link ListenerSubscriber}
      */
     public record Registration(@NotNull Path dataDirectory, @NotNull DefaultMessageCollector defaultMessageCollector,
-                               @NotNull EventManager eventManager) {
+                               @NotNull EventCaller<BoxEvent> eventCaller, @NotNull ListenerSubscriber<Key, BoxEvent, Priority> listenerSubscriber) {
     }
 
     /**

@@ -186,7 +186,7 @@ public class MenuOpenCommand extends AbstractCommand {
     }
 
     private void openMenu(@NotNull PlayerSession session, @NotNull Menu menu) {
-        BoxAPI.api().getEventManager().callAsync(new MenuOpenEvent(menu, session), event -> {
+        BoxAPI.api().getEventCallers().async().call(new MenuOpenEvent(menu, session), event -> {
             if (event.isCancelled()) {
                 this.cannotOpen.source(event.getSession().getMessageSource()).send(event.getViewer());
             } else {

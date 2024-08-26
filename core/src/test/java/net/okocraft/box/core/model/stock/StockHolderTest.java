@@ -1,16 +1,14 @@
 package net.okocraft.box.core.model.stock;
 
-import com.github.siroshun09.event4j.caller.AsyncEventCaller;
 import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2IntLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMaps;
-import net.okocraft.box.api.event.BoxEvent;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.model.stock.StockData;
 import net.okocraft.box.api.model.stock.StockEventCaller;
 import net.okocraft.box.api.model.stock.StockHolder;
-import net.okocraft.box.test.shared.model.item.DummyItem;
 import net.okocraft.box.test.shared.event.StockEventCollector;
+import net.okocraft.box.test.shared.model.item.DummyItem;
 import net.okocraft.box.test.shared.model.stock.TestStockHolder;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
@@ -586,7 +584,7 @@ class StockHolderTest {
         Assertions.assertEquals(0, stockHolder.getAmount(ITEM_2));
     }
 
-    private static @NotNull StockHolder createStockHolder(@NotNull AsyncEventCaller<BoxEvent> eventCaller) {
-        return TestStockHolder.create(StockEventCaller.createDefault(eventCaller), TO_BOX_ITEM);
+    private static @NotNull StockHolder createStockHolder(@NotNull StockEventCollector collector) {
+        return TestStockHolder.create(StockEventCaller.createDefault(collector.sync()), TO_BOX_ITEM);
     }
 }

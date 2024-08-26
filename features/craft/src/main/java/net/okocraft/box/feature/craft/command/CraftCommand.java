@@ -77,7 +77,7 @@ public class CraftCommand extends AbstractCommand {
             menu = new RecipeSelectorMenu(item.get(), recipeHolder);
         }
 
-        BoxAPI.api().getEventManager().callAsync(new MenuOpenEvent(menu, session), event -> {
+        BoxAPI.api().getEventCallers().async().call(new MenuOpenEvent(menu, session), event -> {
             if (event.isCancelled()) {
                 this.cannotOpenMenu.source(event.getSession().getMessageSource()).send(event.getViewer());
             } else {

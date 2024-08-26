@@ -1,6 +1,5 @@
 package net.okocraft.box.feature.notifier;
 
-import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.feature.AbstractBoxFeature;
 import net.okocraft.box.api.feature.FeatureContext;
 import net.okocraft.box.feature.notifier.listener.StockHolderListener;
@@ -14,11 +13,11 @@ public class NotifierFeature extends AbstractBoxFeature {
 
     @Override
     public void enable(@NotNull FeatureContext.Enabling context) {
-        StockHolderListener.register(BoxAPI.api().getEventManager());
+        StockHolderListener.register();
     }
 
     @Override
     public void disable(@NotNull FeatureContext.Disabling context) {
-        StockHolderListener.unregister(BoxAPI.api().getEventManager());
+        StockHolderListener.unregister();
     }
 }

@@ -72,7 +72,7 @@ public class AutoStoreFeature extends AbstractBoxFeature {
 
         HandlerList.unregisterAll(this.itemListener);
 
-        this.autoSaveListener.unregister(AUTO_SAVE_LISTENER_KEY);
+        this.autoSaveListener.unregister();
         this.settingContainer.unregisterBoxPlayerListener();
 
         this.settingContainer.unloadAll();

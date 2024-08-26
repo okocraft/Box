@@ -54,7 +54,7 @@ public class ItemCrafter {
         var stockHolder = session.getSourceStockHolder();
 
         var event = new BoxCraftEvent(crafter, recipe, times);
-        BoxAPI.api().getEventManager().call(event);
+        BoxAPI.api().getEventCallers().sync().call(event);
 
         if (event.isCancelled()) {
             SoundBase.UNSUCCESSFUL.play(crafter);

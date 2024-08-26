@@ -2,11 +2,11 @@ package net.okocraft.box.feature.category.internal.listener;
 
 import com.github.siroshun09.configapi.format.yaml.YamlFormat;
 import net.kyori.adventure.key.Key;
-import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.event.item.CustomItemRegisterEvent;
 import net.okocraft.box.api.event.item.CustomItemRenameEvent;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.util.BoxLogger;
+import net.okocraft.box.api.util.SubscribedListenerHolder;
 import net.okocraft.box.feature.category.api.registry.CategoryRegistry;
 import net.okocraft.box.feature.category.internal.category.CustomItemCategory;
 import net.okocraft.box.feature.category.internal.file.CategoryFile;
@@ -22,6 +22,7 @@ public class CustomItemListener {
 
     private final Path filepath;
     private final CategoryRegistry registry;
+    private final SubscribedListenerHolder listenerHolder = new SubscribedListenerHolder();
 
     public CustomItemListener(@NotNull Path filepath, @NotNull CategoryRegistry registry) {
         this.filepath = filepath;
@@ -29,13 +30,14 @@ public class CustomItemListener {
     }
 
     public void register(@NotNull Key listenerKey) {
-        BoxAPI.api().getEventManager().getSubscriber(CustomItemRegisterEvent.class).subscribe(listenerKey, this::processEvent);
-        BoxAPI.api().getEventManager().getSubscriber(CustomItemRenameEvent.class).subscribe(listenerKey, this::processEvent);
+        this.listenerHolder.subscribeAll(subscriber ->
+            subscriber.add(CustomItemRegisterEvent.class, listenerKey, this::processEvent)
+                    .add(CustomItemRenameEvent.class, listenerKey, this::processEvent)
+        );
     }
 
-    public void unregister(@NotNull Key listenerKey) {
-        BoxAPI.api().getEventManager().getSubscriber(CustomItemRegisterEvent.class).unsubscribeByKey(listenerKey);
-        BoxAPI.api().getEventManager().getSubscriber(CustomItemRenameEvent.class).unsubscribeByKey(listenerKey);
+    public void unregister() {
+        this.listenerHolder.unsubscribeAll();
     }
 
     private void processEvent(@NotNull CustomItemRegisterEvent event) {

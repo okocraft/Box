@@ -1,6 +1,6 @@
 package net.okocraft.box.core.model.manager.item;
 
-import com.github.siroshun09.event4j.caller.EventCaller;
+import dev.siroshun.event4j.api.caller.EventCaller;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.okocraft.box.api.event.BoxEvent;

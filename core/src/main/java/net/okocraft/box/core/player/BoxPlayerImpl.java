@@ -1,6 +1,6 @@
 package net.okocraft.box.core.player;
 
-import com.github.siroshun09.event4j.caller.AsyncEventCaller;
+import dev.siroshun.event4j.api.caller.EventCaller;
 import net.okocraft.box.api.event.BoxEvent;
 import net.okocraft.box.api.event.player.PlayerStockHolderChangeEvent;
 import net.okocraft.box.api.model.stock.StockHolder;
@@ -20,10 +20,10 @@ public class BoxPlayerImpl implements BoxPlayer {
     private final LoadingPersonalStockHolder personalStockHolder;
 
     private volatile StockHolder currentHolder;
-    private final AsyncEventCaller<BoxEvent> eventCaller;
+    private final EventCaller<BoxEvent> eventCaller;
 
     public BoxPlayerImpl(@NotNull BoxUser user, @NotNull Player player,
-                         @NotNull LoadingPersonalStockHolder personalStockHolder, @NotNull AsyncEventCaller<BoxEvent> eventCaller) {
+                         @NotNull LoadingPersonalStockHolder personalStockHolder, @NotNull EventCaller<BoxEvent> eventCaller) {
         this.user = user;
         this.player = player;
         this.personalStockHolder = personalStockHolder;
@@ -55,7 +55,7 @@ public class BoxPlayerImpl implements BoxPlayer {
     public void setCurrentStockHolder(@NotNull StockHolder stockHolder) {
         var previous = this.currentHolder;
         this.currentHolder = Objects.requireNonNull(stockHolder);
-        this.eventCaller.callAsync(new PlayerStockHolderChangeEvent(this, previous));
+        this.eventCaller.call(new PlayerStockHolderChangeEvent(this, previous));
     }
 
     @Override

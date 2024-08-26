@@ -53,8 +53,8 @@ public class CategoryFeature extends AbstractBoxFeature implements Reloadable {
 
     @Override
     public void disable(@NotNull FeatureContext.Disabling context) {
-        this.customItemListener.unregister(CUSTOM_ITEM_LISTENER_KEY);
-        this.itemInfoEventListener.unregister(ITEM_INFO_COLLECT_EVENT_LISTENER_KEY);
+        this.customItemListener.unregister();
+        this.itemInfoEventListener.unregister();
         this.categoryRegistry.unregisterAll();
     }
 

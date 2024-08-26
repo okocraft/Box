@@ -1,7 +1,8 @@
 package net.okocraft.box.core.model.manager.stock;
 
-import com.github.siroshun09.event4j.caller.AsyncEventCaller;
+import dev.siroshun.event4j.api.caller.EventCaller;
 import net.okocraft.box.api.event.BoxEvent;
+import net.okocraft.box.api.event.caller.EventCallerProvider;
 import net.okocraft.box.api.event.stockholder.StockHolderLoadEvent;
 import net.okocraft.box.api.event.stockholder.StockHolderResetEvent;
 import net.okocraft.box.api.event.stockholder.StockHolderSaveEvent;
@@ -41,7 +42,7 @@ import java.util.function.Supplier;
 public class BoxStockManager implements StockManager {
 
     private final StockStorage stockStorage;
-    private final AsyncEventCaller<BoxEvent> eventCaller;
+    private final EventCallerProvider eventCallers;
     private final IntFunction<BoxItem> toBoxItem;
     private final Supplier<ChangeState> changeStateFactory;
     private final long unloadTime;
@@ -51,11 +52,11 @@ public class BoxStockManager implements StockManager {
     private final AtomicBoolean closed = new AtomicBoolean(false);
 
     public BoxStockManager(@NotNull StockStorage stockStorage,
-                           @NotNull AsyncEventCaller<BoxEvent> eventCaller,
+                           @NotNull EventCallerProvider eventCallers,
                            @NotNull IntFunction<BoxItem> toBoxItem,
                            long unloadTime, long saveInterval, @NotNull TimeUnit timeUnit) {
         this.stockStorage = stockStorage;
-        this.eventCaller = eventCaller;
+        this.eventCallers = eventCallers;
         this.toBoxItem = toBoxItem;
         this.changeStateFactory = ChangeState.createSupplier(stockStorage);
         this.unloadTime = Math.max(0, timeUnit.toNanos(unloadTime));
@@ -88,7 +89,7 @@ public class BoxStockManager implements StockManager {
         var eventCaller = this.createStockEventCaller(loader);
         var stockHolder = StockHolderFactory.create(user, eventCaller, stockData, this.toBoxItem);
 
-        this.eventCaller.callAsync(new StockHolderLoadEvent(loader));
+        this.eventCallers.async().call(new StockHolderLoadEvent(loader));
 
         return stockHolder;
     }
@@ -142,7 +143,7 @@ public class BoxStockManager implements StockManager {
 
     @VisibleForTesting
     @NotNull StockEventCaller createStockEventCaller(@NotNull LoadingPersonalStockHolder loader) {
-        return new StateUpdatingStockEventCaller(loader, this.eventCaller);
+        return new StateUpdatingStockEventCaller(loader, this.eventCallers.async());
     }
 
     @VisibleForTesting
@@ -153,7 +154,7 @@ public class BoxStockManager implements StockManager {
 
         try {
             loader.saveChangesOrUnloadIfNeeded(this.unloadTime, this.saveInterval);
-            this.eventCaller.callAsync(new StockHolderSaveEvent(loader));
+            this.eventCallers.async().call(new StockHolderSaveEvent(loader));
         } catch (Exception e) {
             BoxLogger.logger().error("Could not save user's stock holder (name: {} uuid: {})", loader.getName(), loader.getUUID(), e);
         }
@@ -182,48 +183,42 @@ public class BoxStockManager implements StockManager {
         }
     }
 
-    private static class StateUpdatingStockEventCaller implements StockEventCaller {
+    private record StateUpdatingStockEventCaller(LoadingPersonalStockHolder loader,
+                                                 EventCaller<BoxEvent> caller) implements StockEventCaller {
 
-        private final LoadingPersonalStockHolder loader;
-        private final AsyncEventCaller<BoxEvent> eventCaller;
-
-        private StateUpdatingStockEventCaller(@NotNull LoadingPersonalStockHolder loader, @NotNull AsyncEventCaller<BoxEvent> eventCaller) {
+        private StateUpdatingStockEventCaller(@NotNull LoadingPersonalStockHolder loader, @NotNull EventCaller<BoxEvent> caller) {
             this.loader = loader;
-            this.eventCaller = eventCaller;
+            this.caller = caller;
         }
 
         @Override
         public void callSetEvent(@NotNull StockHolder stockHolder, @NotNull BoxItem item, int amount, int previousAmount, StockEvent.@NotNull Cause cause) {
             this.loader.getChangeState().rememberChange(item.getInternalId());
-            this.callEvent(new StockSetEvent(this.loader, item, amount, previousAmount, cause));
+            this.caller.call(new StockSetEvent(this.loader, item, amount, previousAmount, cause));
         }
 
         @Override
         public void callIncreaseEvent(@NotNull StockHolder stockHolder, @NotNull BoxItem item, int increments, int currentAmount, StockEvent.@NotNull Cause cause) {
             this.loader.getChangeState().rememberChange(item.getInternalId());
-            this.callEvent(new StockIncreaseEvent(this.loader, item, increments, currentAmount, cause));
+            this.caller.call(new StockIncreaseEvent(this.loader, item, increments, currentAmount, cause));
         }
 
         @Override
         public void callOverflowEvent(@NotNull StockHolder stockHolder, @NotNull BoxItem item, int increments, int excess, StockEvent.@NotNull Cause cause) {
             this.loader.getChangeState().rememberChange(item.getInternalId());
-            this.callEvent(new StockOverflowEvent(this.loader, item, increments, excess, cause));
+            this.caller.call(new StockOverflowEvent(this.loader, item, increments, excess, cause));
         }
 
         @Override
         public void callDecreaseEvent(@NotNull StockHolder stockHolder, @NotNull BoxItem item, int decrements, int currentAmount, StockEvent.@NotNull Cause cause) {
             this.loader.getChangeState().rememberChange(item.getInternalId());
-            this.callEvent(new StockDecreaseEvent(this.loader, item, decrements, currentAmount, cause));
+            this.caller.call(new StockDecreaseEvent(this.loader, item, decrements, currentAmount, cause));
         }
 
         @Override
         public void callResetEvent(@NotNull StockHolder stockHolder, @NotNull Collection<StockData> stockDataBeforeReset) {
             this.loader.getChangeState().rememberReset(stockDataBeforeReset);
-            this.callEvent(new StockHolderResetEvent(this.loader, stockDataBeforeReset));
-        }
-
-        private void callEvent(@NotNull BoxEvent event) {
-            this.eventCaller.callAsync(event);
+            this.caller.call(new StockHolderResetEvent(this.loader, stockDataBeforeReset));
         }
     }
 }

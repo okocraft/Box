@@ -4,9 +4,8 @@ import com.github.siroshun09.configapi.core.node.IntArray;
 import com.github.siroshun09.configapi.core.node.ListNode;
 import com.github.siroshun09.configapi.core.node.MapNode;
 import com.github.siroshun09.configapi.core.node.NumberValue;
-import com.github.siroshun09.event4j.listener.ListenerBase;
-import com.github.siroshun09.event4j.priority.Priority;
 import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
+import dev.siroshun.event4j.api.priority.Priority;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.kyori.adventure.key.Key;
@@ -15,12 +14,12 @@ import net.okocraft.box.api.event.player.PlayerLoadEvent;
 import net.okocraft.box.api.event.player.PlayerUnloadEvent;
 import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.api.util.MCDataVersion;
+import net.okocraft.box.api.util.SubscribedListenerHolder;
 import net.okocraft.box.feature.autostore.setting.AutoStoreSetting;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -30,6 +29,7 @@ class AutoStoreSettingContainer implements AutoStoreSettingProvider {
     private static final @NotNull Key PLAYER_LISTENER_KEY = Key.key("box", "feature/autostore/player_listener");
 
     private final Map<UUID, AutoStoreSetting> settingMap = new ConcurrentHashMap<>();
+    private final SubscribedListenerHolder listenerHolder = new SubscribedListenerHolder();
 
     @Override
     public boolean isLoaded(@NotNull UUID uuid) {
@@ -53,14 +53,14 @@ class AutoStoreSettingContainer implements AutoStoreSettingProvider {
     }
 
     void registerBoxPlayerListener(@NotNull MiniMessageBase loadErrorMessage) {
-        BoxAPI.api().getEventManager().subscribeAll(List.of(
-                new ListenerBase<>(PlayerLoadEvent.class, PLAYER_LISTENER_KEY, event -> this.load(event.getBoxPlayer().getPlayer(), loadErrorMessage), Priority.NORMAL),
-                new ListenerBase<>(PlayerUnloadEvent.class, PLAYER_LISTENER_KEY, event -> this.unload(event.getBoxPlayer().getPlayer()), Priority.NORMAL)
-        ));
+        this.listenerHolder.subscribeAll(subscriber ->
+                subscriber.add(PlayerLoadEvent.class, PLAYER_LISTENER_KEY, event -> this.load(event.getBoxPlayer().getPlayer(), loadErrorMessage), Priority.NORMAL)
+                        .add(PlayerUnloadEvent.class, PLAYER_LISTENER_KEY, event -> this.unload(event.getBoxPlayer().getPlayer()), Priority.NORMAL)
+        );
     }
 
     void unregisterBoxPlayerListener() {
-        BoxAPI.api().getEventManager().unsubscribeByKey(PLAYER_LISTENER_KEY);
+        this.listenerHolder.unsubscribeAll();
     }
 
     void load(@NotNull Player player, @NotNull MiniMessageBase loadErrorMessage) {

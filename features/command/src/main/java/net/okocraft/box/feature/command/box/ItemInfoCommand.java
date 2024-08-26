@@ -93,7 +93,7 @@ public class ItemInfoCommand extends AbstractCommand {
         event.addInfo(this.itemBasicInfo.apply(boxItem, boxItem.getPlainName(), boxItem.getInternalId()).source(msgSrc).message());
         event.addInfo(this.currentStock.apply(boxPlayer.getCurrentStockHolder().getAmount(boxItem)).source(msgSrc).message());
 
-        BoxAPI.api().getEventManager().callAsync(event, e -> {
+        BoxAPI.api().getEventCallers().async().call(event, e -> {
             for (var info : e.getInfo()) {
                 e.getBoxPlayer().getPlayer().sendMessage(info);
             }

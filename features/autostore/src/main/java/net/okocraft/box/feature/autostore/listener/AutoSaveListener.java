@@ -1,39 +1,39 @@
 package net.okocraft.box.feature.autostore.listener;
 
-import com.github.siroshun09.event4j.listener.ListenerBase;
-import com.github.siroshun09.event4j.priority.Priority;
+import dev.siroshun.event4j.api.priority.Priority;
 import net.kyori.adventure.key.Key;
-import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.event.stockholder.StockHolderSaveEvent;
 import net.okocraft.box.api.model.stock.PersonalStockHolder;
 import net.okocraft.box.api.util.BoxLogger;
+import net.okocraft.box.api.util.SubscribedListenerHolder;
 import net.okocraft.box.feature.autostore.AutoStoreSettingProvider;
 import net.okocraft.box.feature.autostore.event.AutoStoreSettingChangeEvent;
 import net.okocraft.box.feature.autostore.setting.AutoStoreSetting;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class AutoSaveListener {
 
-    private final Set<AutoStoreSetting> modifiedSettings = ConcurrentHashMap.newKeySet();
     private final AutoStoreSettingProvider container;
+
+    private final Set<AutoStoreSetting> modifiedSettings = ConcurrentHashMap.newKeySet();
+    private final SubscribedListenerHolder listenerHolder = new SubscribedListenerHolder();
 
     public AutoSaveListener(@NotNull AutoStoreSettingProvider container) {
         this.container = container;
     }
 
     public void register(@NotNull Key listenerKey) {
-        BoxAPI.api().getEventManager().subscribeAll(List.of(
-                new ListenerBase<>(AutoStoreSettingChangeEvent.class, listenerKey, event -> this.modifiedSettings.add(event.getSetting()), Priority.NORMAL),
-                new ListenerBase<>(StockHolderSaveEvent.class, listenerKey, this::saveModifiedSettings, Priority.NORMAL)
-        ));
+        this.listenerHolder.subscribeAll(subscriber ->
+                subscriber.add(AutoStoreSettingChangeEvent.class, listenerKey, event -> this.modifiedSettings.add(event.getSetting()), Priority.NORMAL)
+                        .add(StockHolderSaveEvent.class, listenerKey, this::saveModifiedSettings, Priority.NORMAL)
+        );
     }
 
-    public void unregister(@NotNull Key listenerKey) {
-        BoxAPI.api().getEventManager().unsubscribeByKey(listenerKey);
+    public void unregister() {
+        this.listenerHolder.unsubscribeAll();
     }
 
     private void saveModifiedSettings(@NotNull StockHolderSaveEvent event) {

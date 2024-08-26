@@ -2,12 +2,17 @@ package net.okocraft.box.bootstrap;
 
 import com.github.siroshun09.messages.api.directory.DirectorySource;
 import com.github.siroshun09.messages.api.util.Loader;
+import dev.siroshun.event4j.api.caller.EventCaller;
+import dev.siroshun.event4j.api.listener.ListenerSubscriber;
+import dev.siroshun.event4j.api.priority.Priority;
+import dev.siroshun.event4j.tree.TreeEventService;
 import io.papermc.paper.plugin.bootstrap.BootstrapContext;
+import net.kyori.adventure.key.Key;
+import net.okocraft.box.api.event.BoxEvent;
 import net.okocraft.box.api.feature.BoxFeature;
 import net.okocraft.box.api.feature.FeatureContext;
 import net.okocraft.box.api.feature.FeatureFactory;
 import net.okocraft.box.core.message.BoxMessageProvider;
-import net.okocraft.box.core.model.manager.event.BoxEventManager;
 import net.okocraft.box.storage.api.registry.StorageRegistry;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -36,7 +41,7 @@ public final class BoxBootstrapContext implements net.okocraft.box.api.bootstrap
     private final Path dataDirectory;
     private final String version;
     private final StorageRegistry storageRegistry;
-    private final BoxEventManager eventManager;
+    private final TreeEventService<Key, BoxEvent, Priority> eventService;
     private final BoxMessageProvider.Collector defaultMessageCollector;
     private final Map<Locale, Loader<Locale, Map<String, String>>> localizationLoaderMap = new HashMap<>();
     private final List<BoxFeature> boxFeatureList = new ArrayList<>();
@@ -47,9 +52,9 @@ public final class BoxBootstrapContext implements net.okocraft.box.api.bootstrap
         this.dataDirectory = pluginDirectory;
         this.version = version;
         this.storageRegistry = new StorageRegistry();
-        this.eventManager = BoxEventManager.create();
+        this.eventService = TreeEventService.factory().keyClass(Key.class).eventClass(BoxEvent.class).defaultOrder(Priority.NORMAL).create();
         this.defaultMessageCollector = BoxMessageProvider.createCollector();
-        this.featureRegistrationContext = new FeatureContext.Registration(this.dataDirectory, this.defaultMessageCollector, this.eventManager);
+        this.featureRegistrationContext = new FeatureContext.Registration(this.dataDirectory, this.defaultMessageCollector, this.eventService.caller(), this.eventService.subscriber());
     }
 
     @Override
@@ -63,8 +68,17 @@ public final class BoxBootstrapContext implements net.okocraft.box.api.bootstrap
     }
 
     @Override
-    public @NotNull BoxEventManager getEventManager() {
-        return this.eventManager;
+    public @NotNull EventCaller<BoxEvent> getEventCaller() {
+        return this.eventService.caller();
+    }
+
+    @Override
+    public @NotNull ListenerSubscriber<Key, BoxEvent, Priority> getListenerSubscriber() {
+        return this.eventService.subscriber();
+    }
+
+    public @NotNull TreeEventService<Key, BoxEvent, Priority> getEventService() {
+        return this.eventService;
     }
 
     @Override

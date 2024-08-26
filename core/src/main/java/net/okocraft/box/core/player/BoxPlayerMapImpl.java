@@ -1,7 +1,6 @@
 package net.okocraft.box.core.player;
 
-import com.github.siroshun09.event4j.caller.AsyncEventCaller;
-import net.okocraft.box.api.event.BoxEvent;
+import net.okocraft.box.api.event.caller.EventCallerProvider;
 import net.okocraft.box.api.event.player.PlayerLoadEvent;
 import net.okocraft.box.api.event.player.PlayerUnloadEvent;
 import net.okocraft.box.api.message.MessageProvider;
@@ -30,16 +29,16 @@ public class BoxPlayerMapImpl implements BoxPlayerMap {
     private final Map<Player, BoxPlayer> playerMap = new ConcurrentHashMap<>();
     private final BoxStockManager stockManager;
     private final BoxUserManager userManager;
-    private final AsyncEventCaller<BoxEvent> eventCaller;
+    private final EventCallerProvider eventCallers;
     private final BoxScheduler scheduler;
     private final MessageProvider messageProvider;
 
     public BoxPlayerMapImpl(@NotNull BoxUserManager userManager, @NotNull BoxStockManager stockManager,
-                            @NotNull AsyncEventCaller<BoxEvent> eventCaller, @NotNull BoxScheduler scheduler,
+                            @NotNull EventCallerProvider eventCallers, @NotNull BoxScheduler scheduler,
                             @NotNull MessageProvider messageProvider) {
         this.userManager = userManager;
         this.stockManager = stockManager;
-        this.eventCaller = eventCaller;
+        this.eventCallers = eventCallers;
         this.scheduler = scheduler;
         this.messageProvider = messageProvider;
     }
@@ -93,14 +92,14 @@ public class BoxPlayerMapImpl implements BoxPlayerMap {
 
         var boxUser = this.userManager.createBoxUser(player.getUniqueId(), player.getName());
         var personal = this.stockManager.getPersonalStockHolder(boxUser);
-        var boxPlayer = new BoxPlayerImpl(boxUser, player, personal, this.eventCaller);
+        var boxPlayer = new BoxPlayerImpl(boxUser, player, personal, this.eventCallers.sync());
 
         if (this.playerMap.replace(player, NOT_LOADED_YET, boxPlayer)) { // This prevents loading data twice.
             personal.load();
             personal.markAsOnline();
 
             this.userManager.saveUsername(boxUser);
-            this.eventCaller.call(new PlayerLoadEvent(boxPlayer));
+            this.eventCallers.async().call(new PlayerLoadEvent(boxPlayer));
         }
     }
 
@@ -112,7 +111,7 @@ public class BoxPlayerMapImpl implements BoxPlayerMap {
 
     private void unload(@NotNull BoxPlayerImpl boxPlayer) {
         boxPlayer.getPersonalStockHolder().markAsOffline();
-        this.eventCaller.call(new PlayerUnloadEvent(boxPlayer));
+        this.eventCallers.async().call(new PlayerUnloadEvent(boxPlayer));
     }
 
     public void loadAll() {

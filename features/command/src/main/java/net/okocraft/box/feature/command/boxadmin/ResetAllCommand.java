@@ -68,7 +68,7 @@ public class ResetAllCommand extends AbstractCommand {
 
             BoxAPI.api().getStockManager().getPersonalStockHolder(target).reset();
 
-            BoxAPI.api().getEventManager().call(new UserDataResetEvent(target));
+            BoxAPI.api().getEventCallers().sync().call(new UserDataResetEvent(target));
 
             this.successSender.apply(target.getName().orElseGet(target.getUUID()::toString)).source(msgSrc).send(sender);
 

@@ -1,12 +1,16 @@
 package net.okocraft.box.api;
 
+import dev.siroshun.event4j.api.listener.ListenerSubscriber;
+import dev.siroshun.event4j.api.priority.Priority;
+import net.kyori.adventure.key.Key;
 import net.okocraft.box.api.command.base.BoxAdminCommand;
 import net.okocraft.box.api.command.base.BoxCommand;
+import net.okocraft.box.api.event.BoxEvent;
+import net.okocraft.box.api.event.caller.EventCallerProvider;
 import net.okocraft.box.api.feature.BoxFeature;
 import net.okocraft.box.api.feature.FeatureProvider;
 import net.okocraft.box.api.message.MessageProvider;
 import net.okocraft.box.api.model.customdata.CustomDataManager;
-import net.okocraft.box.api.model.manager.EventManager;
 import net.okocraft.box.api.model.manager.ItemManager;
 import net.okocraft.box.api.model.manager.StockManager;
 import net.okocraft.box.api.model.manager.UserManager;
@@ -86,11 +90,18 @@ public interface BoxAPI {
     @NotNull BoxPlayerMap getBoxPlayerMap();
 
     /**
-     * Gets the {@link EventManager}.
+     * Gets the {@link EventCallerProvider}.
      *
-     * @return the {@link EventManager}
+     * @return the {@link EventCallerProvider}
      */
-    @NotNull EventManager getEventManager();
+    @NotNull EventCallerProvider getEventCallers();
+
+    /**
+     * Gets the {@link ListenerSubscriber}.
+     *
+     * @return the {@link ListenerSubscriber}
+     */
+    @NotNull ListenerSubscriber<Key, BoxEvent, Priority> getListenerSubscriber();
 
     /**
      * Gets the {@link CustomDataManager}.
