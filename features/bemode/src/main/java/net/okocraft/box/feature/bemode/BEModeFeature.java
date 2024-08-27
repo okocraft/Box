@@ -1,7 +1,6 @@
 package net.okocraft.box.feature.bemode;
 
 import com.github.siroshun09.messages.minimessage.arg.Arg1;
-import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.feature.AbstractBoxFeature;
 import net.okocraft.box.api.feature.BoxFeature;
 import net.okocraft.box.api.feature.FeatureContext;
@@ -32,14 +31,14 @@ public class BEModeFeature extends AbstractBoxFeature {
     public void enable(@NotNull FeatureContext.Enabling context) {
         ClickModeRegistry.register(this.storageDepositMode);
         ClickModeRegistry.register(this.storageWithdrawMode);
-        ClickModeCheckListener.register(BoxAPI.api().getEventManager());
+        ClickModeCheckListener.register();
     }
 
     @Override
     public void disable(@NotNull FeatureContext.Disabling context) {
         ClickModeRegistry.unregister(this.storageDepositMode);
         ClickModeRegistry.unregister(this.storageWithdrawMode);
-        ClickModeCheckListener.unregister(BoxAPI.api().getEventManager());
+        ClickModeCheckListener.unregister();
     }
 
     @Override

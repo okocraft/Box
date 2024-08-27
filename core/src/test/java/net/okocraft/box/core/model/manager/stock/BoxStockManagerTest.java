@@ -71,7 +71,7 @@ class BoxStockManagerTest {
         checkStorageData(storage, 1);
 
         Assertions.assertThrows(IllegalStateException.class, () -> manager.getPersonalStockHolder(TestUser.USER));
-        Assertions.assertThrows(IllegalStateException.class, () -> manager.createStockHolder(UUID.randomUUID(), "unknown", StockEventCaller.createDefault(new EventCollector())));
+        Assertions.assertThrows(IllegalStateException.class, () -> manager.createStockHolder(UUID.randomUUID(), "unknown", StockEventCaller.createDefault(new EventCollector().sync())));
         Assertions.assertThrows(IllegalStateException.class, () -> manager.getPersonalStockHolder(TestUser.USER));
         Assertions.assertThrows(IllegalStateException.class, () -> manager.schedulerAutoSaveTask(new TestScheduler(false)));
         Assertions.assertThrows(IllegalStateException.class, manager::close);

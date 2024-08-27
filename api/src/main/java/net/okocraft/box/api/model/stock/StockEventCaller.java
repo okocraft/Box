@@ -1,6 +1,6 @@
 package net.okocraft.box.api.model.stock;
 
-import com.github.siroshun09.event4j.caller.AsyncEventCaller;
+import dev.siroshun.event4j.api.caller.EventCaller;
 import net.okocraft.box.api.event.BoxEvent;
 import net.okocraft.box.api.event.stockholder.stock.StockEvent;
 import net.okocraft.box.api.model.item.BoxItem;
@@ -17,11 +17,11 @@ public interface StockEventCaller {
     /**
      * Creates a default implementation of {@link  StockEventCaller}.
      *
-     * @param eventCaller a {@link AsyncEventCaller} to call {@link StockEvent}s
+     * @param eventCaller a {@link EventCaller} to call {@link StockEvent}s
      * @return a new {@link StockEventCaller}
      */
     @Contract(value = "_ -> new", pure = true)
-    static @NotNull StockEventCaller createDefault(@NotNull AsyncEventCaller<BoxEvent> eventCaller) {
+    static @NotNull StockEventCaller createDefault(@NotNull EventCaller<BoxEvent> eventCaller) {
         return new DefaultStockEventCaller(eventCaller);
     }
 

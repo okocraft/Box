@@ -1,11 +1,10 @@
 package net.okocraft.box.core.model.manager.item;
 
-import com.github.siroshun09.event4j.caller.AsyncEventCaller;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import it.unimi.dsi.fastutil.ints.Int2IntMaps;
 import it.unimi.dsi.fastutil.ints.IntImmutableList;
 import it.unimi.dsi.fastutil.objects.ObjectImmutableList;
-import net.okocraft.box.api.event.BoxEvent;
+import net.okocraft.box.api.event.caller.EventCallerProvider;
 import net.okocraft.box.api.event.item.CustomItemRegisterEvent;
 import net.okocraft.box.api.event.item.CustomItemRenameEvent;
 import net.okocraft.box.api.model.item.BoxCustomItem;
@@ -33,20 +32,21 @@ import java.util.function.UnaryOperator;
 public class BoxItemManager implements ItemManager {
 
     private final CustomItemStorage itemStorage;
-    private final AsyncEventCaller<BoxEvent> eventCaller;
+    private final EventCallerProvider eventCallers;
     private final BoxScheduler scheduler;
     private final DefaultItemProvider defaultItemProvider;
     private final BukkitBoxItemMap boxItemMap;
     private final Int2IntMap remapItemIds;
 
-    public BoxItemManager(@NotNull CustomItemStorage itemStorage, @NotNull AsyncEventCaller<BoxEvent> eventCaller,
+    public BoxItemManager(@NotNull CustomItemStorage itemStorage,
+                          @NotNull EventCallerProvider eventCallers,
                           @NotNull BoxScheduler scheduler, @NotNull DefaultItemProvider defaultItemProvider, @NotNull Iterator<BoxItem> initialBoxItemIterator,
                           @NotNull Int2IntMap remapItemIds) {
         this.itemStorage = itemStorage;
-        this.eventCaller = eventCaller;
+        this.eventCallers = eventCallers;
         this.scheduler = scheduler;
         this.defaultItemProvider = defaultItemProvider;
-        this.boxItemMap = BukkitBoxItemMap.withItems(initialBoxItemIterator, eventCaller);
+        this.boxItemMap = BukkitBoxItemMap.withItems(initialBoxItemIterator, eventCallers.sync());
         this.remapItemIds = Int2IntMaps.unmodifiable(remapItemIds);
     }
 
@@ -120,7 +120,7 @@ public class BoxItemManager implements ItemManager {
             }
 
             if (result instanceof ItemRegistrationResult.Success success) {
-                this.eventCaller.callAsync(new CustomItemRegisterEvent(success.customItem()));
+                this.eventCallers.async().call(new CustomItemRegisterEvent(success.customItem()));
             }
 
             resultConsumer.accept(result);
@@ -170,7 +170,7 @@ public class BoxItemManager implements ItemManager {
             }
 
             if (result instanceof ItemRenameResult.Success success) {
-                this.eventCaller.callAsync(new CustomItemRenameEvent(success.customItem(), success.previousName()));
+                this.eventCallers.async().call(new CustomItemRenameEvent(success.customItem(), success.previousName()));
             }
 
             resultConsumer.accept(result);

@@ -1,10 +1,13 @@
 package net.okocraft.box.api.bootstrap;
 
-import net.okocraft.box.api.BoxAPI;
+import dev.siroshun.event4j.api.caller.EventCaller;
+import dev.siroshun.event4j.api.listener.ListenerSubscriber;
+import dev.siroshun.event4j.api.priority.Priority;
+import net.kyori.adventure.key.Key;
+import net.okocraft.box.api.event.BoxEvent;
 import net.okocraft.box.api.feature.BoxFeature;
 import net.okocraft.box.api.feature.FeatureFactory;
 import net.okocraft.box.api.message.DefaultMessageCollector;
-import net.okocraft.box.api.model.manager.EventManager;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -51,14 +54,18 @@ public interface BootstrapContext {
     @NotNull String getVersion();
 
     /**
-     * Gets the {@link EventManager}.
-     * <p>
-     * This {@link EventManager} is the same as {@link BoxAPI#getEventManager()},
-     * and listeners registered to this remain active after initialization.
+     * Gets the {@link EventCaller}.
      *
-     * @return the {@link EventManager}
+     * @return the {@link EventCaller}
      */
-    @NotNull EventManager getEventManager();
+    @NotNull EventCaller<BoxEvent> getEventCaller();
+
+    /**
+     * Gets the {@link ListenerSubscriber}.
+     *
+     * @return the {@link ListenerSubscriber}
+     */
+    @NotNull ListenerSubscriber<Key, BoxEvent, Priority> getListenerSubscriber();
 
     /**
      * Gets the {@link DefaultMessageCollector}.

@@ -53,7 +53,7 @@ public final class BoxPlugin extends JavaPlugin {
                 boxBootstrapContext.getVersion(),
                 boxBootstrapContext.getDataDirectory(),
                 new FoliaSchedulerWrapper(this),
-                boxBootstrapContext.getEventManager(),
+                boxBootstrapContext.getEventService(),
                 boxBootstrapContext.createMessageProvider(),
                 new Config(boxBootstrapContext.getDataDirectory()),
                 versionedImpls.createDefaultItemProvider(MCDataVersion.current()),
@@ -73,8 +73,6 @@ public final class BoxPlugin extends JavaPlugin {
         }
 
         var start = Instant.now();
-
-        this.pluginContext.eventManager().initializeAsyncEventCaller(this.pluginContext.scheduler());
 
         try {
             this.storage = this.pluginContext.config().loadAndCreateStorage(this.storageRegistry);

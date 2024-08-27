@@ -22,11 +22,11 @@ public final class ClickModeHolder {
     private static @NotNull ClickModeHolder createHolder(@NotNull PlayerSession session) {
         var modes = ClickModeRegistry.getModes();
         var availableModes = new ArrayList<BoxItemClickMode>(modes.size());
-        var eventManager = BoxAPI.api().getEventManager();
+        var eventCaller = BoxAPI.api().getEventCallers().sync();
 
         for (var mode : modes) {
             var checkEvent = new ClickModeCheckEvent(session, mode, mode.canUse(session));
-            eventManager.call(checkEvent);
+            eventCaller.call(checkEvent);
 
             if (checkEvent.isAllowed()) {
                 availableModes.add(mode);

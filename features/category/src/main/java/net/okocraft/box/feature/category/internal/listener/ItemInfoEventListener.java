@@ -11,6 +11,7 @@ import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.event.player.PlayerCollectItemInfoEvent;
 import net.okocraft.box.api.message.DefaultMessageCollector;
 import net.okocraft.box.api.model.item.BoxItem;
+import net.okocraft.box.api.util.SubscribedListenerHolder;
 import net.okocraft.box.feature.category.api.category.Category;
 import net.okocraft.box.feature.category.api.registry.CategoryRegistry;
 import org.jetbrains.annotations.NotNull;
@@ -32,6 +33,8 @@ public class ItemInfoEventListener {
     private final Arg1<Component> categoryFormat;
     private final MiniMessageBase categorySeparator;
 
+    private final SubscribedListenerHolder listenerHolder = new SubscribedListenerHolder();
+
     public ItemInfoEventListener(@NotNull CategoryRegistry registry, @NotNull DefaultMessageCollector collector) {
         this.registry = registry;
         this.itemInfoFormat = Arg1.arg1(collector.add("box.category.item-info.format", "<gray>Category: <aqua><categories>"), Placeholder.component("categories", Function.identity()));
@@ -40,11 +43,11 @@ public class ItemInfoEventListener {
     }
 
     public void register(@NotNull Key listenerKey) {
-        BoxAPI.api().getEventManager().getSubscriber(PlayerCollectItemInfoEvent.class).subscribe(listenerKey, this::processEvent);
+        this.listenerHolder.subscribeAll(subscriber -> subscriber.add(PlayerCollectItemInfoEvent.class, listenerKey, this::processEvent));
     }
 
-    public void unregister(@NotNull Key listenerKey) {
-        BoxAPI.api().getEventManager().getSubscriber(PlayerCollectItemInfoEvent.class).unsubscribeByKey(listenerKey);
+    public void unregister() {
+        this.listenerHolder.unsubscribeAll();
     }
 
     private void processEvent(@NotNull PlayerCollectItemInfoEvent event) {
