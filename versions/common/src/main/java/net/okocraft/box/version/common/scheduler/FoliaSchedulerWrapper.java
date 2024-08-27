@@ -1,6 +1,7 @@
 package net.okocraft.box.version.common.scheduler;
 
 import net.okocraft.box.api.scheduler.BoxScheduler;
+import net.okocraft.box.api.util.BoxLogger;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.plugin.Plugin;
@@ -20,7 +21,13 @@ public class FoliaSchedulerWrapper implements BoxScheduler {
 
     @Override
     public void runAsyncTask(@NotNull Runnable task) {
-        Bukkit.getAsyncScheduler().runNow(this.plugin, ignored -> task.run());
+        if (this.plugin.isEnabled()) {
+            Bukkit.getAsyncScheduler().runNow(this.plugin, ignored -> task.run());
+        } else {
+            Thread.ofVirtual()
+                    .uncaughtExceptionHandler(((t, e) -> BoxLogger.logger().error("An exception occurred on thread {}", t.getName(), e)))
+                    .start(task);
+        }
     }
 
     @Override
