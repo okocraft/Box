@@ -59,43 +59,43 @@ public class StockTable implements PartialSavingStockStorage {
     @Override
     public void remapItemIds(@NotNull Int2IntMap remappedIdMap) throws Exception {
         try (
-                var connection = this.database.getConnection();
-                var selectByItemIdStatement = this.operator.selectStockByItemIdStatement(connection);
-                var selectByUUIDAndItemIdStatement = this.operator.selectStockByUUIDAndItemIdStatement(connection);
-                var updateItemIdStatement = this.operator.updateItemIdStatement(connection);
-                var updateAmountStatement = this.operator.updateAmountStatement(connection)
+            var connection = this.database.getConnection();
+            var selectByItemIdStatement = this.operator.selectStockByItemIdStatement(connection);
+            var selectByUUIDAndItemIdStatement = this.operator.selectStockByUUIDAndItemIdStatement(connection);
+            var updateItemIdStatement = this.operator.updateItemIdStatement(connection);
+            var updateAmountStatement = this.operator.updateAmountStatement(connection)
         ) {
             for (var remapEntry : remappedIdMap.int2IntEntrySet()) {
                 int oldItemId = remapEntry.getIntKey();
                 int newItemId = remapEntry.getIntValue();
                 this.operator.selectStockByItemId(
-                        selectByItemIdStatement,
-                        oldItemId,
-                        (uuid, amount) -> {
-                            try {
-                                this.operator.selectStockByUUIDAndItemId(
-                                        selectByUUIDAndItemIdStatement,
-                                        uuid,
-                                        newItemId,
-                                        existingAmount -> {
-                                            try {
-                                                this.operator.addUpdateAmountBatch(updateAmountStatement, uuid, newItemId, amount + existingAmount);
-                                            } catch (SQLException e) {
-                                                SneakyThrow.sneaky(e);
-                                            }
-                                        },
-                                        () -> {
-                                            try {
-                                                this.operator.addUpdateItemIdBatch(updateItemIdStatement, uuid, oldItemId, newItemId);
-                                            } catch (SQLException e) {
-                                                SneakyThrow.sneaky(e);
-                                            }
-                                        }
-                                );
-                            } catch (SQLException e) {
-                                SneakyThrow.sneaky(e);
-                            }
+                    selectByItemIdStatement,
+                    oldItemId,
+                    (uuid, amount) -> {
+                        try {
+                            this.operator.selectStockByUUIDAndItemId(
+                                selectByUUIDAndItemIdStatement,
+                                uuid,
+                                newItemId,
+                                existingAmount -> {
+                                    try {
+                                        this.operator.addUpdateAmountBatch(updateAmountStatement, uuid, newItemId, amount + existingAmount);
+                                    } catch (SQLException e) {
+                                        SneakyThrow.sneaky(e);
+                                    }
+                                },
+                                () -> {
+                                    try {
+                                        this.operator.addUpdateItemIdBatch(updateItemIdStatement, uuid, oldItemId, newItemId);
+                                    } catch (SQLException e) {
+                                        SneakyThrow.sneaky(e);
+                                    }
+                                }
+                            );
+                        } catch (SQLException e) {
+                            SneakyThrow.sneaky(e);
                         }
+                    }
                 );
             }
 

@@ -68,11 +68,11 @@ public class AutoStoreClickMode implements BoxItemClickMode {
         } else {
             var icon = item.getClonedItem();
             return ItemEditor.create()
-                    .copyLoreFrom(icon)
-                    .loreEmptyLine()
-                    .loreLine((setting.getPerItemModeSetting().isEnabled(item) ? this.itemEnabled : this.itemDisabled).create(session.getMessageSource()))
-                    .loreEmptyLine()
-                    .applyTo(icon);
+                .copyLoreFrom(icon)
+                .loreEmptyLine()
+                .loreLine((setting.getPerItemModeSetting().isEnabled(item) ? this.itemEnabled : this.itemDisabled).create(session.getMessageSource()))
+                .loreEmptyLine()
+                .applyTo(icon);
         }
     }
 
@@ -137,8 +137,8 @@ public class AutoStoreClickMode implements BoxItemClickMode {
         @Override
         public @NotNull ItemStack createIcon(@NotNull PlayerSession session) {
             return ItemEditor.create()
-                    .displayName(this.displayName.create(session.getMessageSource()))
-                    .createItem(Material.SUNFLOWER);
+                .displayName(this.displayName.create(session.getMessageSource()))
+                .createItem(Material.SUNFLOWER);
         }
 
         @Override
@@ -155,11 +155,11 @@ public class AutoStoreClickMode implements BoxItemClickMode {
         private AutoStoreSettingMenu(@NotNull DefaultMessageCollector collector) {
             this.title = messageKey(collector.add("box.autostore.gui.mode.setting-menu.title", "<black>Auto-store Settings"));
             this.buttons = List.of(
-                    new ModeButton(collector),
-                    new BulkEditingButton(collector),
-                    new ToggleButton(collector),
-                    new DirectButton(collector),
-                    new BackOrCloseButton(22)
+                new ModeButton(collector),
+                new BulkEditingButton(collector),
+                new ToggleButton(collector),
+                new DirectButton(collector),
+                new BackOrCloseButton(22)
             );
         }
 

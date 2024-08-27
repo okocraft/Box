@@ -76,10 +76,10 @@ public class RenameCommand extends AbstractCommand {
             var itemManager = BoxAPI.api().getItemManager();
 
             return itemManager.getItemList()
-                    .stream()
-                    .filter(itemManager::isCustomItem)
-                    .map(BoxItem::getPlainName)
-                    .collect(Collectors.toList());
+                .stream()
+                .filter(itemManager::isCustomItem)
+                .map(BoxItem::getPlainName)
+                .collect(Collectors.toList());
         } else {
             return Collections.emptyList();
         }
@@ -94,9 +94,9 @@ public class RenameCommand extends AbstractCommand {
         var msgSrc = BoxAPI.api().getMessageProvider().findSource(sender);
         switch (result) {
             case ItemRenameResult.Success successResult ->
-                    this.success.apply(successResult.customItem().getPlainName()).source(msgSrc).send(sender);
+                this.success.apply(successResult.customItem().getPlainName()).source(msgSrc).send(sender);
             case ItemRenameResult.DuplicateName duplicateNameResult ->
-                    this.usedName.apply(duplicateNameResult.name()).source(msgSrc).send(sender);
+                this.usedName.apply(duplicateNameResult.name()).source(msgSrc).send(sender);
             case ItemRenameResult.ExceptionOccurred exceptionOccurredResult -> {
                 var ex = exceptionOccurredResult.exception();
                 this.exceptionOccurred.apply(ex).source(msgSrc).send(sender);

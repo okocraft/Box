@@ -46,6 +46,6 @@ tasks {
     }
 }
 
-fun getArtifactFilepath() : File {
+fun getArtifactFilepath(): File {
     return rootProject.layout.buildDirectory.dir("libs").get().file("Box-${project.version}.jar").asFile
 }

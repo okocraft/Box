@@ -38,26 +38,26 @@ public class StockOverflowEvent extends StockIncreaseEvent {
     @Override
     public @NotNull String toDebugLog() {
         return "StockOverflowEvent{" +
-                "stockholderUuid=" + this.getStockHolder().getUUID() +
-                ", stockHolderName=" + this.getStockHolder().getName() +
-                ", stockHolderClass=" + this.getStockHolder().getClass().getSimpleName() +
-                ", item=" + this.getItem().getPlainName() +
-                ", increments=" + this.getIncrements() +
-                ", excess=" + this.getExcess() +
-                ", amount=" + this.getAmount() +
-                ", cause=" + this.getCause() +
-                '}';
+            "stockholderUuid=" + this.getStockHolder().getUUID() +
+            ", stockHolderName=" + this.getStockHolder().getName() +
+            ", stockHolderClass=" + this.getStockHolder().getClass().getSimpleName() +
+            ", item=" + this.getItem().getPlainName() +
+            ", increments=" + this.getIncrements() +
+            ", excess=" + this.getExcess() +
+            ", amount=" + this.getAmount() +
+            ", cause=" + this.getCause() +
+            '}';
     }
 
     @Override
     public String toString() {
         return "StockOverflowEvent{" +
-                "stockholder=" + this.getStockHolder() +
-                ", item=" + this.getItem() +
-                ", increments=" + this.getIncrements() +
-                ", excess=" + this.getExcess() +
-                ", amount=" + this.getAmount() +
-                ", cause=" + this.getCause() +
-                '}';
+            "stockholder=" + this.getStockHolder() +
+            ", item=" + this.getItem() +
+            ", increments=" + this.getIncrements() +
+            ", excess=" + this.getExcess() +
+            ", amount=" + this.getAmount() +
+            ", cause=" + this.getCause() +
+            '}';
     }
 }

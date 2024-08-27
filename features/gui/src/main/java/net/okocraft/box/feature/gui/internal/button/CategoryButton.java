@@ -34,8 +34,8 @@ public class CategoryButton implements Button {
     @Override
     public @NotNull ItemStack createIcon(@NotNull PlayerSession session) {
         return ItemEditor.create()
-                .displayName(this.category.getDisplayName(session.getViewer()).colorIfAbsent(GOLD).decorationIfAbsent(ITALIC, State.FALSE))
-                .createItem(this.category.getIconMaterial());
+            .displayName(this.category.getDisplayName(session.getViewer()).colorIfAbsent(GOLD).decorationIfAbsent(ITALIC, State.FALSE))
+            .createItem(this.category.getIconMaterial());
     }
 
     @Override

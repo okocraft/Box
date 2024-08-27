@@ -12,7 +12,7 @@ class TabCompleterTest {
 
     @Test
     void testEmpty() {
-        Assertions.assertEquals(COMPLETIONS,  filterElements(""));
+        Assertions.assertEquals(COMPLETIONS, filterElements(""));
     }
 
     @Test

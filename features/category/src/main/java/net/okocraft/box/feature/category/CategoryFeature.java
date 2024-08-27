@@ -41,10 +41,10 @@ public class CategoryFeature extends AbstractBoxFeature implements Reloadable {
     public void enable(@NotNull FeatureContext.Enabling context) throws IOException {
         try (var file = new CategoryFile(this.filepath, this.categoryRegistry, BoxAPI.api().getItemManager())) {
             file.loadFile()
-                    .convertIfUnknownVersion()
-                    .readCategoriesIfExists()
-                    .readCustomItemsIfExists()
-                    .addNewDefaultItemsIfNeeded();
+                .convertIfUnknownVersion()
+                .readCategoriesIfExists()
+                .readCustomItemsIfExists()
+                .addNewDefaultItemsIfNeeded();
         }
 
         this.customItemListener.register(CUSTOM_ITEM_LISTENER_KEY);

@@ -41,9 +41,9 @@ public class StockListCommand extends AbstractCommand {
 
         if (playerMap.isLoaded(player)) {
             this.sharedStockListCommand.createAndSendStockList(
-                    sender,
-                    playerMap.get(player).getCurrentStockHolder(),
-                    1 < args.length ? Arrays.copyOfRange(args, 1, args.length) : null
+                sender,
+                playerMap.get(player).getCurrentStockHolder(),
+                1 < args.length ? Arrays.copyOfRange(args, 1, args.length) : null
             );
         } else {
             if (playerMap.isScheduledLoading(player)) {

@@ -50,8 +50,8 @@ public class MemoryPartialSavingStockStorage implements PartialSavingStockStorag
     public void remapItemIds(@NotNull Int2IntMap remappedIdMap) {
         for (var map : this.stockDataMap.values()) {
             new Int2IntOpenHashMap(map)
-                    .int2IntEntrySet()
-                    .forEach(entry -> map.put(remappedIdMap.getOrDefault(entry.getIntKey(), entry.getIntValue()), entry.getIntValue()));
+                .int2IntEntrySet()
+                .forEach(entry -> map.put(remappedIdMap.getOrDefault(entry.getIntKey(), entry.getIntValue()), entry.getIntValue()));
         }
     }
 
@@ -78,8 +78,8 @@ public class MemoryPartialSavingStockStorage implements PartialSavingStockStorag
     @Override
     public boolean hasZeroStock() {
         return this.stockDataMap.values().stream()
-                .map(Int2IntMap::values)
-                .flatMapToInt(IntCollection::intStream)
-                .anyMatch(amount -> amount == 0);
+            .map(Int2IntMap::values)
+            .flatMapToInt(IntCollection::intStream)
+            .anyMatch(amount -> amount == 0);
     }
 }

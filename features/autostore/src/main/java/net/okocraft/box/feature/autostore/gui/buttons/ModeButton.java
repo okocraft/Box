@@ -33,11 +33,11 @@ public class ModeButton extends AbstractAutoStoreSettingButton {
         if (setting == null) return new ItemStack(Material.AIR);
 
         return ItemEditor.create()
-                .displayName(this.displayName.create(session.getMessageSource()))
-                .loreEmptyLine()
-                .loreLine((setting.isAllMode() ? this.changeToPerItem : this.changeToAll).create(session.getMessageSource()))
-                .loreEmptyLine()
-                .createItem(setting.isAllMode() ? Material.REDSTONE_TORCH : Material.SOUL_TORCH);
+            .displayName(this.displayName.create(session.getMessageSource()))
+            .loreEmptyLine()
+            .loreLine((setting.isAllMode() ? this.changeToPerItem : this.changeToAll).create(session.getMessageSource()))
+            .loreEmptyLine()
+            .createItem(setting.isAllMode() ? Material.REDSTONE_TORCH : Material.SOUL_TORCH);
     }
 
     @Override

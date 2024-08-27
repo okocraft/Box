@@ -23,11 +23,11 @@ public abstract class CustomDataTableOperator {
         this.tableName = prefix + "custom_data" + suffix;
 
         this.createTableStatement = """
-                CREATE TABLE IF NOT EXISTS `%s` (
-                  `key` VARCHAR(50) PRIMARY KEY NOT NULL,
-                  `data` BLOB  NOT NULL
-                )
-                """.formatted(this.tableName);
+            CREATE TABLE IF NOT EXISTS `%s` (
+              `key` VARCHAR(50) PRIMARY KEY NOT NULL,
+              `data` BLOB  NOT NULL
+            )
+            """.formatted(this.tableName);
 
         this.selectDataByKeyStatement = "SELECT `data` FROM `%s` WHERE `key`=?".formatted(this.tableName);
         this.selectDataByNamespaceStatement = "SELECT `key`, `data` FROM `%s` WHERE `key` LIKE ?".formatted(this.tableName);

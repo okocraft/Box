@@ -23,9 +23,9 @@ public class StickCommand extends AbstractCommand {
 
     private static final String DEFAULT_DISPLAY_NAME = "<blue>Box Stick";
     private static final String DEFAULT_LORE = """
-            <gray>Holding this in offhand to
-            <gray>consume items from Box when use them.
-            <gray>Also, press RMB to open the menu.""";
+        <gray>Holding this in offhand to
+        <gray>consume items from Box when use them.
+        <gray>Also, press RMB to open the menu.""";
 
     private final BoxStickItem boxStickItem;
 
@@ -103,11 +103,11 @@ public class StickCommand extends AbstractCommand {
     private @NotNull ItemStack createDefaultStick(@NotNull Player player) {
         var src = BoxAPI.api().getMessageProvider().findSource(player);
         return ItemEditor.create()
-                .displayName(this.defaultDisplayName.create(src))
-                .loreEmptyLine()
-                .loreLines(this.defaultLore.create(src))
-                .loreEmptyLine()
-                .editMeta(meta -> this.boxStickItem.saveBoxStickKey(meta.getPersistentDataContainer()))
-                .createItem(Material.STICK);
+            .displayName(this.defaultDisplayName.create(src))
+            .loreEmptyLine()
+            .loreLines(this.defaultLore.create(src))
+            .loreEmptyLine()
+            .editMeta(meta -> this.boxStickItem.saveBoxStickKey(meta.getPersistentDataContainer()))
+            .createItem(Material.STICK);
     }
 }

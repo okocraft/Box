@@ -62,9 +62,9 @@ public class RegisterCommand extends AbstractCommand {
                 this.isAir.source(msgSrc).send(sender);
             } else {
                 BoxAPI.api().getItemManager().registerCustomItem(
-                        mainHandItem.clone(),
-                        1 < args.length ? args[1] : null,
-                        result -> this.consumeResult(player, result)
+                    mainHandItem.clone(),
+                    1 < args.length ? args[1] : null,
+                    result -> this.consumeResult(player, result)
                 );
             }
         });
@@ -83,9 +83,9 @@ public class RegisterCommand extends AbstractCommand {
                 this.renameTip.source(msgSrc).send(player);
             }
             case ItemRegistrationResult.DuplicateName duplicateNameResult ->
-                    this.usedName.apply(duplicateNameResult.name()).source(msgSrc).send(player);
+                this.usedName.apply(duplicateNameResult.name()).source(msgSrc).send(player);
             case ItemRegistrationResult.DuplicateItem duplicateItemResult ->
-                    this.alreadyRegistered.apply(duplicateItemResult.item()).source(msgSrc).send(player);
+                this.alreadyRegistered.apply(duplicateItemResult.item()).source(msgSrc).send(player);
             case ItemRegistrationResult.ExceptionOccurred exceptionOccurredResult -> {
                 var ex = exceptionOccurredResult.exception();
                 this.exceptionOccurred.apply(ex).source(msgSrc).send(player);

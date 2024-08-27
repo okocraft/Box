@@ -16,11 +16,11 @@ public abstract class MetaTableOperator {
         var tableName = tablePrefix + "meta";
 
         this.createTableStatement = """
-                CREATE TABLE IF NOT EXISTS `%s` (
-                  `key` VARCHAR(25) PRIMARY KEY NOT NULL,
-                  `value` VARCHAR(16) NOT NULL
-                )
-                """.formatted(tableName);
+            CREATE TABLE IF NOT EXISTS `%s` (
+              `key` VARCHAR(25) PRIMARY KEY NOT NULL,
+              `value` VARCHAR(16) NOT NULL
+            )
+            """.formatted(tableName);
 
         this.selectValueStatement = "SELECT `value` FROM `%s` WHERE `key`=?".formatted(tableName);
         this.upsertValueStatement = this.upsertStatement(tableName);

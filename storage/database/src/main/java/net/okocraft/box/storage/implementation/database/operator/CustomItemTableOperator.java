@@ -19,11 +19,11 @@ public abstract class CustomItemTableOperator {
         var tableName = tablePrefix + "custom_items";
 
         this.createTableStatement = """
-                CREATE TABLE IF NOT EXISTS `%s` (
-                  `id` INTEGER PRIMARY KEY AUTOINCREMENT,
-                  `data` VARCHAR(50) NOT NULL
-                )
-                """.formatted(tableName);
+            CREATE TABLE IF NOT EXISTS `%s` (
+              `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+              `data` VARCHAR(50) NOT NULL
+            )
+            """.formatted(tableName);
 
         this.insertStatement = "INSERT INTO `%s` (`id`, `data`) VALUES(?,?)".formatted(tableName);
         this.selectItemDataStatement = "SELECT `data` FROM `%s` WHERE `id`=?".formatted(tableName);

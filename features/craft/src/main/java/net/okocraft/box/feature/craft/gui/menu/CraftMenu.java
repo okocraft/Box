@@ -70,36 +70,36 @@ public class CraftMenu implements Menu {
         buttons.add(new IngredientOrderButton(27));
 
         buttons.add(
-                new DecreaseAmountButton(
-                        45,
-                        KEY,
-                        messageKey(DisplayKeys.DECREASE_CRAFT_TIMES_DISPLAY_NAME),
-                        arg1(DisplayKeys.DECREASE_CRAFT_TIMES_LORE, CraftPlaceholders.TIMES),
-                        arg1(DisplayKeys.CURRENT_CRAFT_TIMES, CraftPlaceholders.TIMES),
-                        ClickResult.UPDATE_ICONS
-                )
+            new DecreaseAmountButton(
+                45,
+                KEY,
+                messageKey(DisplayKeys.DECREASE_CRAFT_TIMES_DISPLAY_NAME),
+                arg1(DisplayKeys.DECREASE_CRAFT_TIMES_LORE, CraftPlaceholders.TIMES),
+                arg1(DisplayKeys.CURRENT_CRAFT_TIMES, CraftPlaceholders.TIMES),
+                ClickResult.UPDATE_ICONS
+            )
         );
 
         buttons.add(
-                new UnitChangeButton(
-                        46,
-                        KEY,
-                        messageKey(DisplayKeys.CHANGE_UNIT),
-                        messageKey(DisplayKeys.RESET_CRAFT_TIMES),
-                        ClickResult.UPDATE_ICONS
-                )
+            new UnitChangeButton(
+                46,
+                KEY,
+                messageKey(DisplayKeys.CHANGE_UNIT),
+                messageKey(DisplayKeys.RESET_CRAFT_TIMES),
+                ClickResult.UPDATE_ICONS
+            )
         );
 
         buttons.add(
-                new IncreaseAmountButton(
-                        47,
-                        KEY,
-                        messageKey(DisplayKeys.INCREASE_CRAFT_TIMES_DISPLAY_NAME),
-                        arg1(DisplayKeys.SET_CRAFT_TIMES_LORE, CraftPlaceholders.TIMES),
-                        arg1(DisplayKeys.INCREASE_CRAFT_TIMES_LORE, CraftPlaceholders.TIMES),
-                        arg1(DisplayKeys.CURRENT_CRAFT_TIMES, CraftPlaceholders.TIMES),
-                        ClickResult.UPDATE_ICONS
-                )
+            new IncreaseAmountButton(
+                47,
+                KEY,
+                messageKey(DisplayKeys.INCREASE_CRAFT_TIMES_DISPLAY_NAME),
+                arg1(DisplayKeys.SET_CRAFT_TIMES_LORE, CraftPlaceholders.TIMES),
+                arg1(DisplayKeys.INCREASE_CRAFT_TIMES_LORE, CraftPlaceholders.TIMES),
+                arg1(DisplayKeys.CURRENT_CRAFT_TIMES, CraftPlaceholders.TIMES),
+                ClickResult.UPDATE_ICONS
+            )
         );
 
         buttons.add(new CraftButton(48, KEY));

@@ -47,23 +47,23 @@ public class RecipeSelectButton implements Button {
     @Override
     public @NotNull ItemStack createIcon(@NotNull PlayerSession session) {
         var editor = ItemEditor.create()
-                .displayName(translatable(this.recipe.result().getOriginal()).decoration(ITALIC, State.FALSE).append(space()).append(text("#" + this.number, NO_DECORATION_YELLOW)))
-                .loreEmptyLine();
+            .displayName(translatable(this.recipe.result().getOriginal()).decoration(ITALIC, State.FALSE).append(space()).append(text("#" + this.number, NO_DECORATION_YELLOW)))
+            .loreEmptyLine();
 
         boolean simple = session.getData(SHOW_DETAILS) == null;
         IngredientRenderer.render(editor, session, this.recipe, 1, simple);
 
         return editor.loreEmptyLine()
-                .loreLine(
-                        text(" -> ", NO_DECORATION_GRAY)
-                                .append(translatable(this.recipe.result().getOriginal(), this.recipe.result().getDisplayName().style()))
-                                .append(space())
-                                .append(text("x", NO_DECORATION_GRAY))
-                                .append(text(this.recipe.amount(), NO_DECORATION_AQUA))
-                )
-                .loreEmptyLineIf(simple)
-                .loreLineIf(simple, () -> CLICK_TO_SHOW_DETAILS.create(session.getMessageSource()))
-                .createItem(this.recipe.result().getOriginal().getType());
+            .loreLine(
+                text(" -> ", NO_DECORATION_GRAY)
+                    .append(translatable(this.recipe.result().getOriginal(), this.recipe.result().getDisplayName().style()))
+                    .append(space())
+                    .append(text("x", NO_DECORATION_GRAY))
+                    .append(text(this.recipe.amount(), NO_DECORATION_AQUA))
+            )
+            .loreEmptyLineIf(simple)
+            .loreLineIf(simple, () -> CLICK_TO_SHOW_DETAILS.create(session.getMessageSource()))
+            .createItem(this.recipe.result().getOriginal().getType());
     }
 
     @Override

@@ -47,9 +47,9 @@ class BoxUserImpl implements BoxUser {
     @Override
     public String toString() {
         return "BoxUserImpl{" +
-                "uuid=" + this.uuid +
-                ", name='" + this.name + '\'' +
-                '}';
+            "uuid=" + this.uuid +
+            ", name='" + this.name + '\'' +
+            '}';
     }
 }
 

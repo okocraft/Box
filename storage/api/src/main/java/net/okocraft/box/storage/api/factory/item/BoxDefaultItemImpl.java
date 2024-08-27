@@ -6,7 +6,8 @@ import net.okocraft.box.api.model.item.BoxItem;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-record BoxDefaultItemImpl(int internalId, @NotNull String plainName, @NotNull ItemStack original) implements BoxDefaultItem {
+record BoxDefaultItemImpl(int internalId, @NotNull String plainName,
+                          @NotNull ItemStack original) implements BoxDefaultItem {
 
     @Override
     public int getInternalId() {

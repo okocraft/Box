@@ -36,9 +36,9 @@ import static net.okocraft.box.api.message.Placeholders.ITEM;
 public class DepositCommand extends AbstractCommand {
 
     private static final String HELP = """
-            <aqua>/box deposit [amount]<dark_gray> - <gray>Deposits the item in your main hand
-            <aqua>/box deposit all<dark_gray> - <gray>Deposits all items in your inventory
-            <aqua>/box deposit <item> [amount]<dark_gray> - <gray>Deposits specified item in your inventory""";
+        <aqua>/box deposit [amount]<dark_gray> - <gray>Deposits the item in your main hand
+        <aqua>/box deposit all<dark_gray> - <gray>Deposits all items in your inventory
+        <aqua>/box deposit <item> [amount]<dark_gray> - <gray>Deposits specified item in your inventory""";
 
     private final Arg3<BoxItem, Integer, Integer> depositSuccess;
     private final Arg1<Integer> depositAllSuccess;
@@ -91,15 +91,15 @@ public class DepositCommand extends AbstractCommand {
             }
 
             itemManager.getBoxItem(arg).ifPresentOrElse(
-                    boxItem -> this.depositItem(player, msgSrc, boxItem, Integer.MAX_VALUE),
-                    () -> {
-                        if (!arg.isEmpty() && arg.length() < 4 &&
-                                (arg.charAt(0) == 'a' || arg.charAt(0) == 'A')) {
-                            this.depositAll(player, msgSrc);
-                        } else {
-                            ErrorMessages.ITEM_NOT_FOUND.apply(arg).source(msgSrc).send(sender);
-                        }
+                boxItem -> this.depositItem(player, msgSrc, boxItem, Integer.MAX_VALUE),
+                () -> {
+                    if (!arg.isEmpty() && arg.length() < 4 &&
+                        (arg.charAt(0) == 'a' || arg.charAt(0) == 'A')) {
+                        this.depositAll(player, msgSrc);
+                    } else {
+                        ErrorMessages.ITEM_NOT_FOUND.apply(arg).source(msgSrc).send(sender);
                     }
+                }
             );
 
             return;
@@ -164,19 +164,19 @@ public class DepositCommand extends AbstractCommand {
 
     private void depositAll(@NotNull Player player, @NotNull MiniMessageSource msgSrc) {
         BoxAPI.api().getScheduler().runEntityTask(player, () -> this.sendDepositResult(
-                player, msgSrc, false,
-                StockHolderTransaction.create(BoxAPI.api().getBoxPlayerMap().get(player).getCurrentStockHolder())
-                        .depositAll()
-                        .fromInventory(player.getInventory(), CommandCauses.DEPOSIT)
+            player, msgSrc, false,
+            StockHolderTransaction.create(BoxAPI.api().getBoxPlayerMap().get(player).getCurrentStockHolder())
+                .depositAll()
+                .fromInventory(player.getInventory(), CommandCauses.DEPOSIT)
         ));
     }
 
     private void depositItem(@NotNull Player player, @NotNull MiniMessageSource msgSrc, @NotNull BoxItem boxItem, int amount) {
         BoxAPI.api().getScheduler().runEntityTask(player, () -> this.sendDepositResult(
-                player, msgSrc, true,
-                StockHolderTransaction.create(BoxAPI.api().getBoxPlayerMap().get(player).getCurrentStockHolder())
-                        .deposit(boxItem, amount)
-                        .fromInventory(player.getInventory(), CommandCauses.DEPOSIT)
+            player, msgSrc, true,
+            StockHolderTransaction.create(BoxAPI.api().getBoxPlayerMap().get(player).getCurrentStockHolder())
+                .deposit(boxItem, amount)
+                .fromInventory(player.getInventory(), CommandCauses.DEPOSIT)
         ));
     }
 
@@ -202,14 +202,14 @@ public class DepositCommand extends AbstractCommand {
 
             //noinspection ConstantConditions
             var result =
-                    Arrays.stream(player.getInventory().getStorageContents())
-                            .filter(Objects::nonNull)
-                            .map(BoxAPI.api().getItemManager()::getBoxItem)
-                            .filter(Optional::isPresent)
-                            .map(Optional::get)
-                            .map(BoxItem::getPlainName)
-                            .filter(itemName -> itemName.toLowerCase(Locale.ENGLISH).startsWith(itemNameFilter))
-                            .collect(Collectors.toList());
+                Arrays.stream(player.getInventory().getStorageContents())
+                    .filter(Objects::nonNull)
+                    .map(BoxAPI.api().getItemManager()::getBoxItem)
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .map(BoxItem::getPlainName)
+                    .filter(itemName -> itemName.toLowerCase(Locale.ENGLISH).startsWith(itemNameFilter))
+                    .collect(Collectors.toList());
 
             if ("all".startsWith(args[1].toLowerCase(Locale.ENGLISH))) {
                 result.add("all");

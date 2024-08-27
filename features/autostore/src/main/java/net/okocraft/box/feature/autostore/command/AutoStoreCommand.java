@@ -25,10 +25,10 @@ import java.util.stream.Stream;
 public class AutoStoreCommand extends AbstractCommand {
 
     private static final String DEFAULT_HELP = """
-            <aqua>/box autostore [on/off]<dark_gray> - <gray>Switches on/off auto-store
-            <aqua>/box autostore [all/item]<dark_gray> - <gray>Changes auto-store mode
-            <aqua>/box autostore item <item> [on/off]<dark_gray> - <gray>Toggles the auto-store setting of the item
-            <aqua>/box autostore direct [on/off]<dark_gray> - <gray>Toggles auto-store setting to store drops directly""";
+        <aqua>/box autostore [on/off]<dark_gray> - <gray>Switches on/off auto-store
+        <aqua>/box autostore [all/item]<dark_gray> - <gray>Changes auto-store mode
+        <aqua>/box autostore item <item> [on/off]<dark_gray> - <gray>Toggles the auto-store setting of the item
+        <aqua>/box autostore direct [on/off]<dark_gray> - <gray>Toggles auto-store setting to store drops directly""";
 
     private final AutoStoreSettingProvider container;
     private final MiniMessageBase loadErrorMessage;
@@ -103,19 +103,19 @@ public class AutoStoreCommand extends AbstractCommand {
 
         if (args.length == 2) {
             return Stream.of("all", "item", "on", "off", "direct")
-                    .filter(mode -> mode.startsWith(args[1].toLowerCase(Locale.ROOT)))
-                    .collect(Collectors.toList());
+                .filter(mode -> mode.startsWith(args[1].toLowerCase(Locale.ROOT)))
+                .collect(Collectors.toList());
         }
 
         return this.matchSubCommand(args[1])
-                .map(cmd -> cmd.runTabComplete(sender, args))
-                .orElse(Collections.emptyList());
+            .map(cmd -> cmd.runTabComplete(sender, args))
+            .orElse(Collections.emptyList());
     }
 
     private @NotNull Optional<AutoStoreSubCommand> matchSubCommand(@NotNull String nameOrAlias) {
         return Stream.of(this.allCommand, this.directCommand, this.itemCommand)
-                .filter(command -> nameOrAlias.isEmpty() || command.getName().charAt(0) == nameOrAlias.charAt(0))
-                .findAny();
+            .filter(command -> nameOrAlias.isEmpty() || command.getName().charAt(0) == nameOrAlias.charAt(0))
+            .findAny();
     }
 
     @Override

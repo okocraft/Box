@@ -23,15 +23,15 @@ public final class V6Patch {
 
             try (var statement = operators.itemTable().insertStatement(connection)) {
                 operators.patcher().getDefaultItemsFromLegacy(
-                        connection,
-                        "legacy_items",
-                        (id, name) -> {
-                            try {
-                                operators.itemTable().addInsertBatch(statement, id, name, ItemTable.DEFAULT_ITEM_TYPE);
-                            } catch (SQLException e) {
-                                SneakyThrow.sneaky(e);
-                            }
+                    connection,
+                    "legacy_items",
+                    (id, name) -> {
+                        try {
+                            operators.itemTable().addInsertBatch(statement, id, name, ItemTable.DEFAULT_ITEM_TYPE);
+                        } catch (SQLException e) {
+                            SneakyThrow.sneaky(e);
                         }
+                    }
                 );
                 statement.executeBatch();
             }
@@ -40,16 +40,16 @@ public final class V6Patch {
 
             try (var statement = operators.itemTable().insertStatement(connection)) {
                 operators.patcher().getCustomItemsFromLegacyItemTable(
-                        connection,
-                        "legacy_items",
-                        data -> {
-                            try {
-                                operators.itemTable().addInsertBatch(statement, data.internalId(), data.plainName(), ItemTable.CUSTOM_ITEM_TYPE);
-                                operators.customItemTable().insert(connection, data.internalId(), data.itemData());
-                            } catch (SQLException e) {
-                                SneakyThrow.sneaky(e);
-                            }
+                    connection,
+                    "legacy_items",
+                    data -> {
+                        try {
+                            operators.itemTable().addInsertBatch(statement, data.internalId(), data.plainName(), ItemTable.CUSTOM_ITEM_TYPE);
+                            operators.customItemTable().insert(connection, data.internalId(), data.itemData());
+                        } catch (SQLException e) {
+                            SneakyThrow.sneaky(e);
                         }
+                    }
                 );
                 statement.executeBatch();
             }

@@ -93,9 +93,9 @@ public class WithdrawCommand extends AbstractCommand {
 
         BoxAPI.api().getScheduler().runEntityTask(player, () -> {
             int withdrawnAmount =
-                    StockHolderTransaction.create(stockHolder)
-                            .withdraw(boxItem, amount)
-                            .toInventory(player.getInventory(), CommandCauses.WITHDRAW).amount();
+                StockHolderTransaction.create(stockHolder)
+                    .withdraw(boxItem, amount)
+                    .toInventory(player.getInventory(), CommandCauses.WITHDRAW).amount();
 
             if (withdrawnAmount == 0) {
                 this.inventoryFull.source(msgSrc).send(sender);
@@ -120,9 +120,9 @@ public class WithdrawCommand extends AbstractCommand {
         var stockHolder = BoxAPI.api().getBoxPlayerMap().get(player).getCurrentStockHolder();
 
         return stockHolder.getStockedItems().stream()
-                .map(BoxItem::getPlainName)
-                .filter(itemName -> itemName.toLowerCase(Locale.ENGLISH).startsWith(itemNameFilter))
-                .toList();
+            .map(BoxItem::getPlainName)
+            .filter(itemName -> itemName.toLowerCase(Locale.ENGLISH).startsWith(itemNameFilter))
+            .toList();
     }
 
     @Override

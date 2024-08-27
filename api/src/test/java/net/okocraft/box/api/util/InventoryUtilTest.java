@@ -20,8 +20,8 @@ class InventoryUtilTest {
         var inventory = testCase.inventory().createTestInventory();
 
         Assertions.assertEquals(
-                testCase.expectedReturnValue(),
-                InventoryUtil.putItems(inventory, testCase.item().toItemStack(1), testCase.amount())
+            testCase.expectedReturnValue(),
+            InventoryUtil.putItems(inventory, testCase.item().toItemStack(1), testCase.amount())
         );
 
         testCase.inventory().checkContents(inventory);

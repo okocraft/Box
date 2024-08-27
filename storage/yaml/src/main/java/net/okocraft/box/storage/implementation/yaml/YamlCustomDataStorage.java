@@ -63,14 +63,14 @@ public class YamlCustomDataStorage implements CustomDataStorage {
 
         try (var listStream = Files.list(this.customDataDirectory)) {
             listStream.filter(Files::isDirectory)
-                    .filter(path -> path.getFileName().toString().equals(namespace))
-                    .forEach(dir -> {
-                        try {
-                            Files.walkFileTree(dir, new YamlFileVisitor(dir, consumer));
-                        } catch (IOException e) {
-                            throw new UncheckedIOException(e);
-                        }
-                    });
+                .filter(path -> path.getFileName().toString().equals(namespace))
+                .forEach(dir -> {
+                    try {
+                        Files.walkFileTree(dir, new YamlFileVisitor(dir, consumer));
+                    } catch (IOException e) {
+                        throw new UncheckedIOException(e);
+                    }
+                });
         } catch (UncheckedIOException e) {
             throw e.getCause();
         }
@@ -80,13 +80,13 @@ public class YamlCustomDataStorage implements CustomDataStorage {
     public void visitAllData(@NotNull BiConsumer<Key, MapNode> consumer) throws Exception {
         try (var listStream = Files.list(this.customDataDirectory)) {
             listStream.filter(Files::isDirectory)
-                    .forEach(dir -> {
-                        try {
-                            Files.walkFileTree(dir, new YamlFileVisitor(dir, consumer));
-                        } catch (IOException e) {
-                            throw new UncheckedIOException(e);
-                        }
-                    });
+                .forEach(dir -> {
+                    try {
+                        Files.walkFileTree(dir, new YamlFileVisitor(dir, consumer));
+                    } catch (IOException e) {
+                        throw new UncheckedIOException(e);
+                    }
+                });
         } catch (UncheckedIOException e) {
             throw e.getCause();
         }

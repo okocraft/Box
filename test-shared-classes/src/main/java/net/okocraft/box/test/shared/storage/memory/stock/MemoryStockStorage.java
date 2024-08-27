@@ -24,10 +24,10 @@ public class MemoryStockStorage implements StockStorage {
     @Override
     public void saveStockData(@NotNull UUID uuid, @NotNull Collection<StockData> stockData) {
         this.stockDataMap.put(
-                uuid,
-                stockData.stream()
-                        .map(data -> new StockData(data.itemId(), data.amount()))
-                        .toList()
+            uuid,
+            stockData.stream()
+                .map(data -> new StockData(data.itemId(), data.amount()))
+                .toList()
         );
     }
 
@@ -35,9 +35,9 @@ public class MemoryStockStorage implements StockStorage {
     public void remapItemIds(@NotNull Int2IntMap remappedIdMap) {
         for (var entry : this.stockDataMap.entrySet()) {
             entry.setValue(
-                    entry.getValue().stream()
-                            .map(data -> new StockData(remappedIdMap.getOrDefault(data.itemId(), data.itemId()), data.amount()))
-                            .toList()
+                entry.getValue().stream()
+                    .map(data -> new StockData(remappedIdMap.getOrDefault(data.itemId(), data.itemId()), data.amount()))
+                    .toList()
             );
         }
     }

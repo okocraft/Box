@@ -6,4 +6,4 @@ extensions.add(
     )
 )
 
-data class BoxBuildProperties(val isPublishing : Boolean, val isReleaseVersion : Boolean)
+data class BoxBuildProperties(val isPublishing: Boolean, val isReleaseVersion: Boolean)

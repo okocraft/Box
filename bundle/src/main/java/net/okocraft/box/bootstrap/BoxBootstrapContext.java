@@ -33,8 +33,8 @@ public final class BoxBootstrapContext implements net.okocraft.box.api.bootstrap
     @SuppressWarnings("UnstableApiUsage")
     public static @NotNull BoxBootstrapContext create(@NotNull BootstrapContext context) {
         return new BoxBootstrapContext(
-                context.getDataDirectory(),
-                context.getConfiguration().getVersion()
+            context.getDataDirectory(),
+            context.getConfiguration().getVersion()
         );
     }
 
@@ -113,12 +113,12 @@ public final class BoxBootstrapContext implements net.okocraft.box.api.bootstrap
 
     public @NotNull BoxMessageProvider createMessageProvider() {
         return new BoxMessageProvider(
-                this.defaultMessageCollector,
-                DirectorySource.propertiesFiles(this.dataDirectory.resolve("languages")).defaultLocale(this.localizationLoaderMap.keySet()),
-                locale -> {
-                    var loader = this.localizationLoaderMap.get(locale);
-                    return loader != null ? loader.load(locale) : null;
-                }
+            this.defaultMessageCollector,
+            DirectorySource.propertiesFiles(this.dataDirectory.resolve("languages")).defaultLocale(this.localizationLoaderMap.keySet()),
+            locale -> {
+                var loader = this.localizationLoaderMap.get(locale);
+                return loader != null ? loader.load(locale) : null;
+            }
         );
     }
 }

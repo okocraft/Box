@@ -56,13 +56,13 @@ public final class StorageMode extends AbstractStorageMode {
         int transactionAmount = amountData != null ? amountData.getValue() : 1;
 
         return ItemEditor.create()
-                .copyLoreFrom(item.getOriginal())
-                .loreEmptyLine()
-                .loreLine(this.leftClickToDeposit.apply(transactionAmount).create(session.getMessageSource()))
-                .loreLine(this.rightClickToWithdraw.apply(transactionAmount).create(session.getMessageSource()))
-                .loreEmptyLine()
-                .loreLine(this.currentStock.apply(currentStock).create(session.getMessageSource()))
-                .applyTo(item.getClonedItem());
+            .copyLoreFrom(item.getOriginal())
+            .loreEmptyLine()
+            .loreLine(this.leftClickToDeposit.apply(transactionAmount).create(session.getMessageSource()))
+            .loreLine(this.rightClickToWithdraw.apply(transactionAmount).create(session.getMessageSource()))
+            .loreEmptyLine()
+            .loreLine(this.currentStock.apply(currentStock).create(session.getMessageSource()))
+            .applyTo(item.getClonedItem());
     }
 
     @Override
@@ -102,9 +102,9 @@ public final class StorageMode extends AbstractStorageMode {
 
         private DepositAllButton(int slot, @NotNull MiniMessageBase displayName, @NotNull MiniMessageBase lore) {
             super(
-                    slot,
-                    (session, clickType) -> clickType.isShiftClick(),
-                    ClickResult.NO_UPDATE_NEEDED
+                slot,
+                (session, clickType) -> clickType.isShiftClick(),
+                ClickResult.NO_UPDATE_NEEDED
             );
             this.displayName = displayName;
             this.lore = lore;
@@ -113,9 +113,9 @@ public final class StorageMode extends AbstractStorageMode {
         @Override
         public @NotNull ItemStack createIcon(@NotNull PlayerSession session) {
             return ItemEditor.create()
-                    .displayName(this.displayName.create(session.getMessageSource()))
-                    .loreLines(this.lore.create(session.getMessageSource()))
-                    .createItem(Material.NETHER_STAR);
+                .displayName(this.displayName.create(session.getMessageSource()))
+                .loreLines(this.lore.create(session.getMessageSource()))
+                .createItem(Material.NETHER_STAR);
         }
     }
 }

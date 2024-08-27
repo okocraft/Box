@@ -172,28 +172,28 @@ public class StickListener implements Listener {
 
         if (CONTAINERS.contains(inventory.getType())) {
             operation = new ContainerOperation<>(
-                    ContainerOperation.createContext(boxPlayer, operationType, inventory, clickedBlockLocation),
-                    ContainerOperator::process,
-                    "container"
+                ContainerOperation.createContext(boxPlayer, operationType, inventory, clickedBlockLocation),
+                ContainerOperator::process,
+                "container"
             );
         } else if (inventory instanceof FurnaceInventory furnaceInventory) { // BlastFurnace, Furnace, and Smoker
             operation = new ContainerOperation<>(
-                    ContainerOperation.createContext(boxPlayer, operationType, furnaceInventory, clickedBlockLocation),
-                    FurnaceOperator::process,
-                    "furnace"
+                ContainerOperation.createContext(boxPlayer, operationType, furnaceInventory, clickedBlockLocation),
+                FurnaceOperator::process,
+                "furnace"
             );
         } else if (inventory instanceof BrewerInventory brewerInventory) { // BrewingStand
             operation = new ContainerOperation<>(
-                    ContainerOperation.createContext(boxPlayer, operationType, brewerInventory, clickedBlockLocation),
-                    BrewerOperator::process,
-                    "brewer"
+                ContainerOperation.createContext(boxPlayer, operationType, brewerInventory, clickedBlockLocation),
+                BrewerOperator::process,
+                "brewer"
             );
         } else {
             return;
         }
 
         if (!player.hasPermission("box.stick." + operation.permissionSuffix()) ||
-                !ChestAccessChecker.canAccess(player, container, operationType)) {
+            !ChestAccessChecker.canAccess(player, container, operationType)) {
             return;
         }
 
@@ -235,7 +235,7 @@ public class StickListener implements Listener {
         var mainHandItem = player.getInventory().getItemInMainHand();
 
         if (!this.isIllegalStack(mainHandItem) && event.getItemInHand().equals(mainHandItem) &&
-                this.tryConsumingStock(boxPlayer, mainHandItem, new StickCauses.BlockPlace(boxPlayer, block.getLocation().clone()))) {
+            this.tryConsumingStock(boxPlayer, mainHandItem, new StickCauses.BlockPlace(boxPlayer, block.getLocation().clone()))) {
             player.getInventory().setItemInMainHand(mainHandItem.clone());
         }
     }
@@ -272,8 +272,8 @@ public class StickListener implements Listener {
         }
 
         BoxAPI.api().getItemManager()
-                .getBoxItem(ItemNameGenerator.key(defaultReplacementMaterial))
-                .ifPresent(defaultReplacementItem -> boxPlayer.getCurrentStockHolder().increase(defaultReplacementItem, 1, cause));
+            .getBoxItem(ItemNameGenerator.key(defaultReplacementMaterial))
+            .ifPresent(defaultReplacementItem -> boxPlayer.getCurrentStockHolder().increase(defaultReplacementItem, 1, cause));
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
@@ -303,16 +303,16 @@ public class StickListener implements Listener {
 
         var entityType = event.getEntity().getType();
         var permissionNodeSuffix =
-                switch (entityType) {
-                    case EGG -> "egg";
-                    case ENDER_PEARL -> "enderpearl";
-                    case FIREWORK_ROCKET -> "firework";
-                    case SNOWBALL -> "snowball";
-                    case POTION -> "potion";
-                    case EXPERIENCE_BOTTLE -> "expbottle";
-                    case WIND_CHARGE -> "wind_charge";
-                    default -> null;
-                };
+            switch (entityType) {
+                case EGG -> "egg";
+                case ENDER_PEARL -> "enderpearl";
+                case FIREWORK_ROCKET -> "firework";
+                case SNOWBALL -> "snowball";
+                case POTION -> "potion";
+                case EXPERIENCE_BOTTLE -> "expbottle";
+                case WIND_CHARGE -> "wind_charge";
+                default -> null;
+            };
 
         var boxPlayer = permissionNodeSuffix != null ? this.checkPlayerAndGetBoxPlayer(player, "box.stick." + permissionNodeSuffix) : null;
 
@@ -331,9 +331,9 @@ public class StickListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onShoot(@NotNull EntityShootBowEvent event) {
         if (event.getHand() != EquipmentSlot.HAND ||
-                !(event.getEntity() instanceof Player player) || !(event.getProjectile() instanceof Arrow) ||
-                event.getBow() == null || event.getBow().getType() != Material.BOW || event.getBow().containsEnchantment(Enchantment.INFINITY) ||
-                !event.shouldConsumeItem()) {
+            !(event.getEntity() instanceof Player player) || !(event.getProjectile() instanceof Arrow) ||
+            event.getBow() == null || event.getBow().getType() != Material.BOW || event.getBow().containsEnchantment(Enchantment.INFINITY) ||
+            !event.shouldConsumeItem()) {
             return;
         }
 
@@ -362,7 +362,7 @@ public class StickListener implements Listener {
 
     private @Nullable BoxPlayer checkPlayerAndGetBoxPlayer(@NotNull Player player, @NotNull String permissionNode) {
         if (this.isSurvivalOrAdventure(player) && this.canUseBox(player) &&
-                player.hasPermission(permissionNode) && this.hasBoxStickInOffHand(player)) {
+            player.hasPermission(permissionNode) && this.hasBoxStickInOffHand(player)) {
             return this.getBoxPlayerOrNull(player);
         } else {
             return null;

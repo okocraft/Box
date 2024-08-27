@@ -45,7 +45,7 @@ public class YamlStorage implements Storage {
     @Override
     public @NotNull List<Property> getInfo() {
         return List.of(
-                Property.of("directory-name", this.rootDirectory.getFileName().toString())
+            Property.of("directory-name", this.rootDirectory.getFileName().toString())
         );
     }
 

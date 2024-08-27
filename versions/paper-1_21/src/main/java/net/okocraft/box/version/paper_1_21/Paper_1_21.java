@@ -21,13 +21,13 @@ public final class Paper_1_21 {
     @VersionSpecific.DefaultItemSource
     public static @NotNull Stream<DefaultItem> defaultItems() {
         return new ItemSources.Merger()
-                .append(ItemSources.itemTypes(registry(RegistryKey.ITEM)))
-                .append(ItemSources.potions(registry(RegistryKey.POTION)))
-                .append(ItemSources.enchantedBooks(registry(RegistryKey.ENCHANTMENT)))
-                .append(ItemSources.fireworks())
-                .append(ItemSources.goatHorns(registry(RegistryKey.INSTRUMENT)))
-                .append(ItemSources.ominousBottles())
-                .result();
+            .append(ItemSources.itemTypes(registry(RegistryKey.ITEM)))
+            .append(ItemSources.potions(registry(RegistryKey.POTION)))
+            .append(ItemSources.enchantedBooks(registry(RegistryKey.ENCHANTMENT)))
+            .append(ItemSources.fireworks())
+            .append(ItemSources.goatHorns(registry(RegistryKey.INSTRUMENT)))
+            .append(ItemSources.ominousBottles())
+            .result();
     }
 
     private static <T extends Keyed> @NotNull Registry<T> registry(@NotNull RegistryKey<T> key) {

@@ -105,8 +105,8 @@ public abstract class AbstractPaginatedMenu<T> implements PaginatedMenu {
         @Override
         public @NotNull ItemStack createIcon(@NotNull PlayerSession session) {
             return ItemEditor.create()
-                    .displayName((this.next ? NEXT_PAGE : PREVIOUS_PAGE).create(session.getMessageSource()))
-                    .createItem(Material.ARROW, Math.min(this.newPage, 64));
+                .displayName((this.next ? NEXT_PAGE : PREVIOUS_PAGE).create(session.getMessageSource()))
+                .createItem(Material.ARROW, Math.min(this.newPage, 64));
         }
 
         @Override

@@ -90,16 +90,16 @@ public abstract class BaseCommand implements Command, SubCommandHoldable, Listen
 
         if (args.length == 1) {
             return this.subCommandHolder.getSubCommands().stream()
-                    .filter(cmd -> sender.hasPermission(cmd.getPermissionNode()))
-                    .map(Command::getName)
-                    .filter(cmdName -> cmdName.startsWith(args[0].toLowerCase(Locale.ROOT)))
-                    .toList();
+                .filter(cmd -> sender.hasPermission(cmd.getPermissionNode()))
+                .map(Command::getName)
+                .filter(cmdName -> cmdName.startsWith(args[0].toLowerCase(Locale.ROOT)))
+                .toList();
         }
 
         return this.subCommandHolder.search(args[0])
-                .filter(cmd -> sender.hasPermission(cmd.getPermissionNode()))
-                .map(cmd -> cmd.onTabComplete(sender, args))
-                .orElse(Collections.emptyList());
+            .filter(cmd -> sender.hasPermission(cmd.getPermissionNode()))
+            .map(cmd -> cmd.onTabComplete(sender, args))
+            .orElse(Collections.emptyList());
     }
 
     @Override
@@ -152,8 +152,8 @@ public abstract class BaseCommand implements Command, SubCommandHoldable, Listen
     private void sendHelp(@NotNull CommandSender sender, @NotNull MiniMessageSource msgSrc) {
         CoreMessages.COMMAND_HELP_HEADER.apply("/" + this.getName()).source(msgSrc).send(sender);
         this.subCommandHolder.getSubCommands()
-                .stream()
-                .map(command -> command.getHelp(msgSrc))
-                .forEach(sender::sendMessage);
+            .stream()
+            .map(command -> command.getHelp(msgSrc))
+            .forEach(sender::sendMessage);
     }
 }

@@ -45,12 +45,12 @@ public class IncreaseAmountButton extends AmountModificationButton {
         var currentAmount = amount.getValue();
 
         return ItemEditor.create()
-                .displayName(this.displayName.create(session.getMessageSource()))
-                .loreEmptyLine()
-                .loreLine(this.getClickToLore(unit, currentAmount).apply(unit).create(session.getMessageSource()))
-                .loreEmptyLine()
-                .loreLine(this.currentAmountLore.apply(currentAmount).create(session.getMessageSource()))
-                .createItem(Material.BLUE_STAINED_GLASS_PANE);
+            .displayName(this.displayName.create(session.getMessageSource()))
+            .loreEmptyLine()
+            .loreLine(this.getClickToLore(unit, currentAmount).apply(unit).create(session.getMessageSource()))
+            .loreEmptyLine()
+            .loreLine(this.currentAmountLore.apply(currentAmount).create(session.getMessageSource()))
+            .createItem(Material.BLUE_STAINED_GLASS_PANE);
     }
 
     private @NotNull Arg1<Integer> getClickToLore(int unit, int amount) {

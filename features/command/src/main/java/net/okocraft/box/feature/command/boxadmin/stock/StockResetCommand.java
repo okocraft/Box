@@ -60,8 +60,8 @@ class StockResetCommand extends AbstractCommand {
             var targetPlayer = Bukkit.getPlayer(target.getUUID());
             if (targetPlayer != null && sender != targetPlayer) {
                 this.successTarget.apply(sender.getName(), item.get())
-                        .source(BoxAPI.api().getMessageProvider().findSource(targetPlayer))
-                        .send(targetPlayer);
+                    .source(BoxAPI.api().getMessageProvider().findSource(targetPlayer))
+                    .send(targetPlayer);
             }
         } else {
             ErrorMessages.PLAYER_NOT_FOUND.apply(args[2]).source(msgSrc).send(sender);

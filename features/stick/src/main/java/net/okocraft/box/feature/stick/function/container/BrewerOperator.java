@@ -103,17 +103,17 @@ public final class BrewerOperator {
 
     private static boolean putBlazePowder(@NotNull ContainerOperation.Context<BrewerInventory> context) {
         return ItemPutter.putItem(
-                context.player(),
-                context.inventory().getFuel(),
-                item -> item.getType() == Material.BLAZE_POWDER,
-                context.inventory()::setFuel,
-                () -> new StickCauses.Brewer(context.player(), context.blockLocation(), StickCauses.Brewer.Type.PUT_BLAZE_POWDER)
+            context.player(),
+            context.inventory().getFuel(),
+            item -> item.getType() == Material.BLAZE_POWDER,
+            context.inventory()::setFuel,
+            () -> new StickCauses.Brewer(context.player(), context.blockLocation(), StickCauses.Brewer.Type.PUT_BLAZE_POWDER)
         );
     }
 
     private static boolean isPotion(@NotNull Material material) {
         // see BrewingStandMenu.PotionSlot#mayPlaceItem
         return material == Material.POTION || material == Material.SPLASH_POTION ||
-                material == Material.LINGERING_POTION || material == Material.GLASS_BOTTLE;
+            material == Material.LINGERING_POTION || material == Material.GLASS_BOTTLE;
     }
 }

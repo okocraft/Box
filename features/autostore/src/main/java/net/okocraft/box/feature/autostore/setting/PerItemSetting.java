@@ -119,7 +119,7 @@ public class PerItemSetting {
     @Override
     public String toString() {
         return "PerItemModeSetting{" +
-                "enabledItems=" + this.enabledItemIds +
-                '}';
+            "enabledItems=" + this.enabledItemIds +
+            '}';
     }
 }

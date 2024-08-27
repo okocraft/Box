@@ -46,11 +46,11 @@ public class CraftMode implements BoxItemClickMode {
     @Override
     public @NotNull ItemStack createItemIcon(@NotNull PlayerSession session, @NotNull BoxItem item) {
         return ItemEditor.create()
-                .copyLoreFrom(item.getOriginal())
-                .loreEmptyLine()
-                .loreLine((RecipeRegistry.hasRecipe(item) ? this.clickToShowRecipes : this.noRecipe).create(session.getMessageSource()))
-                .loreEmptyLine()
-                .applyTo(item.getClonedItem());
+            .copyLoreFrom(item.getOriginal())
+            .loreEmptyLine()
+            .loreLine((RecipeRegistry.hasRecipe(item) ? this.clickToShowRecipes : this.noRecipe).create(session.getMessageSource()))
+            .loreEmptyLine()
+            .applyTo(item.getClonedItem());
     }
 
     @Override

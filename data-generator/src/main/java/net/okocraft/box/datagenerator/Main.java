@@ -37,13 +37,13 @@ public class Main extends JavaPlugin {
         if (Files.isDirectory(dir)) {
             try (var walk = Files.walk(dir)) {
                 walk.sorted(Comparator.reverseOrder())
-                        .forEach(filepath -> {
-                            try {
-                                Files.deleteIfExists(filepath);
-                            } catch (IOException e) {
-                                throw new RuntimeException(e);
-                            }
-                        });
+                    .forEach(filepath -> {
+                        try {
+                            Files.deleteIfExists(filepath);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    });
             } catch (IOException | RuntimeException e) {
                 this.getSLF4JLogger().error("Failed to delete old output dir", e);
                 return;
@@ -51,10 +51,10 @@ public class Main extends JavaPlugin {
         }
 
         var generator = Versioned.implementations(this.getClassLoader())
-                .stream()
-                .filter(impl -> impl.version().isSame(MCDataVersion.current()))
-                .map(DataGenerator::new)
-                .findFirst().orElse(null);
+            .stream()
+            .filter(impl -> impl.version().isSame(MCDataVersion.current()))
+            .map(DataGenerator::new)
+            .findFirst().orElse(null);
 
         if (generator == null) {
             this.getSLF4JLogger().error("No version impl found.");

@@ -32,8 +32,8 @@ public final class IngredientRenderer {
 
         for (var ingredient : recipe.ingredients()) {
             ingredientMap.put(
-                    ingredient.item(),
-                    ingredientMap.getOrDefault(ingredient.item(), 0) + ingredient.amount()
+                ingredient.item(),
+                ingredientMap.getOrDefault(ingredient.item(), 0) + ingredient.amount()
             );
         }
 
@@ -45,13 +45,13 @@ public final class IngredientRenderer {
             var style = need <= current ? Styles.NO_DECORATION_AQUA : Styles.NO_DECORATION_RED;
 
             editor.loreLine(
-                    space().toBuilder()
-                            .append(translatable(item.getOriginal(), style))
-                            .append(text(": ", Styles.NO_DECORATION_GRAY))
-                            .append(text(need, style))
-                            .append(text("/", Styles.NO_DECORATION_GRAY))
-                            .append(text(current, style))
-                            .build()
+                space().toBuilder()
+                    .append(translatable(item.getOriginal(), style))
+                    .append(text(": ", Styles.NO_DECORATION_GRAY))
+                    .append(text(need, style))
+                    .append(text("/", Styles.NO_DECORATION_GRAY))
+                    .append(text(current, style))
+                    .build()
             );
         }
     }
@@ -60,10 +60,10 @@ public final class IngredientRenderer {
                               @NotNull BoxItemRecipe recipe, int times, boolean simple) {
         if (simple) {
             var ingredients =
-                    recipe.ingredients()
-                            .stream()
-                            .map(holder -> holder.patterns().getFirst())
-                            .toList();
+                recipe.ingredients()
+                    .stream()
+                    .map(holder -> holder.patterns().getFirst())
+                    .toList();
 
             render(editor, session, new SelectedRecipe(ingredients, recipe.result(), recipe.amount()), times);
             return;
@@ -88,12 +88,12 @@ public final class IngredientRenderer {
             int need = ingredient.getValue() * times;
 
             var itemNames =
-                    holder.patterns().stream()
-                            .map(BoxIngredientItem::item)
-                            .map(BoxItem::getOriginal)
-                            .map(Component::translatable)
-                            .map(component -> component.style(loreStyle))
-                            .toList();
+                holder.patterns().stream()
+                    .map(BoxIngredientItem::item)
+                    .map(BoxItem::getOriginal)
+                    .map(Component::translatable)
+                    .map(component -> component.style(loreStyle))
+                    .toList();
 
             int itemNameCounter = 0;
             int itemNameLast = itemNames.size();
@@ -106,9 +106,9 @@ public final class IngredientRenderer {
                     line = line.append(text(", ", loreStyle));
                 } else {
                     line = line.append(
-                            text().append(space())
-                                    .append(text("x", loreStyle))
-                                    .append(text(need, Styles.NO_DECORATION_AQUA))
+                        text().append(space())
+                            .append(text("x", loreStyle))
+                            .append(text(need, Styles.NO_DECORATION_AQUA))
                     );
                 }
 

@@ -22,11 +22,11 @@ public abstract class UserTableOperator {
         var tableName = tablePrefix + "users";
 
         this.createTableStatement = """
-                CREATE TABLE IF NOT EXISTS `%s` (
-                  `uuid` VARCHAR(36) PRIMARY KEY NOT NULL,
-                  `username` VARCHAR(16) NOT NULL
-                )
-                """.formatted(tableName);
+            CREATE TABLE IF NOT EXISTS `%s` (
+              `uuid` VARCHAR(36) PRIMARY KEY NOT NULL,
+              `username` VARCHAR(16) NOT NULL
+            )
+            """.formatted(tableName);
         this.createIndexStatement = "CREATE INDEX IF NOT EXISTS `%1$s_username` ON `%1$s` (`username`)".formatted(tableName);
 
         this.selectNameByUUIDStatement = "SELECT `username` FROM `%s` WHERE `uuid`=?".formatted(tableName);

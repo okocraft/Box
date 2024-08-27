@@ -27,7 +27,8 @@ public final class FeatureContext {
      * @param listenerSubscriber      a {@link ListenerSubscriber}
      */
     public record Registration(@NotNull Path dataDirectory, @NotNull DefaultMessageCollector defaultMessageCollector,
-                               @NotNull EventCaller<BoxEvent> eventCaller, @NotNull ListenerSubscriber<Key, BoxEvent, Priority> listenerSubscriber) {
+                               @NotNull EventCaller<BoxEvent> eventCaller,
+                               @NotNull ListenerSubscriber<Key, BoxEvent, Priority> listenerSubscriber) {
     }
 
     /**

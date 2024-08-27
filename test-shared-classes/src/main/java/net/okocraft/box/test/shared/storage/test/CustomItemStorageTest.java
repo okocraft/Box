@@ -1,7 +1,7 @@
 package net.okocraft.box.test.shared.storage.test;
 
-import net.okocraft.box.storage.api.model.item.ItemData;
 import net.okocraft.box.storage.api.model.item.CustomItemStorage;
+import net.okocraft.box.storage.api.model.item.ItemData;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -15,7 +15,7 @@ public abstract class CustomItemStorageTest<S> extends AbstractStorageTest<S> {
     private static final byte[] UPDATED_DATA = {(byte) 1, (byte) 2, (byte) 3};
 
     @Test
-    void testEmpty() throws Exception{
+    void testEmpty() throws Exception {
         var storage = this.newStorage();
         var customItemStorage = this.newCustomItemStorage(storage);
 
@@ -73,7 +73,7 @@ public abstract class CustomItemStorageTest<S> extends AbstractStorageTest<S> {
     }
 
     @Test
-    void testRename()throws Exception {
+    void testRename() throws Exception {
         var storage = this.newStorage();
         var customItemStorage = this.newCustomItemStorage(storage);
 

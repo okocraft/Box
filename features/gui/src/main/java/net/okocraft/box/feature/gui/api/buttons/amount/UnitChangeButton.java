@@ -41,16 +41,16 @@ public class UnitChangeButton extends AmountModificationButton {
 
         for (var unit : Amount.Unit.values()) {
             editor.loreLine(
-                    Component.text()
-                            .content(" > " + unit.getAmount())
-                            .style(currentUnit == unit ? Styles.NO_DECORATION_AQUA : Styles.NO_DECORATION_GRAY)
-                            .build()
+                Component.text()
+                    .content(" > " + unit.getAmount())
+                    .style(currentUnit == unit ? Styles.NO_DECORATION_AQUA : Styles.NO_DECORATION_GRAY)
+                    .build()
             );
         }
 
         return editor.loreEmptyLine()
-                .loreLine(this.clickToResetAmount.create(session.getMessageSource()))
-                .createItem(Material.WHITE_STAINED_GLASS_PANE);
+            .loreLine(this.clickToResetAmount.create(session.getMessageSource()))
+            .createItem(Material.WHITE_STAINED_GLASS_PANE);
     }
 
     @Override

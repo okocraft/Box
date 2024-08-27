@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * An utility interface to represent a version and compare two versions.
+ *
  * @param <V> a type that implements {@link Version}
  */
 public interface Version<V extends Version<V>> extends Comparable<V> {

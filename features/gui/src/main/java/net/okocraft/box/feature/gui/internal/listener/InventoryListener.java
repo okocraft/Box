@@ -118,7 +118,7 @@ public class InventoryListener implements Listener {
 
     private @NotNull Optional<Category> findCategory(@NotNull BoxItem item) {
         return CategoryRegistry.get().values().stream()
-                .filter(category -> category.containsItem(item))
-                .findFirst();
+            .filter(category -> category.containsItem(item))
+            .findFirst();
     }
 }

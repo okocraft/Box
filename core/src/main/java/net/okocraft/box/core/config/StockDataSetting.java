@@ -6,12 +6,12 @@ import net.okocraft.box.api.util.BoxLogger;
 import org.jetbrains.annotations.NotNull;
 
 public record StockDataSetting(
-        @Comment("Number of seconds to unload the player's stock data after logging out.")
-        @DefaultLong(300)
-        long unloadTime,
-        @Comment("Interval in seconds to save player stock data.")
-        @DefaultLong(15)
-        long saveInterval
+    @Comment("Number of seconds to unload the player's stock data after logging out.")
+    @DefaultLong(300)
+    long unloadTime,
+    @Comment("Interval in seconds to save player stock data.")
+    @DefaultLong(15)
+    long saveInterval
 ) {
 
     @Override

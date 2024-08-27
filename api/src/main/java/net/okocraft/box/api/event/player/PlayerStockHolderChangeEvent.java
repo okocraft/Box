@@ -37,22 +37,22 @@ public class PlayerStockHolderChangeEvent extends PlayerEvent {
     @Override
     public @NotNull String toDebugLog() {
         return "PlayerStockHolderChangeEvent{" +
-                "uuid=" + this.getBoxPlayer().getUUID() +
-                ", name=" + this.getBoxPlayer().getName() +
-                ", previousStockholderUuid=" + this.previous.getUUID() +
-                ", previousStockHolderName=" + this.previous.getName() +
-                ", previousStockHolderClass=" + this.previous.getClass().getSimpleName() +
-                ", currentStockholderUuid=" + this.getBoxPlayer().getCurrentStockHolder().getUUID() +
-                ", currentStockHolderName=" + this.getBoxPlayer().getCurrentStockHolder().getName() +
-                ", currentStockHolderClass=" + this.getBoxPlayer().getCurrentStockHolder().getClass().getSimpleName() +
-                '}';
+            "uuid=" + this.getBoxPlayer().getUUID() +
+            ", name=" + this.getBoxPlayer().getName() +
+            ", previousStockholderUuid=" + this.previous.getUUID() +
+            ", previousStockHolderName=" + this.previous.getName() +
+            ", previousStockHolderClass=" + this.previous.getClass().getSimpleName() +
+            ", currentStockholderUuid=" + this.getBoxPlayer().getCurrentStockHolder().getUUID() +
+            ", currentStockHolderName=" + this.getBoxPlayer().getCurrentStockHolder().getName() +
+            ", currentStockHolderClass=" + this.getBoxPlayer().getCurrentStockHolder().getClass().getSimpleName() +
+            '}';
     }
 
     @Override
     public String toString() {
         return "PlayerStockHolderChangeEvent{" +
-                "boxPlayer=" + this.getBoxPlayer() +
-                ", previous=" + this.previous +
-                '}';
+            "boxPlayer=" + this.getBoxPlayer() +
+            ", previous=" + this.previous +
+            '}';
     }
 }

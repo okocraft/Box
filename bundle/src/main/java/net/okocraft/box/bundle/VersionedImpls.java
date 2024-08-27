@@ -32,9 +32,9 @@ public final class VersionedImpls {
 
     public @NotNull MCDataVersion leastVersion() {
         return this.impls.stream()
-                .min(Comparator.comparing(Versioned::version))
-                .map(Versioned::version)
-                .orElseThrow();
+            .min(Comparator.comparing(Versioned::version))
+            .map(Versioned::version)
+            .orElseThrow();
     }
 
     public @NotNull DefaultItemProvider createDefaultItemProvider(@NotNull MCDataVersion current) {
@@ -45,18 +45,18 @@ public final class VersionedImpls {
 
     private @NotNull Versioned findLatest(@NotNull MCDataVersion current) {
         return this.impls.stream()
-                .filter(impl -> impl.version().isBeforeOrSame(current))
-                .max(Comparator.comparing(Versioned::version))
-                .orElseThrow();
+            .filter(impl -> impl.version().isBeforeOrSame(current))
+            .max(Comparator.comparing(Versioned::version))
+            .orElseThrow();
     }
 
     private Map<String, String> getRenamedItems(@NotNull MCDataVersion startingVersion, @NotNull MCDataVersion currentVersion) {
         return this.impls.stream()
-                .filter(impl -> startingVersion.isBefore(impl.version()) && currentVersion.isAfterOrSame(impl.version()))
-                .sorted(Comparator.comparing(Versioned::version))
-                .peek(impl -> this.debugVersion("ItemNamePatches", impl))
-                .flatMap(impl -> impl.loadRenamedItems().entrySet().stream())
-                .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue, (older, newer) -> newer));
+            .filter(impl -> startingVersion.isBefore(impl.version()) && currentVersion.isAfterOrSame(impl.version()))
+            .sorted(Comparator.comparing(Versioned::version))
+            .peek(impl -> this.debugVersion("ItemNamePatches", impl))
+            .flatMap(impl -> impl.loadRenamedItems().entrySet().stream())
+            .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue, (older, newer) -> newer));
     }
 
     private @NotNull UnaryOperator<String> createItemNameConvertor(@NotNull MCDataVersion startingVersion, @NotNull MCDataVersion currentVersion) {

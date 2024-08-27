@@ -87,13 +87,13 @@ public record SoundBase(@NotNull Sound sound) {
         @Contract(value = " -> new", pure = true)
         public @NotNull SoundBase build() {
             return new SoundBase(
-                    Sound.sound()
-                            .type(Objects.requireNonNull(this.sound, "sound not set"))
-                            .source(Objects.requireNonNullElse(this.source, Sound.Source.MASTER))
-                            .volume(this.volume)
-                            .pitch(this.pitch)
-                            .seed(this.seed)
-                            .build()
+                Sound.sound()
+                    .type(Objects.requireNonNull(this.sound, "sound not set"))
+                    .source(Objects.requireNonNullElse(this.source, Sound.Source.MASTER))
+                    .volume(this.volume)
+                    .pitch(this.pitch)
+                    .seed(this.seed)
+                    .build()
             );
         }
     }

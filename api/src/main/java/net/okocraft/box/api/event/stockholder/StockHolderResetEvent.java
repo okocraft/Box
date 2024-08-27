@@ -39,18 +39,18 @@ public class StockHolderResetEvent extends StockHolderEvent {
     @Override
     public @NotNull String toDebugLog() {
         return "StockHolderResetEvent{" +
-                "uuid=" + this.getStockHolder().getUUID() +
-                ", name=" + this.getStockHolder().getName() +
-                ", class=" + this.getStockHolder().getClass().getSimpleName() +
-                ", stockDataBeforeReset={" + this.stockDataBeforeReset.stream().map(data -> data.itemId() + "=" + data.amount()).collect(Collectors.joining(",")) + "}" +
-                "}";
+            "uuid=" + this.getStockHolder().getUUID() +
+            ", name=" + this.getStockHolder().getName() +
+            ", class=" + this.getStockHolder().getClass().getSimpleName() +
+            ", stockDataBeforeReset={" + this.stockDataBeforeReset.stream().map(data -> data.itemId() + "=" + data.amount()).collect(Collectors.joining(",")) + "}" +
+            "}";
     }
 
     @Override
     public String toString() {
         return "StockHolderResetEvent{" +
-                "stockholder=" + this.getStockHolder() +
-                ", stockDataBeforeReset=" + this.stockDataBeforeReset +
-                "}";
+            "stockholder=" + this.getStockHolder() +
+            ", stockDataBeforeReset=" + this.stockDataBeforeReset +
+            "}";
     }
 }

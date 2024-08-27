@@ -46,8 +46,8 @@ record DefaultItemLoader<I extends NamedItem<?>>(@NotNull Stream<I> defaultItemS
                 if (nameToIdMap.containsKey(entry.getKey())) {
                     int id = nameToIdMap.removeInt(entry.getKey());
                     remappedItems.put(
-                            id,
-                            new RemappedItem(id, entry.getKey(), nameToIdMap.getInt(entry.getValue()))
+                        id,
+                        new RemappedItem(id, entry.getKey(), nameToIdMap.getInt(entry.getValue()))
                     );
                 } else {
                     BoxLogger.logger().warn("Unknown renamed item found: {} (Not exists) -> {} (Exists)", entry.getKey(), entry.getValue());

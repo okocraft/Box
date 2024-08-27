@@ -18,9 +18,9 @@ record EmptyButton(Material material, int slot) implements Button {
     @Override
     public @NotNull ItemStack createIcon(@NotNull PlayerSession session) {
         return ItemEditor.create()
-                .displayName(Component.empty())
-                .clearLore()
-                .createItem(this.material);
+            .displayName(Component.empty())
+            .clearLore()
+            .createItem(this.material);
     }
 
     @Override

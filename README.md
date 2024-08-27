@@ -38,7 +38,6 @@ cd Box/
 
 You can find the bundled jar in the `bundle/build/libs` directory.
 
-
 ## API
 
 ### Javadocs

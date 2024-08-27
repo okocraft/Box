@@ -52,9 +52,9 @@ public class SQLiteDatabase extends AbstractSQLiteDatabase {
     @Override
     public @NotNull List<Storage.Property> getInfo() {
         return List.of(
-                Storage.Property.of("type", "sqlite"),
-                Storage.Property.of("table-prefix", this.tablePrefix),
-                Storage.Property.of("database-filename", this.databasePath.getFileName().toString())
+            Storage.Property.of("type", "sqlite"),
+            Storage.Property.of("table-prefix", this.tablePrefix),
+            Storage.Property.of("database-filename", this.databasePath.getFileName().toString())
         );
     }
 

@@ -24,42 +24,42 @@ class NotificationFactoryTest {
     @Test
     void testIncrements() {
         Assertions.assertEquals(
-                EXPECTED_INCREASED_NOTIFICATION,
-                new NotificationFactory(ITEM, 10).increments(5).createNotification(ITEM.getDisplayName())
+            EXPECTED_INCREASED_NOTIFICATION,
+            new NotificationFactory(ITEM, 10).increments(5).createNotification(ITEM.getDisplayName())
         );
     }
 
     @Test
     void testDecrements() {
         Assertions.assertEquals(
-                EXPECTED_DECREASED_NOTIFICATION,
-                new NotificationFactory(ITEM, 10).decrements(5).createNotification(ITEM.getDisplayName())
+            EXPECTED_DECREASED_NOTIFICATION,
+            new NotificationFactory(ITEM, 10).decrements(5).createNotification(ITEM.getDisplayName())
         );
     }
 
     @Test
     void testPrevious() {
         Assertions.assertEquals(
-                EXPECTED_INCREASED_NOTIFICATION,
-                new NotificationFactory(ITEM, 10).previous(5).createNotification(ITEM.getDisplayName())
+            EXPECTED_INCREASED_NOTIFICATION,
+            new NotificationFactory(ITEM, 10).previous(5).createNotification(ITEM.getDisplayName())
         );
 
         Assertions.assertEquals(
-                EXPECTED_DECREASED_NOTIFICATION,
-                new NotificationFactory(ITEM, 10).previous(15).createNotification(ITEM.getDisplayName())
+            EXPECTED_DECREASED_NOTIFICATION,
+            new NotificationFactory(ITEM, 10).previous(15).createNotification(ITEM.getDisplayName())
         );
     }
 
     @Test
     void testPlus1AndMinus1() {
         Assertions.assertEquals(
-                text().append(ITEM.getDisplayName(), COMMON_PARTS_1, text(1, WHITE), PLUS_1).build(),
-                new NotificationFactory(ITEM, 1).increments(1).createNotification(ITEM.getDisplayName())
+            text().append(ITEM.getDisplayName(), COMMON_PARTS_1, text(1, WHITE), PLUS_1).build(),
+            new NotificationFactory(ITEM, 1).increments(1).createNotification(ITEM.getDisplayName())
         );
 
         Assertions.assertEquals(
-                text().append(ITEM.getDisplayName(), COMMON_PARTS_1, text(0, WHITE), MINUS_1).build(),
-                new NotificationFactory(ITEM, 0).decrements(1).createNotification(ITEM.getDisplayName())
+            text().append(ITEM.getDisplayName(), COMMON_PARTS_1, text(0, WHITE), MINUS_1).build(),
+            new NotificationFactory(ITEM, 0).decrements(1).createNotification(ITEM.getDisplayName())
         );
     }
 }

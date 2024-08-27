@@ -35,14 +35,14 @@ public class CommandFeature extends AbstractBoxFeature {
         var sharedStockListCommand = new SharedStockListCommand(context.defaultMessageCollector());
 
         this.boxSubCommands = createCommands(context,
-                DepositCommand::new, WithdrawCommand::new, GiveCommand::new,
-                ItemInfoCommand::new, collector -> new StockListCommand(collector, sharedStockListCommand)
+            DepositCommand::new, WithdrawCommand::new, GiveCommand::new,
+            ItemInfoCommand::new, collector -> new StockListCommand(collector, sharedStockListCommand)
         );
 
         this.boxAdminSubCommands = createCommands(context,
-                collector -> new StockCommand(collector, sharedStockListCommand),
-                InfinityCommand::new, RegisterCommand::new, RenameCommand::new,
-                ReloadCommand::new, ResetAllCommand::new, VersionCommand::new
+            collector -> new StockCommand(collector, sharedStockListCommand),
+            InfinityCommand::new, RegisterCommand::new, RenameCommand::new,
+            ReloadCommand::new, ResetAllCommand::new, VersionCommand::new
         );
     }
 
@@ -61,7 +61,7 @@ public class CommandFeature extends AbstractBoxFeature {
     }
 
     @SafeVarargs
-    private static @NotNull List<Command> createCommands(@NotNull FeatureContext.Registration context, @NotNull Function<DefaultMessageCollector, Command> @NotNull... factories) {
+    private static @NotNull List<Command> createCommands(@NotNull FeatureContext.Registration context, @NotNull Function<DefaultMessageCollector, Command> @NotNull ... factories) {
         return Stream.of(factories).map(func -> func.apply(context.defaultMessageCollector())).toList();
     }
 }

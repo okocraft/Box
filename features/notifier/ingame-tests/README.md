@@ -39,5 +39,5 @@
 
 ## Note: Performance
 
-When a lager number of notifications are generated, this feature would have a negative impact on performance. 
+When a lager number of notifications are generated, this feature would have a negative impact on performance.
 Notification is done by sending packets, so this can mainly stress the network.

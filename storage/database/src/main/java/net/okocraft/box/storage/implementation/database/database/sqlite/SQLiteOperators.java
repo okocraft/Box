@@ -16,30 +16,30 @@ final class SQLiteOperators {
 
     static @NotNull OperatorProvider create(@NotNull String prefix) {
         return new OperatorProvider(
-                new MetaTableOperator(prefix) {
-                    @Override
-                    protected @NotNull String upsertStatement(@NotNull String tableName) {
-                        return "INSERT INTO `%s` (`key`, `value`) VALUES (?, ?) ON CONFLICT (`key`) DO UPDATE SET `value` = excluded.value".formatted(tableName);
-                    }
-                },
-                new UserTableOperator(prefix) {
-                    @Override
-                    protected @NotNull String upsertStatement(@NotNull String tableName) {
-                        return "INSERT INTO `%s` (`uuid`, `username`) VALUES (?, ?) ON CONFLICT (`uuid`) DO UPDATE SET `username` = excluded.username".formatted(tableName);
-                    }
-                },
-                new ItemTableOperator(prefix),
-                new CustomItemTableOperator(prefix),
-                new RemappedItemTableOperator(prefix),
-                new StockTableOperator(prefix) {
-                    @Override
-                    protected @NotNull String upsertStockStatement(@NotNull String tableName) {
-                        return "INSERT INTO `%s` (`uuid`, `item_id`, `amount`) VALUES (?, ?, ?) ON CONFLICT (`uuid`, `item_id`) DO UPDATE SET `amount` = excluded.amount".formatted(tableName);
-                    }
-                },
-                new CustomDataTableOperator(prefix, "_v2"),
-                new CustomDataTableOperator(prefix, ""),
-                new PatchingOperator(prefix)
+            new MetaTableOperator(prefix) {
+                @Override
+                protected @NotNull String upsertStatement(@NotNull String tableName) {
+                    return "INSERT INTO `%s` (`key`, `value`) VALUES (?, ?) ON CONFLICT (`key`) DO UPDATE SET `value` = excluded.value".formatted(tableName);
+                }
+            },
+            new UserTableOperator(prefix) {
+                @Override
+                protected @NotNull String upsertStatement(@NotNull String tableName) {
+                    return "INSERT INTO `%s` (`uuid`, `username`) VALUES (?, ?) ON CONFLICT (`uuid`) DO UPDATE SET `username` = excluded.username".formatted(tableName);
+                }
+            },
+            new ItemTableOperator(prefix),
+            new CustomItemTableOperator(prefix),
+            new RemappedItemTableOperator(prefix),
+            new StockTableOperator(prefix) {
+                @Override
+                protected @NotNull String upsertStockStatement(@NotNull String tableName) {
+                    return "INSERT INTO `%s` (`uuid`, `item_id`, `amount`) VALUES (?, ?, ?) ON CONFLICT (`uuid`, `item_id`) DO UPDATE SET `amount` = excluded.amount".formatted(tableName);
+                }
+            },
+            new CustomDataTableOperator(prefix, "_v2"),
+            new CustomDataTableOperator(prefix, ""),
+            new PatchingOperator(prefix)
         );
     }
 

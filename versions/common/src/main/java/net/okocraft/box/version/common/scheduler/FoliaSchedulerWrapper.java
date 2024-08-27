@@ -25,8 +25,8 @@ public class FoliaSchedulerWrapper implements BoxScheduler {
             Bukkit.getAsyncScheduler().runNow(this.plugin, ignored -> task.run());
         } else {
             Thread.ofVirtual()
-                    .uncaughtExceptionHandler(((t, e) -> BoxLogger.logger().error("An exception occurred on thread {}", t.getName(), e)))
-                    .start(task);
+                .uncaughtExceptionHandler(((t, e) -> BoxLogger.logger().error("An exception occurred on thread {}", t.getName(), e)))
+                .start(task);
         }
     }
 
@@ -43,17 +43,17 @@ public class FoliaSchedulerWrapper implements BoxScheduler {
     @Override
     public void scheduleRepeatingAsyncTask(@NotNull Runnable task, @NotNull Duration interval, @NotNull BooleanSupplier condition) {
         Bukkit.getAsyncScheduler().runAtFixedRate(
-                this.plugin,
-                scheduledTask -> {
-                    if (condition.getAsBoolean()) {
-                        task.run();
-                    } else {
-                        scheduledTask.cancel();
-                    }
-                },
-                interval.toMillis(),
-                interval.toMillis(),
-                TimeUnit.MILLISECONDS
+            this.plugin,
+            scheduledTask -> {
+                if (condition.getAsBoolean()) {
+                    task.run();
+                } else {
+                    scheduledTask.cancel();
+                }
+            },
+            interval.toMillis(),
+            interval.toMillis(),
+            TimeUnit.MILLISECONDS
         );
     }
 }

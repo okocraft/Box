@@ -264,9 +264,9 @@ class YamlUserStorage implements UserStorage {
             @Override
             public String toString() {
                 return "NameKey{" +
-                        "name='" + this.name + '\'' +
-                        ", lowercase='" + this.lowercase + '\'' +
-                        '}';
+                    "name='" + this.name + '\'' +
+                    ", lowercase='" + this.lowercase + '\'' +
+                    '}';
             }
         }
     }

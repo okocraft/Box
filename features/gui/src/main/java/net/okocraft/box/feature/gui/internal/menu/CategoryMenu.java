@@ -35,32 +35,32 @@ public class CategoryMenu extends AbstractPaginatedMenu<BoxItem> {
 
     static {
         SHARED_BUTTONS = List.of(
-                new DecreaseAmountButton(
-                        46,
-                        Amount.SHARED_DATA_KEY,
-                        messageKey(DisplayKeys.DECREASE_TRANSACTION_AMOUNT_DISPLAY_NAME),
-                        arg1(DisplayKeys.DECREASE_TRANSACTION_AMOUNT_LORE, Placeholders.AMOUNT),
-                        arg1(DisplayKeys.CURRENT_TRANSACTION_AMOUNT, Placeholders.AMOUNT),
-                        ClickResult.UPDATE_ICONS
-                ),
-                new UnitChangeButton(
-                        47,
-                        Amount.SHARED_DATA_KEY,
-                        messageKey(DisplayKeys.CHANGE_UNIT),
-                        messageKey(DisplayKeys.RESET_TRANSACTION_AMOUNT),
-                        ClickResult.UPDATE_ICONS
-                ),
-                new IncreaseAmountButton(
-                        48,
-                        Amount.SHARED_DATA_KEY,
-                        messageKey(DisplayKeys.INCREASE_TRANSACTION_AMOUNT_DISPLAY_NAME),
-                        arg1(DisplayKeys.SET_TRANSACTION_AMOUNT_LORE, Placeholders.AMOUNT),
-                        arg1(DisplayKeys.INCREASE_TRANSACTION_AMOUNT_LORE, Placeholders.AMOUNT),
-                        arg1(DisplayKeys.CURRENT_TRANSACTION_AMOUNT, Placeholders.AMOUNT),
-                        ClickResult.UPDATE_ICONS
-                ),
-                new BackOrCloseButton(49),
-                new ModeButton(50)
+            new DecreaseAmountButton(
+                46,
+                Amount.SHARED_DATA_KEY,
+                messageKey(DisplayKeys.DECREASE_TRANSACTION_AMOUNT_DISPLAY_NAME),
+                arg1(DisplayKeys.DECREASE_TRANSACTION_AMOUNT_LORE, Placeholders.AMOUNT),
+                arg1(DisplayKeys.CURRENT_TRANSACTION_AMOUNT, Placeholders.AMOUNT),
+                ClickResult.UPDATE_ICONS
+            ),
+            new UnitChangeButton(
+                47,
+                Amount.SHARED_DATA_KEY,
+                messageKey(DisplayKeys.CHANGE_UNIT),
+                messageKey(DisplayKeys.RESET_TRANSACTION_AMOUNT),
+                ClickResult.UPDATE_ICONS
+            ),
+            new IncreaseAmountButton(
+                48,
+                Amount.SHARED_DATA_KEY,
+                messageKey(DisplayKeys.INCREASE_TRANSACTION_AMOUNT_DISPLAY_NAME),
+                arg1(DisplayKeys.SET_TRANSACTION_AMOUNT_LORE, Placeholders.AMOUNT),
+                arg1(DisplayKeys.INCREASE_TRANSACTION_AMOUNT_LORE, Placeholders.AMOUNT),
+                arg1(DisplayKeys.CURRENT_TRANSACTION_AMOUNT, Placeholders.AMOUNT),
+                ClickResult.UPDATE_ICONS
+            ),
+            new BackOrCloseButton(49),
+            new ModeButton(50)
         );
         TITLE = arg1(DisplayKeys.CATEGORY_MENU_TITLE, Placeholder.component("category", Function.identity()));
     }

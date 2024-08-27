@@ -43,9 +43,9 @@ class StockListCommand extends AbstractCommand {
 
         if (target != null) {
             this.sharedStockListCommand.createAndSendStockList(
-                    sender,
-                    BoxAPI.api().getStockManager().getPersonalStockHolder(target),
-                    3 < args.length ? Arrays.copyOfRange(args, 3, args.length) : null
+                sender,
+                BoxAPI.api().getStockManager().getPersonalStockHolder(target),
+                3 < args.length ? Arrays.copyOfRange(args, 3, args.length) : null
             );
         } else {
             ErrorMessages.PLAYER_NOT_FOUND.apply(args[2]).source(msgSrc).send(sender);

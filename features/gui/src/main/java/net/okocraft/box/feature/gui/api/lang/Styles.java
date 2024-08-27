@@ -12,7 +12,7 @@ import static net.kyori.adventure.text.format.NamedTextColor.YELLOW;
 public final class Styles {
 
     private static final Style NO_DECORATION =
-            Style.style().decoration(TextDecoration.ITALIC, TextDecoration.State.FALSE).build();
+        Style.style().decoration(TextDecoration.ITALIC, TextDecoration.State.FALSE).build();
 
     public static final Style NO_DECORATION_GRAY = NO_DECORATION.color(GRAY);
 

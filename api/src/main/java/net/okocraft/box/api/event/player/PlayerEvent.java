@@ -34,15 +34,15 @@ public class PlayerEvent extends BoxEvent {
     @Override
     public @NotNull String toDebugLog() {
         return this.getClass().getSimpleName() + "{" +
-                "uuid=" + this.getBoxPlayer().getUUID() +
-                ", name=" + this.getBoxPlayer().getName() +
-                '}';
+            "uuid=" + this.getBoxPlayer().getUUID() +
+            ", name=" + this.getBoxPlayer().getName() +
+            '}';
     }
 
     @Override
     public String toString() {
         return this.getClass().getSimpleName() + "{" +
-                "boxPlayer=" + this.getBoxPlayer() +
-                '}';
+            "boxPlayer=" + this.getBoxPlayer() +
+            '}';
     }
 }

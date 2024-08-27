@@ -146,15 +146,15 @@ public class MenuOpenCommand extends AbstractCommand {
 
             if (arg.equalsIgnoreCase("-p") || arg.equalsIgnoreCase("--player")) {
                 return sender.hasPermission(OTHER_PLAYERS_GUI_PERMISSION) ?
-                        TabCompleter.players(args[args.length - 1]) :
-                        Collections.emptyList();
+                    TabCompleter.players(args[args.length - 1]) :
+                    Collections.emptyList();
             }
 
             if (arg.equalsIgnoreCase("-c") || arg.equalsIgnoreCase("--category")) {
                 return CategoryRegistry.get().names()
-                        .stream()
-                        .filter(name -> name.startsWith(args[args.length - 1]))
-                        .toList();
+                    .stream()
+                    .filter(name -> name.startsWith(args[args.length - 1]))
+                    .toList();
             }
 
             if (arg.equalsIgnoreCase("-pa") || arg.equalsIgnoreCase("--page")) {
@@ -163,8 +163,8 @@ public class MenuOpenCommand extends AbstractCommand {
         }
 
         return sender.hasPermission(OTHER_PLAYERS_GUI_PERMISSION) ?
-                List.of("--player", "--category", "--page", "-p", "-c", "-pa") :
-                List.of("--category", "-c", "--page", "-pa");
+            List.of("--player", "--category", "--page", "-p", "-c", "-pa") :
+            List.of("--category", "-c", "--page", "-pa");
     }
 
     private void legacyBehavior(@NotNull Player player, @NotNull String[] args) {

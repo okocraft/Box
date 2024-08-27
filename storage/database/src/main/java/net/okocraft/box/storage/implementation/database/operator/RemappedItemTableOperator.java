@@ -18,13 +18,13 @@ public class RemappedItemTableOperator {
         var tableName = tablePrefix + "remapped_items";
 
         this.createTableStatement = """
-                CREATE TABLE IF NOT EXISTS `%s` (
-                  `id` INTEGER PRIMARY KEY AUTOINCREMENT,
-                  `name` VARCHAR(50) NOT NULL,
-                  `remapped_to` INTEGER NOT NULL,
-                  `in_version` INTEGER NOT NULL
-                )
-                """.formatted(tableName);
+            CREATE TABLE IF NOT EXISTS `%s` (
+              `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+              `name` VARCHAR(50) NOT NULL,
+              `remapped_to` INTEGER NOT NULL,
+              `in_version` INTEGER NOT NULL
+            )
+            """.formatted(tableName);
 
         this.insertStatement = "INSERT INTO `%s` (`id`, `name`, `remapped_to`, `in_version`) VALUES(?,?,?,?)".formatted(tableName);
         this.selectAllRemappedIdStatement = "SELECT `id`, `remapped_to`, `in_version` FROM `%s`".formatted(tableName);

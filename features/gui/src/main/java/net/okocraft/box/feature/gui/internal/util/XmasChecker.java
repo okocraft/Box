@@ -25,16 +25,16 @@ public class XmasChecker {
         var today = LocalDateTime.now();
 
         IS_XMAS.set(
-                today.getMonth() == Month.DECEMBER &&
-                        (today.getDayOfMonth() == 24 || today.getDayOfMonth() == 25)
+            today.getMonth() == Month.DECEMBER &&
+                (today.getDayOfMonth() == 24 || today.getDayOfMonth() == 25)
         );
 
         NEXT_XMAS_CHECK_TIME.set(
-                today.truncatedTo(ChronoUnit.DAYS)
-                        .plusDays(1)
-                        .atZone(ZoneId.systemDefault())
-                        .toInstant()
-                        .toEpochMilli()
+            today.truncatedTo(ChronoUnit.DAYS)
+                .plusDays(1)
+                .atZone(ZoneId.systemDefault())
+                .toInstant()
+                .toEpochMilli()
         );
     }
 }

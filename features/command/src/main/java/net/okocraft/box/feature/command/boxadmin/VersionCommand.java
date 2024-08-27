@@ -27,8 +27,8 @@ public class VersionCommand extends AbstractCommand {
     @Override
     public void onCommand(@NotNull CommandSender sender, @NotNull String[] args) {
         this.versionInfo.apply(this.getClass().getPackage().getImplementationVersion())
-                .source(BoxAPI.api().getMessageProvider().findSource(sender))
-                .send(sender);
+            .source(BoxAPI.api().getMessageProvider().findSource(sender))
+            .send(sender);
     }
 
     @Override

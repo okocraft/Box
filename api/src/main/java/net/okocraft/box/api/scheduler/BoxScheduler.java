@@ -25,24 +25,24 @@ public interface BoxScheduler {
      * Executes a task on the entity scheduler.
      *
      * @param entity a {@link Entity} to get its scheduler
-     * @param task a {@link Runnable} to run
+     * @param task   a {@link Runnable} to run
      */
     void runEntityTask(@NotNull Entity entity, @NotNull Runnable task);
 
     /**
      * Schedules a delayed task.
      *
-     * @param task a {@link Runnable} to run
+     * @param task  a {@link Runnable} to run
      * @param delay a delay
-     * @param unit a {@link TimeUnit} of delay
+     * @param unit  a {@link TimeUnit} of delay
      */
     void scheduleAsyncTask(@NotNull Runnable task, long delay, @NotNull TimeUnit unit);
 
     /**
      * Schedules a repeating task.
      *
-     * @param task a {@link Runnable} to run
-     * @param interval an interval
+     * @param task      a {@link Runnable} to run
+     * @param interval  an interval
      * @param condition a {@link BooleanSupplier} that decides the task should be continued
      */
     void scheduleRepeatingAsyncTask(@NotNull Runnable task, @NotNull Duration interval, @NotNull BooleanSupplier condition);

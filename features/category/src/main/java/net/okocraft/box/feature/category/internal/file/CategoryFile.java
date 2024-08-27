@@ -140,15 +140,15 @@ public final class CategoryFile implements AutoCloseable {
             }
 
             this.registry.getByName(category.key()).ifPresentOrElse(
-                    target -> {
-                        target.addItems(this.toBoxItems(items));
-                        var list = mapNode.getOrCreateMap(category.key()).getOrCreateList(ITEMS_KEY);
-                        items.forEach(list::add);
-                    },
-                    () -> {
-                        this.registry.register(category.key(), category.toCategory(this.itemManager));
-                        category.storeToMapNode(mapNode.createMap(category.key()));
-                    }
+                target -> {
+                    target.addItems(this.toBoxItems(items));
+                    var list = mapNode.getOrCreateMap(category.key()).getOrCreateList(ITEMS_KEY);
+                    items.forEach(list::add);
+                },
+                () -> {
+                    this.registry.register(category.key(), category.toCategory(this.itemManager));
+                    category.storeToMapNode(mapNode.createMap(category.key()));
+                }
             );
         }
 

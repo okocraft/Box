@@ -29,8 +29,8 @@ public class ItemCrafter {
 
         for (var ingredient : recipe.ingredients()) {
             ingredientMap.put(
-                    ingredient.item(),
-                    ingredientMap.getOrDefault(ingredient.item(), 0) + ingredient.amount()
+                ingredient.item(),
+                ingredientMap.getOrDefault(ingredient.item(), 0) + ingredient.amount()
             );
         }
 

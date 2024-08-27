@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public abstract class CustomDataStorageTest<S> extends AbstractStorageTest<S>{
+public abstract class CustomDataStorageTest<S> extends AbstractStorageTest<S> {
 
     private static final Key KEY_1 = Key.key("box", "test");
     private static final Key KEY_2 = Key.key("box", "path/to/test");

@@ -111,9 +111,9 @@ class YamlStockStorage implements StockStorage {
 
         try (var reader = Files.newBufferedReader(filePath, StandardCharsets.UTF_8)) {
             reader.lines()
-                    .map(line -> readLine(identity, line))
-                    .filter(Objects::nonNull)
-                    .forEach(loadedData::add);
+                .map(line -> readLine(identity, line))
+                .filter(Objects::nonNull)
+                .forEach(loadedData::add);
         }
 
         return loadedData;

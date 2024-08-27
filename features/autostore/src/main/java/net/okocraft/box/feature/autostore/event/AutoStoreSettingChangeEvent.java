@@ -32,7 +32,7 @@ public class AutoStoreSettingChangeEvent extends BoxEvent {
     @Override
     public String toString() {
         return "AutoStoreSettingChangeEvent{" +
-                "setting=" + this.setting +
-                '}';
+            "setting=" + this.setting +
+            '}';
     }
 }

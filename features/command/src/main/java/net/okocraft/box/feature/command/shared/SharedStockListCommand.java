@@ -38,9 +38,9 @@ import static net.okocraft.box.api.message.Placeholders.PLAYER_NAME;
 public class SharedStockListCommand {
 
     private static final String DEFAULT_ARGUMENT_HELP = """
-             <aqua>-s <gray>(<aqua>--sorter<gray>) <aqua><sort><dark_gray> - <gray>Specifies the order of stock
-             <aqua>-p <gray>(<aqua>--page<gray>) <aqua><page><dark_gray> - <gray>Specifies the page
-             <aqua>-f <gray>(<aqua>--filter<gray>) <aqua><item name><dark_gray> - <gray>Filters items""";
+        <aqua>-s <gray>(<aqua>--sorter<gray>) <aqua><sort><dark_gray> - <gray>Specifies the order of stock
+        <aqua>-p <gray>(<aqua>--page<gray>) <aqua><page><dark_gray> - <gray>Specifies the page
+        <aqua>-f <gray>(<aqua>--filter<gray>) <aqua><item name><dark_gray> - <gray>Filters items""";
 
     private static final Placeholder<Integer> CURRENT_PAGE = Placeholder.component("page", Component::text);
     private static final Placeholder<Integer> MAX_PAGE = Placeholder.component("max_page", Component::text);
@@ -89,14 +89,14 @@ public class SharedStockListCommand {
         if (sorter != null) {
             if (sorter instanceof Sorter.ByName byName) {
                 stockDataCollection =
-                        stream.sorted(byName)
-                                .map(item -> ObjectIntPair.of(item, stockHolder.getAmount(item)))
-                                .toList();
+                    stream.sorted(byName)
+                        .map(item -> ObjectIntPair.of(item, stockHolder.getAmount(item)))
+                        .toList();
             } else if (sorter instanceof Sorter.ByAmount byAmount) {
                 stockDataCollection =
-                        stream.map(item -> ObjectIntPair.of(item, stockHolder.getAmount(item)))
-                                .sorted((p1, p2) -> byAmount.compare(p1.rightInt(), p2.rightInt()))
-                                .toList();
+                    stream.map(item -> ObjectIntPair.of(item, stockHolder.getAmount(item)))
+                        .sorted((p1, p2) -> byAmount.compare(p1.rightInt(), p2.rightInt()))
+                        .toList();
             } else {
                 throw new UnsupportedOperationException("Unknown sorter: " + sorter);
             }
@@ -122,10 +122,10 @@ public class SharedStockListCommand {
         builder.append(this.header.apply(stockHolder.getName(), page, maxPage).create(msgSrc));
 
         stockDataCollection.stream()
-                .skip(start)
-                .limit(8)
-                .map(stock -> this.lineFormat.apply(counter.incrementAndGet(), stock.first(), stock.secondInt()).create(msgSrc))
-                .forEachOrdered(element -> builder.append(Component.newline()).append(element));
+            .skip(start)
+            .limit(8)
+            .map(stock -> this.lineFormat.apply(counter.incrementAndGet(), stock.first(), stock.secondInt()).create(msgSrc))
+            .forEachOrdered(element -> builder.append(Component.newline()).append(element));
 
         sender.sendMessage(builder);
     }
@@ -208,11 +208,11 @@ public class SharedStockListCommand {
 
     private enum ArgumentType {
         SORTER(
-                "sorter", "s",
-                (arg, context) -> context.sorter = Sorter.get(arg.toLowerCase(Locale.ENGLISH)),
-                arg -> Stream.of("na", "name-asc", "nd", "name-desc", "aa", "amount-asc", "ad", "amount-desc")
-                        .filter(sorter -> sorter.startsWith(arg.toLowerCase(Locale.ENGLISH)))
-                        .toList()
+            "sorter", "s",
+            (arg, context) -> context.sorter = Sorter.get(arg.toLowerCase(Locale.ENGLISH)),
+            arg -> Stream.of("na", "name-asc", "nd", "name-desc", "aa", "amount-asc", "ad", "amount-desc")
+                .filter(sorter -> sorter.startsWith(arg.toLowerCase(Locale.ENGLISH)))
+                .toList()
         ),
         PAGE("page", "p", (arg, context) -> {
             try {

@@ -51,14 +51,14 @@ public class BulkEditingButton extends AbstractAutoStoreSettingButton {
         boolean nextClick = recent == null || !recent;
 
         return ItemEditor.create()
-                .displayName(this.displayName.create(src))
-                .loreEmptyLine()
-                .loreLine((nextClick ? this.clickToEnableAll : this.clickToDisableAll).create(src))
-                .loreLine((!nextClick ? this.doubleClickToEnableAll : this.doubleClickToDisableAll).create(src))
-                .loreEmptyLine()
-                .loreLineIf(recent != null, () -> (Boolean.TRUE.equals(recent) ? this.recentAllEnabled : this.recentAllDisabled).create(src))
-                .loreEmptyLineIf(recent != null)
-                .createItem(Material.TRIPWIRE_HOOK);
+            .displayName(this.displayName.create(src))
+            .loreEmptyLine()
+            .loreLine((nextClick ? this.clickToEnableAll : this.clickToDisableAll).create(src))
+            .loreLine((!nextClick ? this.doubleClickToEnableAll : this.doubleClickToDisableAll).create(src))
+            .loreEmptyLine()
+            .loreLineIf(recent != null, () -> (Boolean.TRUE.equals(recent) ? this.recentAllEnabled : this.recentAllDisabled).create(src))
+            .loreEmptyLineIf(recent != null)
+            .createItem(Material.TRIPWIRE_HOOK);
     }
 
     @Override

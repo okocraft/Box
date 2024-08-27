@@ -67,20 +67,20 @@ public class CraftButton implements Button {
         boolean canCraft = ItemCrafter.canCraft(session.getSourceStockHolder(), recipe, times);
 
         return editor.loreEmptyLine()
-                .loreLine(
-                        text(" -> ", NO_DECORATION_GRAY)
-                                .append(translatable(recipe.result().getOriginal(), recipe.result().getDisplayName().style()))
-                                .append(space())
-                                .append(text("x", NO_DECORATION_GRAY))
-                                .append(text(recipe.amount() * times, NO_DECORATION_AQUA))
-                )
-                .loreEmptyLine()
-                .loreLine(CURRENT_STOCK.apply(session.getSourceStockHolder().getAmount(recipe.result())).create(session.getMessageSource()))
-                .createItem(
-                        this.customTimes ?
-                                canCraft ? Material.GLOWSTONE_DUST : Material.GUNPOWDER :
-                                canCraft ? Material.LIME_DYE : Material.GRAY_DYE
-                );
+            .loreLine(
+                text(" -> ", NO_DECORATION_GRAY)
+                    .append(translatable(recipe.result().getOriginal(), recipe.result().getDisplayName().style()))
+                    .append(space())
+                    .append(text("x", NO_DECORATION_GRAY))
+                    .append(text(recipe.amount() * times, NO_DECORATION_AQUA))
+            )
+            .loreEmptyLine()
+            .loreLine(CURRENT_STOCK.apply(session.getSourceStockHolder().getAmount(recipe.result())).create(session.getMessageSource()))
+            .createItem(
+                this.customTimes ?
+                    canCraft ? Material.GLOWSTONE_DUST : Material.GUNPOWDER :
+                    canCraft ? Material.LIME_DYE : Material.GRAY_DYE
+            );
     }
 
     @Override

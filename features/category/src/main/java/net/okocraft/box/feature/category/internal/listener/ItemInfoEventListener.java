@@ -55,15 +55,15 @@ public class ItemInfoEventListener {
         var src = BoxAPI.api().getMessageProvider().findSource(player);
 
         event.addInfo(this.itemInfoFormat.apply(Component.join(
-                JoinConfiguration.separator(this.categorySeparator.create(src)),
-                this.registry.values()
-                        .stream()
-                        .filter(category -> category.containsItem(event.getItem()))
-                        .map(category ->
-                                this.categoryFormat.apply(category.getDisplayName(player))
-                                        .create(src)
-                                        .clickEvent(commandCreator != null ? ClickEvent.runCommand(commandCreator.apply(category, event.getItem())) : null))
-                        .toList()
+            JoinConfiguration.separator(this.categorySeparator.create(src)),
+            this.registry.values()
+                .stream()
+                .filter(category -> category.containsItem(event.getItem()))
+                .map(category ->
+                    this.categoryFormat.apply(category.getDisplayName(player))
+                        .create(src)
+                        .clickEvent(commandCreator != null ? ClickEvent.runCommand(commandCreator.apply(category, event.getItem())) : null))
+                .toList()
         )).create(src));
     }
 }

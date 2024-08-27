@@ -18,9 +18,9 @@ public final class ContainerOperator {
 
     private static boolean depositItemsInInventory(@NotNull ContainerOperation.Context<Inventory> context) {
         var resultList =
-                StockHolderTransaction.create(context.player().getCurrentStockHolder())
-                        .depositAll()
-                        .fromInventory(context.inventory(), new StickCauses.Container(context.player(), context.blockLocation()));
+            StockHolderTransaction.create(context.player().getCurrentStockHolder())
+                .depositAll()
+                .fromInventory(context.inventory(), new StickCauses.Container(context.player(), context.blockLocation()));
 
         if (!resultList.isEmpty()) {
             SoundPlayer.playDepositSound(context.player().getPlayer());
@@ -39,9 +39,9 @@ public final class ContainerOperator {
 
         var stockHolder = context.player().getCurrentStockHolder();
         var result =
-                StockHolderTransaction.create(stockHolder)
-                        .withdraw(boxItem, Integer.MAX_VALUE)
-                        .toInventory(context.inventory(), new StickCauses.Container(context.player(), context.blockLocation()));
+            StockHolderTransaction.create(stockHolder)
+                .withdraw(boxItem, Integer.MAX_VALUE)
+                .toInventory(context.inventory(), new StickCauses.Container(context.player(), context.blockLocation()));
 
         if (0 < result.amount()) {
             SoundPlayer.playWithdrawalSound(context.player().getPlayer());

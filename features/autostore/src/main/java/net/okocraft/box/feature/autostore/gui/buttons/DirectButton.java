@@ -33,11 +33,11 @@ public class DirectButton extends AbstractAutoStoreSettingButton {
         if (setting == null) return new ItemStack(Material.AIR);
 
         return ItemEditor.create()
-                .displayName(this.displayName.create(session.getMessageSource()))
-                .loreEmptyLine()
-                .loreLine((setting.isDirect() ? this.disable : this.enable).create(session.getMessageSource()))
-                .loreEmptyLine()
-                .createItem(Material.HOPPER);
+            .displayName(this.displayName.create(session.getMessageSource()))
+            .loreEmptyLine()
+            .loreLine((setting.isDirect() ? this.disable : this.enable).create(session.getMessageSource()))
+            .loreEmptyLine()
+            .createItem(Material.HOPPER);
     }
 
     @Override

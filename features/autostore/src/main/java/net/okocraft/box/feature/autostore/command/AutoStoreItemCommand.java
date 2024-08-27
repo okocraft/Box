@@ -125,8 +125,8 @@ class AutoStoreItemCommand extends AutoStoreSubCommand {
 
         if (args.length == 4) {
             return Stream.of("on", "off")
-                    .filter(bool -> bool.startsWith(args[3].toLowerCase(Locale.ROOT)))
-                    .collect(Collectors.toList());
+                .filter(bool -> bool.startsWith(args[3].toLowerCase(Locale.ROOT)))
+                .collect(Collectors.toList());
         }
 
         return Collections.emptyList();

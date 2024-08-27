@@ -29,13 +29,13 @@ public final class Builtin {
 
     public static void features(@NotNull BoxBootstrapContext context) {
         context.addFeature(CommandFeature::new)
-                .addFeature(CategoryFeature::new)
-                .addFeature(GuiFeature::new)
-                .addFeature(BEModeFeature::new)
-                .addFeature(AutoStoreFeature::new)
-                .addFeature(CraftFeature::new)
-                .addFeature(StickFeature::new)
-                .addFeature(NotifierFeature::new);
+            .addFeature(CategoryFeature::new)
+            .addFeature(GuiFeature::new)
+            .addFeature(BEModeFeature::new)
+            .addFeature(AutoStoreFeature::new)
+            .addFeature(CraftFeature::new)
+            .addFeature(StickFeature::new)
+            .addFeature(NotifierFeature::new);
     }
 
     public static void storages(@NotNull StorageRegistry registry) {

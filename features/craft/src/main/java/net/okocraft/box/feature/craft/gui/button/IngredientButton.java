@@ -43,20 +43,20 @@ public record IngredientButton(int slot, int ingredientPos) implements Button {
         if (ingredients.size() != 1) {
             for (var ingredient : ingredients.get()) {
                 editor.loreLine(
-                        Component.text()
-                                .append(Component.text(" > "))
-                                .append(Component.translatable(ingredient.item().getOriginal()))
-                                .append(Component.space())
-                                .append(Component.text("(" + session.getSourceStockHolder().getAmount(ingredient.item()) + ")"))
-                                .style(ingredient == ingredients.getSelected() ? Styles.NO_DECORATION_AQUA : Styles.NO_DECORATION_GRAY)
-                                .build()
+                    Component.text()
+                        .append(Component.text(" > "))
+                        .append(Component.translatable(ingredient.item().getOriginal()))
+                        .append(Component.space())
+                        .append(Component.text("(" + session.getSourceStockHolder().getAmount(ingredient.item()) + ")"))
+                        .style(ingredient == ingredients.getSelected() ? Styles.NO_DECORATION_AQUA : Styles.NO_DECORATION_GRAY)
+                        .build()
                 );
             }
         }
 
         if (RecipeRegistry.hasRecipe(ingredients.getSelected().item())) {
             editor.loreEmptyLineIf(ingredients.size() != 1)
-                    .loreLine(CLICK_TO_SHOW_RECIPES.create(session.getMessageSource()));
+                .loreLine(CLICK_TO_SHOW_RECIPES.create(session.getMessageSource()));
         }
 
         var selected = ingredients.getSelected();

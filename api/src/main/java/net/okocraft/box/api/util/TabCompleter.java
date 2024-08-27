@@ -23,11 +23,11 @@ public final class TabCompleter {
      */
     public static @NotNull List<String> itemNames(@NotNull String filter) {
         return BoxAPI.api()
-                .getItemManager()
-                .getItemNameList()
-                .stream()
-                .filter(itemName -> startsWith(itemName, filter))
-                .collect(Collectors.toList());
+            .getItemManager()
+            .getItemNameList()
+            .stream()
+            .filter(itemName -> startsWith(itemName, filter))
+            .collect(Collectors.toList());
     }
 
     /**
@@ -49,11 +49,11 @@ public final class TabCompleter {
      */
     public static @NotNull List<String> players(@NotNull String filter, @Nullable String permissionNode) {
         return Bukkit.getOnlinePlayers()
-                .stream()
-                .filter(player -> permissionNode == null || player.hasPermission(permissionNode))
-                .map(HumanEntity::getName)
-                .filter(playerName -> startsWith(playerName, filter))
-                .collect(Collectors.toList());
+            .stream()
+            .filter(player -> permissionNode == null || player.hasPermission(permissionNode))
+            .map(HumanEntity::getName)
+            .filter(playerName -> startsWith(playerName, filter))
+            .collect(Collectors.toList());
     }
 
     @VisibleForTesting

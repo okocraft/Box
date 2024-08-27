@@ -31,10 +31,10 @@ public class ResetAllCommand extends AbstractCommand {
     private static final String CONFIRM = "confirm";
     private static final String CANCEL = "cancel";
     private static final String DEFAULT_CONFIRMATION_MESSAGE = """
-            <gray>Reset all data of player <aqua><player_name>
-            <red>This operation cannot be undone.
-            <gray>To confirm, run <green>/boxadmin resetall confirm
-            <gray>To cancel, run <red>/boxadmin resetall cancel""";
+        <gray>Reset all data of player <aqua><player_name>
+        <red>This operation cannot be undone.
+        <gray>To confirm, run <green>/boxadmin resetall confirm
+        <gray>To cancel, run <red>/boxadmin resetall cancel""";
 
     private final Map<CommandSender, BoxUser> confirmationMap = new ConcurrentHashMap<>();
 
@@ -76,8 +76,8 @@ public class ResetAllCommand extends AbstractCommand {
 
             if (targetPlayer != null && !sender.getName().equals(targetPlayer.getName())) {
                 this.successTarget.apply(sender.getName())
-                        .source(BoxAPI.api().getMessageProvider().findSource(targetPlayer))
-                        .send(targetPlayer);
+                    .source(BoxAPI.api().getMessageProvider().findSource(targetPlayer))
+                    .send(targetPlayer);
             }
 
             return;
@@ -108,7 +108,7 @@ public class ResetAllCommand extends AbstractCommand {
             var secondArgument = args[1].toLowerCase(Locale.ROOT);
 
             if (secondArgument.isEmpty() ||
-                    (secondArgument.length() == 1 && secondArgument.charAt(0) == 'c')) {
+                (secondArgument.length() == 1 && secondArgument.charAt(0) == 'c')) {
                 return List.of(CONFIRM, CANCEL);
             }
 

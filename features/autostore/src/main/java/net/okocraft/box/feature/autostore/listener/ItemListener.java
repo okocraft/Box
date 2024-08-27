@@ -101,8 +101,8 @@ public class ItemListener implements Listener {
         var setting = this.container.getIfLoaded(player.getUniqueId());
 
         if (!playerMap.isLoaded(player) || setting == null ||
-                !setting.isEnabled() || !player.hasPermission("box.autostore") ||
-                (direct && !setting.isDirect())
+            !setting.isEnabled() || !player.hasPermission("box.autostore") ||
+            (direct && !setting.isDirect())
         ) {
             return false;
         }

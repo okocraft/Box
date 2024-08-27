@@ -34,15 +34,15 @@ public class UserDataResetEvent extends BoxEvent {
     @Override
     public @NotNull String toDebugLog() {
         return "UserDataResetEvent{" +
-                "uuid=" + this.user.getUUID() +
-                ", name=" + this.user.getName() +
-                '}';
+            "uuid=" + this.user.getUUID() +
+            ", name=" + this.user.getName() +
+            '}';
     }
 
     @Override
     public String toString() {
         return "UserDataResetEvent{" +
-                "user=" + this.user +
-                '}';
+            "user=" + this.user +
+            '}';
     }
 }

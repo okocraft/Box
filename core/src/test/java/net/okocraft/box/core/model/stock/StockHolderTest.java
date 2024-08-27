@@ -26,12 +26,12 @@ class StockHolderTest {
     private static final DummyItem ITEM_2 = new DummyItem(2, "test_item_2");
     private static final DummyItem ITEM_3 = new DummyItem(3, "test_item_3");
     private static final IntFunction<BoxItem> TO_BOX_ITEM =
-            id -> switch (id) {
-                case 1 -> ITEM_1;
-                case 2 -> ITEM_2;
-                case 3 -> ITEM_3;
-                default -> null;
-            };
+        id -> switch (id) {
+            case 1 -> ITEM_1;
+            case 2 -> ITEM_2;
+            case 3 -> ITEM_3;
+            default -> null;
+        };
 
     @Test
     void testSet() {

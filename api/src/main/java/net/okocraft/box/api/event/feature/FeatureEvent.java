@@ -46,17 +46,17 @@ public class FeatureEvent extends BoxEvent {
     @Override
     public @NotNull String toDebugLog() {
         return "FeatureEvent{" +
-                "feature=" + this.feature.getName() +
-                ", type=" + this.type +
-                '}';
+            "feature=" + this.feature.getName() +
+            ", type=" + this.type +
+            '}';
     }
 
     @Override
     public String toString() {
         return "FeatureEvent{" +
-                "feature=" + this.feature +
-                ", type=" + this.type +
-                '}';
+            "feature=" + this.feature +
+            ", type=" + this.type +
+            '}';
     }
 
     /**

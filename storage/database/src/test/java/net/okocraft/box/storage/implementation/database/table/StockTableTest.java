@@ -9,7 +9,7 @@ public abstract class StockTableTest extends StockStorageTest<Database> {
     protected @NotNull StockTable newStockStorage(@NotNull Database database) throws Exception {
         var table = new StockTable(database);
 
-        try (var connection = database.getConnection()){
+        try (var connection = database.getConnection()) {
             table.init(connection);
         }
 

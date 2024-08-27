@@ -32,7 +32,7 @@ public class CustomItemListener {
     public void register(@NotNull Key listenerKey) {
         this.listenerHolder.subscribeAll(subscriber ->
             subscriber.add(CustomItemRegisterEvent.class, listenerKey, this::processEvent)
-                    .add(CustomItemRenameEvent.class, listenerKey, this::processEvent)
+                .add(CustomItemRenameEvent.class, listenerKey, this::processEvent)
         );
     }
 

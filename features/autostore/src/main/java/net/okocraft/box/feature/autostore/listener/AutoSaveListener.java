@@ -27,8 +27,8 @@ public class AutoSaveListener {
 
     public void register(@NotNull Key listenerKey) {
         this.listenerHolder.subscribeAll(subscriber ->
-                subscriber.add(AutoStoreSettingChangeEvent.class, listenerKey, event -> this.modifiedSettings.add(event.getSetting()), Priority.NORMAL)
-                        .add(StockHolderSaveEvent.class, listenerKey, this::saveModifiedSettings, Priority.NORMAL)
+            subscriber.add(AutoStoreSettingChangeEvent.class, listenerKey, event -> this.modifiedSettings.add(event.getSetting()), Priority.NORMAL)
+                .add(StockHolderSaveEvent.class, listenerKey, this::saveModifiedSettings, Priority.NORMAL)
         );
     }
 

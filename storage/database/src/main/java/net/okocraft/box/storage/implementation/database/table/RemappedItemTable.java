@@ -33,10 +33,10 @@ public class RemappedItemTable implements RemappedItemStorage {
 
         try (var connection = this.database.getConnection()) {
             this.operator.selectAllRemappedIds(
-                    connection,
-                    (inVersion, item) ->
-                            result.computeIfAbsent(MCDataVersion.of(inVersion), ignored -> new Int2IntOpenHashMap())
-                                    .put(item.oldId(), item.newId())
+                connection,
+                (inVersion, item) ->
+                    result.computeIfAbsent(MCDataVersion.of(inVersion), ignored -> new Int2IntOpenHashMap())
+                        .put(item.oldId(), item.newId())
             );
         }
 

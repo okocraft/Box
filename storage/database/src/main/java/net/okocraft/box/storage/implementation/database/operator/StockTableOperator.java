@@ -33,13 +33,13 @@ public abstract class StockTableOperator {
         var tableName = tablePrefix + "stock";
 
         this.createTableStatement = """
-                CREATE TABLE IF NOT EXISTS `%s` (
-                  `uuid` VARCHAR(36) NOT NULL,
-                  `item_id` INTEGER  NOT NULL,
-                  `amount` INTEGER NOT NULL,
-                  PRIMARY KEY (`uuid`, `item_id`)
-                )
-                """.formatted(tableName);
+            CREATE TABLE IF NOT EXISTS `%s` (
+              `uuid` VARCHAR(36) NOT NULL,
+              `item_id` INTEGER  NOT NULL,
+              `amount` INTEGER NOT NULL,
+              PRIMARY KEY (`uuid`, `item_id`)
+            )
+            """.formatted(tableName);
         this.createIndexStatement = "CREATE INDEX IF NOT EXISTS `%1$s_amount` ON `%1$s` (`amount`)".formatted(tableName);
 
         this.selectStockByUUIDStatement = "SELECT `item_id`, `amount` FROM `%s` WHERE `uuid`=?".formatted(tableName);
@@ -155,7 +155,7 @@ public abstract class StockTableOperator {
         return connection.prepareStatement(this.updateItemIdStatement);
     }
 
-    public void addUpdateItemIdBatch(@NotNull PreparedStatement statement, @NotNull String uuid, int oldItemId, int newItemId) throws SQLException{
+    public void addUpdateItemIdBatch(@NotNull PreparedStatement statement, @NotNull String uuid, int oldItemId, int newItemId) throws SQLException {
         statement.setInt(1, newItemId);
         statement.setString(2, uuid);
         statement.setInt(3, oldItemId);
@@ -166,7 +166,7 @@ public abstract class StockTableOperator {
         return connection.prepareStatement(this.updateAmountStatement);
     }
 
-    public void addUpdateAmountBatch(@NotNull PreparedStatement statement, @NotNull String uuid, int itemId, int amount) throws SQLException{
+    public void addUpdateAmountBatch(@NotNull PreparedStatement statement, @NotNull String uuid, int itemId, int amount) throws SQLException {
         statement.setInt(1, amount);
         statement.setString(2, uuid);
         statement.setInt(3, itemId);

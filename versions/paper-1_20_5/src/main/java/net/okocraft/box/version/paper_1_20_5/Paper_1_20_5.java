@@ -22,22 +22,22 @@ public final class Paper_1_20_5 {
     @VersionSpecific.DefaultItemSource
     public static @NotNull Stream<DefaultItem> defaultItems() {
         return new ItemSources.Merger()
-                .append(fromMaterials())
-                .append(ItemSources.potions(Registry.POTION))
-                .append(ItemSources.enchantedBooks(Registry.ENCHANTMENT))
-                .append(ItemSources.fireworks())
-                .append(ItemSources.goatHorns(Registry.INSTRUMENT))
-                .result();
+            .append(fromMaterials())
+            .append(ItemSources.potions(Registry.POTION))
+            .append(ItemSources.enchantedBooks(Registry.ENCHANTMENT))
+            .append(ItemSources.fireworks())
+            .append(ItemSources.goatHorns(Registry.INSTRUMENT))
+            .result();
     }
 
     public static @NotNull Stream<DefaultItem> fromMaterials() {
         return Registry.MATERIAL.stream()
-                .filter(Predicate.not(Material::isAir))
-                .filter(Material::isItem)
-                .filter(Predicate.not(material -> material.name().startsWith("LEGACY_")))
-                .filter(Predicate.not(material -> material == Material.GOAT_HORN))
-                .filter(Predicate.not(material -> material == Material.FIREWORK_ROCKET))
-                .map(material -> new DefaultItem(ItemNameGenerator.key(material), new ItemStack(material, 1)));
+            .filter(Predicate.not(Material::isAir))
+            .filter(Material::isItem)
+            .filter(Predicate.not(material -> material.name().startsWith("LEGACY_")))
+            .filter(Predicate.not(material -> material == Material.GOAT_HORN))
+            .filter(Predicate.not(material -> material == Material.FIREWORK_ROCKET))
+            .map(material -> new DefaultItem(ItemNameGenerator.key(material), new ItemStack(material, 1)));
     }
 
     private Paper_1_20_5() {

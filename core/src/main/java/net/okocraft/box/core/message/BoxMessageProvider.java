@@ -51,9 +51,9 @@ public class BoxMessageProvider implements MessageProvider {
         }
 
         this.directorySource
-                .messageProcessor(MessageProcessors.appendMissingStringMessages(this.defaultMessageMapLoader, PropertiesFile.DEFAULT_APPENDER))
-                .messageProcessor(MessageProcessors.appendMissingStringMessages(ignored -> this.collector.collectedMessages, PropertiesFile.DEFAULT_APPENDER))
-                .load(loaded -> this.localization.addSource(loaded.locale(), MiniMessageSource.create(loaded.messageSource())));
+            .messageProcessor(MessageProcessors.appendMissingStringMessages(this.defaultMessageMapLoader, PropertiesFile.DEFAULT_APPENDER))
+            .messageProcessor(MessageProcessors.appendMissingStringMessages(ignored -> this.collector.collectedMessages, PropertiesFile.DEFAULT_APPENDER))
+            .load(loaded -> this.localization.addSource(loaded.locale(), MiniMessageSource.create(loaded.messageSource())));
     }
 
     public void unload() {

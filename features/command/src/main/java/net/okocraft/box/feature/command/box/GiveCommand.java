@@ -148,8 +148,8 @@ public class GiveCommand extends AbstractCommand {
 
         this.successSender.apply(target.getName(), boxItem, amount, senderDecreaseResult).source(msgSrc).send(sender);
         this.successTarget.apply(sender.getName(), boxItem, amount, targetCurrent)
-                .source(BoxAPI.api().getMessageProvider().findSource(target))
-                .send(target);
+            .source(BoxAPI.api().getMessageProvider().findSource(target))
+            .send(target);
     }
 
     @Override
@@ -167,9 +167,9 @@ public class GiveCommand extends AbstractCommand {
             var stockHolder = BoxAPI.api().getBoxPlayerMap().get(player).getCurrentStockHolder();
 
             return stockHolder.getStockedItems().stream()
-                    .map(BoxItem::getPlainName)
-                    .filter(itemName -> itemName.toLowerCase(Locale.ENGLISH).startsWith(itemNameFilter))
-                    .collect(Collectors.toList());
+                .map(BoxItem::getPlainName)
+                .filter(itemName -> itemName.toLowerCase(Locale.ENGLISH).startsWith(itemNameFilter))
+                .collect(Collectors.toList());
         }
 
         return Collections.emptyList();

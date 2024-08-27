@@ -46,12 +46,12 @@ public class StorageWithdrawMode extends AbstractStorageMode {
         var amountData = session.getData(Amount.SHARED_DATA_KEY);
 
         return ItemEditor.create()
-                .copyLoreFrom(icon)
-                .loreEmptyLine()
-                .loreLine(this.clickToWithdraw.apply(amountData != null ? amountData.getValue() : 1).create(session.getMessageSource()))
-                .loreEmptyLine()
-                .loreLine(this.currentStock.apply(session.getSourceStockHolder().getAmount(item)).create(session.getMessageSource()))
-                .applyTo(icon);
+            .copyLoreFrom(icon)
+            .loreEmptyLine()
+            .loreLine(this.clickToWithdraw.apply(amountData != null ? amountData.getValue() : 1).create(session.getMessageSource()))
+            .loreEmptyLine()
+            .loreLine(this.currentStock.apply(session.getSourceStockHolder().getAmount(item)).create(session.getMessageSource()))
+            .applyTo(icon);
     }
 
     @Override

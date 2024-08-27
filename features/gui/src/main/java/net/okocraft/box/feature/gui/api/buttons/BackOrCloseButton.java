@@ -25,8 +25,8 @@ public record BackOrCloseButton(int slot) implements Button {
     @Override
     public @NotNull ItemStack createIcon(@NotNull PlayerSession session) {
         return ItemEditor.create()
-                .displayName((MenuHistoryHolder.getFromSession(session).hasPreviousMenu() ? BACK_DISPLAY_NAME : CLOSE_DISPLAY_NAME).create(session.getMessageSource()))
-                .createItem(Material.OAK_DOOR);
+            .displayName((MenuHistoryHolder.getFromSession(session).hasPreviousMenu() ? BACK_DISPLAY_NAME : CLOSE_DISPLAY_NAME).create(session.getMessageSource()))
+            .createItem(Material.OAK_DOOR);
     }
 
     @Override

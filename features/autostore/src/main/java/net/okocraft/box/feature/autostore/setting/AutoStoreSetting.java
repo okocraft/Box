@@ -133,11 +133,11 @@ public class AutoStoreSetting {
     @Override
     public String toString() {
         return "AutoStoreSetting{" +
-                "uuid=" + this.uuid +
-                ", enabled=" + this.enabled +
-                ", allMode=" + this.allMode +
-                ", direct=" + this.direct +
-                ", perItemModeSetting=" + this.perItemSetting +
-                '}';
+            "uuid=" + this.uuid +
+            ", enabled=" + this.enabled +
+            ", allMode=" + this.allMode +
+            ", direct=" + this.direct +
+            ", perItemModeSetting=" + this.perItemSetting +
+            '}';
     }
 }

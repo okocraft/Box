@@ -154,10 +154,10 @@ public class LoadingPersonalStockHolder implements PersonalStockHolder {
     @Override
     public String toString() {
         return "LoadingStockHolder{" +
-                "user=" + this.user +
-                ", isLoaded=" + this.isLoaded() +
-                ", isClosed=" + this.isClosed() +
-                ", lastAccess=" + this.lastAccess +
-                '}';
+            "user=" + this.user +
+            ", isLoaded=" + this.isLoaded() +
+            ", isClosed=" + this.isClosed() +
+            ", lastAccess=" + this.lastAccess +
+            '}';
     }
 }

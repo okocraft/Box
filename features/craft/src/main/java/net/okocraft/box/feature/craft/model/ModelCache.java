@@ -28,17 +28,17 @@ final class ModelCache {
 
     static @NotNull BoxIngredientItem getIngredientItem(@NotNull BoxItem item, int amount) {
         return GENERATED_INGREDIENT_ITEMS != null && amount == 1 ?
-                GENERATED_INGREDIENT_ITEMS.computeIfAbsent(item, ModelCache::createIngredientItem) :
-                new BoxIngredientItem(item, amount);
+            GENERATED_INGREDIENT_ITEMS.computeIfAbsent(item, ModelCache::createIngredientItem) :
+            new BoxIngredientItem(item, amount);
     }
 
     static @NotNull IngredientHolder getIngredientHolder(int slot, @NotNull List<ItemStack> patterns) {
         var holder = new IngredientHolder(
-                slot,
-                patterns.stream().map(item ->
-                        BoxAPI.api().getItemManager().getBoxItem(item)
-                                .map(value -> getIngredientItem(value, item.getAmount()))
-                ).filter(Optional::isPresent).map(Optional::get).toList()
+            slot,
+            patterns.stream().map(item ->
+                BoxAPI.api().getItemManager().getBoxItem(item)
+                    .map(value -> getIngredientItem(value, item.getAmount()))
+            ).filter(Optional::isPresent).map(Optional::get).toList()
         );
 
         return getIngredientHolder(holder);
@@ -46,8 +46,8 @@ final class ModelCache {
 
     static @NotNull IngredientHolder getIngredientHolder(@NotNull IngredientHolder holder) {
         return INGREDIENT_HOLDER_CACHE != null ?
-                INGREDIENT_HOLDER_CACHE.computeIfAbsent(holder, Function.identity()) :
-                holder;
+            INGREDIENT_HOLDER_CACHE.computeIfAbsent(holder, Function.identity()) :
+            holder;
     }
 
     private static @NotNull BoxIngredientItem createIngredientItem(@NotNull BoxItem item) {

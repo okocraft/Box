@@ -14,8 +14,8 @@ public interface Button {
 
         if (XmasChecker.isXmas()) {
             material = slot % 2 == 0 ?
-                    Material.GREEN_STAINED_GLASS_PANE :
-                    Material.RED_STAINED_GLASS_PANE;
+                Material.GREEN_STAINED_GLASS_PANE :
+                Material.RED_STAINED_GLASS_PANE;
         } else {
             material = Material.GRAY_STAINED_GLASS_PANE;
         }

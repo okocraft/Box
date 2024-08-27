@@ -8,13 +8,14 @@ Description: Get a Box Stick (set it to the offhand).
 
 Alias: `s`
 
-
-- If the offhand is empty -> Set a Box stick to the offhand, and send a success message `box.stick.command.stick.success`
+- If the offhand is empty -> Set a Box stick to the offhand, and send a success message
+  `box.stick.command.stick.success`
 - If the offhand is not empty
     - Failure if:
         - The item can be used as a Box Stick -> Error message `box.stick.command.stick.already-in-offhand`
         - The inventory is full -> Error message `box.stick.command.stick.full-inventory`
-    - Move the item in the offhand to the player inventory, set a Box stick to the offhand, and send a message `box.stick.command.stick.success`
+    - Move the item in the offhand to the player inventory, set a Box stick to the offhand, and send a message
+      `box.stick.command.stick.success`
 
 Default Box Stick is:
 

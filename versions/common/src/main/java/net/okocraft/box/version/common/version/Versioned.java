@@ -35,16 +35,16 @@ public interface Versioned {
 
             try (var reader = new BufferedReader(new InputStreamReader(in))) {
                 return reader.lines()
-                        .filter(line -> !line.startsWith("#"))
-                        .map(line -> {
-                            int separatorIndex = line.indexOf(":");
-                            return separatorIndex != -1 && separatorIndex + 1 != line.length() ?
-                                    Pair.of(line.substring(0, separatorIndex), line.substring(separatorIndex + 1)) :
-                                    null;
-                        })
-                        .filter(Objects::nonNull)
-                        .filter(Predicate.not(pair -> pair.first().isEmpty() && pair.second().isEmpty()))
-                        .collect(Collectors.toUnmodifiableMap(Pair::left, Pair::right));
+                    .filter(line -> !line.startsWith("#"))
+                    .map(line -> {
+                        int separatorIndex = line.indexOf(":");
+                        return separatorIndex != -1 && separatorIndex + 1 != line.length() ?
+                            Pair.of(line.substring(0, separatorIndex), line.substring(separatorIndex + 1)) :
+                            null;
+                    })
+                    .filter(Objects::nonNull)
+                    .filter(Predicate.not(pair -> pair.first().isEmpty() && pair.second().isEmpty()))
+                    .collect(Collectors.toUnmodifiableMap(Pair::left, Pair::right));
             }
         } catch (IOException e) {
             throw new RuntimeException(e);

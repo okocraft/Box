@@ -28,9 +28,9 @@ public final class ItemSources {
         var world = Bukkit.getWorlds().getFirst();
         var excludedTypes = Set.of(ItemType.AIR, ItemType.GOAT_HORN, ItemType.FIREWORK_ROCKET, ItemType.OMINOUS_BOTTLE);
         return registry.stream()
-                .filter(Predicate.not(excludedTypes::contains))
-                .filter(type -> type.isEnabledByFeature(world))
-                .map(type -> new DefaultItem(ItemNameGenerator.key(type) , ItemStack.of(type.asMaterial(), 1))); // FIXME: remove asMaterial in the future
+            .filter(Predicate.not(excludedTypes::contains))
+            .filter(type -> type.isEnabledByFeature(world))
+            .map(type -> new DefaultItem(ItemNameGenerator.key(type), ItemStack.of(type.asMaterial(), 1))); // FIXME: remove asMaterial in the future
     }
 
     public static @NotNull Stream<DefaultItem> potions(@NotNull Registry<PotionType> registry) {
@@ -39,14 +39,14 @@ public final class ItemSources {
 
     public static @NotNull Stream<DefaultItem> enchantedBooks(Registry<Enchantment> registry) {
         return registry.stream()
-                .map(enchantment -> {
-                    var name = ItemNameGenerator.keys(Material.ENCHANTED_BOOK, enchantment);
+            .map(enchantment -> {
+                var name = ItemNameGenerator.keys(Material.ENCHANTED_BOOK, enchantment);
 
-                    var book = new ItemStack(Material.ENCHANTED_BOOK);
-                    book.editMeta(EnchantmentStorageMeta.class, meta -> meta.addStoredEnchant(enchantment, enchantment.getMaxLevel(), false));
+                var book = new ItemStack(Material.ENCHANTED_BOOK);
+                book.editMeta(EnchantmentStorageMeta.class, meta -> meta.addStoredEnchant(enchantment, enchantment.getMaxLevel(), false));
 
-                    return new DefaultItem(name, book);
-                });
+                return new DefaultItem(name, book);
+            });
     }
 
     public static @NotNull Stream<DefaultItem> fireworks() {
@@ -61,12 +61,12 @@ public final class ItemSources {
 
     public static @NotNull Stream<DefaultItem> goatHorns(@NotNull Registry<MusicInstrument> registry) {
         return registry.stream()
-                .map(instrument -> {
-                    var name = ItemNameGenerator.key(instrument);
-                    var goatHorn = new ItemStack(Material.GOAT_HORN);
-                    goatHorn.editMeta(MusicInstrumentMeta.class, meta -> meta.setInstrument(instrument));
-                    return new DefaultItem(name, goatHorn);
-                });
+            .map(instrument -> {
+                var name = ItemNameGenerator.key(instrument);
+                var goatHorn = new ItemStack(Material.GOAT_HORN);
+                goatHorn.editMeta(MusicInstrumentMeta.class, meta -> meta.setInstrument(instrument));
+                return new DefaultItem(name, goatHorn);
+            });
     }
 
     public static @NotNull Stream<DefaultItem> ominousBottles() {

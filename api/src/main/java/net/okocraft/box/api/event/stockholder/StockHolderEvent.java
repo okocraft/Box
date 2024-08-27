@@ -34,16 +34,16 @@ public class StockHolderEvent extends BoxEvent {
     @Override
     public @NotNull String toDebugLog() {
         return this.getClass().getSimpleName() + "{" +
-                "uuid=" + this.getStockHolder().getUUID() +
-                ", name=" + this.getStockHolder().getName() +
-                ", class=" + this.getStockHolder().getClass().getSimpleName() +
-                "}";
+            "uuid=" + this.getStockHolder().getUUID() +
+            ", name=" + this.getStockHolder().getName() +
+            ", class=" + this.getStockHolder().getClass().getSimpleName() +
+            "}";
     }
 
     @Override
     public String toString() {
         return this.getClass().getSimpleName() + "{" +
-                "stockHolder=" + this.getStockHolder() +
-                "}";
+            "stockHolder=" + this.getStockHolder() +
+            "}";
     }
 }

@@ -36,21 +36,21 @@ public final class FurnaceOperator {
 
     private static boolean putIngredient(@NotNull ContainerOperation.Context<FurnaceInventory> context) {
         return ItemPutter.putItem(
-                context.player(),
-                context.inventory().getSmelting(),
-                context.inventory()::canSmelt,
-                context.inventory()::setSmelting,
-                () -> new StickCauses.Furnace(context.player(), context.blockLocation(), StickCauses.Furnace.Type.PUT_INGREDIENT)
+            context.player(),
+            context.inventory().getSmelting(),
+            context.inventory()::canSmelt,
+            context.inventory()::setSmelting,
+            () -> new StickCauses.Furnace(context.player(), context.blockLocation(), StickCauses.Furnace.Type.PUT_INGREDIENT)
         );
     }
 
     private static boolean putFuel(@NotNull ContainerOperation.Context<FurnaceInventory> context) {
         return ItemPutter.putItem(
-                context.player(),
-                context.inventory().getFuel(),
-                context.inventory()::isFuel,
-                context.inventory()::setFuel,
-                () -> new StickCauses.Furnace(context.player(), context.blockLocation(), StickCauses.Furnace.Type.PUT_FUEL)
+            context.player(),
+            context.inventory().getFuel(),
+            context.inventory()::isFuel,
+            context.inventory()::setFuel,
+            () -> new StickCauses.Furnace(context.player(), context.blockLocation(), StickCauses.Furnace.Type.PUT_FUEL)
         );
     }
 }

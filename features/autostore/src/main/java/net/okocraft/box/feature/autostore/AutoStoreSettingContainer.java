@@ -54,8 +54,8 @@ class AutoStoreSettingContainer implements AutoStoreSettingProvider {
 
     void registerBoxPlayerListener(@NotNull MiniMessageBase loadErrorMessage) {
         this.listenerHolder.subscribeAll(subscriber ->
-                subscriber.add(PlayerLoadEvent.class, PLAYER_LISTENER_KEY, event -> this.load(event.getBoxPlayer().getPlayer(), loadErrorMessage), Priority.NORMAL)
-                        .add(PlayerUnloadEvent.class, PLAYER_LISTENER_KEY, event -> this.unload(event.getBoxPlayer().getPlayer()), Priority.NORMAL)
+            subscriber.add(PlayerLoadEvent.class, PLAYER_LISTENER_KEY, event -> this.load(event.getBoxPlayer().getPlayer(), loadErrorMessage), Priority.NORMAL)
+                .add(PlayerUnloadEvent.class, PLAYER_LISTENER_KEY, event -> this.unload(event.getBoxPlayer().getPlayer()), Priority.NORMAL)
         );
     }
 
@@ -135,7 +135,7 @@ class AutoStoreSettingContainer implements AutoStoreSettingProvider {
             enabledItemIds = IntArrayList.of(array.value());
         } else if (enabledItemsNode instanceof ListNode list) {
             enabledItemIds = IntArrayList.toList(
-                    list.asList(NumberValue.class).stream().mapToInt(NumberValue::asInt)
+                list.asList(NumberValue.class).stream().mapToInt(NumberValue::asInt)
             );
         } else {
             enabledItemIds = IntList.of();

@@ -6,7 +6,7 @@ import net.okocraft.box.feature.bemode.util.BEPlayerChecker;
 import net.okocraft.box.feature.gui.api.event.mode.ClickModeCheckEvent;
 import net.okocraft.box.feature.gui.api.mode.ClickModeRegistry;
 
-public final class ClickModeCheckListener  {
+public final class ClickModeCheckListener {
 
     private static final Key KEY = Key.key("box", "feature/bemode/listener/click_mode_check_event");
     private static final SubscribedListenerHolder LISTENER_HOLDER = new SubscribedListenerHolder();
@@ -14,7 +14,7 @@ public final class ClickModeCheckListener  {
     public static void register() {
         LISTENER_HOLDER.subscribeAll(subscriber -> subscriber.add(ClickModeCheckEvent.class, KEY, event -> {
             if (event.getMode() == ClickModeRegistry.getStorageMode() &&
-                    BEPlayerChecker.isBEPlayer(event.getSession().getViewer())) {
+                BEPlayerChecker.isBEPlayer(event.getSession().getViewer())) {
                 event.setAllowed(false);
             }
         }));

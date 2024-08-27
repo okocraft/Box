@@ -61,19 +61,19 @@ public class PlayerCollectItemInfoEvent extends PlayerEvent {
     @Override
     public @NotNull String toDebugLog() {
         return "PlayerCollectItemInfoEvent{" +
-                "uuid=" + this.getBoxPlayer().getUUID() +
-                ", name=" + this.getBoxPlayer().getName() +
-                ", item=" + this.getItem().getPlainName() +
-                ", info=" + this.getInfo().stream().map(PlainTextComponentSerializer.plainText()::serialize).toList() +
-                '}';
+            "uuid=" + this.getBoxPlayer().getUUID() +
+            ", name=" + this.getBoxPlayer().getName() +
+            ", item=" + this.getItem().getPlainName() +
+            ", info=" + this.getInfo().stream().map(PlainTextComponentSerializer.plainText()::serialize).toList() +
+            '}';
     }
 
     @Override
     public String toString() {
         return "PlayerCollectItemInfoEvent{" +
-                "boxPlayer=" + this.getBoxPlayer() +
-                ", item=" + this.getItem() +
-                ", info=" + this.getInfo() +
-                '}';
+            "boxPlayer=" + this.getBoxPlayer() +
+            ", item=" + this.getItem() +
+            ", info=" + this.getInfo() +
+            '}';
     }
 }

@@ -33,21 +33,21 @@ public final class ItemLoader {
         var newToOld = new Int2IntOpenHashMap();
 
         storage.loadRemappedIds().entrySet()
-                .stream()
-                .sorted(Map.Entry.comparingByKey())
-                .map(Map.Entry::getValue)
-                .forEach(map -> {
-                    for (var entry : map.int2IntEntrySet()) {
-                        int oldId = entry.getIntKey();
-                        int newId = entry.getIntValue();
-                        oldToNew.put(oldId, newId);
-                        newToOld.put(newId, oldId);
+            .stream()
+            .sorted(Map.Entry.comparingByKey())
+            .map(Map.Entry::getValue)
+            .forEach(map -> {
+                for (var entry : map.int2IntEntrySet()) {
+                    int oldId = entry.getIntKey();
+                    int newId = entry.getIntValue();
+                    oldToNew.put(oldId, newId);
+                    newToOld.put(newId, oldId);
 
-                        if (newToOld.containsKey(oldId)) {
-                            oldToNew.put(newToOld.get(oldId), newId);
-                        }
+                    if (newToOld.containsKey(oldId)) {
+                        oldToNew.put(newToOld.get(oldId), newId);
                     }
-                });
+                }
+            });
 
         return oldToNew;
     }
@@ -67,8 +67,8 @@ public final class ItemLoader {
         }
 
         var result = new Result(
-                loadDefaultItems(itemProvider, storage.defaultItemStorage(), dataVersion, remappedItems -> processRemappedItems(remappedItems, currentVersion, storage.remappedItemStorage(), storage.getStockStorage())),
-                loadCustomItems(storage.customItemStorage(), dataVersion != null && !dataVersion.isSame(currentVersion))
+            loadDefaultItems(itemProvider, storage.defaultItemStorage(), dataVersion, remappedItems -> processRemappedItems(remappedItems, currentVersion, storage.remappedItemStorage(), storage.getStockStorage())),
+            loadCustomItems(storage.customItemStorage(), dataVersion != null && !dataVersion.isSame(currentVersion))
         );
 
         storage.saveDataVersion(currentVersion);
@@ -78,8 +78,8 @@ public final class ItemLoader {
 
     private static @NotNull List<@NotNull BoxDefaultItem> loadDefaultItems(@NotNull DefaultItemProvider itemProvider, @NotNull DefaultItemStorage defaultItemStorage, @Nullable MCDataVersion dataVersion, @NotNull Consumer<Collection<DefaultItemLoader.RemappedItem>> remappedItemsConsumer) throws Exception {
         var loader = new DefaultItemLoader<>(
-                itemProvider.provide(),
-                defaultItemStorage
+            itemProvider.provide(),
+            defaultItemStorage
         );
 
         if (dataVersion == null) {
@@ -90,15 +90,15 @@ public final class ItemLoader {
         if (dataVersion.isSame(itemProvider.version())) {
             BoxLogger.logger().info("Loading default items...");
             return loader.load(
-                    (item, id) -> BoxItemFactory.createDefaultItem(id, item),
-                    item -> BoxLogger.logger().warn("Unknown default item found: {}", item)
+                (item, id) -> BoxItemFactory.createDefaultItem(id, item),
+                item -> BoxLogger.logger().warn("Unknown default item found: {}", item)
             );
         }
 
         BoxLogger.logger().info("Updating default items...");
         var updateResult = loader.update(
-                itemProvider.renamedItems(dataVersion, itemProvider.version()),
-                (item, id) -> BoxItemFactory.createDefaultItem(id, item)
+            itemProvider.renamedItems(dataVersion, itemProvider.version()),
+            (item, id) -> BoxItemFactory.createDefaultItem(id, item)
         );
 
         remappedItemsConsumer.accept(updateResult.remappedItems());
@@ -108,8 +108,8 @@ public final class ItemLoader {
 
     private static @NotNull List<@NotNull BoxCustomItem> loadCustomItems(@NotNull CustomItemStorage storage, boolean shouldUpdate) throws Exception {
         return new CustomItemLoader(storage, shouldUpdate).load(
-                item -> new ItemData(item.getInternalId(), item.getPlainName(), item.getOriginal().serializeAsBytes()),
-                data -> BoxItemFactory.createCustomItem(data.internalId(), data.plainName(), ItemStack.deserializeBytes(data.itemData()))
+            item -> new ItemData(item.getInternalId(), item.getPlainName(), item.getOriginal().serializeAsBytes()),
+            data -> BoxItemFactory.createCustomItem(data.internalId(), data.plainName(), ItemStack.deserializeBytes(data.itemData()))
         );
     }
 

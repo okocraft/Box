@@ -20,12 +20,12 @@ public class ItemTableOperator {
         var tableName = tablePrefix + "items";
 
         this.createTableStatement = """
-                CREATE TABLE IF NOT EXISTS `%s` (
-                  `id` INTEGER PRIMARY KEY AUTOINCREMENT,
-                  `name` VARCHAR(50) NOT NULL,
-                  `type` INTEGER NOT NULL
-                )
-                """.formatted(tableName);
+            CREATE TABLE IF NOT EXISTS `%s` (
+              `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+              `name` VARCHAR(50) NOT NULL,
+              `type` INTEGER NOT NULL
+            )
+            """.formatted(tableName);
 
         this.insertStatement = "INSERT INTO `%s` (`name`, `type`) VALUES(?,?)".formatted(tableName);
         this.idSpecifiedInsertStatement = "INSERT INTO `%s` (`id`, `name`, `type`) VALUES(?,?,?)".formatted(tableName);

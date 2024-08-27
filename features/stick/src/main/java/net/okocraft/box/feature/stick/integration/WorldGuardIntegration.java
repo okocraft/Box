@@ -12,8 +12,8 @@ public class WorldGuardIntegration {
 
     public static boolean canModify(@NotNull Player player, @NotNull Location location) {
         return WorldGuard.getInstance().getPlatform().getRegionContainer()
-                .createQuery()
-                .testBuild(BukkitAdapter.adapt(location), WorldGuardPlugin.inst().wrapPlayer(player), Flags.CHEST_ACCESS);
+            .createQuery()
+            .testBuild(BukkitAdapter.adapt(location), WorldGuardPlugin.inst().wrapPlayer(player), Flags.CHEST_ACCESS);
     }
 
     private WorldGuardIntegration() {

@@ -36,8 +36,8 @@ final class MemorySQLiteDatabase extends AbstractSQLiteDatabase {
     @Override
     public @NotNull List<Storage.Property> getInfo() {
         return List.of(
-                Storage.Property.of("type", "sqlite-memory"),
-                Storage.Property.of("table-prefix", this.tablePrefix)
+            Storage.Property.of("type", "sqlite-memory"),
+            Storage.Property.of("table-prefix", this.tablePrefix)
         );
     }
 }

@@ -54,9 +54,9 @@ class StockInfoCommand extends AbstractCommand {
 
         if (target != null) {
             this.stockInfo.apply(
-                    target.getName().orElseGet(target.getUUID()::toString),
-                    boxItem.get(),
-                    BoxAPI.api().getStockManager().getPersonalStockHolder(target).getAmount(boxItem.get())
+                target.getName().orElseGet(target.getUUID()::toString),
+                boxItem.get(),
+                BoxAPI.api().getStockManager().getPersonalStockHolder(target).getAmount(boxItem.get())
             ).source(msgSrc).send(sender);
         } else {
             ErrorMessages.PLAYER_NOT_FOUND.apply(args[2]).source(msgSrc).send(sender);

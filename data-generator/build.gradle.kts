@@ -65,7 +65,10 @@ tasks {
         minecraftVersion(minecraftVersion)
         systemProperty("com.mojang.eula.agree", "true")
         systemProperty("paper.disablePluginRemapping", "true")
-        systemProperty("net.okocraft.box.datagenerator.output.dir", layout.buildDirectory.dir("resources/generated-data").get().asFile.toPath().toAbsolutePath().toString())
+        systemProperty(
+            "net.okocraft.box.datagenerator.output.dir",
+            layout.buildDirectory.dir("resources/generated-data").get().asFile.toPath().toAbsolutePath().toString()
+        )
         systemProperty("net.okocraft.box.datagenerator.previous-version", previousMinecraftVersion)
     }
 }

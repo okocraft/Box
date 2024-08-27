@@ -6,7 +6,7 @@ import java.nio.file.StandardOpenOption;
 final class YamlFileOptions {
 
     static final OpenOption[] WRITE = new OpenOption[]{
-            StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING
+        StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING
     };
 
     private YamlFileOptions() {

@@ -1,8 +1,8 @@
 package net.okocraft.box.storage.implementation.yaml;
 
 import com.github.siroshun09.configapi.format.yaml.YamlFormat;
-import net.okocraft.box.storage.api.model.item.ItemData;
 import net.okocraft.box.storage.api.model.item.CustomItemStorage;
+import net.okocraft.box.storage.api.model.item.ItemData;
 import net.okocraft.box.storage.api.util.SneakyThrow;
 import org.jetbrains.annotations.NotNull;
 
@@ -45,9 +45,9 @@ class YamlCustomItemStorage implements CustomItemStorage {
 
             if (name != null && data != null) {
                 dataConsumer.accept(new ItemData(
-                        id.intValue(),
-                        name,
-                        Base64.getDecoder().decode(data)
+                    id.intValue(),
+                    name,
+                    Base64.getDecoder().decode(data)
                 ));
             }
         }

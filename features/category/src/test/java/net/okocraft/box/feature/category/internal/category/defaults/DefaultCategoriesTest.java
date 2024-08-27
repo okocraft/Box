@@ -19,15 +19,15 @@ import static net.okocraft.box.feature.category.internal.category.defaults.Defau
 class DefaultCategoriesTest {
 
     private static final String ITEM_LIST = """
-            dirt:
-              - DIRT
-              - GRASS_BLOCK
-            flowers:
-              - GRASS;10:SHORT_GRASS
-              - TALL_GRASS
-            unavailable:
-              - 10:NEW_ITEM
-            """;
+        dirt:
+          - DIRT
+          - GRASS_BLOCK
+        flowers:
+          - GRASS;10:SHORT_GRASS
+          - TALL_GRASS
+        unavailable:
+          - 10:NEW_ITEM
+        """;
 
     @Test
     void testGetCurrentName() {

@@ -49,15 +49,15 @@ public final class BoxPlugin extends JavaPlugin {
         }
 
         this.pluginContext = new PluginContext(
-                this,
-                boxBootstrapContext.getVersion(),
-                boxBootstrapContext.getDataDirectory(),
-                new FoliaSchedulerWrapper(this),
-                boxBootstrapContext.getEventService(),
-                boxBootstrapContext.createMessageProvider(),
-                new Config(boxBootstrapContext.getDataDirectory()),
-                versionedImpls.createDefaultItemProvider(MCDataVersion.current()),
-                command -> BukkitCommandRegisterer.register(this.getName().toLowerCase(Locale.ENGLISH), command)
+            this,
+            boxBootstrapContext.getVersion(),
+            boxBootstrapContext.getDataDirectory(),
+            new FoliaSchedulerWrapper(this),
+            boxBootstrapContext.getEventService(),
+            boxBootstrapContext.createMessageProvider(),
+            new Config(boxBootstrapContext.getDataDirectory()),
+            versionedImpls.createDefaultItemProvider(MCDataVersion.current()),
+            command -> BukkitCommandRegisterer.register(this.getName().toLowerCase(Locale.ENGLISH), command)
         );
 
         this.boxCore = new BoxCore(this.pluginContext);

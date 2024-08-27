@@ -40,12 +40,12 @@ public class DecreaseAmountButton extends AmountModificationButton {
         var amount = this.getOrCreateAmount(session);
 
         return ItemEditor.create()
-                .displayName(this.displayName.create(session.getMessageSource()))
-                .loreEmptyLine()
-                .loreLine(this.clickToDecreaseLore.apply(amount.getUnit().getAmount()).create(session.getMessageSource()))
-                .loreEmptyLine()
-                .loreLine(this.currentAmountLore.apply(amount.getValue()).create(session.getMessageSource()))
-                .createItem(Material.RED_STAINED_GLASS_PANE);
+            .displayName(this.displayName.create(session.getMessageSource()))
+            .loreEmptyLine()
+            .loreLine(this.clickToDecreaseLore.apply(amount.getUnit().getAmount()).create(session.getMessageSource()))
+            .loreEmptyLine()
+            .loreLine(this.currentAmountLore.apply(amount.getValue()).create(session.getMessageSource()))
+            .createItem(Material.RED_STAINED_GLASS_PANE);
     }
 
     @Override

@@ -17,9 +17,9 @@ public final class StockHolderListener {
 
     public static void register() {
         LISTENER_HOLDER.subscribeAll(subscriber ->
-                subscriber.add(StockIncreaseEvent.class, STOCK_EVENT_LISTENER_KEY, StockHolderListener::onIncrease, Priority.NORMAL)
-                        .add(StockDecreaseEvent.class, STOCK_EVENT_LISTENER_KEY, StockHolderListener::onDecrease, Priority.NORMAL)
-                        .add(StockSetEvent.class, STOCK_EVENT_LISTENER_KEY, StockHolderListener::onSet, Priority.NORMAL)
+            subscriber.add(StockIncreaseEvent.class, STOCK_EVENT_LISTENER_KEY, StockHolderListener::onIncrease, Priority.NORMAL)
+                .add(StockDecreaseEvent.class, STOCK_EVENT_LISTENER_KEY, StockHolderListener::onDecrease, Priority.NORMAL)
+                .add(StockSetEvent.class, STOCK_EVENT_LISTENER_KEY, StockHolderListener::onSet, Priority.NORMAL)
         );
     }
 

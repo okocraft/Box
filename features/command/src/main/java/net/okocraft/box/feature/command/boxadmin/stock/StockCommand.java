@@ -25,12 +25,12 @@ public class StockCommand extends AbstractCommand implements SubCommandHoldable 
     public StockCommand(@NotNull DefaultMessageCollector collector, @NotNull SharedStockListCommand sharedStockListCommand) {
         super("stock", "box.admin.command.stock", Set.of("s", "st"));
         this.subCommandHolder = new SubCommandHolder(
-                new StockModifyCommands.StockGiveCommand(collector),
-                new StockModifyCommands.StockTakeCommand(collector),
-                new StockModifyCommands.StockSetCommand(collector),
-                new StockInfoCommand(collector),
-                new StockListCommand(collector, sharedStockListCommand),
-                new StockResetCommand(collector)
+            new StockModifyCommands.StockGiveCommand(collector),
+            new StockModifyCommands.StockTakeCommand(collector),
+            new StockModifyCommands.StockSetCommand(collector),
+            new StockInfoCommand(collector),
+            new StockListCommand(collector, sharedStockListCommand),
+            new StockResetCommand(collector)
         );
     }
 
@@ -67,26 +67,26 @@ public class StockCommand extends AbstractCommand implements SubCommandHoldable 
     public @NotNull List<String> onTabComplete(@NotNull CommandSender sender, @NotNull String[] args) {
         if (args.length == 2) {
             return this.subCommandHolder.getSubCommands().stream()
-                    .filter(cmd -> sender.hasPermission(cmd.getPermissionNode()))
-                    .map(Command::getName)
-                    .filter(cmdName -> cmdName.startsWith(args[1].toLowerCase(Locale.ROOT)))
-                    .toList();
+                .filter(cmd -> sender.hasPermission(cmd.getPermissionNode()))
+                .map(Command::getName)
+                .filter(cmdName -> cmdName.startsWith(args[1].toLowerCase(Locale.ROOT)))
+                .toList();
         } else {
             return this.subCommandHolder.search(args[1])
-                    .filter(cmd -> sender.hasPermission(cmd.getPermissionNode()))
-                    .map(cmd -> cmd.onTabComplete(sender, args))
-                    .orElse(Collections.emptyList());
+                .filter(cmd -> sender.hasPermission(cmd.getPermissionNode()))
+                .map(cmd -> cmd.onTabComplete(sender, args))
+                .orElse(Collections.emptyList());
         }
     }
 
     @Override
     public @NotNull Component getHelp(@NotNull MiniMessageSource msgSrc) {
         return Component.join(
-                JoinConfiguration.newlines(),
-                this.subCommandHolder.getSubCommands()
-                        .stream()
-                        .map(command -> command.getHelp(msgSrc))
-                        .toList()
+            JoinConfiguration.newlines(),
+            this.subCommandHolder.getSubCommands()
+                .stream()
+                .map(command -> command.getHelp(msgSrc))
+                .toList()
         );
     }
 

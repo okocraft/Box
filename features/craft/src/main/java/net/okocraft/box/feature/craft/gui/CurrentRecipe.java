@@ -63,11 +63,11 @@ public class CurrentRecipe {
 
     public void updateSelectedRecipe() {
         this.selectedRecipe =
-                new SelectedRecipe(
-                        this.ingredientsMap.values().stream().map(SelectableIngredients::getSelected).toList(),
-                        this.source.result(),
-                        this.source.amount()
-                );
+            new SelectedRecipe(
+                this.ingredientsMap.values().stream().map(SelectableIngredients::getSelected).toList(),
+                this.source.result(),
+                this.source.amount()
+            );
     }
 
     public @NotNull SelectedRecipe getSelectedRecipe() {

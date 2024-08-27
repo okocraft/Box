@@ -16,30 +16,30 @@ final class MySQLOperators {
 
     static @NotNull OperatorProvider create(@NotNull String prefix) {
         return new OperatorProvider(
-                new MetaTableOperator(prefix) {
-                    @Override
-                    protected @NotNull String upsertStatement(@NotNull String tableName) {
-                        return "INSERT INTO `%s` (`key`, `value`) VALUES (?, ?) AS new ON DUPLICATE KEY UPDATE `value` = new.value".formatted(tableName);
-                    }
-                },
-                new UserTableOperator(prefix) {
-                    @Override
-                    protected @NotNull String upsertStatement(@NotNull String tableName) {
-                        return "INSERT INTO `%s` (`uuid`, `username`) VALUES (?, ?) AS new ON DUPLICATE KEY UPDATE `username` = new.username".formatted(tableName);
-                    }
-                },
-                new ItemTableOperator(prefix),
-                new CustomItemTableOperator(prefix),
-                new RemappedItemTableOperator(prefix),
-                new StockTableOperator(prefix) {
-                    @Override
-                    protected @NotNull String upsertStockStatement(@NotNull String tableName) {
-                        return "INSERT INTO `%s` (`uuid`, `item_id`, `amount`) VALUES (?, ?, ?) AS new ON DUPLICATE KEY UPDATE `amount` = new.amount".formatted(tableName);
-                    }
-                },
-                new CustomDataTableOperator(prefix, "_v2"),
-                new CustomDataTableOperator(prefix, ""),
-                new PatchingOperator(prefix)
+            new MetaTableOperator(prefix) {
+                @Override
+                protected @NotNull String upsertStatement(@NotNull String tableName) {
+                    return "INSERT INTO `%s` (`key`, `value`) VALUES (?, ?) AS new ON DUPLICATE KEY UPDATE `value` = new.value".formatted(tableName);
+                }
+            },
+            new UserTableOperator(prefix) {
+                @Override
+                protected @NotNull String upsertStatement(@NotNull String tableName) {
+                    return "INSERT INTO `%s` (`uuid`, `username`) VALUES (?, ?) AS new ON DUPLICATE KEY UPDATE `username` = new.username".formatted(tableName);
+                }
+            },
+            new ItemTableOperator(prefix),
+            new CustomItemTableOperator(prefix),
+            new RemappedItemTableOperator(prefix),
+            new StockTableOperator(prefix) {
+                @Override
+                protected @NotNull String upsertStockStatement(@NotNull String tableName) {
+                    return "INSERT INTO `%s` (`uuid`, `item_id`, `amount`) VALUES (?, ?, ?) AS new ON DUPLICATE KEY UPDATE `amount` = new.amount".formatted(tableName);
+                }
+            },
+            new CustomDataTableOperator(prefix, "_v2"),
+            new CustomDataTableOperator(prefix, ""),
+            new PatchingOperator(prefix)
         );
     }
 

@@ -55,10 +55,10 @@ class SubscribedListenerHolderTest {
         var subscriber = newSubscriber();
 
         holder.subscribeAll(
-                subscriber,
-                bulkSubscriber ->
-                        bulkSubscriber.add(BoxEvent.class, TEST_KEY, EMPTY_CONSUMER)
-                                .add(BoxEvent.class, TEST_KEY, EMPTY_CONSUMER)
+            subscriber,
+            bulkSubscriber ->
+                bulkSubscriber.add(BoxEvent.class, TEST_KEY, EMPTY_CONSUMER)
+                    .add(BoxEvent.class, TEST_KEY, EMPTY_CONSUMER)
         );
 
         Assertions.assertEquals(2, holder.getListeners().size());
@@ -82,10 +82,10 @@ class SubscribedListenerHolderTest {
 
     private static @NotNull ListenerSubscriber<Key, BoxEvent, Priority> newSubscriber() {
         return TreeEventService.factory()
-                .eventClass(BoxEvent.class)
-                .keyClass(Key.class)
-                .defaultOrder(Priority.NORMAL)
-                .create()
-                .subscriber();
+            .eventClass(BoxEvent.class)
+            .keyClass(Key.class)
+            .defaultOrder(Priority.NORMAL)
+            .create()
+            .subscriber();
     }
 }

@@ -31,8 +31,8 @@ public class YamlRemappedItemStorage implements RemappedItemStorage {
         for (var entry : source.value().entrySet()) {
             if (entry.getKey() instanceof Number oldId && entry.getValue() instanceof MapNode section) {
                 result.computeIfAbsent(
-                        MCDataVersion.of(section.getInteger("in-version")),
-                        ignored -> new Int2IntOpenHashMap()
+                    MCDataVersion.of(section.getInteger("in-version")),
+                    ignored -> new Int2IntOpenHashMap()
                 ).put(oldId.intValue(), section.getInteger("remapped-to"));
             }
         }

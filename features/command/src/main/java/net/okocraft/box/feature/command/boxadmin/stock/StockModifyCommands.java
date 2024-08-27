@@ -123,12 +123,12 @@ abstract class StockModifyCommands extends AbstractCommand {
 
         StockGiveCommand(@NotNull DefaultMessageCollector collector) {
             super(
-                    "give",
-                    Set.of("g"),
-                    false,
-                    arg4(collector.add("box.command.boxadmin.stock.give.success.sender", "<gray>Gave <aqua><item><gray>x<aqua><amount><gray> to player <aqua><player_name><gray> (Now <aqua><current><gray>)."), PLAYER_NAME, ITEM, AMOUNT, CURRENT),
-                    arg4(collector.add("box.command.boxadmin.stock.give.success.target", "<aqua><player_name><gray> gave you <aqua><item><gray>x<aqua><amount><gray> (Now <aqua><current><gray>)."), PLAYER_NAME, ITEM, AMOUNT, CURRENT),
-                    messageKey(collector.add("box.command.boxadmin.stock.give.help", "<aqua>/boxadmin give <player> <item> <amount><dark_gray> - <gray>Increases stock"))
+                "give",
+                Set.of("g"),
+                false,
+                arg4(collector.add("box.command.boxadmin.stock.give.success.sender", "<gray>Gave <aqua><item><gray>x<aqua><amount><gray> to player <aqua><player_name><gray> (Now <aqua><current><gray>)."), PLAYER_NAME, ITEM, AMOUNT, CURRENT),
+                arg4(collector.add("box.command.boxadmin.stock.give.success.target", "<aqua><player_name><gray> gave you <aqua><item><gray>x<aqua><amount><gray> (Now <aqua><current><gray>)."), PLAYER_NAME, ITEM, AMOUNT, CURRENT),
+                messageKey(collector.add("box.command.boxadmin.stock.give.help", "<aqua>/boxadmin give <player> <item> <amount><dark_gray> - <gray>Increases stock"))
             );
         }
 
@@ -142,12 +142,12 @@ abstract class StockModifyCommands extends AbstractCommand {
 
         StockTakeCommand(@NotNull DefaultMessageCollector collector) {
             super(
-                    "take",
-                    Set.of("t"),
-                    false,
-                    arg4(collector.add("box.command.boxadmin.stock.take.success.sender", "<gray>Took <aqua><item><gray>x<aqua><amount><gray> from player <aqua><player_name><gray> (Now <aqua><current><gray>)."), PLAYER_NAME, ITEM, AMOUNT, CURRENT),
-                    arg4(collector.add("box.command.boxadmin.stock.take.success.target", "<aqua><player_name><gray> took <aqua><item><gray>x<aqua><amount><gray> from you (Now <aqua><current><gray>)."), PLAYER_NAME, ITEM, AMOUNT, CURRENT),
-                    messageKey(collector.add("box.command.boxadmin.stock.take.help", "<aqua>/boxadmin take <player> <item name> <amount><dark_gray> - <gray>Decreases stock"))
+                "take",
+                Set.of("t"),
+                false,
+                arg4(collector.add("box.command.boxadmin.stock.take.success.sender", "<gray>Took <aqua><item><gray>x<aqua><amount><gray> from player <aqua><player_name><gray> (Now <aqua><current><gray>)."), PLAYER_NAME, ITEM, AMOUNT, CURRENT),
+                arg4(collector.add("box.command.boxadmin.stock.take.success.target", "<aqua><player_name><gray> took <aqua><item><gray>x<aqua><amount><gray> from you (Now <aqua><current><gray>)."), PLAYER_NAME, ITEM, AMOUNT, CURRENT),
+                messageKey(collector.add("box.command.boxadmin.stock.take.help", "<aqua>/boxadmin take <player> <item name> <amount><dark_gray> - <gray>Decreases stock"))
             );
         }
 
@@ -161,12 +161,12 @@ abstract class StockModifyCommands extends AbstractCommand {
 
         StockSetCommand(@NotNull DefaultMessageCollector collector) {
             super(
-                    "set",
-                    Set.of("s"),
-                    true,
-                    arg4(collector.add("box.command.boxadmin.stock.set.success.sender", "<gray>Player <aqua><player_name><gray>'s item <aqua><item><gray> has been set to <aqua><amount><gray>."), PLAYER_NAME, ITEM, AMOUNT, CURRENT),
-                    arg4(collector.add("box.command.boxadmin.stock.set.success.target", "<gray>Item <aqua><item><gray> has been set to <aqua><amount><gray> by <aqua><player_name><gray>."), PLAYER_NAME, ITEM, AMOUNT, CURRENT),
-                    messageKey(collector.add("box.command.boxadmin.stock.set.help", "<aqua>/boxadmin set <player> <item name> <amount><dark_gray> - <gray>Sets stock"))
+                "set",
+                Set.of("s"),
+                true,
+                arg4(collector.add("box.command.boxadmin.stock.set.success.sender", "<gray>Player <aqua><player_name><gray>'s item <aqua><item><gray> has been set to <aqua><amount><gray>."), PLAYER_NAME, ITEM, AMOUNT, CURRENT),
+                arg4(collector.add("box.command.boxadmin.stock.set.success.target", "<gray>Item <aqua><item><gray> has been set to <aqua><amount><gray> by <aqua><player_name><gray>."), PLAYER_NAME, ITEM, AMOUNT, CURRENT),
+                messageKey(collector.add("box.command.boxadmin.stock.set.help", "<aqua>/boxadmin set <player> <item name> <amount><dark_gray> - <gray>Sets stock"))
             );
         }
 

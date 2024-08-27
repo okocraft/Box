@@ -35,11 +35,11 @@ public class ToggleButton extends AbstractAutoStoreSettingButton {
         if (setting == null) return new ItemStack(Material.AIR);
 
         return ItemEditor.create()
-                .displayName((setting.isEnabled() ? this.enabled : this.disabled).create(session.getMessageSource()))
-                .loreEmptyLine()
-                .loreLine((setting.isEnabled() ? this.clickToDisable : this.clickToEnable).create(session.getMessageSource()))
-                .loreEmptyLine()
-                .createItem(setting.isEnabled() ? Material.LIME_WOOL : Material.RED_WOOL);
+            .displayName((setting.isEnabled() ? this.enabled : this.disabled).create(session.getMessageSource()))
+            .loreEmptyLine()
+            .loreLine((setting.isEnabled() ? this.clickToDisable : this.clickToEnable).create(session.getMessageSource()))
+            .loreEmptyLine()
+            .createItem(setting.isEnabled() ? Material.LIME_WOOL : Material.RED_WOOL);
     }
 
     @Override

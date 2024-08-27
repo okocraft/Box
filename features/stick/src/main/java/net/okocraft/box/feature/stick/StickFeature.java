@@ -31,6 +31,7 @@ public class StickFeature extends AbstractBoxFeature {
 
     /**
      * The constructor of {@link StickFeature}.
+     *
      * @param context a {@link net.okocraft.box.api.feature.FeatureContext.Registration} context
      */
     @ApiStatus.Internal

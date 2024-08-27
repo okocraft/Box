@@ -18,75 +18,75 @@ import java.util.Set;
 class ConfigTest {
 
     private static final String EXPECTED_DEFAULT_CONFIG =
-            """
-                    #
-                    # The core settings of Box.
-                    #
-                    core:
-                      # Settings related to player stock data.
-                      stock-data:
-                        # Number of seconds to unload the player's stock data after logging out.
-                        unload-time: 300
-                        # Interval in seconds to save player stock data.
-                        save-interval: 15
-                      # The list of worlds where Box cannot be used.
-                      disabled-worlds: []
-                      # Whether to enable debug mode or not.
-                      debug: false
-                    #
-                    # The settings of storage that will be used for loading/saving data.
-                    #
-                    storage:
-                      type: memory # The type of storage to be used.
-                      memory:
-                        # Whether to enable partial saving.
-                        partial-saving: true
-                        example-value: 10 # An example setting to test generating default config.
-                    """;
+        """
+            #
+            # The core settings of Box.
+            #
+            core:
+              # Settings related to player stock data.
+              stock-data:
+                # Number of seconds to unload the player's stock data after logging out.
+                unload-time: 300
+                # Interval in seconds to save player stock data.
+                save-interval: 15
+              # The list of worlds where Box cannot be used.
+              disabled-worlds: []
+              # Whether to enable debug mode or not.
+              debug: false
+            #
+            # The settings of storage that will be used for loading/saving data.
+            #
+            storage:
+              type: memory # The type of storage to be used.
+              memory:
+                # Whether to enable partial saving.
+                partial-saving: true
+                example-value: 10 # An example setting to test generating default config.
+            """;
 
     private static final String CUSTOM_CORE_SETTING =
-            """
-                    core:
-                      stock-data:
-                        unload-time: 100
-                        save-interval: 10
-                      disabled-worlds:
-                        - example_world_1
-                        - example_world_2
-                      debug: true
-                    """;
+        """
+            core:
+              stock-data:
+                unload-time: 100
+                save-interval: 10
+              disabled-worlds:
+                - example_world_1
+                - example_world_2
+              debug: true
+            """;
 
     private static final String CUSTOM_EDITED_CORE_SETTING =
-            """
-                    core:
-                      stock-data:
-                        unload-time: 500
-                        save-interval: 20
-                      disabled-worlds:
-                        - example_world_1
-                      debug: false
-                    """;
+        """
+            core:
+              stock-data:
+                unload-time: 500
+                save-interval: 20
+              disabled-worlds:
+                - example_world_1
+              debug: false
+            """;
 
     private static final String WITH_INVALID_STORAGE_TYPE =
-            """
-                    storage:
-                      type: invalid
-                    """;
+        """
+            storage:
+              type: invalid
+            """;
 
     private static final String ONLY_MEMORY_STORAGE_TYPE =
-            """
-                    storage:
-                      type: memory
-                    """;
+        """
+            storage:
+              type: memory
+            """;
 
     private static final String MEMORY_STORAGE_TYPE_WITH_SETTING =
-            """
-                    storage:
-                      type: memory
-                      memory:
-                        partial-saving: false
-                        example-value: -1
-                    """;
+        """
+            storage:
+              type: memory
+              memory:
+                partial-saving: false
+                example-value: -1
+            """;
 
     @Test
     void testInitialLoad(@TempDir Path dir) throws Exception {

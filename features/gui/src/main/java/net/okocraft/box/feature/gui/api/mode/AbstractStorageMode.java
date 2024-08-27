@@ -31,10 +31,10 @@ public abstract class AbstractStorageMode implements BoxItemClickMode {
 
         BoxAPI.api().getScheduler().runEntityTask(viewer, () -> {
             var resultList =
-                    StockHolderTransaction
-                            .create(session.getSourceStockHolder())
-                            .deposit(item, amount)
-                            .fromInventory(viewer.getInventory(), new GuiCauses.Deposit(viewer));
+                StockHolderTransaction
+                    .create(session.getSourceStockHolder())
+                    .deposit(item, amount)
+                    .fromInventory(viewer.getInventory(), new GuiCauses.Deposit(viewer));
 
             finishTransaction(!resultList.isEmpty(), viewer, DEPOSIT_SOUND, result);
         });
@@ -61,10 +61,10 @@ public abstract class AbstractStorageMode implements BoxItemClickMode {
 
         BoxAPI.api().getScheduler().runEntityTask(viewer, () -> {
             var withdrawn =
-                    StockHolderTransaction
-                            .create(session.getSourceStockHolder())
-                            .withdraw(item, amount)
-                            .toInventory(viewer.getInventory(), new GuiCauses.Withdraw(viewer)).amount();
+                StockHolderTransaction
+                    .create(session.getSourceStockHolder())
+                    .withdraw(item, amount)
+                    .toInventory(viewer.getInventory(), new GuiCauses.Withdraw(viewer)).amount();
 
             finishTransaction(0 < withdrawn, viewer, WITHDRAW_SOUND, result);
         });
@@ -112,10 +112,10 @@ public abstract class AbstractStorageMode implements BoxItemClickMode {
 
                 scheduler.runEntityTask(viewer, () -> {
                     var resultList =
-                            StockHolderTransaction
-                                    .create(session.getSourceStockHolder())
-                                    .depositAll()
-                                    .fromInventory(viewer.getInventory(), new GuiCauses.Deposit(viewer));
+                        StockHolderTransaction
+                            .create(session.getSourceStockHolder())
+                            .depositAll()
+                            .fromInventory(viewer.getInventory(), new GuiCauses.Deposit(viewer));
                     finishTransaction(!resultList.isEmpty(), viewer, DEPOSIT_ALL_SOUND, result);
                 });
 

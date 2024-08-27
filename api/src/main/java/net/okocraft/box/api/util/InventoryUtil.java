@@ -18,7 +18,7 @@ public final class InventoryUtil {
      * @param item      {@link ItemStack} to put
      * @param amount    amount of items to put
      * @return amount of items that could not be put in the {@link Inventory} because it was full
-     * @throws NullPointerException if {@code inventory} or {@code item} is null
+     * @throws NullPointerException     if {@code inventory} or {@code item} is null
      * @throws IllegalArgumentException if {@code amount} is negative
      */
     public static int putItems(@NotNull Inventory inventory, @NotNull ItemStack item, int amount) {

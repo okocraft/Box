@@ -32,8 +32,8 @@ public class IngredientChangeModeButton implements Button {
     public @NotNull ItemStack createIcon(@NotNull PlayerSession session) {
         boolean changePerIngredientMode = session.getData(IngredientButton.CHANGE_PER_INGREDIENT) != null;
         return ItemEditor.create()
-                .displayName((changePerIngredientMode ? EACH_INGREDIENT_MODE : ALL_INGREDIENT_MODE).create(session.getMessageSource()))
-                .createItem(changePerIngredientMode ? Material.FIREWORK_STAR : Material.FIRE_CHARGE);
+            .displayName((changePerIngredientMode ? EACH_INGREDIENT_MODE : ALL_INGREDIENT_MODE).create(session.getMessageSource()))
+            .createItem(changePerIngredientMode ? Material.FIREWORK_STAR : Material.FIRE_CHARGE);
     }
 
     @Override

@@ -66,41 +66,41 @@ class DataGenerator {
 
         try (var writer = Files.newBufferedWriter(dir.resolve(Bukkit.getMinecraftVersion() + "-new-items.txt"))) {
             this.defaultItems.stream()
-                    .filter(Predicate.not(items::contains))
-                    .forEach(name -> {
-                        try {
-                            writer.write(name);
-                            writer.newLine();
-                        } catch (IOException e) {
-                            SneakyThrow.sneaky(e);
-                        }
-                    });
+                .filter(Predicate.not(items::contains))
+                .forEach(name -> {
+                    try {
+                        writer.write(name);
+                        writer.newLine();
+                    } catch (IOException e) {
+                        SneakyThrow.sneaky(e);
+                    }
+                });
         }
     }
 
     @SuppressWarnings("deprecation")
     public void uncategorizedItems(@NotNull Path dir) throws IOException {
         var categorizedItems =
-                DefaultCategories.loadDefaultCategories(MCDataVersion.current())
-                        .stream()
-                        .map(DefaultCategory::itemNames)
-                        .flatMap(Collection::stream)
-                        .collect(Collectors.toSet());
+            DefaultCategories.loadDefaultCategories(MCDataVersion.current())
+                .stream()
+                .map(DefaultCategory::itemNames)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toSet());
 
         try (var writer = Files.newBufferedWriter(dir.resolve(Bukkit.getMinecraftVersion() + "-uncategorized-items.txt"))) {
             this.defaultItems.stream()
-                    .filter(Predicate.not(categorizedItems::contains))
-                    .forEach(name -> {
-                        try {
-                            writer.write("  - ");
-                            writer.write(String.valueOf(Bukkit.getUnsafe().getDataVersion()));
-                            writer.write(":");
-                            writer.write(name);
-                            writer.newLine();
-                        } catch (IOException e) {
-                            SneakyThrow.sneaky(e);
-                        }
-                    });
+                .filter(Predicate.not(categorizedItems::contains))
+                .forEach(name -> {
+                    try {
+                        writer.write("  - ");
+                        writer.write(String.valueOf(Bukkit.getUnsafe().getDataVersion()));
+                        writer.write(":");
+                        writer.write(name);
+                        writer.newLine();
+                    } catch (IOException e) {
+                        SneakyThrow.sneaky(e);
+                    }
+                });
         }
     }
 }

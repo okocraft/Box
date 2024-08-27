@@ -45,7 +45,7 @@ abstract class AbstractSQLiteDatabase implements Database {
 
     protected static @NotNull Connection newConnection(@NotNull String filepath, @NotNull String filename) throws ReflectiveOperationException {
         return (Connection) Class.forName("org.sqlite.jdbc4.JDBC4Connection")
-                .getConstructor(String.class, String.class, Properties.class)
-                .newInstance("jdbc:sqlite:" + filepath, filename, new Properties());
+            .getConstructor(String.class, String.class, Properties.class)
+            .newInstance("jdbc:sqlite:" + filepath, filename, new Properties());
     }
 }

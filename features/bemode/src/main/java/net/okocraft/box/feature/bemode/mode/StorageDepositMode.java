@@ -56,12 +56,12 @@ public class StorageDepositMode extends AbstractStorageMode {
         var amountData = session.getData(Amount.SHARED_DATA_KEY);
 
         return ItemEditor.create()
-                .copyLoreFrom(icon)
-                .loreEmptyLine()
-                .loreLine(this.clickToDeposit.apply(amountData != null ? amountData.getValue() : 1).create(session.getMessageSource()))
-                .loreEmptyLine()
-                .loreLine(this.currentStock.apply(session.getSourceStockHolder().getAmount(item)).create(session.getMessageSource()))
-                .applyTo(icon);
+            .copyLoreFrom(icon)
+            .loreEmptyLine()
+            .loreLine(this.clickToDeposit.apply(amountData != null ? amountData.getValue() : 1).create(session.getMessageSource()))
+            .loreEmptyLine()
+            .loreLine(this.currentStock.apply(session.getSourceStockHolder().getAmount(item)).create(session.getMessageSource()))
+            .applyTo(icon);
     }
 
     @Override
@@ -119,12 +119,12 @@ public class StorageDepositMode extends AbstractStorageMode {
         @Override
         public @NotNull ItemStack createIcon(@NotNull PlayerSession session) {
             return ItemEditor.create()
-                    .displayName(this.displayName.create(session.getMessageSource()))
-                    .loreEmptyLine()
-                    .loreLine(this.lore.create(session.getMessageSource()))
-                    .loreLineIf(isClicked(session), () -> this.confirmation.create(session.getMessageSource()))
-                    .loreEmptyLine()
-                    .createItem(Material.NETHER_STAR);
+                .displayName(this.displayName.create(session.getMessageSource()))
+                .loreEmptyLine()
+                .loreLine(this.lore.create(session.getMessageSource()))
+                .loreLineIf(isClicked(session), () -> this.confirmation.create(session.getMessageSource()))
+                .loreEmptyLine()
+                .createItem(Material.NETHER_STAR);
         }
     }
 }

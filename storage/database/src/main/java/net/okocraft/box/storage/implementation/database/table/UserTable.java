@@ -61,7 +61,7 @@ public class UserTable implements UserStorage {
 
         if (rawUuid != null) {
             var uuid = UUIDParser.parseOrWarn(rawUuid);
-            return uuid != null ? BoxUserFactory.create(uuid, name) :null;
+            return uuid != null ? BoxUserFactory.create(uuid, name) : null;
         }
 
         return null;
@@ -88,7 +88,7 @@ public class UserTable implements UserStorage {
         try (var connection = this.database.getConnection();
              var statement = this.operator.upsertUserStatement(connection)) {
             for (var user : users) {
-                this.operator.addUpsertUserBatch(statement, user.getUUID(),  user.getName().orElse(""));
+                this.operator.addUpsertUserBatch(statement, user.getUUID(), user.getName().orElse(""));
             }
             statement.executeBatch();
         }

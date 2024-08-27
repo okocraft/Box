@@ -13,10 +13,10 @@ public final class VersionedImplGenerator {
     private static final char NEWLINE = '\n';
 
     private static final List<String> IMPORTS = List.of(
-            "net.okocraft.box.api.util.MCDataVersion",
-            "net.okocraft.box.storage.api.model.item.provider.DefaultItem",
-            "net.okocraft.box.version.common.version.Versioned",
-            "java.util.stream.Stream"
+        "net.okocraft.box.api.util.MCDataVersion",
+        "net.okocraft.box.storage.api.model.item.provider.DefaultItem",
+        "net.okocraft.box.version.common.version.Versioned",
+        "java.util.stream.Stream"
     );
 
     private final TypeElement element;
@@ -52,12 +52,12 @@ public final class VersionedImplGenerator {
 
     private void addDefaultItemVersion(Writer writer) throws IOException {
         var verField =
-                ElementFilter.fieldsIn(this.element.getEnclosedElements())
-                        .stream()
-                        .filter(v -> v.getAnnotation(VersionSpecific.Version.class) != null)
-                        .findFirst()
-                        .map(v -> this.element.getSimpleName() + "." + v.getSimpleName())
-                        .orElseThrow(() -> new IllegalStateException("@VersionSpecific.Version with a MCDataVersion field not found"));
+            ElementFilter.fieldsIn(this.element.getEnclosedElements())
+                .stream()
+                .filter(v -> v.getAnnotation(VersionSpecific.Version.class) != null)
+                .findFirst()
+                .map(v -> this.element.getSimpleName() + "." + v.getSimpleName())
+                .orElseThrow(() -> new IllegalStateException("@VersionSpecific.Version with a MCDataVersion field not found"));
 
         writer.append("    public MCDataVersion version() {").append(NEWLINE);
         writer.append("        return ").append(verField).append(";").append(NEWLINE);
@@ -66,11 +66,11 @@ public final class VersionedImplGenerator {
 
     private void addDefaultItems(Writer writer) throws IOException {
         var method = ElementFilter.methodsIn(this.element.getEnclosedElements())
-                .stream()
-                .filter(e -> e.getAnnotation(VersionSpecific.DefaultItemSource.class) != null)
-                .map(e -> this.element.getSimpleName() + "." + e.getSimpleName() + "()")
-                .findFirst()
-                .orElseThrow(() -> new IllegalStateException("@DefaultItemSource not found"));
+            .stream()
+            .filter(e -> e.getAnnotation(VersionSpecific.DefaultItemSource.class) != null)
+            .map(e -> this.element.getSimpleName() + "." + e.getSimpleName() + "()")
+            .findFirst()
+            .orElseThrow(() -> new IllegalStateException("@DefaultItemSource not found"));
 
         writer.append("    public Stream<DefaultItem> defaultItems() {\n");
         writer.append("        return ").append(method).append(";\n");

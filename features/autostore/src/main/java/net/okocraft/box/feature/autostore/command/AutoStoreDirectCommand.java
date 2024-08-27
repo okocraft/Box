@@ -52,8 +52,8 @@ class AutoStoreDirectCommand extends AutoStoreSubCommand {
     @NotNull List<String> runTabComplete(@NotNull CommandSender sender, @NotNull String[] args) {
         if (args.length == 3) {
             return Stream.of("on", "off")
-                    .filter(bool -> bool.startsWith(args[2].toLowerCase(Locale.ROOT)))
-                    .collect(Collectors.toList());
+                .filter(bool -> bool.startsWith(args[2].toLowerCase(Locale.ROOT)))
+                .collect(Collectors.toList());
         }
 
         return Collections.emptyList();

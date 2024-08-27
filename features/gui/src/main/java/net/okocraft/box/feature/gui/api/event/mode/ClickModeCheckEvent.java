@@ -42,20 +42,20 @@ public class ClickModeCheckEvent extends BoxEvent {
     @Override
     public @NotNull String toDebugLog() {
         return "ClickModeCheckEvent{" +
-                "viewer=" + this.session.getViewer() +
-                ", mode=" + this.mode +
-                ", originalResult=" + this.originalResult +
-                ", result=" + this.result +
-                '}';
+            "viewer=" + this.session.getViewer() +
+            ", mode=" + this.mode +
+            ", originalResult=" + this.originalResult +
+            ", result=" + this.result +
+            '}';
     }
 
     @Override
     public String toString() {
         return "ClickModeCheckEvent{" +
-                "session=" + this.session +
-                ", mode=" + this.mode +
-                ", originalResult=" + this.originalResult +
-                ", result=" + this.result +
-                '}';
+            "session=" + this.session +
+            ", mode=" + this.mode +
+            ", originalResult=" + this.originalResult +
+            ", result=" + this.result +
+            '}';
     }
 }

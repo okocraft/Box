@@ -34,7 +34,7 @@ public class ItemEvent extends BoxEvent {
     @Override
     public String toString() {
         return this.getClass().getSimpleName() + "{" +
-                "item=" + this.getItem() +
-                '}';
+            "item=" + this.getItem() +
+            '}';
     }
 }

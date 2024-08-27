@@ -99,7 +99,7 @@ public final class BoxStickItem {
     @Override
     public String toString() {
         return "BoxStickItem[" +
-                "key=" + this.key +
-                ']';
+            "key=" + this.key +
+            ']';
     }
 }

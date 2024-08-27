@@ -35,8 +35,8 @@ public class CustomItemRenameEvent extends ItemEvent {
     @Override
     public String toString() {
         return "CustomItemRenameEvent{" +
-                "item=" + this.getItem() +
-                ", previousName='" + this.previousName + '\'' +
-                '}';
+            "item=" + this.getItem() +
+            ", previousName='" + this.previousName + '\'' +
+            '}';
     }
 }

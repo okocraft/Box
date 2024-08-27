@@ -18,7 +18,7 @@ public interface Category {
     /**
      * Gets the display name.
      *
-     * @param viewer  a {@link Player} who see the display name
+     * @param viewer a {@link Player} who see the display name
      * @return the display name
      */
     @NotNull Component getDisplayName(@NotNull Player viewer);
