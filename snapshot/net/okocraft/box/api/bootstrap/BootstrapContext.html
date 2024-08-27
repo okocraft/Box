@@ -124,14 +124,19 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets the <a href="../message/DefaultMessageCollector.html" title="interface in net.okocraft.box.api.message"><code>DefaultMessageCollector</code></a>.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>@NotNull <a href="../model/manager/EventManager.html" title="interface in net.okocraft.box.api.model.manager">EventManager</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getEventManager()" class="member-name-link">getEventManager</a>()</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>@NotNull <a href="https://siroshun09.github.io/Event4J/4.0.1/dev/siroshun/event4j/api/caller/EventCaller.html" title="class or interface in dev.siroshun.event4j.api.caller" class="external-link">EventCaller</a><wbr>&lt;<a href="../event/BoxEvent.html" title="class in net.okocraft.box.api.event">BoxEvent</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getEventCaller()" class="member-name-link">getEventCaller</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-<div class="block">Gets the <a href="../model/manager/EventManager.html" title="interface in net.okocraft.box.api.model.manager"><code>EventManager</code></a>.</div>
+<div class="block">Gets the <a href="https://siroshun09.github.io/Event4J/4.0.1/dev/siroshun/event4j/api/caller/EventCaller.html" title="class or interface in dev.siroshun.event4j.api.caller" class="external-link"><code>EventCaller</code></a>.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getVersion()" class="member-name-link">getVersion</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>@NotNull <a href="https://siroshun09.github.io/Event4J/4.0.1/dev/siroshun/event4j/api/listener/ListenerSubscriber.html" title="class or interface in dev.siroshun.event4j.api.listener" class="external-link">ListenerSubscriber</a><wbr>&lt;net.kyori.adventure.key.Key,<wbr><a href="../event/BoxEvent.html" title="class in net.okocraft.box.api.event">BoxEvent</a>,<wbr><a href="https://siroshun09.github.io/Event4J/4.0.1/dev/siroshun/event4j/api/priority/Priority.html" title="class or interface in dev.siroshun.event4j.api.priority" class="external-link">Priority</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getListenerSubscriber()" class="member-name-link">getListenerSubscriber</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets the <a href="https://siroshun09.github.io/Event4J/4.0.1/dev/siroshun/event4j/api/listener/ListenerSubscriber.html" title="class or interface in dev.siroshun.event4j.api.listener" class="external-link"><code>ListenerSubscriber</code></a>.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>@NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getVersion()" class="member-name-link">getVersion</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets the version of Box.</div>
 </div>
 </div>
@@ -187,17 +192,26 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="getEventManager()">
-<h3>getEventManager</h3>
+<section class="detail" id="getEventCaller()">
+<h3>getEventCaller</h3>
 <div class="member-signature"><span class="annotations">@NotNull
-</span><span class="return-type">@NotNull <a href="../model/manager/EventManager.html" title="interface in net.okocraft.box.api.model.manager">EventManager</a></span>&nbsp;<span class="element-name">getEventManager</span>()</div>
-<div class="block">Gets the <a href="../model/manager/EventManager.html" title="interface in net.okocraft.box.api.model.manager"><code>EventManager</code></a>.
- <p>
- This <a href="../model/manager/EventManager.html" title="interface in net.okocraft.box.api.model.manager"><code>EventManager</code></a> is the same as <a href="../BoxAPI.html#getEventManager()"><code>BoxAPI.getEventManager()</code></a>,
- and listeners registered to this remain active after initialization.</div>
+</span><span class="return-type">@NotNull <a href="https://siroshun09.github.io/Event4J/4.0.1/dev/siroshun/event4j/api/caller/EventCaller.html" title="class or interface in dev.siroshun.event4j.api.caller" class="external-link">EventCaller</a>&lt;<a href="../event/BoxEvent.html" title="class in net.okocraft.box.api.event">BoxEvent</a>&gt;</span>&nbsp;<span class="element-name">getEventCaller</span>()</div>
+<div class="block">Gets the <a href="https://siroshun09.github.io/Event4J/4.0.1/dev/siroshun/event4j/api/caller/EventCaller.html" title="class or interface in dev.siroshun.event4j.api.caller" class="external-link"><code>EventCaller</code></a>.</div>
 <dl class="notes">
 <dt>Returns:</dt>
-<dd>the <a href="../model/manager/EventManager.html" title="interface in net.okocraft.box.api.model.manager"><code>EventManager</code></a></dd>
+<dd>the <a href="https://siroshun09.github.io/Event4J/4.0.1/dev/siroshun/event4j/api/caller/EventCaller.html" title="class or interface in dev.siroshun.event4j.api.caller" class="external-link"><code>EventCaller</code></a></dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getListenerSubscriber()">
+<h3>getListenerSubscriber</h3>
+<div class="member-signature"><span class="annotations">@NotNull
+</span><span class="return-type">@NotNull <a href="https://siroshun09.github.io/Event4J/4.0.1/dev/siroshun/event4j/api/listener/ListenerSubscriber.html" title="class or interface in dev.siroshun.event4j.api.listener" class="external-link">ListenerSubscriber</a>&lt;net.kyori.adventure.key.Key,<wbr><a href="../event/BoxEvent.html" title="class in net.okocraft.box.api.event">BoxEvent</a>,<wbr><a href="https://siroshun09.github.io/Event4J/4.0.1/dev/siroshun/event4j/api/priority/Priority.html" title="class or interface in dev.siroshun.event4j.api.priority" class="external-link">Priority</a>&gt;</span>&nbsp;<span class="element-name">getListenerSubscriber</span>()</div>
+<div class="block">Gets the <a href="https://siroshun09.github.io/Event4J/4.0.1/dev/siroshun/event4j/api/listener/ListenerSubscriber.html" title="class or interface in dev.siroshun.event4j.api.listener" class="external-link"><code>ListenerSubscriber</code></a>.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the <a href="https://siroshun09.github.io/Event4J/4.0.1/dev/siroshun/event4j/api/listener/ListenerSubscriber.html" title="class or interface in dev.siroshun.event4j.api.listener" class="external-link"><code>ListenerSubscriber</code></a></dd>
 </dl>
 </section>
 </li>
