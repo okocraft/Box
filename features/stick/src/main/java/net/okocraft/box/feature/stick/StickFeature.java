@@ -27,7 +27,7 @@ public class StickFeature extends AbstractBoxFeature {
     private final BoxStickItem boxStickItem;
     private final StickCommand stickCommand;
     private final CustomStickCommand customStickCommand;
-    private final StickListener stickListener;
+    private StickListener stickListener;
 
     /**
      * The constructor of {@link StickFeature}.
@@ -40,7 +40,6 @@ public class StickFeature extends AbstractBoxFeature {
         this.boxStickItem = new BoxStickItem(new NamespacedKey("box", "stick"));
         this.stickCommand = new StickCommand(this.boxStickItem, context.defaultMessageCollector());
         this.customStickCommand = new CustomStickCommand(this.boxStickItem, context.defaultMessageCollector());
-        this.stickListener = new StickListener(this.boxStickItem);
     }
 
     @Override
@@ -51,6 +50,8 @@ public class StickFeature extends AbstractBoxFeature {
 
         BoxAPI.api().getBoxCommand().getSubCommandHolder().register(this.stickCommand);
         BoxAPI.api().getBoxAdminCommand().getSubCommandHolder().register(this.customStickCommand);
+
+        this.stickListener = new StickListener(this.boxStickItem);
         Bukkit.getPluginManager().registerEvents(this.stickListener, context.plugin());
     }
 
@@ -58,7 +59,10 @@ public class StickFeature extends AbstractBoxFeature {
     public void disable(@NotNull FeatureContext.Disabling context) {
         BoxAPI.api().getBoxCommand().getSubCommandHolder().unregister(this.stickCommand);
         BoxAPI.api().getBoxAdminCommand().getSubCommandHolder().register(this.customStickCommand);
-        HandlerList.unregisterAll(this.stickListener);
+
+        if (this.stickListener != null) {
+            HandlerList.unregisterAll(this.stickListener);
+        }
     }
 
     /**
