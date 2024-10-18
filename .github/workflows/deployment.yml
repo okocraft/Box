@@ -1,10 +1,12 @@
 name: Gradle Deployment
 on:
   push:
-    branches:
-      - "main"
+# for release
     tags:
       - "**"
+# for snapshot
+#    branches:
+#      - "main"
 
 concurrency:
   group: box-deployment
