@@ -6,7 +6,6 @@ import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.okocraft.box.api.event.BoxEvent;
 import net.okocraft.box.api.event.item.ItemImportEvent;
 import net.okocraft.box.api.model.item.BoxItem;
-import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -59,10 +58,6 @@ class BukkitBoxItemMap extends BoxItemMap {
 
     @Nullable BoxItem getByItemStack(@NotNull ItemStack item) {
         Objects.requireNonNull(item);
-
-        if (!item.hasItemMeta() && item.getType() != Material.FIREWORK_ROCKET) {
-            return this.getByItemName(item.getType().name());
-        }
 
         var one = item.getAmount() == 1 ? item : item.asOne();
 
