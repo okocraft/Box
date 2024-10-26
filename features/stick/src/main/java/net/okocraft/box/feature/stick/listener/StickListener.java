@@ -286,11 +286,9 @@ public class StickListener implements Listener {
             return;
         }
 
-        var copied = original.clone();
+        original.editMeta(Damageable.class, meta -> meta.setDamage(0));
 
-        copied.editMeta(Damageable.class, meta -> meta.setDamage(0));
-
-        if (this.tryConsumingStock(boxPlayer, copied, new StickCauses.ItemBreak(boxPlayer))) {
+        if (this.tryConsumingStock(boxPlayer, original, new StickCauses.ItemBreak(boxPlayer))) {
             original.setAmount(2);
         }
     }
