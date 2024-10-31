@@ -1,7 +1,7 @@
 package net.okocraft.box.feature.category.internal.category.defaults;
 
-import com.github.siroshun09.configapi.core.node.BooleanValue;
-import com.github.siroshun09.configapi.core.node.MapNode;
+import dev.siroshun.configapi.core.node.BooleanValue;
+import dev.siroshun.configapi.core.node.MapNode;
 import net.okocraft.box.api.model.manager.ItemManager;
 import net.okocraft.box.feature.category.api.category.Category;
 import net.okocraft.box.feature.category.internal.category.LoadedCategory;

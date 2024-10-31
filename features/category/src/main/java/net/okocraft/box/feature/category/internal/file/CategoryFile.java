@@ -1,8 +1,8 @@
 package net.okocraft.box.feature.category.internal.file;
 
-import com.github.siroshun09.configapi.core.node.MapNode;
-import com.github.siroshun09.configapi.core.node.StringRepresentable;
-import com.github.siroshun09.configapi.format.yaml.YamlFormat;
+import dev.siroshun.configapi.core.node.MapNode;
+import dev.siroshun.configapi.core.node.StringRepresentable;
+import dev.siroshun.configapi.format.yaml.YamlFormat;
 import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.model.manager.ItemManager;

@@ -1,10 +1,10 @@
 package net.okocraft.box.feature.craft.loader;
 
-import com.github.siroshun09.configapi.core.node.MapNode;
-import com.github.siroshun09.configapi.core.serialization.key.KeyGenerator;
-import com.github.siroshun09.configapi.core.serialization.record.RecordDeserializer;
-import com.github.siroshun09.configapi.core.serialization.record.RecordSerializer;
-import com.github.siroshun09.configapi.format.yaml.YamlFormat;
+import dev.siroshun.configapi.core.node.MapNode;
+import dev.siroshun.configapi.core.serialization.key.KeyGenerator;
+import dev.siroshun.configapi.core.serialization.record.RecordDeserializer;
+import dev.siroshun.configapi.core.serialization.record.RecordSerializer;
+import dev.siroshun.configapi.format.yaml.YamlFormat;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.feature.craft.config.RecipeConfig;
 import net.okocraft.box.feature.craft.model.RecipeHolder;

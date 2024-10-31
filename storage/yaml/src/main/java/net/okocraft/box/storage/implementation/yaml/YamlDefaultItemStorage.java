@@ -1,8 +1,8 @@
 package net.okocraft.box.storage.implementation.yaml;
 
-import com.github.siroshun09.configapi.core.node.NullNode;
-import com.github.siroshun09.configapi.core.node.StringRepresentable;
-import com.github.siroshun09.configapi.format.yaml.YamlFormat;
+import dev.siroshun.configapi.core.node.NullNode;
+import dev.siroshun.configapi.core.node.StringRepresentable;
+import dev.siroshun.configapi.format.yaml.YamlFormat;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.IntSet;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;

@@ -1,6 +1,6 @@
 package net.okocraft.box.api.model.customdata;
 
-import com.github.siroshun09.configapi.core.node.MapNode;
+import dev.siroshun.configapi.core.node.MapNode;
 import net.kyori.adventure.key.Key;
 import org.jetbrains.annotations.NotNull;
 

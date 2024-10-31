@@ -1,6 +1,6 @@
 package net.okocraft.box.storage.implementation.yaml;
 
-import com.github.siroshun09.configapi.format.yaml.YamlFormat;
+import dev.siroshun.configapi.format.yaml.YamlFormat;
 import net.okocraft.box.storage.api.model.item.CustomItemStorage;
 import net.okocraft.box.storage.api.model.item.ItemData;
 import net.okocraft.box.storage.api.util.SneakyThrow;

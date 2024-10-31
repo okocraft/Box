@@ -1,6 +1,6 @@
 package net.okocraft.box.api.util;
 
-import com.github.siroshun09.configapi.core.serialization.annotation.Inline;
+import dev.siroshun.configapi.core.serialization.annotation.Inline;
 import net.okocraft.box.test.shared.mock.bukkit.inventory.InventoryInfo;
 import net.okocraft.box.test.shared.model.item.ItemType;
 import net.okocraft.box.test.shared.util.TestCaseLoader;

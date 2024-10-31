@@ -1,7 +1,7 @@
 package net.okocraft.box.storage.implementation.database.table;
 
-import com.github.siroshun09.configapi.core.node.MapNode;
-import com.github.siroshun09.configapi.format.yaml.YamlFormat;
+import dev.siroshun.configapi.core.node.MapNode;
+import dev.siroshun.configapi.format.yaml.YamlFormat;
 import net.okocraft.box.storage.implementation.database.database.Database;
 import org.jetbrains.annotations.NotNull;
 

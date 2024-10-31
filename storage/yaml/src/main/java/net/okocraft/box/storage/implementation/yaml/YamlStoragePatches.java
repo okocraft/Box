@@ -1,6 +1,6 @@
 package net.okocraft.box.storage.implementation.yaml;
 
-import com.github.siroshun09.configapi.format.yaml.YamlFormat;
+import dev.siroshun.configapi.format.yaml.YamlFormat;
 import net.okocraft.box.api.util.BoxLogger;
 import org.jetbrains.annotations.NotNull;
 

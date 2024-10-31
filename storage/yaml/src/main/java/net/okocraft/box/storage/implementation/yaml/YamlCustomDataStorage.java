@@ -1,7 +1,7 @@
 package net.okocraft.box.storage.implementation.yaml;
 
-import com.github.siroshun09.configapi.core.node.MapNode;
-import com.github.siroshun09.configapi.format.yaml.YamlFormat;
+import dev.siroshun.configapi.core.node.MapNode;
+import dev.siroshun.configapi.format.yaml.YamlFormat;
 import net.kyori.adventure.key.Key;
 import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.storage.api.model.data.CustomDataStorage;
