@@ -78,7 +78,6 @@ class DataGenerator {
         }
     }
 
-    @SuppressWarnings("deprecation")
     public void uncategorizedItems(@NotNull Path dir) throws IOException {
         var categorizedItems =
             DefaultCategories.loadDefaultCategories(MCDataVersion.current())
@@ -93,7 +92,7 @@ class DataGenerator {
                 .forEach(name -> {
                     try {
                         writer.write("  - ");
-                        writer.write(String.valueOf(Bukkit.getUnsafe().getDataVersion()));
+                        writer.write(String.valueOf(MCDataVersion.current().dataVersion()));
                         writer.write(":");
                         writer.write(name);
                         writer.newLine();

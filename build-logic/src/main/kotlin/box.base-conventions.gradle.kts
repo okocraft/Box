@@ -20,7 +20,6 @@ dependencies {
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter)
     testImplementation(libs.annotations)
-    testImplementation(libs.configapi.test.shared.classes)
     testImplementation(libs.fastutil)
     testImplementation(libs.mockito)
 

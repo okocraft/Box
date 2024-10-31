@@ -1,6 +1,6 @@
 package net.okocraft.box.feature.category.internal.listener;
 
-import com.github.siroshun09.configapi.format.yaml.YamlFormat;
+import dev.siroshun.configapi.format.yaml.YamlFormat;
 import net.kyori.adventure.key.Key;
 import net.okocraft.box.api.event.item.CustomItemRegisterEvent;
 import net.okocraft.box.api.event.item.CustomItemRenameEvent;

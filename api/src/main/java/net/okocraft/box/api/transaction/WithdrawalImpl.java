@@ -40,7 +40,7 @@ record WithdrawalImpl(@NotNull StockHolder stockHolder, @NotNull BoxItem boxItem
             var item = contents[i];
 
             if (item == null) {
-                if (view != null && !checkClickEvent(view, i)) {
+                if (view != null && fireClickEventAndCheckCancelled(view, i)) {
                     continue;
                 }
 
@@ -53,7 +53,7 @@ record WithdrawalImpl(@NotNull StockHolder stockHolder, @NotNull BoxItem boxItem
                 withdrawnAmount += withdrawn;
                 contents[i] = this.boxItem.getOriginal().asQuantity(withdrawn);
             } else if (item.isSimilar(this.boxItem.getOriginal())) {
-                if (view != null && !checkClickEvent(view, i)) {
+                if (view != null && fireClickEventAndCheckCancelled(view, i)) {
                     continue;
                 }
 
@@ -79,7 +79,7 @@ record WithdrawalImpl(@NotNull StockHolder stockHolder, @NotNull BoxItem boxItem
         return TransactionResult.create(this.boxItem, withdrawnAmount);
     }
 
-    private static boolean checkClickEvent(@NotNull InventoryView view, int slot) {
-        return new InventoryClickEvent(view, InventoryType.SlotType.CONTAINER, slot, ClickType.LEFT, InventoryAction.PLACE_ALL).callEvent();
+    private static boolean fireClickEventAndCheckCancelled(@NotNull InventoryView view, int slot) {
+        return !new InventoryClickEvent(view, InventoryType.SlotType.CONTAINER, slot, ClickType.LEFT, InventoryAction.PLACE_ALL).callEvent();
     }
 }

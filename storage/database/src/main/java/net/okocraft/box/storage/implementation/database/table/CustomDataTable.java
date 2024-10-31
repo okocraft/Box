@@ -1,7 +1,7 @@
 package net.okocraft.box.storage.implementation.database.table;
 
-import com.github.siroshun09.configapi.core.file.java.binary.BinaryFormat;
-import com.github.siroshun09.configapi.core.node.MapNode;
+import dev.siroshun.configapi.core.node.MapNode;
+import dev.siroshun.configapi.format.binary.BinaryFormat;
 import net.kyori.adventure.key.Key;
 import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.storage.api.util.SneakyThrow;

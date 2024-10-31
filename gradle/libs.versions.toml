@@ -1,8 +1,7 @@
 [versions]
 # common libraries
-adventure = "4.17.0"
 annotations = "26.0.1"
-configapi = "5.0.0-beta.2"
+configapi = "5.0.0-beta.4"
 event4j = "4.0.1"
 fastutil = "8.5.15"
 hikaricp = "6.0.0"
@@ -22,7 +21,7 @@ slf4j = "2.0.16"
 sqlite-jdbc = "3.47.0.0"
 
 # platform api
-paper = "1.21.1-R0.1-SNAPSHOT"
+paper = "1.21.3-R0.1-SNAPSHOT"
 paper-javadoc = "1.21"
 
 # plugin api
@@ -34,10 +33,9 @@ worldguard = "7.0.12"
 [libraries]
 
 # common libraries
-adventure = { module = "net.kyori:adventure-api", version.ref = "adventure" }
 annotations = { module = "org.jetbrains:annotations", version.ref = "annotations" }
-configapi-core = { module = "com.github.siroshun09.configapi:configapi-core", version.ref = "configapi" }
-configapi-format-yaml = { module = "com.github.siroshun09.configapi:configapi-format-yaml", version.ref = "configapi" }
+configapi-format-binary = { module = "dev.siroshun.configapi:configapi-format-binary", version.ref = "configapi" }
+configapi-format-yaml = { module = "dev.siroshun.configapi:configapi-format-yaml", version.ref = "configapi" }
 event4j = { module = "dev.siroshun.event4j:event4j-tree", version.ref = "event4j" }
 fastutil = { module = "it.unimi.dsi:fastutil", version.ref = "fastutil" }
 hikaricp = { module = "com.zaxxer:HikariCP", version.ref = "hikaricp" }
@@ -49,7 +47,6 @@ junit-bom = { module = "org.junit:junit-bom", version.ref = "junit" }
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit" }
 
 # test environment
-configapi-test-shared-classes = { module = "com.github.siroshun09.configapi:configapi-test-shared-classes", version.ref = "configapi" }
 mockito = { module = "org.mockito:mockito-core", version.ref = "mockito" }
 slf4j-simple = { module = "org.slf4j:slf4j-simple", version.ref = "slf4j" }
 sqlite-jdbc = { module = "org.xerial:sqlite-jdbc", version.ref = "sqlite-jdbc" }

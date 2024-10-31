@@ -1,9 +1,9 @@
 package net.okocraft.box.test.shared.storage.test;
 
-import com.github.siroshun09.configapi.core.node.MapNode;
-import com.github.siroshun09.configapi.test.shared.util.NodeAssertion;
+import dev.siroshun.configapi.core.node.MapNode;
 import net.kyori.adventure.key.Key;
 import net.okocraft.box.storage.api.model.data.CustomDataStorage;
+import net.okocraft.box.test.shared.util.NodeAssertion;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

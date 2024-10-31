@@ -1,9 +1,9 @@
 package net.okocraft.box.feature.autostore;
 
-import com.github.siroshun09.configapi.core.node.IntArray;
-import com.github.siroshun09.configapi.core.node.ListNode;
-import com.github.siroshun09.configapi.core.node.MapNode;
-import com.github.siroshun09.configapi.core.node.NumberValue;
+import dev.siroshun.configapi.core.node.IntArray;
+import dev.siroshun.configapi.core.node.ListNode;
+import dev.siroshun.configapi.core.node.MapNode;
+import dev.siroshun.configapi.core.node.NumberValue;
 import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
 import dev.siroshun.event4j.api.priority.Priority;
 import it.unimi.dsi.fastutil.ints.IntArrayList;

@@ -1,6 +1,6 @@
 package net.okocraft.box.test.shared.model.item;
 
-import com.github.siroshun09.configapi.core.serialization.annotation.DefaultInt;
+import dev.siroshun.configapi.core.serialization.annotation.DefaultInt;
 import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.util.ItemNameGenerator;

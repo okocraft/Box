@@ -1,7 +1,7 @@
 package net.okocraft.box.test.shared.mock.bukkit.inventory;
 
-import com.github.siroshun09.configapi.core.serialization.annotation.CollectionType;
-import com.github.siroshun09.configapi.core.serialization.key.Key;
+import dev.siroshun.configapi.core.serialization.annotation.CollectionType;
+import dev.siroshun.configapi.core.serialization.key.Key;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

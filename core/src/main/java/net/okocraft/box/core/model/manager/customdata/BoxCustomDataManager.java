@@ -1,6 +1,6 @@
 package net.okocraft.box.core.model.manager.customdata;
 
-import com.github.siroshun09.configapi.core.node.MapNode;
+import dev.siroshun.configapi.core.node.MapNode;
 import net.kyori.adventure.key.Key;
 import net.okocraft.box.api.model.customdata.CustomDataManager;
 import net.okocraft.box.storage.api.model.data.CustomDataStorage;

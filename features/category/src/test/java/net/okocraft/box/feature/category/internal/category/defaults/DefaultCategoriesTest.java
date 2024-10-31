@@ -1,6 +1,6 @@
 package net.okocraft.box.feature.category.internal.category.defaults;
 
-import com.github.siroshun09.configapi.format.yaml.YamlFormat;
+import dev.siroshun.configapi.format.yaml.YamlFormat;
 import net.okocraft.box.api.util.MCDataVersion;
 import net.okocraft.box.feature.category.internal.category.defaults.DefaultCategories.ItemNameSet;
 import net.okocraft.box.feature.category.internal.category.defaults.DefaultCategories.VersionedItemName;

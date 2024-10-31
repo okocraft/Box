@@ -29,7 +29,7 @@ public final class ItemSources {
         var excludedTypes = Set.of(ItemType.AIR, ItemType.GOAT_HORN, ItemType.FIREWORK_ROCKET, ItemType.OMINOUS_BOTTLE);
         return registry.stream()
             .filter(Predicate.not(excludedTypes::contains))
-            .filter(type -> type.isEnabledByFeature(world))
+            .filter(world::isEnabled)
             .map(type -> new DefaultItem(ItemNameGenerator.key(type), ItemStack.of(type.asMaterial(), 1))); // FIXME: remove asMaterial in the future
     }
 
