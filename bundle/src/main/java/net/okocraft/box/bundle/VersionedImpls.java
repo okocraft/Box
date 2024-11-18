@@ -1,9 +1,9 @@
 package net.okocraft.box.bundle;
 
-import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.api.util.MCDataVersion;
 import net.okocraft.box.storage.api.model.item.provider.DefaultItem;
 import net.okocraft.box.storage.api.model.item.provider.DefaultItemProvider;
+import net.okocraft.box.version.common.item.RenamedItems;
 import net.okocraft.box.version.common.version.Versioned;
 import org.jetbrains.annotations.NotNull;
 
@@ -13,12 +13,9 @@ import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public final class VersionedImpls {
-
-    private static final boolean PRINT_VERSION = false;
 
     public static VersionedImpls load(ClassLoader classLoader) {
         return new VersionedImpls(Versioned.implementations(classLoader));
@@ -39,8 +36,7 @@ public final class VersionedImpls {
 
     public @NotNull DefaultItemProvider createDefaultItemProvider(@NotNull MCDataVersion current) {
         var latest = this.findLatest(current);
-        this.debugVersion("Latest", latest);
-        return new DefaultItemProviderImpl(latest.version(), latest::defaultItems, this::getRenamedItems, this::createItemNameConvertor);
+        return new DefaultItemProviderImpl(latest.version(), latest::defaultItems, RenamedItems::loadFromResource, this::createItemNameConvertor);
     }
 
     private @NotNull Versioned findLatest(@NotNull MCDataVersion current) {
@@ -50,25 +46,9 @@ public final class VersionedImpls {
             .orElseThrow();
     }
 
-    private Map<String, String> getRenamedItems(@NotNull MCDataVersion startingVersion, @NotNull MCDataVersion currentVersion) {
-        return this.impls.stream()
-            .filter(impl -> startingVersion.isBefore(impl.version()) && currentVersion.isAfterOrSame(impl.version()))
-            .sorted(Comparator.comparing(Versioned::version))
-            .peek(impl -> this.debugVersion("ItemNamePatches", impl))
-            .flatMap(impl -> impl.loadRenamedItems().entrySet().stream())
-            .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue, (older, newer) -> newer));
-    }
-
     private @NotNull UnaryOperator<String> createItemNameConvertor(@NotNull MCDataVersion startingVersion, @NotNull MCDataVersion currentVersion) {
-        var renameMap = this.getRenamedItems(startingVersion, currentVersion);
+        var renameMap = RenamedItems.loadFromResource(startingVersion, currentVersion);
         return name -> renameMap.getOrDefault(name, name);
-    }
-
-    private void debugVersion(@NotNull String name, @NotNull Versioned impl) {
-        if (PRINT_VERSION) {
-            var version = impl.version();
-            BoxLogger.logger().info("{}: {} ({})", name, version.dataVersion(), impl.getClass().getSimpleName());
-        }
     }
 
     private record DefaultItemProviderImpl(@NotNull MCDataVersion version,

@@ -6,6 +6,7 @@ import net.okocraft.box.feature.category.internal.category.defaults.DefaultCateg
 import net.okocraft.box.feature.category.internal.category.defaults.DefaultCategory;
 import net.okocraft.box.storage.api.model.item.provider.DefaultItem;
 import net.okocraft.box.storage.api.util.SneakyThrow;
+import net.okocraft.box.version.common.item.RenamedItems;
 import net.okocraft.box.version.common.version.Versioned;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
@@ -28,7 +29,7 @@ class DataGenerator {
 
     DataGenerator(@NotNull Versioned impl) {
         this.defaultItems = impl.defaultItems().map(DefaultItem::plainName).distinct().sorted().toList();
-        this.renamedItems = impl.loadRenamedItems();
+        this.renamedItems = RenamedItems.loadVersionFromResource(impl.version());
     }
 
     public void defaultItems(@NotNull Path dir) throws IOException {
