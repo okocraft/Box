@@ -45,13 +45,7 @@ public final class BoxStickItem {
      * @return if the {@link ItemStack} has {@link #key()} in {@link PersistentDataContainer}, returns {@code true}, otherwise {@code false}
      */
     public boolean check(@NotNull ItemStack itemStack) {
-        var meta = itemStack.getItemMeta();
-
-        if (meta == null) {
-            return false;
-        }
-
-        return meta.getPersistentDataContainer().has(this.key, PersistentDataType.BYTE);
+        return itemStack.getPersistentDataContainer().has(this.key);
     }
 
     /**
