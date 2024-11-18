@@ -54,8 +54,6 @@ val versionSuffix = "version"
 // versions
 sequenceOf(
     "common",
-    "paper-1_20_5",
-    "paper-1_21",
     "paper-1_21_2"
 ).forEach {
     include("$boxPrefix-$versionSuffix-$it")
