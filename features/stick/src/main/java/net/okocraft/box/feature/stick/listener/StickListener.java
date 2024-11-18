@@ -1,5 +1,6 @@
 package net.okocraft.box.feature.stick.listener;
 
+import io.papermc.paper.datacomponent.DataComponentTypes;
 import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.player.BoxPlayer;
@@ -36,7 +37,6 @@ import org.bukkit.inventory.BrewerInventory;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.FurnaceInventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.Damageable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -286,7 +286,7 @@ public class StickListener implements Listener {
             return;
         }
 
-        original.editMeta(Damageable.class, meta -> meta.setDamage(0));
+        original.setData(DataComponentTypes.DAMAGE, 0);
 
         if (this.tryConsumingStock(boxPlayer, original, new StickCauses.ItemBreak(boxPlayer))) {
             original.setAmount(2);
