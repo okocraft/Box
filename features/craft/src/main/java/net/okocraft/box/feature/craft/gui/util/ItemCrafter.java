@@ -1,5 +1,6 @@
 package net.okocraft.box.feature.craft.gui.util;
 
+import io.papermc.paper.registry.keys.SoundEventKeys;
 import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.okocraft.box.api.BoxAPI;
@@ -14,14 +15,13 @@ import net.okocraft.box.feature.gui.api.button.ClickResult;
 import net.okocraft.box.feature.gui.api.session.PlayerSession;
 import net.okocraft.box.feature.gui.api.session.TypedKey;
 import net.okocraft.box.feature.gui.api.util.SoundBase;
-import org.bukkit.Sound;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 
 public class ItemCrafter {
 
-    private static final SoundBase CRAFT_SOUND = SoundBase.builder().sound(Sound.BLOCK_LEVER_CLICK).build();
+    private static final SoundBase CRAFT_SOUND = SoundBase.builder().sound(SoundEventKeys.BLOCK_LEVER_CLICK).build();
     public static final TypedKey<Boolean> PUT_CRAFTED_ITEMS_INTO_INVENTORY = TypedKey.of(Boolean.class, "put_crafted_items_into_inventory");
 
     public static boolean canCraft(@NotNull StockHolder stockHolder, @NotNull SelectedRecipe recipe, int times) {

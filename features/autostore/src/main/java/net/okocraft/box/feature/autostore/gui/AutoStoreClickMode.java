@@ -1,6 +1,7 @@
 package net.okocraft.box.feature.autostore.gui;
 
 import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
+import io.papermc.paper.registry.keys.SoundEventKeys;
 import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.message.DefaultMessageCollector;
 import net.okocraft.box.api.model.item.BoxItem;
@@ -19,7 +20,6 @@ import net.okocraft.box.feature.gui.api.session.PlayerSession;
 import net.okocraft.box.feature.gui.api.util.ItemEditor;
 import net.okocraft.box.feature.gui.api.util.SoundBase;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -30,8 +30,8 @@ import static com.github.siroshun09.messages.minimessage.base.MiniMessageBase.me
 
 public class AutoStoreClickMode implements BoxItemClickMode {
 
-    private static final SoundBase ENABLE_SOUND = SoundBase.builder().sound(Sound.BLOCK_WOODEN_BUTTON_CLICK_ON).pitch(1.5f).build();
-    private static final SoundBase DISABLE_SOUND = SoundBase.builder().sound(Sound.BLOCK_WOODEN_BUTTON_CLICK_OFF).pitch(1.5f).build();
+    private static final SoundBase ENABLE_SOUND = SoundBase.builder().sound(SoundEventKeys.BLOCK_WOODEN_BUTTON_CLICK_ON).pitch(1.5f).build();
+    private static final SoundBase DISABLE_SOUND = SoundBase.builder().sound(SoundEventKeys.BLOCK_WOODEN_BUTTON_CLICK_OFF).pitch(1.5f).build();
 
     private final AutoStoreSettingProvider container;
 

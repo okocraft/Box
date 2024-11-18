@@ -2,6 +2,7 @@ package net.okocraft.box.feature.gui.api.buttons.amount;
 
 import com.github.siroshun09.messages.minimessage.arg.Arg1;
 import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
+import io.papermc.paper.registry.keys.SoundEventKeys;
 import net.okocraft.box.feature.gui.api.button.ClickResult;
 import net.okocraft.box.feature.gui.api.session.Amount;
 import net.okocraft.box.feature.gui.api.session.PlayerSession;
@@ -9,14 +10,13 @@ import net.okocraft.box.feature.gui.api.session.TypedKey;
 import net.okocraft.box.feature.gui.api.util.ItemEditor;
 import net.okocraft.box.feature.gui.api.util.SoundBase;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 public class IncreaseAmountButton extends AmountModificationButton {
 
-    private static final SoundBase INCREASE_SOUND = SoundBase.builder().sound(Sound.BLOCK_WOODEN_BUTTON_CLICK_ON).pitch(1.5f).build();
+    private static final SoundBase INCREASE_SOUND = SoundBase.builder().sound(SoundEventKeys.BLOCK_WOODEN_BUTTON_CLICK_ON).pitch(1.5f).build();
 
     private final MiniMessageBase displayName;
     private final Arg1<Integer> clickToSetLore;

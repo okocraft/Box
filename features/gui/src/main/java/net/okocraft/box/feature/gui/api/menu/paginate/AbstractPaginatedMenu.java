@@ -1,6 +1,7 @@
 package net.okocraft.box.feature.gui.api.menu.paginate;
 
 import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
+import io.papermc.paper.registry.keys.SoundEventKeys;
 import net.okocraft.box.feature.gui.api.button.Button;
 import net.okocraft.box.feature.gui.api.button.ClickResult;
 import net.okocraft.box.feature.gui.api.session.PlayerSession;
@@ -9,7 +10,6 @@ import net.okocraft.box.feature.gui.api.util.ItemEditor;
 import net.okocraft.box.feature.gui.api.util.SoundBase;
 import net.okocraft.box.feature.gui.internal.lang.DisplayKeys;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +23,7 @@ public abstract class AbstractPaginatedMenu<T> implements PaginatedMenu {
     private final List<T> list;
     private final TypedKey<Integer> currentPageKey;
 
-    private static final SoundBase PAGE_CHANGE_SOUND = SoundBase.builder().sound(Sound.BLOCK_LEVER_CLICK).pitch(1.5f).build();
+    private static final SoundBase PAGE_CHANGE_SOUND = SoundBase.builder().sound(SoundEventKeys.BLOCK_LEVER_CLICK).pitch(1.5f).build();
 
     private final int iconsPerPage;
     private final int maxPage;

@@ -1,6 +1,7 @@
 package net.okocraft.box.feature.gui.api.buttons.amount;
 
 import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
+import io.papermc.paper.registry.keys.SoundEventKeys;
 import net.kyori.adventure.text.Component;
 import net.okocraft.box.feature.gui.api.button.ClickResult;
 import net.okocraft.box.feature.gui.api.lang.Styles;
@@ -10,14 +11,13 @@ import net.okocraft.box.feature.gui.api.session.TypedKey;
 import net.okocraft.box.feature.gui.api.util.ItemEditor;
 import net.okocraft.box.feature.gui.api.util.SoundBase;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 public class UnitChangeButton extends AmountModificationButton {
 
-    private static final SoundBase RESET_SOUND = SoundBase.builder().sound(Sound.ENTITY_EXPERIENCE_ORB_PICKUP).pitch(1.5f).build();
+    private static final SoundBase RESET_SOUND = SoundBase.builder().sound(SoundEventKeys.ENTITY_EXPERIENCE_ORB_PICKUP).pitch(1.5f).build();
 
     private final MiniMessageBase displayName;
     private final MiniMessageBase clickToResetAmount;

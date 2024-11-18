@@ -1,5 +1,6 @@
 package net.okocraft.box.feature.gui.api.mode;
 
+import io.papermc.paper.registry.keys.SoundEventKeys;
 import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.transaction.StockHolderTransaction;
@@ -9,7 +10,6 @@ import net.okocraft.box.feature.gui.api.event.stock.GuiCauses;
 import net.okocraft.box.feature.gui.api.session.Amount;
 import net.okocraft.box.feature.gui.api.session.PlayerSession;
 import net.okocraft.box.feature.gui.api.util.SoundBase;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.jetbrains.annotations.NotNull;
@@ -18,8 +18,8 @@ import java.util.function.BiPredicate;
 
 public abstract class AbstractStorageMode implements BoxItemClickMode {
 
-    private static final SoundBase DEPOSIT_SOUND = SoundBase.builder().sound(Sound.ENTITY_ITEM_PICKUP).build();
-    private static final SoundBase WITHDRAW_SOUND = SoundBase.builder().sound(Sound.BLOCK_STONE_BUTTON_CLICK_ON).build();
+    private static final SoundBase DEPOSIT_SOUND = SoundBase.builder().sound(SoundEventKeys.ENTITY_ITEM_PICKUP).build();
+    private static final SoundBase WITHDRAW_SOUND = SoundBase.builder().sound(SoundEventKeys.BLOCK_STONE_BUTTON_CLICK_ON).build();
 
     protected final @NotNull ClickResult processDeposit(@NotNull PlayerSession session, @NotNull BoxItem item) {
         var viewer = session.getViewer();
@@ -86,7 +86,7 @@ public abstract class AbstractStorageMode implements BoxItemClickMode {
 
     protected static abstract class AbstractDepositAllButton implements Button {
 
-        private static final SoundBase DEPOSIT_ALL_SOUND = SoundBase.builder().sound(Sound.BLOCK_NOTE_BLOCK_HARP).pitch(2.0f).build();
+        private static final SoundBase DEPOSIT_ALL_SOUND = SoundBase.builder().sound(SoundEventKeys.BLOCK_NOTE_BLOCK_HARP).pitch(2.0f).build();
 
         private final int slot;
         private final BiPredicate<PlayerSession, ClickType> canDepositAll;

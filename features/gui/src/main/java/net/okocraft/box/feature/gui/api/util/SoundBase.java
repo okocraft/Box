@@ -1,5 +1,7 @@
 package net.okocraft.box.feature.gui.api.util;
 
+import io.papermc.paper.registry.TypedKey;
+import io.papermc.paper.registry.keys.SoundEventKeys;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import org.bukkit.SoundCategory;
@@ -11,8 +13,8 @@ import java.util.Objects;
 
 public record SoundBase(@NotNull Sound sound) {
 
-    public static final SoundBase CLICK = SoundBase.builder().sound(org.bukkit.Sound.BLOCK_COMPARATOR_CLICK).pitch(1.5f).build();
-    public static final SoundBase UNSUCCESSFUL = SoundBase.builder().sound(org.bukkit.Sound.ENTITY_ENDERMAN_TELEPORT).pitch(1.5f).build();
+    public static final SoundBase CLICK = SoundBase.builder().sound(SoundEventKeys.BLOCK_COMPARATOR_CLICK).pitch(1.5f).build();
+    public static final SoundBase UNSUCCESSFUL = SoundBase.builder().sound(SoundEventKeys.ENTITY_ENDERMAN_TELEPORT).pitch(1.5f).build();
 
     @Contract(value = " -> new", pure = true)
     public static @NotNull Builder builder() {
@@ -38,8 +40,8 @@ public record SoundBase(@NotNull Sound sound) {
         }
 
         @Contract("_ -> this")
-        public @NotNull Builder sound(@NotNull org.bukkit.Sound sound) {
-            this.sound = sound.key();
+        public @NotNull Builder sound(@NotNull TypedKey<org.bukkit.Sound> key) {
+            this.sound = key.key();
             return this;
         }
 

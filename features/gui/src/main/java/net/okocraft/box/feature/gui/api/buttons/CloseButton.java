@@ -1,6 +1,7 @@
 package net.okocraft.box.feature.gui.api.buttons;
 
 import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
+import io.papermc.paper.registry.keys.SoundEventKeys;
 import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.feature.gui.api.button.Button;
 import net.okocraft.box.feature.gui.api.button.ClickResult;
@@ -9,14 +10,13 @@ import net.okocraft.box.feature.gui.api.util.ItemEditor;
 import net.okocraft.box.feature.gui.api.util.SoundBase;
 import net.okocraft.box.feature.gui.internal.lang.DisplayKeys;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 public record CloseButton(int slot) implements Button {
 
-    private static final SoundBase CLOSE_SOUND = SoundBase.builder().sound(Sound.BLOCK_CHEST_CLOSE).pitch(1.5f).build();
+    private static final SoundBase CLOSE_SOUND = SoundBase.builder().sound(SoundEventKeys.BLOCK_CHEST_CLOSE).pitch(1.5f).build();
     private static final MiniMessageBase DISPLAY_NAME = MiniMessageBase.messageKey(DisplayKeys.CLOSE);
 
     @Override
