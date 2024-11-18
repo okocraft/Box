@@ -1,5 +1,7 @@
 package net.okocraft.box.feature.gui.api.util;
 
+import io.papermc.paper.datacomponent.DataComponentTypes;
+import io.papermc.paper.datacomponent.item.ItemLore;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -12,9 +14,6 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -37,7 +36,7 @@ public class ItemEditor<M extends ItemMeta> {
 
     private final Class<M> clazz;
     private @Nullable Component displayName;
-    private @Nullable List<Component> lore;
+    private @Nullable ItemLore.Builder lore;
     private Consumer<M> editMeta;
 
     private ItemEditor(@NotNull Class<M> clazz) {
@@ -50,12 +49,12 @@ public class ItemEditor<M extends ItemMeta> {
     }
 
     public @NotNull ItemEditor<M> clearLore() {
-        this.lore = Collections.emptyList();
+        this.lore = ItemLore.lore();
         return this;
     }
 
     public @NotNull ItemEditor<M> loreEmptyLine() {
-        this.getOrCreateLore().add(Component.empty());
+        this.getOrCreateLore().addLine(Component.empty());
         return this;
     }
 
@@ -67,7 +66,7 @@ public class ItemEditor<M extends ItemMeta> {
     }
 
     public @NotNull ItemEditor<M> loreLine(@NotNull Component line) {
-        this.getOrCreateLore().add(line.applyFallbackStyle(DEFAULT_STYLE));
+        this.getOrCreateLore().addLine(line.applyFallbackStyle(DEFAULT_STYLE));
         return this;
     }
 
@@ -118,17 +117,10 @@ public class ItemEditor<M extends ItemMeta> {
         }
     }
 
-    public @NotNull ItemEditor<M> loreLinesIf(boolean state, @NotNull Supplier<Component> lines) {
-        if (state) {
-            this.loreLines(lines.get());
-        }
-        return this;
-    }
-
     public @NotNull ItemEditor<M> copyLoreFrom(@NotNull ItemStack source) {
         var lore = source.lore();
         if (lore != null) {
-            this.getOrCreateLore().addAll(lore);
+            this.getOrCreateLore().addLines(lore);
         }
         return this;
     }
@@ -144,14 +136,13 @@ public class ItemEditor<M extends ItemMeta> {
 
     @Contract("_ -> param1")
     public @NotNull ItemStack applyTo(@NotNull ItemStack item) {
-        item.editMeta(meta -> {
-            if (this.displayName != null) {
-                meta.displayName(this.displayName);
-            }
-            if (this.lore != null) {
-                meta.lore(this.lore);
-            }
-        });
+        if (this.displayName != null) {
+            item.setData(DataComponentTypes.CUSTOM_NAME, this.displayName);
+        }
+
+        if (this.lore != null) {
+            item.setData(DataComponentTypes.LORE, this.lore);
+        }
 
         if (this.editMeta != null) {
             item.editMeta(this.clazz, this.editMeta);
@@ -168,9 +159,9 @@ public class ItemEditor<M extends ItemMeta> {
         return this.applyTo(new ItemStack(material, amount));
     }
 
-    private @NotNull List<Component> getOrCreateLore() {
-        if (this.lore == null || this.lore == Collections.<Component>emptyList()) {
-            this.lore = new ArrayList<>();
+    private @NotNull ItemLore.Builder getOrCreateLore() {
+        if (this.lore == null) {
+            this.lore = ItemLore.lore();
         }
         return this.lore;
     }
