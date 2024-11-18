@@ -4,7 +4,6 @@ import net.okocraft.box.bundle.Builtin;
 import net.okocraft.box.core.message.CoreMessages;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -13,7 +12,6 @@ import java.util.Map;
 
 class BundledMessageFileTest {
 
-    @Disabled("Some classes try to access Minecraft registries due to Spigot breaking change.")
     @Test
     void testJapaneseFile(@TempDir Path dir) {
         test(dir, Builtin.loadJapaneseFileFromJar());
