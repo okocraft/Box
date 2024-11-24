@@ -1,6 +1,5 @@
 package net.okocraft.box.feature.gui.api.util;
 
-import io.papermc.paper.registry.TypedKey;
 import io.papermc.paper.registry.keys.SoundEventKeys;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
@@ -36,12 +35,6 @@ public record SoundBase(@NotNull Sound sound) {
         @Contract("_ -> this")
         public @NotNull Builder sound(@NotNull Key sound) {
             this.sound = sound;
-            return this;
-        }
-
-        @Contract("_ -> this")
-        public @NotNull Builder sound(@NotNull TypedKey<org.bukkit.Sound> key) {
-            this.sound = key.key();
             return this;
         }
 
