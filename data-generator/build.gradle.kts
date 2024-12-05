@@ -7,8 +7,8 @@ plugins {
 group = "net.okocraft.box.datagenerator"
 version = "1.0"
 
-val previousMinecraftVersion = "1.21"
-val minecraftVersion = "1.21.3"
+val previousMinecraftVersion = "1.21.3"
+val minecraftVersion = "1.21.4"
 val javaVersion = JavaVersion.VERSION_21
 
 java {

@@ -21,7 +21,11 @@ dependencies {
     compileOnly(libs.bolt.bukkit)
     compileOnly(libs.bolt.common)
     compileOnly(libs.coreprotect)
-    compileOnly(libs.worldguard)
+    compileOnly(libs.worldguard) {
+        exclude("com.google.guava", "guava")
+        exclude("com.google.code.gson", "gson")
+        exclude("it.unimi.dsi", "fastutil")
+    }
 }
 
 tasks.javadoc {
