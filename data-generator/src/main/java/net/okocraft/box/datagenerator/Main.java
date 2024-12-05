@@ -57,7 +57,7 @@ public class Main extends JavaPlugin {
             .findFirst().orElse(null);
 
         if (generator == null) {
-            this.getSLF4JLogger().error("No version impl found.");
+            this.getSLF4JLogger().error("No version impl found: {}", MCDataVersion.current().dataVersion());
             return;
         }
 
