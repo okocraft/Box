@@ -20,7 +20,7 @@ object JavadocAggregator {
 
     fun addProject(project: Project) {
         val javadocTask = project.tasks.withType<Javadoc>()[JavaPlugin.JAVADOC_TASK_NAME]
-        val collectTask = project.tasks.create(COLLECT_JAVADOC_TASK)
+        val collectTask = project.tasks.register(COLLECT_JAVADOC_TASK).get()
         val javadocClasspath = project.files().builtBy(collectTask)
 
         collectTask.doFirst {
