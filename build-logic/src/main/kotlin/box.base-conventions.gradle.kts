@@ -3,6 +3,7 @@ plugins {
 }
 
 val libs = extensions.getByType(org.gradle.accessors.dm.LibrariesForLibs::class)
+val mockitoAgent = configurations.register("mockitoAgent")
 
 repositories {
     mavenCentral()
@@ -22,6 +23,7 @@ dependencies {
     testImplementation(libs.annotations)
     testImplementation(libs.fastutil)
     testImplementation(libs.mockito)
+    mockitoAgent(libs.mockito) { isTransitive = false }
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testRuntimeOnly(libs.slf4j.simple)
@@ -52,8 +54,7 @@ tasks {
     }
 
     test {
-        // See https://github.com/mockito/mockito/issues/3037
-        jvmArgs("-XX:+EnableDynamicAgentLoading")
+        jvmArgs("-Xshare:off", "-javaagent:${mockitoAgent.get().asPath}")
 
         useJUnitPlatform()
         testLogging {
