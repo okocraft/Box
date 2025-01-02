@@ -1,0 +1,45 @@
+<h1>Box GitHub Pages</h1>
+<h2>Javadocs</h2>
+<ul>
+    <li><a href="https://okocraft.github.io/Box/release">Latest Release</a></li>
+    <li><a href="https://okocraft.github.io/Box/snapshot">Snapshot</a></li>
+</ul>
+<h2>Maven Repository</h2>
+<h3>For release</h3>
+<h4>Maven</h4>
+<div class="highlight highlight-text-xml"><pre>&lt;<span class="pl-ent">repository</span>&gt;
+    &lt;<span class="pl-ent">id</span>&gt;okocraft-box-repo&lt;/<span class="pl-ent">id</span>&gt;
+    &lt;<span class="pl-ent">url</span>&gt;https://okocraft.github.io/Box/maven/&lt;/<span class="pl-ent">url</span>&gt;
+&lt;/<span class="pl-ent">repository</span>&gt;</pre></div>
+<h4>Gradle (Groovy DSL)</h4>
+<pre><code>repositories {
+    maven {
+        url 'https://okocraft.github.io/Box/maven/'
+    }
+}
+</code></pre>
+<h4>Gradle (Kotlin DSL)</h4>
+<div class="highlight highlight-source-kotlin"><pre>repositories {
+    maven {
+        url <span class="pl-k">=</span> uri(<span class="pl-s"><span class="pl-pds">"</span>https://okocraft.github.io/Box/maven/<span class="pl-pds">"</span></span>)
+    }
+}</pre></div>
+<h3>For snapshot</h3>
+<h4>Maven</h4>
+<div class="highlight highlight-text-xml"><pre>&lt;<span class="pl-ent">repository</span>&gt;
+    &lt;<span class="pl-ent">id</span>&gt;okocraft-box-snapshot-repo&lt;/<span class="pl-ent">id</span>&gt;
+    &lt;<span class="pl-ent">url</span>&gt;https://okocraft.github.io/Box/maven-snapshot/&lt;/<span class="pl-ent">url</span>&gt;
+&lt;/<span class="pl-ent">repository</span>&gt;</pre></div>
+<h4>Gradle (Groovy DSL)</h4>
+<pre><code>repositories {
+    maven {
+        url 'https://okocraft.github.io/Box/maven-snapshot/'
+    }
+}
+</code></pre>
+<h4>Gradle (Kotlin DSL)</h4>
+<div class="highlight highlight-source-kotlin"><pre>repositories {
+    maven {
+        url <span class="pl-k">=</span> uri(<span class="pl-s"><span class="pl-pds">"</span>https://okocraft.github.io/Box/maven-snapshot/<span class="pl-pds">"</span></span>)
+    }
+}</pre></div>
