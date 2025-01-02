@@ -5,12 +5,7 @@ on:
     tags:
       - "**"
 # for snapshot
-#    branches:
-#      - "main"
-
-concurrency:
-  group: box-deployment
-  cancel-in-progress: true
+  workflow_dispatch:
 
 jobs:
   build:
