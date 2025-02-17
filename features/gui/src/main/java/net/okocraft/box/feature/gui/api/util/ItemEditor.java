@@ -9,7 +9,7 @@ import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataContainer;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -19,65 +19,55 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
-public class ItemEditor<M extends ItemMeta> {
+public class ItemEditor {
 
     private static final Style DEFAULT_STYLE = Style.style().color(NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, TextDecoration.State.FALSE).build();
     private static final Pattern LINE_SEPARATORS = Pattern.compile("\\r\\n|\\n|\\r");
 
     @Contract("-> new")
-    public static @NotNull ItemEditor<ItemMeta> create() {
-        return new ItemEditor<>(ItemMeta.class);
+    public static @NotNull ItemEditor create() {
+        return new ItemEditor();
     }
 
-    @Contract("_ -> new")
-    public static <M extends ItemMeta> @NotNull ItemEditor<M> create(@NotNull Class<M> clazz) {
-        return new ItemEditor<>(clazz);
-    }
-
-    private final Class<M> clazz;
     private @Nullable Component displayName;
     private @Nullable ItemLore.Builder lore;
-    private Consumer<M> editMeta;
+    private Consumer<PersistentDataContainer> editPersistentDataContainer;
 
-    private ItemEditor(@NotNull Class<M> clazz) {
-        this.clazz = clazz;
-    }
-
-    public @NotNull ItemEditor<M> displayName(@NotNull Component displayName) {
+    public @NotNull ItemEditor displayName(@NotNull Component displayName) {
         this.displayName = displayName.applyFallbackStyle(DEFAULT_STYLE);
         return this;
     }
 
-    public @NotNull ItemEditor<M> clearLore() {
+    public @NotNull ItemEditor clearLore() {
         this.lore = ItemLore.lore();
         return this;
     }
 
-    public @NotNull ItemEditor<M> loreEmptyLine() {
+    public @NotNull ItemEditor loreEmptyLine() {
         this.getOrCreateLore().addLine(Component.empty());
         return this;
     }
 
-    public @NotNull ItemEditor<M> loreEmptyLineIf(boolean state) {
+    public @NotNull ItemEditor loreEmptyLineIf(boolean state) {
         if (state) {
             this.loreEmptyLine();
         }
         return this;
     }
 
-    public @NotNull ItemEditor<M> loreLine(@NotNull Component line) {
+    public @NotNull ItemEditor loreLine(@NotNull Component line) {
         this.getOrCreateLore().addLine(line.applyFallbackStyle(DEFAULT_STYLE));
         return this;
     }
 
-    public @NotNull ItemEditor<M> loreLineIf(boolean state, @NotNull Supplier<Component> line) {
+    public @NotNull ItemEditor loreLineIf(boolean state, @NotNull Supplier<Component> line) {
         if (state) {
             this.loreLine(line.get());
         }
         return this;
     }
 
-    public @NotNull ItemEditor<M> loreLines(@NotNull Component lines) {
+    public @NotNull ItemEditor loreLines(@NotNull Component lines) {
         var builder = new LineBuilder();
 
         this.buildLines(lines, builder);
@@ -117,7 +107,7 @@ public class ItemEditor<M extends ItemMeta> {
         }
     }
 
-    public @NotNull ItemEditor<M> copyLoreFrom(@NotNull ItemStack source) {
+    public @NotNull ItemEditor copyLoreFrom(@NotNull ItemStack source) {
         var lore = source.lore();
         if (lore != null) {
             this.getOrCreateLore().addLines(lore);
@@ -125,11 +115,11 @@ public class ItemEditor<M extends ItemMeta> {
         return this;
     }
 
-    public @NotNull ItemEditor<M> editMeta(@NotNull Consumer<M> edit) {
-        if (this.editMeta == null) {
-            this.editMeta = edit;
+    public @NotNull ItemEditor editPersistentDataContainer(@NotNull Consumer<PersistentDataContainer> edit) {
+        if (this.editPersistentDataContainer == null) {
+            this.editPersistentDataContainer = edit;
         } else {
-            this.editMeta = this.editMeta.andThen(edit);
+            this.editPersistentDataContainer = this.editPersistentDataContainer.andThen(edit);
         }
         return this;
     }
@@ -144,8 +134,9 @@ public class ItemEditor<M extends ItemMeta> {
             item.setData(DataComponentTypes.LORE, this.lore);
         }
 
-        if (this.editMeta != null) {
-            item.editMeta(this.clazz, this.editMeta);
+        if (this.editPersistentDataContainer != null) {
+            item.editPersistentDataContainer(this.editPersistentDataContainer);
+
         }
 
         return item;

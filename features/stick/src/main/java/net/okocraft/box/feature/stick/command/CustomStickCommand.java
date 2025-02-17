@@ -46,9 +46,8 @@ public class CustomStickCommand extends AbstractCommand {
         var msgSrc = BoxAPI.api().getMessageProvider().findSource(player);
 
         var item = player.getInventory().getItemInMainHand();
-        var meta = item.getItemMeta();
 
-        if (meta == null) {
+        if (item.getType().isAir()) {
             this.isAir.source(msgSrc).send(player);
             return;
         }
@@ -58,7 +57,7 @@ public class CustomStickCommand extends AbstractCommand {
             return;
         }
 
-        item.editMeta(target -> this.boxStickItem.saveBoxStickKey(target.getPersistentDataContainer()));
+        item.editPersistentDataContainer(this.boxStickItem::saveBoxStickKey);
         this.success.source(msgSrc).send(player);
     }
 

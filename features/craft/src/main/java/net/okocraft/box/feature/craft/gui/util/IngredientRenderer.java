@@ -11,7 +11,6 @@ import net.okocraft.box.feature.craft.model.SelectedRecipe;
 import net.okocraft.box.feature.gui.api.lang.Styles;
 import net.okocraft.box.feature.gui.api.session.PlayerSession;
 import net.okocraft.box.feature.gui.api.util.ItemEditor;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -24,7 +23,7 @@ public final class IngredientRenderer {
 
     private static final MiniMessageBase INGREDIENTS_HEADER = MiniMessageBase.messageKey(DisplayKeys.INGREDIENTS_HEADER);
 
-    public static void render(@NotNull ItemEditor<? extends ItemMeta> editor, @NotNull PlayerSession session,
+    public static void render(@NotNull ItemEditor editor, @NotNull PlayerSession session,
                               @NotNull SelectedRecipe recipe, int times) {
         editor.loreLine(INGREDIENTS_HEADER.create(session.getMessageSource()));
 
@@ -56,7 +55,7 @@ public final class IngredientRenderer {
         }
     }
 
-    public static void render(@NotNull ItemEditor<? extends ItemMeta> editor, @NotNull PlayerSession session,
+    public static void render(@NotNull ItemEditor editor, @NotNull PlayerSession session,
                               @NotNull BoxItemRecipe recipe, int times, boolean simple) {
         if (simple) {
             var ingredients =

@@ -107,7 +107,7 @@ public class StickCommand extends AbstractCommand {
             .loreEmptyLine()
             .loreLines(this.defaultLore.create(src))
             .loreEmptyLine()
-            .editMeta(meta -> this.boxStickItem.saveBoxStickKey(meta.getPersistentDataContainer()))
+            .editPersistentDataContainer(this.boxStickItem::saveBoxStickKey)
             .createItem(Material.STICK);
     }
 }
