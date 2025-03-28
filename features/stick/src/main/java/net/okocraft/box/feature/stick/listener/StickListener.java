@@ -306,7 +306,7 @@ public class StickListener implements Listener {
                 case ENDER_PEARL -> "enderpearl";
                 case FIREWORK_ROCKET -> "firework";
                 case SNOWBALL -> "snowball";
-                case POTION -> "potion";
+                case SPLASH_POTION, LINGERING_POTION -> "potion";
                 case EXPERIENCE_BOTTLE -> "expbottle";
                 case WIND_CHARGE -> "wind_charge";
                 default -> null;
