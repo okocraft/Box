@@ -8,6 +8,7 @@ public record OperatorProvider(
     @NotNull ItemTableOperator itemTable,
     @NotNull CustomItemTableOperator customItemTable,
     @NotNull RemappedItemTableOperator remappedItemTable,
+    @NotNull StockHolderTableOperator stockHolderTable,
     @NotNull StockTableOperator stockTable,
     @NotNull CustomDataTableOperator customDataTable,
     @NotNull CustomDataTableOperator legacyCustomDataTable,

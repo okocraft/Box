@@ -4,13 +4,16 @@ import net.okocraft.box.storage.implementation.database.operator.ItemTableOperat
 import net.okocraft.box.storage.implementation.database.operator.MetaTableOperator;
 import net.okocraft.box.storage.implementation.database.operator.OperatorProvider;
 import net.okocraft.box.storage.implementation.database.operator.RemappedItemTableOperator;
+import net.okocraft.box.storage.implementation.database.operator.StockHolderTableOperator;
 import net.okocraft.box.storage.implementation.database.operator.StockTableOperator;
 import net.okocraft.box.storage.implementation.database.operator.UserTableOperator;
 import org.jetbrains.annotations.NotNull;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.UUID;
 
 final class MySQLOperators {
 
@@ -31,6 +34,7 @@ final class MySQLOperators {
             new ItemTableOperator(prefix),
             new CustomItemTableOperator(prefix),
             new RemappedItemTableOperator(prefix),
+            new StockHolderTableOperator(prefix, "BINARY(16)"),
             new StockTableOperator(prefix) {
                 @Override
                 protected @NotNull String upsertStockStatement(@NotNull String tableName) {
