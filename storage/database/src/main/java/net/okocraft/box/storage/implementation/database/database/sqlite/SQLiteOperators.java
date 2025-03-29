@@ -4,6 +4,7 @@ import net.okocraft.box.storage.implementation.database.operator.ItemTableOperat
 import net.okocraft.box.storage.implementation.database.operator.MetaTableOperator;
 import net.okocraft.box.storage.implementation.database.operator.OperatorProvider;
 import net.okocraft.box.storage.implementation.database.operator.RemappedItemTableOperator;
+import net.okocraft.box.storage.implementation.database.operator.StockHolderTableOperator;
 import net.okocraft.box.storage.implementation.database.operator.StockTableOperator;
 import net.okocraft.box.storage.implementation.database.operator.UserTableOperator;
 import org.jetbrains.annotations.NotNull;
@@ -31,6 +32,7 @@ final class SQLiteOperators {
             new ItemTableOperator(prefix),
             new CustomItemTableOperator(prefix),
             new RemappedItemTableOperator(prefix),
+            new StockHolderTableOperator(prefix, "BLOB"),
             new StockTableOperator(prefix) {
                 @Override
                 protected @NotNull String upsertStockStatement(@NotNull String tableName) {
