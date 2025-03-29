@@ -6,7 +6,6 @@ import org.jetbrains.annotations.NotNull;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.IntConsumer;
@@ -17,14 +16,14 @@ public abstract class StockTableOperator {
 
     private final String createTableStatement;
     private final String createIndexStatement;
-    private final String selectStockByUUIDStatement;
-    private final String deleteStockByUUIDStatement;
+    private final String selectStockByIdStatement;
+    private final String deleteStockByIdStatement;
     private final String insertStockStatement;
     private final String upsertStockStatement;
     private final String deleteZeroStockStatement;
     private final String countZeroStockStatement;
     private final String selectStockByItemIdStatement;
-    private final String selectStockByUUIDAndItemIdStatement;
+    private final String selectStockByIdAndItemIdStatement;
     private final String updateItemIdStatement;
     private final String updateAmountStatement;
     private final String deleteStockByItemIdsStatement;
@@ -34,24 +33,24 @@ public abstract class StockTableOperator {
 
         this.createTableStatement = """
             CREATE TABLE IF NOT EXISTS `%s` (
-              `uuid` VARCHAR(36) NOT NULL,
+              `stock_id` INTEGER NOT NULL,
               `item_id` INTEGER  NOT NULL,
               `amount` INTEGER NOT NULL,
-              PRIMARY KEY (`uuid`, `item_id`)
+              PRIMARY KEY (`stock_id`, `item_id`)
             )
             """.formatted(tableName);
         this.createIndexStatement = "CREATE INDEX IF NOT EXISTS `%1$s_amount` ON `%1$s` (`amount`)".formatted(tableName);
 
-        this.selectStockByUUIDStatement = "SELECT `item_id`, `amount` FROM `%s` WHERE `uuid`=?".formatted(tableName);
-        this.deleteStockByUUIDStatement = "DELETE FROM `%s` WHERE `uuid`=?".formatted(tableName);
-        this.insertStockStatement = "INSERT INTO `%s` (`uuid`, `item_id`, `amount`) VALUES(?,?,?)".formatted(tableName);
+        this.selectStockByIdStatement = "SELECT `item_id`, `amount` FROM `%s` WHERE `stock_id`=?".formatted(tableName);
+        this.deleteStockByIdStatement = "DELETE FROM `%s` WHERE `stock_id`=?".formatted(tableName);
+        this.insertStockStatement = "INSERT INTO `%s` (`stock_id`, `item_id`, `amount`) VALUES(?,?,?)".formatted(tableName);
         this.upsertStockStatement = this.upsertStockStatement(tableName);
         this.deleteZeroStockStatement = "DELETE FROM `%s` WHERE `amount`=0".formatted(tableName);
         this.countZeroStockStatement = "SELECT COUNT(`amount`) FROM `%s` WHERE `amount`=0".formatted(tableName);
-        this.selectStockByItemIdStatement = "SELECT `uuid`, `amount` FROM `%s` WHERE `item_id` = ?".formatted(tableName);
-        this.selectStockByUUIDAndItemIdStatement = "SELECT `amount` FROM `%s` WHERE `uuid` = ? AND `item_id` = ?".formatted(tableName);
-        this.updateItemIdStatement = "UPDATE `%s` SET `item_id` = ? WHERE `uuid` = ? AND `item_id` = ?".formatted(tableName);
-        this.updateAmountStatement = "UPDATE `%s` SET `amount` = ? WHERE `uuid` = ? AND `item_id` = ?".formatted(tableName);
+        this.selectStockByItemIdStatement = "SELECT `stock_id`, `amount` FROM `%s` WHERE `item_id` = ?".formatted(tableName);
+        this.selectStockByIdAndItemIdStatement = "SELECT `amount` FROM `%s` WHERE `stock_id` = ? AND `item_id` = ?".formatted(tableName);
+        this.updateItemIdStatement = "UPDATE `%s` SET `item_id` = ? WHERE `stock_id` = ? AND `item_id` = ?".formatted(tableName);
+        this.updateAmountStatement = "UPDATE `%s` SET `amount` = ? WHERE `stock_id` = ? AND `item_id` = ?".formatted(tableName);
         this.deleteStockByItemIdsStatement = "DELETE FROM `%s` WHERE `item_id` IN (:ITEM_IDS:)".formatted(tableName);
     }
 
@@ -62,9 +61,9 @@ public abstract class StockTableOperator {
         }
     }
 
-    public void selectStockByUUID(@NotNull Connection connection, @NotNull UUID uuid, @NotNull Consumer<StockData> consumer) throws SQLException {
-        try (var statement = connection.prepareStatement(this.selectStockByUUIDStatement)) {
-            statement.setString(1, uuid.toString());
+    public void selectStockById(@NotNull Connection connection, int stockId, @NotNull Consumer<StockData> consumer) throws SQLException {
+        try (var statement = connection.prepareStatement(this.selectStockByIdStatement)) {
+            statement.setInt(1, stockId);
             try (var resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
                     int itemId = resultSet.getInt("item_id");
@@ -78,9 +77,9 @@ public abstract class StockTableOperator {
         }
     }
 
-    public void deleteStockByUUID(@NotNull Connection connection, @NotNull String uuid) throws SQLException {
-        try (var statement = connection.prepareStatement(this.deleteStockByUUIDStatement)) {
-            statement.setString(1, uuid);
+    public void deleteStockByStockId(@NotNull Connection connection, int stockId) throws SQLException {
+        try (var statement = connection.prepareStatement(this.deleteStockByIdStatement)) {
+            statement.setInt(1, stockId);
             statement.execute();
         }
     }
@@ -89,8 +88,8 @@ public abstract class StockTableOperator {
         return connection.prepareStatement(this.insertStockStatement);
     }
 
-    public void addInsertStockBatch(@NotNull PreparedStatement statement, @NotNull String uuid, int itemId, int amount) throws SQLException {
-        statement.setString(1, uuid);
+    public void addInsertStockBatch(@NotNull PreparedStatement statement, int stockId, int itemId, int amount) throws SQLException {
+        statement.setInt(1, stockId);
         statement.setInt(2, itemId);
         statement.setInt(3, amount);
         statement.addBatch();
@@ -100,8 +99,8 @@ public abstract class StockTableOperator {
         return connection.prepareStatement(this.upsertStockStatement);
     }
 
-    public void addUpsertStockBatch(@NotNull PreparedStatement statement, @NotNull String uuid, int itemId, int amount) throws SQLException {
-        statement.setString(1, uuid);
+    public void addUpsertStockBatch(@NotNull PreparedStatement statement, int stockId, int itemId, int amount) throws SQLException {
+        statement.setInt(1, stockId);
         statement.setInt(2, itemId);
         statement.setInt(3, amount);
         statement.addBatch();
@@ -124,22 +123,22 @@ public abstract class StockTableOperator {
         return connection.prepareStatement(this.selectStockByItemIdStatement);
     }
 
-    public void selectStockByItemId(@NotNull PreparedStatement statement, int itemId, @NotNull BiConsumer<String, Integer> consumer) throws SQLException {
+    public void selectStockByItemId(@NotNull PreparedStatement statement, int itemId, @NotNull BiConsumer<Integer, Integer> consumer) throws SQLException {
         statement.setInt(1, itemId);
 
         try (var resultSet = statement.executeQuery()) {
             while (resultSet.next()) {
-                consumer.accept(resultSet.getString(1), resultSet.getInt(2));
+                consumer.accept(resultSet.getInt(1), resultSet.getInt(2));
             }
         }
     }
 
-    public @NotNull PreparedStatement selectStockByUUIDAndItemIdStatement(@NotNull Connection connection) throws SQLException {
-        return connection.prepareStatement(this.selectStockByUUIDAndItemIdStatement);
+    public @NotNull PreparedStatement selectStockByIdAndItemIdStatement(@NotNull Connection connection) throws SQLException {
+        return connection.prepareStatement(this.selectStockByIdAndItemIdStatement);
     }
 
-    public void selectStockByUUIDAndItemId(@NotNull PreparedStatement statement, @NotNull String uuid, int itemId, @NotNull IntConsumer consumer, @NotNull Runnable onNotFound) throws SQLException {
-        statement.setString(1, uuid);
+    public void selectStockByIdAndItemId(@NotNull PreparedStatement statement, int stockId, int itemId, @NotNull IntConsumer consumer, @NotNull Runnable onNotFound) throws SQLException {
+        statement.setInt(1, stockId);
         statement.setInt(2, itemId);
 
         try (var resultSet = statement.executeQuery()) {
@@ -155,9 +154,9 @@ public abstract class StockTableOperator {
         return connection.prepareStatement(this.updateItemIdStatement);
     }
 
-    public void addUpdateItemIdBatch(@NotNull PreparedStatement statement, @NotNull String uuid, int oldItemId, int newItemId) throws SQLException {
+    public void addUpdateItemIdBatch(@NotNull PreparedStatement statement, int stockId, int oldItemId, int newItemId) throws SQLException {
         statement.setInt(1, newItemId);
-        statement.setString(2, uuid);
+        statement.setInt(2, stockId);
         statement.setInt(3, oldItemId);
         statement.addBatch();
     }
@@ -166,9 +165,9 @@ public abstract class StockTableOperator {
         return connection.prepareStatement(this.updateAmountStatement);
     }
 
-    public void addUpdateAmountBatch(@NotNull PreparedStatement statement, @NotNull String uuid, int itemId, int amount) throws SQLException {
+    public void addUpdateAmountBatch(@NotNull PreparedStatement statement, int stockId, int itemId, int amount) throws SQLException {
         statement.setInt(1, amount);
-        statement.setString(2, uuid);
+        statement.setInt(2, stockId);
         statement.setInt(3, itemId);
         statement.addBatch();
     }
