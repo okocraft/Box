@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.UUID;
 
-// | uuid | item_id | amount |
+// | stock_id | item_id | amount |
 public class StockTable implements PartialSavingStockStorage {
 
     private final Database database;
