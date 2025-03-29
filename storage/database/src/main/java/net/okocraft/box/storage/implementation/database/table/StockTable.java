@@ -38,7 +38,8 @@ public class StockTable implements PartialSavingStockStorage {
         var stock = new ArrayList<StockData>();
 
         try (var connection = this.database.getConnection()) {
-            this.stockTable.selectStockByUUID(connection, uuid, stock::add);
+            int stockId = this.stockHolderTable.getStockHolderIdByUUID(connection, uuid);
+            this.stockTable.selectStockById(connection, stockId, stock::add);
         }
 
         return stock;
@@ -47,13 +48,13 @@ public class StockTable implements PartialSavingStockStorage {
     @Override
     public void saveStockData(@NotNull UUID uuid, @NotNull Collection<StockData> stockData) throws Exception {
         try (var connection = this.database.getConnection()) {
-            var strUuid = uuid.toString();
+            int stockId = this.stockHolderTable.getStockHolderIdByUUID(connection, uuid);
 
-            this.stockTable.deleteStockByUUID(connection, strUuid);
+            this.stockTable.deleteStockByStockId(connection, stockId);
 
             try (var statement = this.stockTable.insertStockStatement(connection)) {
                 for (var data : stockData) {
-                    this.stockTable.addInsertStockBatch(statement, strUuid, data.itemId(), data.amount());
+                    this.stockTable.addInsertStockBatch(statement, stockId, data.itemId(), data.amount());
                 }
                 statement.executeBatch();
             }
@@ -65,7 +66,7 @@ public class StockTable implements PartialSavingStockStorage {
         try (
             var connection = this.database.getConnection();
             var selectByItemIdStatement = this.stockTable.selectStockByItemIdStatement(connection);
-            var selectByUUIDAndItemIdStatement = this.stockTable.selectStockByUUIDAndItemIdStatement(connection);
+            var selectByUUIDAndItemIdStatement = this.stockTable.selectStockByIdAndItemIdStatement(connection);
             var updateItemIdStatement = this.stockTable.updateItemIdStatement(connection);
             var updateAmountStatement = this.stockTable.updateAmountStatement(connection)
         ) {
@@ -75,22 +76,22 @@ public class StockTable implements PartialSavingStockStorage {
                 this.stockTable.selectStockByItemId(
                     selectByItemIdStatement,
                     oldItemId,
-                    (uuid, amount) -> {
+                    (stockId, amount) -> {
                         try {
-                            this.stockTable.selectStockByUUIDAndItemId(
+                            this.stockTable.selectStockByIdAndItemId(
                                 selectByUUIDAndItemIdStatement,
-                                uuid,
+                                stockId,
                                 newItemId,
                                 existingAmount -> {
                                     try {
-                                        this.stockTable.addUpdateAmountBatch(updateAmountStatement, uuid, newItemId, amount + existingAmount);
+                                        this.stockTable.addUpdateAmountBatch(updateAmountStatement, stockId, newItemId, amount + existingAmount);
                                     } catch (SQLException e) {
                                         SneakyThrow.sneaky(e);
                                     }
                                 },
                                 () -> {
                                     try {
-                                        this.stockTable.addUpdateItemIdBatch(updateItemIdStatement, uuid, oldItemId, newItemId);
+                                        this.stockTable.addUpdateItemIdBatch(updateItemIdStatement, stockId, oldItemId, newItemId);
                                     } catch (SQLException e) {
                                         SneakyThrow.sneaky(e);
                                     }
@@ -114,9 +115,9 @@ public class StockTable implements PartialSavingStockStorage {
         try (var connection = this.database.getConnection();
              var statement = this.stockTable.upsertStockStatement(connection)
         ) {
-            var strUuid = uuid.toString();
+            int stockId = this.stockHolderTable.getStockHolderIdByUUID(connection, uuid);
             for (var data : stockData) {
-                this.stockTable.addUpsertStockBatch(statement, strUuid, data.itemId(), data.amount());
+                this.stockTable.addUpsertStockBatch(statement, stockId, data.itemId(), data.amount());
             }
             statement.executeBatch();
         }

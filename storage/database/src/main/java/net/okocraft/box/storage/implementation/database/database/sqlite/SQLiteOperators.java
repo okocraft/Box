@@ -36,7 +36,7 @@ final class SQLiteOperators {
             new StockTableOperator(prefix) {
                 @Override
                 protected @NotNull String upsertStockStatement(@NotNull String tableName) {
-                    return "INSERT INTO `%s` (`uuid`, `item_id`, `amount`) VALUES (?, ?, ?) ON CONFLICT (`uuid`, `item_id`) DO UPDATE SET `amount` = excluded.amount".formatted(tableName);
+                    return "INSERT INTO `%s` (`stock_id`, `item_id`, `amount`) VALUES (?, ?, ?) ON CONFLICT (`stock_id`, `item_id`) DO UPDATE SET `amount` = excluded.amount".formatted(tableName);
                 }
             },
             new CustomDataTableOperator(prefix, "_v2"),

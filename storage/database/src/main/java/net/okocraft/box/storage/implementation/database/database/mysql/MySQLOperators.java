@@ -9,11 +9,9 @@ import net.okocraft.box.storage.implementation.database.operator.StockTableOpera
 import net.okocraft.box.storage.implementation.database.operator.UserTableOperator;
 import org.jetbrains.annotations.NotNull;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.UUID;
 
 final class MySQLOperators {
 
@@ -38,7 +36,7 @@ final class MySQLOperators {
             new StockTableOperator(prefix) {
                 @Override
                 protected @NotNull String upsertStockStatement(@NotNull String tableName) {
-                    return "INSERT INTO `%s` (`uuid`, `item_id`, `amount`) VALUES (?, ?, ?) AS new ON DUPLICATE KEY UPDATE `amount` = new.amount".formatted(tableName);
+                    return "INSERT INTO `%s` (`stock_id`, `item_id`, `amount`) VALUES (?, ?, ?) AS new ON DUPLICATE KEY UPDATE `amount` = new.amount".formatted(tableName);
                 }
             },
             new CustomDataTableOperator(prefix, "_v2"),
