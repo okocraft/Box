@@ -45,7 +45,10 @@ tasks {
 
     processResources {
         filesMatching(listOf("plugin.yml")) {
-            expand("projectVersion" to version)
+            expand(
+                "projectVersion" to version,
+                "minecraftVersion" to minecraftVersion
+            )
         }
     }
 
