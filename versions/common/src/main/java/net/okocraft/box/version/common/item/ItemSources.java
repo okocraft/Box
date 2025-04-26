@@ -86,7 +86,7 @@ public final class ItemSources {
         });
     }
 
-    private static <T extends Keyed> @NotNull Registry<T> registry(@NotNull RegistryKey<T> key) {
+    private static <T extends Keyed> @NotNull Registry<@NotNull T> registry(@NotNull RegistryKey<T> key) {
         return RegistryAccess.registryAccess().getRegistry(key);
     }
 
