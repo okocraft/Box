@@ -15,7 +15,6 @@ import org.bukkit.Material;
 import org.bukkit.Registry;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ItemType;
-import org.bukkit.inventory.meta.MusicInstrumentMeta;
 import org.bukkit.potion.PotionType;
 import org.jetbrains.annotations.NotNull;
 
@@ -71,11 +70,11 @@ public final class ItemSources {
 
     public static @NotNull Stream<DefaultItem> goatHorns() {
         return registry(RegistryKey.INSTRUMENT).stream().map(instrument -> {
-                var name = ItemNameGenerator.key(instrument);
-                var goatHorn = new ItemStack(Material.GOAT_HORN);
-                goatHorn.editMeta(MusicInstrumentMeta.class, meta -> meta.setInstrument(instrument));
-                return new DefaultItem(name, goatHorn);
-            });
+            var name = ItemNameGenerator.key(instrument);
+            var goatHorn = new ItemStack(Material.GOAT_HORN);
+            goatHorn.setData(DataComponentTypes.INSTRUMENT, instrument);
+            return new DefaultItem(name, goatHorn);
+        });
     }
 
     public static @NotNull Stream<DefaultItem> ominousBottles() {
