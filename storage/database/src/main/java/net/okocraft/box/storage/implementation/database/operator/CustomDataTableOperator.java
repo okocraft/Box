@@ -18,6 +18,7 @@ public abstract class CustomDataTableOperator {
     private final String selectAllDataStatement;
     private final String deleteDataStatement;
     private final String upsertDataStatement;
+    private final String insertDataStatement;
 
     public CustomDataTableOperator(@NotNull String prefix, @NotNull String suffix) {
         this.tableName = prefix + "custom_data" + suffix;
@@ -34,6 +35,7 @@ public abstract class CustomDataTableOperator {
         this.selectAllDataStatement = "SELECT `key`, `data` FROM `%s`".formatted(this.tableName);
         this.deleteDataStatement = "DELETE FROM `%s` WHERE `key`=?".formatted(this.tableName);
         this.upsertDataStatement = this.upsertStatement(this.tableName);
+        this.insertDataStatement = "INSERT INTO `%s` (`key`, `data`) VALUES (?, ?)".formatted(this.tableName);
     }
 
     public @NotNull String tableName() {
@@ -95,6 +97,16 @@ public abstract class CustomDataTableOperator {
             this.writeBytes(statement, 2, data);
             statement.executeUpdate();
         }
+    }
+
+    public PreparedStatement insertDataStatement(Connection connection) throws SQLException {
+        return connection.prepareStatement(this.insertDataStatement);
+    }
+
+    public void addInsertDataBatch(PreparedStatement statement, String key, byte @NotNull [] data) throws SQLException {
+        statement.setString(1, key);
+        this.writeBytes(statement, 2, data);
+        statement.addBatch();
     }
 
     protected abstract @NotNull String upsertStatement(@NotNull String tableName);

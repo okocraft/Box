@@ -30,6 +30,10 @@ public class MetaTable {
         this.operator.initTable(connection);
     }
 
+    public boolean exists(@NotNull Connection connection) throws Exception {
+        return this.operator.existsTable(connection);
+    }
+
     public @Nullable MCDataVersion getItemDataVersion() throws SQLException {
         var version = this.getVersion(ITEM_DATA_VERSION_KEY);
 

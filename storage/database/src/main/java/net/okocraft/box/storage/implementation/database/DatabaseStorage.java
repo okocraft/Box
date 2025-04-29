@@ -33,6 +33,8 @@ public class DatabaseStorage implements Storage {
     private final CustomDataTable customDataTable;
     private final RemappedItemTable remappedItemTable;
 
+    private boolean firstStartup;
+
     public DatabaseStorage(@NotNull Database database) {
         this.database = database;
         this.metaTable = new MetaTable(database);
@@ -53,8 +55,16 @@ public class DatabaseStorage implements Storage {
         this.database.prepare();
 
         try (var connection = this.database.getConnection()) {
-            this.metaTable.init(connection);
+            this.firstStartup = !this.metaTable.exists(connection);
+            if (this.firstStartup) {
+                this.metaTable.init(connection);
+            }
         }
+    }
+
+    @Override
+    public boolean isFirstStartup() {
+        return this.firstStartup;
     }
 
     @Override

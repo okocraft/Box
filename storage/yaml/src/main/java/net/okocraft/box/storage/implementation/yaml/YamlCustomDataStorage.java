@@ -15,6 +15,7 @@ import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Map;
 import java.util.function.BiConsumer;
 
 public class YamlCustomDataStorage implements CustomDataStorage {
@@ -52,6 +53,13 @@ public class YamlCustomDataStorage implements CustomDataStorage {
                 Files.createDirectories(parent);
             }
             YamlFormat.DEFAULT.save(mapNode, filepath);
+        }
+    }
+
+    @Override
+    public void saveAllData(@NotNull Map<Key, MapNode> customDataMap) throws Exception {
+        for (var entry : customDataMap.entrySet()) {
+            this.saveData(entry.getKey(), entry.getValue());
         }
     }
 

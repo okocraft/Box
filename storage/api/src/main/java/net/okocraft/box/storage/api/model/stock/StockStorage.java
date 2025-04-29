@@ -5,6 +5,7 @@ import net.okocraft.box.api.model.stock.StockData;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.UUID;
 
 public interface StockStorage {
@@ -14,5 +15,9 @@ public interface StockStorage {
     void saveStockData(@NotNull UUID uuid, @NotNull Collection<StockData> stockData) throws Exception;
 
     void remapItemIds(@NotNull Int2IntMap remappedIdMap) throws Exception;
+
+    Map<UUID, Collection<StockData>> loadAllStockData() throws Exception;
+
+    void saveAllStockData(@NotNull Map<UUID, Collection<StockData>> stockDataMap) throws Exception;
 
 }

@@ -6,6 +6,7 @@ val libs = extensions.getByType(org.gradle.accessors.dm.LibrariesForLibs::class)
 val mockitoAgent = configurations.register("mockitoAgent")
 
 repositories {
+    mavenLocal()
     mavenCentral()
 }
 

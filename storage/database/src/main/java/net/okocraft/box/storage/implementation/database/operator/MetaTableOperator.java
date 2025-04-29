@@ -4,32 +4,42 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 
 public abstract class MetaTableOperator {
 
+    private final String tableName;
     private final String createTableStatement;
     private final String selectValueStatement;
     private final String upsertValueStatement;
 
     public MetaTableOperator(@NotNull String tablePrefix) {
-        var tableName = tablePrefix + "meta";
+        this.tableName = tablePrefix + "meta";
 
         this.createTableStatement = """
             CREATE TABLE IF NOT EXISTS `%s` (
               `key` VARCHAR(25) PRIMARY KEY NOT NULL,
               `value` VARCHAR(16) NOT NULL
             )
-            """.formatted(tableName);
+            """.formatted(this.tableName);
 
-        this.selectValueStatement = "SELECT `value` FROM `%s` WHERE `key`=?".formatted(tableName);
-        this.upsertValueStatement = this.upsertStatement(tableName);
+        this.selectValueStatement = "SELECT `value` FROM `%s` WHERE `key`=?".formatted(this.tableName);
+        this.upsertValueStatement = this.upsertStatement(this.tableName);
     }
 
     public void initTable(@NotNull Connection connection) throws SQLException {
         try (var statement = connection.createStatement()) {
             statement.execute(this.createTableStatement);
         }
+    }
+
+    public boolean existsTable(@NotNull Connection connection) throws SQLException {
+            DatabaseMetaData meta = connection.getMetaData();
+
+            try (var tables = meta.getTables(null, null, this.tableName.toUpperCase(), new String[] { "TABLE" })) {
+                return tables.next();
+            }
     }
 
     public @Nullable String selectValue(@NotNull Connection connection, @NotNull String key) throws SQLException {

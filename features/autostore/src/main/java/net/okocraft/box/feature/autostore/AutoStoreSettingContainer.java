@@ -1,15 +1,16 @@
 package net.okocraft.box.feature.autostore;
 
+import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
 import dev.siroshun.configapi.core.node.IntArray;
 import dev.siroshun.configapi.core.node.ListNode;
 import dev.siroshun.configapi.core.node.MapNode;
 import dev.siroshun.configapi.core.node.NumberValue;
-import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
 import dev.siroshun.event4j.api.priority.Priority;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.kyori.adventure.key.Key;
 import net.okocraft.box.api.BoxAPI;
+import net.okocraft.box.api.event.customdata.CustomDataExportEvent;
 import net.okocraft.box.api.event.player.PlayerLoadEvent;
 import net.okocraft.box.api.event.player.PlayerUnloadEvent;
 import net.okocraft.box.api.util.BoxLogger;
@@ -107,14 +108,16 @@ class AutoStoreSettingContainer implements AutoStoreSettingProvider {
     private static @NotNull MapNode serialize(@NotNull AutoStoreSetting setting) {
         var data = MapNode.create();
 
-        data.set("data-version", MCDataVersion.current().dataVersion());
-
         if (setting.isEnabled()) data.set("enable", true);
         if (setting.isAllMode()) data.set("all-mode", true);
         if (setting.isDirect()) data.set("direct", true);
 
         var items = setting.getPerItemModeSetting().getEnabledItems();
         if (!items.isEmpty()) data.set("enabled-items", items.toIntArray());
+
+        if (!data.isEmpty()) {
+            data.set("data-version", MCDataVersion.current().dataVersion());
+        }
 
         return data;
     }
@@ -131,8 +134,8 @@ class AutoStoreSettingContainer implements AutoStoreSettingProvider {
         var enabledItemsNode = data.get("enabled-items");
         IntList enabledItemIds;
 
-        if (enabledItemsNode instanceof IntArray array) {
-            enabledItemIds = IntArrayList.of(array.value());
+        if (enabledItemsNode instanceof IntArray(int[] value)) {
+            enabledItemIds = IntArrayList.of(value);
         } else if (enabledItemsNode instanceof ListNode list) {
             enabledItemIds = IntArrayList.toList(
                 list.asList(NumberValue.class).stream().mapToInt(NumberValue::asInt)
@@ -149,5 +152,47 @@ class AutoStoreSettingContainer implements AutoStoreSettingProvider {
         setting.getPerItemModeSetting().clearAndEnableItems(enabledItemIds);
 
         return setting;
+    }
+
+    static void onExportAutoStoreSetting(CustomDataExportEvent event) {
+        if (!event.getKey().namespace().equals("autostore")) {
+            return;
+        }
+
+        event.editNode(AutoStoreSettingContainer::trimMapNode);
+    }
+
+    private static void trimMapNode(MapNode target) {
+        MapNode source = target.copy();
+        target.clear();
+
+        if (source.getBoolean("enable")) {
+            target.set("enable", true);
+        }
+
+        if (source.getBoolean("all-mode")) {
+            target.set("all-mode", true);
+        }
+
+        if (source.getBoolean("direct")) {
+            target.set("direct", true);
+        }
+
+        var enabledItemsNode = source.get("enabled-items");
+        if (enabledItemsNode instanceof IntArray(int[] value) && 0 < value.length) {
+            target.set("enabled-items", value);
+        } else if (enabledItemsNode instanceof ListNode list) {
+            int[] ids = list.asList(NumberValue.class).stream().mapToInt(NumberValue::asInt).toArray();
+            if (0 < ids.length) {
+                target.set("enabled-items", new IntArray(ids));
+            }
+        }
+
+        if (!target.isEmpty()) {
+            int dataVersion = source.getInteger("data-version");
+            if (dataVersion != 0) {
+                target.set("data-version", dataVersion);
+            }
+        }
     }
 }

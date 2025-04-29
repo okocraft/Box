@@ -22,4 +22,6 @@ public interface DefaultItemStorage {
 
     void renameItems(@NotNull Int2ObjectMap<String> idToNewNameMap) throws Exception;
 
+    void saveDefaultItems(@NotNull List<DefaultItemData> items) throws Exception;
+
 }

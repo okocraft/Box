@@ -27,6 +27,7 @@ public abstract class StockTableOperator {
     private final String updateItemIdStatement;
     private final String updateAmountStatement;
     private final String deleteStockByItemIdsStatement;
+    private final String selectAllStockStatement;
 
     public StockTableOperator(@NotNull String tablePrefix) {
         var tableName = tablePrefix + "stock";
@@ -52,6 +53,7 @@ public abstract class StockTableOperator {
         this.updateItemIdStatement = "UPDATE `%s` SET `item_id` = ? WHERE `stock_id` = ? AND `item_id` = ?".formatted(tableName);
         this.updateAmountStatement = "UPDATE `%s` SET `amount` = ? WHERE `stock_id` = ? AND `item_id` = ?".formatted(tableName);
         this.deleteStockByItemIdsStatement = "DELETE FROM `%s` WHERE `item_id` IN (:ITEM_IDS:)".formatted(tableName);
+        this.selectAllStockStatement = "SELECT stock_id, item_id, amount FROM `%s`".formatted(tableName);
     }
 
     public void initTable(@NotNull Connection connection) throws SQLException {
@@ -180,5 +182,17 @@ public abstract class StockTableOperator {
     }
 
     protected abstract @NotNull String upsertStockStatement(@NotNull String tableName);
+
+    public void selectAllStock(@NotNull Connection connection, @NotNull BiConsumer<Integer, StockData> consumer) throws SQLException{
+        try (var statement = connection.prepareStatement(this.selectAllStockStatement)) {
+            try (var resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    int stockId = resultSet.getInt(1);
+                    StockData stockData = new StockData(resultSet.getInt(2), resultSet.getInt(3));
+                    consumer.accept(stockId, stockData);
+                }
+            }
+        }
+    }
 
 }

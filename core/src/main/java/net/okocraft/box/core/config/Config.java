@@ -27,6 +27,7 @@ public class Config {
     private final Path directory;
     private final Path filepath;
     private final AtomicReference<CoreSetting> coreSettingRef = new AtomicReference<>();
+    private String initialBoxDataJsonFilepath = "";
 
     public Config(@NotNull Path directory) {
         this.directory = directory;
@@ -38,6 +39,7 @@ public class Config {
 
         this.loadCoreSetting(loaded, true);
         var storage = this.createStorageFromSection(loaded, storageRegistry);
+        this.initialBoxDataJsonFilepath = loaded.getMap("storage").getString("initial-data-file");
 
         YamlFormat.COMMENT_PROCESSING.save(loaded, this.filepath);
 
@@ -54,6 +56,10 @@ public class Config {
 
     public @NotNull Path filepath() {
         return this.filepath;
+    }
+
+    public @NotNull String getInitialBoxDataJsonFilepath() {
+        return this.initialBoxDataJsonFilepath;
     }
 
     private void loadCoreSetting(@NotNull MapNode source, boolean applyDefaults) {

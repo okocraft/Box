@@ -16,7 +16,9 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -103,6 +105,39 @@ class YamlStockStorage implements StockStorage {
                 writer.write(Integer.toString(entry.getIntValue()));
                 writer.newLine();
             }
+        }
+    }
+
+    @Override
+    public Map<UUID, Collection<StockData>> loadAllStockData() throws Exception {
+        var result = new HashMap<UUID, Collection<StockData>>();
+        try (var list = Files.list(this.stockDirectory)) {
+            list.forEach(filepath -> {
+                if (!Files.isRegularFile(filepath)) {
+                    return;
+                }
+
+                UUID uuid;
+                try {
+                    uuid = UUID.fromString(filepath.getFileName().toString().substring(0, filepath.getFileName().toString().lastIndexOf('.')));
+                } catch (IllegalArgumentException e) {
+                    return;
+                }
+
+                try {
+                    result.put(uuid, loadFromFile(filepath, uuid.toString()));
+                } catch (IOException e) {
+                    SneakyThrow.sneaky(e);
+                }
+            });
+        }
+        return result;
+    }
+
+    @Override
+    public void saveAllStockData(@NotNull Map<UUID, Collection<StockData>> stockDataMap) throws Exception {
+        for (var entry : stockDataMap.entrySet()) {
+            this.saveStockData(entry.getKey(), entry.getValue());
         }
     }
 

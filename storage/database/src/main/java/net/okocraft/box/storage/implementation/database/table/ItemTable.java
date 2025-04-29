@@ -6,6 +6,7 @@ import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.storage.api.model.item.CustomItemStorage;
+import net.okocraft.box.storage.api.model.item.DefaultItemData;
 import net.okocraft.box.storage.api.model.item.DefaultItemStorage;
 import net.okocraft.box.storage.api.model.item.ItemData;
 import net.okocraft.box.storage.api.model.item.NamedItem;
@@ -114,6 +115,18 @@ public class ItemTable implements DefaultItemStorage {
         }
     }
 
+    @Override
+    public void saveDefaultItems(@NotNull List<DefaultItemData> items) throws Exception {
+        try (var connection = this.database.getConnection()) {
+            try (var statement = this.operator.insertStatement(connection)) {
+                for (var item : items) {
+                    this.operator.addInsertBatch(statement, item.itemId(), item.plainName(), DEFAULT_ITEM_TYPE);
+                }
+                statement.executeBatch();
+            }
+        }
+    }
+
     private class CustomItemTable implements CustomItemStorage {
 
         private final CustomItemTableOperator operator;
@@ -172,6 +185,20 @@ public class ItemTable implements DefaultItemStorage {
         public void renameCustomItem(int id, @NotNull String newName) throws Exception {
             try (var connection = ItemTable.this.database.getConnection()) {
                 ItemTable.this.operator.updateItemName(connection, id, newName);
+            }
+        }
+
+        @Override
+        public void saveCustomItems(@NotNull List<ItemData> customItems) throws Exception {
+            try (var connection = ItemTable.this.database.getConnection();
+                 var itemTableInsertStatement = ItemTable.this.operator.insertStatement(connection);
+                 var customItemTableInsertStatement = this.operator.insertStatement(connection)) {
+                for (var item : customItems) {
+                    ItemTable.this.operator.addInsertBatch(itemTableInsertStatement, item.internalId(), item.plainName(), CUSTOM_ITEM_TYPE);
+                    this.operator.addInsertBatch(customItemTableInsertStatement, item.internalId(), item.itemData());
+                }
+                itemTableInsertStatement.executeBatch();
+                customItemTableInsertStatement.executeBatch();
             }
         }
     }
