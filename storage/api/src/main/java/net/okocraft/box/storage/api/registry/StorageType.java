@@ -1,8 +1,8 @@
 package net.okocraft.box.storage.api.registry;
 
 import dev.siroshun.configapi.core.node.MapNode;
-import dev.siroshun.configapi.core.serialization.key.KeyGenerator;
-import dev.siroshun.configapi.core.serialization.record.RecordDeserializer;
+import dev.siroshun.configapi.serialization.record.RecordDeserializer;
+import dev.siroshun.serialization.core.key.KeyGenerator;
 import net.okocraft.box.storage.api.model.Storage;
 import org.jetbrains.annotations.NotNull;
 

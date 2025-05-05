@@ -1,7 +1,7 @@
 package net.okocraft.box.core.config;
 
-import dev.siroshun.configapi.core.serialization.annotation.Comment;
-import dev.siroshun.configapi.core.serialization.annotation.DefaultLong;
+import dev.siroshun.serialization.annotation.Comment;
+import dev.siroshun.serialization.annotation.DefaultLong;
 import net.okocraft.box.api.util.BoxLogger;
 import org.jetbrains.annotations.NotNull;
 

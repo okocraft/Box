@@ -1,7 +1,7 @@
 package net.okocraft.box.core.config;
 
-import dev.siroshun.configapi.core.serialization.annotation.CollectionType;
-import dev.siroshun.configapi.core.serialization.annotation.Comment;
+import dev.siroshun.serialization.annotation.CollectionType;
+import dev.siroshun.serialization.annotation.Comment;
 
 import java.util.Set;
 

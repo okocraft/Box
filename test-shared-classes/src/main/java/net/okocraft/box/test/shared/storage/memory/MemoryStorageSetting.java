@@ -1,8 +1,8 @@
 package net.okocraft.box.test.shared.storage.memory;
 
-import dev.siroshun.configapi.core.serialization.annotation.Comment;
-import dev.siroshun.configapi.core.serialization.annotation.DefaultBoolean;
-import dev.siroshun.configapi.core.serialization.annotation.DefaultInt;
+import dev.siroshun.serialization.annotation.Comment;
+import dev.siroshun.serialization.annotation.DefaultBoolean;
+import dev.siroshun.serialization.annotation.DefaultInt;
 
 // Note: When this record is changed, ConfigTest#EXPECTED_DEFAULT_CONFIG must also be updated.
 public record MemoryStorageSetting(

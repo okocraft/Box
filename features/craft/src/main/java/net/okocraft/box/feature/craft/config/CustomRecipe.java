@@ -1,7 +1,7 @@
 package net.okocraft.box.feature.craft.config;
 
-import dev.siroshun.configapi.core.serialization.annotation.CollectionType;
-import dev.siroshun.configapi.core.serialization.annotation.DefaultInt;
+import dev.siroshun.serialization.annotation.CollectionType;
+import dev.siroshun.serialization.annotation.DefaultInt;
 
 import java.util.List;
 

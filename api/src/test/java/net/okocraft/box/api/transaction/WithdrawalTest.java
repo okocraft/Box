@@ -1,6 +1,6 @@
 package net.okocraft.box.api.transaction;
 
-import dev.siroshun.configapi.core.serialization.annotation.Inline;
+import dev.siroshun.serialization.annotation.Inline;
 import net.okocraft.box.api.model.stock.StockData;
 import net.okocraft.box.test.shared.event.StockEventCollector;
 import net.okocraft.box.test.shared.mock.bukkit.inventory.InventoryInfo;

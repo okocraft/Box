@@ -1,9 +1,9 @@
 package net.okocraft.box.test.shared.util;
 
 import dev.siroshun.configapi.core.node.MapNode;
-import dev.siroshun.configapi.core.serialization.key.KeyGenerator;
-import dev.siroshun.configapi.core.serialization.record.RecordDeserializer;
 import dev.siroshun.configapi.format.yaml.YamlFormat;
+import dev.siroshun.configapi.serialization.record.RecordDeserializer;
+import dev.siroshun.serialization.core.key.KeyGenerator;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;

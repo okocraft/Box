@@ -1,7 +1,7 @@
 package net.okocraft.box.test.shared.mock.bukkit.inventory;
 
-import dev.siroshun.configapi.core.serialization.annotation.DefaultInt;
-import dev.siroshun.configapi.core.serialization.annotation.Inline;
+import dev.siroshun.serialization.annotation.DefaultInt;
+import dev.siroshun.serialization.annotation.Inline;
 import net.okocraft.box.test.shared.model.item.ItemType;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;

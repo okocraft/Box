@@ -1,6 +1,6 @@
 package net.okocraft.box.storage.implementation.yaml;
 
-import dev.siroshun.configapi.core.serialization.annotation.DefaultString;
+import dev.siroshun.serialization.annotation.DefaultString;
 import net.okocraft.box.api.util.MCDataVersion;
 import net.okocraft.box.storage.api.model.Storage;
 import net.okocraft.box.storage.api.model.data.CustomDataStorage;

@@ -1,7 +1,7 @@
 package net.okocraft.box.api.transaction;
 
-import dev.siroshun.configapi.core.serialization.annotation.CollectionType;
-import dev.siroshun.configapi.core.serialization.annotation.MapType;
+import dev.siroshun.serialization.annotation.CollectionType;
+import dev.siroshun.serialization.annotation.MapType;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.model.manager.ItemManager;
 import net.okocraft.box.api.util.ItemNameGenerator;

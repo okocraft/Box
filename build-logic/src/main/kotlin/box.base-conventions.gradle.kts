@@ -15,6 +15,7 @@ dependencies {
     }
     api(libs.event4j)
     api(libs.messages)
+    implementation(libs.configapi.serialization.record)
 
     compileOnly(libs.annotations)
 
