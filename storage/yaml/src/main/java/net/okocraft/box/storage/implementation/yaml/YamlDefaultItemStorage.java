@@ -7,6 +7,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.IntSet;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import net.okocraft.box.storage.api.model.item.DefaultItemData;
 import net.okocraft.box.storage.api.model.item.DefaultItemStorage;
 import net.okocraft.box.storage.api.model.item.NamedItem;
 import net.okocraft.box.storage.api.util.SneakyThrow;
@@ -114,6 +115,17 @@ class YamlDefaultItemStorage implements DefaultItemStorage {
         }
 
         YamlFormat.DEFAULT.save(source, this.filepath);
+    }
+
+    @Override
+    public void saveDefaultItems(@NotNull List<DefaultItemData> items) throws Exception {
+        try (var writer = Files.newBufferedWriter(this.filepath, StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.WRITE)) {
+            for (var item : items) {
+                int id = this.metaStorage.newItemIdWithoutSaving();
+                appendNewItem(writer, id, item.plainName());
+            }
+        }
+        this.metaStorage.saveLastItemId();
     }
 
     public @NotNull Path filepath() {

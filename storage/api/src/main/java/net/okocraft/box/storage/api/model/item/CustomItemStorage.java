@@ -2,6 +2,7 @@ package net.okocraft.box.storage.api.model.item;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
@@ -14,5 +15,7 @@ public interface CustomItemStorage {
     int newCustomItem(@NotNull String name, byte[] data) throws Exception;
 
     void renameCustomItem(int id, @NotNull String newName) throws Exception;
+
+    void saveCustomItems(@NotNull List<ItemData> customItems) throws Exception;
 
 }

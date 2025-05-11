@@ -10,6 +10,7 @@ import net.okocraft.box.feature.command.box.GiveCommand;
 import net.okocraft.box.feature.command.box.ItemInfoCommand;
 import net.okocraft.box.feature.command.box.StockListCommand;
 import net.okocraft.box.feature.command.box.WithdrawCommand;
+import net.okocraft.box.feature.command.boxadmin.ExportCommand;
 import net.okocraft.box.feature.command.boxadmin.InfinityCommand;
 import net.okocraft.box.feature.command.boxadmin.RegisterCommand;
 import net.okocraft.box.feature.command.boxadmin.ReloadCommand;
@@ -42,7 +43,8 @@ public class CommandFeature extends AbstractBoxFeature {
         this.boxAdminSubCommands = createCommands(context,
             collector -> new StockCommand(collector, sharedStockListCommand),
             InfinityCommand::new, RegisterCommand::new, RenameCommand::new,
-            ReloadCommand::new, ResetAllCommand::new, VersionCommand::new
+            ReloadCommand::new, ResetAllCommand::new, VersionCommand::new,
+            ExportCommand::new
         );
     }
 

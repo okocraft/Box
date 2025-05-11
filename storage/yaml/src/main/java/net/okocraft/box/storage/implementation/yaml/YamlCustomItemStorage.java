@@ -13,6 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Base64;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
@@ -87,6 +88,23 @@ class YamlCustomItemStorage implements CustomItemStorage {
         var mapNode = YamlFormat.DEFAULT.load(this.filepath);
         mapNode.getOrCreateMap(id).set("name", newName);
         YamlFormat.DEFAULT.save(mapNode, this.filepath);
+    }
+
+    @Override
+    public void saveCustomItems(@NotNull List<ItemData> customItems) throws Exception {
+        var parent = this.filepath.getParent();
+        if (!Files.isDirectory(parent)) {
+            Files.createDirectories(parent);
+        }
+
+        try (var writer = Files.newBufferedWriter(this.filepath, StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.APPEND)) {
+            for (var item :customItems) {
+                int id = this.metaStorage.newItemIdWithoutSaving();
+                appendNewItem(writer, id, item.plainName(), item.itemData());
+            }
+        }
+
+        this.metaStorage.saveLastItemId();
     }
 
     private static void appendNewItem(@NotNull BufferedWriter writer, int id, @NotNull String name, byte[] itemData) throws IOException {

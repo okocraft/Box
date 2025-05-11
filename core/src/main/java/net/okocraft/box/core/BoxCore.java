@@ -84,7 +84,7 @@ public class BoxCore implements BoxAPI {
 
         BoxLogger.logger().info("Initializing the storage...");
 
-        if (!StorageLoader.initialize(storage)) {
+        if (!StorageLoader.initialize(storage, this.context.config().getInitialBoxDataJsonFilepath())) {
             return false;
         }
 

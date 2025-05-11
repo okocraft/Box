@@ -13,6 +13,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class MemoryPartialSavingStockStorage implements PartialSavingStockStorage {
 
@@ -81,5 +83,21 @@ public class MemoryPartialSavingStockStorage implements PartialSavingStockStorag
             .map(Int2IntMap::values)
             .flatMapToInt(IntCollection::intStream)
             .anyMatch(amount -> amount == 0);
+    }
+
+    @Override
+    public Map<UUID, Collection<StockData>> loadAllStockData() {
+        return this.stockDataMap.keySet().stream().collect(Collectors.toUnmodifiableMap(Function.identity(), this::loadStockData));
+    }
+
+    @Override
+    public void saveAllStockData(@NotNull Map<UUID, Collection<StockData>> stockDataMap) {
+        for (var entry : stockDataMap.entrySet()) {
+            Int2IntMap map = new Int2IntOpenHashMap(entry.getValue().size());
+            for (var data : entry.getValue()) {
+                map.put(data.itemId(), data.amount());
+            }
+            this.stockDataMap.put(entry.getKey(), map);
+        }
     }
 }

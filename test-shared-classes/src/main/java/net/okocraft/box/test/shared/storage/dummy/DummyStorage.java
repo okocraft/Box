@@ -33,6 +33,11 @@ public class DummyStorage implements Storage {
     }
 
     @Override
+    public boolean isFirstStartup() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public void prepare() {
         throw new UnsupportedOperationException();
     }

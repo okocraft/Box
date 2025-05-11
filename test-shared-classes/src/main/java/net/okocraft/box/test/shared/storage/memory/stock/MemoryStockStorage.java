@@ -41,4 +41,14 @@ public class MemoryStockStorage implements StockStorage {
             );
         }
     }
+
+    @Override
+    public Map<UUID, Collection<StockData>> loadAllStockData() {
+        return Collections.unmodifiableMap(this.stockDataMap);
+    }
+
+    @Override
+    public void saveAllStockData(@NotNull Map<UUID, Collection<StockData>> stockDataMap) {
+        this.stockDataMap.putAll(stockDataMap);
+    }
 }

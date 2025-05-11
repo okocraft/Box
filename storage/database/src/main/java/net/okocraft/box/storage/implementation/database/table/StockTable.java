@@ -13,6 +13,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 // | stock_id | item_id | amount |
@@ -134,6 +136,55 @@ public class StockTable implements PartialSavingStockStorage {
     public boolean hasZeroStock() throws Exception {
         try (var connection = this.database.getConnection()) {
             return 0 < this.stockTable.countZeroStock(connection);
+        }
+    }
+
+    @Override
+    public Map<UUID, Collection<StockData>> loadAllStockData() throws Exception {
+        Map<UUID, Collection<StockData>> result;
+        try (var connection = this.database.getConnection()) {
+            var idMap = this.stockHolderTable.getAllUUIDByStockHolderId(connection);
+            var invalidUUID = new UUID(0, 0);
+            result = new HashMap<>(idMap.size());
+            this.stockTable.selectAllStock(connection, (stockId, stockData) -> {
+                var uuid = idMap.getOrDefault(stockId.intValue(), invalidUUID);
+                if (uuid.equals(invalidUUID)) {
+                    return;
+                }
+
+                var col = result.computeIfAbsent(uuid, ignored -> new ArrayList<>());
+                col.add(stockData);
+            });
+        }
+        return result;
+    }
+
+    @Override
+    public void saveAllStockData(@NotNull Map<UUID, Collection<StockData>> stockDataMap) throws Exception {
+        try (var connection = this.database.getConnection()) {
+            this.stockHolderTable.insertStockHolderUUIDs(connection, stockDataMap.keySet());
+            var idMap = this.stockHolderTable.getAllStockHolderIdByUUID(connection);
+            int count = 0;
+            try (var statement = this.stockTable.insertStockStatement(connection)) {
+                for (var entry : stockDataMap.entrySet()) {
+                    var id = idMap.getInt(entry.getKey());
+                    if (id == 0) {
+                        continue;
+                    }
+
+                    for (var stock : entry.getValue()) {
+                        this.stockTable.addInsertStockBatch(statement, id, stock.itemId(), stock.amount());
+                        if (count++ == 10000) {
+                            statement.executeBatch();
+                            count = 0;
+                        }
+                    }
+                }
+
+                if (count != 0) {
+                    statement.executeBatch();
+                }
+            }
         }
     }
 }

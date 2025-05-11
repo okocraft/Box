@@ -8,6 +8,7 @@ import net.okocraft.box.api.feature.FeatureContext;
 import net.okocraft.box.feature.autostore.command.AutoStoreCommand;
 import net.okocraft.box.feature.autostore.gui.AutoStoreClickMode;
 import net.okocraft.box.feature.autostore.listener.AutoSaveListener;
+import net.okocraft.box.feature.autostore.listener.CustomDataExportListener;
 import net.okocraft.box.feature.autostore.listener.ItemListener;
 import net.okocraft.box.feature.gui.api.mode.ClickModeRegistry;
 import org.bukkit.Bukkit;
@@ -23,11 +24,13 @@ import static com.github.siroshun09.messages.minimessage.base.MiniMessageBase.me
 public class AutoStoreFeature extends AbstractBoxFeature {
 
     private static final Key AUTO_SAVE_LISTENER_KEY = Key.key("box", "feature/autostore/auto_save_listener");
+    private static final Key CUSTOM_DATA_EXPORT_LISTENER_KEY = Key.key("box", "feature/autostore/custom_data_export_listener");
 
     private final AutoStoreSettingContainer settingContainer;
     private final MiniMessageBase loadErrorMessage;
 
     private final AutoSaveListener autoSaveListener;
+    private final CustomDataExportListener customDataExportListener;
     private final ItemListener itemListener;
 
     private final AutoStoreCommand autoStoreCommand;
@@ -45,6 +48,7 @@ public class AutoStoreFeature extends AbstractBoxFeature {
         this.loadErrorMessage = messageKey(collector.add("box.autostore.error.failed-to-load-settings", "<red>Failed to load the auto-store settings. Please contact the administrator."));
         this.settingContainer = new AutoStoreSettingContainer();
         this.autoSaveListener = new AutoSaveListener(this.settingContainer);
+        this.customDataExportListener = new CustomDataExportListener();
         this.itemListener = new ItemListener(this.settingContainer);
         this.autoStoreCommand = new AutoStoreCommand(this.settingContainer, this.loadErrorMessage, collector);
         this.autoStoreClickMode = new AutoStoreClickMode(this.settingContainer, collector);
@@ -54,6 +58,7 @@ public class AutoStoreFeature extends AbstractBoxFeature {
     public void enable(@NotNull FeatureContext.Enabling context) {
         this.settingContainer.registerBoxPlayerListener(this.loadErrorMessage);
         this.autoSaveListener.register(AUTO_SAVE_LISTENER_KEY);
+        this.customDataExportListener.register(CUSTOM_DATA_EXPORT_LISTENER_KEY, AutoStoreSettingContainer::onExportAutoStoreSetting);
 
         Bukkit.getPluginManager().registerEvents(this.itemListener, context.plugin());
 
@@ -73,6 +78,7 @@ public class AutoStoreFeature extends AbstractBoxFeature {
         HandlerList.unregisterAll(this.itemListener);
 
         this.autoSaveListener.unregister();
+        this.customDataExportListener.unregister();
         this.settingContainer.unregisterBoxPlayerListener();
 
         this.settingContainer.unloadAll();

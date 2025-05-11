@@ -31,6 +31,8 @@ public class YamlStorage implements Storage {
     final YamlStockStorage stockStorage;
     final YamlCustomDataStorage customDataStorage;
 
+    private boolean firstStartup;
+
     public YamlStorage(@NotNull StorageContext<Setting> context) {
         this.rootDirectory = context.pluginDirectory().resolve(context.setting().directoryName());
         this.metaStorage = new YamlMetaStorage(this.rootDirectory);
@@ -51,6 +53,7 @@ public class YamlStorage implements Storage {
 
     @Override
     public void init() throws Exception {
+        this.firstStartup = !Files.isDirectory(this.rootDirectory);
         Files.createDirectories(this.rootDirectory);
 
         var oldMetaFilepath = this.rootDirectory.resolve("items").resolve("storage-meta.yml");
@@ -59,6 +62,11 @@ public class YamlStorage implements Storage {
         }
 
         this.metaStorage.load();
+    }
+
+    @Override
+    public boolean isFirstStartup() {
+        return this.firstStartup;
     }
 
     @Override

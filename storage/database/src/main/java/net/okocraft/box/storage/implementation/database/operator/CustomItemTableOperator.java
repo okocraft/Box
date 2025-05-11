@@ -44,6 +44,15 @@ public abstract class CustomItemTableOperator {
         }
     }
 
+    public PreparedStatement insertStatement(@NotNull Connection connection) throws SQLException {
+        return connection.prepareStatement(this.insertStatement);
+    }
+
+    public void addInsertBatch(@NotNull PreparedStatement statement, int id, byte[] data) throws SQLException {
+        statement.setInt(1, id);
+        this.writeBytes(statement, 2, data);
+    }
+
     public @NotNull Optional<byte[]> selectItemData(@NotNull Connection connection, int id) throws SQLException {
         try (var statement = connection.prepareStatement(this.selectItemDataStatement)) {
             statement.setInt(1, id);

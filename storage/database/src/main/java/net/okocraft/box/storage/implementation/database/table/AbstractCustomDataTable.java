@@ -9,6 +9,7 @@ import net.okocraft.box.storage.implementation.database.database.Database;
 import net.okocraft.box.storage.implementation.database.operator.CustomDataTableOperator;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Map;
 import java.util.function.BiConsumer;
 
 public abstract class AbstractCustomDataTable implements CustomDataStorage {
@@ -40,6 +41,20 @@ public abstract class AbstractCustomDataTable implements CustomDataStorage {
             } else {
                 this.operator.upsertData(connection, key.asString(), this.toBytes(mapNode));
             }
+        }
+    }
+
+    @Override
+    public void saveAllData(@NotNull Map<Key, MapNode> customDataMap) throws Exception {
+        try (var connection = this.database.getConnection();
+             var statement = this.operator.insertDataStatement(connection)) {
+            for (var entry : customDataMap.entrySet()) {
+                if (entry.getValue().isEmpty()) {
+                    continue;
+                }
+                this.operator.addInsertDataBatch(statement, entry.getKey().asString(), this.toBytes(entry.getValue()));
+            }
+            statement.executeBatch();
         }
     }
 

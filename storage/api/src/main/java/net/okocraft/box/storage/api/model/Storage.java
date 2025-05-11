@@ -20,6 +20,8 @@ public interface Storage {
 
     void init() throws Exception;
 
+    boolean isFirstStartup();
+
     void prepare() throws Exception;
 
     void close() throws Exception;
