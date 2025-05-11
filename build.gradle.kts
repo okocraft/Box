@@ -3,12 +3,6 @@ plugins {
     id("box.properties")
 }
 
-subprojects {
-    repositories {
-        mavenLocal()
-    }
-}
-
 tasks {
     register<Delete>("clean") {
         group = "build"
