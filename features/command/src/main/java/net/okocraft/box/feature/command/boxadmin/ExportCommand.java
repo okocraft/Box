@@ -46,7 +46,7 @@ public class ExportCommand extends AbstractCommand {
         var msgSrc = BoxAPI.api().getMessageProvider().findSource(sender);
         this.exportStart.source(msgSrc).send(sender);
 
-        Path path = BoxAPI.api().getPluginDirectory().resolve("data-" + LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME).replace(":", "-") + "json.gz");
+        Path path = BoxAPI.api().getPluginDirectory().resolve("data-" + LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME).replace(":", "-") + ".json.gz");
 
         BoxDataFile.encode(path, StorageHolder.getStorage(), BoxAPI.api().getItemManager(), BoxAPI.api().getEventCallers().sync())
             .inspect(ignored -> this.exportSuccess.apply(path).source(msgSrc).send(sender))
