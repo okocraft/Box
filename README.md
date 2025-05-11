@@ -101,4 +101,4 @@ dependencies {
 
 This project is under the GPL-3.0 license. Please see [LICENSE](LICENSE) for more info.
 
-Copyright © 2019-2024, OKOCRAFT
+Copyright © 2019-2025, OKOCRAFT
