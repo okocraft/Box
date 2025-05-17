@@ -1,5 +1,10 @@
 pluginManagement {
     includeBuild("build-logic")
+    repositories {
+        gradlePluginPortal()
+        mavenCentral()
+        mavenLocal()
+    }
 }
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")

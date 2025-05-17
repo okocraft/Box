@@ -1,5 +1,5 @@
-plugins {
-    id("box.versions-paper-conventions")
+dependencies {
+    api(projects.boxVersionCommon)
+    compileOnly(projects.boxAnnotationProcessor)
+    annotationProcessor(projects.boxAnnotationProcessor)
 }
-
-project.extra["paper.version"] = "1.21.5"
