@@ -1,5 +1,6 @@
 plugins {
     id("box.common-conventions")
+    alias(libs.plugins.aggregated.javadoc.collector)
 }
 
 repositories {
@@ -23,8 +24,4 @@ tasks.javadoc {
     include("net/okocraft/box/feature/autostore/AutoStoreSettingProvider.java")
     include("net/okocraft/box/feature/autostore/package-info.java")
     include("net/okocraft/box/feature/autostore/setting/**")
-}
-
-afterEvaluate {
-    collector.JavadocAggregator.addProject(this)
 }

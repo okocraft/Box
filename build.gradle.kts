@@ -1,16 +1,12 @@
 plugins {
     alias(libs.plugins.jcommon)
-    id("box.aggregate-javadocs")
+    alias(libs.plugins.aggregated.javadoc)
     id("box.properties")
 }
 
-tasks {
-    aggregateJavadoc {
-        if (boxBuildProperties.isPublishing) {
-            val dirName = if (boxBuildProperties.isReleaseVersion) "release" else "snapshot"
-            setDestinationDir(rootDir.resolve("staging").resolve(dirName))
-        }
-    }
+aggregatedJavadoc {
+    val dirName = if (boxBuildProperties.isReleaseVersion) "release" else "snapshot"
+    outputDir = rootDir.resolve("staging").resolve(dirName)
 }
 
 jcommon {
@@ -48,5 +44,19 @@ jcommon {
                 "Implementation-Version" to project.version.toString()
             )
         }
+    }
+
+    javadocTask {
+        val opts = options as StandardJavadocDocletOptions
+
+        opts.encoding = Charsets.UTF_8.name()
+        opts.addStringOption("Xdoclint:none", "-quiet")
+        opts.links(
+            "https://jd.papermc.io/paper/${libs.versions.paper.javadoc.get()}/",
+            "https://jd.advntr.dev/api/${libs.versions.adventure.get()}/",
+            //"https://javadoc.io/doc/org.jetbrains/annotations/${libs.versions.annotations.get()}/",
+            "https://siroshun09.github.io/ConfigAPI/${libs.versions.configapi.get()}",
+            "https://siroshun09.github.io/Event4J/${libs.versions.event4j.get()}/"
+        )
     }
 }
