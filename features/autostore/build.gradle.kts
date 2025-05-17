@@ -6,6 +6,9 @@ plugins {
 repositories {
     maven {
         url = uri("https://maven.playpro.com/")
+        mavenContent {
+            includeGroup(libs.coreprotect.get().module.group)
+        }
     }
 }
 
