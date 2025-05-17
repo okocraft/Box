@@ -2,11 +2,12 @@ plugins {
     alias(libs.plugins.jcommon)
     alias(libs.plugins.aggregated.javadoc)
     alias(libs.plugins.mavenPublication)
-    id("box.properties")
 }
 
+val isReleaseVersion = !project.version.toString().endsWith("-SNAPSHOT")
+
 aggregatedJavadoc {
-    val dirName = if (boxBuildProperties.isReleaseVersion) "release" else "snapshot"
+    val dirName = if (isReleaseVersion) "release" else "snapshot"
     outputDir = rootDir.resolve("staging").resolve(dirName)
 }
 
@@ -63,7 +64,7 @@ jcommon {
 }
 
 mavenPublication {
-    val dirName = if (isReleaseVersion(project)) "maven" else "maven-snapshot"
+    val dirName = if (isReleaseVersion) "maven" else "maven-snapshot"
     localRepository(rootProject.projectDir.resolve("staging").resolve(dirName))
     description("A Paper plugin to provide virtual containers that can store 2.1 billion items per item.")
     apacheLicense()
