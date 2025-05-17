@@ -1,5 +1,4 @@
 plugins {
-    id("box.common-conventions")
     alias(libs.plugins.shadow)
     alias(libs.plugins.run.server)
 }

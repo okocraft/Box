@@ -1,5 +1,5 @@
 plugins {
-    id("box.common-conventions")
+    alias(libs.plugins.mavenPublication)
 }
 
 dependencies {

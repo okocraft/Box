@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.jcommon)
     alias(libs.plugins.aggregated.javadoc)
+    alias(libs.plugins.mavenPublication)
     id("box.properties")
 }
 
@@ -59,4 +60,14 @@ jcommon {
             "https://siroshun09.github.io/Event4J/${libs.versions.event4j.get()}/"
         )
     }
+}
+
+mavenPublication {
+    val dirName = if (isReleaseVersion(project)) "maven" else "maven-snapshot"
+    localRepository(rootProject.projectDir.resolve("staging").resolve(dirName))
+    description("A Paper plugin to provide virtual containers that can store 2.1 billion items per item.")
+    apacheLicense()
+    developer("Siroshun09")
+    developer("lazy_gon")
+    github("okocraft/Box")
 }

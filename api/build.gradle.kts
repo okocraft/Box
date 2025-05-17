@@ -1,6 +1,6 @@
 plugins {
     alias(libs.plugins.aggregated.javadoc.collector)
-    id("box.common-conventions")
+    alias(libs.plugins.mavenPublication)
 }
 
 tasks.javadoc {
