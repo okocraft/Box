@@ -1,5 +1,6 @@
 plugins {
-    id("box.common-conventions")
+    alias(libs.plugins.aggregated.javadoc.collector)
+    alias(libs.plugins.mavenPublication)
 }
 
 dependencies {
@@ -12,8 +13,4 @@ tasks.javadoc {
     include("net/okocraft/box/feature/craft/RecipeRegistry.java")
     include("net/okocraft/box/feature/craft/event/**")
     include("net/okocraft/box/feature/craft/model/**")
-}
-
-afterEvaluate {
-    collector.JavadocAggregator.addProject(this)
 }

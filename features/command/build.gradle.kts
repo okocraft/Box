@@ -1,5 +1,6 @@
 plugins {
-    id("box.common-conventions")
+    alias(libs.plugins.aggregated.javadoc.collector)
+    alias(libs.plugins.mavenPublication)
 }
 
 dependencies {
@@ -13,8 +14,4 @@ dependencies {
 
 tasks.javadoc {
     include("net/okocraft/box/feature/command/event/stock/**")
-}
-
-afterEvaluate {
-    collector.JavadocAggregator.addProject(this)
 }

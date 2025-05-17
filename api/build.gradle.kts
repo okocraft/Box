@@ -1,13 +1,10 @@
 plugins {
-    id("box.common-conventions")
+    alias(libs.plugins.aggregated.javadoc.collector)
+    alias(libs.plugins.mavenPublication)
 }
 
 tasks.javadoc {
     include("net/okocraft/box/api/**")
-}
-
-afterEvaluate {
-    collector.JavadocAggregator.addProject(this)
 }
 
 dependencies {
