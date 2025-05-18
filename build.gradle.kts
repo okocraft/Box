@@ -67,7 +67,7 @@ mavenPublication {
     val dirName = if (isReleaseVersion) "maven" else "maven-snapshot"
     localRepository(rootProject.projectDir.resolve("staging").resolve(dirName))
     description("A Paper plugin to provide virtual containers that can store 2.1 billion items per item.")
-    apacheLicense()
+    gplV3License()
     developer("Siroshun09")
     developer("lazy_gon")
     github("okocraft/Box")
