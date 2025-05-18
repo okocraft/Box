@@ -1,6 +1,6 @@
 plugins {
     `java-library`
-    alias(libs.plugins.shadow)
+    alias(libs.plugins.bundler)
     alias(libs.plugins.run.server)
 }
 
@@ -9,12 +9,6 @@ version = "1.0"
 
 val previousMinecraftVersion = "1.21.4"
 val minecraftVersion = "1.21.5"
-val javaVersion = JavaVersion.VERSION_21
-
-java {
-    sourceCompatibility = javaVersion
-    targetCompatibility = javaVersion
-}
 
 repositories {
     mavenCentral()
@@ -34,15 +28,6 @@ dependencies {
 }
 
 tasks {
-    build {
-        dependsOn(shadowJar)
-    }
-
-    compileJava {
-        options.encoding = Charsets.UTF_8.name()
-        options.release.set(javaVersion.ordinal + 1)
-    }
-
     processResources {
         filesMatching(listOf("plugin.yml")) {
             expand(
@@ -53,14 +38,12 @@ tasks {
     }
 
     jar {
-        archiveFileName = "BoxDataGenerator-$version-original.jar"
         manifest {
             attributes("paperweight-mappings-namespace" to "mojang")
         }
     }
 
     shadowJar {
-        archiveFileName = "BoxDataGenerator-$version.jar"
         mergeServiceFiles()
     }
 

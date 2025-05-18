@@ -1,5 +1,5 @@
 plugins {
-    alias(libs.plugins.shadow)
+    alias(libs.plugins.bundler)
     alias(libs.plugins.run.server)
 }
 
@@ -12,28 +12,12 @@ dependencies {
         .forEach { project -> implementation(project) }
 }
 
+bundler {
+    copyToRootBuildDirectory("Box-${project.version}")
+    replacePluginVersionForPaper(project.version)
+}
+
 tasks {
-    build {
-        dependsOn(shadowJar)
-        doLast {
-            val filepath = getArtifactFilepath()
-            filepath.parentFile.mkdirs()
-            shadowJar.get().archiveFile.get().asFile.copyTo(getArtifactFilepath(), true)
-        }
-    }
-
-    clean {
-        doLast {
-            getArtifactFilepath().delete()
-        }
-    }
-
-    processResources {
-        filesMatching(listOf("paper-plugin.yml")) {
-            expand("projectVersion" to project.version)
-        }
-    }
-
     shadowJar {
         mergeServiceFiles()
     }
@@ -43,8 +27,4 @@ tasks {
         systemProperty("com.mojang.eula.agree", "true")
         systemProperty("paper.disablePluginRemapping", "true")
     }
-}
-
-fun getArtifactFilepath(): File {
-    return rootProject.layout.buildDirectory.dir("libs").get().file("Box-${project.version}.jar").asFile
 }
