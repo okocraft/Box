@@ -30,7 +30,6 @@ jcommon {
         testImplementation(platform(libs.junit.bom))
         testImplementation(libs.junit.jupiter)
         testImplementation(libs.annotations)
-        testImplementation(libs.fastutil)
         testImplementation(libs.paper)
 
         testRuntimeOnly("org.junit.platform:junit-platform-launcher")
