@@ -4,6 +4,8 @@ import dev.siroshun.codec4j.api.codec.Base64Codec;
 import dev.siroshun.codec4j.api.codec.Codec;
 import dev.siroshun.codec4j.api.codec.UUIDCodec;
 import dev.siroshun.codec4j.api.codec.object.ObjectCodec;
+import dev.siroshun.codec4j.api.decoder.Decoder;
+import dev.siroshun.codec4j.api.decoder.object.ObjectDecoder;
 import dev.siroshun.codec4j.api.error.DecodeError;
 import dev.siroshun.configapi.codec.NodeCodec;
 import dev.siroshun.configapi.core.node.MapNode;
@@ -34,21 +36,21 @@ public record BoxData(
 
     static final Codec<Collection<BoxUser>> USERS_CODEC = ObjectCodec.create(
         BoxUserFactory::create,
-        UUIDCodec.UUID_AS_STRING.toFieldCodec("uuid").required(BoxUser::getUUID),
-        Codec.STRING.toFieldCodec("name").optional(user -> user.getName().orElseThrow(), user -> user.getName().orElse("").isEmpty())
+        UUIDCodec.UUID_AS_STRING.toFieldCodec("uuid").build(BoxUser::getUUID),
+        Codec.STRING.toFieldCodec("name").defaultValue("").build(user -> user.getName().orElseThrow(), user -> user.getName().orElse("").isEmpty())
     ).toCollectionCodec();
 
     static final Codec<List<DefaultItemData>> DEFAULT_ITEMS_CODEC = ObjectCodec.create(
         DefaultItemData::new,
-        Codec.INT.toFieldCodec("id").required(DefaultItemData::itemId),
-        Codec.STRING.toFieldCodec("plain_name").required(DefaultItemData::plainName)
+        Codec.INT.toFieldCodec("id").build(DefaultItemData::itemId),
+        Codec.STRING.toFieldCodec("plain_name").build(DefaultItemData::plainName)
     ).toListCodec();
 
     static final Codec<List<ItemData>> CUSTOM_ITEMS_CODEC = ObjectCodec.create(
         ItemData::new,
-        Codec.INT.toFieldCodec("id").required(ItemData::internalId),
-        Codec.STRING.toFieldCodec("plain_name").required(ItemData::plainName),
-        Base64Codec.CODEC.toFieldCodec("item_data").required(ItemData::itemData)
+        Codec.INT.toFieldCodec("id").build(ItemData::internalId),
+        Codec.STRING.toFieldCodec("plain_name").build(ItemData::plainName),
+        Base64Codec.CODEC.toFieldCodec("item_data").build(ItemData::itemData)
     ).toListCodec();
 
     static final Codec<StockData> STOCK_DATA_CODEC = Codec.INT.toListCodec().flatXmap(
@@ -76,13 +78,13 @@ public record BoxData(
 
     static final Codec<Map<Key, MapNode>> CUSTOM_DATA_CODEC = KEY_CODEC.toMapCodecAsKey(NodeCodec.MAP_NODE_CODEC);
 
-    public static final Codec<BoxData> BOX_DATA_CODEC = ObjectCodec.create(
+    public static final Decoder<BoxData> BOX_DATA_CODEC = ObjectDecoder.create(
         BoxData::new,
-        Codec.INT.xmap(MCDataVersion::dataVersion, MCDataVersion::new).toFieldCodec("data-version").required(BoxData::dataVersion),
-        USERS_CODEC.toFieldCodec("users").required(BoxData::users),
-        DEFAULT_ITEMS_CODEC.toFieldCodec("default_items").required(BoxData::defaultItems),
-        CUSTOM_ITEMS_CODEC.toFieldCodec("custom_items").required(BoxData::customItems),
-        STOCK_HOLDER_CODEC.toFieldCodec("stock").required(BoxData::stockHolders),
-        CUSTOM_DATA_CODEC.toFieldCodec("custom_data").required(BoxData::customData)
+        Codec.INT.xmap(MCDataVersion::dataVersion, MCDataVersion::new).toRequiredFieldDecoder("data-version"),
+        USERS_CODEC.toRequiredFieldDecoder("users"),
+        DEFAULT_ITEMS_CODEC.toRequiredFieldDecoder("default_items"),
+        CUSTOM_ITEMS_CODEC.toRequiredFieldDecoder("custom_items"),
+        STOCK_HOLDER_CODEC.toRequiredFieldDecoder("stock"),
+        CUSTOM_DATA_CODEC.toRequiredFieldDecoder("custom_data")
     );
 }

@@ -1,6 +1,6 @@
 package net.okocraft.box.storage.api.exporter;
 
-import dev.siroshun.codec4j.api.codec.Encoder;
+import dev.siroshun.codec4j.api.encoder.Encoder;
 import dev.siroshun.codec4j.api.error.EncodeError;
 import dev.siroshun.codec4j.api.io.Out;
 import dev.siroshun.configapi.codec.NodeCodec;
