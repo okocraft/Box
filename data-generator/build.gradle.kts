@@ -7,8 +7,8 @@ plugins {
 group = "net.okocraft.box.datagenerator"
 version = "1.0"
 
-val previousMinecraftVersion = "1.21.4"
-val minecraftVersion = "1.21.5"
+val previousMinecraftVersion = "1.21.5"
+val minecraftVersion = "1.21.6"
 
 repositories {
     mavenCentral()
