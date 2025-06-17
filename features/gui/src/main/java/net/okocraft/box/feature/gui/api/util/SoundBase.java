@@ -3,7 +3,6 @@ package net.okocraft.box.feature.gui.api.util;
 import io.papermc.paper.registry.keys.SoundEventKeys;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
-import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -41,23 +40,6 @@ public record SoundBase(@NotNull Sound sound) {
         @Contract("_ -> this")
         public @NotNull Builder source(@NotNull Sound.Source source) {
             this.source = source;
-            return this;
-        }
-
-        @Contract("_ -> this")
-        public @NotNull Builder source(@NotNull SoundCategory category) {
-            this.source = switch (category) {
-                case MASTER -> Sound.Source.MASTER;
-                case MUSIC -> Sound.Source.MUSIC;
-                case RECORDS -> Sound.Source.RECORD;
-                case WEATHER -> Sound.Source.WEATHER;
-                case BLOCKS -> Sound.Source.BLOCK;
-                case HOSTILE -> Sound.Source.HOSTILE;
-                case NEUTRAL -> Sound.Source.NEUTRAL;
-                case PLAYERS -> Sound.Source.PLAYER;
-                case AMBIENT -> Sound.Source.AMBIENT;
-                case VOICE -> Sound.Source.VOICE;
-            };
             return this;
         }
 
