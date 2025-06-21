@@ -8,4 +8,5 @@ dependencies {
     implementation(libs.codec4j.io.gson) {
         exclude("com.google.code.gson", "gson")
     }
+    implementation(libs.codec4j.io.gzip)
 }
