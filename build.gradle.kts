@@ -22,7 +22,7 @@ jcommon {
         }
         api(libs.event4j)
         api(libs.messages)
-        api(libs.paper)
+        compileOnlyApi(libs.paper)
         implementation(libs.configapi.serialization.record)
 
         compileOnly(libs.annotations)
