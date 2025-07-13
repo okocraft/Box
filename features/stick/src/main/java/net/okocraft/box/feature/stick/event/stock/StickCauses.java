@@ -164,6 +164,17 @@ public final class StickCauses {
         }
     }
 
+    /**
+     * A record of {@link StickCause} indicating that a Box Stick was used when the player is resurrecting using the totem of undying.
+     * @param player
+     */
+    public record Resurrect(@NotNull BoxPlayer player) implements StickCause {
+        @Override
+        public @NotNull String name() {
+            return "stick_resurrect";
+        }
+    }
+
     private StickCauses() {
         throw new UnsupportedOperationException();
     }

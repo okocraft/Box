@@ -27,6 +27,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityResurrectEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.inventory.InventoryType;
@@ -345,6 +346,36 @@ public class StickListener implements Listener {
 
         if (arrowItem != null && !this.isIllegalStack(arrowItem) && this.tryConsumingStock(boxPlayer, arrowItem, new StickCauses.ShootBow(boxPlayer))) {
             player.getInventory().addItem(arrowItem.asOne());
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onResurrect(@NotNull EntityResurrectEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
+
+        if (!(event.getEntity() instanceof Player player)) {
+            return;
+        }
+
+        EquipmentSlot hand = event.getHand();
+        if (hand == null || !hand.isHand()) {
+            return;
+        }
+
+        var boxPlayer = this.checkPlayerAndGetBoxPlayer(player, "box.stick.resurrect");
+        if (boxPlayer == null) {
+            return;
+        }
+
+        ItemStack item = player.getInventory().getItem(hand);
+        if (item.getType() != Material.TOTEM_OF_UNDYING) {
+            return;
+        }
+
+        if (item.getType() == Material.TOTEM_OF_UNDYING && !this.isIllegalStack(item) && this.tryConsumingStock(boxPlayer, item, new StickCauses.Resurrect(boxPlayer))) {
+            player.getInventory().setItem(hand, item.clone());
         }
     }
 
