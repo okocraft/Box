@@ -3,7 +3,6 @@ package net.okocraft.box.storage.implementation.database.table;
 import net.okocraft.box.api.model.user.BoxUser;
 import net.okocraft.box.storage.api.factory.user.BoxUserFactory;
 import net.okocraft.box.storage.api.model.user.UserStorage;
-import net.okocraft.box.storage.api.util.uuid.UUIDParser;
 import net.okocraft.box.storage.implementation.database.database.Database;
 import net.okocraft.box.storage.implementation.database.operator.UserTableOperator;
 import org.jetbrains.annotations.NotNull;
@@ -53,18 +52,10 @@ public class UserTable implements UserStorage {
             return null;
         }
 
-        String rawUuid;
-
         try (var connection = this.database.getConnection()) {
-            rawUuid = this.operator.selectUUIDByUserName(connection, name);
-        }
-
-        if (rawUuid != null) {
-            var uuid = UUIDParser.parseOrWarn(rawUuid);
+            UUID uuid = this.operator.selectUUIDByUserName(connection, name);
             return uuid != null ? BoxUserFactory.create(uuid, name) : null;
         }
-
-        return null;
     }
 
     @Override
@@ -72,12 +63,7 @@ public class UserTable implements UserStorage {
         var result = new ArrayList<BoxUser>();
 
         try (var connection = this.database.getConnection()) {
-            this.operator.selectAllUsers(connection, (rawUuid, name) -> {
-                var uuid = UUIDParser.parseOrWarn(rawUuid);
-                if (uuid != null) {
-                    result.add(BoxUserFactory.create(uuid, name));
-                }
-            });
+            this.operator.selectAllUsers(connection, (uuid, name) -> result.add(BoxUserFactory.create(uuid, name)));
         }
 
         return result;

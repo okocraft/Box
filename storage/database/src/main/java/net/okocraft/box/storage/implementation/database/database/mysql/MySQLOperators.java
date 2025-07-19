@@ -23,7 +23,7 @@ final class MySQLOperators {
                     return "INSERT INTO `%s` (`key`, `value`) VALUES (?, ?) AS new ON DUPLICATE KEY UPDATE `value` = new.value".formatted(tableName);
                 }
             },
-            new UserTableOperator(prefix) {
+            new UserTableOperator(prefix, "BINARY(16)") {
                 @Override
                 protected @NotNull String upsertStatement(@NotNull String tableName) {
                     return "INSERT INTO `%s` (`uuid`, `username`) VALUES (?, ?) AS new ON DUPLICATE KEY UPDATE `username` = new.username".formatted(tableName);

@@ -23,7 +23,7 @@ final class SQLiteOperators {
                     return "INSERT INTO `%s` (`key`, `value`) VALUES (?, ?) ON CONFLICT (`key`) DO UPDATE SET `value` = excluded.value".formatted(tableName);
                 }
             },
-            new UserTableOperator(prefix) {
+            new UserTableOperator(prefix, "BLOB") {
                 @Override
                 protected @NotNull String upsertStatement(@NotNull String tableName) {
                     return "INSERT INTO `%s` (`uuid`, `username`) VALUES (?, ?) ON CONFLICT (`uuid`) DO UPDATE SET `username` = excluded.username".formatted(tableName);
