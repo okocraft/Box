@@ -9,34 +9,41 @@ import org.jetbrains.annotations.NotNullByDefault;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 @NotNullByDefault
 public class StockHolderTableOperator {
 
+    private final String  tableName;
     private final String createTableStatement;
     private final String selectStockHolderIdByUUID;
     private final String insertStockHolderIdByUUID;
+    private final BulkInserter stockHolderIdBulkInserter;
     private final String selectAllStockHolderIDs;
 
     public StockHolderTableOperator(String tablePrefix, String uuidType) {
-        var tableName = tablePrefix + "stockholders";
+        this.tableName = tablePrefix + "stockholders";
         this.createTableStatement = """
             CREATE TABLE IF NOT EXISTS `%s` (
             `id` INTEGER PRIMARY KEY AUTOINCREMENT,
             `uuid` %s NOT NULL UNIQUE
             )
-            """.formatted(tableName, uuidType);
-        this.selectStockHolderIdByUUID = "SELECT id FROM `%s` WHERE `uuid`=?".formatted(tableName);
-        this.insertStockHolderIdByUUID = "INSERT INTO `%s` (`uuid`) VALUES (?)".formatted(tableName);
-        this.selectAllStockHolderIDs = "SELECT id, uuid FROM `%s`;".formatted(tableName);
+            """.formatted(this.tableName, uuidType);
+        this.selectStockHolderIdByUUID = "SELECT id FROM `%s` WHERE `uuid`=?".formatted(this.tableName);
+        this.insertStockHolderIdByUUID = "INSERT INTO `%s` (`uuid`) VALUES (?)".formatted(this.tableName);
+        this.stockHolderIdBulkInserter = BulkInserter.create(this.tableName, List.of("uuid"));
+        this.selectAllStockHolderIDs = "SELECT id, uuid FROM `%s`;".formatted(this.tableName);
     }
 
     public void initTable(@NotNull Connection connection) throws SQLException {
         try (var statement = connection.createStatement()) {
             statement.execute(this.createTableStatement);
         }
+    }
+
+    public String tableName() {
+        return this.tableName;
     }
 
     public int getStockHolderIdByUUID(Connection connection, UUID uuid) throws SQLException {
@@ -74,13 +81,13 @@ public class StockHolderTableOperator {
         return result;
     }
 
-    public void insertStockHolderUUIDs(Connection connection, Collection<UUID> uuids) throws SQLException {
-        try (var statement = connection.prepareStatement(this.insertStockHolderIdByUUID)) {
+    public void insertStockHolderUUIDs(Connection connection, List<UUID> uuids) throws SQLException {
+        try (var statement = connection.prepareStatement(this.stockHolderIdBulkInserter.createQuery(uuids.size()))) {
+            int index = 1;
             for (var uuid : uuids) {
-                statement.setBytes(1, UUIDConverters.toBytes(uuid));
-                statement.addBatch();
+                statement.setBytes(index++, UUIDConverters.toBytes(uuid));
             }
-            statement.executeBatch();
+            statement.executeUpdate();
         }
     }
 

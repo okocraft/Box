@@ -14,6 +14,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -162,28 +163,33 @@ public class StockTable implements PartialSavingStockStorage {
     @Override
     public void saveAllStockData(@NotNull Map<UUID, Collection<StockData>> stockDataMap) throws Exception {
         try (var connection = this.database.getConnection()) {
-            this.stockHolderTable.insertStockHolderUUIDs(connection, stockDataMap.keySet());
+            List<UUID> uuids = List.copyOf(stockDataMap.keySet());
+            for (int i = 0; i * 10000 < uuids.size(); i++) {
+                List<UUID> sublist = uuids.subList(i * 10000, Math.min((i + 1) * 10000, uuids.size()));
+                this.stockHolderTable.insertStockHolderUUIDs(connection, sublist);
+            }
+
             var idMap = this.stockHolderTable.getAllStockHolderIdByUUID(connection);
             int count = 0;
-            try (var statement = this.stockTable.insertStockStatement(connection)) {
-                for (var entry : stockDataMap.entrySet()) {
-                    var id = idMap.getInt(entry.getKey());
-                    if (id == 0) {
-                        continue;
-                    }
-
-                    for (var stock : entry.getValue()) {
-                        this.stockTable.addInsertStockBatch(statement, id, stock.itemId(), stock.amount());
-                        if (count++ == 10000) {
-                            statement.executeBatch();
-                            count = 0;
-                        }
-                    }
+            List<StockTableOperator.StockRecord> records = new ArrayList<>(Math.min(10000, stockDataMap.size()));
+            for (var entry : stockDataMap.entrySet()) {
+                int id = idMap.getInt(entry.getKey());
+                if (id == 0) {
+                    continue;
                 }
 
-                if (count != 0) {
-                    statement.executeBatch();
+                for (var stock : entry.getValue()) {
+                    records.add(new StockTableOperator.StockRecord(id, stock.itemId(), stock.amount()));
+                    if (++count == 10000) {
+                        this.stockTable.insertStockRecords(connection, records);
+                        records.clear();
+                        count = 0;
+                    }
                 }
+            }
+
+            if (count != 0) {
+                this.stockTable.insertStockRecords(connection, records);
             }
         }
     }

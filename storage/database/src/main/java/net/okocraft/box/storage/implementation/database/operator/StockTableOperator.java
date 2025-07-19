@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.IntConsumer;
@@ -14,11 +15,13 @@ import java.util.stream.IntStream;
 
 public abstract class StockTableOperator {
 
+    private final String tableName;
     private final String createTableStatement;
     private final String createIndexStatement;
     private final String selectStockByIdStatement;
     private final String deleteStockByIdStatement;
     private final String insertStockStatement;
+    private final BulkInserter stockBulkInserter;
     private final String upsertStockStatement;
     private final String deleteZeroStockStatement;
     private final String countZeroStockStatement;
@@ -30,7 +33,7 @@ public abstract class StockTableOperator {
     private final String selectAllStockStatement;
 
     public StockTableOperator(@NotNull String tablePrefix) {
-        var tableName = tablePrefix + "stock";
+        this.tableName = tablePrefix + "stock";
 
         this.createTableStatement = """
             CREATE TABLE IF NOT EXISTS `%s` (
@@ -39,21 +42,22 @@ public abstract class StockTableOperator {
               `amount` INTEGER NOT NULL,
               PRIMARY KEY (`stock_id`, `item_id`)
             )
-            """.formatted(tableName);
-        this.createIndexStatement = "CREATE INDEX IF NOT EXISTS `%1$s_amount` ON `%1$s` (`amount`)".formatted(tableName);
+            """.formatted(this.tableName);
+        this.createIndexStatement = "CREATE INDEX IF NOT EXISTS `%1$s_amount` ON `%1$s` (`amount`)".formatted(this.tableName);
 
-        this.selectStockByIdStatement = "SELECT `item_id`, `amount` FROM `%s` WHERE `stock_id`=?".formatted(tableName);
-        this.deleteStockByIdStatement = "DELETE FROM `%s` WHERE `stock_id`=?".formatted(tableName);
-        this.insertStockStatement = "INSERT INTO `%s` (`stock_id`, `item_id`, `amount`) VALUES(?,?,?)".formatted(tableName);
-        this.upsertStockStatement = this.upsertStockStatement(tableName);
-        this.deleteZeroStockStatement = "DELETE FROM `%s` WHERE `amount`=0".formatted(tableName);
-        this.countZeroStockStatement = "SELECT COUNT(`amount`) FROM `%s` WHERE `amount`=0".formatted(tableName);
-        this.selectStockByItemIdStatement = "SELECT `stock_id`, `amount` FROM `%s` WHERE `item_id` = ?".formatted(tableName);
-        this.selectStockByIdAndItemIdStatement = "SELECT `amount` FROM `%s` WHERE `stock_id` = ? AND `item_id` = ?".formatted(tableName);
-        this.updateItemIdStatement = "UPDATE `%s` SET `item_id` = ? WHERE `stock_id` = ? AND `item_id` = ?".formatted(tableName);
-        this.updateAmountStatement = "UPDATE `%s` SET `amount` = ? WHERE `stock_id` = ? AND `item_id` = ?".formatted(tableName);
-        this.deleteStockByItemIdsStatement = "DELETE FROM `%s` WHERE `item_id` IN (:ITEM_IDS:)".formatted(tableName);
-        this.selectAllStockStatement = "SELECT stock_id, item_id, amount FROM `%s`".formatted(tableName);
+        this.selectStockByIdStatement = "SELECT `item_id`, `amount` FROM `%s` WHERE `stock_id`=?".formatted(this.tableName);
+        this.deleteStockByIdStatement = "DELETE FROM `%s` WHERE `stock_id`=?".formatted(this.tableName);
+        this.insertStockStatement = "INSERT INTO `%s` (`stock_id`, `item_id`, `amount`) VALUES(?,?,?)".formatted(this.tableName);
+        this.stockBulkInserter = BulkInserter.create(this.tableName, List.of("stock_id", "item_id", "amount"));
+        this.upsertStockStatement = this.upsertStockStatement(this.tableName);
+        this.deleteZeroStockStatement = "DELETE FROM `%s` WHERE `amount`=0".formatted(this.tableName);
+        this.countZeroStockStatement = "SELECT COUNT(`amount`) FROM `%s` WHERE `amount`=0".formatted(this.tableName);
+        this.selectStockByItemIdStatement = "SELECT `stock_id`, `amount` FROM `%s` WHERE `item_id` = ?".formatted(this.tableName);
+        this.selectStockByIdAndItemIdStatement = "SELECT `amount` FROM `%s` WHERE `stock_id` = ? AND `item_id` = ?".formatted(this.tableName);
+        this.updateItemIdStatement = "UPDATE `%s` SET `item_id` = ? WHERE `stock_id` = ? AND `item_id` = ?".formatted(this.tableName);
+        this.updateAmountStatement = "UPDATE `%s` SET `amount` = ? WHERE `stock_id` = ? AND `item_id` = ?".formatted(this.tableName);
+        this.deleteStockByItemIdsStatement = "DELETE FROM `%s` WHERE `item_id` IN (:ITEM_IDS:)".formatted(this.tableName);
+        this.selectAllStockStatement = "SELECT stock_id, item_id, amount FROM `%s`".formatted(this.tableName);
     }
 
     public void initTable(@NotNull Connection connection) throws SQLException {
@@ -61,6 +65,10 @@ public abstract class StockTableOperator {
             statement.execute(this.createTableStatement);
             statement.execute(this.createIndexStatement);
         }
+    }
+
+    public @NotNull String tableName() {
+        return this.tableName;
     }
 
     public void selectStockById(@NotNull Connection connection, int stockId, @NotNull Consumer<StockData> consumer) throws SQLException {
@@ -88,6 +96,18 @@ public abstract class StockTableOperator {
 
     public @NotNull PreparedStatement insertStockStatement(@NotNull Connection connection) throws SQLException {
         return connection.prepareStatement(this.insertStockStatement);
+    }
+
+    public void insertStockRecords(@NotNull Connection connection, List<StockRecord> records) throws SQLException {
+        try (var statement = connection.prepareStatement(this.stockBulkInserter.createQuery(records.size()))) {
+            int index = 1;
+            for (StockRecord record : records) {
+                statement.setInt(index++, record.stockId);
+                statement.setInt(index++,  record.itemId);
+                statement.setInt(index++, record.amount);
+            }
+            statement.executeUpdate();
+        }
     }
 
     public void addInsertStockBatch(@NotNull PreparedStatement statement, int stockId, int itemId, int amount) throws SQLException {
@@ -193,6 +213,9 @@ public abstract class StockTableOperator {
                 }
             }
         }
+    }
+
+    public record StockRecord(int stockId, int itemId, int amount) {
     }
 
 }

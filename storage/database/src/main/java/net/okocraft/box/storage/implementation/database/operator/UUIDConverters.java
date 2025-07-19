@@ -6,16 +6,16 @@ import java.nio.ByteBuffer;
 import java.util.UUID;
 
 @NotNullByDefault
-final class UUIDConverters {
+public final class UUIDConverters {
 
-    static byte[] toBytes(UUID uuid) {
+    public static byte[] toBytes(UUID uuid) {
         ByteBuffer buffer = ByteBuffer.allocate(16);
         buffer.putLong(uuid.getMostSignificantBits());
         buffer.putLong(uuid.getLeastSignificantBits());
         return buffer.array();
     }
 
-    static UUID fromBytes(byte[] bytes) {
+    public static UUID fromBytes(byte[] bytes) {
         ByteBuffer buffer = ByteBuffer.wrap(bytes);
         return new UUID(buffer.getLong(), buffer.getLong());
     }
