@@ -77,11 +77,12 @@ public class AutoStoreClickMode implements BoxItemClickMode {
     }
 
     @Override
-    public void onSelect(@NotNull PlayerSession session) {
+    public @NotNull ClickResult onSelect(@NotNull PlayerSession session) {
         var setting = this.container.getIfLoaded(session.getSourceUser().getUUID());
         if (setting != null) {
             session.putData(AutoStoreSetting.KEY, setting);
         }
+        return ClickResult.UPDATE_ICONS;
     }
 
     @Override

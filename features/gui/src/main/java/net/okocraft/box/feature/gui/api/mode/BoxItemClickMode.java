@@ -18,7 +18,7 @@ public interface BoxItemClickMode {
 
     @NotNull ItemStack createItemIcon(@NotNull PlayerSession session, @NotNull BoxItem item);
 
-    void onSelect(@NotNull PlayerSession session);
+    @NotNull ClickResult onSelect(@NotNull PlayerSession session);
 
     @NotNull ClickResult onClick(@NotNull PlayerSession session, @NotNull BoxItem item, @NotNull ClickType clickType);
 

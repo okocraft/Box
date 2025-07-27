@@ -71,7 +71,8 @@ public final class StorageMode extends AbstractStorageMode {
     }
 
     @Override
-    public void onSelect(@NotNull PlayerSession session) {
+    public @NotNull ClickResult onSelect(@NotNull PlayerSession session) {
+        return ClickResult.UPDATE_ICONS;
     }
 
     @Override

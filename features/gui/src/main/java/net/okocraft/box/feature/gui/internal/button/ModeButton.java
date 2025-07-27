@@ -48,10 +48,10 @@ public record ModeButton(int slot) implements Button {
         var mode = holder.getAvailableModes().get(nextIndex);
 
         holder.setCurrentMode(mode);
-        mode.onSelect(session);
+        ClickResult result = mode.onSelect(session);
 
         SoundBase.CLICK.play(session.getViewer());
 
-        return ClickResult.UPDATE_ICONS;
+        return result;
     }
 }
