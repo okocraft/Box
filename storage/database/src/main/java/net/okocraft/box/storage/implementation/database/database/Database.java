@@ -14,6 +14,8 @@ public interface Database extends AutoCloseable {
 
     void shutdown() throws Exception;
 
+    String tablePrefix();
+
     @NotNull
     List<Storage.Property> getInfo();
 

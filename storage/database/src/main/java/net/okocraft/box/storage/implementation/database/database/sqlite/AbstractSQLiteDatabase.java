@@ -20,6 +20,11 @@ abstract class AbstractSQLiteDatabase implements Database {
     }
 
     @Override
+    public String tablePrefix() {
+        return this.tablePrefix;
+    }
+
+    @Override
     public @NotNull OperatorProvider operators() {
         return this.operators;
     }

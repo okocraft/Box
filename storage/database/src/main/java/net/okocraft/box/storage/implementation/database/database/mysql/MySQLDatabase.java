@@ -61,6 +61,11 @@ public class MySQLDatabase implements Database {
     }
 
     @Override
+    public String tablePrefix() {
+        return this.mySQLSetting.tablePrefix();
+    }
+
+    @Override
     public @NotNull List<Storage.Property> getInfo() {
         var result = new ArrayList<Storage.Property>();
 
