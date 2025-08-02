@@ -27,16 +27,11 @@ dependencies {
         .forEach { project -> implementation(project) }
 }
 
-tasks {
-    processResources {
-        filesMatching(listOf("plugin.yml")) {
-            expand(
-                "projectVersion" to version,
-                "minecraftVersion" to minecraftVersion
-            )
-        }
-    }
+bundler {
+    replacePluginVersionForBukkit(version, minecraftVersion)
+}
 
+tasks {
     jar {
         manifest {
             attributes("paperweight-mappings-namespace" to "mojang")
