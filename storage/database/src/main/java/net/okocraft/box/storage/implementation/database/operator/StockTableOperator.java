@@ -43,7 +43,7 @@ public abstract class StockTableOperator {
               PRIMARY KEY (`stock_id`, `item_id`)
             )
             """.formatted(this.tableName);
-        this.createIndexStatement = "CREATE INDEX IF NOT EXISTS `%1$s_amount` ON `%1$s` (`amount`)".formatted(this.tableName);
+        this.createIndexStatement = "CREATE INDEX IF NOT EXISTS `%1$s_item_id_amount` ON `%1$s` (`item_id`, `amount`)".formatted(this.tableName);
 
         this.selectStockByIdStatement = "SELECT `item_id`, `amount` FROM `%s` WHERE `stock_id`=?".formatted(this.tableName);
         this.deleteStockByIdStatement = "DELETE FROM `%s` WHERE `stock_id`=?".formatted(this.tableName);
