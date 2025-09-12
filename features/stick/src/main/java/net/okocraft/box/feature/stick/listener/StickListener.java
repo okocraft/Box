@@ -268,13 +268,11 @@ public class StickListener implements Listener {
         };
         // @formatter:on
 
-        if (defaultReplacementMaterial == null) {
-            return;
+        if (defaultReplacementMaterial != null) {
+            BoxAPI.api().getItemManager()
+                .getBoxItem(ItemNameGenerator.key(defaultReplacementMaterial))
+                .ifPresent(defaultReplacementItem -> boxPlayer.getCurrentStockHolder().increase(defaultReplacementItem, 1, cause));
         }
-
-        BoxAPI.api().getItemManager()
-            .getBoxItem(ItemNameGenerator.key(defaultReplacementMaterial))
-            .ifPresent(defaultReplacementItem -> boxPlayer.getCurrentStockHolder().increase(defaultReplacementItem, 1, cause));
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
