@@ -273,6 +273,8 @@ public class StickListener implements Listener {
                 .getBoxItem(ItemNameGenerator.key(defaultReplacementMaterial))
                 .ifPresent(defaultReplacementItem -> boxPlayer.getCurrentStockHolder().increase(defaultReplacementItem, 1, cause));
         }
+
+        BoxAPI.api().getScheduler().runEntityTask(player, player::updateInventory);
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
