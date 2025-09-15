@@ -141,8 +141,7 @@ public class LoadingPersonalStockHolder implements PersonalStockHolder {
         return this.changeState;
     }
 
-    @VisibleForTesting
-    boolean isLoaded() {
+    public boolean isLoaded() {
         return this.stockHolder != null;
     }
 

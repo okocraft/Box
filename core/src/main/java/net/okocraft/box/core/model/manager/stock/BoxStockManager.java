@@ -148,7 +148,7 @@ public class BoxStockManager implements StockManager {
 
     @VisibleForTesting
     void autoSaveOrUnload(@NotNull LoadingPersonalStockHolder loader) {
-        if (this.closed.get()) {
+        if (this.closed.get() || !loader.isLoaded()) {
             return;
         }
 
