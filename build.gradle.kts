@@ -15,6 +15,8 @@ jcommon {
     javaVersion = JavaVersion.VERSION_21
 
     setupPaperRepository()
+    setupJUnit(libs.junit.bom)
+    setupMockito(libs.mockito)
 
     commonDependencies {
         api(libs.configapi.format.yaml) {
@@ -25,19 +27,11 @@ jcommon {
         compileOnlyApi(libs.paper)
         implementation(libs.configapi.serialization.record)
 
-        compileOnly(libs.annotations)
-
-        testImplementation(platform(libs.junit.bom))
         testImplementation(libs.junit.jupiter)
-        testImplementation(libs.annotations)
         testImplementation(libs.paper)
-
-        testRuntimeOnly("org.junit.platform:junit-platform-launcher")
         testRuntimeOnly(libs.slf4j.simple)
         testRuntimeOnly(libs.snakeyaml)
     }
-
-    setupMockito(libs.mockito)
 
     jarTask {
         manifest {
