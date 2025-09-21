@@ -7,8 +7,8 @@ plugins {
 group = "net.okocraft.box.datagenerator"
 version = "1.0"
 
-val previousMinecraftVersion = "1.21.7"
-val minecraftVersion = "1.21.8"
+val previousMinecraftVersion = "1.21.8"
+val minecraftVersion = "1.21.9-pre2"
 
 repositories {
     mavenCentral()
@@ -28,7 +28,7 @@ dependencies {
 }
 
 bundler {
-    replacePluginVersionForBukkit(version, minecraftVersion)
+    replacePluginVersionForBukkit(version, "1.21.9")
 }
 
 tasks {
