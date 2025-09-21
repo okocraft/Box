@@ -13,7 +13,6 @@ import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.storage.api.exporter.BoxDataFile;
 import net.okocraft.box.storage.api.holder.StorageHolder;
 import org.bukkit.command.CommandSender;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.NotNullByDefault;
 
 import java.nio.file.Path;
@@ -37,12 +36,12 @@ public class ExportCommand extends AbstractCommand {
     }
 
     @Override
-    public @NotNull Component getHelp(@NotNull MiniMessageSource msgSrc) {
+    public Component getHelp(MiniMessageSource msgSrc) {
         return this.help.create(msgSrc);
     }
 
     @Override
-    public void onCommand(@NotNull CommandSender sender, @NotNull String[] args) {
+    public void onCommand(CommandSender sender, String[] args) {
         var msgSrc = BoxAPI.api().getMessageProvider().findSource(sender);
         this.exportStart.source(msgSrc).send(sender);
 

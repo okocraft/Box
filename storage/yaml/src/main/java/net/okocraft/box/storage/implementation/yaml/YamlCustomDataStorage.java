@@ -117,13 +117,13 @@ public class YamlCustomDataStorage implements CustomDataStorage {
         }
 
         @Override
-        public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
+        public @NotNull FileVisitResult preVisitDirectory(Path dir, @NotNull BasicFileAttributes attrs) {
             return FileVisitResult.CONTINUE;
         }
 
         @SuppressWarnings("PatternValidation")
         @Override
-        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+        public @NotNull FileVisitResult visitFile(Path file, @NotNull BasicFileAttributes attrs) throws IOException {
             var relative = this.rootDir.relativize(file).toString().replace(File.separatorChar, '/');
 
             if (!relative.endsWith(".yml")) {
@@ -142,12 +142,12 @@ public class YamlCustomDataStorage implements CustomDataStorage {
         }
 
         @Override
-        public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+        public @NotNull FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
             throw exc;
         }
 
         @Override
-        public FileVisitResult postVisitDirectory(Path dir, IOException exc) {
+        public @NotNull FileVisitResult postVisitDirectory(Path dir, IOException exc) {
             return FileVisitResult.CONTINUE;
         }
     }

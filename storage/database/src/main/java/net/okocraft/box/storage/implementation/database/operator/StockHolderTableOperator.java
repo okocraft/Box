@@ -4,7 +4,6 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.NotNullByDefault;
 
 import java.sql.Connection;
@@ -36,7 +35,7 @@ public class StockHolderTableOperator {
         this.selectAllStockHolderIDs = "SELECT id, uuid FROM `%s`;".formatted(this.tableName);
     }
 
-    public void initTable(@NotNull Connection connection) throws SQLException {
+    public void initTable(Connection connection) throws SQLException {
         try (var statement = connection.createStatement()) {
             statement.execute(this.createTableStatement);
         }

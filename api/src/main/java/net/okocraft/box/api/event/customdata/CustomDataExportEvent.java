@@ -4,7 +4,6 @@ import dev.siroshun.configapi.core.node.MapNode;
 import net.kyori.adventure.key.Key;
 import net.okocraft.box.api.event.BoxEvent;
 import net.okocraft.box.api.event.Cancellable;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,19 +27,19 @@ public class CustomDataExportEvent extends BoxEvent implements Cancellable {
         return this.key;
     }
 
-    public @NotNull MapNode getOriginalNode() {
+    public MapNode getOriginalNode() {
         return this.node;
     }
 
-    public @NotNull MapNode getResultNode() {
+    public MapNode getResultNode() {
         return Objects.requireNonNullElse(this.resultNode, this.node);
     }
 
-    public void setResultNode(@NotNull MapNode node) {
+    public void setResultNode(MapNode node) {
         this.resultNode = node;
     }
 
-    public void editNode(@NotNull Consumer<MapNode> editor) {
+    public void editNode(Consumer<MapNode> editor) {
         MapNode node = this.getResultNode().copy();
         editor.accept(node);
         this.resultNode = node;
