@@ -12,7 +12,7 @@ aggregatedJavadoc {
 }
 
 jcommon {
-    javaVersion = JavaVersion.VERSION_21
+    javaVersion = JavaVersion.VERSION_25
 
     setupPaperRepository()
     setupJUnit(libs.junit.bom)
