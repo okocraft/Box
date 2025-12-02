@@ -1,23 +1,8 @@
 {
   $schema: 'https://docs.renovatebot.com/renovate-schema.json',
   extends: [
-    'config:recommended',
-    'helpers:pinGitHubActionDigests',
-  ],
-  packageRules: [
-    {
-      groupName: 'all non-major dependencies',
-      groupSlug: 'all-minor-patch',
-      matchManagers: [
-        'github-actions',
-      ],
-      matchUpdateTypes: [
-        'minor',
-        'patch',
-      ],
-      matchPackageNames: [
-        '*',
-      ],
-    },
-  ],
+    'github>okocraft/renovate-config//github-actions/renovate.json5',
+    'github>okocraft/renovate-config//java/gradle/renovate.json5',
+    'github>okocraft/renovate-config//java/ignores/papermc/renovate.json5'
+  ]
 }
