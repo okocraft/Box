@@ -1,6 +1,6 @@
 package net.okocraft.box.feature.autostore.gui.buttons;
 
-import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
+import dev.siroshun.mcmsgdef.MessageKey;
 import net.okocraft.box.api.message.DefaultMessageCollector;
 import net.okocraft.box.feature.autostore.setting.AutoStoreSetting;
 import net.okocraft.box.feature.gui.api.button.ClickResult;
@@ -12,19 +12,17 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import static com.github.siroshun09.messages.minimessage.base.MiniMessageBase.messageKey;
-
 public class DirectButton extends AbstractAutoStoreSettingButton {
 
-    private final MiniMessageBase displayName;
-    private final MiniMessageBase enable;
-    private final MiniMessageBase disable;
+    private final MessageKey displayName;
+    private final MessageKey enable;
+    private final MessageKey disable;
 
     public DirectButton(@NotNull DefaultMessageCollector collector) {
         super(15);
-        this.displayName = messageKey(collector.add("box.autostore.gui.mode.setting-menu.buttons.toggle-direct.display-name", "<gold>Toggle auto-store direct mode"));
-        this.enable = messageKey(collector.add("box.autostore.gui.mode.setting-menu.buttons.toggle-direct.click-to-enable", "<gray>Click to <aqua>enable<gray> auto-store direct"));
-        this.disable = messageKey(collector.add("box.autostore.gui.mode.setting-menu.buttons.toggle-direct.click-to-disable", "<gray>Click to <red>disable<gray> auto-store direct"));
+        this.displayName = MessageKey.key(collector.add("box.autostore.gui.mode.setting-menu.buttons.toggle-direct.display-name", "<gold>Toggle auto-store direct mode"));
+        this.enable = MessageKey.key(collector.add("box.autostore.gui.mode.setting-menu.buttons.toggle-direct.click-to-enable", "<gray>Click to <aqua>enable<gray> auto-store direct"));
+        this.disable = MessageKey.key(collector.add("box.autostore.gui.mode.setting-menu.buttons.toggle-direct.click-to-disable", "<gray>Click to <red>disable<gray> auto-store direct"));
     }
 
     @Override
@@ -33,11 +31,11 @@ public class DirectButton extends AbstractAutoStoreSettingButton {
         if (setting == null) return new ItemStack(Material.AIR);
 
         return ItemEditor.create()
-            .displayName(this.displayName.create(session.getMessageSource()))
+            .displayName(this.displayName)
             .loreEmptyLine()
-            .loreLine((setting.isDirect() ? this.disable : this.enable).create(session.getMessageSource()))
+            .loreLine((setting.isDirect() ? this.disable : this.enable))
             .loreEmptyLine()
-            .createItem(Material.HOPPER);
+            .createItem(session.getViewer(), Material.HOPPER);
     }
 
     @Override

@@ -1,6 +1,6 @@
 package net.okocraft.box.feature.category;
 
-import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
+import dev.siroshun.mcmsgdef.MessageKey;
 import net.kyori.adventure.key.Key;
 import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.feature.AbstractBoxFeature;
@@ -26,7 +26,7 @@ public class CategoryFeature extends AbstractBoxFeature implements Reloadable {
     private final CategoryRegistry categoryRegistry = new CategoryRegistryImpl();
     private final CustomItemListener customItemListener;
     private final ItemInfoEventListener itemInfoEventListener;
-    private final MiniMessageBase reloaded;
+    private final MessageKey reloaded;
 
     public CategoryFeature(@NotNull FeatureContext.Registration context) {
         super("category");
@@ -34,7 +34,7 @@ public class CategoryFeature extends AbstractBoxFeature implements Reloadable {
         this.customItemListener = new CustomItemListener(this.filepath, this.categoryRegistry);
         this.itemInfoEventListener = new ItemInfoEventListener(this.categoryRegistry, context.defaultMessageCollector());
         CustomItemCategory.addDefaultCategoryName(context.defaultMessageCollector());
-        this.reloaded = MiniMessageBase.messageKey(context.defaultMessageCollector().add("box.category.reloaded", "<gray>Categories have been reloaded."));
+        this.reloaded = MessageKey.key(context.defaultMessageCollector().add("box.category.reloaded", "<gray>Categories have been reloaded."));
     }
 
     @Override
@@ -62,7 +62,7 @@ public class CategoryFeature extends AbstractBoxFeature implements Reloadable {
     public void reload(@NotNull FeatureContext.Reloading context) throws IOException {
         this.disable(context.asDisabling());
         this.enable(context.asEnabling());
-        this.reloaded.source(BoxAPI.api().getMessageProvider().findSource(context.commandSender())).send(context.commandSender());
+        context.commandSender().sendMessage(this.reloaded);
     }
 
     public @NotNull CategoryRegistry getCategoryRegistry() {

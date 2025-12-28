@@ -1,7 +1,6 @@
 package net.okocraft.box.feature.bemode.mode;
 
-import com.github.siroshun09.messages.minimessage.arg.Arg1;
-import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
+import dev.siroshun.mcmsgdef.MessageKey;
 import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.message.DefaultMessageCollector;
 import net.okocraft.box.api.message.Placeholders;
@@ -20,13 +19,13 @@ import org.jetbrains.annotations.NotNull;
 
 public class StorageWithdrawMode extends AbstractStorageMode {
 
-    private final MiniMessageBase displayName;
-    private final Arg1<Integer> clickToWithdraw;
-    private final Arg1<Integer> currentStock;
+    private final MessageKey displayName;
+    private final MessageKey.Arg1<Integer> clickToWithdraw;
+    private final MessageKey.Arg1<Integer> currentStock;
 
-    public StorageWithdrawMode(@NotNull Arg1<Integer> currentStock, @NotNull DefaultMessageCollector collector) {
-        this.displayName = MiniMessageBase.messageKey(collector.add("box.bemode.storage-mode.withdraw.display-name", "<gray>Storage mode (withdraw)"));
-        this.clickToWithdraw = Arg1.arg1(collector.add("box.bemode.storage-mode.withdraw.click-to-withdraw", "<gray>Click to withdraw <aqua><amount><gray> items"), Placeholders.AMOUNT);
+    public StorageWithdrawMode(@NotNull MessageKey.Arg1<Integer> currentStock, @NotNull DefaultMessageCollector collector) {
+        this.displayName = MessageKey.key(collector.add("box.bemode.storage-mode.withdraw.display-name", "<gray>Storage mode (withdraw)"));
+        this.clickToWithdraw = MessageKey.arg1(collector.add("box.bemode.storage-mode.withdraw.click-to-withdraw", "<gray>Click to withdraw <aqua><amount><gray> items"), Placeholders.AMOUNT);
         this.currentStock = currentStock;
     }
 
@@ -37,7 +36,7 @@ public class StorageWithdrawMode extends AbstractStorageMode {
 
     @Override
     public @NotNull Component getDisplayName(@NotNull PlayerSession session) {
-        return this.displayName.create(session.getMessageSource());
+        return this.displayName.asComponent();
     }
 
     @Override
@@ -48,10 +47,10 @@ public class StorageWithdrawMode extends AbstractStorageMode {
         return ItemEditor.create()
             .copyLoreFrom(icon)
             .loreEmptyLine()
-            .loreLine(this.clickToWithdraw.apply(amountData != null ? amountData.getValue() : 1).create(session.getMessageSource()))
+            .loreLine(this.clickToWithdraw.apply(amountData != null ? amountData.getValue() : 1))
             .loreEmptyLine()
-            .loreLine(this.currentStock.apply(session.getSourceStockHolder().getAmount(item)).create(session.getMessageSource()))
-            .applyTo(icon);
+            .loreLine(this.currentStock.apply(session.getSourceStockHolder().getAmount(item)))
+            .applyTo(session.getViewer(), icon);
     }
 
     @Override

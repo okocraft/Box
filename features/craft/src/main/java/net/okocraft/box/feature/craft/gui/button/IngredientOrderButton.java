@@ -1,6 +1,6 @@
 package net.okocraft.box.feature.craft.gui.button;
 
-import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
+import dev.siroshun.mcmsgdef.MessageKey;
 import net.okocraft.box.feature.craft.gui.CurrentRecipe;
 import net.okocraft.box.feature.craft.gui.menu.CraftMenu;
 import net.okocraft.box.feature.craft.lang.DisplayKeys;
@@ -16,8 +16,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class IngredientOrderButton implements Button {
 
-    private static final MiniMessageBase INGREDIENT_ORDER_NORMAL = MiniMessageBase.messageKey(DisplayKeys.INGREDIENT_ORDER_NORMAL);
-    private static final MiniMessageBase INGREDIENT_ORDER_STOCK_AMOUNT = MiniMessageBase.messageKey(DisplayKeys.INGREDIENT_ORDER_STOCK_AMOUNT);
+    private static final MessageKey INGREDIENT_ORDER_NORMAL = MessageKey.key(DisplayKeys.INGREDIENT_ORDER_NORMAL);
+    private static final MessageKey INGREDIENT_ORDER_STOCK_AMOUNT = MessageKey.key(DisplayKeys.INGREDIENT_ORDER_STOCK_AMOUNT);
 
     private final int slot;
 
@@ -34,8 +34,8 @@ public class IngredientOrderButton implements Button {
     public @NotNull ItemStack createIcon(@NotNull PlayerSession session) {
         var order = session.getData(CraftMenu.INGREDIENT_ORDER_KEY);
         return order == CraftMenu.IngredientOrder.STOCK_AMOUNT ?
-            ItemEditor.create().displayName(INGREDIENT_ORDER_STOCK_AMOUNT.create(session.getMessageSource())).createItem(Material.SOUL_TORCH) :
-            ItemEditor.create().displayName(INGREDIENT_ORDER_NORMAL.create(session.getMessageSource())).createItem(Material.TORCH);
+            ItemEditor.create().displayName(INGREDIENT_ORDER_STOCK_AMOUNT).createItem(session.getViewer(), Material.SOUL_TORCH) :
+            ItemEditor.create().displayName(INGREDIENT_ORDER_NORMAL).createItem(session.getViewer(), Material.TORCH);
     }
 
     @Override

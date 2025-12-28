@@ -26,7 +26,7 @@ public class XmasChecker {
 
         IS_XMAS.set(
             today.getMonth() == Month.DECEMBER &&
-                (today.getDayOfMonth() == 24 || today.getDayOfMonth() == 25)
+            (today.getDayOfMonth() == 24 || today.getDayOfMonth() == 25)
         );
 
         NEXT_XMAS_CHECK_TIME.set(

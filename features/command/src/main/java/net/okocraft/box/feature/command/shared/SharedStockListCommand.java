@@ -1,13 +1,12 @@
 package net.okocraft.box.feature.command.shared;
 
-import com.github.siroshun09.messages.minimessage.arg.Arg3;
-import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
-import com.github.siroshun09.messages.minimessage.base.Placeholder;
+import dev.siroshun.mcmsgdef.MessageKey;
+import dev.siroshun.mcmsgdef.Placeholder;
 import it.unimi.dsi.fastutil.ints.IntComparator;
 import it.unimi.dsi.fastutil.ints.IntComparators;
 import it.unimi.dsi.fastutil.objects.ObjectIntPair;
 import net.kyori.adventure.text.Component;
-import net.okocraft.box.api.BoxAPI;
+import net.kyori.adventure.text.minimessage.translation.Argument;
 import net.okocraft.box.api.message.DefaultMessageCollector;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.model.stock.StockHolder;
@@ -29,8 +28,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import static com.github.siroshun09.messages.minimessage.arg.Arg3.arg3;
-import static com.github.siroshun09.messages.minimessage.base.MiniMessageBase.messageKey;
 import static net.okocraft.box.api.message.Placeholders.CURRENT;
 import static net.okocraft.box.api.message.Placeholders.ITEM;
 import static net.okocraft.box.api.message.Placeholders.PLAYER_NAME;
@@ -42,9 +39,9 @@ public class SharedStockListCommand {
         <aqua>-p <gray>(<aqua>--page<gray>) <aqua><page><dark_gray> - <gray>Specifies the page
         <aqua>-f <gray>(<aqua>--filter<gray>) <aqua><item name><dark_gray> - <gray>Filters items""";
 
-    private static final Placeholder<Integer> CURRENT_PAGE = Placeholder.component("page", Component::text);
-    private static final Placeholder<Integer> MAX_PAGE = Placeholder.component("max_page", Component::text);
-    private static final Placeholder<Integer> NUM = Placeholder.component("num", Component::text);
+    private static final Placeholder<Integer> CURRENT_PAGE = page -> Argument.numeric("page", page);
+    private static final Placeholder<Integer> MAX_PAGE = maxPage -> Argument.numeric("max_page", maxPage);
+    private static final Placeholder<Integer> NUM = num -> Argument.numeric("num", num);
 
     private static final Map<String, ArgumentType> ARGUMENT_MAP;
     private static final List<String> ARGUMENT_TYPES;
@@ -61,16 +58,16 @@ public class SharedStockListCommand {
         ARGUMENT_TYPES = List.copyOf(ARGUMENT_MAP.keySet());
     }
 
-    private final Arg3<String, Integer, Integer> header;
-    private final Arg3<Integer, BoxItem, Integer> lineFormat;
-    private final MiniMessageBase notFound;
-    private final MiniMessageBase argHelp;
+    private final MessageKey.Arg3<String, Integer, Integer> header;
+    private final MessageKey.Arg3<Integer, BoxItem, Integer> lineFormat;
+    private final MessageKey notFound;
+    private final MessageKey argHelp;
 
     public SharedStockListCommand(@NotNull DefaultMessageCollector collector) {
-        this.header = arg3(collector.add("box.command.shared.stock-list.header", "<gray>Player <aqua><player_name><gray>'s stock list (Page <aqua><page><gray>/<aqua><max_page><gray>)"), PLAYER_NAME, CURRENT_PAGE, MAX_PAGE);
-        this.lineFormat = arg3(collector.add("box.command.shared.stock-list.line-format", "<gray><num>. <aqua><item><gray> - <aqua><current>"), NUM, ITEM, CURRENT);
-        this.notFound = messageKey(collector.add("box.command.shared.stock-list.not-found", "<red>There were no items in stock matching the specified pattern."));
-        this.argHelp = messageKey(collector.add("box.command.shared.stock-list.arg-help", DEFAULT_ARGUMENT_HELP));
+        this.header = MessageKey.arg3(collector.add("box.command.shared.stock-list.header", "<gray>Player <aqua><player_name><gray>'s stock list (Page <aqua><page><gray>/<aqua><max_page><gray>)"), PLAYER_NAME, CURRENT_PAGE, MAX_PAGE);
+        this.lineFormat = MessageKey.arg3(collector.add("box.command.shared.stock-list.line-format", "<gray><num>. <aqua><item><gray> - <aqua><current>"), NUM, ITEM, CURRENT);
+        this.notFound = MessageKey.key(collector.add("box.command.shared.stock-list.not-found", "<red>There were no items in stock matching the specified pattern."));
+        this.argHelp = MessageKey.key(collector.add("box.command.shared.stock-list.arg-help", DEFAULT_ARGUMENT_HELP));
     }
 
     public void createAndSendStockList(@NotNull CommandSender sender, @NotNull StockHolder stockHolder, @NotNull String @Nullable [] args) {
@@ -104,10 +101,8 @@ public class SharedStockListCommand {
             stockDataCollection = stream.map(item -> ObjectIntPair.of(item, stockHolder.getAmount(item))).toList();
         }
 
-        var msgSrc = BoxAPI.api().getMessageProvider().findSource(sender);
-
         if (stockDataCollection.isEmpty()) {
-            this.notFound.source(msgSrc).send(sender);
+            sender.sendMessage(this.notFound);
             return;
         }
 
@@ -119,19 +114,19 @@ public class SharedStockListCommand {
 
         var builder = Component.text();
 
-        builder.append(this.header.apply(stockHolder.getName(), page, maxPage).create(msgSrc));
+        builder.append(this.header.apply(stockHolder.getName(), page, maxPage));
 
         stockDataCollection.stream()
             .skip(start)
             .limit(8)
-            .map(stock -> this.lineFormat.apply(counter.incrementAndGet(), stock.first(), stock.secondInt()).create(msgSrc))
+            .map(stock -> this.lineFormat.apply(counter.incrementAndGet(), stock.first(), stock.secondInt()))
             .forEachOrdered(element -> builder.append(Component.newline()).append(element));
 
         sender.sendMessage(builder);
     }
 
-    public @NotNull MiniMessageBase getArgHelp() {
-        return this.argHelp;
+    public @NotNull Component getArgHelp() {
+        return this.argHelp.asComponent();
     }
 
     public static @NotNull List<String> getArgumentTypes() {
@@ -219,7 +214,7 @@ public class SharedStockListCommand {
                 context.page = Integer.parseInt(arg);
             } catch (NumberFormatException ignored) {
             }
-        }, arg -> Collections.emptyList()),
+        }, _ -> Collections.emptyList()),
         FILTER("filter", "f", (arg, context) -> context.filter = arg, TabCompleter::itemNames);
 
         private final String longArg;

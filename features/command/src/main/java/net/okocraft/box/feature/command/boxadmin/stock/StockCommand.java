@@ -1,9 +1,8 @@
 package net.okocraft.box.feature.command.boxadmin.stock;
 
-import com.github.siroshun09.messages.minimessage.source.MiniMessageSource;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.JoinConfiguration;
-import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.command.AbstractCommand;
 import net.okocraft.box.api.command.Command;
 import net.okocraft.box.api.command.SubCommandHoldable;
@@ -36,11 +35,9 @@ public class StockCommand extends AbstractCommand implements SubCommandHoldable 
 
     @Override
     public void onCommand(@NotNull CommandSender sender, @NotNull String[] args) {
-        var msgSrc = BoxAPI.api().getMessageProvider().findSource(sender);
-
         if (args.length < 2) {
-            ErrorMessages.NOT_ENOUGH_ARGUMENT.source(msgSrc).send(sender);
-            sender.sendMessage(this.getHelp(msgSrc));
+            sender.sendMessage(ErrorMessages.NOT_ENOUGH_ARGUMENT);
+            sender.sendMessage(this.getHelp());
             return;
         }
 
@@ -48,9 +45,9 @@ public class StockCommand extends AbstractCommand implements SubCommandHoldable 
 
         if (optionalSubCommand.isEmpty()) {
             if (!args[1].equalsIgnoreCase("help")) {
-                ErrorMessages.SUB_COMMAND_NOT_FOUND.source(msgSrc).send(sender);
+                sender.sendMessage(ErrorMessages.SUB_COMMAND_NOT_FOUND);
             }
-            sender.sendMessage(this.getHelp(msgSrc));
+            sender.sendMessage(this.getHelp());
             return;
         }
 
@@ -59,7 +56,7 @@ public class StockCommand extends AbstractCommand implements SubCommandHoldable 
         if (sender.hasPermission(subCommand.getPermissionNode())) {
             subCommand.onCommand(sender, args);
         } else {
-            ErrorMessages.NO_PERMISSION.apply(subCommand.getPermissionNode()).source(msgSrc).send(sender);
+            sender.sendMessage(ErrorMessages.NO_PERMISSION.apply(subCommand.getPermissionNode()));
         }
     }
 
@@ -80,12 +77,12 @@ public class StockCommand extends AbstractCommand implements SubCommandHoldable 
     }
 
     @Override
-    public @NotNull Component getHelp(@NotNull MiniMessageSource msgSrc) {
+    public @NotNull ComponentLike getHelp() {
         return Component.join(
             JoinConfiguration.newlines(),
             this.subCommandHolder.getSubCommands()
                 .stream()
-                .map(command -> command.getHelp(msgSrc))
+                .map(Command::getHelp)
                 .toList()
         );
     }

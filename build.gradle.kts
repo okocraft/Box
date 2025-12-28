@@ -23,7 +23,7 @@ jcommon {
             exclude("org.yaml", "snakeyaml")
         }
         api(libs.event4j)
-        api(libs.messages)
+        api(libs.mcmsgdef)
         compileOnlyApi(libs.paper)
         implementation(libs.configapi.serialization.record)
 

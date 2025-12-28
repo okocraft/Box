@@ -3,18 +3,22 @@ package net.okocraft.box.feature.gui.api.util;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.ItemLore;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.translation.GlobalTranslator;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Objects;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
@@ -29,22 +33,22 @@ public class ItemEditor {
         return new ItemEditor();
     }
 
-    private @Nullable Component displayName;
-    private @Nullable ItemLore.Builder lore;
+    private @Nullable ComponentLike displayName;
+    private @Nullable List<ComponentLike> lore;
     private Consumer<PersistentDataContainer> editPersistentDataContainer;
 
-    public @NotNull ItemEditor displayName(@NotNull Component displayName) {
-        this.displayName = displayName.applyFallbackStyle(DEFAULT_STYLE);
+    public @NotNull ItemEditor displayName(@NotNull ComponentLike displayName) {
+        this.displayName = displayName;
         return this;
     }
 
     public @NotNull ItemEditor clearLore() {
-        this.lore = ItemLore.lore();
+        this.lore = null;
         return this;
     }
 
     public @NotNull ItemEditor loreEmptyLine() {
-        this.getOrCreateLore().addLine(Component.empty());
+        this.getOrCreateLore().add(Component.empty());
         return this;
     }
 
@@ -55,62 +59,27 @@ public class ItemEditor {
         return this;
     }
 
-    public @NotNull ItemEditor loreLine(@NotNull Component line) {
-        this.getOrCreateLore().addLine(line.applyFallbackStyle(DEFAULT_STYLE));
+    public @NotNull ItemEditor loreLine(@NotNull ComponentLike line) {
+        this.getOrCreateLore().add(line);
         return this;
     }
 
-    public @NotNull ItemEditor loreLineIf(boolean state, @NotNull Supplier<Component> line) {
+    public @NotNull ItemEditor loreLineIf(boolean state, @NotNull Supplier<? extends ComponentLike> line) {
         if (state) {
             this.loreLine(line.get());
         }
         return this;
     }
 
-    public @NotNull ItemEditor loreLines(@NotNull Component lines) {
-        var builder = new LineBuilder();
-
-        this.buildLines(lines, builder);
-
-        if (builder.hasBuildingLine()) {
-            builder.buildLine(this::loreLine);
-        }
-
+    public @NotNull ItemEditor loreLines(@NotNull ComponentLike lines) {
+        this.getOrCreateLore().add(new MultipleLineComponent(lines));
         return this;
-    }
-
-    private void buildLines(@NotNull Component self, @NotNull ItemEditor.LineBuilder builder) {
-        this.splitContent(self, builder);
-
-        if (!self.children().isEmpty()) {
-            for (Component child : self.children()) {
-                this.buildLines(child, builder);
-            }
-        }
-    }
-
-    private void splitContent(Component component, @NotNull ItemEditor.LineBuilder builder) {
-        if (!(component instanceof TextComponent text)) {
-            builder.appendComponent(component);
-            return;
-        }
-
-        var lines = LINE_SEPARATORS.split(text.content());
-
-        if (lines.length == 1) {
-            builder.appendComponent(Component.text(lines[0], text.style()));
-        } else {
-            for (var line : lines) {
-                builder.appendComponent(Component.text(line, text.style()));
-                builder.buildLine(this::loreLine);
-            }
-        }
     }
 
     public @NotNull ItemEditor copyLoreFrom(@NotNull ItemStack source) {
         var lore = source.lore();
         if (lore != null) {
-            this.getOrCreateLore().addLines(lore);
+            lore.forEach(this::loreLine);
         }
         return this;
     }
@@ -124,14 +93,20 @@ public class ItemEditor {
         return this;
     }
 
-    @Contract("_ -> param1")
-    public @NotNull ItemStack applyTo(@NotNull ItemStack item) {
+    @Contract("_, _ -> param2")
+    public @NotNull ItemStack applyTo(@NotNull Player player, @NotNull ItemStack item) {
         if (this.displayName != null) {
-            item.setData(DataComponentTypes.CUSTOM_NAME, this.displayName);
+            item.setData(DataComponentTypes.CUSTOM_NAME, renderComponent(player, this.displayName).applyFallbackStyle(DEFAULT_STYLE));
         }
 
         if (this.lore != null) {
-            item.setData(DataComponentTypes.LORE, this.lore);
+            LoreBuilder builder = new LoreBuilder(player, this.lore.size());
+
+            for (ComponentLike line : this.lore) {
+                builder.processLine(line);
+            }
+
+            item.setData(DataComponentTypes.LORE, builder.toItemLore());
         }
 
         if (this.editPersistentDataContainer != null) {
@@ -142,24 +117,59 @@ public class ItemEditor {
         return item;
     }
 
-    public @NotNull ItemStack createItem(@NotNull Material material) {
-        return this.createItem(material, 1);
+    public @NotNull ItemStack createItem(@NotNull Player player, @NotNull Material material) {
+        return this.createItem(player, material, 1);
     }
 
-    public @NotNull ItemStack createItem(@NotNull Material material, int amount) {
-        return this.applyTo(new ItemStack(material, amount));
+    public @NotNull ItemStack createItem(@NotNull Player player, @NotNull Material material, int amount) {
+        return this.applyTo(player, new ItemStack(material, amount));
     }
 
-    private @NotNull ItemLore.Builder getOrCreateLore() {
+    private @NotNull List<ComponentLike> getOrCreateLore() {
         if (this.lore == null) {
-            this.lore = ItemLore.lore();
+            this.lore = new ArrayList<>();
         }
         return this.lore;
     }
 
-    private static class LineBuilder {
+    private static @NotNull Component renderComponent(@NotNull Player player, @NotNull ComponentLike component) {
+        return GlobalTranslator.render(component.asComponent(), player.locale());
+    }
 
+    private record MultipleLineComponent(ComponentLike component) implements ComponentLike {
+        @Override
+        public @NotNull Component asComponent() {
+            return this.component.asComponent();
+        }
+    }
+
+    private static class LoreBuilder {
+
+        private final Player player;
+        private final List<Component> lines;
         private TextComponent.Builder builder = Component.text();
+
+        private LoreBuilder(Player player, int initialCapacity) {
+            this.player = player;
+            this.lines = new ArrayList<>(initialCapacity);
+        }
+
+        private @NotNull ItemLore toItemLore() {
+            return ItemLore.lore(this.lines);
+        }
+
+        private void processLine(ComponentLike line) {
+            Component renderedLine = renderComponent(this.player, line);
+            if (line instanceof MultipleLineComponent) {
+                this.buildLines(renderedLine);
+            } else {
+                this.addLine(renderedLine);
+            }
+        }
+
+        private void addLine(Component line) {
+            this.lines.add(line.applyFallbackStyle(DEFAULT_STYLE));
+        }
 
         private void appendComponent(@NotNull Component component) {
             if (this.builder == null) {
@@ -168,13 +178,37 @@ public class ItemEditor {
             this.builder.append(component);
         }
 
-        private boolean hasBuildingLine() {
-            return this.builder != null;
+        private void buildLines(@NotNull Component self) {
+            this.splitContent(self);
+
+            if (!self.children().isEmpty()) {
+                for (Component child : self.children()) {
+                    this.buildLines(child);
+                }
+            }
+
+            if (this.builder != null) {
+                this.addLine(this.builder.build());
+                this.builder = null;
+            }
         }
 
-        private void buildLine(@NotNull Consumer<Component> consumer) {
-            consumer.accept(Objects.requireNonNull(this.builder).build());
-            this.builder = null;
+        private void splitContent(Component component) {
+            if (!(component instanceof TextComponent text)) {
+                this.appendComponent(component);
+                return;
+            }
+
+            String[] lines = LINE_SEPARATORS.split(text.content());
+            if (lines.length == 1) {
+                this.appendComponent(Component.text(lines[0], text.style()));
+            } else {
+                for (String line : lines) {
+                    this.appendComponent(Component.text(line, text.style()));
+                    this.addLine(this.builder.build());
+                    this.builder = null;
+                }
+            }
         }
     }
 }

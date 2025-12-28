@@ -1,6 +1,6 @@
 package net.okocraft.box.feature.craft.gui.button;
 
-import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
+import dev.siroshun.mcmsgdef.MessageKey;
 import net.kyori.adventure.text.Component;
 import net.okocraft.box.feature.craft.RecipeRegistry;
 import net.okocraft.box.feature.craft.gui.CurrentRecipe;
@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 public record IngredientButton(int slot, int ingredientPos) implements Button {
 
     public static final TypedKey<Boolean> CHANGE_PER_INGREDIENT = TypedKey.of(Boolean.class, "change_per_ingredient");
-    private static final MiniMessageBase CLICK_TO_SHOW_RECIPES = MiniMessageBase.messageKey(DisplayKeys.INGREDIENT_BUTTON_CLICK_TO_SHOW_RECIPES);
+    private static final MessageKey CLICK_TO_SHOW_RECIPES = MessageKey.key(DisplayKeys.INGREDIENT_BUTTON_CLICK_TO_SHOW_RECIPES);
 
     @Override
     public int getSlot() {
@@ -56,11 +56,11 @@ public record IngredientButton(int slot, int ingredientPos) implements Button {
 
         if (RecipeRegistry.hasRecipe(ingredients.getSelected().item())) {
             editor.loreEmptyLineIf(ingredients.size() != 1)
-                .loreLine(CLICK_TO_SHOW_RECIPES.create(session.getMessageSource()));
+                .loreLine(CLICK_TO_SHOW_RECIPES);
         }
 
         var selected = ingredients.getSelected();
-        return editor.applyTo(selected.item().getOriginal().asQuantity(selected.amount()));
+        return editor.applyTo(session.getViewer(), selected.item().getOriginal().asQuantity(selected.amount()));
     }
 
     @Override

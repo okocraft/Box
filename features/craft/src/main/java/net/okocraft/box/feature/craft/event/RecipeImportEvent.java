@@ -34,7 +34,7 @@ public class RecipeImportEvent extends BoxEvent {
     @Override
     public String toString() {
         return "RecipeImportEvent{" +
-            "recipe=" + this.recipe +
-            '}';
+               "recipe=" + this.recipe +
+               '}';
     }
 }

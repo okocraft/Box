@@ -1,16 +1,12 @@
 package net.okocraft.box.core.message;
 
-import com.github.siroshun09.messages.api.directory.DirectorySource;
-import com.github.siroshun09.messages.api.directory.MessageProcessors;
-import com.github.siroshun09.messages.api.source.StringMessageMap;
-import com.github.siroshun09.messages.api.util.Loader;
-import com.github.siroshun09.messages.api.util.PropertiesFile;
-import com.github.siroshun09.messages.minimessage.localization.MiniMessageLocalization;
-import com.github.siroshun09.messages.minimessage.source.MiniMessageSource;
+import dev.siroshun.mcmsgdef.directory.DirectorySource;
+import dev.siroshun.mcmsgdef.directory.MessageProcessors;
+import dev.siroshun.mcmsgdef.file.Loader;
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.text.minimessage.translation.MiniMessageTranslationStore;
+import net.kyori.adventure.translation.GlobalTranslator;
 import net.okocraft.box.api.message.DefaultMessageCollector;
-import net.okocraft.box.api.message.MessageProvider;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
@@ -20,45 +16,39 @@ import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 
-public class BoxMessageProvider implements MessageProvider {
+public class BoxMessageProvider {
 
     public static @NotNull BoxMessageProvider.Collector createCollector() {
         return new BoxMessageProvider.Collector();
     }
 
     private final Collector collector;
-    private final DirectorySource<StringMessageMap> directorySource;
+    private final DirectorySource directorySource;
     private final Loader<Locale, Map<String, String>> defaultMessageMapLoader;
 
-    private MiniMessageLocalization localization;
+    private MiniMessageTranslationStore store;
 
-    public BoxMessageProvider(@NotNull Collector collector, DirectorySource<StringMessageMap> directorySource, Loader<Locale, Map<String, String>> defaultMessageMapLoader) {
+    public BoxMessageProvider(@NotNull Collector collector, DirectorySource directorySource, Loader<Locale, Map<String, String>> defaultMessageMapLoader) {
         this.collector = collector;
         this.directorySource = directorySource;
         this.defaultMessageMapLoader = defaultMessageMapLoader;
     }
 
-    @Override
-    public @NotNull MiniMessageSource findSource(@NotNull CommandSender sender) {
-        return this.localization.findSource(sender instanceof Player player ? player.locale() : Locale.getDefault());
-    }
-
     public void load() throws IOException {
-        if (this.localization == null) { // on startup
-            this.localization = new MiniMessageLocalization(MiniMessageSource.create(StringMessageMap.create(this.collector.collectedMessages)));
-        } else { // on reload
-            this.localization.clearSources();
+        if (this.store != null) {
+            GlobalTranslator.translator().removeSource(this.store);
         }
 
-        this.directorySource
-            .messageProcessor(MessageProcessors.appendMissingStringMessages(this.defaultMessageMapLoader, PropertiesFile.DEFAULT_APPENDER))
-            .messageProcessor(MessageProcessors.appendMissingStringMessages(ignored -> this.collector.collectedMessages, PropertiesFile.DEFAULT_APPENDER))
-            .load(loaded -> this.localization.addSource(loaded.locale(), MiniMessageSource.create(loaded.messageSource())));
+        this.store = this.directorySource
+            .messageProcessor(MessageProcessors.appendMissingMessagesToPropertiesFile(this.defaultMessageMapLoader))
+            .messageProcessor(MessageProcessors.appendMissingMessagesToPropertiesFile(ignored -> this.collector.collectedMessages))
+            .loadAsMiniMessageTranslationStore(Key.key("box", "languages"));
+        GlobalTranslator.translator().addSource(this.store);
     }
 
     public void unload() {
-        if (this.localization != null) {
-            this.localization.clearSources();
+        if (this.store != null) {
+            GlobalTranslator.translator().removeSource(this.store);
         }
     }
 

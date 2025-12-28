@@ -1,9 +1,7 @@
 package net.okocraft.box.feature.craft.command;
 
-import com.github.siroshun09.messages.minimessage.arg.Arg1;
-import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
-import com.github.siroshun09.messages.minimessage.source.MiniMessageSource;
-import net.kyori.adventure.text.Component;
+import dev.siroshun.mcmsgdef.MessageKey;
+import net.kyori.adventure.text.ComponentLike;
 import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.command.AbstractCommand;
 import net.okocraft.box.api.message.DefaultMessageCollector;
@@ -28,43 +26,41 @@ import java.util.Set;
 
 public class CraftCommand extends AbstractCommand {
 
-    private final MiniMessageBase help;
-    private final Arg1<BoxItem> recipeNotFound;
-    private final MiniMessageBase cannotOpenMenu;
+    private final MessageKey help;
+    private final MessageKey.Arg1<BoxItem> recipeNotFound;
+    private final MessageKey cannotOpenMenu;
 
     public CraftCommand(@NotNull DefaultMessageCollector collector) {
         super("craft", "box.command.craft", Set.of("c"));
-        this.help = MiniMessageBase.messageKey(collector.add("box.craft.command.help", "<aqua>/box craft <item name><dark_gray> - <gray>Shows the item recipe"));
-        this.recipeNotFound = Arg1.arg1(collector.add("box.craft.command.craft.recipe-not-found", "<red>No recipes found for item <aqua><item>"), Placeholders.ITEM);
-        this.cannotOpenMenu = MiniMessageBase.messageKey(collector.add("box.craft.command.craft.cannot-open-menu", "<red>Cannot open the recipe menu."));
+        this.help = MessageKey.key(collector.add("box.craft.command.help", "<aqua>/box craft <item name><dark_gray> - <gray>Shows the item recipe"));
+        this.recipeNotFound = MessageKey.arg1(collector.add("box.craft.command.craft.recipe-not-found", "<red>No recipes found for item <aqua><item>"), Placeholders.ITEM);
+        this.cannotOpenMenu = MessageKey.key(collector.add("box.craft.command.craft.cannot-open-menu", "<red>Cannot open the recipe menu."));
     }
 
     @Override
     public void onCommand(@NotNull CommandSender sender, @NotNull String[] args) {
-        var msgSrc = BoxAPI.api().getMessageProvider().findSource(sender);
-
         if (!(sender instanceof Player player)) {
-            ErrorMessages.COMMAND_ONLY_PLAYER.source(msgSrc).send(sender);
+            sender.sendMessage(ErrorMessages.COMMAND_ONLY_PLAYER);
             return;
         }
 
         if (args.length < 2) {
-            ErrorMessages.NOT_ENOUGH_ARGUMENT.source(msgSrc).send(sender);
-            sender.sendMessage(this.getHelp(msgSrc));
+            sender.sendMessage(ErrorMessages.NOT_ENOUGH_ARGUMENT);
+            sender.sendMessage(this.getHelp());
             return;
         }
 
         var item = BoxAPI.api().getItemManager().getBoxItem(args[1]);
 
         if (item.isEmpty()) {
-            ErrorMessages.ITEM_NOT_FOUND.apply(args[1]).source(msgSrc).send(sender);
+            sender.sendMessage(ErrorMessages.ITEM_NOT_FOUND.apply(args[1]));
             return;
         }
 
         var recipeHolder = RecipeRegistry.getRecipes(item.get());
 
         if (recipeHolder == null || recipeHolder.getRecipeList().isEmpty()) {
-            this.recipeNotFound.apply(item.get()).source(msgSrc).send(sender);
+            sender.sendMessage(this.recipeNotFound.apply(item.get()));
             return;
         }
 
@@ -79,7 +75,7 @@ public class CraftCommand extends AbstractCommand {
 
         BoxAPI.api().getEventCallers().async().call(new MenuOpenEvent(menu, session), event -> {
             if (event.isCancelled()) {
-                this.cannotOpenMenu.source(event.getSession().getMessageSource()).send(event.getViewer());
+                event.getViewer().sendMessage(this.cannotOpenMenu);
             } else {
                 MenuOpener.open(event.getMenu(), event.getSession());
             }
@@ -96,7 +92,7 @@ public class CraftCommand extends AbstractCommand {
     }
 
     @Override
-    public @NotNull Component getHelp(@NotNull MiniMessageSource msgSrc) {
-        return this.help.create(msgSrc);
+    public @NotNull ComponentLike getHelp() {
+        return this.help;
     }
 }

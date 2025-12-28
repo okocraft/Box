@@ -1,8 +1,7 @@
 package net.okocraft.box.feature.command.boxadmin.stock;
 
-import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
-import com.github.siroshun09.messages.minimessage.source.MiniMessageSource;
-import net.kyori.adventure.text.Component;
+import dev.siroshun.mcmsgdef.MessageKey;
+import net.kyori.adventure.text.ComponentLike;
 import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.command.AbstractCommand;
 import net.okocraft.box.api.message.DefaultMessageCollector;
@@ -21,21 +20,19 @@ import java.util.Set;
 class StockListCommand extends AbstractCommand {
 
     private final SharedStockListCommand sharedStockListCommand;
-    private final MiniMessageBase help;
+    private final MessageKey help;
 
     StockListCommand(@NotNull DefaultMessageCollector collector, @NotNull SharedStockListCommand sharedStockListCommand) {
         super("list", "box.admin.command.stock.list", Set.of("l"));
         this.sharedStockListCommand = sharedStockListCommand;
-        this.help = MiniMessageBase.messageKey(collector.add("box.command.boxadmin.stock.list.help", "<aqua>/boxadmin stock list <player> [args]<dark_gray> - <gray>Shows the stock list"));
+        this.help = MessageKey.key(collector.add("box.command.boxadmin.stock.list.help", "<aqua>/boxadmin stock list <player> [args]<dark_gray> - <gray>Shows the stock list"));
     }
 
     @Override
     public void onCommand(@NotNull CommandSender sender, @NotNull String[] args) {
-        var msgSrc = BoxAPI.api().getMessageProvider().findSource(sender);
-
         if (args.length <= 2) {
-            ErrorMessages.NOT_ENOUGH_ARGUMENT.source(msgSrc).send(sender);
-            sender.sendMessage(this.getHelp(msgSrc));
+            sender.sendMessage(ErrorMessages.NOT_ENOUGH_ARGUMENT);
+            sender.sendMessage(this.getHelp());
             return;
         }
 
@@ -48,7 +45,7 @@ class StockListCommand extends AbstractCommand {
                 3 < args.length ? Arrays.copyOfRange(args, 3, args.length) : null
             );
         } else {
-            ErrorMessages.PLAYER_NOT_FOUND.apply(args[2]).source(msgSrc).send(sender);
+            sender.sendMessage(ErrorMessages.PLAYER_NOT_FOUND.apply(args[2]));
         }
     }
 
@@ -71,7 +68,7 @@ class StockListCommand extends AbstractCommand {
     }
 
     @Override
-    public @NotNull Component getHelp(@NotNull MiniMessageSource msgSrc) {
-        return this.help.create(msgSrc).appendNewline().append(this.sharedStockListCommand.getArgHelp().create(msgSrc));
+    public @NotNull ComponentLike getHelp() {
+        return this.help.asComponent().appendNewline().append(this.sharedStockListCommand.getArgHelp());
     }
 }

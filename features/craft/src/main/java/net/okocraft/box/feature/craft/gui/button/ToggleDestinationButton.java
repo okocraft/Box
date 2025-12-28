@@ -1,8 +1,7 @@
 package net.okocraft.box.feature.craft.gui.button;
 
-import com.github.siroshun09.messages.minimessage.arg.Arg1;
-import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
-import com.github.siroshun09.messages.minimessage.base.Placeholder;
+import dev.siroshun.mcmsgdef.MessageKey;
+import net.kyori.adventure.text.minimessage.translation.Argument;
 import net.okocraft.box.feature.craft.gui.util.ItemCrafter;
 import net.okocraft.box.feature.craft.lang.DisplayKeys;
 import net.okocraft.box.feature.gui.api.button.Button;
@@ -17,11 +16,11 @@ import org.jetbrains.annotations.NotNull;
 
 public class ToggleDestinationButton implements Button {
 
-    private static final MiniMessageBase INVENTORY = MiniMessageBase.messageKey(DisplayKeys.INVENTORY);
-    private static final MiniMessageBase BOX = MiniMessageBase.messageKey(DisplayKeys.BOX);
-    private static final Arg1<Boolean> DISPLAY_NAME = Arg1.arg1(DisplayKeys.DESTINATION_BUTTON, Placeholder.messageBase("destination", state -> state ? INVENTORY : BOX));
-    private static final MiniMessageBase CHANGE_TO_INVENTORY = MiniMessageBase.messageKey(DisplayKeys.CHANGE_TO_INVENTORY);
-    private static final MiniMessageBase CHANGE_TO_BOX = MiniMessageBase.messageKey(DisplayKeys.CHANGE_TO_BOX);
+    private static final MessageKey INVENTORY = MessageKey.key(DisplayKeys.INVENTORY);
+    private static final MessageKey BOX = MessageKey.key(DisplayKeys.BOX);
+    private static final MessageKey.Arg1<Boolean> DISPLAY_NAME = MessageKey.arg1(DisplayKeys.DESTINATION_BUTTON, state -> Argument.component("destination", state ? INVENTORY : BOX));
+    private static final MessageKey CHANGE_TO_INVENTORY = MessageKey.key(DisplayKeys.CHANGE_TO_INVENTORY);
+    private static final MessageKey CHANGE_TO_BOX = MessageKey.key(DisplayKeys.CHANGE_TO_BOX);
 
     private final int slot;
 
@@ -38,11 +37,11 @@ public class ToggleDestinationButton implements Button {
     public @NotNull ItemStack createIcon(@NotNull PlayerSession session) {
         boolean currentState = session.getData(ItemCrafter.PUT_CRAFTED_ITEMS_INTO_INVENTORY) != null;
         return ItemEditor.create()
-            .displayName(DISPLAY_NAME.apply(currentState).create(session.getMessageSource()))
+            .displayName(DISPLAY_NAME.apply(currentState))
             .loreEmptyLine()
-            .loreLine((currentState ? CHANGE_TO_BOX : CHANGE_TO_INVENTORY).create(session.getMessageSource()))
+            .loreLine(currentState ? CHANGE_TO_BOX : CHANGE_TO_INVENTORY)
             .loreEmptyLine()
-            .createItem(currentState ? Material.PLAYER_HEAD : Material.CHEST);
+            .createItem(session.getViewer(), currentState ? Material.PLAYER_HEAD : Material.CHEST);
     }
 
     @Override

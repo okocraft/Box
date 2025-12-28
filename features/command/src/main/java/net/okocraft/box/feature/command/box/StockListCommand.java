@@ -1,8 +1,7 @@
 package net.okocraft.box.feature.command.box;
 
-import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
-import com.github.siroshun09.messages.minimessage.source.MiniMessageSource;
-import net.kyori.adventure.text.Component;
+import dev.siroshun.mcmsgdef.MessageKey;
+import net.kyori.adventure.text.ComponentLike;
 import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.command.AbstractCommand;
 import net.okocraft.box.api.message.DefaultMessageCollector;
@@ -20,20 +19,18 @@ import java.util.Set;
 public class StockListCommand extends AbstractCommand {
 
     private final SharedStockListCommand sharedStockListCommand;
-    private final MiniMessageBase help;
+    private final MessageKey help;
 
     public StockListCommand(@NotNull DefaultMessageCollector collector, @NotNull SharedStockListCommand sharedStockListCommand) {
         super("stocklist", "box.command.stocklist", Set.of("slist", "list", "sl", "l"));
         this.sharedStockListCommand = sharedStockListCommand;
-        this.help = MiniMessageBase.messageKey(collector.add("box.command.box.stocklist.help", "<aqua>/box stocklist [args]<dark_gray> - <gray>Shows the stock list"));
+        this.help = MessageKey.key(collector.add("box.command.box.stocklist.help", "<aqua>/box stocklist [args]<dark_gray> - <gray>Shows the stock list"));
     }
 
     @Override
     public void onCommand(@NotNull CommandSender sender, @NotNull String[] args) {
-        var msgSrc = BoxAPI.api().getMessageProvider().findSource(sender);
-
         if (!(sender instanceof Player player)) {
-            ErrorMessages.COMMAND_ONLY_PLAYER.source(msgSrc).send(sender);
+            sender.sendMessage(ErrorMessages.COMMAND_ONLY_PLAYER);
             return;
         }
 
@@ -47,9 +44,9 @@ public class StockListCommand extends AbstractCommand {
             );
         } else {
             if (playerMap.isScheduledLoading(player)) {
-                ErrorMessages.playerDataIsLoading(null).source(msgSrc).send(sender);
+                sender.sendMessage(ErrorMessages.playerDataIsLoading(null));
             } else {
-                ErrorMessages.playerDataIsNotLoaded(null).source(msgSrc).send(sender);
+                sender.sendMessage(ErrorMessages.playerDataIsNotLoaded(null));
             }
         }
     }
@@ -69,7 +66,7 @@ public class StockListCommand extends AbstractCommand {
     }
 
     @Override
-    public @NotNull Component getHelp(@NotNull MiniMessageSource msgSrc) {
-        return this.help.create(msgSrc).appendNewline().append(this.sharedStockListCommand.getArgHelp().create(msgSrc));
+    public @NotNull ComponentLike getHelp() {
+        return this.help.asComponent().appendNewline().append(this.sharedStockListCommand.getArgHelp());
     }
 }

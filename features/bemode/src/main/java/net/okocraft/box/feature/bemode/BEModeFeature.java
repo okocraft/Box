@@ -1,6 +1,6 @@
 package net.okocraft.box.feature.bemode;
 
-import com.github.siroshun09.messages.minimessage.arg.Arg1;
+import dev.siroshun.mcmsgdef.MessageKey;
 import net.okocraft.box.api.feature.AbstractBoxFeature;
 import net.okocraft.box.api.feature.BoxFeature;
 import net.okocraft.box.api.feature.FeatureContext;
@@ -22,7 +22,7 @@ public class BEModeFeature extends AbstractBoxFeature {
 
     public BEModeFeature(@NotNull FeatureContext.Registration context) {
         super("bemode");
-        var currentStock = Arg1.arg1(context.defaultMessageCollector().add("box.bemode.current-stock", "<gray>Current stock: <aqua><current>"), Placeholders.CURRENT);
+        var currentStock = MessageKey.arg1(context.defaultMessageCollector().add("box.bemode.current-stock", "<gray>Current stock: <aqua><current>"), Placeholders.CURRENT);
         this.storageDepositMode = new StorageDepositMode(currentStock, context.defaultMessageCollector());
         this.storageWithdrawMode = new StorageWithdrawMode(currentStock, context.defaultMessageCollector());
     }

@@ -1,6 +1,6 @@
 package net.okocraft.box.feature.gui.internal.holder;
 
-import com.github.siroshun09.messages.minimessage.arg.Arg1;
+import dev.siroshun.mcmsgdef.MessageKey;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.kyori.adventure.text.Component;
@@ -16,6 +16,7 @@ import net.okocraft.box.feature.gui.api.session.MenuHistoryHolder;
 import net.okocraft.box.feature.gui.api.session.PlayerSession;
 import net.okocraft.box.feature.gui.api.util.MenuOpener;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
@@ -28,7 +29,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class BoxInventoryHolder implements InventoryHolder {
 
     private static final String ERROR_KEY = "box.gui.click-error";
-    private static final Arg1<Throwable> ERROR = Arg1.arg1(ERROR_KEY, Placeholders.ERROR);
+    private static final MessageKey.Arg1<Throwable> ERROR = MessageKey.arg1(ERROR_KEY, Placeholders.ERROR);
 
     // In Folia, some Inventory#getHolder implementation checks if the current thread is a correct tick thread, and it may fail.
     // Before calling Inventory#getHolder, we need to check if the inventory is CraftInventoryCustom, which does not check the thread.
@@ -103,8 +104,8 @@ public class BoxInventoryHolder implements InventoryHolder {
         try {
             this.processClick0(slot, clickType);
         } catch (Throwable e) {
-            var viewer = this.session.getViewer();
-            ERROR.apply(e).source(this.session.getMessageSource()).send(viewer);
+            Player viewer = this.session.getViewer();
+            viewer.sendMessage(ERROR.apply(e));
             BoxLogger.logger().error("An error occurred while processing a click event ({})", viewer.getName(), e);
 
             BoxAPI.api().getScheduler().runEntityTask(viewer, viewer::closeInventory);

@@ -1,11 +1,11 @@
 package net.okocraft.box.bootstrap;
 
-import com.github.siroshun09.messages.api.directory.DirectorySource;
-import com.github.siroshun09.messages.api.util.Loader;
 import dev.siroshun.event4j.api.caller.EventCaller;
 import dev.siroshun.event4j.api.listener.ListenerSubscriber;
 import dev.siroshun.event4j.api.priority.Priority;
 import dev.siroshun.event4j.tree.TreeEventService;
+import dev.siroshun.mcmsgdef.directory.DirectorySource;
+import dev.siroshun.mcmsgdef.file.Loader;
 import io.papermc.paper.plugin.bootstrap.BootstrapContext;
 import net.kyori.adventure.key.Key;
 import net.okocraft.box.api.event.BoxEvent;

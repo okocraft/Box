@@ -1,6 +1,6 @@
 package net.okocraft.box.feature.craft.mode;
 
-import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
+import dev.siroshun.mcmsgdef.MessageKey;
 import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.message.DefaultMessageCollector;
 import net.okocraft.box.api.model.item.BoxItem;
@@ -19,18 +19,16 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import static com.github.siroshun09.messages.minimessage.base.MiniMessageBase.messageKey;
-
 public class CraftMode implements BoxItemClickMode {
 
-    private final MiniMessageBase displayName;
-    private final MiniMessageBase clickToShowRecipes;
-    private final MiniMessageBase noRecipe;
+    private final MessageKey displayName;
+    private final MessageKey clickToShowRecipes;
+    private final MessageKey noRecipe;
 
     public CraftMode(@NotNull DefaultMessageCollector collector) {
-        this.displayName = messageKey(collector.add("box.craft.mode.display-name", "Craft mode"));
-        this.clickToShowRecipes = messageKey(collector.add("box.craft.mode.click-to-show-recipes", "<gray>Click to show recipes"));
-        this.noRecipe = messageKey(collector.add("box.craft.mode.no-recipe", "<red>There is no recipe"));
+        this.displayName = MessageKey.key(collector.add("box.craft.mode.display-name", "Craft mode"));
+        this.clickToShowRecipes = MessageKey.key(collector.add("box.craft.mode.click-to-show-recipes", "<gray>Click to show recipes"));
+        this.noRecipe = MessageKey.key(collector.add("box.craft.mode.no-recipe", "<red>There is no recipe"));
     }
 
     @Override
@@ -40,7 +38,7 @@ public class CraftMode implements BoxItemClickMode {
 
     @Override
     public @NotNull Component getDisplayName(@NotNull PlayerSession session) {
-        return this.displayName.create(session.getMessageSource());
+        return this.displayName.asComponent();
     }
 
     @Override
@@ -48,9 +46,9 @@ public class CraftMode implements BoxItemClickMode {
         return ItemEditor.create()
             .copyLoreFrom(item.getOriginal())
             .loreEmptyLine()
-            .loreLine((RecipeRegistry.hasRecipe(item) ? this.clickToShowRecipes : this.noRecipe).create(session.getMessageSource()))
+            .loreLine(RecipeRegistry.hasRecipe(item) ? this.clickToShowRecipes : this.noRecipe)
             .loreEmptyLine()
-            .applyTo(item.getClonedItem());
+            .applyTo(session.getViewer(), item.getClonedItem());
     }
 
     @Override

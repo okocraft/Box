@@ -114,6 +114,6 @@ public final class BrewerOperator {
     private static boolean isPotion(@NotNull Material material) {
         // see BrewingStandMenu.PotionSlot#mayPlaceItem
         return material == Material.POTION || material == Material.SPLASH_POTION ||
-            material == Material.LINGERING_POTION || material == Material.GLASS_BOTTLE;
+               material == Material.LINGERING_POTION || material == Material.GLASS_BOTTLE;
     }
 }

@@ -1,6 +1,6 @@
 package net.okocraft.box.feature.autostore.gui.buttons;
 
-import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
+import dev.siroshun.mcmsgdef.MessageKey;
 import net.okocraft.box.api.message.DefaultMessageCollector;
 import net.okocraft.box.feature.autostore.setting.AutoStoreSetting;
 import net.okocraft.box.feature.gui.api.button.ClickResult;
@@ -12,19 +12,17 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import static com.github.siroshun09.messages.minimessage.base.MiniMessageBase.messageKey;
-
 public class ModeButton extends AbstractAutoStoreSettingButton {
 
-    private final MiniMessageBase displayName;
-    private final MiniMessageBase changeToAll;
-    private final MiniMessageBase changeToPerItem;
+    private final MessageKey displayName;
+    private final MessageKey changeToAll;
+    private final MessageKey changeToPerItem;
 
     public ModeButton(@NotNull DefaultMessageCollector collector) {
         super(10);
-        this.displayName = messageKey(collector.add("box.autostore.gui.mode.setting-menu.buttons.change-mode.display-name", "<gold>Change auto-store mode"));
-        this.changeToAll = messageKey(collector.add("box.autostore.gui.mode.setting-menu.buttons.change-mode.click-to-all", "<gray>Click to change to <aqua>all-items"));
-        this.changeToPerItem = messageKey(collector.add("box.autostore.gui.mode.setting-menu.buttons.change-mode.click-to-per-item", "<gray>Click to change to <aqua>per-item"));
+        this.displayName = MessageKey.key(collector.add("box.autostore.gui.mode.setting-menu.buttons.change-mode.display-name", "<gold>Change auto-store mode"));
+        this.changeToAll = MessageKey.key(collector.add("box.autostore.gui.mode.setting-menu.buttons.change-mode.click-to-all", "<gray>Click to change to <aqua>all-items"));
+        this.changeToPerItem = MessageKey.key(collector.add("box.autostore.gui.mode.setting-menu.buttons.change-mode.click-to-per-item", "<gray>Click to change to <aqua>per-item"));
     }
 
     @Override
@@ -33,11 +31,11 @@ public class ModeButton extends AbstractAutoStoreSettingButton {
         if (setting == null) return new ItemStack(Material.AIR);
 
         return ItemEditor.create()
-            .displayName(this.displayName.create(session.getMessageSource()))
+            .displayName(this.displayName)
             .loreEmptyLine()
-            .loreLine((setting.isAllMode() ? this.changeToPerItem : this.changeToAll).create(session.getMessageSource()))
+            .loreLine((setting.isAllMode() ? this.changeToPerItem : this.changeToAll))
             .loreEmptyLine()
-            .createItem(setting.isAllMode() ? Material.REDSTONE_TORCH : Material.SOUL_TORCH);
+            .createItem(session.getViewer(), setting.isAllMode() ? Material.REDSTONE_TORCH : Material.SOUL_TORCH);
     }
 
     @Override

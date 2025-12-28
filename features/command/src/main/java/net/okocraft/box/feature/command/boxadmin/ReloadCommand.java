@@ -1,41 +1,35 @@
 package net.okocraft.box.feature.command.boxadmin;
 
-import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
-import com.github.siroshun09.messages.minimessage.source.MiniMessageSource;
-import net.kyori.adventure.text.Component;
+import dev.siroshun.mcmsgdef.MessageKey;
+import net.kyori.adventure.text.ComponentLike;
 import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.command.AbstractCommand;
 import net.okocraft.box.api.message.DefaultMessageCollector;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
-import static com.github.siroshun09.messages.minimessage.base.MiniMessageBase.messageKey;
-
 public class ReloadCommand extends AbstractCommand {
 
-    private final MiniMessageBase start;
-    private final MiniMessageBase finish;
-    private final MiniMessageBase help;
+    private final MessageKey start;
+    private final MessageKey finish;
+    private final MessageKey help;
 
     public ReloadCommand(@NotNull DefaultMessageCollector collector) {
         super("reload", "box.admin.command.reload");
-        this.start = messageKey(collector.add("box.command.boxadmin.reload.start", "<gray>Reloading Box..."));
-        this.finish = messageKey(collector.add("box.command.boxadmin.reload.finish", "<gray>Box has been reloaded!"));
-        this.help = messageKey(collector.add("box.command.boxadmin.reload.help", "<aqua>/boxadmin reload<dark_gray> - <gray>Reloads Box"));
+        this.start = MessageKey.key(collector.add("box.command.boxadmin.reload.start", "<gray>Reloading Box..."));
+        this.finish = MessageKey.key(collector.add("box.command.boxadmin.reload.finish", "<gray>Box has been reloaded!"));
+        this.help = MessageKey.key(collector.add("box.command.boxadmin.reload.help", "<aqua>/boxadmin reload<dark_gray> - <gray>Reloads Box"));
     }
 
     @Override
     public void onCommand(@NotNull CommandSender sender, @NotNull String[] args) {
-        var msgSrc = BoxAPI.api().getMessageProvider().findSource(sender);
-        this.start.source(msgSrc).send(sender);
-
+        sender.sendMessage(this.start);
         BoxAPI.api().reload(sender);
-
-        this.finish.source(msgSrc).send(sender);
+        sender.sendMessage(this.finish);
     }
 
     @Override
-    public @NotNull Component getHelp(@NotNull MiniMessageSource msgSrc) {
-        return this.help.create(msgSrc);
+    public @NotNull ComponentLike getHelp() {
+        return this.help;
     }
 }

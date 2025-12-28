@@ -1,6 +1,6 @@
 package net.okocraft.box.feature.gui.api.menu.paginate;
 
-import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
+import dev.siroshun.mcmsgdef.MessageKey;
 import io.papermc.paper.registry.keys.SoundEventKeys;
 import net.okocraft.box.feature.gui.api.button.Button;
 import net.okocraft.box.feature.gui.api.button.ClickResult;
@@ -94,8 +94,8 @@ public abstract class AbstractPaginatedMenu<T> implements PaginatedMenu {
     private record PageSwitchButton(int rows, int newPage, boolean next,
                                     @NotNull TypedKey<Integer> currentPageKey) implements Button {
 
-        private static final MiniMessageBase PREVIOUS_PAGE = MiniMessageBase.messageKey(DisplayKeys.PREVIOUS_PAGE);
-        private static final MiniMessageBase NEXT_PAGE = MiniMessageBase.messageKey(DisplayKeys.NEXT_PAGE);
+        private static final MessageKey PREVIOUS_PAGE = MessageKey.key(DisplayKeys.PREVIOUS_PAGE);
+        private static final MessageKey NEXT_PAGE = MessageKey.key(DisplayKeys.NEXT_PAGE);
 
         @Override
         public int getSlot() {
@@ -105,8 +105,8 @@ public abstract class AbstractPaginatedMenu<T> implements PaginatedMenu {
         @Override
         public @NotNull ItemStack createIcon(@NotNull PlayerSession session) {
             return ItemEditor.create()
-                .displayName((this.next ? NEXT_PAGE : PREVIOUS_PAGE).create(session.getMessageSource()))
-                .createItem(Material.ARROW, Math.min(this.newPage, 64));
+                .displayName(this.next ? NEXT_PAGE : PREVIOUS_PAGE)
+                .createItem(session.getViewer(), Material.ARROW, Math.min(this.newPage, 64));
         }
 
         @Override

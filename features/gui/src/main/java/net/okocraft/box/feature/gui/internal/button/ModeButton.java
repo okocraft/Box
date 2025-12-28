@@ -1,6 +1,6 @@
 package net.okocraft.box.feature.gui.internal.button;
 
-import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
+import dev.siroshun.mcmsgdef.MessageKey;
 import net.kyori.adventure.text.Component;
 import net.okocraft.box.feature.gui.api.button.Button;
 import net.okocraft.box.feature.gui.api.button.ClickResult;
@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 
 public record ModeButton(int slot) implements Button {
 
-    private static final MiniMessageBase DISPLAY_NAME = MiniMessageBase.messageKey(DisplayKeys.MODE_CHANGE);
+    private static final MessageKey DISPLAY_NAME = MessageKey.key(DisplayKeys.MODE_CHANGE);
 
     @Override
     public int getSlot() {
@@ -25,7 +25,7 @@ public record ModeButton(int slot) implements Button {
 
     @Override
     public @NotNull ItemStack createIcon(@NotNull PlayerSession session) {
-        var editor = ItemEditor.create().displayName(DISPLAY_NAME.create(session.getMessageSource()));
+        var editor = ItemEditor.create().displayName(DISPLAY_NAME);
         var holder = ClickModeHolder.getFromSession(session);
 
         for (var mode : holder.getAvailableModes()) {
@@ -33,7 +33,7 @@ public record ModeButton(int slot) implements Button {
             editor.loreLine(Component.text().append(Component.text(" > ")).append(mode.getDisplayName(session)).style(style).build());
         }
 
-        return editor.createItem(holder.getCurrentMode().getIconMaterial());
+        return editor.createItem(session.getViewer(), holder.getCurrentMode().getIconMaterial());
     }
 
     @Override

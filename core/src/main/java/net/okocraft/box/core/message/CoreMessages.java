@@ -1,17 +1,11 @@
 package net.okocraft.box.core.message;
 
-import com.github.siroshun09.messages.minimessage.arg.Arg1;
-import com.github.siroshun09.messages.minimessage.arg.Arg2;
-import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
-import com.github.siroshun09.messages.minimessage.base.Placeholder;
-import net.kyori.adventure.text.Component;
+import dev.siroshun.mcmsgdef.MessageKey;
+import net.kyori.adventure.text.minimessage.translation.Argument;
 import net.okocraft.box.api.feature.BoxFeature;
 import net.okocraft.box.api.message.DefaultMessageCollector;
 import org.jetbrains.annotations.NotNull;
 
-import static com.github.siroshun09.messages.minimessage.arg.Arg1.arg1;
-import static com.github.siroshun09.messages.minimessage.arg.Arg2.arg2;
-import static com.github.siroshun09.messages.minimessage.base.MiniMessageBase.messageKey;
 import static net.okocraft.box.api.message.Placeholders.ERROR;
 
 public class CoreMessages {
@@ -39,14 +33,14 @@ public class CoreMessages {
     private static final String ERROR_RELOAD_MESSAGES = "box.core.reload.error.messages";
     private static final String ERROR_RELOAD_FEATURE = "box.core.reload.error.feature";
 
-    public static final Arg1<String> COMMAND_HELP_HEADER = arg1(HELP_BOX, Placeholder.component("command", Component::text));
-    public static final Arg1<Throwable> COMMAND_EXECUTION_ERROR_MSG = arg1(COMMAND_EXECUTION_ERROR, ERROR);
-    public static final MiniMessageBase LOAD_FAILURE_ON_JOIN = messageKey(LOAD_ERROR_ON_JOIN);
-    public static final Arg1<String> CONFIG_RELOADED_MSG = arg1(CONFIG_RELOADED, Placeholder.component("filename", Component::text));
-    public static final MiniMessageBase MESSAGE_RELOADED_MSG = messageKey(MESSAGES_RELOADED);
-    public static final Arg2<String, Throwable> CONFIG_RELOAD_FAILURE = arg2(ERROR_RELOAD_CONFIG, Placeholder.component("filename", Component::text), ERROR);
-    public static final Arg1<Throwable> MESSAGES_RELOAD_FAILURE = arg1(ERROR_RELOAD_MESSAGES, ERROR);
-    public static final Arg2<BoxFeature, Throwable> FEATURE_RELOAD_FAILURE = arg2(ERROR_RELOAD_FEATURE, Placeholder.component("feature", feature -> Component.text(feature.getName())), ERROR);
+    public static final MessageKey.Arg1<String> COMMAND_HELP_HEADER = MessageKey.arg1(HELP_BOX, command -> Argument.string("command", command));
+    public static final MessageKey.Arg1<Throwable> COMMAND_EXECUTION_ERROR_MSG = MessageKey.arg1(COMMAND_EXECUTION_ERROR, ERROR);
+    public static final MessageKey LOAD_FAILURE_ON_JOIN = MessageKey.key(LOAD_ERROR_ON_JOIN);
+    public static final MessageKey.Arg1<String> CONFIG_RELOADED_MSG = MessageKey.arg1(CONFIG_RELOADED, filename -> Argument.string("filename", filename));
+    public static final MessageKey MESSAGE_RELOADED_MSG = MessageKey.key(MESSAGES_RELOADED);
+    public static final MessageKey.Arg2<String, Throwable> CONFIG_RELOAD_FAILURE = MessageKey.arg2(ERROR_RELOAD_CONFIG, filename -> Argument.string("filename", filename), ERROR);
+    public static final MessageKey.Arg1<Throwable> MESSAGES_RELOAD_FAILURE = MessageKey.arg1(ERROR_RELOAD_MESSAGES, ERROR);
+    public static final MessageKey.Arg2<BoxFeature, Throwable> FEATURE_RELOAD_FAILURE = MessageKey.arg2(ERROR_RELOAD_FEATURE, feature -> Argument.string("feature", feature.getName()), ERROR);
 
     public static void addDefaultMessages(@NotNull DefaultMessageCollector collector) {
         collector.add(HELP_BOX, "<dark_gray>==================== <gold>Command helps for <command><dark_gray> ====================");

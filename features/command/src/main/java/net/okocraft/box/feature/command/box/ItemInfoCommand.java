@@ -1,11 +1,9 @@
 package net.okocraft.box.feature.command.box;
 
-import com.github.siroshun09.messages.minimessage.arg.Arg1;
-import com.github.siroshun09.messages.minimessage.arg.Arg3;
-import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
-import com.github.siroshun09.messages.minimessage.base.Placeholder;
-import com.github.siroshun09.messages.minimessage.source.MiniMessageSource;
-import net.kyori.adventure.text.Component;
+import dev.siroshun.mcmsgdef.MessageKey;
+import dev.siroshun.mcmsgdef.Placeholder;
+import net.kyori.adventure.text.ComponentLike;
+import net.kyori.adventure.text.minimessage.translation.Argument;
 import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.command.AbstractCommand;
 import net.okocraft.box.api.event.player.PlayerCollectItemInfoEvent;
@@ -21,39 +19,34 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import static com.github.siroshun09.messages.minimessage.arg.Arg1.arg1;
-import static com.github.siroshun09.messages.minimessage.arg.Arg3.arg3;
-import static com.github.siroshun09.messages.minimessage.base.MiniMessageBase.messageKey;
 import static net.okocraft.box.api.message.Placeholders.AMOUNT;
 import static net.okocraft.box.api.message.Placeholders.ITEM;
 import static net.okocraft.box.api.message.Placeholders.ITEM_NAME;
 
 public class ItemInfoCommand extends AbstractCommand {
 
-    private static final Placeholder<Integer> ITEM_INTERNAL_ID = Placeholder.component("id", Component::text);
+    private static final Placeholder<Integer> ITEM_INTERNAL_ID = id -> Argument.numeric("id", id);
 
-    private final MiniMessageBase isAir;
-    private final MiniMessageBase itemNotRegistered;
-    private final Arg3<BoxItem, String, Integer> itemBasicInfo;
-    private final Arg1<Integer> currentStock;
-    private final MiniMessageBase help;
+    private final MessageKey isAir;
+    private final MessageKey itemNotRegistered;
+    private final MessageKey.Arg3<BoxItem, String, Integer> itemBasicInfo;
+    private final MessageKey.Arg1<Integer> currentStock;
+    private final MessageKey help;
 
     public ItemInfoCommand(@NotNull DefaultMessageCollector collector) {
         super("iteminfo", "box.command.iteminfo", Set.of("i"));
 
-        this.isAir = messageKey(collector.add("box.command.box.iteminfo.is-air", "<red>You have no item in your main hand."));
-        this.itemNotRegistered = messageKey(collector.add("box.command.box.iteminfo.item-not-registered", "<red>The item in your main hand is not registered."));
-        this.itemBasicInfo = arg3(collector.add("box.command.box.iteminfo.basic", "<gray>Item <aqua><item><gray> (<aqua><item_name><gray>) <dark_gray>#<id>"), ITEM, ITEM_NAME, ITEM_INTERNAL_ID);
-        this.currentStock = arg1(collector.add("box.command.box.iteminfo.stock", "<gray>Current stock: <aqua><amount>"), AMOUNT);
-        this.help = messageKey(collector.add("box.command.box.iteminfo.help", "<aqua>/box iteminfo [item]<dark_gray> - <gray>Shows information about the item you have or specify"));
+        this.isAir = MessageKey.key(collector.add("box.command.box.iteminfo.is-air", "<red>You have no item in your main hand."));
+        this.itemNotRegistered = MessageKey.key(collector.add("box.command.box.iteminfo.item-not-registered", "<red>The item in your main hand is not registered."));
+        this.itemBasicInfo = MessageKey.arg3(collector.add("box.command.box.iteminfo.basic", "<gray>Item <aqua><item><gray> (<aqua><item_name><gray>) <dark_gray>#<id>"), ITEM, ITEM_NAME, ITEM_INTERNAL_ID);
+        this.currentStock = MessageKey.arg1(collector.add("box.command.box.iteminfo.stock", "<gray>Current stock: <aqua><amount>"), AMOUNT);
+        this.help = MessageKey.key(collector.add("box.command.box.iteminfo.help", "<aqua>/box iteminfo [item]<dark_gray> - <gray>Shows information about the item you have or specify"));
     }
 
     @Override
     public void onCommand(@NotNull CommandSender sender, @NotNull String[] args) {
-        var msgSrc = BoxAPI.api().getMessageProvider().findSource(sender);
-
         if (!(sender instanceof Player player)) {
-            ErrorMessages.COMMAND_ONLY_PLAYER.source(msgSrc).send(sender);
+            sender.sendMessage(ErrorMessages.COMMAND_ONLY_PLAYER);
             return;
         }
 
@@ -65,14 +58,14 @@ public class ItemInfoCommand extends AbstractCommand {
             if (optionalBoxItem.isPresent()) {
                 boxItem = optionalBoxItem.get();
             } else {
-                ErrorMessages.ITEM_NOT_FOUND.apply(args[1]).source(msgSrc).send(sender);
+                sender.sendMessage(ErrorMessages.ITEM_NOT_FOUND.apply(args[1]));
                 return;
             }
         } else {
             var itemInMainHand = player.getInventory().getItemInMainHand();
 
             if (itemInMainHand.getType().isAir()) {
-                this.isAir.source(msgSrc).send(sender);
+                sender.sendMessage(this.isAir);
                 return;
             }
 
@@ -81,7 +74,7 @@ public class ItemInfoCommand extends AbstractCommand {
             if (optionalBoxItem.isPresent()) {
                 boxItem = optionalBoxItem.get();
             } else {
-                this.itemNotRegistered.source(msgSrc).send(sender);
+                sender.sendMessage(this.itemNotRegistered);
                 return;
             }
         }
@@ -90,8 +83,8 @@ public class ItemInfoCommand extends AbstractCommand {
 
         var event = new PlayerCollectItemInfoEvent(boxPlayer, boxItem);
 
-        event.addInfo(this.itemBasicInfo.apply(boxItem, boxItem.getPlainName(), boxItem.getInternalId()).source(msgSrc).message());
-        event.addInfo(this.currentStock.apply(boxPlayer.getCurrentStockHolder().getAmount(boxItem)).source(msgSrc).message());
+        event.addInfo(this.itemBasicInfo.apply(boxItem, boxItem.getPlainName(), boxItem.getInternalId()));
+        event.addInfo(this.currentStock.apply(boxPlayer.getCurrentStockHolder().getAmount(boxItem)));
 
         BoxAPI.api().getEventCallers().async().call(event, e -> {
             for (var info : e.getInfo()) {
@@ -110,7 +103,7 @@ public class ItemInfoCommand extends AbstractCommand {
     }
 
     @Override
-    public @NotNull Component getHelp(@NotNull MiniMessageSource msgSrc) {
-        return this.help.create(msgSrc);
+    public @NotNull ComponentLike getHelp() {
+        return this.help;
     }
 }
