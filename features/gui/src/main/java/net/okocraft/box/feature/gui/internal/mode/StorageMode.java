@@ -1,7 +1,6 @@
 package net.okocraft.box.feature.gui.internal.mode;
 
-import com.github.siroshun09.messages.minimessage.arg.Arg1;
-import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
+import dev.siroshun.mcmsgdef.MessageKey;
 import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.message.Placeholders;
 import net.okocraft.box.api.model.item.BoxItem;
@@ -17,26 +16,23 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import static com.github.siroshun09.messages.minimessage.arg.Arg1.arg1;
-import static com.github.siroshun09.messages.minimessage.base.MiniMessageBase.messageKey;
-
 public final class StorageMode extends AbstractStorageMode {
 
-    private final MiniMessageBase displayName;
-    private final Arg1<Integer> leftClickToDeposit;
-    private final Arg1<Integer> rightClickToWithdraw;
-    private final Arg1<Integer> currentStock;
+    private final MessageKey displayName;
+    private final MessageKey.Arg1<Integer> leftClickToDeposit;
+    private final MessageKey.Arg1<Integer> rightClickToWithdraw;
+    private final MessageKey.Arg1<Integer> currentStock;
 
-    private final MiniMessageBase depositAllDisplayName;
-    private final MiniMessageBase depositAllLore;
+    private final MessageKey depositAllDisplayName;
+    private final MessageKey depositAllLore;
 
     public StorageMode() {
-        this.displayName = messageKey(DisplayKeys.STORAGE_MODE_DISPLAY_NAME);
-        this.leftClickToDeposit = arg1(DisplayKeys.STORAGE_MODE_DEPOSIT, Placeholders.AMOUNT);
-        this.rightClickToWithdraw = arg1(DisplayKeys.STORAGE_MODE_WITHDRAW, Placeholders.AMOUNT);
-        this.currentStock = arg1(DisplayKeys.STORAGE_MODE_CURRENT_STOCK, Placeholders.CURRENT);
-        this.depositAllDisplayName = messageKey(DisplayKeys.STORAGE_MODE_DEPOSIT_ALL_DISPLAY_NAME);
-        this.depositAllLore = messageKey(DisplayKeys.STORAGE_MODE_DEPOSIT_ALL_LORE);
+        this.displayName = MessageKey.key(DisplayKeys.STORAGE_MODE_DISPLAY_NAME);
+        this.leftClickToDeposit = MessageKey.arg1(DisplayKeys.STORAGE_MODE_DEPOSIT, Placeholders.AMOUNT);
+        this.rightClickToWithdraw = MessageKey.arg1(DisplayKeys.STORAGE_MODE_WITHDRAW, Placeholders.AMOUNT);
+        this.currentStock = MessageKey.arg1(DisplayKeys.STORAGE_MODE_CURRENT_STOCK, Placeholders.CURRENT);
+        this.depositAllDisplayName = MessageKey.key(DisplayKeys.STORAGE_MODE_DEPOSIT_ALL_DISPLAY_NAME);
+        this.depositAllLore = MessageKey.key(DisplayKeys.STORAGE_MODE_DEPOSIT_ALL_LORE);
     }
 
     @Override
@@ -46,7 +42,7 @@ public final class StorageMode extends AbstractStorageMode {
 
     @Override
     public @NotNull Component getDisplayName(@NotNull PlayerSession session) {
-        return this.displayName.create(session.getMessageSource());
+        return this.displayName.asComponent();
     }
 
     @Override
@@ -58,11 +54,11 @@ public final class StorageMode extends AbstractStorageMode {
         return ItemEditor.create()
             .copyLoreFrom(item.getOriginal())
             .loreEmptyLine()
-            .loreLine(this.leftClickToDeposit.apply(transactionAmount).create(session.getMessageSource()))
-            .loreLine(this.rightClickToWithdraw.apply(transactionAmount).create(session.getMessageSource()))
+            .loreLine(this.leftClickToDeposit.apply(transactionAmount))
+            .loreLine(this.rightClickToWithdraw.apply(transactionAmount))
             .loreEmptyLine()
-            .loreLine(this.currentStock.apply(currentStock).create(session.getMessageSource()))
-            .applyTo(item.getClonedItem());
+            .loreLine(this.currentStock.apply(currentStock))
+            .applyTo(session.getViewer(), item.getClonedItem());
     }
 
     @Override
@@ -98,13 +94,13 @@ public final class StorageMode extends AbstractStorageMode {
 
     private static class DepositAllButton extends AbstractDepositAllButton {
 
-        private final MiniMessageBase displayName;
-        private final MiniMessageBase lore;
+        private final MessageKey displayName;
+        private final MessageKey lore;
 
-        private DepositAllButton(int slot, @NotNull MiniMessageBase displayName, @NotNull MiniMessageBase lore) {
+        private DepositAllButton(int slot, @NotNull MessageKey displayName, @NotNull MessageKey lore) {
             super(
                 slot,
-                (session, clickType) -> clickType.isShiftClick(),
+                (_, clickType) -> clickType.isShiftClick(),
                 ClickResult.NO_UPDATE_NEEDED
             );
             this.displayName = displayName;
@@ -114,9 +110,9 @@ public final class StorageMode extends AbstractStorageMode {
         @Override
         public @NotNull ItemStack createIcon(@NotNull PlayerSession session) {
             return ItemEditor.create()
-                .displayName(this.displayName.create(session.getMessageSource()))
-                .loreLines(this.lore.create(session.getMessageSource()))
-                .createItem(Material.NETHER_STAR);
+                .displayName(this.displayName)
+                .loreLines(this.lore)
+                .createItem(session.getViewer(), Material.NETHER_STAR);
         }
     }
 }

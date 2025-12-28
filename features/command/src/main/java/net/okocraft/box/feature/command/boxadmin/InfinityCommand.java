@@ -1,10 +1,8 @@
 package net.okocraft.box.feature.command.boxadmin;
 
-import com.github.siroshun09.messages.minimessage.arg.Arg1;
-import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
-import com.github.siroshun09.messages.minimessage.source.MiniMessageSource;
+import dev.siroshun.mcmsgdef.MessageKey;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
 import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.command.AbstractCommand;
 import net.okocraft.box.api.event.stockholder.stock.StockEvent;
@@ -25,36 +23,31 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.UUID;
 
-import static com.github.siroshun09.messages.minimessage.arg.Arg1.arg1;
-import static com.github.siroshun09.messages.minimessage.base.MiniMessageBase.messageKey;
-
 public class InfinityCommand extends AbstractCommand {
 
-    private final MiniMessageBase enableSelf;
-    private final Arg1<String> enableOtherSender;
-    private final Arg1<String> enableOtherTarget;
-    private final MiniMessageBase disableSelf;
-    private final Arg1<String> disableOtherSender;
-    private final Arg1<String> disableOtherTarget;
-    private final MiniMessageBase tip;
-    private final MiniMessageBase help;
+    private final MessageKey enableSelf;
+    private final MessageKey.Arg1<String> enableOtherSender;
+    private final MessageKey.Arg1<String> enableOtherTarget;
+    private final MessageKey disableSelf;
+    private final MessageKey.Arg1<String> disableOtherSender;
+    private final MessageKey.Arg1<String> disableOtherTarget;
+    private final MessageKey tip;
+    private final MessageKey help;
 
     public InfinityCommand(@NotNull DefaultMessageCollector collector) {
         super("infinity", "box.admin.command.infinity", Set.of("i", "inf"));
-        this.enableSelf = messageKey(collector.add("box.command.boxadmin.infinity.enable.self", "<gray>Infinite stock mode has been <green>enabled<gray>."));
-        this.enableOtherSender = arg1(collector.add("box.command.boxadmin.infinity.enable.other.sender", "<green>Enabled<gray> infinite stock mode for player <aqua><player_name><gray>."), Placeholders.PLAYER_NAME);
-        this.enableOtherTarget = arg1(collector.add("box.command.boxadmin.infinity.enable.other.target", "<gray>Infinite stock mode has been <green>enabled<gray> by <aqua><player_name><gray>."), Placeholders.PLAYER_NAME);
-        this.disableSelf = messageKey(collector.add("box.command.boxadmin.infinity.disable.self", "<gray>Infinite stock mode has been <green>disabled<gray>."));
-        this.disableOtherSender = arg1(collector.add("box.command.boxadmin.infinity.disable.other.sender", "<green>Disabled<gray> infinite stock mode for player <aqua><player_name><gray>."), Placeholders.PLAYER_NAME);
-        this.disableOtherTarget = arg1(collector.add("box.command.boxadmin.infinity.disable.other.target", "<gray>Infinite stock mode has been <green>disabled<gray> by <aqua><player_name><gray>."), Placeholders.PLAYER_NAME);
-        this.tip = messageKey(collector.add("box.command.boxadmin.infinity.tip", "<gray>Infinite stock mode does not save deposited items."));
-        this.help = MiniMessageBase.messageKey(collector.add("box.command.boxadmin.infinity.help", "<aqua>/boxadmin infinity [player]<dark_gray> - <gray>Toggles infinite stock mode"));
+        this.enableSelf = MessageKey.key(collector.add("box.command.boxadmin.infinity.enable.self", "<gray>Infinite stock mode has been <green>enabled<gray>."));
+        this.enableOtherSender = MessageKey.arg1(collector.add("box.command.boxadmin.infinity.enable.other.sender", "<green>Enabled<gray> infinite stock mode for player <aqua><player_name><gray>."), Placeholders.PLAYER_NAME);
+        this.enableOtherTarget = MessageKey.arg1(collector.add("box.command.boxadmin.infinity.enable.other.target", "<gray>Infinite stock mode has been <green>enabled<gray> by <aqua><player_name><gray>."), Placeholders.PLAYER_NAME);
+        this.disableSelf = MessageKey.key(collector.add("box.command.boxadmin.infinity.disable.self", "<gray>Infinite stock mode has been <green>disabled<gray>."));
+        this.disableOtherSender = MessageKey.arg1(collector.add("box.command.boxadmin.infinity.disable.other.sender", "<green>Disabled<gray> infinite stock mode for player <aqua><player_name><gray>."), Placeholders.PLAYER_NAME);
+        this.disableOtherTarget = MessageKey.arg1(collector.add("box.command.boxadmin.infinity.disable.other.target", "<gray>Infinite stock mode has been <green>disabled<gray> by <aqua><player_name><gray>."), Placeholders.PLAYER_NAME);
+        this.tip = MessageKey.key(collector.add("box.command.boxadmin.infinity.tip", "<gray>Infinite stock mode does not save deposited items."));
+        this.help = MessageKey.key(collector.add("box.command.boxadmin.infinity.help", "<aqua>/boxadmin infinity [player]<dark_gray> - <gray>Toggles infinite stock mode"));
     }
 
     @Override
     public void onCommand(@NotNull CommandSender sender, @NotNull String[] args) {
-        var msgSrc = BoxAPI.api().getMessageProvider().findSource(sender);
-
         Player target;
         boolean self;
 
@@ -62,7 +55,7 @@ public class InfinityCommand extends AbstractCommand {
             target = Bukkit.getPlayer(args[1]);
 
             if (target == null) {
-                ErrorMessages.PLAYER_NOT_FOUND.apply(args[1]).source(msgSrc).send(sender);
+                sender.sendMessage(ErrorMessages.PLAYER_NOT_FOUND.apply(args[1]));
                 return;
             }
 
@@ -71,8 +64,8 @@ public class InfinityCommand extends AbstractCommand {
             if (sender instanceof Player player) {
                 target = player;
             } else {
-                ErrorMessages.NOT_ENOUGH_ARGUMENT.source(msgSrc).send(sender);
-                sender.sendMessage(this.getHelp(msgSrc));
+                sender.sendMessage(ErrorMessages.NOT_ENOUGH_ARGUMENT);
+                sender.sendMessage(this.getHelp());
                 return;
             }
 
@@ -83,9 +76,9 @@ public class InfinityCommand extends AbstractCommand {
 
         if (!playerMap.isLoaded(target)) {
             if (playerMap.isScheduledLoading(target)) {
-                ErrorMessages.playerDataIsLoading(self ? null : target.getName()).source(msgSrc).send(sender);
+                sender.sendMessage(ErrorMessages.playerDataIsLoading(self ? null : target.getName()));
             } else {
-                ErrorMessages.playerDataIsNotLoaded(self ? null : target.getName()).source(msgSrc).send(sender);
+                sender.sendMessage(ErrorMessages.playerDataIsNotLoaded(self ? null : target.getName()));
             }
             return;
         }
@@ -102,23 +95,21 @@ public class InfinityCommand extends AbstractCommand {
             enabled = true;
         }
 
-        var targetMsgSrc = BoxAPI.api().getMessageProvider().findSource(target);
-
         if (self) {
-            (enabled ? this.enableSelf : this.disableSelf).source(msgSrc).send(sender);
+            sender.sendMessage(enabled ? this.enableSelf : this.disableSelf);
         } else {
-            (enabled ? this.enableOtherSender : this.disableOtherSender).apply(target.getName()).source(msgSrc).send(sender);
-            (enabled ? this.enableOtherTarget : this.disableOtherTarget).apply(sender.getName()).source(msgSrc).send(target);
+            sender.sendMessage((enabled ? this.enableOtherSender : this.disableOtherSender).apply(target.getName()));
+            sender.sendMessage((enabled ? this.enableOtherTarget : this.disableOtherTarget).apply(sender.getName()));
         }
 
         if (enabled) {
-            this.tip.source(targetMsgSrc).send(target);
+            target.sendMessage(this.tip);
         }
     }
 
     @Override
-    public @NotNull Component getHelp(@NotNull MiniMessageSource msgSrc) {
-        return this.help.create(msgSrc);
+    public @NotNull ComponentLike getHelp() {
+        return this.help;
     }
 
     private static class InfinityStockHolder implements StockHolder {

@@ -3,7 +3,6 @@ package net.okocraft.box.core.player;
 import net.okocraft.box.api.event.caller.EventCallerProvider;
 import net.okocraft.box.api.event.player.PlayerLoadEvent;
 import net.okocraft.box.api.event.player.PlayerUnloadEvent;
-import net.okocraft.box.api.message.MessageProvider;
 import net.okocraft.box.api.player.BoxPlayer;
 import net.okocraft.box.api.player.BoxPlayerMap;
 import net.okocraft.box.api.scheduler.BoxScheduler;
@@ -31,16 +30,13 @@ public class BoxPlayerMapImpl implements BoxPlayerMap {
     private final BoxUserManager userManager;
     private final EventCallerProvider eventCallers;
     private final BoxScheduler scheduler;
-    private final MessageProvider messageProvider;
 
     public BoxPlayerMapImpl(@NotNull BoxUserManager userManager, @NotNull BoxStockManager stockManager,
-                            @NotNull EventCallerProvider eventCallers, @NotNull BoxScheduler scheduler,
-                            @NotNull MessageProvider messageProvider) {
+                            @NotNull EventCallerProvider eventCallers, @NotNull BoxScheduler scheduler) {
         this.userManager = userManager;
         this.stockManager = stockManager;
         this.eventCallers = eventCallers;
         this.scheduler = scheduler;
-        this.messageProvider = messageProvider;
     }
 
     @Override
@@ -80,7 +76,7 @@ public class BoxPlayerMapImpl implements BoxPlayerMap {
         } catch (Exception e) {
             this.playerMap.remove(player);
             BoxLogger.logger().error("Could not load a player ({})", player.getName(), e);
-            CoreMessages.LOAD_FAILURE_ON_JOIN.source(this.messageProvider.findSource(player)).send(player);
+            player.sendMessage(CoreMessages.LOAD_FAILURE_ON_JOIN);
         }
     }
 

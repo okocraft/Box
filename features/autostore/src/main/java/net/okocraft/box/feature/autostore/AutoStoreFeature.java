@@ -1,6 +1,6 @@
 package net.okocraft.box.feature.autostore;
 
-import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
+import dev.siroshun.mcmsgdef.MessageKey;
 import net.kyori.adventure.key.Key;
 import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.feature.AbstractBoxFeature;
@@ -16,8 +16,6 @@ import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
-import static com.github.siroshun09.messages.minimessage.base.MiniMessageBase.messageKey;
-
 /**
  * A {@link net.okocraft.box.api.feature.BoxFeature} that provides autostore feature.
  */
@@ -27,7 +25,7 @@ public class AutoStoreFeature extends AbstractBoxFeature {
     private static final Key CUSTOM_DATA_EXPORT_LISTENER_KEY = Key.key("box", "feature/autostore/custom_data_export_listener");
 
     private final AutoStoreSettingContainer settingContainer;
-    private final MiniMessageBase loadErrorMessage;
+    private final MessageKey loadErrorMessage;
 
     private final AutoSaveListener autoSaveListener;
     private final CustomDataExportListener customDataExportListener;
@@ -45,7 +43,7 @@ public class AutoStoreFeature extends AbstractBoxFeature {
     public AutoStoreFeature(@NotNull FeatureContext.Registration context) {
         super("autostore");
         var collector = context.defaultMessageCollector();
-        this.loadErrorMessage = messageKey(collector.add("box.autostore.error.failed-to-load-settings", "<red>Failed to load the auto-store settings. Please contact the administrator."));
+        this.loadErrorMessage = MessageKey.key(collector.add("box.autostore.error.failed-to-load-settings", "<red>Failed to load the auto-store settings. Please contact the administrator."));
         this.settingContainer = new AutoStoreSettingContainer();
         this.autoSaveListener = new AutoSaveListener(this.settingContainer);
         this.customDataExportListener = new CustomDataExportListener();

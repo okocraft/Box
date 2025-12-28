@@ -1,6 +1,5 @@
 package net.okocraft.box.feature.gui.api.session;
 
-import com.github.siroshun09.messages.minimessage.source.MiniMessageSource;
 import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.model.stock.StockHolder;
 import net.okocraft.box.api.model.user.BoxUser;
@@ -26,15 +25,12 @@ public final class PlayerSession {
     private final Player viewer;
     private final BoxUser sourceUser;
     private final StockHolder sourceStockHolder;
-    private final MiniMessageSource messageSource;
-
     private final Map<TypedKey<?>, Object> dataMap = new ConcurrentHashMap<>();
 
     private PlayerSession(@NotNull Player viewer, @NotNull BoxUser sourceUser, @NotNull StockHolder sourceStockHolder) {
         this.viewer = viewer;
         this.sourceUser = sourceUser;
         this.sourceStockHolder = sourceStockHolder;
-        this.messageSource = BoxAPI.api().getMessageProvider().findSource(viewer);
     }
 
     public @NotNull Player getViewer() {
@@ -47,10 +43,6 @@ public final class PlayerSession {
 
     public @NotNull StockHolder getSourceStockHolder() {
         return this.sourceStockHolder;
-    }
-
-    public @NotNull MiniMessageSource getMessageSource() {
-        return this.messageSource;
     }
 
     public <T> @Nullable T getData(@NotNull TypedKey<T> key) {

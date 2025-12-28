@@ -1,8 +1,6 @@
 package net.okocraft.box.feature.autostore.command;
 
-import com.github.siroshun09.messages.minimessage.arg.Arg1;
-import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
-import com.github.siroshun09.messages.minimessage.source.MiniMessageSource;
+import dev.siroshun.mcmsgdef.MessageKey;
 import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.message.DefaultMessageCollector;
 import net.okocraft.box.api.message.Placeholders;
@@ -15,12 +13,12 @@ import org.jetbrains.annotations.Nullable;
 final class AutoStoreCommandUtil {
 
     private static final String AUTOSTORE_ENABLED_KEY = "box.autostore.command.enable-autostore";
-    private static final MiniMessageBase AUTOSTORE_ENABLED = MiniMessageBase.messageKey(AUTOSTORE_ENABLED_KEY);
+    private static final MessageKey AUTOSTORE_ENABLED = MessageKey.key(AUTOSTORE_ENABLED_KEY);
     private static final String AUTOSTORE_DISABLED_KEY = "box.autostore.command.disable-autostore";
-    private static final MiniMessageBase AUTOSTORE_DISABLED = MiniMessageBase.messageKey(AUTOSTORE_DISABLED_KEY);
+    private static final MessageKey AUTOSTORE_DISABLED = MessageKey.key(AUTOSTORE_DISABLED_KEY);
 
     private static final String NOT_BOOLEAN_KEY = "box.autostore.command.error.not-boolean";
-    static final Arg1<String> NOT_BOOLEAN = Arg1.arg1(NOT_BOOLEAN_KEY, Placeholders.ARG);
+    static final MessageKey.Arg1<String> NOT_BOOLEAN = MessageKey.arg1(NOT_BOOLEAN_KEY, Placeholders.ARG);
 
     static void addToggleMessages(@NotNull DefaultMessageCollector collector) {
         collector.add(AUTOSTORE_ENABLED_KEY, "<gray>Auto-store is now <green>enabled<gray>.");
@@ -31,7 +29,7 @@ final class AutoStoreCommandUtil {
         collector.add(NOT_BOOLEAN_KEY, "<aqua><arg><red> is not boolean. [on/off/true/false]");
     }
 
-    static boolean changeAutoStore(@NotNull AutoStoreSetting setting, @NotNull CommandSender sender, @NotNull MiniMessageSource msgSrc, boolean newState, boolean alwaysSendMessage) {
+    static boolean changeAutoStore(@NotNull AutoStoreSetting setting, @NotNull CommandSender sender, boolean newState, boolean alwaysSendMessage) {
         boolean change = setting.isEnabled() != newState;
 
         if (change) {
@@ -39,7 +37,7 @@ final class AutoStoreCommandUtil {
         }
 
         if (change || alwaysSendMessage) {
-            (newState ? AUTOSTORE_ENABLED : AUTOSTORE_DISABLED).source(msgSrc).send(sender);
+            sender.sendMessage(newState ? AUTOSTORE_ENABLED : AUTOSTORE_DISABLED);
         }
 
         return change;

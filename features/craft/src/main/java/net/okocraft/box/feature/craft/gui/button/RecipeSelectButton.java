@@ -1,6 +1,6 @@
 package net.okocraft.box.feature.craft.gui.button;
 
-import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
+import dev.siroshun.mcmsgdef.MessageKey;
 import net.kyori.adventure.text.format.TextDecoration.State;
 import net.okocraft.box.feature.craft.gui.menu.CraftMenu;
 import net.okocraft.box.feature.craft.gui.util.IngredientRenderer;
@@ -25,7 +25,7 @@ import static net.okocraft.box.feature.gui.api.lang.Styles.NO_DECORATION_YELLOW;
 
 public class RecipeSelectButton implements Button {
 
-    private static final MiniMessageBase CLICK_TO_SHOW_DETAILS = MiniMessageBase.messageKey(DisplayKeys.CLICK_TO_SHOW_DETAILS);
+    private static final MessageKey CLICK_TO_SHOW_DETAILS = MessageKey.key(DisplayKeys.CLICK_TO_SHOW_DETAILS);
 
     private static final TypedKey<Boolean> SHOW_DETAILS = TypedKey.of(Boolean.class, "recipe_show_details");
 
@@ -62,8 +62,8 @@ public class RecipeSelectButton implements Button {
                     .append(text(this.recipe.amount(), NO_DECORATION_AQUA))
             )
             .loreEmptyLineIf(simple)
-            .loreLineIf(simple, () -> CLICK_TO_SHOW_DETAILS.create(session.getMessageSource()))
-            .createItem(this.recipe.result().getOriginal().getType());
+            .loreLineIf(simple, () -> CLICK_TO_SHOW_DETAILS)
+            .createItem(session.getViewer(), this.recipe.result().getOriginal().getType());
     }
 
     @Override

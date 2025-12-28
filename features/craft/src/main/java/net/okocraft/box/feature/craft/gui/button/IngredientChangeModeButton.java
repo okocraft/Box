@@ -1,6 +1,6 @@
 package net.okocraft.box.feature.craft.gui.button;
 
-import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
+import dev.siroshun.mcmsgdef.MessageKey;
 import net.okocraft.box.feature.craft.lang.DisplayKeys;
 import net.okocraft.box.feature.gui.api.button.Button;
 import net.okocraft.box.feature.gui.api.button.ClickResult;
@@ -14,8 +14,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class IngredientChangeModeButton implements Button {
 
-    private static final MiniMessageBase EACH_INGREDIENT_MODE = MiniMessageBase.messageKey(DisplayKeys.EACH_INGREDIENT_MODE);
-    private static final MiniMessageBase ALL_INGREDIENT_MODE = MiniMessageBase.messageKey(DisplayKeys.ALL_INGREDIENT_MODE);
+    private static final MessageKey EACH_INGREDIENT_MODE = MessageKey.key(DisplayKeys.EACH_INGREDIENT_MODE);
+    private static final MessageKey ALL_INGREDIENT_MODE = MessageKey.key(DisplayKeys.ALL_INGREDIENT_MODE);
 
     private final int slot;
 
@@ -32,8 +32,8 @@ public class IngredientChangeModeButton implements Button {
     public @NotNull ItemStack createIcon(@NotNull PlayerSession session) {
         boolean changePerIngredientMode = session.getData(IngredientButton.CHANGE_PER_INGREDIENT) != null;
         return ItemEditor.create()
-            .displayName((changePerIngredientMode ? EACH_INGREDIENT_MODE : ALL_INGREDIENT_MODE).create(session.getMessageSource()))
-            .createItem(changePerIngredientMode ? Material.FIREWORK_STAR : Material.FIRE_CHARGE);
+            .displayName(changePerIngredientMode ? EACH_INGREDIENT_MODE : ALL_INGREDIENT_MODE)
+            .createItem(session.getViewer(), changePerIngredientMode ? Material.FIREWORK_STAR : Material.FIRE_CHARGE);
     }
 
     @Override

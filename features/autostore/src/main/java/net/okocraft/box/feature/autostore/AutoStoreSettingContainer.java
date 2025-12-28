@@ -1,11 +1,11 @@
 package net.okocraft.box.feature.autostore;
 
-import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
 import dev.siroshun.configapi.core.node.IntArray;
 import dev.siroshun.configapi.core.node.ListNode;
 import dev.siroshun.configapi.core.node.MapNode;
 import dev.siroshun.configapi.core.node.NumberValue;
 import dev.siroshun.event4j.api.priority.Priority;
+import dev.siroshun.mcmsgdef.MessageKey;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.kyori.adventure.key.Key;
@@ -53,7 +53,7 @@ class AutoStoreSettingContainer implements AutoStoreSettingProvider {
         BoxAPI.api().getCustomDataManager().saveData(createKey(setting.getUuid()), serialize(setting));
     }
 
-    void registerBoxPlayerListener(@NotNull MiniMessageBase loadErrorMessage) {
+    void registerBoxPlayerListener(@NotNull MessageKey loadErrorMessage) {
         this.listenerHolder.subscribeAll(subscriber ->
             subscriber.add(PlayerLoadEvent.class, PLAYER_LISTENER_KEY, event -> this.load(event.getBoxPlayer().getPlayer(), loadErrorMessage), Priority.NORMAL)
                 .add(PlayerUnloadEvent.class, PLAYER_LISTENER_KEY, event -> this.unload(event.getBoxPlayer().getPlayer()), Priority.NORMAL)
@@ -64,12 +64,12 @@ class AutoStoreSettingContainer implements AutoStoreSettingProvider {
         this.listenerHolder.unsubscribeAll();
     }
 
-    void load(@NotNull Player player, @NotNull MiniMessageBase loadErrorMessage) {
+    void load(@NotNull Player player, @NotNull MessageKey loadErrorMessage) {
         try {
             this.settingMap.put(player.getUniqueId(), this.load(player.getUniqueId()));
         } catch (Exception e) {
             BoxLogger.logger().error("Could not load autostore setting ({})", player.getName(), e);
-            loadErrorMessage.source(BoxAPI.api().getMessageProvider().findSource(player)).send(player);
+            player.sendMessage(loadErrorMessage);
         }
     }
 

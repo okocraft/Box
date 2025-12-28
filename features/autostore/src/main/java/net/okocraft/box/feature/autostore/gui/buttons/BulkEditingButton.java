@@ -1,6 +1,6 @@
 package net.okocraft.box.feature.autostore.gui.buttons;
 
-import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
+import dev.siroshun.mcmsgdef.MessageKey;
 import io.papermc.paper.registry.keys.SoundEventKeys;
 import it.unimi.dsi.fastutil.ints.IntSet;
 import net.okocraft.box.api.BoxAPI;
@@ -16,8 +16,6 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import static com.github.siroshun09.messages.minimessage.base.MiniMessageBase.messageKey;
-
 public class BulkEditingButton extends AbstractAutoStoreSettingButton {
 
     private static final SoundBase ENABLE_ALL_SOUND = SoundBase.builder().sound(SoundEventKeys.BLOCK_WOODEN_DOOR_OPEN).pitch(1.5f).build();
@@ -25,40 +23,39 @@ public class BulkEditingButton extends AbstractAutoStoreSettingButton {
 
     private static final TypedKey<Boolean> RECENT_OPERATION_KEY = TypedKey.of(Boolean.class, "autostore_bulk_editing_recent");
 
-    private final MiniMessageBase displayName;
-    private final MiniMessageBase clickToEnableAll;
-    private final MiniMessageBase clickToDisableAll;
-    private final MiniMessageBase doubleClickToEnableAll;
-    private final MiniMessageBase doubleClickToDisableAll;
-    private final MiniMessageBase recentAllEnabled;
-    private final MiniMessageBase recentAllDisabled;
+    private final MessageKey displayName;
+    private final MessageKey clickToEnableAll;
+    private final MessageKey clickToDisableAll;
+    private final MessageKey doubleClickToEnableAll;
+    private final MessageKey doubleClickToDisableAll;
+    private final MessageKey recentAllEnabled;
+    private final MessageKey recentAllDisabled;
 
     public BulkEditingButton(@NotNull DefaultMessageCollector collector) {
         super(11);
-        this.displayName = messageKey(collector.add("box.autostore.gui.mode.setting-menu.buttons.bulk-edit.display-name", "<gold>Bulk change operation for per-item mode"));
-        this.clickToEnableAll = messageKey(collector.add("box.autostore.gui.mode.setting-menu.buttons.bulk-edit.click-to-enable-all", "<gray>Click to toggle all items to <green>enabled<gray>"));
-        this.clickToDisableAll = messageKey(collector.add("box.autostore.gui.mode.setting-menu.buttons.bulk-edit.click-to-disable-all", "<gray>Click to toggle all items to <red>disabled<gray>"));
-        this.doubleClickToEnableAll = messageKey(collector.add("box.autostore.gui.mode.setting-menu.buttons.bulk-edit.double-click-to-enable-all", "<gray>Double-click to toggle all items to <green>enabled<gray>"));
-        this.doubleClickToDisableAll = messageKey(collector.add("box.autostore.gui.mode.setting-menu.buttons.bulk-edit.double-click-to-disable-all", "<gray>Double-click to toggle all items to <red>disabled<gray>"));
-        this.recentAllEnabled = messageKey(collector.add("box.autostore.gui.mode.setting-menu.buttons.bulk-edit.recently-enabled", "<gray>Recent operation: <green>All enabled"));
-        this.recentAllDisabled = messageKey(collector.add("box.autostore.gui.mode.setting-menu.buttons.bulk-edit.recently-disabled", "<gray>Recent operation: <red>All disabled"));
+        this.displayName = MessageKey.key(collector.add("box.autostore.gui.mode.setting-menu.buttons.bulk-edit.display-name", "<gold>Bulk change operation for per-item mode"));
+        this.clickToEnableAll = MessageKey.key(collector.add("box.autostore.gui.mode.setting-menu.buttons.bulk-edit.click-to-enable-all", "<gray>Click to toggle all items to <green>enabled<gray>"));
+        this.clickToDisableAll = MessageKey.key(collector.add("box.autostore.gui.mode.setting-menu.buttons.bulk-edit.click-to-disable-all", "<gray>Click to toggle all items to <red>disabled<gray>"));
+        this.doubleClickToEnableAll = MessageKey.key(collector.add("box.autostore.gui.mode.setting-menu.buttons.bulk-edit.double-click-to-enable-all", "<gray>Double-click to toggle all items to <green>enabled<gray>"));
+        this.doubleClickToDisableAll = MessageKey.key(collector.add("box.autostore.gui.mode.setting-menu.buttons.bulk-edit.double-click-to-disable-all", "<gray>Double-click to toggle all items to <red>disabled<gray>"));
+        this.recentAllEnabled = MessageKey.key(collector.add("box.autostore.gui.mode.setting-menu.buttons.bulk-edit.recently-enabled", "<gray>Recent operation: <green>All enabled"));
+        this.recentAllDisabled = MessageKey.key(collector.add("box.autostore.gui.mode.setting-menu.buttons.bulk-edit.recently-disabled", "<gray>Recent operation: <red>All disabled"));
     }
 
     @Override
     public @NotNull ItemStack createIcon(@NotNull PlayerSession session) {
-        var src = session.getMessageSource();
         Boolean recent = session.getData(RECENT_OPERATION_KEY);
         boolean nextClick = recent == null || !recent;
 
         return ItemEditor.create()
-            .displayName(this.displayName.create(src))
+            .displayName(this.displayName)
             .loreEmptyLine()
-            .loreLine((nextClick ? this.clickToEnableAll : this.clickToDisableAll).create(src))
-            .loreLine((!nextClick ? this.doubleClickToEnableAll : this.doubleClickToDisableAll).create(src))
+            .loreLine((nextClick ? this.clickToEnableAll : this.clickToDisableAll))
+            .loreLine((!nextClick ? this.doubleClickToEnableAll : this.doubleClickToDisableAll))
             .loreEmptyLine()
-            .loreLineIf(recent != null, () -> (Boolean.TRUE.equals(recent) ? this.recentAllEnabled : this.recentAllDisabled).create(src))
+            .loreLineIf(recent != null, () -> (Boolean.TRUE.equals(recent) ? this.recentAllEnabled : this.recentAllDisabled))
             .loreEmptyLineIf(recent != null)
-            .createItem(Material.TRIPWIRE_HOOK);
+            .createItem(session.getViewer(), Material.TRIPWIRE_HOOK);
     }
 
     @Override

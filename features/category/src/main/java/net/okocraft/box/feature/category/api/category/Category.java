@@ -35,7 +35,9 @@ public interface Category {
      *
      * @return the list of items that are categorized to this {@link Category}
      */
-    @NotNull @Unmodifiable List<BoxItem> getItems();
+    @NotNull
+    @Unmodifiable
+    List<BoxItem> getItems();
 
     /**
      * Adds a {@link BoxItem} to this {@link Category}.

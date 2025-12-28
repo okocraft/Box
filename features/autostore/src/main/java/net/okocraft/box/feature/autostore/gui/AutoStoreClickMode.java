@@ -1,6 +1,6 @@
 package net.okocraft.box.feature.autostore.gui;
 
-import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
+import dev.siroshun.mcmsgdef.MessageKey;
 import io.papermc.paper.registry.keys.SoundEventKeys;
 import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.message.DefaultMessageCollector;
@@ -26,8 +26,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static com.github.siroshun09.messages.minimessage.base.MiniMessageBase.messageKey;
-
 public class AutoStoreClickMode implements BoxItemClickMode {
 
     private static final SoundBase ENABLE_SOUND = SoundBase.builder().sound(SoundEventKeys.BLOCK_WOODEN_BUTTON_CLICK_ON).pitch(1.5f).build();
@@ -35,18 +33,18 @@ public class AutoStoreClickMode implements BoxItemClickMode {
 
     private final AutoStoreSettingProvider container;
 
-    private final MiniMessageBase displayName;
-    private final MiniMessageBase itemEnabled;
-    private final MiniMessageBase itemDisabled;
-    private final MiniMessageBase settingMenuButtonDisplayName;
+    private final MessageKey displayName;
+    private final MessageKey itemEnabled;
+    private final MessageKey itemDisabled;
+    private final MessageKey settingMenuButtonDisplayName;
     private final AutoStoreSettingMenu settingMenu;
 
     public AutoStoreClickMode(@NotNull AutoStoreSettingProvider container, @NotNull DefaultMessageCollector collector) {
         this.container = container;
-        this.displayName = messageKey(collector.add("box.autostore.gui.mode.display-name", "Auto-store setting"));
-        this.itemEnabled = messageKey(collector.add("box.autostore.gui.mode.item.enabled", "<gray>Auto-store setting: <green>Enabled"));
-        this.itemDisabled = messageKey(collector.add("box.autostore.gui.mode.item.disabled", "<gray>Auto-store setting: <red>Disabled"));
-        this.settingMenuButtonDisplayName = messageKey(collector.add("box.autostore.gui.mode.setting-menu.open-button", "<gray>Open auto-store setting menu"));
+        this.displayName = MessageKey.key(collector.add("box.autostore.gui.mode.display-name", "Auto-store setting"));
+        this.itemEnabled = MessageKey.key(collector.add("box.autostore.gui.mode.item.enabled", "<gray>Auto-store setting: <green>Enabled"));
+        this.itemDisabled = MessageKey.key(collector.add("box.autostore.gui.mode.item.disabled", "<gray>Auto-store setting: <red>Disabled"));
+        this.settingMenuButtonDisplayName = MessageKey.key(collector.add("box.autostore.gui.mode.setting-menu.open-button", "<gray>Open auto-store setting menu"));
         this.settingMenu = new AutoStoreSettingMenu(collector);
     }
 
@@ -57,7 +55,7 @@ public class AutoStoreClickMode implements BoxItemClickMode {
 
     @Override
     public @NotNull Component getDisplayName(@NotNull PlayerSession session) {
-        return this.displayName.create(session.getMessageSource());
+        return this.displayName.asComponent();
     }
 
     @Override
@@ -70,9 +68,9 @@ public class AutoStoreClickMode implements BoxItemClickMode {
             return ItemEditor.create()
                 .copyLoreFrom(icon)
                 .loreEmptyLine()
-                .loreLine((setting.getPerItemModeSetting().isEnabled(item) ? this.itemEnabled : this.itemDisabled).create(session.getMessageSource()))
+                .loreLine(setting.getPerItemModeSetting().isEnabled(item) ? this.itemEnabled : this.itemDisabled)
                 .loreEmptyLine()
-                .applyTo(icon);
+                .applyTo(session.getViewer(), icon);
         }
     }
 
@@ -126,7 +124,7 @@ public class AutoStoreClickMode implements BoxItemClickMode {
         return new AutoStoreSettingMenuButton(this.settingMenuButtonDisplayName, this.settingMenu, slot);
     }
 
-    private record AutoStoreSettingMenuButton(@NotNull MiniMessageBase displayName,
+    private record AutoStoreSettingMenuButton(@NotNull MessageKey displayName,
                                               @NotNull AutoStoreSettingMenu menu,
                                               int slot) implements Button {
 
@@ -138,8 +136,8 @@ public class AutoStoreClickMode implements BoxItemClickMode {
         @Override
         public @NotNull ItemStack createIcon(@NotNull PlayerSession session) {
             return ItemEditor.create()
-                .displayName(this.displayName.create(session.getMessageSource()))
-                .createItem(Material.SUNFLOWER);
+                .displayName(this.displayName)
+                .createItem(session.getViewer(), Material.SUNFLOWER);
         }
 
         @Override
@@ -150,11 +148,11 @@ public class AutoStoreClickMode implements BoxItemClickMode {
 
     private static class AutoStoreSettingMenu implements Menu {
 
-        private final MiniMessageBase title;
+        private final MessageKey title;
         private final List<Button> buttons;
 
         private AutoStoreSettingMenu(@NotNull DefaultMessageCollector collector) {
-            this.title = messageKey(collector.add("box.autostore.gui.mode.setting-menu.title", "<black>Auto-store Settings"));
+            this.title = MessageKey.key(collector.add("box.autostore.gui.mode.setting-menu.title", "<black>Auto-store Settings"));
             this.buttons = List.of(
                 new ModeButton(collector),
                 new BulkEditingButton(collector),
@@ -171,7 +169,7 @@ public class AutoStoreClickMode implements BoxItemClickMode {
 
         @Override
         public @NotNull Component getTitle(@NotNull PlayerSession session) {
-            return this.title.create(session.getMessageSource());
+            return this.title.asComponent();
         }
 
         @Override

@@ -2,7 +2,6 @@ package net.okocraft.box.core.command;
 
 import net.okocraft.box.api.command.base.BoxCommand;
 import net.okocraft.box.api.message.ErrorMessages;
-import net.okocraft.box.api.message.MessageProvider;
 import net.okocraft.box.api.player.BoxPlayerMap;
 import net.okocraft.box.api.scheduler.BoxScheduler;
 import org.bukkit.command.CommandSender;
@@ -21,9 +20,9 @@ public class BoxCommandImpl extends BaseCommand implements BoxCommand {
 
     private final Predicate<Player> canUseBox;
 
-    public BoxCommandImpl(@NotNull MessageProvider messageProvider, @NotNull BoxScheduler scheduler,
+    public BoxCommandImpl(@NotNull BoxScheduler scheduler,
                           @NotNull BoxPlayerMap playerMap, @NotNull Predicate<Player> canUseBox) {
-        super(messageProvider, scheduler);
+        super(scheduler);
         this.playerMap = playerMap;
         this.canUseBox = canUseBox;
     }
@@ -48,15 +47,15 @@ public class BoxCommandImpl extends BaseCommand implements BoxCommand {
         if (sender instanceof Player player) {
             if (this.playerMap.isLoaded(player)) {
                 if (!this.canUseBox.test(player)) {
-                    ErrorMessages.CANNOT_USE_BOX.source(this.messageProvider.findSource(sender)).send(sender);
+                    sender.sendMessage(ErrorMessages.CANNOT_USE_BOX);
                     return;
                 }
             } else {
-                if (this.playerMap.isScheduledLoading(player)) {
-                    ErrorMessages.playerDataIsLoading(null).source(this.messageProvider.findSource(sender)).send(sender);
-                } else {
-                    ErrorMessages.playerDataIsNotLoaded(null).source(this.messageProvider.findSource(sender)).send(sender);
-                }
+                sender.sendMessage(
+                    this.playerMap.isScheduledLoading(player) ?
+                        ErrorMessages.playerDataIsLoading(null) :
+                        ErrorMessages.playerDataIsNotLoaded(null)
+                );
                 return;
             }
         }

@@ -15,7 +15,6 @@ import net.okocraft.box.api.feature.BoxFeature;
 import net.okocraft.box.api.feature.FeatureContext;
 import net.okocraft.box.api.feature.FeatureProvider;
 import net.okocraft.box.api.feature.Reloadable;
-import net.okocraft.box.api.message.MessageProvider;
 import net.okocraft.box.api.model.manager.ItemManager;
 import net.okocraft.box.api.model.manager.StockManager;
 import net.okocraft.box.api.model.manager.UserManager;
@@ -107,7 +106,7 @@ public class BoxCore implements BoxAPI {
 
         this.customDataManager = new BoxCustomDataManager(storage.getCustomDataStorage());
 
-        this.playerMap = new BoxPlayerMapImpl(this.userManager, this.stockManager, this.eventCallers, this.context.scheduler(), this.context.messageProvider());
+        this.playerMap = new BoxPlayerMapImpl(this.userManager, this.stockManager, this.eventCallers, this.context.scheduler());
         this.playerMap.loadAll();
 
         Bukkit.getPluginManager().registerEvents(new PlayerConnectionListener(this.playerMap), this.context.plugin());
@@ -116,8 +115,8 @@ public class BoxCore implements BoxAPI {
 
         BoxLogger.logger().info("Registering commands...");
 
-        this.boxCommand = new BoxCommandImpl(this.context.messageProvider(), this.context.scheduler(), this.playerMap, this::canUseBox);
-        this.boxAdminCommand = new BoxAdminCommandImpl(this.context.messageProvider(), this.context.scheduler());
+        this.boxCommand = new BoxCommandImpl(this.context.scheduler(), this.playerMap, this::canUseBox);
+        this.boxAdminCommand = new BoxAdminCommandImpl(this.context.scheduler());
 
         this.context.commandRegisterer().register(this.boxCommand).register(this.boxAdminCommand);
 
@@ -138,7 +137,6 @@ public class BoxCore implements BoxAPI {
 
     @Override
     public void reload(@NotNull CommandSender sender) {
-        var source = this.context.messageProvider().findSource(sender);
         var playerMessenger = new Consumer<Supplier<Component>>() {
             @Override
             public void accept(Supplier<Component> componentSupplier) {
@@ -154,9 +152,9 @@ public class BoxCore implements BoxAPI {
 
         try {
             this.context.config().reload();
-            CoreMessages.CONFIG_RELOADED_MSG.apply(Config.FILENAME).source(source).send(sender);
+            sender.sendMessage(CoreMessages.CONFIG_RELOADED_MSG.apply(Config.FILENAME));
         } catch (Throwable e) {
-            playerMessenger.accept(() -> CoreMessages.CONFIG_RELOAD_FAILURE.apply(Config.FILENAME, e).source(source).message());
+            playerMessenger.accept(() -> CoreMessages.CONFIG_RELOAD_FAILURE.apply(Config.FILENAME, e));
             BoxLogger.logger().error("Could not reload {}", Config.FILENAME, e);
         }
 
@@ -164,9 +162,9 @@ public class BoxCore implements BoxAPI {
 
         try {
             this.context.messageProvider().load();
-            CoreMessages.MESSAGE_RELOADED_MSG.source(source).send(sender);
+            sender.sendMessage(CoreMessages.MESSAGE_RELOADED_MSG);
         } catch (Throwable e) {
-            playerMessenger.accept(() -> CoreMessages.MESSAGES_RELOAD_FAILURE.apply(e).source(source).message());
+            playerMessenger.accept(() -> CoreMessages.MESSAGES_RELOAD_FAILURE.apply(e));
             BoxLogger.logger().error("Could not reload messages", e);
         }
 
@@ -178,7 +176,7 @@ public class BoxCore implements BoxAPI {
                     reloadable.reload(featureReloadContext);
                     this.eventCallers.sync().call(new FeatureEvent(feature, FeatureEvent.Type.RELOAD));
                 } catch (Throwable e) {
-                    playerMessenger.accept(() -> CoreMessages.FEATURE_RELOAD_FAILURE.apply(feature, e).source(source).message());
+                    playerMessenger.accept(() -> CoreMessages.FEATURE_RELOAD_FAILURE.apply(feature, e));
                     BoxLogger.logger().error("Could not reload {}", feature.getName(), e);
                 }
             }
@@ -193,12 +191,6 @@ public class BoxCore implements BoxAPI {
     public @NotNull Path getPluginDirectory() {
         return this.context.dataDirectory();
     }
-
-    @Override
-    public @NotNull MessageProvider getMessageProvider() {
-        return this.context.messageProvider();
-    }
-
 
     @Override
     public @NotNull EventCallerProvider getEventCallers() {

@@ -1,6 +1,6 @@
 package net.okocraft.box.feature.gui.api.buttons;
 
-import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
+import dev.siroshun.mcmsgdef.MessageKey;
 import io.papermc.paper.registry.keys.SoundEventKeys;
 import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.feature.gui.api.button.Button;
@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 public record CloseButton(int slot) implements Button {
 
     private static final SoundBase CLOSE_SOUND = SoundBase.builder().sound(SoundEventKeys.BLOCK_CHEST_CLOSE).pitch(1.5f).build();
-    private static final MiniMessageBase DISPLAY_NAME = MiniMessageBase.messageKey(DisplayKeys.CLOSE);
+    private static final MessageKey DISPLAY_NAME = MessageKey.key(DisplayKeys.CLOSE);
 
     @Override
     public int getSlot() {
@@ -26,7 +26,7 @@ public record CloseButton(int slot) implements Button {
 
     @Override
     public @NotNull ItemStack createIcon(@NotNull PlayerSession session) {
-        return ItemEditor.create().displayName(DISPLAY_NAME.create(session.getMessageSource())).createItem(Material.OAK_DOOR);
+        return ItemEditor.create().displayName(DISPLAY_NAME).createItem(session.getViewer(), Material.OAK_DOOR);
     }
 
     @Override

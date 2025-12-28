@@ -1,6 +1,6 @@
 package net.okocraft.box.feature.gui.api.buttons.amount;
 
-import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
+import dev.siroshun.mcmsgdef.MessageKey;
 import io.papermc.paper.registry.keys.SoundEventKeys;
 import net.kyori.adventure.text.Component;
 import net.okocraft.box.feature.gui.api.button.ClickResult;
@@ -19,13 +19,13 @@ public class UnitChangeButton extends AmountModificationButton {
 
     private static final SoundBase RESET_SOUND = SoundBase.builder().sound(SoundEventKeys.ENTITY_EXPERIENCE_ORB_PICKUP).pitch(1.5f).build();
 
-    private final MiniMessageBase displayName;
-    private final MiniMessageBase clickToResetAmount;
+    private final MessageKey displayName;
+    private final MessageKey clickToResetAmount;
     private final ClickResult returningResult;
 
     public UnitChangeButton(int slot, @NotNull TypedKey<Amount> dataKey,
-                            @NotNull MiniMessageBase displayName,
-                            @NotNull MiniMessageBase clickToResetAmount,
+                            @NotNull MessageKey displayName,
+                            @NotNull MessageKey clickToResetAmount,
                             @NotNull ClickResult returningResult) {
         super(slot, dataKey);
 
@@ -36,7 +36,7 @@ public class UnitChangeButton extends AmountModificationButton {
 
     @Override
     public @NotNull ItemStack createIcon(@NotNull PlayerSession session) {
-        var editor = ItemEditor.create().displayName(this.displayName.create(session.getMessageSource()));
+        var editor = ItemEditor.create().displayName(this.displayName);
         var currentUnit = this.getOrCreateAmount(session).getUnit();
 
         for (var unit : Amount.Unit.values()) {
@@ -49,8 +49,8 @@ public class UnitChangeButton extends AmountModificationButton {
         }
 
         return editor.loreEmptyLine()
-            .loreLine(this.clickToResetAmount.create(session.getMessageSource()))
-            .createItem(Material.WHITE_STAINED_GLASS_PANE);
+            .loreLine(this.clickToResetAmount)
+            .createItem(session.getViewer(), Material.WHITE_STAINED_GLASS_PANE);
     }
 
     @Override

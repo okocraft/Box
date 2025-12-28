@@ -1,7 +1,6 @@
 package net.okocraft.box.api.command;
 
-import com.github.siroshun09.messages.minimessage.source.MiniMessageSource;
-import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
@@ -38,10 +37,9 @@ public interface Command {
     /**
      * Gets the helps.
      *
-     * @param msgSrc a {@link MiniMessageSource}
      * @return the helps
      */
-    @NotNull Component getHelp(@NotNull MiniMessageSource msgSrc);
+    @NotNull ComponentLike getHelp();
 
     /**
      * Executes the command.

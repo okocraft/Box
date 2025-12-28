@@ -1,6 +1,6 @@
 package net.okocraft.box.feature.craft;
 
-import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
+import dev.siroshun.mcmsgdef.MessageKey;
 import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.feature.AbstractBoxFeature;
 import net.okocraft.box.api.feature.BoxFeature;
@@ -24,14 +24,14 @@ public class CraftFeature extends AbstractBoxFeature implements Reloadable {
 
     private final CraftMode craftMode;
     private final CraftCommand craftCommand;
-    private final MiniMessageBase reloaded;
+    private final MessageKey reloaded;
 
     public CraftFeature(@NotNull FeatureContext.Registration context) {
         super("craft");
         DisplayKeys.addDefaults(context.defaultMessageCollector());
         this.craftMode = new CraftMode(context.defaultMessageCollector());
         this.craftCommand = new CraftCommand(context.defaultMessageCollector());
-        this.reloaded = MiniMessageBase.messageKey(context.defaultMessageCollector().add("box.craft.reloaded", "<gray>Item recipes have been reloaded."));
+        this.reloaded = MessageKey.key(context.defaultMessageCollector().add("box.craft.reloaded", "<gray>Item recipes have been reloaded."));
     }
 
     @Override
@@ -64,7 +64,7 @@ public class CraftFeature extends AbstractBoxFeature implements Reloadable {
     public void reload(@NotNull FeatureContext.Reloading context) throws IOException {
         this.disable(context.asDisabling());
         this.enable(context.asEnabling());
-        this.reloaded.source(BoxAPI.api().getMessageProvider().findSource(context.commandSender())).send(context.commandSender());
+        context.commandSender().sendMessage(this.reloaded);
     }
 
     @Override

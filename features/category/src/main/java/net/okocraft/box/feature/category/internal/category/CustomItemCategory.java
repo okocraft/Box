@@ -1,8 +1,7 @@
 package net.okocraft.box.feature.category.internal.category;
 
-import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
+import dev.siroshun.mcmsgdef.MessageKey;
 import net.kyori.adventure.text.Component;
-import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.message.DefaultMessageCollector;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.feature.category.api.registry.CategoryRegistry;
@@ -23,7 +22,7 @@ public final class CustomItemCategory extends AbstractCategory {
     }
 
     private final CategoryRegistry registry;
-    private final MiniMessageBase displayName = MiniMessageBase.messageKey(DISPLAY_NAME_KEY);
+    private final MessageKey displayName = MessageKey.key(DISPLAY_NAME_KEY);
 
     public CustomItemCategory(CategoryRegistry registry) {
         this.registry = registry;
@@ -36,7 +35,7 @@ public final class CustomItemCategory extends AbstractCategory {
 
     @Override
     public @NotNull Component getDisplayName(@NotNull Player viewer) {
-        return this.displayName.create(BoxAPI.api().getMessageProvider().findSource(viewer));
+        return this.displayName.asComponent();
     }
 
     @Override

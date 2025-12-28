@@ -20,7 +20,7 @@ record EmptyButton(Material material, int slot) implements Button {
         return ItemEditor.create()
             .displayName(Component.empty())
             .clearLore()
-            .createItem(this.material);
+            .createItem(session.getViewer(), this.material);
     }
 
     @Override

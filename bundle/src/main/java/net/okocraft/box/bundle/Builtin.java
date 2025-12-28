@@ -1,6 +1,6 @@
 package net.okocraft.box.bundle;
 
-import com.github.siroshun09.messages.api.util.PropertiesFile;
+import dev.siroshun.mcmsgdef.file.PropertiesFile;
 import net.okocraft.box.bootstrap.BoxBootstrapContext;
 import net.okocraft.box.feature.autostore.AutoStoreFeature;
 import net.okocraft.box.feature.bemode.BEModeFeature;

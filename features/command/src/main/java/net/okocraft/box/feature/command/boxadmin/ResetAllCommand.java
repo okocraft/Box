@@ -1,9 +1,7 @@
 package net.okocraft.box.feature.command.boxadmin;
 
-import com.github.siroshun09.messages.minimessage.arg.Arg1;
-import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
-import com.github.siroshun09.messages.minimessage.source.MiniMessageSource;
-import net.kyori.adventure.text.Component;
+import dev.siroshun.mcmsgdef.MessageKey;
+import net.kyori.adventure.text.ComponentLike;
 import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.command.AbstractCommand;
 import net.okocraft.box.api.event.user.UserDataResetEvent;
@@ -22,8 +20,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static com.github.siroshun09.messages.minimessage.arg.Arg1.arg1;
-import static com.github.siroshun09.messages.minimessage.base.MiniMessageBase.messageKey;
 import static net.okocraft.box.api.message.Placeholders.PLAYER_NAME;
 
 public class ResetAllCommand extends AbstractCommand {
@@ -38,28 +34,26 @@ public class ResetAllCommand extends AbstractCommand {
 
     private final Map<CommandSender, BoxUser> confirmationMap = new ConcurrentHashMap<>();
 
-    private final Arg1<String> successSender;
-    private final Arg1<String> successTarget;
-    private final MiniMessageBase cancel;
-    private final Arg1<String> confirmation;
-    private final MiniMessageBase help;
+    private final MessageKey.Arg1<String> successSender;
+    private final MessageKey.Arg1<String> successTarget;
+    private final MessageKey cancel;
+    private final MessageKey.Arg1<String> confirmation;
+    private final MessageKey help;
 
     public ResetAllCommand(@NotNull DefaultMessageCollector collector) {
         super("resetall", "box.admin.command.resetall");
-        this.successSender = arg1(collector.add("box.command.boxadmin.resetall.success.sender", "<aqua><player><gray>'s Box data have been reset."), PLAYER_NAME);
-        this.successTarget = arg1(collector.add("box.command.boxadmin.resetall.success.target", "<gray>Your Box data have been reset by <aqua><player_name><gray>."), PLAYER_NAME);
-        this.cancel = messageKey(collector.add("box.command.boxadmin.resetall.cancel", "<gray>Cancelled reset operation."));
-        this.confirmation = arg1(collector.add("box.command.boxadmin.resetall.confirmation", DEFAULT_CONFIRMATION_MESSAGE), PLAYER_NAME);
-        this.help = messageKey(collector.add("box.command.boxadmin.resetall.help", "<aqua>/boxadmin resetall <player><dark_gray> - <gray>Resets player's data"));
+        this.successSender = MessageKey.arg1(collector.add("box.command.boxadmin.resetall.success.sender", "<aqua><player><gray>'s Box data have been reset."), PLAYER_NAME);
+        this.successTarget = MessageKey.arg1(collector.add("box.command.boxadmin.resetall.success.target", "<gray>Your Box data have been reset by <aqua><player_name><gray>."), PLAYER_NAME);
+        this.cancel = MessageKey.key(collector.add("box.command.boxadmin.resetall.cancel", "<gray>Cancelled reset operation."));
+        this.confirmation = MessageKey.arg1(collector.add("box.command.boxadmin.resetall.confirmation", DEFAULT_CONFIRMATION_MESSAGE), PLAYER_NAME);
+        this.help = MessageKey.key(collector.add("box.command.boxadmin.resetall.help", "<aqua>/boxadmin resetall <player><dark_gray> - <gray>Resets player's data"));
     }
 
     @Override
     public void onCommand(@NotNull CommandSender sender, @NotNull String[] args) {
-        var msgSrc = BoxAPI.api().getMessageProvider().findSource(sender);
-
         if (args.length < 2) {
-            ErrorMessages.NOT_ENOUGH_ARGUMENT.source(msgSrc).send(sender);
-            sender.sendMessage(this.getHelp(msgSrc));
+            sender.sendMessage(ErrorMessages.NOT_ENOUGH_ARGUMENT);
+            sender.sendMessage(this.getHelp());
             return;
         }
 
@@ -70,21 +64,19 @@ public class ResetAllCommand extends AbstractCommand {
 
             BoxAPI.api().getEventCallers().sync().call(new UserDataResetEvent(target));
 
-            this.successSender.apply(target.getName().orElseGet(target.getUUID()::toString)).source(msgSrc).send(sender);
+            sender.sendMessage(this.successSender.apply(target.getName().orElseGet(target.getUUID()::toString)));
 
             var targetPlayer = Bukkit.getPlayer(target.getUUID());
 
             if (targetPlayer != null && !sender.getName().equals(targetPlayer.getName())) {
-                this.successTarget.apply(sender.getName())
-                    .source(BoxAPI.api().getMessageProvider().findSource(targetPlayer))
-                    .send(targetPlayer);
+                targetPlayer.sendMessage(this.successTarget.apply(sender.getName()));
             }
 
             return;
         }
 
         if (CANCEL.equalsIgnoreCase(args[1]) && this.confirmationMap.remove(sender) != null) {
-            this.cancel.source(msgSrc).send(sender);
+            sender.sendMessage(this.cancel);
             return;
         }
 
@@ -92,9 +84,9 @@ public class ResetAllCommand extends AbstractCommand {
 
         if (target != null) {
             this.confirmationMap.put(sender, target);
-            this.confirmation.apply(target.getName().orElseGet(target.getUUID()::toString)).source(msgSrc).send(sender);
+            sender.sendMessage(this.confirmation.apply(target.getName().orElseGet(target.getUUID()::toString)));
         } else {
-            ErrorMessages.PLAYER_NOT_FOUND.apply(args[1]).source(msgSrc).send(sender);
+            sender.sendMessage(ErrorMessages.PLAYER_NOT_FOUND.apply(args[1]));
         }
     }
 
@@ -127,7 +119,7 @@ public class ResetAllCommand extends AbstractCommand {
     }
 
     @Override
-    public @NotNull Component getHelp(@NotNull MiniMessageSource msgSrc) {
-        return this.help.create(msgSrc);
+    public @NotNull ComponentLike getHelp() {
+        return this.help;
     }
 }

@@ -1,7 +1,6 @@
 package net.okocraft.box.feature.gui.api.buttons.amount;
 
-import com.github.siroshun09.messages.minimessage.arg.Arg1;
-import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
+import dev.siroshun.mcmsgdef.MessageKey;
 import io.papermc.paper.registry.keys.SoundEventKeys;
 import net.okocraft.box.feature.gui.api.button.ClickResult;
 import net.okocraft.box.feature.gui.api.session.Amount;
@@ -18,17 +17,17 @@ public class IncreaseAmountButton extends AmountModificationButton {
 
     private static final SoundBase INCREASE_SOUND = SoundBase.builder().sound(SoundEventKeys.BLOCK_WOODEN_BUTTON_CLICK_ON).pitch(1.5f).build();
 
-    private final MiniMessageBase displayName;
-    private final Arg1<Integer> clickToSetLore;
-    private final Arg1<Integer> clickToIncreaseLore;
-    private final Arg1<Integer> currentAmountLore;
+    private final MessageKey displayName;
+    private final MessageKey.Arg1<Integer> clickToSetLore;
+    private final MessageKey.Arg1<Integer> clickToIncreaseLore;
+    private final MessageKey.Arg1<Integer> currentAmountLore;
     private final ClickResult returningResult;
 
     public IncreaseAmountButton(int slot, @NotNull TypedKey<Amount> dataKey,
-                                @NotNull MiniMessageBase displayName,
-                                @NotNull Arg1<Integer> clickToSetLore,
-                                @NotNull Arg1<Integer> clickToIncreaseLore,
-                                @NotNull Arg1<Integer> currentAmountLore,
+                                @NotNull MessageKey displayName,
+                                @NotNull MessageKey.Arg1<Integer> clickToSetLore,
+                                @NotNull MessageKey.Arg1<Integer> clickToIncreaseLore,
+                                @NotNull MessageKey.Arg1<Integer> currentAmountLore,
                                 @NotNull ClickResult returningResult) {
         super(slot, dataKey);
         this.displayName = displayName;
@@ -45,15 +44,15 @@ public class IncreaseAmountButton extends AmountModificationButton {
         var currentAmount = amount.getValue();
 
         return ItemEditor.create()
-            .displayName(this.displayName.create(session.getMessageSource()))
+            .displayName(this.displayName)
             .loreEmptyLine()
-            .loreLine(this.getClickToLore(unit, currentAmount).apply(unit).create(session.getMessageSource()))
+            .loreLine(this.getClickToLore(unit, currentAmount).apply(unit))
             .loreEmptyLine()
-            .loreLine(this.currentAmountLore.apply(currentAmount).create(session.getMessageSource()))
-            .createItem(Material.BLUE_STAINED_GLASS_PANE);
+            .loreLine(this.currentAmountLore.apply(currentAmount))
+            .createItem(session.getViewer(), Material.BLUE_STAINED_GLASS_PANE);
     }
 
-    private @NotNull Arg1<Integer> getClickToLore(int unit, int amount) {
+    private @NotNull MessageKey.Arg1<Integer> getClickToLore(int unit, int amount) {
         return unit != 1 && amount == 1 ? this.clickToSetLore : this.clickToIncreaseLore;
     }
 

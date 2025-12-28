@@ -1,8 +1,8 @@
 package net.okocraft.box.feature.gui.internal.menu;
 
-import com.github.siroshun09.messages.minimessage.arg.Arg1;
-import com.github.siroshun09.messages.minimessage.base.Placeholder;
+import dev.siroshun.mcmsgdef.MessageKey;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.translation.Argument;
 import net.okocraft.box.api.model.stock.StockHolder;
 import net.okocraft.box.feature.category.api.category.Category;
 import net.okocraft.box.feature.category.api.registry.CategoryRegistry;
@@ -24,7 +24,7 @@ public class CategorySelectorMenu extends AbstractPaginatedMenu<Category> {
 
     private static final TypedKey<Integer> CURRENT_PAGE_KEY = PaginatedMenu.createCurrentPageKey("category_selector");
     private static final List<Button> FOOTER;
-    private static final Arg1<StockHolder> TITLE = Arg1.arg1(DisplayKeys.CATEGORY_SELECTOR_MENU_TITLE, Placeholder.component("name", holder -> Component.text(holder.getName())));
+    private static final MessageKey.Arg1<StockHolder> TITLE = MessageKey.arg1(DisplayKeys.CATEGORY_SELECTOR_MENU_TITLE, holder -> Argument.string("name", holder.getName()));
 
     static {
         var footer = new ArrayList<Button>(9);
@@ -46,7 +46,7 @@ public class CategorySelectorMenu extends AbstractPaginatedMenu<Category> {
 
     @Override
     public @NotNull Component getTitle(@NotNull PlayerSession session) {
-        return TITLE.apply(session.getSourceStockHolder()).create(session.getMessageSource());
+        return TITLE.apply(session.getSourceStockHolder()).asComponent();
     }
 
     @Override

@@ -1,8 +1,6 @@
 package net.okocraft.box.feature.autostore.command;
 
-import com.github.siroshun09.messages.minimessage.arg.Arg1;
-import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
-import com.github.siroshun09.messages.minimessage.source.MiniMessageSource;
+import dev.siroshun.mcmsgdef.MessageKey;
 import it.unimi.dsi.fastutil.ints.IntSet;
 import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.message.DefaultMessageCollector;
@@ -22,28 +20,28 @@ import java.util.stream.Stream;
 
 class AutoStoreItemCommand extends AutoStoreSubCommand {
 
-    private final MiniMessageBase perItemModeEnabled;
-    private final MiniMessageBase allEnabled;
-    private final MiniMessageBase allDisabled;
-    private final Arg1<BoxItem> itemEnabled;
-    private final Arg1<BoxItem> itemDisabled;
+    private final MessageKey perItemModeEnabled;
+    private final MessageKey allEnabled;
+    private final MessageKey allDisabled;
+    private final MessageKey.Arg1<BoxItem> itemEnabled;
+    private final MessageKey.Arg1<BoxItem> itemDisabled;
 
     AutoStoreItemCommand(@NotNull DefaultMessageCollector collector) {
         super("item");
-        this.perItemModeEnabled = MiniMessageBase.messageKey(collector.add("box.autostore.command.per-item.mode-changed", "<gray>Auto-store mode is now <aqua>per-item<gray>."));
-        this.allEnabled = MiniMessageBase.messageKey(collector.add("box.autostore.command.per-item.all-enabled", "<gray>Auto-store settings for all items have been <green>enabled<gray>."));
-        this.allDisabled = MiniMessageBase.messageKey(collector.add("box.autostore.command.per-item.all-disabled", "<gray>Auto-store settings for all items have been <red>disabled<gray>."));
-        this.itemEnabled = Arg1.arg1(collector.add("box.autostore.command.per-item.item-enabled", "<gray>Auto-store setting of the item <aqua><item><gray> has been <green>enabled<gray>."), Placeholders.ITEM);
-        this.itemDisabled = Arg1.arg1(collector.add("box.autostore.command.per-item.item-disabled", "<gray>Auto-store setting of the item <aqua><item><gray> has been <red>disabled<gray>."), Placeholders.ITEM);
+        this.perItemModeEnabled = MessageKey.key(collector.add("box.autostore.command.per-item.mode-changed", "<gray>Auto-store mode is now <aqua>per-item<gray>."));
+        this.allEnabled = MessageKey.key(collector.add("box.autostore.command.per-item.all-enabled", "<gray>Auto-store settings for all items have been <green>enabled<gray>."));
+        this.allDisabled = MessageKey.key(collector.add("box.autostore.command.per-item.all-disabled", "<gray>Auto-store settings for all items have been <red>disabled<gray>."));
+        this.itemEnabled = MessageKey.arg1(collector.add("box.autostore.command.per-item.item-enabled", "<gray>Auto-store setting of the item <aqua><item><gray> has been <green>enabled<gray>."), Placeholders.ITEM);
+        this.itemDisabled = MessageKey.arg1(collector.add("box.autostore.command.per-item.item-disabled", "<gray>Auto-store setting of the item <aqua><item><gray> has been <red>disabled<gray>."), Placeholders.ITEM);
     }
 
     @Override
-    void runCommand(@NotNull CommandSender sender, @NotNull String[] args, @NotNull MiniMessageSource msgSrc, @NotNull AutoStoreSetting setting) {
+    void runCommand(@NotNull CommandSender sender, @NotNull String[] args, @NotNull AutoStoreSetting setting) {
         // set all mode false
         if (args.length < 3) {
-            this.perItemModeEnabled.source(msgSrc).send(sender);
+            sender.sendMessage(this.perItemModeEnabled);
 
-            if (AutoStoreCommandUtil.changeAutoStore(setting, sender, msgSrc, true, false) || setting.isAllMode()) {
+            if (AutoStoreCommandUtil.changeAutoStore(setting, sender, true, false) || setting.isAllMode()) {
                 setting.setAllMode(false);
                 AutoStoreCommandUtil.callEvent(setting);
             }
@@ -56,21 +54,21 @@ class AutoStoreItemCommand extends AutoStoreSubCommand {
 
         if (optionalBoxItem.isEmpty()) {
             if (args.length < 4 || !this.isAll(args[2])) {
-                ErrorMessages.ITEM_NOT_FOUND.apply(args[2]).source(msgSrc).send(sender);
+                sender.sendMessage(ErrorMessages.ITEM_NOT_FOUND.apply(args[2]));
                 return;
             }
 
             Boolean result = AutoStoreCommandUtil.getBoolean(args[3]);
             if (result == null) {
-                AutoStoreCommandUtil.NOT_BOOLEAN.apply(args[3]).source(msgSrc).send(sender);
+                sender.sendMessage(AutoStoreCommandUtil.NOT_BOOLEAN.apply(args[3]));
                 return;
             }
 
-            AutoStoreCommandUtil.changeAutoStore(setting, sender, msgSrc, true, false);
-            this.changeToPerItemMode(setting, sender, msgSrc);
+            AutoStoreCommandUtil.changeAutoStore(setting, sender, true, false);
+            this.changeToPerItemMode(setting, sender);
 
             perItemModeSetting.clearAndEnableItems(result ? itemManager.getItemIdList() : IntSet.of());
-            (result ? this.allEnabled : this.allDisabled).source(msgSrc).send(sender);
+            sender.sendMessage(result ? this.allEnabled : this.allDisabled);
 
             AutoStoreCommandUtil.callEvent(setting);
 
@@ -84,7 +82,7 @@ class AutoStoreItemCommand extends AutoStoreSubCommand {
             var temp = AutoStoreCommandUtil.getBoolean(args[3]);
 
             if (temp == null) {
-                AutoStoreCommandUtil.NOT_BOOLEAN.apply(args[3]).source(msgSrc).send(sender);
+                sender.sendMessage(AutoStoreCommandUtil.NOT_BOOLEAN.apply(args[3]));
                 return;
             }
 
@@ -94,10 +92,10 @@ class AutoStoreItemCommand extends AutoStoreSubCommand {
             result = perItemModeSetting.toggleEnabled(boxItem);
         }
 
-        AutoStoreCommandUtil.changeAutoStore(setting, sender, msgSrc, true, false);
-        this.changeToPerItemMode(setting, sender, msgSrc);
+        AutoStoreCommandUtil.changeAutoStore(setting, sender, true, false);
+        this.changeToPerItemMode(setting, sender);
 
-        (result ? this.itemEnabled : this.itemDisabled).apply(boxItem).source(msgSrc).send(sender);
+        sender.sendMessage((result ? this.itemEnabled : this.itemDisabled).apply(boxItem));
         AutoStoreCommandUtil.callEvent(setting);
     }
 
@@ -105,9 +103,9 @@ class AutoStoreItemCommand extends AutoStoreSubCommand {
         return !arg.isEmpty() && arg.length() < 4 && (arg.charAt(0) == 'a' || arg.charAt(0) == 'A');
     }
 
-    private void changeToPerItemMode(@NotNull AutoStoreSetting setting, @NotNull CommandSender sender, @NotNull MiniMessageSource msgSrc) {
+    private void changeToPerItemMode(@NotNull AutoStoreSetting setting, @NotNull CommandSender sender) {
         if (setting.isAllMode()) {
-            this.perItemModeEnabled.source(msgSrc).send(sender);
+            sender.sendMessage(this.perItemModeEnabled);
         }
     }
 

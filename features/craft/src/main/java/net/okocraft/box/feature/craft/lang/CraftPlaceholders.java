@@ -1,10 +1,10 @@
 package net.okocraft.box.feature.craft.lang;
 
-import com.github.siroshun09.messages.minimessage.base.Placeholder;
-import net.kyori.adventure.text.Component;
+import dev.siroshun.mcmsgdef.Placeholder;
+import net.kyori.adventure.text.minimessage.translation.Argument;
 
 public class CraftPlaceholders {
 
-    public static final Placeholder<Integer> TIMES = Placeholder.component("times", Component::text);
+    public static final Placeholder<Integer> TIMES = times -> Argument.numeric("times", times);
 
 }

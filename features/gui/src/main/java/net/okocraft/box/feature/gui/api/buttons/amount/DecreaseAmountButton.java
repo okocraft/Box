@@ -1,7 +1,6 @@
 package net.okocraft.box.feature.gui.api.buttons.amount;
 
-import com.github.siroshun09.messages.minimessage.arg.Arg1;
-import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
+import dev.siroshun.mcmsgdef.MessageKey;
 import io.papermc.paper.registry.keys.SoundEventKeys;
 import net.okocraft.box.feature.gui.api.button.ClickResult;
 import net.okocraft.box.feature.gui.api.session.Amount;
@@ -18,15 +17,15 @@ public class DecreaseAmountButton extends AmountModificationButton {
 
     private static final SoundBase DECREASE_SOUND = SoundBase.builder().sound(SoundEventKeys.BLOCK_WOODEN_BUTTON_CLICK_OFF).pitch(1.5f).build();
 
-    private final MiniMessageBase displayName;
-    private final Arg1<Integer> clickToDecreaseLore;
-    private final Arg1<Integer> currentAmountLore;
+    private final MessageKey displayName;
+    private final MessageKey.Arg1<Integer> clickToDecreaseLore;
+    private final MessageKey.Arg1<Integer> currentAmountLore;
     private final ClickResult returningResult;
 
     public DecreaseAmountButton(int slot, @NotNull TypedKey<Amount> dataKey,
-                                @NotNull MiniMessageBase displayName,
-                                @NotNull Arg1<Integer> clickToDecreaseLore,
-                                @NotNull Arg1<Integer> currentAmountLore,
+                                @NotNull MessageKey displayName,
+                                @NotNull MessageKey.Arg1<Integer> clickToDecreaseLore,
+                                @NotNull MessageKey.Arg1<Integer> currentAmountLore,
                                 @NotNull ClickResult returningResult) {
         super(slot, dataKey);
         this.displayName = displayName;
@@ -40,12 +39,12 @@ public class DecreaseAmountButton extends AmountModificationButton {
         var amount = this.getOrCreateAmount(session);
 
         return ItemEditor.create()
-            .displayName(this.displayName.create(session.getMessageSource()))
+            .displayName(this.displayName)
             .loreEmptyLine()
-            .loreLine(this.clickToDecreaseLore.apply(amount.getUnit().getAmount()).create(session.getMessageSource()))
+            .loreLine(this.clickToDecreaseLore.apply(amount.getUnit().getAmount()))
             .loreEmptyLine()
-            .loreLine(this.currentAmountLore.apply(amount.getValue()).create(session.getMessageSource()))
-            .createItem(Material.RED_STAINED_GLASS_PANE);
+            .loreLine(this.currentAmountLore.apply(amount.getValue()))
+            .createItem(session.getViewer(), Material.RED_STAINED_GLASS_PANE);
     }
 
     @Override

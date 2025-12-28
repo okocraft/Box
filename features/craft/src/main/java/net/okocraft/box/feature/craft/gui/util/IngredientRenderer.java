@@ -1,6 +1,6 @@
 package net.okocraft.box.feature.craft.gui.util;
 
-import com.github.siroshun09.messages.minimessage.base.MiniMessageBase;
+import dev.siroshun.mcmsgdef.MessageKey;
 import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.feature.craft.lang.DisplayKeys;
@@ -21,11 +21,11 @@ import static net.kyori.adventure.text.Component.translatable;
 
 public final class IngredientRenderer {
 
-    private static final MiniMessageBase INGREDIENTS_HEADER = MiniMessageBase.messageKey(DisplayKeys.INGREDIENTS_HEADER);
+    private static final MessageKey INGREDIENTS_HEADER = MessageKey.key(DisplayKeys.INGREDIENTS_HEADER);
 
     public static void render(@NotNull ItemEditor editor, @NotNull PlayerSession session,
                               @NotNull SelectedRecipe recipe, int times) {
-        editor.loreLine(INGREDIENTS_HEADER.create(session.getMessageSource()));
+        editor.loreLine(INGREDIENTS_HEADER);
 
         var ingredientMap = new HashMap<BoxItem, Integer>();
 
@@ -74,7 +74,7 @@ public final class IngredientRenderer {
             ingredientMap.put(ingredient, ingredientMap.getOrDefault(ingredient, 0) + 1);
         }
 
-        editor.loreLine(INGREDIENTS_HEADER.create(session.getMessageSource()));
+        editor.loreLine(INGREDIENTS_HEADER);
 
         int ingredientCounter = 0;
         int ingredientLast = ingredientMap.size();

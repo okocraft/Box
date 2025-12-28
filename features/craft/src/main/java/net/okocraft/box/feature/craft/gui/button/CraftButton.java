@@ -1,6 +1,6 @@
 package net.okocraft.box.feature.craft.gui.button;
 
-import com.github.siroshun09.messages.minimessage.arg.Arg1;
+import dev.siroshun.mcmsgdef.MessageKey;
 import net.okocraft.box.api.message.Placeholders;
 import net.okocraft.box.feature.craft.gui.CurrentRecipe;
 import net.okocraft.box.feature.craft.gui.util.IngredientRenderer;
@@ -28,8 +28,8 @@ import static net.okocraft.box.feature.gui.api.lang.Styles.NO_DECORATION_GRAY;
 
 public class CraftButton implements Button {
 
-    private static final Arg1<Integer> DISPLAY_NAME = Arg1.arg1(DisplayKeys.CRAFT_BUTTON, CraftPlaceholders.TIMES);
-    private static final Arg1<Integer> CURRENT_STOCK = Arg1.arg1(DisplayKeys.CRAFT_BUTTON_CURRENT_STOCK, Placeholders.CURRENT);
+    private static final MessageKey.Arg1<Integer> DISPLAY_NAME = MessageKey.arg1(DisplayKeys.CRAFT_BUTTON, CraftPlaceholders.TIMES);
+    private static final MessageKey.Arg1<Integer> CURRENT_STOCK = MessageKey.arg1(DisplayKeys.CRAFT_BUTTON_CURRENT_STOCK, Placeholders.CURRENT);
 
     private final int slot;
     private final ToIntFunction<PlayerSession> timesFunction;
@@ -60,7 +60,7 @@ public class CraftButton implements Button {
         var recipe = session.getDataOrThrow(CurrentRecipe.DATA_KEY).getSelectedRecipe();
         int times = this.timesFunction.applyAsInt(session);
 
-        var editor = ItemEditor.create().displayName(DISPLAY_NAME.apply(times).create(session.getMessageSource()));
+        var editor = ItemEditor.create().displayName(DISPLAY_NAME.apply(times));
 
         IngredientRenderer.render(editor.loreEmptyLine(), session, recipe, times);
 
@@ -75,8 +75,9 @@ public class CraftButton implements Button {
                     .append(text(recipe.amount() * times, NO_DECORATION_AQUA))
             )
             .loreEmptyLine()
-            .loreLine(CURRENT_STOCK.apply(session.getSourceStockHolder().getAmount(recipe.result())).create(session.getMessageSource()))
+            .loreLine(CURRENT_STOCK.apply(session.getSourceStockHolder().getAmount(recipe.result())))
             .createItem(
+                session.getViewer(),
                 this.customTimes ?
                     canCraft ? Material.GLOWSTONE_DUST : Material.GUNPOWDER :
                     canCraft ? Material.LIME_DYE : Material.GRAY_DYE
