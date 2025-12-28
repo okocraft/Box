@@ -9,6 +9,7 @@ import net.okocraft.box.feature.command.CommandFeature;
 import net.okocraft.box.feature.craft.CraftFeature;
 import net.okocraft.box.feature.gui.GuiFeature;
 import net.okocraft.box.feature.notifier.NotifierFeature;
+import net.okocraft.box.feature.stats.StatsFeature;
 import net.okocraft.box.feature.stick.StickFeature;
 import net.okocraft.box.storage.api.registry.StorageRegistry;
 import net.okocraft.box.storage.implementation.database.database.mysql.MySQLDatabase;
@@ -36,7 +37,8 @@ public final class Builtin {
             .addFeature(AutoStoreFeature::new)
             .addFeature(CraftFeature::new)
             .addFeature(StickFeature::new)
-            .addFeature(NotifierFeature::new);
+            .addFeature(NotifierFeature::new)
+            .addFeature(StatsFeature::new);
     }
 
     public static void storages(@NotNull StorageRegistry registry) {

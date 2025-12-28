@@ -46,6 +46,7 @@ sequenceOf(
     "craft",
     "gui",
     "notifier",
+    "stats",
     "stick"
 ).forEach {
     include("$boxPrefix-$it-$featureSuffix")
