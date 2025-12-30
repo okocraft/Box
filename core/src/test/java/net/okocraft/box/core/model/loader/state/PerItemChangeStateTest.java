@@ -15,24 +15,24 @@ class PerItemChangeStateTest extends AbstractChangeStateTest {
         StockHolder stockHolder = TestStockHolder.create(STOCK_DATA);
         PerItemChangeState state = new PerItemChangeState(storage);
 
-        checkSize(state, 0);
+        this.checkSize(state, 0);
 
         state.rememberChange(ITEM_ID);
 
-        checkSize(state, 1);
+        this.checkSize(state, 1);
 
         state.saveChanges(stockHolder);
 
-        checkSize(state, 0);
+        this.checkSize(state, 0);
         this.checkStorageAmount(storage, stockHolder, ITEM_AMOUNT);
 
         state.rememberReset(stockHolder.reset());
 
-        checkSize(state, 1);
+        this.checkSize(state, 1);
 
         state.saveChanges(stockHolder);
 
-        checkSize(state, 0);
+        this.checkSize(state, 0);
         this.checkStorageAmount(storage, stockHolder, 0);
     }
 

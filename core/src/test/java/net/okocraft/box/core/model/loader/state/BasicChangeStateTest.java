@@ -15,24 +15,24 @@ class BasicChangeStateTest extends AbstractChangeStateTest {
         StockHolder stockHolder = TestStockHolder.create(STOCK_DATA);
         BasicChangeState state = new BasicChangeState(storage);
 
-        checkChanges(state, false);
+        this.checkChanges(state, false);
 
         state.rememberChange(ITEM_ID);
 
-        checkChanges(state, true);
+        this.checkChanges(state, true);
 
         state.saveChanges(stockHolder);
 
-        checkChanges(state, false);
+        this.checkChanges(state, false);
         this.checkStorageAmount(storage, stockHolder, ITEM_AMOUNT);
 
         state.rememberReset(stockHolder.reset());
 
-        checkChanges(state, true);
+        this.checkChanges(state, true);
 
         state.saveChanges(stockHolder);
 
-        checkChanges(state, false);
+        this.checkChanges(state, false);
         this.checkStorageAmount(storage, stockHolder, 0);
     }
 

@@ -28,12 +28,12 @@ class LoadingPersonalStockHolderTest {
 
     @Test
     void testSavingWithBasicChangeState() throws Exception {
-        testSaving(new MemoryStockStorage());
+        this.testSaving(new MemoryStockStorage());
     }
 
     @Test
     void testSavingWithPerItemChangeState() throws Exception {
-        testSaving(new MemoryPartialSavingStockStorage());
+        this.testSaving(new MemoryPartialSavingStockStorage());
     }
 
     void testSaving(@NotNull StockStorage storage) throws Exception {
@@ -47,12 +47,12 @@ class LoadingPersonalStockHolderTest {
 
     @Test
     void testUnloadWithBasicChangeState() throws Exception {
-        testUnload(new MemoryStockStorage());
+        this.testUnload(new MemoryStockStorage());
     }
 
     @Test
     void testUnloadWithPerItemChangeState() throws Exception {
-        testUnload(new MemoryPartialSavingStockStorage());
+        this.testUnload(new MemoryPartialSavingStockStorage());
     }
 
     void testUnload(@NotNull StockStorage storage) throws Exception {
