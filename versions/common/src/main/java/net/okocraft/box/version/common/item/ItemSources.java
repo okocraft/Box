@@ -19,6 +19,7 @@ import org.bukkit.inventory.ItemType;
 import org.bukkit.potion.PotionType;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.IntStream;
@@ -33,7 +34,7 @@ public final class ItemSources {
         return registry(RegistryKey.ITEM).stream()
             .filter(Predicate.not(excludedTypes::contains))
             .filter(world::isEnabled)
-            .map(type -> new DefaultItem(ItemNameGenerator.key(type), ItemStack.of(type.asMaterial(), 1))); // FIXME: remove asMaterial in the future
+            .map(type -> new DefaultItem(ItemNameGenerator.key(type), ItemStack.of(Objects.requireNonNull(type.asMaterial()), 1))); // FIXME: remove asMaterial in the future
     }
 
     public static @NotNull Stream<DefaultItem> potions() {
