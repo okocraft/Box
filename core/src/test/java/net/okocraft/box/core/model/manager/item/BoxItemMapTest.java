@@ -70,8 +70,8 @@ class BoxItemMapTest {
         Assertions.assertTrue(itemMap.isRegistered(ITEM.getPlainName()));
         Assertions.assertSame(ITEM, itemMap.getByItemName(ITEM.getPlainName()));
         Assertions.assertSame(ITEM, itemMap.getById(ITEM.getInternalId()));
-        Assertions.assertEquals(ITEM.getPlainName(), itemMap.getItemNameList().get(0));
-        Assertions.assertSame(ITEM, itemMap.getItemList().get(0));
+        Assertions.assertEquals(ITEM.getPlainName(), itemMap.getItemNameList().getFirst());
+        Assertions.assertSame(ITEM, itemMap.getItemList().getFirst());
     }
 
     @Test
@@ -84,8 +84,8 @@ class BoxItemMapTest {
         Assertions.assertTrue(itemMap.isRegistered(ITEM.getPlainName()));
         Assertions.assertSame(ITEM, itemMap.getByItemName(ITEM.getPlainName()));
         Assertions.assertSame(ITEM, itemMap.getById(ITEM.getInternalId()));
-        Assertions.assertEquals(ITEM.getPlainName(), itemMap.getItemNameList().get(0));
-        Assertions.assertSame(ITEM, itemMap.getItemList().get(0));
+        Assertions.assertEquals(ITEM.getPlainName(), itemMap.getItemNameList().getFirst());
+        Assertions.assertSame(ITEM, itemMap.getItemList().getFirst());
 
         itemMap.acquireWriteLock();
         DummyItem renamedItem;
@@ -108,8 +108,8 @@ class BoxItemMapTest {
         Assertions.assertNull(itemMap.getByItemName(ITEM.getPlainName()));
         Assertions.assertSame(renamedItem, itemMap.getByItemName(RENAMED_ITEM_NAME));
         Assertions.assertSame(renamedItem, itemMap.getById(ITEM.getInternalId()));
-        Assertions.assertEquals(RENAMED_ITEM_NAME, itemMap.getItemNameList().get(0));
-        Assertions.assertSame(renamedItem, itemMap.getItemList().get(0));
+        Assertions.assertEquals(RENAMED_ITEM_NAME, itemMap.getItemNameList().getFirst());
+        Assertions.assertSame(renamedItem, itemMap.getItemList().getFirst());
     }
 
     private @NotNull BoxItemMap createItemMap() {

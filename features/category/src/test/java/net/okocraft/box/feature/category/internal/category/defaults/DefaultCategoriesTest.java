@@ -68,7 +68,7 @@ class DefaultCategoriesTest {
             List<DefaultCategory> categories = new ArrayList<>(collectNewItems(MCDataVersion.of(5), MCDataVersion.of(10), source));
             categories.removeIf(category -> category.itemNames().isEmpty());
             Assertions.assertEquals(1, categories.size());
-            Assertions.assertEquals(List.of("NEW_ITEM"), categories.get(0).itemNames());
+            Assertions.assertEquals(List.of("NEW_ITEM"), categories.getFirst().itemNames());
         }
 
         {
