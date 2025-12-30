@@ -100,9 +100,8 @@ class ConfigTest {
         Config config = new Config(dir);
         MemoryStorage storage = Assertions.assertInstanceOf(MemoryStorage.class, config.loadAndCreateStorage(registry));
 
-        Assertions.assertNotNull(config.coreSetting());
-        Assertions.assertEquals(config.coreSetting(), new CoreSetting(new StockDataSetting(300, 15), Collections.emptySet(), false));
-        Assertions.assertEquals(storage.getSetting(), new MemoryStorageSetting(true, 10));
+        Assertions.assertEquals(new CoreSetting(new StockDataSetting(300, 15), Collections.emptySet(), false), config.coreSetting());
+        Assertions.assertEquals(new MemoryStorageSetting(true, 10), storage.getSetting());
 
         Assertions.assertEquals(EXPECTED_DEFAULT_CONFIG, Files.readString(config.filepath()));
     }

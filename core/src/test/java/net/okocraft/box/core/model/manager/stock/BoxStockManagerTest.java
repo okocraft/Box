@@ -134,18 +134,18 @@ class BoxStockManagerTest {
 
         manager1.schedulerAutoSaveTask(scheduler);
         scheduler.checkTask(task -> {
-            Assertions.assertEquals(task.delay(), Duration.ofSeconds(1));
-            Assertions.assertEquals(task.interval(), Duration.ofSeconds(1));
-            Assertions.assertEquals(task.type(), ScheduledTask.Type.ASYNC);
+            Assertions.assertEquals(Duration.ofSeconds(1), task.delay());
+            Assertions.assertEquals(Duration.ofSeconds(1), task.interval());
+            Assertions.assertEquals(ScheduledTask.Type.ASYNC, task.type());
         });
 
         BoxStockManager manager2 = new BoxStockManager(new MemoryStockStorage(), new EventCollector(), id -> null, 12, 18, TimeUnit.SECONDS);
 
         manager2.schedulerAutoSaveTask(scheduler);
         scheduler.checkTask(task -> {
-            Assertions.assertEquals(task.delay(), Duration.ofSeconds(6));
-            Assertions.assertEquals(task.interval(), Duration.ofSeconds(6));
-            Assertions.assertEquals(task.type(), ScheduledTask.Type.ASYNC);
+            Assertions.assertEquals(Duration.ofSeconds(6), task.delay());
+            Assertions.assertEquals(Duration.ofSeconds(6), task.interval());
+            Assertions.assertEquals(ScheduledTask.Type.ASYNC, task.type());
         });
     }
 
