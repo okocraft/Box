@@ -40,21 +40,23 @@ public final class NodeAssertion {
      * @param b a second {@link Node}
      */
     public static void assertEquals(@NotNull Node<?> a, @NotNull Node<?> b) {
-        if (a instanceof ListNode listNodeA && b instanceof ListNode listNodeB) {
-            assertEquals(listNodeA, listNodeB);
-        } else if (a instanceof MapNode mapNodeA && b instanceof MapNode mapNodeB) {
-            assertEquals(mapNodeA, mapNodeB);
-        } else if (a instanceof NumberValue numberA && b instanceof NumberValue numberB) {
-            if (numberA.compareTo(numberB) != 0) {
-                fail(a, b);
+        switch (a) {
+            case ListNode listNodeA when b instanceof ListNode listNodeB -> assertEquals(listNodeA, listNodeB);
+            case MapNode mapNodeA when b instanceof MapNode mapNodeB -> assertEquals(mapNodeA, mapNodeB);
+            case NumberValue numberA when b instanceof NumberValue numberB -> {
+                if (numberA.compareTo(numberB) != 0) {
+                    fail(a, b);
+                }
             }
-        } else if (a instanceof ValueNode<?> valueA && b instanceof ValueNode<?> valueB) {
-            if (!a.value().equals(b.value())) {
-                fail(a, b);
+            case ValueNode<?> _ when b instanceof ValueNode<?> _ -> {
+                if (!a.value().equals(b.value())) {
+                    fail(a, b);
+                }
             }
-        } else {
-            if (!a.equals(b)) {
-                fail(a, b);
+            default -> {
+                if (!a.equals(b)) {
+                    fail(a, b);
+                }
             }
         }
     }
