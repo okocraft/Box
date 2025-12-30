@@ -21,8 +21,8 @@ Box には以下のような特徴があります。
 
 ## Requirements
 
-- Java 21+
-- Paper 1.20.5+
+- Java 25+
+- Paper 1.21.2+
 
 ## Installation
 
