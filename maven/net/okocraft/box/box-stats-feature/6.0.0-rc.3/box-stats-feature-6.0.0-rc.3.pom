@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <!-- This module was also published with a richer model, Gradle metadata,  -->
+  <!-- which should be used instead. Do not delete the following line which  -->
+  <!-- is to indicate to Gradle or any Gradle module metadata file consumer  -->
+  <!-- that they should prefer consuming it instead. -->
+  <!-- do_not_remove: published-with-gradle-metadata -->
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>net.okocraft.box</groupId>
+  <artifactId>box-stats-feature</artifactId>
+  <version>6.0.0-rc.3</version>
+  <name>box-stats-feature</name>
+  <description>A Paper plugin to provide virtual containers that can store 2.1 billion items per item.</description>
+  <url>https://github.com/okocraft/Box</url>
+  <licenses>
+    <license>
+      <name>GNU General Public License, Version 3.0</name>
+      <url>https://www.gnu.org/licenses/gpl-3.0.txt</url>
+    </license>
+  </licenses>
+  <developers>
+    <developer>
+      <id>Siroshun09</id>
+      <name>Siroshun09</name>
+    </developer>
+    <developer>
+      <id>lazy_gon</id>
+      <name>lazy_gon</name>
+    </developer>
+  </developers>
+  <scm>
+    <connection>scm:git:https://github.com/okocraft/Box.git</connection>
+    <developerConnection>scm:git@github.com:okocraft/Box.git</developerConnection>
+    <url>https://github.com/okocraft/Box</url>
+  </scm>
+  <issueManagement>
+    <system>GitHub Issues</system>
+    <url>https://github.com/okocraft/Box/issues</url>
+  </issueManagement>
+  <ciManagement>
+    <system>GitHub Actions</system>
+    <url>https://github.com/okocraft/Box/runs</url>
+  </ciManagement>
+  <dependencies>
+    <dependency>
+      <groupId>dev.siroshun.configapi</groupId>
+      <artifactId>configapi-format-yaml</artifactId>
+      <version>5.0.0-rc.2</version>
+      <scope>compile</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.yaml</groupId>
+          <artifactId>snakeyaml</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>dev.siroshun.event4j</groupId>
+      <artifactId>event4j-tree</artifactId>
+      <version>4.1.0</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>dev.siroshun.mcmsgdef</groupId>
+      <artifactId>mcmsgdef</artifactId>
+      <version>1.0.0</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.papermc.paper</groupId>
+      <artifactId>paper-api</artifactId>
+      <version>1.21.11-R0.1-SNAPSHOT</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>dev.siroshun.configapi</groupId>
+      <artifactId>configapi-serialization-record</artifactId>
+      <version>5.0.0-rc.2</version>
+      <scope>runtime</scope>
+    </dependency>
+  </dependencies>
+</project>

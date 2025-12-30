@@ -1,0 +1,172 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "net.okocraft.box",
+    "module": "box-notifier-feature",
+    "version": "6.0.0-rc.3",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "9.2.1"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 25,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api"
+      },
+      "dependencies": [
+        {
+          "group": "dev.siroshun.configapi",
+          "module": "configapi-format-yaml",
+          "version": {
+            "requires": "5.0.0-rc.2"
+          },
+          "excludes": [
+            {
+              "group": "org.yaml",
+              "module": "snakeyaml"
+            }
+          ]
+        },
+        {
+          "group": "dev.siroshun.event4j",
+          "module": "event4j-tree",
+          "version": {
+            "requires": "4.1.0"
+          }
+        },
+        {
+          "group": "dev.siroshun.mcmsgdef",
+          "module": "mcmsgdef",
+          "version": {
+            "requires": "1.0.0"
+          }
+        },
+        {
+          "group": "io.papermc.paper",
+          "module": "paper-api",
+          "version": {
+            "requires": "1.21.11-R0.1-SNAPSHOT"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "box-notifier-feature-6.0.0-rc.3.jar",
+          "url": "box-notifier-feature-6.0.0-rc.3.jar",
+          "size": 6201,
+          "sha512": "a47024ba5d4260cc9294ea44eedd20319688b188921d40c024c5d1ae7108257f09df4a9751b31fe3d84cb645e81076fce7988f3617491ca01845e8d0579c0ee4",
+          "sha256": "218afac303effb31935cda7ea8890023af95e28afb271c362b4e560b75c36382",
+          "sha1": "c328eb71fb71d2bc85c9703bf14789628aa21351",
+          "md5": "c57ab30eb2d42222951e753ad0bc40f8"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 25,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "dependencies": [
+        {
+          "group": "dev.siroshun.configapi",
+          "module": "configapi-serialization-record",
+          "version": {
+            "requires": "5.0.0-rc.2"
+          }
+        },
+        {
+          "group": "dev.siroshun.configapi",
+          "module": "configapi-format-yaml",
+          "version": {
+            "requires": "5.0.0-rc.2"
+          },
+          "excludes": [
+            {
+              "group": "org.yaml",
+              "module": "snakeyaml"
+            }
+          ]
+        },
+        {
+          "group": "dev.siroshun.event4j",
+          "module": "event4j-tree",
+          "version": {
+            "requires": "4.1.0"
+          }
+        },
+        {
+          "group": "dev.siroshun.mcmsgdef",
+          "module": "mcmsgdef",
+          "version": {
+            "requires": "1.0.0"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "box-notifier-feature-6.0.0-rc.3.jar",
+          "url": "box-notifier-feature-6.0.0-rc.3.jar",
+          "size": 6201,
+          "sha512": "a47024ba5d4260cc9294ea44eedd20319688b188921d40c024c5d1ae7108257f09df4a9751b31fe3d84cb645e81076fce7988f3617491ca01845e8d0579c0ee4",
+          "sha256": "218afac303effb31935cda7ea8890023af95e28afb271c362b4e560b75c36382",
+          "sha1": "c328eb71fb71d2bc85c9703bf14789628aa21351",
+          "md5": "c57ab30eb2d42222951e753ad0bc40f8"
+        }
+      ]
+    },
+    {
+      "name": "javadocElements",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "javadoc",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "box-notifier-feature-6.0.0-rc.3-javadoc.jar",
+          "url": "box-notifier-feature-6.0.0-rc.3-javadoc.jar",
+          "size": 4160781,
+          "sha512": "d4129fd0fd25916402c95c23b24da9a6031d5d4378ca111453fae51b6dca8d57829a70d01ba6fb54c0f2170ef0cbb0d3838ce59fe1333961fa4dfbbec03edab2",
+          "sha256": "94b978c1a6498fa0bbc9cc25dc775cf9f039f4d9283bfe5dee966f369d3fbdc6",
+          "sha1": "40c7c6991ddbaae838e4641afad3cd48e733fa60",
+          "md5": "e04eec3494a917d9f21ea1ed8078f626"
+        }
+      ]
+    },
+    {
+      "name": "sourcesElements",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "box-notifier-feature-6.0.0-rc.3-sources.jar",
+          "url": "box-notifier-feature-6.0.0-rc.3-sources.jar",
+          "size": 3637,
+          "sha512": "5b5e1e8a5cc68006b0e8b08e0f333b10b818f46a1e5f09112ed187c16d869cff9017c373383158db1bb6ef0fb608bfa52c9f3777a280e40de8d1cd29e78b81e1",
+          "sha256": "a123a0fee28d2ef55de5d07ba21ab32df27c04f3cb7cda1253c2c654e9ea12f0",
+          "sha1": "7636d9e5f90a654d8ca86750e5821550983aa721",
+          "md5": "aafbf0fd9a96c927b8f76febd1a7826e"
+        }
+      ]
+    }
+  ]
+}
