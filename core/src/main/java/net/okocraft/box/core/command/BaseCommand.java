@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Optional;
 
 public abstract class BaseCommand implements Command, SubCommandHoldable, Listener {
 
@@ -49,7 +50,7 @@ public abstract class BaseCommand implements Command, SubCommandHoldable, Listen
             return;
         }
 
-        var optionalSubCommand = this.subCommandHolder.search(args[0]);
+        Optional<Command> optionalSubCommand = this.subCommandHolder.search(args[0]);
 
         if (optionalSubCommand.isEmpty()) {
             if (!args[0].equalsIgnoreCase("help")) {
@@ -59,7 +60,7 @@ public abstract class BaseCommand implements Command, SubCommandHoldable, Listen
             return;
         }
 
-        var subCommand = optionalSubCommand.get();
+        Command subCommand = optionalSubCommand.get();
 
         if (sender.hasPermission(subCommand.getPermissionNode())) {
             this.scheduler.runAsyncTask(() -> {
@@ -117,7 +118,7 @@ public abstract class BaseCommand implements Command, SubCommandHoldable, Listen
             return;
         }
 
-        var buffer = event.getBuffer();
+        String buffer = event.getBuffer();
 
         if (buffer.isEmpty()) {
             return;
@@ -132,7 +133,7 @@ public abstract class BaseCommand implements Command, SubCommandHoldable, Listen
             return;
         }
 
-        var label = buffer.substring(0, firstSpace).toLowerCase(Locale.ROOT);
+        String label = buffer.substring(0, firstSpace).toLowerCase(Locale.ROOT);
 
         if (!this.getName().equals(label) && !this.getAliases().contains(label)) {
             return;

@@ -29,7 +29,7 @@ public final class VersionedImplGenerator {
         writer.append("package ").append(this.element.getEnclosingElement().toString()).append(";").append(NEWLINE);
         writer.write(NEWLINE);
 
-        for (var i : IMPORTS) {
+        for (String i : IMPORTS) {
             writer.append("import ").append(i).append(";").append(NEWLINE);
         }
         writer.write(NEWLINE);
@@ -51,7 +51,7 @@ public final class VersionedImplGenerator {
     }
 
     private void addDefaultItemVersion(Writer writer) throws IOException {
-        var verField =
+        String verField =
             ElementFilter.fieldsIn(this.element.getEnclosedElements())
                 .stream()
                 .filter(v -> v.getAnnotation(VersionSpecific.Version.class) != null)
@@ -65,7 +65,7 @@ public final class VersionedImplGenerator {
     }
 
     private void addDefaultItems(Writer writer) throws IOException {
-        var method = ElementFilter.methodsIn(this.element.getEnclosedElements())
+        String method = ElementFilter.methodsIn(this.element.getEnclosedElements())
             .stream()
             .filter(e -> e.getAnnotation(VersionSpecific.DefaultItemSource.class) != null)
             .map(e -> this.element.getSimpleName() + "." + e.getSimpleName() + "()")

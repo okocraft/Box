@@ -6,6 +6,7 @@ import net.okocraft.box.feature.gui.api.menu.Menu;
 import net.okocraft.box.feature.gui.api.session.PlayerSession;
 import net.okocraft.box.feature.gui.internal.holder.BoxInventoryHolder;
 import net.okocraft.box.feature.gui.internal.util.XmasChecker;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 public final class MenuOpener {
@@ -16,8 +17,8 @@ public final class MenuOpener {
     public static void open(@NotNull Menu menu, @NotNull PlayerSession session) {
         menu.onOpen(session);
 
-        var holder = new BoxInventoryHolder(menu, session);
-        var viewer = session.getViewer();
+        BoxInventoryHolder holder = new BoxInventoryHolder(menu, session);
+        Player viewer = session.getViewer();
 
         BoxAPI.api().getScheduler().runEntityTask(viewer, () -> {
             viewer.openInventory(holder.getInventory());

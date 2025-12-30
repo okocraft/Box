@@ -7,14 +7,17 @@ import net.okocraft.box.api.message.DefaultMessageCollector;
 import net.okocraft.box.api.message.ErrorMessages;
 import net.okocraft.box.api.message.Placeholders;
 import net.okocraft.box.api.model.item.BoxItem;
+import net.okocraft.box.api.model.manager.ItemManager;
 import net.okocraft.box.api.util.TabCompleter;
 import net.okocraft.box.feature.autostore.setting.AutoStoreSetting;
+import net.okocraft.box.feature.autostore.setting.PerItemSetting;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -48,9 +51,9 @@ class AutoStoreItemCommand extends AutoStoreSubCommand {
             return;
         }
 
-        var perItemModeSetting = setting.getPerItemModeSetting();
-        var itemManager = BoxAPI.api().getItemManager();
-        var optionalBoxItem = itemManager.getBoxItem(args[2]);
+        PerItemSetting perItemModeSetting = setting.getPerItemModeSetting();
+        ItemManager itemManager = BoxAPI.api().getItemManager();
+        Optional<BoxItem> optionalBoxItem = itemManager.getBoxItem(args[2]);
 
         if (optionalBoxItem.isEmpty()) {
             if (args.length < 4 || !this.isAll(args[2])) {
@@ -75,11 +78,11 @@ class AutoStoreItemCommand extends AutoStoreSubCommand {
             return;
         }
 
-        var boxItem = optionalBoxItem.get();
+        BoxItem boxItem = optionalBoxItem.get();
         boolean result;
 
         if (3 < args.length) {
-            var temp = AutoStoreCommandUtil.getBoolean(args[3]);
+            Boolean temp = AutoStoreCommandUtil.getBoolean(args[3]);
 
             if (temp == null) {
                 sender.sendMessage(AutoStoreCommandUtil.NOT_BOOLEAN.apply(args[3]));
@@ -112,7 +115,7 @@ class AutoStoreItemCommand extends AutoStoreSubCommand {
     @Override
     @NotNull List<String> runTabComplete(@NotNull CommandSender sender, @NotNull String[] args) {
         if (args.length == 3) {
-            var result = TabCompleter.itemNames(args[2]);
+            List<String> result = TabCompleter.itemNames(args[2]);
 
             if ("all".startsWith(args[2].toLowerCase(Locale.ROOT))) {
                 result.add("all");

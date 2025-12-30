@@ -7,11 +7,13 @@ import net.okocraft.box.api.command.AbstractCommand;
 import net.okocraft.box.api.message.DefaultMessageCollector;
 import net.okocraft.box.api.message.ErrorMessages;
 import net.okocraft.box.api.model.item.BoxItem;
+import net.okocraft.box.api.model.manager.ItemManager;
 import net.okocraft.box.api.transaction.StockHolderTransaction;
 import net.okocraft.box.api.transaction.TransactionResult;
 import net.okocraft.box.feature.command.event.stock.CommandCauses;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -66,10 +68,10 @@ public class DepositCommand extends AbstractCommand {
             return;
         }
 
-        var itemManager = BoxAPI.api().getItemManager();
+        ItemManager itemManager = BoxAPI.api().getItemManager();
 
         if (args.length == 2) {
-            var arg = args[1];
+            String arg = args[1];
 
             if (arg.equalsIgnoreCase("all")) {
                 this.depositAll(player);
@@ -98,7 +100,7 @@ public class DepositCommand extends AbstractCommand {
         }
 
         if (2 < args.length) {
-            var boxItem = itemManager.getBoxItem(args[1]);
+            Optional<BoxItem> boxItem = itemManager.getBoxItem(args[1]);
 
             if (boxItem.isEmpty()) {
                 sender.sendMessage(ErrorMessages.ITEM_NOT_FOUND.apply(args[1]));
@@ -125,14 +127,14 @@ public class DepositCommand extends AbstractCommand {
                 return;
             }
 
-            var mainHand = player.getInventory().getItemInMainHand();
+            ItemStack mainHand = player.getInventory().getItemInMainHand();
 
             if (mainHand.getType().isAir()) {
                 player.sendMessage(this.isAir);
                 return;
             }
 
-            var boxItem = BoxAPI.api().getItemManager().getBoxItem(mainHand).orElse(null);
+            BoxItem boxItem = BoxAPI.api().getItemManager().getBoxItem(mainHand).orElse(null);
 
             if (boxItem == null) {
                 player.sendMessage(this.itemNotRegistered);
@@ -190,10 +192,10 @@ public class DepositCommand extends AbstractCommand {
         }
 
         if (args.length == 2) {
-            var itemNameFilter = args[1].toLowerCase(Locale.ENGLISH);
+            String itemNameFilter = args[1].toLowerCase(Locale.ENGLISH);
 
             //noinspection ConstantConditions
-            var result =
+            List<@NotNull String> result =
                 Arrays.stream(player.getInventory().getStorageContents())
                     .filter(Objects::nonNull)
                     .map(BoxAPI.api().getItemManager()::getBoxItem)

@@ -33,7 +33,7 @@ final class ModelCache {
     }
 
     static @NotNull IngredientHolder getIngredientHolder(int slot, @NotNull List<ItemStack> patterns) {
-        var holder = new IngredientHolder(
+        IngredientHolder holder = new IngredientHolder(
             slot,
             patterns.stream().map(item ->
                 BoxAPI.api().getItemManager().getBoxItem(item)

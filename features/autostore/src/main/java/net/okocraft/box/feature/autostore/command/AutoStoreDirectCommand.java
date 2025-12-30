@@ -28,7 +28,7 @@ class AutoStoreDirectCommand extends AutoStoreSubCommand {
         boolean enabled;
 
         if (2 < args.length) {
-            var bool = AutoStoreCommandUtil.getBoolean(args[2]);
+            Boolean bool = AutoStoreCommandUtil.getBoolean(args[2]);
             if (bool != null) {
                 enabled = bool;
             } else {

@@ -5,7 +5,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -61,7 +63,7 @@ public abstract class StockTableOperator {
     }
 
     public void initTable(@NotNull Connection connection) throws SQLException {
-        try (var statement = connection.createStatement()) {
+        try (Statement statement = connection.createStatement()) {
             statement.execute(this.createTableStatement);
             statement.execute(this.createIndexStatement);
         }
@@ -72,9 +74,9 @@ public abstract class StockTableOperator {
     }
 
     public void selectStockById(@NotNull Connection connection, int stockId, @NotNull Consumer<StockData> consumer) throws SQLException {
-        try (var statement = connection.prepareStatement(this.selectStockByIdStatement)) {
+        try (PreparedStatement statement = connection.prepareStatement(this.selectStockByIdStatement)) {
             statement.setInt(1, stockId);
-            try (var resultSet = statement.executeQuery()) {
+            try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
                     int itemId = resultSet.getInt("item_id");
                     int amount = resultSet.getInt("amount");
@@ -88,7 +90,7 @@ public abstract class StockTableOperator {
     }
 
     public void deleteStockByStockId(@NotNull Connection connection, int stockId) throws SQLException {
-        try (var statement = connection.prepareStatement(this.deleteStockByIdStatement)) {
+        try (PreparedStatement statement = connection.prepareStatement(this.deleteStockByIdStatement)) {
             statement.setInt(1, stockId);
             statement.execute();
         }
@@ -99,7 +101,7 @@ public abstract class StockTableOperator {
     }
 
     public void insertStockRecords(@NotNull Connection connection, List<StockRecord> records) throws SQLException {
-        try (var statement = connection.prepareStatement(this.stockBulkInserter.createQuery(records.size()))) {
+        try (PreparedStatement statement = connection.prepareStatement(this.stockBulkInserter.createQuery(records.size()))) {
             int index = 1;
             for (StockRecord record : records) {
                 statement.setInt(index++, record.stockId);
@@ -129,14 +131,14 @@ public abstract class StockTableOperator {
     }
 
     public void deleteZeroStock(@NotNull Connection connection) throws SQLException {
-        try (var statement = connection.createStatement()) {
+        try (Statement statement = connection.createStatement()) {
             statement.execute(this.deleteZeroStockStatement);
         }
     }
 
     public int countZeroStock(@NotNull Connection connection) throws SQLException {
-        try (var statement = connection.createStatement();
-             var resultSet = statement.executeQuery(this.countZeroStockStatement)) {
+        try (Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(this.countZeroStockStatement)) {
             return resultSet.next() ? resultSet.getInt(1) : 0;
         }
     }
@@ -148,7 +150,7 @@ public abstract class StockTableOperator {
     public void selectStockByItemId(@NotNull PreparedStatement statement, int itemId, @NotNull BiConsumer<Integer, Integer> consumer) throws SQLException {
         statement.setInt(1, itemId);
 
-        try (var resultSet = statement.executeQuery()) {
+        try (ResultSet resultSet = statement.executeQuery()) {
             while (resultSet.next()) {
                 consumer.accept(resultSet.getInt(1), resultSet.getInt(2));
             }
@@ -163,7 +165,7 @@ public abstract class StockTableOperator {
         statement.setInt(1, stockId);
         statement.setInt(2, itemId);
 
-        try (var resultSet = statement.executeQuery()) {
+        try (ResultSet resultSet = statement.executeQuery()) {
             if (resultSet.next()) {
                 consumer.accept(resultSet.getInt(1));
             } else {
@@ -196,7 +198,7 @@ public abstract class StockTableOperator {
 
     @SuppressWarnings("SqlSourceToSinkFlow")
     public void deleteStockByItemIds(@NotNull Connection connection, @NotNull IntStream stream) throws SQLException {
-        try (var statement = connection.createStatement()) {
+        try (Statement statement = connection.createStatement()) {
             statement.execute(this.deleteStockByItemIdsStatement.replace(":ITEM_IDS:", stream.mapToObj(Integer::toString).collect(Collectors.joining(", "))));
         }
     }
@@ -204,8 +206,8 @@ public abstract class StockTableOperator {
     protected abstract @NotNull String upsertStockStatement(@NotNull String tableName);
 
     public void selectAllStock(@NotNull Connection connection, @NotNull BiConsumer<Integer, StockData> consumer) throws SQLException{
-        try (var statement = connection.prepareStatement(this.selectAllStockStatement)) {
-            try (var resultSet = statement.executeQuery()) {
+        try (PreparedStatement statement = connection.prepareStatement(this.selectAllStockStatement)) {
+            try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
                     int stockId = resultSet.getInt(1);
                     StockData stockData = new StockData(resultSet.getInt(2), resultSet.getInt(3));

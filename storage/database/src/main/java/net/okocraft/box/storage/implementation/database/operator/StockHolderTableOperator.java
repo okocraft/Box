@@ -7,7 +7,10 @@ import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import org.jetbrains.annotations.NotNullByDefault;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 import java.util.UUID;
 
@@ -36,7 +39,7 @@ public class StockHolderTableOperator {
     }
 
     public void initTable(Connection connection) throws SQLException {
-        try (var statement = connection.createStatement()) {
+        try (Statement statement = connection.createStatement()) {
             statement.execute(this.createTableStatement);
         }
     }
@@ -46,19 +49,19 @@ public class StockHolderTableOperator {
     }
 
     public int getStockHolderIdByUUID(Connection connection, UUID uuid) throws SQLException {
-        try (var statement = connection.prepareStatement(this.selectStockHolderIdByUUID)) {
+        try (PreparedStatement statement = connection.prepareStatement(this.selectStockHolderIdByUUID)) {
             statement.setBytes(1, UUIDConverters.toBytes(uuid));
-            try (var resultSet = statement.executeQuery()) {
+            try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
                     return resultSet.getInt(1);
                 }
             }
         }
 
-        try (var statement = connection.prepareStatement(this.insertStockHolderIdByUUID)) {
+        try (PreparedStatement statement = connection.prepareStatement(this.insertStockHolderIdByUUID)) {
             statement.setBytes(1, UUIDConverters.toBytes(uuid));
             statement.executeUpdate();
-            try (var resultSet = statement.getGeneratedKeys()) {
+            try (ResultSet resultSet = statement.getGeneratedKeys()) {
                 if (resultSet.next()) {
                     return resultSet.getInt(1);
                 }
@@ -69,9 +72,9 @@ public class StockHolderTableOperator {
     }
 
     public Int2ObjectMap<UUID> getAllUUIDByStockHolderId(Connection connection) throws SQLException {
-        var result = new Int2ObjectOpenHashMap<UUID>();
-        try (var statement = connection.prepareStatement(this.selectAllStockHolderIDs)) {
-            try (var resultSet = statement.executeQuery()) {
+        Int2ObjectMap<UUID> result = new Int2ObjectOpenHashMap<>();
+        try (PreparedStatement statement = connection.prepareStatement(this.selectAllStockHolderIDs)) {
+            try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
                     result.put(resultSet.getInt(1), UUIDConverters.fromBytes(resultSet.getBytes(2)));
                 }
@@ -81,9 +84,9 @@ public class StockHolderTableOperator {
     }
 
     public void insertStockHolderUUIDs(Connection connection, List<UUID> uuids) throws SQLException {
-        try (var statement = connection.prepareStatement(this.stockHolderIdBulkInserter.createQuery(uuids.size()))) {
+        try (PreparedStatement statement = connection.prepareStatement(this.stockHolderIdBulkInserter.createQuery(uuids.size()))) {
             int index = 1;
-            for (var uuid : uuids) {
+            for (UUID uuid : uuids) {
                 statement.setBytes(index++, UUIDConverters.toBytes(uuid));
             }
             statement.executeUpdate();
@@ -91,9 +94,9 @@ public class StockHolderTableOperator {
     }
 
     public Object2IntMap<UUID> getAllStockHolderIdByUUID(Connection connection) throws SQLException {
-        var result = new Object2IntOpenHashMap<UUID>();
-        try (var statement = connection.prepareStatement(this.selectAllStockHolderIDs)) {
-            try (var resultSet = statement.executeQuery()) {
+        Object2IntMap<UUID> result = new Object2IntOpenHashMap<>();
+        try (PreparedStatement statement = connection.prepareStatement(this.selectAllStockHolderIDs)) {
+            try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
                     result.put(UUIDConverters.fromBytes(resultSet.getBytes(2)), resultSet.getInt(1));
                 }

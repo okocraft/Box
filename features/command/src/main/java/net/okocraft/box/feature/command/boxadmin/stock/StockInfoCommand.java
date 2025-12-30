@@ -7,6 +7,7 @@ import net.okocraft.box.api.command.AbstractCommand;
 import net.okocraft.box.api.message.DefaultMessageCollector;
 import net.okocraft.box.api.message.ErrorMessages;
 import net.okocraft.box.api.model.item.BoxItem;
+import net.okocraft.box.api.model.user.BoxUser;
 import net.okocraft.box.api.util.TabCompleter;
 import net.okocraft.box.api.util.UserSearcher;
 import org.bukkit.command.CommandSender;
@@ -14,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import static net.okocraft.box.api.message.Placeholders.CURRENT;
@@ -39,14 +41,14 @@ class StockInfoCommand extends AbstractCommand {
             return;
         }
 
-        var boxItem = BoxAPI.api().getItemManager().getBoxItem(args[3]);
+        Optional<BoxItem> boxItem = BoxAPI.api().getItemManager().getBoxItem(args[3]);
 
         if (boxItem.isEmpty()) {
             sender.sendMessage(ErrorMessages.ITEM_NOT_FOUND.apply(args[3]));
             return;
         }
 
-        var target = UserSearcher.search(args[2]);
+        BoxUser target = UserSearcher.search(args[2]);
 
         if (target != null) {
             sender.sendMessage(this.stockInfo.apply(

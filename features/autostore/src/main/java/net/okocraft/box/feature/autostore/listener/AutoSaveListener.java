@@ -38,7 +38,7 @@ public class AutoSaveListener {
 
     private void saveModifiedSettings(@NotNull StockHolderSaveEvent event) {
         if (event.getStockHolder() instanceof PersonalStockHolder personalStockHolder) {
-            var setting = this.container.getIfLoaded(personalStockHolder.getUser().getUUID());
+            AutoStoreSetting setting = this.container.getIfLoaded(personalStockHolder.getUser().getUUID());
 
             if (setting != null && this.modifiedSettings.contains(setting)) {
                 try {

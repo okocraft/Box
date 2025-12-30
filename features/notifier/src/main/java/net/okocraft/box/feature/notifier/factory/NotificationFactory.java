@@ -1,10 +1,12 @@
 package net.okocraft.box.feature.notifier.factory;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import net.okocraft.box.api.event.stockholder.stock.StockEvent;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.model.user.BoxUser;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.VisibleForTesting;
@@ -63,7 +65,7 @@ public final class NotificationFactory {
     }
 
     public void showActionBar(@NotNull BoxUser target) {
-        var player = Bukkit.getPlayer(target.getUUID());
+        Player player = Bukkit.getPlayer(target.getUUID());
 
         if (player != null) {
             player.sendActionBar(this.createNotification(translatable(this.item.getOriginal())));
@@ -72,7 +74,7 @@ public final class NotificationFactory {
 
     @VisibleForTesting
     @NotNull Component createNotification(@NotNull Component itemDisplay) {
-        var builder = text();
+        TextComponent.Builder builder = text();
 
         builder.append(itemDisplay); // <display name of item>
         builder.append(COMMON_PARTS_1).append(text(this.current, WHITE)); // - <current stock>

@@ -2,6 +2,9 @@ package net.okocraft.box.feature.craft.gui.util;
 
 import dev.siroshun.mcmsgdef.MessageKey;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.TranslatableComponent;
+import net.kyori.adventure.text.format.Style;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.feature.craft.lang.DisplayKeys;
 import net.okocraft.box.feature.craft.model.BoxIngredientItem;
@@ -14,6 +17,8 @@ import net.okocraft.box.feature.gui.api.util.ItemEditor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static net.kyori.adventure.text.Component.space;
 import static net.kyori.adventure.text.Component.text;
@@ -27,21 +32,21 @@ public final class IngredientRenderer {
                               @NotNull SelectedRecipe recipe, int times) {
         editor.loreLine(INGREDIENTS_HEADER);
 
-        var ingredientMap = new HashMap<BoxItem, Integer>();
+        Map<BoxItem, Integer> ingredientMap = new HashMap<>();
 
-        for (var ingredient : recipe.ingredients()) {
+        for (BoxIngredientItem ingredient : recipe.ingredients()) {
             ingredientMap.put(
                 ingredient.item(),
                 ingredientMap.getOrDefault(ingredient.item(), 0) + ingredient.amount()
             );
         }
 
-        for (var ingredient : ingredientMap.entrySet()) {
-            var item = ingredient.getKey();
+        for (Map.Entry<BoxItem, Integer> ingredient : ingredientMap.entrySet()) {
+            BoxItem item = ingredient.getKey();
             int need = ingredient.getValue() * times;
 
             int current = session.getSourceStockHolder().getAmount(item);
-            var style = need <= current ? Styles.NO_DECORATION_AQUA : Styles.NO_DECORATION_RED;
+            Style style = need <= current ? Styles.NO_DECORATION_AQUA : Styles.NO_DECORATION_RED;
 
             editor.loreLine(
                 space().toBuilder()
@@ -58,7 +63,7 @@ public final class IngredientRenderer {
     public static void render(@NotNull ItemEditor editor, @NotNull PlayerSession session,
                               @NotNull BoxItemRecipe recipe, int times, boolean simple) {
         if (simple) {
-            var ingredients =
+            List<BoxIngredientItem> ingredients =
                 recipe.ingredients()
                     .stream()
                     .map(holder -> holder.patterns().getFirst())
@@ -68,9 +73,9 @@ public final class IngredientRenderer {
             return;
         }
 
-        var ingredientMap = new HashMap<IngredientHolder, Integer>();
+        Map<IngredientHolder, Integer> ingredientMap = new HashMap<>();
 
-        for (var ingredient : recipe.ingredients()) {
+        for (IngredientHolder ingredient : recipe.ingredients()) {
             ingredientMap.put(ingredient, ingredientMap.getOrDefault(ingredient, 0) + 1);
         }
 
@@ -79,14 +84,14 @@ public final class IngredientRenderer {
         int ingredientCounter = 0;
         int ingredientLast = ingredientMap.size();
 
-        var loreStyle = Styles.NO_DECORATION_GRAY;
+        Style loreStyle = Styles.NO_DECORATION_GRAY;
 
-        for (var ingredient : ingredientMap.entrySet()) {
+        for (Map.Entry<IngredientHolder, Integer> ingredient : ingredientMap.entrySet()) {
             ingredientCounter++;
-            var holder = ingredient.getKey();
+            IngredientHolder holder = ingredient.getKey();
             int need = ingredient.getValue() * times;
 
-            var itemNames =
+            List<TranslatableComponent> itemNames =
                 holder.patterns().stream()
                     .map(BoxIngredientItem::item)
                     .map(BoxItem::getOriginal)
@@ -97,8 +102,8 @@ public final class IngredientRenderer {
             int itemNameCounter = 0;
             int itemNameLast = itemNames.size();
 
-            for (var itemName : itemNames) {
-                var line = space().append(itemName);
+            for (TranslatableComponent itemName : itemNames) {
+                TextComponent line = space().append(itemName);
                 itemNameCounter++;
 
                 if (itemNameCounter != itemNameLast) {

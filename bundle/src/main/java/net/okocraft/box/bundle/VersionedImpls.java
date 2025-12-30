@@ -35,7 +35,7 @@ public final class VersionedImpls {
     }
 
     public @NotNull DefaultItemProvider createDefaultItemProvider(@NotNull MCDataVersion current) {
-        var latest = this.findLatest(current);
+        Versioned latest = this.findLatest(current);
         return new DefaultItemProviderImpl(latest.version(), latest::defaultItems, RenamedItems::loadFromResource, this::createItemNameConvertor);
     }
 
@@ -47,7 +47,7 @@ public final class VersionedImpls {
     }
 
     private @NotNull UnaryOperator<String> createItemNameConvertor(@NotNull MCDataVersion startingVersion, @NotNull MCDataVersion currentVersion) {
-        var renameMap = RenamedItems.loadFromResource(startingVersion, currentVersion);
+        Map<String, String> renameMap = RenamedItems.loadFromResource(startingVersion, currentVersion);
         return name -> renameMap.getOrDefault(name, name);
     }
 

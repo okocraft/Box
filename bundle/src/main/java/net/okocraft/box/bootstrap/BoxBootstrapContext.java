@@ -116,7 +116,7 @@ public final class BoxBootstrapContext implements net.okocraft.box.api.bootstrap
             this.defaultMessageCollector,
             DirectorySource.propertiesFiles(this.dataDirectory.resolve("languages")).defaultLocale(this.localizationLoaderMap.keySet()),
             locale -> {
-                var loader = this.localizationLoaderMap.get(locale);
+                Loader<Locale, Map<String, String>> loader = this.localizationLoaderMap.get(locale);
                 return loader != null ? loader.load(locale) : null;
             }
         );

@@ -1,6 +1,8 @@
 package net.okocraft.box.feature.gui.api.session;
 
+import dev.siroshun.event4j.api.caller.EventCaller;
 import net.okocraft.box.api.BoxAPI;
+import net.okocraft.box.api.event.BoxEvent;
 import net.okocraft.box.feature.gui.api.event.mode.ClickModeCheckEvent;
 import net.okocraft.box.feature.gui.api.mode.BoxItemClickMode;
 import net.okocraft.box.feature.gui.api.mode.ClickModeRegistry;
@@ -20,12 +22,12 @@ public final class ClickModeHolder {
     }
 
     private static @NotNull ClickModeHolder createHolder(@NotNull PlayerSession session) {
-        var modes = ClickModeRegistry.getModes();
-        var availableModes = new ArrayList<BoxItemClickMode>(modes.size());
-        var eventCaller = BoxAPI.api().getEventCallers().sync();
+        List<BoxItemClickMode> modes = ClickModeRegistry.getModes();
+        List<BoxItemClickMode> availableModes = new ArrayList<>(modes.size());
+        EventCaller<BoxEvent> eventCaller = BoxAPI.api().getEventCallers().sync();
 
-        for (var mode : modes) {
-            var checkEvent = new ClickModeCheckEvent(session, mode, mode.canUse(session));
+        for (BoxItemClickMode mode : modes) {
+            ClickModeCheckEvent checkEvent = new ClickModeCheckEvent(session, mode, mode.canUse(session));
             eventCaller.call(checkEvent);
 
             if (checkEvent.isAllowed()) {

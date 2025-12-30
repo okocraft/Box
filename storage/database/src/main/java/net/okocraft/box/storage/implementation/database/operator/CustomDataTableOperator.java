@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.function.BiConsumer;
 
 public abstract class CustomDataTableOperator {
@@ -43,16 +44,16 @@ public abstract class CustomDataTableOperator {
     }
 
     public void initTable(@NotNull Connection connection) throws SQLException {
-        try (var statement = connection.createStatement()) {
+        try (Statement statement = connection.createStatement()) {
             statement.execute(this.createTableStatement);
         }
     }
 
     public byte @Nullable [] selectDataByKey(@NotNull Connection connection, @NotNull String key) throws SQLException {
-        try (var statement = connection.prepareStatement(this.selectDataByKeyStatement)) {
+        try (PreparedStatement statement = connection.prepareStatement(this.selectDataByKeyStatement)) {
             statement.setString(1, key);
 
-            try (var resultSet = statement.executeQuery()) {
+            try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
                     return this.readBytes(resultSet, 1);
                 }
@@ -63,10 +64,10 @@ public abstract class CustomDataTableOperator {
     }
 
     public void selectDataByNamespace(@NotNull Connection connection, @NotNull String namespace, @NotNull BiConsumer<String, byte[]> consumer) throws SQLException {
-        try (var statement = connection.prepareStatement(this.selectDataByNamespaceStatement)) {
+        try (PreparedStatement statement = connection.prepareStatement(this.selectDataByNamespaceStatement)) {
             statement.setString(1, namespace + ":%");
 
-            try (var resultSet = statement.executeQuery()) {
+            try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
                     consumer.accept(resultSet.getString(1), this.readBytes(resultSet, 2));
                 }
@@ -75,8 +76,8 @@ public abstract class CustomDataTableOperator {
     }
 
     public void selectAllData(@NotNull Connection connection, @NotNull BiConsumer<String, byte[]> consumer) throws SQLException {
-        try (var statement = connection.prepareStatement(this.selectAllDataStatement)) {
-            try (var resultSet = statement.executeQuery()) {
+        try (PreparedStatement statement = connection.prepareStatement(this.selectAllDataStatement)) {
+            try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
                     consumer.accept(resultSet.getString(1), this.readBytes(resultSet, 2));
                 }
@@ -85,14 +86,14 @@ public abstract class CustomDataTableOperator {
     }
 
     public void deleteData(@NotNull Connection connection, @NotNull String key) throws SQLException {
-        try (var statement = connection.prepareStatement(this.deleteDataStatement)) {
+        try (PreparedStatement statement = connection.prepareStatement(this.deleteDataStatement)) {
             statement.setString(1, key);
             statement.executeUpdate();
         }
     }
 
     public void upsertData(@NotNull Connection connection, @NotNull String key, byte @NotNull [] data) throws SQLException {
-        try (var statement = connection.prepareStatement(this.upsertDataStatement)) {
+        try (PreparedStatement statement = connection.prepareStatement(this.upsertDataStatement)) {
             statement.setString(1, key);
             this.writeBytes(statement, 2, data);
             statement.executeUpdate();

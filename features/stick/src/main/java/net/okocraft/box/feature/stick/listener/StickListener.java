@@ -4,6 +4,7 @@ import io.papermc.paper.datacomponent.DataComponentTypes;
 import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.player.BoxPlayer;
+import net.okocraft.box.api.player.BoxPlayerMap;
 import net.okocraft.box.api.util.ItemNameGenerator;
 import net.okocraft.box.feature.stick.event.stock.StickCause;
 import net.okocraft.box.feature.stick.event.stock.StickCauses;
@@ -17,9 +18,11 @@ import net.okocraft.box.feature.stick.item.BoxStickItem;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.block.Container;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Arrow;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
@@ -37,11 +40,14 @@ import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.BrewerInventory;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.FurnaceInventory;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumSet;
+import java.util.Optional;
 
 public class StickListener implements Listener {
 
@@ -55,7 +61,7 @@ public class StickListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onInteract(@NotNull PlayerInteractEvent event) {
-        var player = event.getPlayer();
+        Player player = event.getPlayer();
 
         if (event.getAction() == Action.PHYSICAL || !this.canUseBox(player)) {
             return;
@@ -69,7 +75,7 @@ public class StickListener implements Listener {
     }
 
     private void onRightClick(@NotNull PlayerInteractEvent event) {
-        var player = event.getPlayer();
+        Player player = event.getPlayer();
 
         boolean doAction;
 
@@ -89,16 +95,16 @@ public class StickListener implements Listener {
             return;
         }
 
-        var player = event.getPlayer();
-        var boxPlayer = this.getBoxPlayerOrNull(player);
-        var block = event.getClickedBlock();
+        Player player = event.getPlayer();
+        BoxPlayer boxPlayer = this.getBoxPlayerOrNull(player);
+        Block block = event.getClickedBlock();
 
         if (boxPlayer == null || !player.isSneaking() || block == null) {
             return;
         }
 
-        var inv = player.getInventory();
-        var offHand = inv.getItemInOffHand();
+        PlayerInventory inv = player.getInventory();
+        ItemStack offHand = inv.getItemInOffHand();
 
         boolean isStickInOffhand = this.boxStickItem.check(offHand);
 
@@ -111,19 +117,19 @@ public class StickListener implements Listener {
             return;
         }
 
-        var boxItem = BoxAPI.api().getItemManager().getBoxItem(block.getBlockData().getPlacementMaterial().name());
+        Optional<BoxItem> boxItem = BoxAPI.api().getItemManager().getBoxItem(block.getBlockData().getPlacementMaterial().name());
 
         if (boxItem.isEmpty()) {
             return;
         }
 
-        var mainHand = inv.getItemInMainHand();
+        ItemStack mainHand = inv.getItemInMainHand();
         BoxItem offHandBoxItem;
         boolean moveStickToOffHand;
 
         if (this.boxStickItem.check(mainHand)) {
             if (!offHand.getType().isAir()) {
-                var optionalOffHandBoxItem = BoxAPI.api().getItemManager().getBoxItem(offHand);
+                Optional<BoxItem> optionalOffHandBoxItem = BoxAPI.api().getItemManager().getBoxItem(offHand);
 
                 if (optionalOffHandBoxItem.isEmpty()) {
                     return;
@@ -143,7 +149,7 @@ public class StickListener implements Listener {
             moveStickToOffHand = false;
         }
 
-        var cause = new StickCauses.BlockItem(boxPlayer, block.getLocation().clone());
+        StickCauses.BlockItem cause = new StickCauses.BlockItem(boxPlayer, block.getLocation().clone());
 
         if (boxPlayer.getCurrentStockHolder().decreaseIfPossible(boxItem.get(), 1, cause) == -1) {
             return;
@@ -165,10 +171,10 @@ public class StickListener implements Listener {
             return;
         }
 
-        var player = boxPlayer.getPlayer();
+        Player player = boxPlayer.getPlayer();
 
-        var operationType = player.getInventory().getItemInMainHand().getType().isAir() ? ContainerOperation.OperationType.DEPOSIT : ContainerOperation.OperationType.WITHDRAW;
-        var inventory = container.getInventory();
+        ContainerOperation.OperationType operationType = player.getInventory().getItemInMainHand().getType().isAir() ? ContainerOperation.OperationType.DEPOSIT : ContainerOperation.OperationType.WITHDRAW;
+        Inventory inventory = container.getInventory();
         ContainerOperation<?> operation;
 
         if (CONTAINERS.contains(inventory.getType())) {
@@ -214,7 +220,7 @@ public class StickListener implements Listener {
             return;
         }
 
-        var block = event.getBlockPlaced();
+        Block block = event.getBlockPlaced();
 
         // ignore POWDER_SNOW because it cannot be replenished
         if (block.getType() == Material.POWDER_SNOW) {
@@ -226,14 +232,14 @@ public class StickListener implements Listener {
             return;
         }
 
-        var player = event.getPlayer();
-        var boxPlayer = this.checkPlayerAndGetBoxPlayer(player, "box.stick.block");
+        Player player = event.getPlayer();
+        BoxPlayer boxPlayer = this.checkPlayerAndGetBoxPlayer(player, "box.stick.block");
 
         if (boxPlayer == null) {
             return;
         }
 
-        var mainHandItem = player.getInventory().getItemInMainHand();
+        ItemStack mainHandItem = player.getInventory().getItemInMainHand();
 
         if (!this.isIllegalStack(mainHandItem) && event.getItemInHand().equals(mainHandItem) &&
             this.tryConsumingStock(boxPlayer, mainHandItem, new StickCauses.BlockPlace(boxPlayer, block.getLocation().clone()))) {
@@ -243,15 +249,15 @@ public class StickListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onItemConsume(@NotNull PlayerItemConsumeEvent event) {
-        var player = event.getPlayer();
-        var boxPlayer = this.checkPlayerAndGetBoxPlayer(player, "box.stick.food");
+        Player player = event.getPlayer();
+        BoxPlayer boxPlayer = this.checkPlayerAndGetBoxPlayer(player, "box.stick.food");
 
         if (boxPlayer == null) {
             return;
         }
 
-        var mainHandItem = player.getInventory().getItemInMainHand();
-        var cause = new StickCauses.ItemConsume(boxPlayer);
+        ItemStack mainHandItem = player.getInventory().getItemInMainHand();
+        StickCauses.ItemConsume cause = new StickCauses.ItemConsume(boxPlayer);
 
         if (this.isIllegalStack(mainHandItem) || !event.getItem().equals(mainHandItem) || !this.tryConsumingStock(boxPlayer, mainHandItem, cause)) {
             return;
@@ -260,7 +266,7 @@ public class StickListener implements Listener {
         event.setReplacement(mainHandItem.clone());
 
         // @formatter:off
-        var defaultReplacementMaterial = switch (event.getItem().getType()) {
+        Material defaultReplacementMaterial = switch (event.getItem().getType()) {
             case MUSHROOM_STEW, RABBIT_STEW, BEETROOT_SOUP, SUSPICIOUS_STEW -> Material.BOWL; // BowlFoodItem#finishUsingItem L15 / SuspiciousStewItem#finishUsingItem L75
             case HONEY_BOTTLE, POTION -> Material.GLASS_BOTTLE; // HoneyBottleItem#finishUsingItem L35 / PotionItem#finishUsingItem L89
             case MILK_BUCKET -> Material.BUCKET; // MilkBucketItem#finishUsingItem L37
@@ -279,9 +285,9 @@ public class StickListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onItemBreak(@NotNull PlayerItemBreakEvent event) {
-        var player = event.getPlayer();
-        var boxPlayer = this.checkPlayerAndGetBoxPlayer(player, "box.stick.tool");
-        var original = event.getBrokenItem();
+        Player player = event.getPlayer();
+        BoxPlayer boxPlayer = this.checkPlayerAndGetBoxPlayer(player, "box.stick.tool");
+        ItemStack original = event.getBrokenItem();
 
         if (boxPlayer == null || this.isIllegalStack(original)) {
             return;
@@ -300,8 +306,8 @@ public class StickListener implements Listener {
             return;
         }
 
-        var entityType = event.getEntity().getType();
-        var permissionNodeSuffix =
+        EntityType entityType = event.getEntity().getType();
+        String permissionNodeSuffix =
             switch (entityType) {
                 case EGG -> "egg";
                 case ENDER_PEARL -> "enderpearl";
@@ -313,13 +319,13 @@ public class StickListener implements Listener {
                 default -> null;
             };
 
-        var boxPlayer = permissionNodeSuffix != null ? this.checkPlayerAndGetBoxPlayer(player, "box.stick." + permissionNodeSuffix) : null;
+        BoxPlayer boxPlayer = permissionNodeSuffix != null ? this.checkPlayerAndGetBoxPlayer(player, "box.stick." + permissionNodeSuffix) : null;
 
         if (boxPlayer == null) {
             return;
         }
 
-        var mainHandItem = player.getInventory().getItemInMainHand();
+        ItemStack mainHandItem = player.getInventory().getItemInMainHand();
 
         if (!this.isIllegalStack(mainHandItem) && this.tryConsumingStock(boxPlayer, mainHandItem, new StickCauses.ProjectileLaunch(boxPlayer, entityType))) {
             mainHandItem.setAmount(mainHandItem.getAmount() + 1);
@@ -336,13 +342,13 @@ public class StickListener implements Listener {
             return;
         }
 
-        var boxPlayer = this.checkPlayerAndGetBoxPlayer(player, "box.stick.arrow");
+        BoxPlayer boxPlayer = this.checkPlayerAndGetBoxPlayer(player, "box.stick.arrow");
 
         if (boxPlayer == null) {
             return;
         }
 
-        var arrowItem = event.getConsumable();
+        ItemStack arrowItem = event.getConsumable();
 
         if (arrowItem != null && !this.isIllegalStack(arrowItem) && this.tryConsumingStock(boxPlayer, arrowItem, new StickCauses.ShootBow(boxPlayer))) {
             player.getInventory().addItem(arrowItem.asOne());
@@ -364,7 +370,7 @@ public class StickListener implements Listener {
             return;
         }
 
-        var boxPlayer = this.checkPlayerAndGetBoxPlayer(player, "box.stick.resurrect");
+        BoxPlayer boxPlayer = this.checkPlayerAndGetBoxPlayer(player, "box.stick.resurrect");
         if (boxPlayer == null) {
             return;
         }
@@ -380,12 +386,12 @@ public class StickListener implements Listener {
     }
 
     private @Nullable BoxPlayer getBoxPlayerOrNull(@NotNull Player player) {
-        var playerMap = BoxAPI.api().getBoxPlayerMap();
+        BoxPlayerMap playerMap = BoxAPI.api().getBoxPlayerMap();
         return playerMap.isLoaded(player) ? playerMap.get(player) : null;
     }
 
     private boolean tryConsumingStock(@NotNull BoxPlayer boxPlayer, @NotNull ItemStack item, @NotNull StickCause cause) {
-        var boxItem = BoxAPI.api().getItemManager().getBoxItem(item);
+        Optional<BoxItem> boxItem = BoxAPI.api().getItemManager().getBoxItem(item);
         return boxItem.isPresent() && boxPlayer.getCurrentStockHolder().decreaseIfPossible(boxItem.get(), 1, cause) != -1;
     }
 

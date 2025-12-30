@@ -26,7 +26,7 @@ public final class MenuHistoryHolder {
             throw new IllegalStateException("No previous menu.");
         }
 
-        var menu = this.previousMenu.menu;
+        Menu menu = this.previousMenu.menu;
         this.previousMenu = this.previousMenu.parent;
 
         return menu;

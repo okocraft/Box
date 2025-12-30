@@ -36,7 +36,7 @@ public class DecreaseAmountButton extends AmountModificationButton {
 
     @Override
     public @NotNull ItemStack createIcon(@NotNull PlayerSession session) {
-        var amount = this.getOrCreateAmount(session);
+        Amount amount = this.getOrCreateAmount(session);
 
         return ItemEditor.create()
             .displayName(this.displayName)
@@ -49,8 +49,8 @@ public class DecreaseAmountButton extends AmountModificationButton {
 
     @Override
     public @NotNull ClickResult onClick(@NotNull PlayerSession session, @NotNull ClickType clickType) {
-        var amount = this.getOrCreateAmount(session);
-        var current = amount.getValue();
+        Amount amount = this.getOrCreateAmount(session);
+        int current = amount.getValue();
 
         if (1 < current) {
             amount.decrease();

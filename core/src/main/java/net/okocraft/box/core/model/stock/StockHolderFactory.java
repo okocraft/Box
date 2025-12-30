@@ -29,9 +29,9 @@ public final class StockHolderFactory {
         if (stockData.isEmpty()) {
             return new StockHolderImpl(uuid, nameHolder, eventCaller, new Int2ObjectOpenHashMap<>(), toBoxItem);
         } else {
-            var stockMap = new Int2ObjectOpenHashMap<Stock>(stockData.size());
+            Int2ObjectOpenHashMap<Stock> stockMap = new Int2ObjectOpenHashMap<>(stockData.size());
 
-            for (var data : stockData) {
+            for (StockData data : stockData) {
                 if (0 < data.amount()) {
                     stockMap.put(data.itemId(), new Stock(data.amount()));
                 }

@@ -23,15 +23,15 @@ public final class ItemStackMock {
             throw new IllegalArgumentException("Invalid amount: " + amount);
         }
 
-        var mockedMaterial = MATERIAL_MOCK_MAP.computeIfAbsent(item.key(), key -> {
-            var mocked = Mockito.mock(Material.class);
+        Material mockedMaterial = MATERIAL_MOCK_MAP.computeIfAbsent(item.key(), key -> {
+            Material mocked = Mockito.mock(Material.class);
             Mockito.when(mocked.key()).thenReturn(key);
             Mockito.when(mocked.isAir()).thenReturn(item == Material.AIR);
             Mockito.when(mocked.getMaxStackSize()).thenReturn(maxStackSize);
             return mocked;
         });
 
-        var mockedItem = Mockito.mock(ItemStack.class);
+        ItemStack mockedItem = Mockito.mock(ItemStack.class);
 
         Mockito.when(mockedItem.getType()).thenReturn(mockedMaterial);
         Mockito.when(mockedItem.getAmount()).thenReturn(amount);

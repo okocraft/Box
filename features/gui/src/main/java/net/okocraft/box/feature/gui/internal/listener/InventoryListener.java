@@ -2,14 +2,17 @@ package net.okocraft.box.feature.gui.internal.listener;
 
 import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.model.item.BoxItem;
+import net.okocraft.box.api.model.stock.StockHolder;
 import net.okocraft.box.feature.category.api.category.Category;
 import net.okocraft.box.feature.category.api.registry.CategoryRegistry;
 import net.okocraft.box.feature.gui.api.event.stock.GuiCauses;
 import net.okocraft.box.feature.gui.api.session.MenuHistoryHolder;
+import net.okocraft.box.feature.gui.api.session.PlayerSession;
 import net.okocraft.box.feature.gui.api.util.MenuOpener;
 import net.okocraft.box.feature.gui.internal.holder.BoxInventoryHolder;
 import net.okocraft.box.feature.gui.internal.menu.CategoryMenu;
 import org.bukkit.Sound;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -28,7 +31,7 @@ public class InventoryListener implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onClick(@NotNull InventoryClickEvent event) {
-        var topHolder = BoxInventoryHolder.getFromInventory(event.getView().getTopInventory());
+        BoxInventoryHolder topHolder = BoxInventoryHolder.getFromInventory(event.getView().getTopInventory());
 
         if (topHolder == null) {
             return;
@@ -36,7 +39,7 @@ public class InventoryListener implements Listener {
 
         event.setCancelled(true);
 
-        var clicked = event.getClickedInventory();
+        Inventory clicked = event.getClickedInventory();
 
         if (clicked == null || System.nanoTime() - topHolder.getLastClickTime() < CLICK_COOLDOWN) {
             return;
@@ -60,8 +63,8 @@ public class InventoryListener implements Listener {
     }
 
     private void onClickPlayerInventory(@NotNull BoxInventoryHolder holder, @NotNull Inventory inventory, int slot, @NotNull ClickType clickType) {
-        var item = inventory.getItem(slot);
-        var boxItem = item != null ? BoxAPI.api().getItemManager().getBoxItem(item).orElse(null) : null;
+        ItemStack item = inventory.getItem(slot);
+        BoxItem boxItem = item != null ? BoxAPI.api().getItemManager().getBoxItem(item).orElse(null) : null;
 
         if (boxItem == null) {
             return;
@@ -75,11 +78,11 @@ public class InventoryListener implements Listener {
     }
 
     private void depositClickedItem(@NotNull BoxInventoryHolder holder, @NotNull Inventory inventory, int slot, @NotNull ItemStack item, @NotNull BoxItem boxItem) {
-        var viewer = holder.getSession().getViewer();
-        var amount = item.getAmount();
+        Player viewer = holder.getSession().getViewer();
+        int amount = item.getAmount();
 
-        var stockHolder = holder.getSession().getSourceStockHolder();
-        var cause = new GuiCauses.Deposit(viewer);
+        StockHolder stockHolder = holder.getSession().getSourceStockHolder();
+        GuiCauses.Deposit cause = new GuiCauses.Deposit(viewer);
 
         if (amount == 1) {
             inventory.setItem(slot, null);
@@ -101,14 +104,14 @@ public class InventoryListener implements Listener {
             return;
         }
 
-        var category = this.findCategory(boxItem).orElse(null);
+        Category category = this.findCategory(boxItem).orElse(null);
 
         if (category == null) {
             return;
         }
 
-        var session = holder.getSession();
-        var menu = new CategoryMenu(category);
+        PlayerSession session = holder.getSession();
+        CategoryMenu menu = new CategoryMenu(category);
         int page = category.getItems().indexOf(boxItem) / menu.getIconsPerPage() + 1;
 
         menu.setCurrentPage(session, page);

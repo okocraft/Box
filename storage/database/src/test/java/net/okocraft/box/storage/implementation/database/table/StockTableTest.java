@@ -4,12 +4,14 @@ import net.okocraft.box.storage.implementation.database.database.Database;
 import net.okocraft.box.test.shared.storage.test.StockStorageTest;
 import org.jetbrains.annotations.NotNull;
 
+import java.sql.Connection;
+
 public abstract class StockTableTest extends StockStorageTest<Database> {
     @Override
     protected @NotNull StockTable newStockStorage(@NotNull Database database) throws Exception {
-        var table = new StockTable(database);
+        StockTable table = new StockTable(database);
 
-        try (var connection = database.getConnection()) {
+        try (Connection connection = database.getConnection()) {
             table.init(connection);
         }
 

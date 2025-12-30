@@ -1,6 +1,8 @@
 package net.okocraft.box.feature.category.internal.file;
 
+import dev.siroshun.configapi.core.node.ListNode;
 import dev.siroshun.configapi.core.node.MapNode;
+import dev.siroshun.configapi.core.node.Node;
 import dev.siroshun.configapi.core.node.StringRepresentable;
 import dev.siroshun.configapi.format.yaml.YamlFormat;
 import net.okocraft.box.api.BoxAPI;
@@ -72,23 +74,23 @@ public final class CategoryFile implements AutoCloseable {
 
         Files.copy(this.filepath, this.filepath.getParent().resolve(this.filepath.getFileName().toString() + ".backup-" + System.currentTimeMillis()));
 
-        var mapNode = MapNode.create();
-        var patcher = BoxAPI.api().getItemManager().getItemNameConverter(MCDataVersion.MC_1_17);
+        MapNode mapNode = MapNode.create();
+        UnaryOperator<String> patcher = BoxAPI.api().getItemManager().getItemNameConverter(MCDataVersion.MC_1_17);
 
-        for (var key : this.loadedSource.value().keySet()) {
+        for (Object key : this.loadedSource.value().keySet()) {
             if (key.equals("icons")) {
                 continue;
             } else if (key.equals("custom-items")) {
-                var newList = mapNode.createList(CustomItemCategory.CONFIG_KEY);
+                ListNode newList = mapNode.createList(CustomItemCategory.CONFIG_KEY);
                 this.loadedSource.getList(key).value().forEach(newList::add);
                 continue;
             }
 
-            var map = mapNode.createMap(renameKey(key));
+            MapNode map = mapNode.createMap(renameKey(key));
             map.set(ICON_KEY, this.loadedSource.getMap("icons").getString(key));
             addDefaultDisplayName(String.valueOf(key), map);
 
-            var items = map.createList(ITEMS_KEY);
+            ListNode items = map.createList(ITEMS_KEY);
             this.loadedSource.getList(key).asList(String.class).stream().map(patcher).forEach(items::add);
         }
 
@@ -99,8 +101,8 @@ public final class CategoryFile implements AutoCloseable {
     public CategoryFile readCategoriesIfExists() {
         if (this.loadedSource == null) return this;
 
-        for (var entry : this.loadedSource.value().entrySet()) {
-            var key = String.valueOf(entry.getKey());
+        for (Map.Entry<Object, Node<?>> entry : this.loadedSource.value().entrySet()) {
+            String key = String.valueOf(entry.getKey());
             if (!key.startsWith("$") && entry.getValue() instanceof MapNode section) {
                 this.loadAndRegisterCategory(key, section, BoxAPI.api().getItemManager().getItemNameConverter(this.version));
             }
@@ -120,7 +122,7 @@ public final class CategoryFile implements AutoCloseable {
         MapNode mapNode;
         List<DefaultCategory> defaultCategories;
 
-        var currentVersion = MCDataVersion.current();
+        MCDataVersion currentVersion = MCDataVersion.current();
 
         if (this.version == null) {
             mapNode = MapNode.create();
@@ -132,8 +134,8 @@ public final class CategoryFile implements AutoCloseable {
             return;
         }
 
-        for (var category : defaultCategories) {
-            var items = category.itemNames();
+        for (DefaultCategory category : defaultCategories) {
+            List<String> items = category.itemNames();
 
             if (items.isEmpty()) {
                 continue;
@@ -142,7 +144,7 @@ public final class CategoryFile implements AutoCloseable {
             this.registry.getByName(category.key()).ifPresentOrElse(
                 target -> {
                     target.addItems(this.toBoxItems(items));
-                    var list = mapNode.getOrCreateMap(category.key()).getOrCreateList(ITEMS_KEY);
+                    ListNode list = mapNode.getOrCreateMap(category.key()).getOrCreateList(ITEMS_KEY);
                     items.forEach(list::add);
                 },
                 () -> {
@@ -173,9 +175,9 @@ public final class CategoryFile implements AutoCloseable {
         Map<Locale, String> displayNameMap;
 
         if (source.get(DISPLAY_NAME_KEY) instanceof MapNode mapNode) {
-            var map = new HashMap<Locale, String>();
+            Map<Locale, String> map = new HashMap<>();
 
-            for (var entry : mapNode.value().entrySet()) {
+            for (Map.Entry<Object, Node<?>> entry : mapNode.value().entrySet()) {
                 if (entry.getKey() instanceof String locale && entry.getValue() instanceof StringRepresentable stringRepresentable) {
                     if (locale.equalsIgnoreCase(LOCALE_DEFAULT)) {
                         map.put(null, stringRepresentable.asString());
@@ -190,14 +192,14 @@ public final class CategoryFile implements AutoCloseable {
             displayNameMap = Collections.emptyMap();
         }
 
-        var itemNameList = source.getList(ITEMS_KEY).asList(String.class);
-        var items = new ArrayList<BoxItem>(itemNameList.size());
+        List<String> itemNameList = source.getList(ITEMS_KEY).asList(String.class);
+        List<BoxItem> items = new ArrayList<>(itemNameList.size());
 
-        for (var name : itemNameList) {
+        for (String name : itemNameList) {
             BoxAPI.api().getItemManager().getBoxItem(itemNameConverter.apply(name)).ifPresent(items::add);
         }
 
-        var category = new LoadedCategory(iconMaterial, displayNameMap);
+        LoadedCategory category = new LoadedCategory(iconMaterial, displayNameMap);
         category.addItems(items);
         this.registry.register(key, category);
     }

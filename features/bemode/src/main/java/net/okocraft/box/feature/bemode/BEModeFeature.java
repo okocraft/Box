@@ -22,7 +22,7 @@ public class BEModeFeature extends AbstractBoxFeature {
 
     public BEModeFeature(@NotNull FeatureContext.Registration context) {
         super("bemode");
-        var currentStock = MessageKey.arg1(context.defaultMessageCollector().add("box.bemode.current-stock", "<gray>Current stock: <aqua><current>"), Placeholders.CURRENT);
+        MessageKey.Arg1<Integer> currentStock = MessageKey.arg1(context.defaultMessageCollector().add("box.bemode.current-stock", "<gray>Current stock: <aqua><current>"), Placeholders.CURRENT);
         this.storageDepositMode = new StorageDepositMode(currentStock, context.defaultMessageCollector());
         this.storageWithdrawMode = new StorageWithdrawMode(currentStock, context.defaultMessageCollector());
     }

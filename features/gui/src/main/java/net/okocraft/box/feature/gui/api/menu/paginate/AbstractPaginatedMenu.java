@@ -64,7 +64,7 @@ public abstract class AbstractPaginatedMenu<T> implements PaginatedMenu {
 
     @Override
     public @NotNull List<? extends Button> getButtons(@NotNull PlayerSession session) {
-        var buttons = new ArrayList<Button>();
+        List<Button> buttons = new ArrayList<>();
         int currentPage = this.getCurrentPage(session);
 
         int start = (currentPage - 1) * this.iconsPerPage;

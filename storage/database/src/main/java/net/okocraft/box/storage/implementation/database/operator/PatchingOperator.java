@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -19,20 +20,20 @@ public abstract class PatchingOperator {
     }
 
     public boolean hasTable(@NotNull Connection connection, @NotNull String tableType) throws SQLException {
-        try (var result = connection.getMetaData().getTables(null, null, this.prefix + tableType, null)) {
+        try (ResultSet result = connection.getMetaData().getTables(null, null, this.prefix + tableType, null)) {
             return result.next();
         }
     }
 
     public void renameTable(@NotNull Connection connection, @NotNull String oldTableType, @NotNull String newTableType) throws SQLException {
-        try (var statement = connection.createStatement()) {
+        try (Statement statement = connection.createStatement()) {
             statement.execute("ALTER TABLE `%s` RENAME TO `%s`".formatted(this.prefix + oldTableType, this.prefix + newTableType));
         }
     }
 
     public void getDefaultItemsFromLegacy(@NotNull Connection connection, @NotNull String tableType, @NotNull BiConsumer<Integer, String> consumer) throws SQLException {
-        try (var statement = connection.createStatement()) {
-            try (var resultSet = statement.executeQuery("SELECT id, name FROM `%s` WHERE is_default_item=TRUE".formatted(this.prefix + tableType))) {
+        try (Statement statement = connection.createStatement()) {
+            try (ResultSet resultSet = statement.executeQuery("SELECT id, name FROM `%s` WHERE is_default_item=TRUE".formatted(this.prefix + tableType))) {
                 while (resultSet.next()) {
                     consumer.accept(resultSet.getInt(1), resultSet.getString(2));
                 }
@@ -41,8 +42,8 @@ public abstract class PatchingOperator {
     }
 
     public void getCustomItemsFromLegacyItemTable(@NotNull Connection connection, @NotNull String tableType, @NotNull Consumer<ItemData> consumer) throws SQLException {
-        try (var statement = connection.createStatement()) {
-            try (var resultSet = statement.executeQuery("SELECT id, name, item_data FROM `%s` WHERE is_default_item=FALSE".formatted(this.prefix + tableType))) {
+        try (Statement statement = connection.createStatement()) {
+            try (ResultSet resultSet = statement.executeQuery("SELECT id, name, item_data FROM `%s` WHERE is_default_item=FALSE".formatted(this.prefix + tableType))) {
                 while (resultSet.next()) {
                     consumer.accept(new ItemData(resultSet.getInt(1), resultSet.getString(2), this.readBytes(resultSet, 3)));
                 }

@@ -104,7 +104,7 @@ class PerItemChangeState implements ChangeState {
             return;
         }
 
-        var partialStockData = new StockData[itemIds.length];
+        StockData[] partialStockData = new StockData[itemIds.length];
 
         for (int i = 0; i < itemIds.length; i++) {
             int itemId = itemIds[i];

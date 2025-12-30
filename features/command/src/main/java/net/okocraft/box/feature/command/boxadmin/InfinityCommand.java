@@ -12,6 +12,8 @@ import net.okocraft.box.api.message.Placeholders;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.model.stock.StockData;
 import net.okocraft.box.api.model.stock.StockHolder;
+import net.okocraft.box.api.player.BoxPlayer;
+import net.okocraft.box.api.player.BoxPlayerMap;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -72,7 +74,7 @@ public class InfinityCommand extends AbstractCommand {
             self = true;
         }
 
-        var playerMap = BoxAPI.api().getBoxPlayerMap();
+        BoxPlayerMap playerMap = BoxAPI.api().getBoxPlayerMap();
 
         if (!playerMap.isLoaded(target)) {
             if (playerMap.isScheduledLoading(target)) {
@@ -83,7 +85,7 @@ public class InfinityCommand extends AbstractCommand {
             return;
         }
 
-        var boxPlayer = playerMap.get(target);
+        BoxPlayer boxPlayer = playerMap.get(target);
 
         boolean enabled;
 

@@ -21,7 +21,7 @@ public abstract class ContentsHoldingInventory implements Inventory {
     }
 
     private static @NotNull ContentsHoldingInventory createMock(@Nullable ItemStack @NotNull [] contents) {
-        var mock = Mockito.mock(ContentsHoldingInventory.class);
+        ContentsHoldingInventory mock = Mockito.mock(ContentsHoldingInventory.class);
 
         Mockito.doCallRealMethod().when(mock).getContents();
         Mockito.doCallRealMethod().when(mock).getStorageContents();
@@ -67,7 +67,7 @@ public abstract class ContentsHoldingInventory implements Inventory {
     }
 
     public void checkContents(@Nullable ItemStack @NotNull [] expectedContents) {
-        var actualContents = this.contents;
+        ItemStack[] actualContents = this.contents;
 
         if (actualContents == null) {
             throw new IllegalStateException("Not initialized.");
@@ -76,8 +76,8 @@ public abstract class ContentsHoldingInventory implements Inventory {
         Assertions.assertEquals(expectedContents.length, actualContents.length);
 
         for (int i = 0; i < expectedContents.length; i++) {
-            var expectedItem = expectedContents[i];
-            var actualItem = actualContents[i];
+            ItemStack expectedItem = expectedContents[i];
+            ItemStack actualItem = actualContents[i];
 
             if (expectedItem == null) {
                 Assertions.assertNull(actualItem);

@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
@@ -28,8 +29,8 @@ public abstract class UserStorageTest<S> extends AbstractStorageTest<S> {
 
     @Test
     void testLoadingAndSaving() throws Exception {
-        var storage = this.newStorage();
-        var userStorage = this.newUserStorage(storage);
+        S storage = this.newStorage();
+        UserStorage userStorage = this.newUserStorage(storage);
 
         try {
             save(userStorage, TEST_USER_1);
@@ -38,7 +39,7 @@ public abstract class UserStorageTest<S> extends AbstractStorageTest<S> {
             save(userStorage, TEST_USER_2);
             checkLoad(userStorage, TEST_USER_2);
 
-            var users = userStorage.loadAllBoxUsers();
+            Collection<BoxUser> users = userStorage.loadAllBoxUsers();
             Assertions.assertEquals(2, users.size());
             Assertions.assertTrue(List.of(TEST_USER_1, TEST_USER_2).containsAll(users));
         } finally {
@@ -48,14 +49,14 @@ public abstract class UserStorageTest<S> extends AbstractStorageTest<S> {
 
     @Test
     void testRename() throws Exception {
-        var storage = this.newStorage();
-        var userStorage = this.newUserStorage(storage);
+        S storage = this.newStorage();
+        UserStorage userStorage = this.newUserStorage(storage);
 
         try {
             save(userStorage, TEST_USER_1);
             checkLoad(userStorage, TEST_USER_1);
 
-            var renamed = BoxUserFactory.create(TEST_USER_1.getUUID(), "renamed_test_user_1");
+            BoxUser renamed = BoxUserFactory.create(TEST_USER_1.getUUID(), "renamed_test_user_1");
             save(userStorage, renamed);
             checkLoad(userStorage, renamed);
             Assertions.assertNull(userStorage.searchByName(TEST_USER_1.getName().orElseThrow())); // cannot obtain user by old name

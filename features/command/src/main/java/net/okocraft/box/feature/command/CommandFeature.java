@@ -33,7 +33,7 @@ public class CommandFeature extends AbstractBoxFeature {
     public CommandFeature(@NotNull FeatureContext.Registration context) {
         super("command");
 
-        var sharedStockListCommand = new SharedStockListCommand(context.defaultMessageCollector());
+        SharedStockListCommand sharedStockListCommand = new SharedStockListCommand(context.defaultMessageCollector());
 
         this.boxSubCommands = createCommands(context,
             DepositCommand::new, WithdrawCommand::new, GiveCommand::new,
@@ -50,14 +50,14 @@ public class CommandFeature extends AbstractBoxFeature {
 
     @Override
     public void enable(@NotNull FeatureContext.Enabling context) {
-        var api = BoxAPI.api();
+        BoxAPI api = BoxAPI.api();
         this.boxSubCommands.forEach(api.getBoxCommand().getSubCommandHolder()::register);
         this.boxAdminSubCommands.forEach(api.getBoxAdminCommand().getSubCommandHolder()::register);
     }
 
     @Override
     public void disable(@NotNull FeatureContext.Disabling context) {
-        var api = BoxAPI.api();
+        BoxAPI api = BoxAPI.api();
         this.boxSubCommands.forEach(api.getBoxCommand().getSubCommandHolder()::unregister);
         this.boxAdminSubCommands.forEach(api.getBoxAdminCommand().getSubCommandHolder()::unregister);
     }

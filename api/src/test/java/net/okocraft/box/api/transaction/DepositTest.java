@@ -1,7 +1,10 @@
 package net.okocraft.box.api.transaction;
 
 import dev.siroshun.serialization.annotation.Inline;
+import net.okocraft.box.api.model.item.BoxItem;
+import net.okocraft.box.api.model.stock.StockHolder;
 import net.okocraft.box.test.shared.event.StockEventCollector;
+import net.okocraft.box.test.shared.mock.bukkit.inventory.ContentsHoldingInventory;
 import net.okocraft.box.test.shared.mock.bukkit.inventory.InventoryInfo;
 import net.okocraft.box.test.shared.model.item.ItemType;
 import net.okocraft.box.test.shared.model.stock.TestStockHolder;
@@ -13,24 +16,25 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
 
 class DepositTest {
 
     @ParameterizedTest
     @MethodSource({"loadTestCases"})
     void test(TestCase testCase) {
-        var stockHolder = TestStockHolder.create();
-        var inventory = testCase.inventory().createTestInventory();
-        var item = testCase.item().asBoxItem(1);
+        StockHolder stockHolder = TestStockHolder.create();
+        ContentsHoldingInventory inventory = testCase.inventory().createTestInventory();
+        BoxItem item = testCase.item().asBoxItem(1);
 
-        var resultList = StockHolderTransaction.create(stockHolder).deposit(item, testCase.limit()).fromInventory(inventory, StockEventCollector.TEST_CAUSE);
+        List<TransactionResult> resultList = StockHolderTransaction.create(stockHolder).deposit(item, testCase.limit()).fromInventory(inventory, StockEventCollector.TEST_CAUSE);
 
         int expectedDepositedAmount = testCase.expectedDepositedAmount();
 
         if (expectedDepositedAmount == 0) {
             Assertions.assertTrue(resultList.isEmpty());
         } else {
-            var result = resultList.getFirst();
+            TransactionResult result = resultList.getFirst();
             Assertions.assertEquals(item, result.item());
             Assertions.assertEquals(expectedDepositedAmount, result.amount());
         }

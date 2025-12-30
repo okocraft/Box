@@ -49,7 +49,7 @@ public class RegisterCommand extends AbstractCommand {
         }
 
         BoxAPI.api().getScheduler().runEntityTask(player, () -> {
-            var mainHandItem = player.getInventory().getItemInMainHand();
+            ItemStack mainHandItem = player.getInventory().getItemInMainHand();
 
             if (mainHandItem.getType().isAir()) {
                 sender.sendMessage(this.isAir);
@@ -79,7 +79,7 @@ public class RegisterCommand extends AbstractCommand {
             case ItemRegistrationResult.DuplicateItem duplicateItemResult ->
                 player.sendMessage(this.alreadyRegistered.apply(duplicateItemResult.item()));
             case ItemRegistrationResult.ExceptionOccurred exceptionOccurredResult -> {
-                var ex = exceptionOccurredResult.exception();
+                Exception ex = exceptionOccurredResult.exception();
                 player.sendMessage(this.exceptionOccurred.apply(ex));
                 BoxLogger.logger().error("Could not register a new custom item.", ex);
             }

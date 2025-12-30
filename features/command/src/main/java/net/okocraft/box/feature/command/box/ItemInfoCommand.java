@@ -2,6 +2,7 @@ package net.okocraft.box.feature.command.box;
 
 import dev.siroshun.mcmsgdef.MessageKey;
 import dev.siroshun.mcmsgdef.Placeholder;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.minimessage.translation.Argument;
 import net.okocraft.box.api.BoxAPI;
@@ -10,13 +11,16 @@ import net.okocraft.box.api.event.player.PlayerCollectItemInfoEvent;
 import net.okocraft.box.api.message.DefaultMessageCollector;
 import net.okocraft.box.api.message.ErrorMessages;
 import net.okocraft.box.api.model.item.BoxItem;
+import net.okocraft.box.api.player.BoxPlayer;
 import net.okocraft.box.api.util.TabCompleter;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import static net.okocraft.box.api.message.Placeholders.AMOUNT;
@@ -53,7 +57,7 @@ public class ItemInfoCommand extends AbstractCommand {
         BoxItem boxItem;
 
         if (1 < args.length) {
-            var optionalBoxItem = BoxAPI.api().getItemManager().getBoxItem(args[1]);
+            Optional<BoxItem> optionalBoxItem = BoxAPI.api().getItemManager().getBoxItem(args[1]);
 
             if (optionalBoxItem.isPresent()) {
                 boxItem = optionalBoxItem.get();
@@ -62,14 +66,14 @@ public class ItemInfoCommand extends AbstractCommand {
                 return;
             }
         } else {
-            var itemInMainHand = player.getInventory().getItemInMainHand();
+            ItemStack itemInMainHand = player.getInventory().getItemInMainHand();
 
             if (itemInMainHand.getType().isAir()) {
                 sender.sendMessage(this.isAir);
                 return;
             }
 
-            var optionalBoxItem = BoxAPI.api().getItemManager().getBoxItem(itemInMainHand);
+            Optional<BoxItem> optionalBoxItem = BoxAPI.api().getItemManager().getBoxItem(itemInMainHand);
 
             if (optionalBoxItem.isPresent()) {
                 boxItem = optionalBoxItem.get();
@@ -79,15 +83,15 @@ public class ItemInfoCommand extends AbstractCommand {
             }
         }
 
-        var boxPlayer = BoxAPI.api().getBoxPlayerMap().get(player);
+        BoxPlayer boxPlayer = BoxAPI.api().getBoxPlayerMap().get(player);
 
-        var event = new PlayerCollectItemInfoEvent(boxPlayer, boxItem);
+        PlayerCollectItemInfoEvent event = new PlayerCollectItemInfoEvent(boxPlayer, boxItem);
 
         event.addInfo(this.itemBasicInfo.apply(boxItem, boxItem.getPlainName(), boxItem.getInternalId()));
         event.addInfo(this.currentStock.apply(boxPlayer.getCurrentStockHolder().getAmount(boxItem)));
 
         BoxAPI.api().getEventCallers().async().call(event, e -> {
-            for (var info : e.getInfo()) {
+            for (Component info : e.getInfo()) {
                 e.getBoxPlayer().getPlayer().sendMessage(info);
             }
         });

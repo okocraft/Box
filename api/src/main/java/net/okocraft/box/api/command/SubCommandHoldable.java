@@ -78,7 +78,7 @@ public interface SubCommandHoldable {
         public @NotNull Optional<Command> search(@NotNull String name) {
             name = Objects.requireNonNull(name).toLowerCase(Locale.ROOT);
 
-            for (var subCommand : this.subCommands) {
+            for (Command subCommand : this.subCommands) {
                 if (subCommand.getName().equals(name) || subCommand.getAliases().contains(name)) {
                     return Optional.of(subCommand);
                 }

@@ -2,17 +2,20 @@ package net.okocraft.box.storage.implementation.database.patches;
 
 import net.okocraft.box.storage.api.util.SneakyThrow;
 import net.okocraft.box.storage.implementation.database.DatabaseStorage;
+import net.okocraft.box.storage.implementation.database.operator.OperatorProvider;
 import net.okocraft.box.storage.implementation.database.table.ItemTable;
 import org.jetbrains.annotations.NotNull;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public final class V6Patch {
 
     public static void patch(@NotNull DatabaseStorage storage) throws SQLException {
-        var operators = storage.getDatabase().operators();
+        OperatorProvider operators = storage.getDatabase().operators();
 
-        try (var connection = storage.getDatabase().getConnection()) {
+        try (Connection connection = storage.getDatabase().getConnection()) {
             if (!operators.patcher().hasTable(connection, "items")) {
                 return;
             }
@@ -21,7 +24,7 @@ public final class V6Patch {
 
             operators.itemTable().initTable(connection);
 
-            try (var statement = operators.itemTable().insertStatement(connection)) {
+            try (PreparedStatement statement = operators.itemTable().insertStatement(connection)) {
                 operators.patcher().getDefaultItemsFromLegacy(
                     connection,
                     "legacy_items",
@@ -38,7 +41,7 @@ public final class V6Patch {
 
             operators.customItemTable().initTable(connection);
 
-            try (var statement = operators.itemTable().insertStatement(connection)) {
+            try (PreparedStatement statement = operators.itemTable().insertStatement(connection)) {
                 operators.patcher().getCustomItemsFromLegacyItemTable(
                     connection,
                     "legacy_items",

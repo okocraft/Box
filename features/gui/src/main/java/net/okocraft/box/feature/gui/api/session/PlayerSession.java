@@ -3,6 +3,7 @@ package net.okocraft.box.feature.gui.api.session;
 import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.model.stock.StockHolder;
 import net.okocraft.box.api.model.user.BoxUser;
+import net.okocraft.box.api.player.BoxPlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -14,7 +15,7 @@ import java.util.function.Supplier;
 public final class PlayerSession {
 
     public static @NotNull PlayerSession newSession(@NotNull Player viewer) {
-        var boxPlayer = BoxAPI.api().getBoxPlayerMap().get(viewer);
+        BoxPlayer boxPlayer = BoxAPI.api().getBoxPlayerMap().get(viewer);
         return new PlayerSession(viewer, boxPlayer.asUser(), boxPlayer.getCurrentStockHolder());
     }
 
@@ -46,12 +47,12 @@ public final class PlayerSession {
     }
 
     public <T> @Nullable T getData(@NotNull TypedKey<T> key) {
-        var data = this.dataMap.get(key);
+        Object data = this.dataMap.get(key);
         return key.clazz().isInstance(data) ? key.clazz().cast(data) : null;
     }
 
     public <T> @NotNull T getDataOrThrow(@NotNull TypedKey<T> key) {
-        var data = this.getData(key);
+        T data = this.getData(key);
 
         if (data == null) {
             throw new IllegalStateException(key + " does not exist in this session (" + this.getViewer().getName() + ")");
@@ -65,18 +66,18 @@ public final class PlayerSession {
     }
 
     public <T> @NotNull T computeDataIfAbsent(@NotNull TypedKey<T> key, @NotNull Supplier<? extends T> supplier) {
-        var data = this.dataMap.computeIfAbsent(key, ignored -> supplier.get());
+        Object data = this.dataMap.computeIfAbsent(key, ignored -> supplier.get());
         if (key.clazz().isInstance(data)) {
             return key.clazz().cast(data);
         } else {
-            var created = supplier.get();
+            T created = supplier.get();
             this.dataMap.put(key, data);
             return created;
         }
     }
 
     public <T> @Nullable T removeData(@NotNull TypedKey<T> key) {
-        var removed = this.dataMap.remove(key);
+        Object removed = this.dataMap.remove(key);
         return key.clazz().isInstance(removed) ? key.clazz().cast(removed) : null;
     }
 }

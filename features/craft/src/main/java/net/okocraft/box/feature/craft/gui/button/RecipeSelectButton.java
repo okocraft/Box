@@ -46,7 +46,7 @@ public class RecipeSelectButton implements Button {
 
     @Override
     public @NotNull ItemStack createIcon(@NotNull PlayerSession session) {
-        var editor = ItemEditor.create()
+        ItemEditor editor = ItemEditor.create()
             .displayName(translatable(this.recipe.result().getOriginal()).decoration(ITALIC, State.FALSE).append(space()).append(text("#" + this.number, NO_DECORATION_YELLOW)))
             .loreEmptyLine();
 
@@ -75,7 +75,7 @@ public class RecipeSelectButton implements Button {
 
             return ClickResult.UPDATE_ICONS;
         } else {
-            var menu = CraftMenu.prepare(this.recipe);
+            CraftMenu menu = CraftMenu.prepare(this.recipe);
             return ClickResult.changeMenu(menu);
         }
     }

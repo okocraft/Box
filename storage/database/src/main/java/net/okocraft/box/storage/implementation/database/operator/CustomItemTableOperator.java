@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Optional;
 
 public abstract class CustomItemTableOperator {
@@ -16,7 +17,7 @@ public abstract class CustomItemTableOperator {
     private final String updateItemDataStatement;
 
     public CustomItemTableOperator(@NotNull String tablePrefix) {
-        var tableName = tablePrefix + "custom_items";
+        String tableName = tablePrefix + "custom_items";
 
         this.createTableStatement = """
             CREATE TABLE IF NOT EXISTS `%s` (
@@ -31,13 +32,13 @@ public abstract class CustomItemTableOperator {
     }
 
     public void initTable(@NotNull Connection connection) throws SQLException {
-        try (var statement = connection.createStatement()) {
+        try (Statement statement = connection.createStatement()) {
             statement.execute(this.createTableStatement);
         }
     }
 
     public void insert(@NotNull Connection connection, int id, byte[] data) throws SQLException {
-        try (var statement = connection.prepareStatement(this.insertStatement)) {
+        try (PreparedStatement statement = connection.prepareStatement(this.insertStatement)) {
             statement.setInt(1, id);
             this.writeBytes(statement, 2, data);
             statement.executeUpdate();
@@ -54,10 +55,10 @@ public abstract class CustomItemTableOperator {
     }
 
     public @NotNull Optional<byte[]> selectItemData(@NotNull Connection connection, int id) throws SQLException {
-        try (var statement = connection.prepareStatement(this.selectItemDataStatement)) {
+        try (PreparedStatement statement = connection.prepareStatement(this.selectItemDataStatement)) {
             statement.setInt(1, id);
 
-            try (var resultSet = statement.executeQuery()) {
+            try (ResultSet resultSet = statement.executeQuery()) {
                 return resultSet.next() ? Optional.of(this.readBytes(resultSet, 1)) : Optional.empty();
             }
         }

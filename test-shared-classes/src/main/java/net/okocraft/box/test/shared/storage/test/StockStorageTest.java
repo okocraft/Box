@@ -32,8 +32,8 @@ public abstract class StockStorageTest<S> extends AbstractStorageTest<S> {
 
     @Test
     void testLoadingAndSaving() throws Exception {
-        var storage = this.newStorage();
-        var stockStorage = this.newStockStorage(storage);
+        S storage = this.newStorage();
+        StockStorage stockStorage = this.newStockStorage(storage);
 
         try {
             Assertions.assertTrue(stockStorage.loadStockData(ID).isEmpty()); // new player's stock data should be empty
@@ -48,7 +48,7 @@ public abstract class StockStorageTest<S> extends AbstractStorageTest<S> {
 
     @Test
     void testPartialSaving() throws Exception {
-        var storage = this.newStorage();
+        S storage = this.newStorage();
 
         if (!(this.newStockStorage(storage) instanceof PartialSavingStockStorage stockStorage)) {
             this.closeStorage(storage);
@@ -78,8 +78,8 @@ public abstract class StockStorageTest<S> extends AbstractStorageTest<S> {
 
     @Test
     void testCleaningZeroStock() throws Exception {
-        var storage = this.newStorage();
-        var stockStorage = this.newStockStorage(storage);
+        S storage = this.newStorage();
+        StockStorage stockStorage = this.newStockStorage(storage);
 
         try {
             stockStorage.saveStockData(ID, List.of(stock(1, 0), stock(2, 1)));
@@ -91,8 +91,8 @@ public abstract class StockStorageTest<S> extends AbstractStorageTest<S> {
 
     @Test
     void testRemapItemId() throws Exception {
-        var storage = this.newStorage();
-        var stockStorage = this.newStockStorage(storage);
+        S storage = this.newStorage();
+        StockStorage stockStorage = this.newStockStorage(storage);
 
         try {
             saveAndLoad(stockStorage, List.of(stock(1, 1), stock(2, 2), stock(3, 3))); // initial saving

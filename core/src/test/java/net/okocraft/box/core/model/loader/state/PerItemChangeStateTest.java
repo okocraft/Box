@@ -1,5 +1,6 @@
 package net.okocraft.box.core.model.loader.state;
 
+import net.okocraft.box.api.model.stock.StockHolder;
 import net.okocraft.box.test.shared.model.stock.TestStockHolder;
 import net.okocraft.box.test.shared.storage.memory.stock.MemoryPartialSavingStockStorage;
 import org.jetbrains.annotations.NotNull;
@@ -10,9 +11,9 @@ class PerItemChangeStateTest extends AbstractChangeStateTest {
 
     @Test
     void test() throws Exception {
-        var storage = new MemoryPartialSavingStockStorage();
-        var stockHolder = TestStockHolder.create(STOCK_DATA);
-        var state = new PerItemChangeState(storage);
+        MemoryPartialSavingStockStorage storage = new MemoryPartialSavingStockStorage();
+        StockHolder stockHolder = TestStockHolder.create(STOCK_DATA);
+        PerItemChangeState state = new PerItemChangeState(storage);
 
         checkSize(state, 0);
 

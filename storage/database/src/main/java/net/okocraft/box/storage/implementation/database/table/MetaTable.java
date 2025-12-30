@@ -35,7 +35,7 @@ public class MetaTable {
     }
 
     public @Nullable MCDataVersion getItemDataVersion() throws SQLException {
-        var version = this.getVersion(ITEM_DATA_VERSION_KEY);
+        Integer version = this.getVersion(ITEM_DATA_VERSION_KEY);
 
         if (version != null) {
             return MCDataVersion.of(version);
@@ -49,7 +49,7 @@ public class MetaTable {
     }
 
     public @NotNull StorageVersion getStorageVersion() throws SQLException {
-        var version = this.getVersion(STORAGE_VERSION_KEY);
+        Integer version = this.getVersion(STORAGE_VERSION_KEY);
 
         if (version != null) {
             return new StorageVersion(version);
@@ -63,25 +63,25 @@ public class MetaTable {
     }
 
     private @Nullable Integer getVersion(@NotNull String key) throws SQLException {
-        try (var connection = this.database.getConnection()) {
+        try (Connection connection = this.database.getConnection()) {
             return this.operator.selectValueAsIntOrNull(connection, key);
         }
     }
 
     private void saveVersion(@NotNull String key, int version) throws SQLException {
-        try (var connection = this.database.getConnection()) {
+        try (Connection connection = this.database.getConnection()) {
             this.operator.upsertValue(connection, key, String.valueOf(version));
         }
     }
 
     public boolean isCurrentCustomDataFormat() throws SQLException {
-        try (var connection = this.database.getConnection()) {
+        try (Connection connection = this.database.getConnection()) {
             return CURRENT_CUSTOM_DATA_FORMAT_VALUE.equals(this.operator.selectValue(connection, CUSTOM_DATA_FORMAT_KEY));
         }
     }
 
     public void saveCurrentCustomDataFormat() throws SQLException {
-        try (var connection = this.database.getConnection()) {
+        try (Connection connection = this.database.getConnection()) {
             this.operator.upsertValue(connection, CUSTOM_DATA_FORMAT_KEY, CURRENT_CUSTOM_DATA_FORMAT_VALUE);
         }
     }

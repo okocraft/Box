@@ -1,8 +1,10 @@
 package net.okocraft.box.api.util;
 
 import net.okocraft.box.api.BoxAPI;
+import net.okocraft.box.api.model.manager.UserManager;
 import net.okocraft.box.api.model.user.BoxUser;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,10 +22,10 @@ public final class UserSearcher {
      * @return a search result
      */
     public static @Nullable BoxUser search(@NotNull String uuidOrName) {
-        var uuid = toUuidOrNull(uuidOrName);
+        UUID uuid = toUuidOrNull(uuidOrName);
 
-        var onlinePlayer = uuid != null ? Bukkit.getPlayer(uuid) : Bukkit.getPlayer(uuidOrName);
-        var userManager = BoxAPI.api().getUserManager();
+        Player onlinePlayer = uuid != null ? Bukkit.getPlayer(uuid) : Bukkit.getPlayer(uuidOrName);
+        UserManager userManager = BoxAPI.api().getUserManager();
 
         if (onlinePlayer != null) {
             return userManager.createBoxUser(onlinePlayer.getUniqueId(), onlinePlayer.getName());

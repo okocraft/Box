@@ -1,5 +1,6 @@
 package net.okocraft.box.storage.implementation.yaml;
 
+import dev.siroshun.configapi.core.node.MapNode;
 import dev.siroshun.configapi.format.yaml.YamlFormat;
 import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.api.util.MCDataVersion;
@@ -26,14 +27,14 @@ class YamlMetaStorage {
     private StorageVersion storageVersion;
 
     YamlMetaStorage(@NotNull Path rootDirectory) {
-        var directory = rootDirectory.resolve("meta");
+        Path directory = rootDirectory.resolve("meta");
         this.lastItemIdFilepath = directory.resolve("last-item-id.dat");
         this.dataVersionFilepath = directory.resolve("data-version.dat");
         this.storageVersionFilepath = directory.resolve("storage-version.dat");
     }
 
     void migrateFromOldMetaFile(@NotNull Path filepath) throws IOException {
-        var source = YamlFormat.DEFAULT.load(filepath);
+        MapNode source = YamlFormat.DEFAULT.load(filepath);
 
         saveInt(this.lastItemIdFilepath, source.getInteger("last-used-item-id"));
         saveInt(this.dataVersionFilepath, source.getInteger("data-version"));
@@ -87,7 +88,7 @@ class YamlMetaStorage {
             return OptionalInt.empty();
         }
 
-        var content = Files.readString(filepath, StandardCharsets.UTF_8);
+        String content = Files.readString(filepath, StandardCharsets.UTF_8);
 
         try {
             return OptionalInt.of(Integer.parseInt(content));

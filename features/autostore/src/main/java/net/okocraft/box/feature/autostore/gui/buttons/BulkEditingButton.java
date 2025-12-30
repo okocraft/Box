@@ -6,6 +6,7 @@ import it.unimi.dsi.fastutil.ints.IntSet;
 import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.message.DefaultMessageCollector;
 import net.okocraft.box.feature.autostore.setting.AutoStoreSetting;
+import net.okocraft.box.feature.autostore.setting.PerItemSetting;
 import net.okocraft.box.feature.gui.api.button.ClickResult;
 import net.okocraft.box.feature.gui.api.session.PlayerSession;
 import net.okocraft.box.feature.gui.api.session.TypedKey;
@@ -60,13 +61,13 @@ public class BulkEditingButton extends AbstractAutoStoreSettingButton {
 
     @Override
     public @NotNull ClickResult onClick(@NotNull PlayerSession session, @NotNull ClickType clickType) {
-        var setting = session.getData(AutoStoreSetting.KEY);
+        AutoStoreSetting setting = session.getData(AutoStoreSetting.KEY);
 
         if (setting == null) {
             return ClickResult.NO_UPDATE_NEEDED;
         }
 
-        var perItemSetting = setting.getPerItemModeSetting();
+        PerItemSetting perItemSetting = setting.getPerItemModeSetting();
         SoundBase sound;
 
         Boolean recent = session.getData(RECENT_OPERATION_KEY);
@@ -82,7 +83,7 @@ public class BulkEditingButton extends AbstractAutoStoreSettingButton {
         }
 
         session.putData(RECENT_OPERATION_KEY, recent);
-        var result = ClickResult.UPDATE_BUTTON;
+        ClickResult result = ClickResult.UPDATE_BUTTON;
 
         if (!setting.isEnabled()) {
             setting.setEnabled(true);

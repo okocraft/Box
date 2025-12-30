@@ -6,7 +6,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 class BoxItemMapTest {
 
@@ -15,11 +17,11 @@ class BoxItemMapTest {
 
     @Test
     void testLock() throws ExecutionException, InterruptedException {
-        var itemMap = this.createItemMap();
+        BoxItemMap itemMap = this.createItemMap();
         Boolean[] states = new Boolean[3];
 
-        var lockingExecutor = Executors.newSingleThreadExecutor();
-        var readingExecutor = Executors.newSingleThreadExecutor();
+        ExecutorService lockingExecutor = Executors.newSingleThreadExecutor();
+        ExecutorService readingExecutor = Executors.newSingleThreadExecutor();
 
         readingExecutor.submit(() -> states[0] = !itemMap.isRegistered(ITEM.getPlainName())).get();
 
@@ -27,7 +29,7 @@ class BoxItemMapTest {
 
         lockingExecutor.submit(itemMap::acquireWriteLock).get();
 
-        var readingFuture = readingExecutor.submit(() -> states[1] = itemMap.isRegistered(ITEM.getPlainName()));
+        Future<Boolean> readingFuture = readingExecutor.submit(() -> states[1] = itemMap.isRegistered(ITEM.getPlainName()));
 
         Assertions.assertNull(states[1]);
 
@@ -45,7 +47,7 @@ class BoxItemMapTest {
 
     @Test
     void testRegisterItem() {
-        var itemMap = this.createItemMap();
+        BoxItemMap itemMap = this.createItemMap();
 
         Assertions.assertFalse(itemMap.isRegistered(ITEM.getPlainName()));
         Assertions.assertNull(itemMap.getByItemName(ITEM.getPlainName()));
@@ -74,7 +76,7 @@ class BoxItemMapTest {
 
     @Test
     void testRenameItem() {
-        var itemMap = this.createItemMap();
+        BoxItemMap itemMap = this.createItemMap();
 
         itemMap.addItemAtUnsynchronized(ITEM);
         itemMap.rebuildCache();

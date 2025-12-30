@@ -60,8 +60,8 @@ public final class Amount {
         }
 
         public @NotNull Unit next() {
-            var values = values();
-            var index = this.ordinal() + 1;
+            Unit[] values = values();
+            int index = this.ordinal() + 1;
 
             if (index == values.length) {
                 index = 0;

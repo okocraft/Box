@@ -91,14 +91,14 @@ class ConfigTest {
     @Test
     void testInitialLoad(@TempDir Path dir) throws Exception {
         Files.createDirectories(dir);
-        var registry = storageRegistry();
+        StorageRegistry registry = storageRegistry();
 
         registry.register("memory", MemoryStorageSetting.class, MemoryStorage::new);
 
         registry.setDefaultStorageName("memory");
 
-        var config = new Config(dir);
-        var storage = Assertions.assertInstanceOf(MemoryStorage.class, config.loadAndCreateStorage(registry));
+        Config config = new Config(dir);
+        MemoryStorage storage = Assertions.assertInstanceOf(MemoryStorage.class, config.loadAndCreateStorage(registry));
 
         Assertions.assertNotNull(config.coreSetting());
         Assertions.assertEquals(config.coreSetting(), new CoreSetting(new StockDataSetting(300, 15), Collections.emptySet(), false));
@@ -109,7 +109,7 @@ class ConfigTest {
 
     @Test
     void testCoreSetting(@TempDir Path dir) throws Exception {
-        var config = new Config(dir);
+        Config config = new Config(dir);
         Files.writeString(config.filepath(), CUSTOM_CORE_SETTING);
         config.loadAndCreateStorage(storageRegistry());
 
@@ -122,9 +122,9 @@ class ConfigTest {
 
     @Test
     void testCreateStorage(@TempDir Path dir) throws Exception {
-        var config = new Config(dir);
+        Config config = new Config(dir);
         Files.writeString(config.filepath(), WITH_INVALID_STORAGE_TYPE);
-        var registry = storageRegistry();
+        StorageRegistry registry = storageRegistry();
 
         registry.register("memory", MemoryStorageSetting.class, MemoryStorage::new);
 
@@ -136,13 +136,13 @@ class ConfigTest {
 
         Files.writeString(config.filepath(), MEMORY_STORAGE_TYPE_WITH_SETTING);
 
-        var storage = Assertions.assertInstanceOf(MemoryStorage.class, config.loadAndCreateStorage(registry));
+        MemoryStorage storage = Assertions.assertInstanceOf(MemoryStorage.class, config.loadAndCreateStorage(registry));
         Assertions.assertFalse(storage.getSetting().partialSaving());
         Assertions.assertEquals(-1, storage.getSetting().exampleValue());
     }
 
     private static @NotNull StorageRegistry storageRegistry() {
-        var registry = new StorageRegistry();
+        StorageRegistry registry = new StorageRegistry();
 
         registry.register("dummy", DummyStorageSetting.class, DummyStorage::new);
         registry.setDefaultStorageName("dummy");

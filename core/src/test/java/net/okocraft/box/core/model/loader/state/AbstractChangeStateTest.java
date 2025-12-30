@@ -20,8 +20,8 @@ abstract class AbstractChangeStateTest {
 
     @Test
     void testIsInInterval() throws Exception {
-        var nanosToSave = TimeUnit.SECONDS.toNanos(15);
-        var state = this.createState();
+        long nanosToSave = TimeUnit.SECONDS.toNanos(15);
+        ChangeState state = this.createState();
         Assertions.assertFalse(state.isInInterval(nanosToSave));
         state.saveChanges(TestStockHolder.create());
         Assertions.assertTrue(state.isInInterval(nanosToSave));
@@ -43,7 +43,7 @@ abstract class AbstractChangeStateTest {
 
         Assertions.assertEquals(1, collection.size());
 
-        var data = collection.toArray(StockData[]::new)[0];
+        StockData data = collection.toArray(StockData[]::new)[0];
 
         Assertions.assertEquals(ITEM_ID, data.itemId());
         Assertions.assertEquals(expectedAmount, data.amount());

@@ -4,6 +4,7 @@ import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.model.manager.ItemManager;
 import net.okocraft.box.api.util.BoxLogger;
+import net.okocraft.box.feature.craft.config.CustomRecipe;
 import net.okocraft.box.feature.craft.config.RecipeConfig;
 import net.okocraft.box.feature.craft.event.RecipeImportEvent;
 import net.okocraft.box.feature.craft.model.BoxItemRecipe;
@@ -16,11 +17,13 @@ import org.bukkit.inventory.ShapelessRecipe;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 final class Processor {
 
@@ -33,7 +36,7 @@ final class Processor {
     }
 
     void processRecipe(@NotNull Recipe recipe) {
-        var result = this.itemManager.getBoxItem(recipe.getResult());
+        Optional<BoxItem> result = this.itemManager.getBoxItem(recipe.getResult());
 
         if (result.isEmpty()) {
             return;
@@ -50,18 +53,18 @@ final class Processor {
     }
 
     void processCustomRecipes() {
-        var logger = BoxLogger.logger();
-        var itemManager = BoxAPI.api().getItemManager();
+        Logger logger = BoxLogger.logger();
+        ItemManager itemManager = BoxAPI.api().getItemManager();
 
-        for (var customRecipe : this.recipeConfig.customRecipes()) {
-            var resultItem = itemManager.getBoxItem(customRecipe.result());
+        for (CustomRecipe customRecipe : this.recipeConfig.customRecipes()) {
+            Optional<BoxItem> resultItem = itemManager.getBoxItem(customRecipe.result());
 
             if (resultItem.isEmpty()) {
                 logger.warn("Could not get a result item in recipes.yml ({})", customRecipe.result());
                 continue;
             }
 
-            var ingredientsNames = customRecipe.ingredients();
+            List<String> ingredientsNames = customRecipe.ingredients();
 
             if (ingredientsNames.isEmpty()) {
                 logger.warn("No ingredients specified for {}", customRecipe.result());
@@ -73,17 +76,17 @@ final class Processor {
                 continue;
             }
 
-            var ingredients = new BoxItem[ingredientsNames.size()];
+            BoxItem[] ingredients = new BoxItem[ingredientsNames.size()];
             boolean process = false; // Indicates whether there is at least one or more valid ingredient and there is no unknown ingredient.
 
             for (int i = 0, s = ingredientsNames.size(); i < s; i++) {
-                var ingredientName = ingredientsNames.get(i);
+                String ingredientName = ingredientsNames.get(i);
 
                 if (ingredientName.equalsIgnoreCase("air")) {
                     continue;
                 }
 
-                var ingredient = itemManager.getBoxItem(ingredientName);
+                Optional<BoxItem> ingredient = itemManager.getBoxItem(ingredientName);
 
                 if (ingredient.isEmpty()) {
                     logger.warn("Could not get an ingredient item in recipes.yml ({})", ingredientName);
@@ -110,16 +113,16 @@ final class Processor {
             return;
         }
 
-        var ingredients = new ArrayList<IngredientHolder>();
+        List<IngredientHolder> ingredients = new ArrayList<>();
 
-        for (var entry : recipe.getChoiceMap().entrySet()) {
-            var slot = this.getPosition(entry.getKey(), recipe.getShape());
-            var choice = entry.getValue();
+        for (Map.Entry<Character, RecipeChoice> entry : recipe.getChoiceMap().entrySet()) {
+            int slot = this.getPosition(entry.getKey(), recipe.getShape());
+            RecipeChoice choice = entry.getValue();
 
             if (choice instanceof RecipeChoice.MaterialChoice materialChoice) {
                 ingredients.add(IngredientHolder.fromMaterialChoice(slot, materialChoice));
             } else if (choice instanceof RecipeChoice.ExactChoice exactChoice) {
-                var ingredientItem = IngredientHolder.fromExactChoice(slot, exactChoice);
+                IngredientHolder ingredientItem = IngredientHolder.fromExactChoice(slot, exactChoice);
 
                 if (ingredientItem.patterns().isEmpty()) {
                     return;
@@ -139,14 +142,14 @@ final class Processor {
             return;
         }
 
-        var ingredients = new ArrayList<IngredientHolder>();
+        List<IngredientHolder> ingredients = new ArrayList<>();
 
         int slot = 0;
-        for (var choice : recipe.getChoiceList()) {
+        for (RecipeChoice choice : recipe.getChoiceList()) {
             if (choice instanceof RecipeChoice.MaterialChoice materialChoice) {
                 ingredients.add(IngredientHolder.fromMaterialChoice(slot, materialChoice));
             } else if (choice instanceof RecipeChoice.ExactChoice exactChoice) {
-                var ingredientItem = IngredientHolder.fromExactChoice(slot, exactChoice);
+                IngredientHolder ingredientItem = IngredientHolder.fromExactChoice(slot, exactChoice);
 
                 if (ingredientItem.patterns().isEmpty()) {
                     return;
@@ -164,10 +167,10 @@ final class Processor {
     }
 
     private void processCustomRecipe(@Nullable BoxItem @NotNull [] ingredients, @NotNull BoxItem result, int amount) {
-        var ingredientHolders = new ArrayList<IngredientHolder>();
+        List<IngredientHolder> ingredientHolders = new ArrayList<>();
 
         for (int i = 0; i < ingredients.length; i++) {
-            var ingredient = ingredients[i];
+            BoxItem ingredient = ingredients[i];
             if (ingredient != null) {
                 ingredientHolders.add(IngredientHolder.fromSingleItem(i, ingredient.getOriginal()));
             }
@@ -179,8 +182,8 @@ final class Processor {
     @Contract(pure = true)
     private int getPosition(char c, String @NotNull [] shape) {
         for (int row = 0; row < shape.length; row++) {
-            var str = shape[row];
-            var pos = str.indexOf(c);
+            String str = shape[row];
+            int pos = str.indexOf(c);
 
             if (pos != -1) {
                 return pos + (row * 3);
@@ -191,7 +194,7 @@ final class Processor {
     }
 
     void addRecipe(@NotNull List<IngredientHolder> ingredients, @NotNull BoxItem result, int amount) {
-        var recipe = new BoxItemRecipe(ingredients, result, amount);
+        BoxItemRecipe recipe = new BoxItemRecipe(ingredients, result, amount);
         this.recipeMap.computeIfAbsent(result, i -> new RecipeHolder()).addRecipe(recipe);
         BoxAPI.api().getEventCallers().sync().call(new RecipeImportEvent(recipe));
     }

@@ -1,8 +1,11 @@
 package net.okocraft.box.api.transaction;
 
 import dev.siroshun.serialization.annotation.Inline;
+import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.model.stock.StockData;
+import net.okocraft.box.api.model.stock.StockHolder;
 import net.okocraft.box.test.shared.event.StockEventCollector;
+import net.okocraft.box.test.shared.mock.bukkit.inventory.ContentsHoldingInventory;
 import net.okocraft.box.test.shared.mock.bukkit.inventory.InventoryInfo;
 import net.okocraft.box.test.shared.model.item.ItemType;
 import net.okocraft.box.test.shared.model.stock.TestStockHolder;
@@ -22,11 +25,11 @@ class WithdrawalTest {
     @MethodSource({"loadTestCases"})
     void test(TestCase testCase) {
         int initialAmount = testCase.initialAmount();
-        var stockHolder = TestStockHolder.create(List.of(new StockData(1, initialAmount)));
-        var inventory = testCase.inventory().createTestInventory();
-        var item = testCase.item().asBoxItem(1);
+        StockHolder stockHolder = TestStockHolder.create(List.of(new StockData(1, initialAmount)));
+        ContentsHoldingInventory inventory = testCase.inventory().createTestInventory();
+        BoxItem item = testCase.item().asBoxItem(1);
 
-        var result = StockHolderTransaction.create(stockHolder).withdraw(item, testCase.limit()).toInventory(inventory, StockEventCollector.TEST_CAUSE);
+        TransactionResult result = StockHolderTransaction.create(stockHolder).withdraw(item, testCase.limit()).toInventory(inventory, StockEventCollector.TEST_CAUSE);
 
         int expectedWithdrawnAmount = testCase.expectedWithdrawnAmount();
         Assertions.assertEquals(item, result.item());

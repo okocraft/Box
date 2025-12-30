@@ -7,6 +7,9 @@ import net.okocraft.box.api.command.AbstractCommand;
 import net.okocraft.box.api.message.DefaultMessageCollector;
 import net.okocraft.box.api.message.ErrorMessages;
 import net.okocraft.box.api.model.item.BoxItem;
+import net.okocraft.box.api.model.stock.StockHolder;
+import net.okocraft.box.api.player.BoxPlayer;
+import net.okocraft.box.api.player.BoxPlayerMap;
 import net.okocraft.box.api.util.TabCompleter;
 import net.okocraft.box.feature.command.event.stock.CommandCauses;
 import org.bukkit.Bukkit;
@@ -17,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -61,7 +65,7 @@ public class GiveCommand extends AbstractCommand {
             return;
         }
 
-        var target = Bukkit.getPlayer(args[1]);
+        Player target = Bukkit.getPlayer(args[1]);
 
         if (target == null) {
             sender.sendMessage(ErrorMessages.PLAYER_NOT_FOUND.apply(args[1]));
@@ -83,20 +87,20 @@ public class GiveCommand extends AbstractCommand {
             return;
         }
 
-        var optionalBoxItem = BoxAPI.api().getItemManager().getBoxItem(args[2]);
+        Optional<BoxItem> optionalBoxItem = BoxAPI.api().getItemManager().getBoxItem(args[2]);
 
         if (optionalBoxItem.isEmpty()) {
             sender.sendMessage(ErrorMessages.ITEM_NOT_FOUND.apply(args[2]));
             return;
         }
 
-        var boxItem = optionalBoxItem.get();
+        BoxItem boxItem = optionalBoxItem.get();
 
-        var playerMap = BoxAPI.api().getBoxPlayerMap();
+        BoxPlayerMap playerMap = BoxAPI.api().getBoxPlayerMap();
 
-        var senderBoxPlayer = playerMap.get(player);
-        var stockHolder = senderBoxPlayer.getCurrentStockHolder();
-        var currentStock = stockHolder.getAmount(boxItem);
+        BoxPlayer senderBoxPlayer = playerMap.get(player);
+        StockHolder stockHolder = senderBoxPlayer.getCurrentStockHolder();
+        int currentStock = stockHolder.getAmount(boxItem);
 
         if (currentStock < 1) {
             sender.sendMessage(this.noStock.apply(boxItem));
@@ -125,7 +129,7 @@ public class GiveCommand extends AbstractCommand {
             return;
         }
 
-        var targetBoxPlayer = playerMap.get(target);
+        BoxPlayer targetBoxPlayer = playerMap.get(target);
 
         int senderDecreaseResult = stockHolder.decreaseIfPossible(boxItem, amount, new CommandCauses.Give(targetBoxPlayer));
 
@@ -134,7 +138,7 @@ public class GiveCommand extends AbstractCommand {
             return;
         }
 
-        var targetCurrent = targetBoxPlayer.getCurrentStockHolder().increase(boxItem, amount, new CommandCauses.Receive(senderBoxPlayer));
+        int targetCurrent = targetBoxPlayer.getCurrentStockHolder().increase(boxItem, amount, new CommandCauses.Receive(senderBoxPlayer));
 
         sender.sendMessage(this.successSender.apply(target.getName(), boxItem, amount, senderDecreaseResult));
         target.sendMessage(this.successTarget.apply(sender.getName(), boxItem, amount, targetCurrent));
@@ -151,8 +155,8 @@ public class GiveCommand extends AbstractCommand {
         }
 
         if (args.length == 3) {
-            var itemNameFilter = args[2].toLowerCase(Locale.ENGLISH);
-            var stockHolder = BoxAPI.api().getBoxPlayerMap().get(player).getCurrentStockHolder();
+            String itemNameFilter = args[2].toLowerCase(Locale.ENGLISH);
+            StockHolder stockHolder = BoxAPI.api().getBoxPlayerMap().get(player).getCurrentStockHolder();
 
             return stockHolder.getStockedItems().stream()
                 .map(BoxItem::getPlainName)

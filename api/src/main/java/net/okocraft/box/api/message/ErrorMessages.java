@@ -5,6 +5,8 @@ import net.kyori.adventure.text.ComponentLike;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Field;
+
 import static net.okocraft.box.api.message.Placeholders.ARG;
 import static net.okocraft.box.api.message.Placeholders.ITEM_NAME;
 import static net.okocraft.box.api.message.Placeholders.PERMISSION;
@@ -62,8 +64,8 @@ public final class ErrorMessages {
 
     private static @NotNull MessageKey getKeyFromCore(@NotNull String fieldName) {
         try {
-            var clazz = Class.forName("net.okocraft.box.core.message.CoreMessages");
-            var field = clazz.getDeclaredField(fieldName);
+            Class<?> clazz = Class.forName("net.okocraft.box.core.message.CoreMessages");
+            Field field = clazz.getDeclaredField(fieldName);
             field.setAccessible(true);
             return MessageKey.key((String) field.get(null));
         } catch (NoSuchFieldException | ClassNotFoundException | IllegalAccessException e) {

@@ -9,6 +9,8 @@ import net.okocraft.box.storage.implementation.database.database.Database;
 import net.okocraft.box.storage.implementation.database.operator.CustomDataTableOperator;
 import org.jetbrains.annotations.NotNull;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
@@ -26,7 +28,7 @@ public abstract class AbstractCustomDataTable implements CustomDataStorage {
     public @NotNull MapNode loadData(@NotNull Key key) throws Exception {
         byte[] data;
 
-        try (var connection = this.database.getConnection()) {
+        try (Connection connection = this.database.getConnection()) {
             data = this.operator.selectDataByKey(connection, key.asString());
         }
 
@@ -35,7 +37,7 @@ public abstract class AbstractCustomDataTable implements CustomDataStorage {
 
     @Override
     public void saveData(@NotNull Key key, @NotNull MapNode mapNode) throws Exception {
-        try (var connection = this.database.getConnection()) {
+        try (Connection connection = this.database.getConnection()) {
             if (mapNode.value().isEmpty()) {
                 this.operator.deleteData(connection, key.asString());
             } else {
@@ -46,9 +48,9 @@ public abstract class AbstractCustomDataTable implements CustomDataStorage {
 
     @Override
     public void saveAllData(@NotNull Map<Key, MapNode> customDataMap) throws Exception {
-        try (var connection = this.database.getConnection();
-             var statement = this.operator.insertDataStatement(connection)) {
-            for (var entry : customDataMap.entrySet()) {
+        try (Connection connection = this.database.getConnection();
+             PreparedStatement statement = this.operator.insertDataStatement(connection)) {
+            for (Map.Entry<Key, MapNode> entry : customDataMap.entrySet()) {
                 if (entry.getValue().isEmpty()) {
                     continue;
                 }
@@ -65,7 +67,7 @@ public abstract class AbstractCustomDataTable implements CustomDataStorage {
             throw new IllegalArgumentException("Invalid namespace: " + namespace);
         }
 
-        try (var connection = this.database.getConnection()) {
+        try (Connection connection = this.database.getConnection()) {
             this.operator.selectDataByNamespace(connection, namespace, (key, data) -> {
                 try {
                     consumer.accept(Key.key(key), this.fromBytes(data));
@@ -79,7 +81,7 @@ public abstract class AbstractCustomDataTable implements CustomDataStorage {
     @SuppressWarnings("PatternValidation")
     @Override
     public void visitAllData(@NotNull BiConsumer<Key, MapNode> consumer) throws Exception {
-        try (var connection = this.database.getConnection()) {
+        try (Connection connection = this.database.getConnection()) {
             this.operator.selectAllData(connection, (key, data) -> {
                 try {
                     consumer.accept(Key.key(key), this.fromBytes(data));

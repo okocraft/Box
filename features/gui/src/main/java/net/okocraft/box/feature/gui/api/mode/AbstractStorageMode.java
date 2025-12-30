@@ -3,7 +3,10 @@ package net.okocraft.box.feature.gui.api.mode;
 import io.papermc.paper.registry.keys.SoundEventKeys;
 import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.model.item.BoxItem;
+import net.okocraft.box.api.model.stock.StockHolder;
+import net.okocraft.box.api.scheduler.BoxScheduler;
 import net.okocraft.box.api.transaction.StockHolderTransaction;
+import net.okocraft.box.api.transaction.TransactionResult;
 import net.okocraft.box.feature.gui.api.button.Button;
 import net.okocraft.box.feature.gui.api.button.ClickResult;
 import net.okocraft.box.feature.gui.api.event.stock.GuiCauses;
@@ -14,6 +17,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.function.BiPredicate;
 
 public abstract class AbstractStorageMode implements BoxItemClickMode {
@@ -22,15 +26,15 @@ public abstract class AbstractStorageMode implements BoxItemClickMode {
     private static final SoundBase WITHDRAW_SOUND = SoundBase.builder().sound(SoundEventKeys.BLOCK_STONE_BUTTON_CLICK_ON).build();
 
     protected final @NotNull ClickResult processDeposit(@NotNull PlayerSession session, @NotNull BoxItem item) {
-        var viewer = session.getViewer();
+        Player viewer = session.getViewer();
 
-        var amountData = session.getData(Amount.SHARED_DATA_KEY);
+        Amount amountData = session.getData(Amount.SHARED_DATA_KEY);
         int amount = amountData != null ? amountData.getValue() : 1;
 
-        var result = ClickResult.waitingTask();
+        ClickResult.WaitingTask result = ClickResult.waitingTask();
 
         BoxAPI.api().getScheduler().runEntityTask(viewer, () -> {
-            var resultList =
+            List<TransactionResult> resultList =
                 StockHolderTransaction
                     .create(session.getSourceStockHolder())
                     .deposit(item, amount)
@@ -43,13 +47,13 @@ public abstract class AbstractStorageMode implements BoxItemClickMode {
     }
 
     protected final @NotNull ClickResult processWithdraw(@NotNull PlayerSession session, @NotNull BoxItem item) {
-        var viewer = session.getViewer();
+        Player viewer = session.getViewer();
 
-        var amountData = session.getData(Amount.SHARED_DATA_KEY);
+        Amount amountData = session.getData(Amount.SHARED_DATA_KEY);
         int limit = amountData != null ? amountData.getValue() : 1;
 
-        var stockHolder = session.getSourceStockHolder();
-        var currentStock = stockHolder.getAmount(item);
+        StockHolder stockHolder = session.getSourceStockHolder();
+        int currentStock = stockHolder.getAmount(item);
 
         if (currentStock < 1) {
             SoundBase.UNSUCCESSFUL.play(viewer);
@@ -57,10 +61,10 @@ public abstract class AbstractStorageMode implements BoxItemClickMode {
         }
 
         int amount = Math.min(currentStock, limit);
-        var result = ClickResult.waitingTask();
+        ClickResult.WaitingTask result = ClickResult.waitingTask();
 
         BoxAPI.api().getScheduler().runEntityTask(viewer, () -> {
-            var withdrawn =
+            int withdrawn =
                 StockHolderTransaction
                     .create(session.getSourceStockHolder())
                     .withdraw(item, amount)
@@ -106,12 +110,12 @@ public abstract class AbstractStorageMode implements BoxItemClickMode {
         @Override
         public @NotNull ClickResult onClick(@NotNull PlayerSession session, @NotNull ClickType clickType) {
             if (this.canDepositAll.test(session, clickType)) {
-                var viewer = session.getViewer();
-                var scheduler = BoxAPI.api().getScheduler();
-                var result = ClickResult.waitingTask();
+                Player viewer = session.getViewer();
+                BoxScheduler scheduler = BoxAPI.api().getScheduler();
+                ClickResult.WaitingTask result = ClickResult.waitingTask();
 
                 scheduler.runEntityTask(viewer, () -> {
-                    var resultList =
+                    List<TransactionResult> resultList =
                         StockHolderTransaction
                             .create(session.getSourceStockHolder())
                             .depositAll()

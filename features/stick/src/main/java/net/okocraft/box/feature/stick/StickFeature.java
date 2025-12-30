@@ -76,8 +76,8 @@ public class StickFeature extends AbstractBoxFeature {
 
     private void defaultRightClickAction(@NotNull Player player) {
         if (player.hasPermission("box.stick.menu") && BoxAPI.api().getBoxPlayerMap().isLoaded(player)) {
-            var menu = new CategorySelectorMenu();
-            var session = PlayerSession.newSession(player);
+            CategorySelectorMenu menu = new CategorySelectorMenu();
+            PlayerSession session = PlayerSession.newSession(player);
 
             BoxAPI.api().getEventCallers().async().call(new MenuOpenEvent(menu, session), event -> {
                 if (!event.isCancelled()) {

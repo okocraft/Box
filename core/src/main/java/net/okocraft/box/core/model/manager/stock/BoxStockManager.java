@@ -76,7 +76,7 @@ public class BoxStockManager implements StockManager {
     private @NotNull StockHolder loadStockHolder(@NotNull LoadingPersonalStockHolder loader) {
         this.checkClosed();
 
-        var user = loader.getUser();
+        BoxUser user = loader.getUser();
 
         Collection<StockData> stockData;
 
@@ -86,8 +86,8 @@ public class BoxStockManager implements StockManager {
             throw new RuntimeException("Could not load user's stock holder (" + user.getUUID() + ")", e);
         }
 
-        var eventCaller = this.createStockEventCaller(loader);
-        var stockHolder = StockHolderFactory.create(user, eventCaller, stockData, this.toBoxItem);
+        StockEventCaller eventCaller = this.createStockEventCaller(loader);
+        StockHolder stockHolder = StockHolderFactory.create(user, eventCaller, stockData, this.toBoxItem);
 
         this.eventCallers.async().call(new StockHolderLoadEvent(loader));
 
@@ -162,7 +162,7 @@ public class BoxStockManager implements StockManager {
 
     @VisibleForTesting
     void closeLoader(@NotNull LoadingPersonalStockHolder loader) {
-        var unloaded = loader.close();
+        StockHolder unloaded = loader.close();
 
         if (unloaded != null) {
             try {

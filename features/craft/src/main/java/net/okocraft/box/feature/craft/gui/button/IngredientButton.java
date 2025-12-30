@@ -2,11 +2,15 @@ package net.okocraft.box.feature.craft.gui.button;
 
 import dev.siroshun.mcmsgdef.MessageKey;
 import net.kyori.adventure.text.Component;
+import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.feature.craft.RecipeRegistry;
 import net.okocraft.box.feature.craft.gui.CurrentRecipe;
+import net.okocraft.box.feature.craft.gui.SelectableIngredients;
 import net.okocraft.box.feature.craft.gui.menu.CraftMenu;
 import net.okocraft.box.feature.craft.gui.menu.RecipeSelectorMenu;
 import net.okocraft.box.feature.craft.lang.DisplayKeys;
+import net.okocraft.box.feature.craft.model.BoxIngredientItem;
+import net.okocraft.box.feature.craft.model.RecipeHolder;
 import net.okocraft.box.feature.gui.api.button.Button;
 import net.okocraft.box.feature.gui.api.button.ClickResult;
 import net.okocraft.box.feature.gui.api.lang.Styles;
@@ -31,17 +35,17 @@ public record IngredientButton(int slot, int ingredientPos) implements Button {
 
     @Override
     public @NotNull ItemStack createIcon(@NotNull PlayerSession session) {
-        var currentRecipe = session.getDataOrThrow(CurrentRecipe.DATA_KEY);
-        var ingredients = currentRecipe.getIngredients(this.ingredientPos);
+        CurrentRecipe currentRecipe = session.getDataOrThrow(CurrentRecipe.DATA_KEY);
+        SelectableIngredients ingredients = currentRecipe.getIngredients(this.ingredientPos);
 
         if (ingredients == null) {
             return new ItemStack(Material.AIR);
         }
 
-        var editor = ItemEditor.create();
+        ItemEditor editor = ItemEditor.create();
 
         if (ingredients.size() != 1) {
-            for (var ingredient : ingredients.get()) {
+            for (BoxIngredientItem ingredient : ingredients.get()) {
                 editor.loreLine(
                     Component.text()
                         .append(Component.text(" > "))
@@ -59,23 +63,23 @@ public record IngredientButton(int slot, int ingredientPos) implements Button {
                 .loreLine(CLICK_TO_SHOW_RECIPES);
         }
 
-        var selected = ingredients.getSelected();
+        BoxIngredientItem selected = ingredients.getSelected();
         return editor.applyTo(session.getViewer(), selected.item().getOriginal().asQuantity(selected.amount()));
     }
 
     @Override
     public @NotNull ClickResult onClick(@NotNull PlayerSession session, @NotNull ClickType clickType) {
-        var currentRecipe = session.getDataOrThrow(CurrentRecipe.DATA_KEY);
+        CurrentRecipe currentRecipe = session.getDataOrThrow(CurrentRecipe.DATA_KEY);
 
         if (clickType.isShiftClick()) {
-            var ingredients = currentRecipe.getIngredients(this.ingredientPos);
+            SelectableIngredients ingredients = currentRecipe.getIngredients(this.ingredientPos);
 
             if (ingredients == null) {
                 return ClickResult.NO_UPDATE_NEEDED;
             }
 
-            var item = ingredients.getSelected().item();
-            var recipes = RecipeRegistry.getRecipes(item);
+            BoxItem item = ingredients.getSelected().item();
+            RecipeHolder recipes = RecipeRegistry.getRecipes(item);
 
             if (recipes == null || recipes.getRecipeList().isEmpty()) {
                 return ClickResult.NO_UPDATE_NEEDED;

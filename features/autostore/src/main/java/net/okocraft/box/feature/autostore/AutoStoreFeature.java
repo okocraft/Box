@@ -5,6 +5,7 @@ import net.kyori.adventure.key.Key;
 import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.feature.AbstractBoxFeature;
 import net.okocraft.box.api.feature.FeatureContext;
+import net.okocraft.box.api.message.DefaultMessageCollector;
 import net.okocraft.box.feature.autostore.command.AutoStoreCommand;
 import net.okocraft.box.feature.autostore.gui.AutoStoreClickMode;
 import net.okocraft.box.feature.autostore.listener.AutoSaveListener;
@@ -12,6 +13,7 @@ import net.okocraft.box.feature.autostore.listener.CustomDataExportListener;
 import net.okocraft.box.feature.autostore.listener.ItemListener;
 import net.okocraft.box.feature.gui.api.mode.ClickModeRegistry;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -42,7 +44,7 @@ public class AutoStoreFeature extends AbstractBoxFeature {
     @ApiStatus.Internal
     public AutoStoreFeature(@NotNull FeatureContext.Registration context) {
         super("autostore");
-        var collector = context.defaultMessageCollector();
+        DefaultMessageCollector collector = context.defaultMessageCollector();
         this.loadErrorMessage = MessageKey.key(collector.add("box.autostore.error.failed-to-load-settings", "<red>Failed to load the auto-store settings. Please contact the administrator."));
         this.settingContainer = new AutoStoreSettingContainer();
         this.autoSaveListener = new AutoSaveListener(this.settingContainer);
@@ -63,7 +65,7 @@ public class AutoStoreFeature extends AbstractBoxFeature {
         BoxAPI.api().getBoxCommand().getSubCommandHolder().register(this.autoStoreCommand);
         ClickModeRegistry.register(this.autoStoreClickMode);
 
-        for (var player : Bukkit.getOnlinePlayers()) {
+        for (Player player : Bukkit.getOnlinePlayers()) {
             this.settingContainer.load(player, this.loadErrorMessage);
         }
     }

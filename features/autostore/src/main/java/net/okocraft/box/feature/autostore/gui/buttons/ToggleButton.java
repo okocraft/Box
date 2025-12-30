@@ -29,7 +29,7 @@ public class ToggleButton extends AbstractAutoStoreSettingButton {
 
     @Override
     public @NotNull ItemStack createIcon(@NotNull PlayerSession session) {
-        var setting = session.getData(AutoStoreSetting.KEY);
+        AutoStoreSetting setting = session.getData(AutoStoreSetting.KEY);
         if (setting == null) return new ItemStack(Material.AIR);
 
         return ItemEditor.create()
@@ -42,7 +42,7 @@ public class ToggleButton extends AbstractAutoStoreSettingButton {
 
     @Override
     public @NotNull ClickResult onClick(@NotNull PlayerSession session, @NotNull ClickType clickType) {
-        var setting = session.getData(AutoStoreSetting.KEY);
+        AutoStoreSetting setting = session.getData(AutoStoreSetting.KEY);
 
         if (setting == null) {
             return ClickResult.NO_UPDATE_NEEDED;

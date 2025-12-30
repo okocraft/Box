@@ -9,6 +9,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,10 +35,10 @@ record WithdrawalImpl(@NotNull StockHolder stockHolder, @NotNull BoxItem boxItem
         int maxStackSize = this.boxItem.getOriginal().getMaxStackSize();
         int withdrawnAmount = 0;
 
-        var contents = inventory.getStorageContents();
+        ItemStack[] contents = inventory.getStorageContents();
 
         for (int i = 0; i < contents.length && withdrawnAmount < this.limit; i++) {
-            var item = contents[i];
+            ItemStack item = contents[i];
 
             if (item == null) {
                 if (view != null && fireClickEventAndCheckCancelled(view, i)) {

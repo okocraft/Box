@@ -1,5 +1,7 @@
 package net.okocraft.box.storage.implementation.yaml;
 
+import dev.siroshun.configapi.core.node.MapNode;
+import dev.siroshun.configapi.core.node.Node;
 import dev.siroshun.configapi.core.node.NullNode;
 import dev.siroshun.configapi.core.node.StringRepresentable;
 import dev.siroshun.configapi.format.yaml.YamlFormat;
@@ -20,6 +22,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
+import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.stream.Stream;
 
@@ -43,7 +46,7 @@ class YamlDefaultItemStorage implements DefaultItemStorage {
 
         int id = this.metaStorage.newItemId();
 
-        try (var writer = Files.newBufferedWriter(this.filepath, StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.APPEND)) {
+        try (BufferedWriter writer = Files.newBufferedWriter(this.filepath, StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.APPEND)) {
             appendNewItem(writer, id, name);
         }
 
@@ -58,7 +61,7 @@ class YamlDefaultItemStorage implements DefaultItemStorage {
 
         List<R> result;
 
-        try (var writer = Files.newBufferedWriter(this.filepath, StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.WRITE)) {
+        try (BufferedWriter writer = Files.newBufferedWriter(this.filepath, StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.WRITE)) {
             result = defaultItemStream.map(item -> {
                 int id = this.metaStorage.newItemIdWithoutSaving();
                 try {
@@ -76,15 +79,15 @@ class YamlDefaultItemStorage implements DefaultItemStorage {
 
     @Override
     public @NotNull Object2IntMap<String> loadDefaultItemNameToIdMap() throws Exception {
-        var result = new Object2IntOpenHashMap<String>();
+        Object2IntMap<String> result = new Object2IntOpenHashMap<>();
 
         if (!Files.isRegularFile(this.filepath)) {
             return result;
         }
 
-        var source = YamlFormat.DEFAULT.load(this.filepath);
+        MapNode source = YamlFormat.DEFAULT.load(this.filepath);
 
-        for (var entry : source.value().entrySet()) {
+        for (Map.Entry<Object, Node<?>> entry : source.value().entrySet()) {
             if (entry.getKey() instanceof Number id && entry.getValue() instanceof StringRepresentable name) {
                 result.put(name.asString(), id.intValue());
             }
@@ -95,7 +98,7 @@ class YamlDefaultItemStorage implements DefaultItemStorage {
 
     @Override
     public void removeItems(@NotNull IntSet itemIds) throws Exception {
-        var source = YamlFormat.DEFAULT.load(this.filepath);
+        MapNode source = YamlFormat.DEFAULT.load(this.filepath);
 
         itemIds.forEach(id -> source.set(id, null));
 
@@ -104,9 +107,9 @@ class YamlDefaultItemStorage implements DefaultItemStorage {
 
     @Override
     public void renameItems(@NotNull Int2ObjectMap<String> idToNewNameMap) throws Exception {
-        var source = YamlFormat.DEFAULT.load(this.filepath);
+        MapNode source = YamlFormat.DEFAULT.load(this.filepath);
 
-        for (var entry : idToNewNameMap.int2ObjectEntrySet()) {
+        for (Int2ObjectMap.Entry<String> entry : idToNewNameMap.int2ObjectEntrySet()) {
             if (source.get(entry.getIntKey()) != NullNode.NULL) {
                 source.set(entry.getIntKey(), entry.getValue());
             } else {
@@ -119,8 +122,8 @@ class YamlDefaultItemStorage implements DefaultItemStorage {
 
     @Override
     public void saveDefaultItems(@NotNull List<DefaultItemData> items) throws Exception {
-        try (var writer = Files.newBufferedWriter(this.filepath, StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.WRITE)) {
-            for (var item : items) {
+        try (BufferedWriter writer = Files.newBufferedWriter(this.filepath, StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.WRITE)) {
+            for (DefaultItemData item : items) {
                 int id = this.metaStorage.newItemIdWithoutSaving();
                 appendNewItem(writer, id, item.plainName());
             }

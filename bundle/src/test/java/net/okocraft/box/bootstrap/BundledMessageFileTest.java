@@ -18,14 +18,14 @@ class BundledMessageFileTest {
     }
 
     private static void test(@NotNull Path dir, @NotNull Map<String, String> messageMap) {
-        var context = new BoxBootstrapContext(dir, BundledMessageFileTest.class.getPackage().getImplementationVersion());
+        BoxBootstrapContext context = new BoxBootstrapContext(dir, BundledMessageFileTest.class.getPackage().getImplementationVersion());
 
         CoreMessages.addDefaultMessages(context.getDefaultMessageCollector());
         Builtin.features(context);
 
-        var collected = context.getDefaultMessageCollector().getCollectedMessages();
+        Map<String, String> collected = context.getDefaultMessageCollector().getCollectedMessages();
 
-        for (var key : messageMap.keySet()) {
+        for (String key : messageMap.keySet()) {
             Assertions.assertNotNull(collected.remove(key), "Unknown key: " + key);
         }
 

@@ -4,12 +4,15 @@ import dev.siroshun.serialization.annotation.CollectionType;
 import dev.siroshun.serialization.annotation.MapType;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.model.manager.ItemManager;
+import net.okocraft.box.api.model.stock.StockHolder;
 import net.okocraft.box.api.util.ItemNameGenerator;
 import net.okocraft.box.test.shared.event.StockEventCollector;
+import net.okocraft.box.test.shared.mock.bukkit.inventory.ContentsHoldingInventory;
 import net.okocraft.box.test.shared.mock.bukkit.inventory.InventoryInfo;
 import net.okocraft.box.test.shared.model.item.ItemType;
 import net.okocraft.box.test.shared.model.stock.TestStockHolder;
 import net.okocraft.box.test.shared.util.TestCaseLoader;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
@@ -31,14 +34,14 @@ class DepositAllTest {
     @ParameterizedTest
     @MethodSource({"loadTestCases"})
     void test(TestCase testCase) {
-        var stockHolder = TestStockHolder.create();
-        var inventory = testCase.inventory().createTestInventory();
+        StockHolder stockHolder = TestStockHolder.create();
+        ContentsHoldingInventory inventory = testCase.inventory().createTestInventory();
 
-        var resultList = new DepositAllImpl(stockHolder, testCase.createFilter()).fromInventory(inventory, null, testCase.createItemManager(), StockEventCollector.TEST_CAUSE);
+        List<TransactionResult> resultList = new DepositAllImpl(stockHolder, testCase.createFilter()).fromInventory(inventory, null, testCase.createItemManager(), StockEventCollector.TEST_CAUSE);
 
-        var resultMap = new HashMap<>(testCase.resultMap());
+        HashMap<String, Integer> resultMap = new HashMap<>(testCase.resultMap());
 
-        for (var result : resultList) {
+        for (TransactionResult result : resultList) {
             int amount = resultMap.remove(result.item().getPlainName());
             Assertions.assertEquals(amount, result.amount());
             Assertions.assertEquals(amount, stockHolder.getAmount(result.item()));
@@ -59,9 +62,9 @@ class DepositAllTest {
                             @MapType(key = String.class, value = Integer.class) Map<String, Integer> resultMap) {
 
         private @NotNull ItemManager createItemManager() {
-            var mock = Mockito.mock(ItemManager.class);
+            ItemManager mock = Mockito.mock(ItemManager.class);
             Mockito.when(mock.getBoxItem((ItemStack) Mockito.any())).thenAnswer(args -> {
-                var type = args.<ItemStack>getArgument(0).getType();
+                Material type = args.<ItemStack>getArgument(0).getType();
                 int index = this.boxItems.indexOf(ItemNameGenerator.key(type));
                 return Optional.ofNullable(index != -1 ? new ItemType(type, type.getMaxStackSize()).asBoxItem(index) : null);
             });

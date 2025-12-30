@@ -81,7 +81,7 @@ public final class BoxStickItem {
     public boolean equals(Object obj) {
         if (obj == this) return true;
         if (obj == null || obj.getClass() != this.getClass()) return false;
-        var that = (BoxStickItem) obj;
+        BoxStickItem that = (BoxStickItem) obj;
         return Objects.equals(this.key, that.key);
     }
 

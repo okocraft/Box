@@ -36,7 +36,7 @@ public final class BoxPlugin extends JavaPlugin {
     private Storage storage;
 
     public BoxPlugin(@NotNull BoxBootstrapContext boxBootstrapContext) {
-        var versionedImpls = VersionedImpls.load(this.getClassLoader());
+        VersionedImpls versionedImpls = VersionedImpls.load(this.getClassLoader());
 
         if (versionedImpls.leastVersion().isAfter(MCDataVersion.current())) {
             this.pluginContext = null;
@@ -72,7 +72,7 @@ public final class BoxPlugin extends JavaPlugin {
             return;
         }
 
-        var start = Instant.now();
+        Instant start = Instant.now();
 
         try {
             this.storage = this.pluginContext.config().loadAndCreateStorage(this.storageRegistry);
@@ -92,7 +92,7 @@ public final class BoxPlugin extends JavaPlugin {
         }
 
         this.status = Status.LOADED;
-        var finish = Instant.now();
+        Instant finish = Instant.now();
 
         BoxLogger.logger().info("Successfully loaded! ({}ms)", Duration.between(start, finish).toMillis());
     }
@@ -104,7 +104,7 @@ public final class BoxPlugin extends JavaPlugin {
             return;
         }
 
-        var start = Instant.now();
+        Instant start = Instant.now();
 
         if (!this.boxCore.enable(this.storage)) {
             this.status = Status.EXCEPTION_OCCURRED;
@@ -127,7 +127,7 @@ public final class BoxPlugin extends JavaPlugin {
 
         this.status = Status.ENABLED;
 
-        var finish = Instant.now();
+        Instant finish = Instant.now();
         BoxLogger.logger().info("Successfully enabled! ({}ms)", Duration.between(start, finish).toMillis());
     }
 

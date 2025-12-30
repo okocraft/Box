@@ -70,7 +70,7 @@ class BoxItemMap {
         Objects.requireNonNull(itemName);
         {
             long readAttempt = this.lock.tryOptimisticRead();
-            var boxItem = this.getByItemNameAtUnsynchronized(itemName);
+            BoxItem boxItem = this.getByItemNameAtUnsynchronized(itemName);
 
             if (this.lock.validate(readAttempt)) {
                 return boxItem;
@@ -93,7 +93,7 @@ class BoxItemMap {
 
         {
             long readAttempt = this.lock.tryOptimisticRead();
-            var boxItem = this.getByIdAtUnsynchronized(id);
+            BoxItem boxItem = this.getByIdAtUnsynchronized(id);
 
             if (this.lock.validate(readAttempt)) {
                 return boxItem;
@@ -112,7 +112,7 @@ class BoxItemMap {
     @NotNull IntImmutableList getItemIdList() {
         {
             long readAttempt = this.lock.tryOptimisticRead();
-            var list = this.getItemIdListAtUnsynchronized();
+            IntImmutableList list = this.getItemIdListAtUnsynchronized();
 
             if (this.lock.validate(readAttempt)) {
                 return list;
@@ -131,7 +131,7 @@ class BoxItemMap {
     @NotNull ObjectImmutableList<String> getItemNameList() {
         {
             long readAttempt = this.lock.tryOptimisticRead();
-            var list = this.getItemNameListAtUnsynchronized();
+            ObjectImmutableList<String> list = this.getItemNameListAtUnsynchronized();
 
             if (this.lock.validate(readAttempt)) {
                 return list;
@@ -150,7 +150,7 @@ class BoxItemMap {
     @NotNull ObjectImmutableList<BoxItem> getItemList() {
         {
             long readAttempt = this.lock.tryOptimisticRead();
-            var list = this.getBoxItemListAtUnsynchronized();
+            ObjectImmutableList<BoxItem> list = this.getBoxItemListAtUnsynchronized();
 
             if (this.lock.validate(readAttempt)) {
                 return list;

@@ -10,14 +10,19 @@ import net.okocraft.box.api.util.InventoryUtil;
 import net.okocraft.box.feature.craft.event.BoxCraftEvent;
 import net.okocraft.box.feature.craft.event.stock.CraftCause;
 import net.okocraft.box.feature.craft.gui.CurrentRecipe;
+import net.okocraft.box.feature.craft.model.BoxIngredientItem;
 import net.okocraft.box.feature.craft.model.SelectedRecipe;
 import net.okocraft.box.feature.gui.api.button.ClickResult;
 import net.okocraft.box.feature.gui.api.session.PlayerSession;
 import net.okocraft.box.feature.gui.api.session.TypedKey;
 import net.okocraft.box.feature.gui.api.util.SoundBase;
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 public class ItemCrafter {
 
@@ -25,17 +30,17 @@ public class ItemCrafter {
     public static final TypedKey<Boolean> PUT_CRAFTED_ITEMS_INTO_INVENTORY = TypedKey.of(Boolean.class, "put_crafted_items_into_inventory");
 
     public static boolean canCraft(@NotNull StockHolder stockHolder, @NotNull SelectedRecipe recipe, int times) {
-        var ingredientMap = new HashMap<BoxItem, Integer>();
+        Map<BoxItem, Integer> ingredientMap = new HashMap<>();
 
-        for (var ingredient : recipe.ingredients()) {
+        for (BoxIngredientItem ingredient : recipe.ingredients()) {
             ingredientMap.put(
                 ingredient.item(),
                 ingredientMap.getOrDefault(ingredient.item(), 0) + ingredient.amount()
             );
         }
 
-        for (var ingredient : ingredientMap.entrySet()) {
-            var item = ingredient.getKey();
+        for (Map.Entry<BoxItem, Integer> ingredient : ingredientMap.entrySet()) {
+            BoxItem item = ingredient.getKey();
 
             int need = ingredient.getValue() * times;
             int current = stockHolder.getAmount(item);
@@ -49,11 +54,11 @@ public class ItemCrafter {
     }
 
     public static void craft(@NotNull PlayerSession session, int times, @NotNull ClickResult.WaitingTask waitingTask) {
-        var crafter = session.getViewer();
-        var recipe = session.getDataOrThrow(CurrentRecipe.DATA_KEY).getSelectedRecipe();
-        var stockHolder = session.getSourceStockHolder();
+        Player crafter = session.getViewer();
+        SelectedRecipe recipe = session.getDataOrThrow(CurrentRecipe.DATA_KEY).getSelectedRecipe();
+        StockHolder stockHolder = session.getSourceStockHolder();
 
-        var event = new BoxCraftEvent(crafter, recipe, times);
+        BoxCraftEvent event = new BoxCraftEvent(crafter, recipe, times);
         BoxAPI.api().getEventCallers().sync().call(event);
 
         if (event.isCancelled()) {
@@ -62,20 +67,20 @@ public class ItemCrafter {
             return;
         }
 
-        var cause = new CraftCause(crafter, recipe);
+        CraftCause cause = new CraftCause(crafter, recipe);
 
         Object2IntMap<BoxItem> ingredientMap = new Object2IntArrayMap<>(recipe.ingredients().size());
         Object2IntMap<BoxItem> craftRemainingItemMap = null;
 
-        for (var ingredient : recipe.ingredients()) {
+        for (BoxIngredientItem ingredient : recipe.ingredients()) {
             int amount = ingredient.amount() * times;
 
             ingredientMap.mergeInt(ingredient.item(), amount, Integer::sum);
 
-            var remainingItem = ingredient.item().getOriginal().getType().getCraftingRemainingItem();
+            Material remainingItem = ingredient.item().getOriginal().getType().getCraftingRemainingItem();
 
             if (remainingItem != null) {
-                var remainingBoxItem = BoxAPI.api().getItemManager().getBoxItem(remainingItem.name());
+                Optional<BoxItem> remainingBoxItem = BoxAPI.api().getItemManager().getBoxItem(remainingItem.name());
 
                 if (remainingBoxItem.isPresent()) {
                     if (craftRemainingItemMap == null) {
@@ -93,7 +98,7 @@ public class ItemCrafter {
         }
 
         if (craftRemainingItemMap != null) {
-            for (var entry : craftRemainingItemMap.object2IntEntrySet()) {
+            for (Object2IntMap.Entry<BoxItem> entry : craftRemainingItemMap.object2IntEntrySet()) {
                 stockHolder.increase(entry.getKey(), entry.getIntValue(), cause);
             }
         }

@@ -1,5 +1,6 @@
 package net.okocraft.box.storage.implementation.yaml;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.okocraft.box.test.shared.storage.test.UserStorageTest;
 import org.junit.jupiter.api.Assertions;
@@ -13,10 +14,10 @@ class YamlUserStorageTest {
 
     @Test
     void testUserMap() {
-        var userMap = new YamlUserStorage.UserMap();
+        YamlUserStorage.UserMap userMap = new YamlUserStorage.UserMap();
 
-        var uuid = UserStorageTest.TEST_USER_1.getUUID();
-        var name = UserStorageTest.TEST_USER_1.getName().orElseThrow();
+        UUID uuid = UserStorageTest.TEST_USER_1.getUUID();
+        String name = UserStorageTest.TEST_USER_1.getName().orElseThrow();
 
         userMap.putUUIDAndUsername(uuid, name);
         Assertions.assertEquals(uuid, userMap.searchForUUID(name)); // obtain uuid
@@ -31,7 +32,7 @@ class YamlUserStorageTest {
 
         Assertions.assertEquals(List.of(UserStorageTest.TEST_USER_1), userMap.getAllUsers());
 
-        var expectedSnapshot = new Object2ObjectOpenHashMap<UUID, String>();
+        Object2ObjectMap<UUID, String> expectedSnapshot = new Object2ObjectOpenHashMap<>();
         expectedSnapshot.put(uuid, "renamed");
         Assertions.assertEquals(expectedSnapshot, userMap.getSnapshotIfDirty()); // should return entries to save
         Assertions.assertNull(userMap.getSnapshotIfDirty()); // should return null because user map is not modified

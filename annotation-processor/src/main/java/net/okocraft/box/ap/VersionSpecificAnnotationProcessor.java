@@ -9,10 +9,15 @@ import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
+import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
+import javax.tools.FileObject;
+import javax.tools.JavaFileObject;
 import javax.tools.StandardLocation;
 import java.io.IOException;
+import java.io.Writer;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 @SupportedAnnotationTypes({"net.okocraft.box.ap.annotation.version.VersionSpecific"})
@@ -26,16 +31,16 @@ public class VersionSpecificAnnotationProcessor extends AbstractProcessor {
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        var classes = new ArrayList<String>();
+        List<String> classes = new ArrayList<>();
 
-        for (var element : roundEnv.getElementsAnnotatedWith(VersionSpecific.class)) {
+        for (Element element : roundEnv.getElementsAnnotatedWith(VersionSpecific.class)) {
             if (element instanceof TypeElement typeElement) {
-                var implLoc = element.getEnclosingElement() + "." + element.getSimpleName() + "Impl";
-                var generator = new VersionedImplGenerator(typeElement);
+                String implLoc = element.getEnclosingElement() + "." + element.getSimpleName() + "Impl";
+                VersionedImplGenerator generator = new VersionedImplGenerator(typeElement);
                 try {
-                    var file = this.processingEnv.getFiler().createSourceFile(implLoc);
+                    JavaFileObject file = this.processingEnv.getFiler().createSourceFile(implLoc);
 
-                    try (var writer = file.openWriter()) {
+                    try (Writer writer = file.openWriter()) {
                         generator.writeTo(writer);
                     }
                 } catch (Exception e) {
@@ -51,8 +56,8 @@ public class VersionSpecificAnnotationProcessor extends AbstractProcessor {
         }
 
         try {
-            var file = this.processingEnv.getFiler().createResource(StandardLocation.CLASS_OUTPUT, "", "META-INF/services/net.okocraft.box.version.common.version.Versioned");
-            try (var writer = file.openWriter()) {
+            FileObject file = this.processingEnv.getFiler().createResource(StandardLocation.CLASS_OUTPUT, "", "META-INF/services/net.okocraft.box.version.common.version.Versioned");
+            try (Writer writer = file.openWriter()) {
                 for (int i = 0, classesSize = classes.size(); i < classesSize; i++) {
                     if (i != 0) writer.write('\n');
                     writer.write(classes.get(i));

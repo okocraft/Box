@@ -17,6 +17,7 @@ import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Map;
 import java.util.function.BiConsumer;
+import java.util.stream.Stream;
 
 public class YamlCustomDataStorage implements CustomDataStorage {
 
@@ -32,7 +33,7 @@ public class YamlCustomDataStorage implements CustomDataStorage {
 
     @Override
     public @NotNull MapNode loadData(@NotNull Key key) throws Exception {
-        var filepath = this.createFilepathFromKey(key);
+        Path filepath = this.createFilepathFromKey(key);
 
         if (Files.isRegularFile(filepath)) {
             return YamlFormat.DEFAULT.load(filepath);
@@ -43,12 +44,12 @@ public class YamlCustomDataStorage implements CustomDataStorage {
 
     @Override
     public void saveData(@NotNull Key key, @NotNull MapNode mapNode) throws Exception {
-        var filepath = this.createFilepathFromKey(key);
+        Path filepath = this.createFilepathFromKey(key);
 
         if (mapNode.value().isEmpty()) {
             Files.deleteIfExists(filepath);
         } else {
-            var parent = filepath.getParent();
+            Path parent = filepath.getParent();
             if (parent != null && Files.isDirectory(parent)) {
                 Files.createDirectories(parent);
             }
@@ -58,7 +59,7 @@ public class YamlCustomDataStorage implements CustomDataStorage {
 
     @Override
     public void saveAllData(@NotNull Map<Key, MapNode> customDataMap) throws Exception {
-        for (var entry : customDataMap.entrySet()) {
+        for (Map.Entry<Key, MapNode> entry : customDataMap.entrySet()) {
             this.saveData(entry.getKey(), entry.getValue());
         }
     }
@@ -69,7 +70,7 @@ public class YamlCustomDataStorage implements CustomDataStorage {
             throw new IllegalArgumentException("Invalid namespace: " + namespace);
         }
 
-        try (var listStream = Files.list(this.customDataDirectory)) {
+        try (Stream<@NotNull Path> listStream = Files.list(this.customDataDirectory)) {
             listStream.filter(Files::isDirectory)
                 .filter(path -> path.getFileName().toString().equals(namespace))
                 .forEach(dir -> {
@@ -86,7 +87,7 @@ public class YamlCustomDataStorage implements CustomDataStorage {
 
     @Override
     public void visitAllData(@NotNull BiConsumer<Key, MapNode> consumer) throws Exception {
-        try (var listStream = Files.list(this.customDataDirectory)) {
+        try (Stream<@NotNull Path> listStream = Files.list(this.customDataDirectory)) {
             listStream.filter(Files::isDirectory)
                 .forEach(dir -> {
                     try {
@@ -124,13 +125,13 @@ public class YamlCustomDataStorage implements CustomDataStorage {
         @SuppressWarnings("PatternValidation")
         @Override
         public @NotNull FileVisitResult visitFile(Path file, @NotNull BasicFileAttributes attrs) throws IOException {
-            var relative = this.rootDir.relativize(file).toString().replace(File.separatorChar, '/');
+            String relative = this.rootDir.relativize(file).toString().replace(File.separatorChar, '/');
 
             if (!relative.endsWith(".yml")) {
                 return FileVisitResult.CONTINUE;
             }
 
-            var value = relative.substring(0, relative.length() - 4);
+            String value = relative.substring(0, relative.length() - 4);
 
             if (Key.checkValue(value).isEmpty()) {
                 this.consumer.accept(Key.key(this.namespace, value), YamlFormat.DEFAULT.load(file));

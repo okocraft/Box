@@ -104,7 +104,7 @@ public class BoxItemManager implements ItemManager {
 
     @Override
     public void registerCustomItem(@NotNull ItemStack original, @Nullable String plainName, @NotNull Consumer<ItemRegistrationResult> resultConsumer) {
-        var one = original.asOne();
+        ItemStack one = original.asOne();
         Objects.requireNonNull(resultConsumer);
 
         this.scheduler.runAsyncTask(() -> {
@@ -137,9 +137,9 @@ public class BoxItemManager implements ItemManager {
             return new ItemRegistrationResult.DuplicateItem(original);
         }
 
-        var name = plainName != null ? plainName : ItemNameGenerator.itemStack(original);
-        var id = this.itemStorage.newCustomItem(name, original.serializeAsBytes());
-        var result = BoxItemFactory.createCustomItem(id, name, original);
+        String name = plainName != null ? plainName : ItemNameGenerator.itemStack(original);
+        int id = this.itemStorage.newCustomItem(name, original.serializeAsBytes());
+        BoxCustomItem result = BoxItemFactory.createCustomItem(id, name, original);
 
         this.boxItemMap.addItemAtUnsynchronized(result);
         this.boxItemMap.rebuildCache();
@@ -185,7 +185,7 @@ public class BoxItemManager implements ItemManager {
 
         this.boxItemMap.removeItemAtUnsynchronized(item);
 
-        var previousName = item.getPlainName();
+        String previousName = item.getPlainName();
         this.itemStorage.renameCustomItem(item.getInternalId(), newName);
         BoxItemFactory.renameCustomItem(item, newName);
 

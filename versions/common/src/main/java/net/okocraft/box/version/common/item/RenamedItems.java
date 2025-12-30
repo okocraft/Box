@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Collection;
 import java.util.Collections;
@@ -33,12 +34,12 @@ public final class RenamedItems {
     }
 
     public static @NotNull Map<String,String > loadVersionFromResource(@NotNull MCDataVersion version) {
-        try (var in = RenamedItems.class.getClassLoader().getResourceAsStream(version.dataVersion() + ".txt")) {
+        try (InputStream in = RenamedItems.class.getClassLoader().getResourceAsStream(version.dataVersion() + ".txt")) {
             if (in == null) {
                 return Collections.emptyMap();
             }
 
-            try (var reader = new BufferedReader(new InputStreamReader(in))) {
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
                 return reader.lines()
                     .filter(line -> !line.startsWith("#"))
                     .map(line -> {

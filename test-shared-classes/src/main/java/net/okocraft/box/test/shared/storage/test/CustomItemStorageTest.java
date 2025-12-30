@@ -16,8 +16,8 @@ public abstract class CustomItemStorageTest<S> extends AbstractStorageTest<S> {
 
     @Test
     void testEmpty() throws Exception {
-        var storage = this.newStorage();
-        var customItemStorage = this.newCustomItemStorage(storage);
+        S storage = this.newStorage();
+        CustomItemStorage customItemStorage = this.newCustomItemStorage(storage);
 
         try {
             customItemStorage.loadItemData(data -> Assertions.fail("Expected no custom items"));
@@ -28,12 +28,12 @@ public abstract class CustomItemStorageTest<S> extends AbstractStorageTest<S> {
 
     @Test
     void testAdd() throws Exception {
-        var storage = this.newStorage();
-        var customItemStorage = this.newCustomItemStorage(storage);
+        S storage = this.newStorage();
+        CustomItemStorage customItemStorage = this.newCustomItemStorage(storage);
 
         try {
             int id = customItemStorage.newCustomItem("test", DATA);
-            var loaded = new AtomicBoolean(false);
+            AtomicBoolean loaded = new AtomicBoolean(false);
             customItemStorage.loadItemData(data -> {
                 if (loaded.compareAndSet(false, true)) {
                     Assertions.assertEquals(id, data.internalId());
@@ -50,14 +50,14 @@ public abstract class CustomItemStorageTest<S> extends AbstractStorageTest<S> {
 
     @Test
     void testUpdate() throws Exception {
-        var storage = this.newStorage();
-        var customItemStorage = this.newCustomItemStorage(storage);
+        S storage = this.newStorage();
+        CustomItemStorage customItemStorage = this.newCustomItemStorage(storage);
 
         try {
             int id = customItemStorage.newCustomItem("test", DATA);
             customItemStorage.updateItemData(Stream.of(new ItemData(id, "test", UPDATED_DATA)));
 
-            var loaded = new AtomicBoolean(false);
+            AtomicBoolean loaded = new AtomicBoolean(false);
             customItemStorage.loadItemData(data -> {
                 if (loaded.compareAndSet(false, true)) {
                     Assertions.assertEquals(id, data.internalId());
@@ -74,14 +74,14 @@ public abstract class CustomItemStorageTest<S> extends AbstractStorageTest<S> {
 
     @Test
     void testRename() throws Exception {
-        var storage = this.newStorage();
-        var customItemStorage = this.newCustomItemStorage(storage);
+        S storage = this.newStorage();
+        CustomItemStorage customItemStorage = this.newCustomItemStorage(storage);
 
         try {
             int id = customItemStorage.newCustomItem("test", DATA);
             customItemStorage.renameCustomItem(id, "renamed_test");
 
-            var loaded = new AtomicBoolean(false);
+            AtomicBoolean loaded = new AtomicBoolean(false);
             customItemStorage.loadItemData(data -> {
                 if (loaded.compareAndSet(false, true)) {
                     Assertions.assertEquals(id, data.internalId());

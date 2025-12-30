@@ -8,7 +8,7 @@ class APISetterTest {
 
     @Test
     void testSetAndUnset() {
-        var api = Mockito.mock(BoxAPI.class);
+        BoxAPI api = Mockito.mock(BoxAPI.class);
 
         APISetter.set(api);
 
@@ -27,7 +27,7 @@ class APISetterTest {
     void testIllegalState() {
         Assertions.assertThrows(IllegalStateException.class, APISetter::unset); // unset when no API is set
 
-        var api = Mockito.mock(BoxAPI.class);
+        BoxAPI api = Mockito.mock(BoxAPI.class);
 
         APISetter.set(api);
 

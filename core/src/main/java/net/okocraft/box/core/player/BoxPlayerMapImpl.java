@@ -3,17 +3,20 @@ package net.okocraft.box.core.player;
 import net.okocraft.box.api.event.caller.EventCallerProvider;
 import net.okocraft.box.api.event.player.PlayerLoadEvent;
 import net.okocraft.box.api.event.player.PlayerUnloadEvent;
+import net.okocraft.box.api.model.user.BoxUser;
 import net.okocraft.box.api.player.BoxPlayer;
 import net.okocraft.box.api.player.BoxPlayerMap;
 import net.okocraft.box.api.scheduler.BoxScheduler;
 import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.core.message.CoreMessages;
+import net.okocraft.box.core.model.loader.LoadingPersonalStockHolder;
 import net.okocraft.box.core.model.manager.stock.BoxStockManager;
 import net.okocraft.box.core.model.manager.user.BoxUserManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -41,7 +44,7 @@ public class BoxPlayerMapImpl implements BoxPlayerMap {
 
     @Override
     public boolean isLoaded(@NotNull Player player) {
-        var boxPlayer = this.playerMap.get(player);
+        BoxPlayer boxPlayer = this.playerMap.get(player);
         return boxPlayer != null && boxPlayer != NOT_LOADED_YET;
     }
 
@@ -53,7 +56,7 @@ public class BoxPlayerMapImpl implements BoxPlayerMap {
     @Override
     public @NotNull BoxPlayer get(@NotNull Player player) {
         Objects.requireNonNull(player);
-        var boxPlayer = this.playerMap.get(player);
+        BoxPlayer boxPlayer = this.playerMap.get(player);
 
         if (boxPlayer == null || boxPlayer == NOT_LOADED_YET) {
             throw new IllegalStateException("player is not loaded (" + player.getName() + ")");
@@ -86,9 +89,9 @@ public class BoxPlayerMapImpl implements BoxPlayerMap {
             return;
         }
 
-        var boxUser = this.userManager.createBoxUser(player.getUniqueId(), player.getName());
-        var personal = this.stockManager.getPersonalStockHolder(boxUser);
-        var boxPlayer = new BoxPlayerImpl(boxUser, player, personal, this.eventCallers.sync());
+        BoxUser boxUser = this.userManager.createBoxUser(player.getUniqueId(), player.getName());
+        LoadingPersonalStockHolder personal = this.stockManager.getPersonalStockHolder(boxUser);
+        BoxPlayerImpl boxPlayer = new BoxPlayerImpl(boxUser, player, personal, this.eventCallers.sync());
 
         if (this.playerMap.replace(player, NOT_LOADED_YET, boxPlayer)) { // This prevents loading data twice.
             personal.load();
@@ -118,10 +121,10 @@ public class BoxPlayerMapImpl implements BoxPlayerMap {
     }
 
     public void unloadAll() {
-        var iterator = this.playerMap.values().iterator();
+        Iterator<BoxPlayer> iterator = this.playerMap.values().iterator();
 
         while (iterator.hasNext()) {
-            var player = iterator.next();
+            BoxPlayer player = iterator.next();
             iterator.remove();
 
             if (player instanceof BoxPlayerImpl boxPlayer) {

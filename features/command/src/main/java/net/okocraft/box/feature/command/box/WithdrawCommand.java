@@ -7,6 +7,7 @@ import net.okocraft.box.api.command.AbstractCommand;
 import net.okocraft.box.api.message.DefaultMessageCollector;
 import net.okocraft.box.api.message.ErrorMessages;
 import net.okocraft.box.api.model.item.BoxItem;
+import net.okocraft.box.api.model.stock.StockHolder;
 import net.okocraft.box.api.transaction.StockHolderTransaction;
 import net.okocraft.box.feature.command.event.stock.CommandCauses;
 import org.bukkit.command.CommandSender;
@@ -16,6 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.Set;
 
 import static net.okocraft.box.api.message.Placeholders.AMOUNT;
@@ -52,18 +54,18 @@ public class WithdrawCommand extends AbstractCommand {
             return;
         }
 
-        var optionalBoxItem = BoxAPI.api().getItemManager().getBoxItem(args[1]);
+        Optional<BoxItem> optionalBoxItem = BoxAPI.api().getItemManager().getBoxItem(args[1]);
 
         if (optionalBoxItem.isEmpty()) {
             sender.sendMessage(ErrorMessages.ITEM_NOT_FOUND.apply(args[1]));
             return;
         }
 
-        var boxItem = optionalBoxItem.get();
+        BoxItem boxItem = optionalBoxItem.get();
 
-        var stockHolder = BoxAPI.api().getBoxPlayerMap().get(player).getCurrentStockHolder();
+        StockHolder stockHolder = BoxAPI.api().getBoxPlayerMap().get(player).getCurrentStockHolder();
 
-        var currentStock = stockHolder.getAmount(boxItem);
+        int currentStock = stockHolder.getAmount(boxItem);
 
         if (currentStock < 1) {
             sender.sendMessage(this.noStock.apply(boxItem));
@@ -108,8 +110,8 @@ public class WithdrawCommand extends AbstractCommand {
             return Collections.emptyList();
         }
 
-        var itemNameFilter = args[1].toLowerCase(Locale.ENGLISH);
-        var stockHolder = BoxAPI.api().getBoxPlayerMap().get(player).getCurrentStockHolder();
+        String itemNameFilter = args[1].toLowerCase(Locale.ENGLISH);
+        StockHolder stockHolder = BoxAPI.api().getBoxPlayerMap().get(player).getCurrentStockHolder();
 
         return stockHolder.getStockedItems().stream()
             .map(BoxItem::getPlainName)

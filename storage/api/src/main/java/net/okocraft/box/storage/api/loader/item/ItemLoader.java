@@ -13,6 +13,7 @@ import net.okocraft.box.storage.api.model.item.CustomItemStorage;
 import net.okocraft.box.storage.api.model.item.DefaultItemStorage;
 import net.okocraft.box.storage.api.model.item.ItemData;
 import net.okocraft.box.storage.api.model.item.RemappedItemStorage;
+import net.okocraft.box.storage.api.model.item.provider.DefaultItem;
 import net.okocraft.box.storage.api.model.item.provider.DefaultItemProvider;
 import net.okocraft.box.storage.api.model.stock.StockStorage;
 import net.okocraft.box.storage.api.util.SneakyThrow;
@@ -29,15 +30,15 @@ import java.util.function.Consumer;
 public final class ItemLoader {
 
     public static @NotNull Int2IntMap loadRemappedItemIds(@NotNull RemappedItemStorage storage) throws Exception {
-        var oldToNew = new Int2IntOpenHashMap();
-        var newToOld = new Int2IntOpenHashMap();
+        Int2IntMap oldToNew = new Int2IntOpenHashMap();
+        Int2IntMap newToOld = new Int2IntOpenHashMap();
 
         storage.loadRemappedIds().entrySet()
             .stream()
             .sorted(Map.Entry.comparingByKey())
             .map(Map.Entry::getValue)
             .forEach(map -> {
-                for (var entry : map.int2IntEntrySet()) {
+                for (Int2IntMap.Entry entry : map.int2IntEntrySet()) {
                     int oldId = entry.getIntKey();
                     int newId = entry.getIntValue();
                     oldToNew.put(oldId, newId);
@@ -53,8 +54,8 @@ public final class ItemLoader {
     }
 
     public static @NotNull Result fromStorage(@NotNull DefaultItemProvider itemProvider, @NotNull Storage storage) throws Exception {
-        var dataVersion = storage.getDataVersion();
-        var currentVersion = itemProvider.version();
+        MCDataVersion dataVersion = storage.getDataVersion();
+        MCDataVersion currentVersion = itemProvider.version();
 
         if (dataVersion != null) {
             if (dataVersion.isAfter(currentVersion)) {
@@ -66,7 +67,7 @@ public final class ItemLoader {
             }
         }
 
-        var result = new Result(
+        Result result = new Result(
             loadDefaultItems(itemProvider, storage.defaultItemStorage(), dataVersion, remappedItems -> processRemappedItems(remappedItems, currentVersion, storage.remappedItemStorage(), storage.getStockStorage())),
             loadCustomItems(storage.customItemStorage(), dataVersion != null && !dataVersion.isSame(currentVersion))
         );
@@ -77,7 +78,7 @@ public final class ItemLoader {
     }
 
     private static @NotNull List<@NotNull BoxDefaultItem> loadDefaultItems(@NotNull DefaultItemProvider itemProvider, @NotNull DefaultItemStorage defaultItemStorage, @Nullable MCDataVersion dataVersion, @NotNull Consumer<Collection<DefaultItemLoader.RemappedItem>> remappedItemsConsumer) throws Exception {
-        var loader = new DefaultItemLoader<>(
+        DefaultItemLoader<DefaultItem> loader = new DefaultItemLoader<>(
             itemProvider.provide(),
             defaultItemStorage
         );
@@ -96,7 +97,7 @@ public final class ItemLoader {
         }
 
         BoxLogger.logger().info("Updating default items...");
-        var updateResult = loader.update(
+        DefaultItemLoader.UpdateResult<@NotNull BoxDefaultItem> updateResult = loader.update(
             itemProvider.renamedItems(dataVersion, itemProvider.version()),
             (item, id) -> BoxItemFactory.createDefaultItem(id, item)
         );
@@ -114,9 +115,9 @@ public final class ItemLoader {
     }
 
     private static void processRemappedItems(@NotNull Collection<DefaultItemLoader.RemappedItem> remappedItems, @NotNull MCDataVersion version, @NotNull RemappedItemStorage remappedItemStorage, @NotNull StockStorage stockStorage) {
-        var idMap = new Int2IntOpenHashMap();
+        Int2IntMap idMap = new Int2IntOpenHashMap();
 
-        for (var item : remappedItems) {
+        for (DefaultItemLoader.RemappedItem item : remappedItems) {
             idMap.put(item.oldId(), item.newId());
             try {
                 remappedItemStorage.saveRemappedItem(item.oldId(), item.name(), item.newId(), version);

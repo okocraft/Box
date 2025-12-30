@@ -1,14 +1,17 @@
 package net.okocraft.box.storage.implementation.yaml;
 
 import dev.siroshun.configapi.core.node.MapNode;
+import dev.siroshun.configapi.core.node.Node;
 import dev.siroshun.configapi.format.yaml.YamlFormat;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.okocraft.box.api.util.MCDataVersion;
 import net.okocraft.box.storage.api.model.item.RemappedItemStorage;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.BufferedWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -25,10 +28,10 @@ public class YamlRemappedItemStorage implements RemappedItemStorage {
 
     @Override
     public @NotNull Map<MCDataVersion, Int2IntMap> loadRemappedIds() throws Exception {
-        var source = YamlFormat.DEFAULT.load(this.filepath);
-        var result = new Object2ObjectOpenHashMap<MCDataVersion, Int2IntMap>();
+        MapNode source = YamlFormat.DEFAULT.load(this.filepath);
+        Object2ObjectMap<MCDataVersion, Int2IntMap> result = new Object2ObjectOpenHashMap<>();
 
-        for (var entry : source.value().entrySet()) {
+        for (Map.Entry<Object, Node<?>> entry : source.value().entrySet()) {
             if (entry.getKey() instanceof Number oldId && entry.getValue() instanceof MapNode section) {
                 result.computeIfAbsent(
                     MCDataVersion.of(section.getInteger("in-version")),
@@ -42,10 +45,10 @@ public class YamlRemappedItemStorage implements RemappedItemStorage {
 
     @Override
     public @NotNull Int2IntMap loadRemappedIds(@NotNull MCDataVersion version) throws Exception {
-        var source = YamlFormat.DEFAULT.load(this.filepath);
-        var result = new Int2IntOpenHashMap();
+        MapNode source = YamlFormat.DEFAULT.load(this.filepath);
+        Int2IntMap result = new Int2IntOpenHashMap();
 
-        for (var entry : source.value().entrySet()) {
+        for (Map.Entry<Object, Node<?>> entry : source.value().entrySet()) {
             if (entry.getKey() instanceof Number oldId && entry.getValue() instanceof MapNode section) {
                 if (section.getInteger("in-version") == version.dataVersion()) {
                     result.put(oldId.intValue(), section.getInteger("remapped-to"));
@@ -59,7 +62,7 @@ public class YamlRemappedItemStorage implements RemappedItemStorage {
     @Override
     public void saveRemappedItem(int id, @NotNull String name, int remappedTo, @NotNull MCDataVersion inVersion) throws Exception {
         Files.createDirectories(this.filepath.getParent());
-        try (var writer = Files.newBufferedWriter(this.filepath, StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.APPEND)) {
+        try (BufferedWriter writer = Files.newBufferedWriter(this.filepath, StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.APPEND)) {
             writer.write(Integer.toString(id));
             writer.write(": ");
             writer.newLine();

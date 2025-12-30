@@ -9,6 +9,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
@@ -34,12 +35,12 @@ record DepositImpl(@NotNull StockHolder stockHolder, @NotNull BoxItem boxItem,
         Objects.requireNonNull(inventory);
         Objects.requireNonNull(cause);
 
-        var contents = inventory.getStorageContents();
+        ItemStack[] contents = inventory.getStorageContents();
 
         int depositedAmount = 0;
 
         for (int i = 0; i < contents.length && depositedAmount < this.limit; i++) {
-            var item = contents[i];
+            ItemStack item = contents[i];
 
             if (item == null || !this.boxItem.getOriginal().isSimilar(item) || (view != null && !checkClickEvent(view, i))) {
                 continue;

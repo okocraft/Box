@@ -9,6 +9,8 @@ import net.okocraft.box.storage.api.util.SneakyThrow;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -21,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 class YamlStockStorage implements StockStorage {
 
@@ -38,7 +41,7 @@ class YamlStockStorage implements StockStorage {
 
     @Override
     public @NotNull Collection<StockData> loadStockData(@NotNull UUID uuid) throws Exception {
-        var filePath = this.stockDirectory.resolve(uuid + ".yml");
+        Path filePath = this.stockDirectory.resolve(uuid + ".yml");
 
         if (!Files.isRegularFile(filePath)) {
             return Collections.emptyList();
@@ -49,10 +52,10 @@ class YamlStockStorage implements StockStorage {
 
     @Override
     public void saveStockData(@NotNull UUID uuid, @NotNull Collection<StockData> stockData) throws Exception {
-        var file = this.stockDirectory.resolve(uuid + ".yml");
+        Path file = this.stockDirectory.resolve(uuid + ".yml");
 
-        try (var writer = Files.newBufferedWriter(file, StandardCharsets.UTF_8, YamlFileOptions.WRITE)) {
-            for (var stock : stockData) {
+        try (BufferedWriter writer = Files.newBufferedWriter(file, StandardCharsets.UTF_8, YamlFileOptions.WRITE)) {
+            for (StockData stock : stockData) {
                 if (0 != stock.amount()) {
                     writer.write('\'');
                     writer.write(Integer.toString(stock.itemId()));
@@ -66,7 +69,7 @@ class YamlStockStorage implements StockStorage {
 
     @Override
     public void remapItemIds(@NotNull Int2IntMap remappedIdMap) throws Exception {
-        try (var list = Files.list(this.stockDirectory)) {
+        try (Stream<@NotNull Path> list = Files.list(this.stockDirectory)) {
             list.forEach(filepath -> {
                 if (!Files.isRegularFile(filepath)) {
                     return;
@@ -82,14 +85,14 @@ class YamlStockStorage implements StockStorage {
     }
 
     private void remapItemIds(@NotNull Int2IntMap remappedIdMap, @NotNull Path filepath) throws IOException {
-        var stockData = loadFromFile(filepath, filepath.getFileName().toString());
-        var idToAmountMap = new Int2IntOpenHashMap();
+        List<StockData> stockData = loadFromFile(filepath, filepath.getFileName().toString());
+        Int2IntMap idToAmountMap = new Int2IntOpenHashMap();
 
-        for (var stock : stockData) {
+        for (StockData stock : stockData) {
             idToAmountMap.put(stock.itemId(), stock.amount());
         }
 
-        for (var remapEntry : remappedIdMap.int2IntEntrySet()) {
+        for (Int2IntMap.Entry remapEntry : remappedIdMap.int2IntEntrySet()) {
             int oldId = remapEntry.getIntKey();
             int newId = remapEntry.getIntValue();
             int amount = idToAmountMap.remove(oldId);
@@ -97,8 +100,8 @@ class YamlStockStorage implements StockStorage {
             idToAmountMap.merge(newId, amount, Integer::sum);
         }
 
-        try (var writer = Files.newBufferedWriter(filepath, StandardCharsets.UTF_8, YamlFileOptions.WRITE)) {
-            for (var entry : idToAmountMap.int2IntEntrySet()) {
+        try (BufferedWriter writer = Files.newBufferedWriter(filepath, StandardCharsets.UTF_8, YamlFileOptions.WRITE)) {
+            for (Int2IntMap.Entry entry : idToAmountMap.int2IntEntrySet()) {
                 writer.write('\'');
                 writer.write(Integer.toString(entry.getIntKey()));
                 writer.write("': ");
@@ -110,8 +113,8 @@ class YamlStockStorage implements StockStorage {
 
     @Override
     public Map<UUID, Collection<StockData>> loadAllStockData() throws Exception {
-        var result = new HashMap<UUID, Collection<StockData>>();
-        try (var list = Files.list(this.stockDirectory)) {
+        HashMap<UUID, Collection<StockData>> result = new HashMap<>();
+        try (Stream<@NotNull Path> list = Files.list(this.stockDirectory)) {
             list.forEach(filepath -> {
                 if (!Files.isRegularFile(filepath)) {
                     return;
@@ -136,15 +139,15 @@ class YamlStockStorage implements StockStorage {
 
     @Override
     public void saveAllStockData(@NotNull Map<UUID, Collection<StockData>> stockDataMap) throws Exception {
-        for (var entry : stockDataMap.entrySet()) {
+        for (Map.Entry<UUID, Collection<StockData>> entry : stockDataMap.entrySet()) {
             this.saveStockData(entry.getKey(), entry.getValue());
         }
     }
 
     private static @NotNull List<StockData> loadFromFile(Path filePath, String identity) throws IOException {
-        var loadedData = new ArrayList<StockData>(50);
+        List<StockData> loadedData = new ArrayList<>(50);
 
-        try (var reader = Files.newBufferedReader(filePath, StandardCharsets.UTF_8)) {
+        try (BufferedReader reader = Files.newBufferedReader(filePath, StandardCharsets.UTF_8)) {
             reader.lines()
                 .map(line -> readLine(identity, line))
                 .filter(Objects::nonNull)

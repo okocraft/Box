@@ -77,7 +77,7 @@ public class ItemEditor {
     }
 
     public @NotNull ItemEditor copyLoreFrom(@NotNull ItemStack source) {
-        var lore = source.lore();
+        List<Component> lore = source.lore();
         if (lore != null) {
             lore.forEach(this::loreLine);
         }

@@ -9,6 +9,8 @@ import org.jetbrains.annotations.NotNull;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.Statement;
 import java.util.List;
 
 public class SQLiteDatabase extends AbstractSQLiteDatabase {
@@ -34,15 +36,15 @@ public class SQLiteDatabase extends AbstractSQLiteDatabase {
 
         this.connect();
 
-        try (var statement = this.getConnection().createStatement()) {
+        try (Statement statement = this.getConnection().createStatement()) {
             statement.execute("PRAGMA journal_mode=TRUNCATE");
         }
     }
 
     @Override
     public void shutdown() throws Exception {
-        try (var connection = this.getConnection();
-             var statement = connection.prepareStatement("VACUUM")) {
+        try (Connection connection = this.getConnection();
+             PreparedStatement statement = connection.prepareStatement("VACUUM")) {
             statement.execute();
         } finally {
             this.disconnect();
@@ -60,7 +62,7 @@ public class SQLiteDatabase extends AbstractSQLiteDatabase {
 
     @Override
     protected @NotNull Connection createConnection() throws ReflectiveOperationException {
-        var filepath = this.databasePath.toAbsolutePath().toString();
+        String filepath = this.databasePath.toAbsolutePath().toString();
         return newConnection(filepath, filepath);
     }
 }

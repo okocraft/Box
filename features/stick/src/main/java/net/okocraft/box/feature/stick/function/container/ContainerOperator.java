@@ -1,10 +1,15 @@
 package net.okocraft.box.feature.stick.function.container;
 
 import net.okocraft.box.api.BoxAPI;
+import net.okocraft.box.api.model.item.BoxItem;
+import net.okocraft.box.api.model.stock.StockHolder;
 import net.okocraft.box.api.transaction.StockHolderTransaction;
+import net.okocraft.box.api.transaction.TransactionResult;
 import net.okocraft.box.feature.stick.event.stock.StickCauses;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public final class ContainerOperator {
 
@@ -17,7 +22,7 @@ public final class ContainerOperator {
     }
 
     private static boolean depositItemsInInventory(@NotNull ContainerOperation.Context<Inventory> context) {
-        var resultList =
+        List<TransactionResult> resultList =
             StockHolderTransaction.create(context.player().getCurrentStockHolder())
                 .depositAll()
                 .fromInventory(context.inventory(), new StickCauses.Container(context.player(), context.blockLocation()));
@@ -31,14 +36,14 @@ public final class ContainerOperator {
     }
 
     private static boolean withdrawToInventory(@NotNull ContainerOperation.Context<Inventory> context) {
-        var boxItem = BoxAPI.api().getItemManager().getBoxItem(context.player().getPlayer().getInventory().getItemInMainHand()).orElse(null);
+        BoxItem boxItem = BoxAPI.api().getItemManager().getBoxItem(context.player().getPlayer().getInventory().getItemInMainHand()).orElse(null);
 
         if (boxItem == null) {
             return false;
         }
 
-        var stockHolder = context.player().getCurrentStockHolder();
-        var result =
+        StockHolder stockHolder = context.player().getCurrentStockHolder();
+        TransactionResult result =
             StockHolderTransaction.create(stockHolder)
                 .withdraw(boxItem, Integer.MAX_VALUE)
                 .toInventory(context.inventory(), new StickCauses.Container(context.player(), context.blockLocation()));

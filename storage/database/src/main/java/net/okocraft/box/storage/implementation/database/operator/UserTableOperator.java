@@ -5,7 +5,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.UUID;
 import java.util.function.BiConsumer;
 
@@ -19,7 +21,7 @@ public abstract class UserTableOperator {
     private final String upsertStatement;
 
     public UserTableOperator(@NotNull String tablePrefix, @NotNull String uuidType) {
-        var tableName = tablePrefix + "users";
+        String tableName = tablePrefix + "users";
 
         this.createTableStatement = """
             CREATE TABLE IF NOT EXISTS `%s` (
@@ -36,16 +38,16 @@ public abstract class UserTableOperator {
     }
 
     public void initTable(@NotNull Connection connection) throws SQLException {
-        try (var statement = connection.createStatement()) {
+        try (Statement statement = connection.createStatement()) {
             statement.execute(this.createTableStatement);
             statement.execute(this.createIndexStatement);
         }
     }
 
     public @Nullable String selectUsernameByUUID(@NotNull Connection connection, @NotNull UUID uuid) throws SQLException {
-        try (var statement = connection.prepareStatement(this.selectNameByUUIDStatement)) {
+        try (PreparedStatement statement = connection.prepareStatement(this.selectNameByUUIDStatement)) {
             statement.setBytes(1, UUIDConverters.toBytes(uuid));
-            try (var resultSet = statement.executeQuery()) {
+            try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
                     return resultSet.getString("username");
                 }
@@ -55,9 +57,9 @@ public abstract class UserTableOperator {
     }
 
     public @Nullable UUID selectUUIDByUserName(@NotNull Connection connection, @NotNull String username) throws SQLException {
-        try (var statement = connection.prepareStatement(this.selectUUIDByNameStatement)) {
+        try (PreparedStatement statement = connection.prepareStatement(this.selectUUIDByNameStatement)) {
             statement.setString(1, username);
-            try (var resultSet = statement.executeQuery()) {
+            try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
                     return UUIDConverters.fromBytes(resultSet.getBytes("uuid"));
                 }
@@ -67,8 +69,8 @@ public abstract class UserTableOperator {
     }
 
     public void selectAllUsers(@NotNull Connection connection, @NotNull BiConsumer<UUID, String> consumer) throws SQLException {
-        try (var statement = connection.prepareStatement(this.selectAllStatement)) {
-            try (var resultSet = statement.executeQuery()) {
+        try (PreparedStatement statement = connection.prepareStatement(this.selectAllStatement)) {
+            try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
                     UUID uuid = UUIDConverters.fromBytes(resultSet.getBytes("uuid"));
                     consumer.accept(uuid, resultSet.getString("username"));
@@ -78,7 +80,7 @@ public abstract class UserTableOperator {
     }
 
     public void upsertUser(@NotNull Connection connection, @NotNull UUID uuid, @NotNull String username) throws SQLException {
-        try (var statement = connection.prepareStatement(this.upsertStatement)) {
+        try (PreparedStatement statement = connection.prepareStatement(this.upsertStatement)) {
             statement.setBytes(1, UUIDConverters.toBytes(uuid));
             statement.setString(2, username);
             statement.executeUpdate();

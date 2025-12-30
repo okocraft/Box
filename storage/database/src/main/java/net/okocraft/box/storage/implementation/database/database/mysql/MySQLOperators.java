@@ -9,6 +9,7 @@ import net.okocraft.box.storage.implementation.database.operator.StockTableOpera
 import net.okocraft.box.storage.implementation.database.operator.UserTableOperator;
 import org.jetbrains.annotations.NotNull;
 
+import java.sql.Blob;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -47,12 +48,12 @@ final class MySQLOperators {
 
     private interface ByteRW {
         default byte[] readBytes0(@NotNull ResultSet resultSet, int pos) throws SQLException {
-            var blob = resultSet.getBlob(pos);
+            Blob blob = resultSet.getBlob(pos);
             return blob.getBytes(1, (int) blob.length());
         }
 
         default void writeBytes0(@NotNull PreparedStatement statement, int pos, byte[] data) throws SQLException {
-            var blob = statement.getConnection().createBlob();
+            Blob blob = statement.getConnection().createBlob();
             blob.setBytes(1, data);
             statement.setBlob(pos, blob);
         }

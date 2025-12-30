@@ -4,6 +4,7 @@ import dev.siroshun.codec4j.api.encoder.Encoder;
 import dev.siroshun.codec4j.api.error.EncodeError;
 import dev.siroshun.codec4j.api.io.Out;
 import dev.siroshun.configapi.codec.NodeCodec;
+import dev.siroshun.configapi.core.node.MapNode;
 import dev.siroshun.event4j.api.caller.EventCaller;
 import dev.siroshun.jfun.result.Result;
 import net.okocraft.box.api.event.BoxEvent;
@@ -36,32 +37,32 @@ final class DataExporter {
             public @NotNull <O> Result<O, EncodeError> encode(@NotNull Out<O> out, @UnknownNullability Void input) {
                 return out.createMap().flatMap(
                     appender -> {
-                        var dataVersionResult = appender.append(o -> o.writeString("data-version"), o -> o.writeInt(MCDataVersion.current().dataVersion()));
+                        Result<Void, EncodeError> dataVersionResult = appender.append(o -> o.writeString("data-version"), o -> o.writeInt(MCDataVersion.current().dataVersion()));
                         if (dataVersionResult.isFailure()) {
                             return dataVersionResult.asFailure();
                         }
 
-                        var usersResult = appender.append(o -> o.writeString("users"), o -> encodeUsers(o, storage.getUserStorage()));
+                        Result<Void, EncodeError> usersResult = appender.append(o -> o.writeString("users"), o -> encodeUsers(o, storage.getUserStorage()));
                         if (usersResult.isFailure()) {
                             return usersResult.asFailure();
                         }
 
-                        var stockResult = appender.append(o -> o.writeString("stock"), o -> encodeStockHolders(o, storage.getStockStorage()));
+                        Result<Void, EncodeError> stockResult = appender.append(o -> o.writeString("stock"), o -> encodeStockHolders(o, storage.getStockStorage()));
                         if (stockResult.isFailure()) {
                             return stockResult.asFailure();
                         }
 
-                        var defaultItemResult = appender.append(o -> o.writeString("default_items"), o -> encodeDefaultItems(o, itemManager));
+                        Result<Void, EncodeError> defaultItemResult = appender.append(o -> o.writeString("default_items"), o -> encodeDefaultItems(o, itemManager));
                         if (defaultItemResult.isFailure()) {
                             return defaultItemResult.asFailure();
                         }
 
-                        var customItemResult = appender.append(o -> o.writeString("custom_items"), o -> encodeCustomItems(o, itemManager));
+                        Result<Void, EncodeError> customItemResult = appender.append(o -> o.writeString("custom_items"), o -> encodeCustomItems(o, itemManager));
                         if (customItemResult.isFailure()) {
                             return customItemResult.asFailure();
                         }
 
-                        var customDataResult = appender.append(o -> o.writeString("custom_data"), o -> encodeCustomData(o, storage.getCustomDataStorage(), eventCaller));
+                        Result<Void, EncodeError> customDataResult = appender.append(o -> o.writeString("custom_data"), o -> encodeCustomData(o, storage.getCustomDataStorage(), eventCaller));
                         if (customDataResult.isFailure()) {
                             return customDataResult.asFailure();
                         }
@@ -120,18 +121,18 @@ final class DataExporter {
     private static <O> Result<O, EncodeError> encodeCustomData(Out<O> out, CustomDataStorage storage, EventCaller<BoxEvent> eventCaller) {
         return out.createMap().flatMap(
             appender -> {
-                var ref = new AtomicReference<Result<Void, EncodeError>>();
+                AtomicReference<Result<Void, EncodeError>> ref = new AtomicReference<>();
                 try {
                     storage.visitAllData((key, mapNode) -> {
-                        var event = new CustomDataExportEvent(key, mapNode);
+                        CustomDataExportEvent event = new CustomDataExportEvent(key, mapNode);
                         eventCaller.call(event);
 
-                        var resultNode = event.getResultNode();
+                        MapNode resultNode = event.getResultNode();
                         if (event.isCancelled() || resultNode.isEmpty()) {
                             return;
                         }
 
-                        var result = appender.append(o -> o.writeString(key.asString()), o -> NodeCodec.MAP_NODE_CODEC.encode(o, resultNode));
+                        Result<Void, EncodeError> result = appender.append(o -> o.writeString(key.asString()), o -> NodeCodec.MAP_NODE_CODEC.encode(o, resultNode));
                         if (result.isFailure()) {
                             ref.set(result);
                             throw new RuntimeException();

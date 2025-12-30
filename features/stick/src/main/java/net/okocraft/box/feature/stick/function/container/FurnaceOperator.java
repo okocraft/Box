@@ -1,9 +1,13 @@
 package net.okocraft.box.feature.stick.function.container;
 
 import net.okocraft.box.api.BoxAPI;
+import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.feature.stick.event.stock.StickCauses;
 import org.bukkit.inventory.FurnaceInventory;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Optional;
 
 public final class FurnaceOperator {
 
@@ -16,13 +20,13 @@ public final class FurnaceOperator {
     }
 
     private static boolean takeResultItem(@NotNull ContainerOperation.Context<FurnaceInventory> context) {
-        var result = context.inventory().getResult();
+        ItemStack result = context.inventory().getResult();
 
         if (result == null) {
             return false;
         }
 
-        var boxItem = BoxAPI.api().getItemManager().getBoxItem(result);
+        Optional<BoxItem> boxItem = BoxAPI.api().getItemManager().getBoxItem(result);
 
         if (boxItem.isEmpty()) {
             return false;

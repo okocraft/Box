@@ -13,6 +13,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Keyed;
 import org.bukkit.Material;
 import org.bukkit.Registry;
+import org.bukkit.World;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ItemType;
 import org.bukkit.potion.PotionType;
@@ -27,8 +28,8 @@ public final class ItemSources {
 
     @SuppressWarnings("deprecation")
     public static @NotNull Stream<DefaultItem> itemTypes() {
-        var world = Bukkit.getWorlds().getFirst();
-        var excludedTypes = Set.of(ItemType.AIR, ItemType.GOAT_HORN, ItemType.FIREWORK_ROCKET, ItemType.OMINOUS_BOTTLE);
+        World world = Bukkit.getWorlds().getFirst();
+        Set<ItemType> excludedTypes = Set.of(ItemType.AIR, ItemType.GOAT_HORN, ItemType.FIREWORK_ROCKET, ItemType.OMINOUS_BOTTLE);
         return registry(RegistryKey.ITEM).stream()
             .filter(Predicate.not(excludedTypes::contains))
             .filter(world::isEnabled)
@@ -42,8 +43,8 @@ public final class ItemSources {
     private static @NotNull Stream<DefaultItem> createItemsForPotionType(@NotNull PotionType potionType) {
         return Stream.of(Material.POTION, Material.SPLASH_POTION, Material.LINGERING_POTION, Material.TIPPED_ARROW)
             .map(itemType -> {
-                var name = ItemNameGenerator.keys(itemType, potionType);
-                var item = ItemStack.of(itemType, 1);
+                String name = ItemNameGenerator.keys(itemType, potionType);
+                ItemStack item = ItemStack.of(itemType, 1);
                 item.setData(DataComponentTypes.POTION_CONTENTS, PotionContents.potionContents().potion(potionType));
                 return new DefaultItem(name, item);
             });
@@ -52,8 +53,8 @@ public final class ItemSources {
     public static @NotNull Stream<DefaultItem> enchantedBooks() {
         return registry(RegistryKey.ENCHANTMENT).stream()
             .map(enchantment -> {
-                var name = ItemNameGenerator.keys(Material.ENCHANTED_BOOK, enchantment);
-                var book = new ItemStack(Material.ENCHANTED_BOOK);
+                String name = ItemNameGenerator.keys(Material.ENCHANTED_BOOK, enchantment);
+                ItemStack book = new ItemStack(Material.ENCHANTED_BOOK);
                 book.setData(DataComponentTypes.STORED_ENCHANTMENTS, ItemEnchantments.itemEnchantments().add(enchantment, enchantment.getMaxLevel()));
                 return new DefaultItem(name, book);
             });
@@ -61,8 +62,8 @@ public final class ItemSources {
 
     public static @NotNull Stream<DefaultItem> fireworks() {
         return IntStream.of(1, 2, 3).mapToObj(power -> {
-            var name = ItemNameGenerator.key(Material.FIREWORK_ROCKET) + "_" + power;
-            var firework = new ItemStack(Material.FIREWORK_ROCKET);
+            String name = ItemNameGenerator.key(Material.FIREWORK_ROCKET) + "_" + power;
+            ItemStack firework = new ItemStack(Material.FIREWORK_ROCKET);
             firework.setData(DataComponentTypes.FIREWORKS, Fireworks.fireworks().flightDuration(power));
             return new DefaultItem(name, firework);
         });
@@ -70,8 +71,8 @@ public final class ItemSources {
 
     public static @NotNull Stream<DefaultItem> goatHorns() {
         return registry(RegistryKey.INSTRUMENT).stream().map(instrument -> {
-            var name = ItemNameGenerator.key(instrument);
-            var goatHorn = new ItemStack(Material.GOAT_HORN);
+            String name = ItemNameGenerator.key(instrument);
+            ItemStack goatHorn = new ItemStack(Material.GOAT_HORN);
             goatHorn.setData(DataComponentTypes.INSTRUMENT, instrument);
             return new DefaultItem(name, goatHorn);
         });
@@ -79,8 +80,8 @@ public final class ItemSources {
 
     public static @NotNull Stream<DefaultItem> ominousBottles() {
         return IntStream.rangeClosed(1, 5).mapToObj(level -> {
-            var name = ItemNameGenerator.key(Material.OMINOUS_BOTTLE) + "_" + level;
-            var bottle = new ItemStack(Material.OMINOUS_BOTTLE);
+            String name = ItemNameGenerator.key(Material.OMINOUS_BOTTLE) + "_" + level;
+            ItemStack bottle = new ItemStack(Material.OMINOUS_BOTTLE);
             bottle.setData(DataComponentTypes.OMINOUS_BOTTLE_AMPLIFIER, OminousBottleAmplifier.amplifier(level - 1));
             return new DefaultItem(name, bottle);
         });

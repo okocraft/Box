@@ -79,7 +79,7 @@ public class CategoryRegistryImpl implements CategoryRegistry {
             snapshot = Map.copyOf(this.registry);
         }
 
-        for (var entry : snapshot.entrySet()) {
+        for (Map.Entry<String, Category> entry : snapshot.entrySet()) {
             if (entry.getValue() == category) {
                 return entry.getKey();
             }

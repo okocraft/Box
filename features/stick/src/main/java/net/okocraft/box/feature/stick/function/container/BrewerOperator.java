@@ -1,12 +1,16 @@
 package net.okocraft.box.feature.stick.function.container;
 
 import net.okocraft.box.api.BoxAPI;
+import net.okocraft.box.api.model.item.BoxItem;
+import net.okocraft.box.api.model.stock.StockHolder;
 import net.okocraft.box.feature.stick.event.stock.StickCause;
 import net.okocraft.box.feature.stick.event.stock.StickCauses;
 import org.bukkit.Material;
 import org.bukkit.inventory.BrewerInventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Optional;
 
 public final class BrewerOperator {
 
@@ -15,7 +19,7 @@ public final class BrewerOperator {
             return takeResultPotions(context);
         }
 
-        var mainHand = context.player().getPlayer().getInventory().getItemInMainHand();
+        ItemStack mainHand = context.player().getPlayer().getInventory().getItemInMainHand();
 
         if (isPotion(mainHand.getType())) {
             return putPotions(context, mainHand);
@@ -33,13 +37,13 @@ public final class BrewerOperator {
         // Brewer Inventory (see BrewingStandMenu.java in NMS)
         // 0~2: potion slot | 3: ingredients slot | 4: fuel slot
         for (int i = 0; i < 3; i++) {
-            var potion = context.inventory().getItem(i);
+            ItemStack potion = context.inventory().getItem(i);
 
             if (potion == null) {
                 continue;
             }
 
-            var boxItem = BoxAPI.api().getItemManager().getBoxItem(potion);
+            Optional<BoxItem> boxItem = BoxAPI.api().getItemManager().getBoxItem(potion);
 
             if (boxItem.isEmpty()) {
                 continue;
@@ -62,21 +66,21 @@ public final class BrewerOperator {
     }
 
     private static boolean putPotions(@NotNull ContainerOperation.Context<BrewerInventory> context, @NotNull ItemStack mainHand) {
-        var optionalBoxItem = BoxAPI.api().getItemManager().getBoxItem(mainHand);
+        Optional<BoxItem> optionalBoxItem = BoxAPI.api().getItemManager().getBoxItem(mainHand);
 
         if (optionalBoxItem.isEmpty()) {
             return false;
         }
 
         boolean result = false;
-        var stockHolder = context.player().getCurrentStockHolder();
-        var item = optionalBoxItem.get();
+        StockHolder stockHolder = context.player().getCurrentStockHolder();
+        BoxItem item = optionalBoxItem.get();
         StickCause cause = null;
 
         // Brewer Inventory (see BrewingStandMenu.java in NMS)
         // 0~2: potion slot | 3: ingredients slot | 4: fuel slot
         for (int i = 0; i < 3; i++) {
-            var potion = context.inventory().getItem(i);
+            ItemStack potion = context.inventory().getItem(i);
 
             if (potion != null) { // if the slot is not empty, ignore it.
                 continue;

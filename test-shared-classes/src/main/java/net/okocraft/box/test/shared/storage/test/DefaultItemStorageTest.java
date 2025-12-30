@@ -2,6 +2,7 @@ package net.okocraft.box.test.shared.storage.test;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.IntSet;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.okocraft.box.storage.api.model.item.DefaultItemStorage;
 import net.okocraft.box.storage.api.model.item.NamedItem;
@@ -21,15 +22,15 @@ public abstract class DefaultItemStorageTest<S> extends AbstractStorageTest<S> {
     }
 
     private static @NotNull Object2IntOpenHashMap<Object> nameToIdMap(List<RegisteredItem> items) {
-        var expectedItemMap = new Object2IntOpenHashMap<>();
+        Object2IntOpenHashMap<Object> expectedItemMap = new Object2IntOpenHashMap<>();
         items.forEach(item -> expectedItemMap.put(item.item().plainName(), item.id()));
         return expectedItemMap;
     }
 
     @Test
     void testEmpty() throws Exception {
-        var storage = this.newStorage();
-        var defaultItemStorage = this.newDefaultItemStorage(storage);
+        S storage = this.newStorage();
+        DefaultItemStorage defaultItemStorage = this.newDefaultItemStorage(storage);
 
         try {
             Assertions.assertTrue(defaultItemStorage.loadDefaultItemNameToIdMap().isEmpty());
@@ -40,15 +41,15 @@ public abstract class DefaultItemStorageTest<S> extends AbstractStorageTest<S> {
 
     @Test
     void testInitialize() throws Exception {
-        var storage = this.newStorage();
-        var defaultItemStorage = this.newDefaultItemStorage(storage);
+        S storage = this.newStorage();
+        DefaultItemStorage defaultItemStorage = this.newDefaultItemStorage(storage);
 
         try {
-            var items = defaultItemStorage.initializeDefaultItems(defaultItemStream(), RegisteredItem::new);
+            List<RegisteredItem> items = defaultItemStorage.initializeDefaultItems(defaultItemStream(), RegisteredItem::new);
 
             Assertions.assertEquals(3, items.size());
 
-            var expectedItems = defaultItemStream().collect(Collectors.toList());
+            List<NamedItem<String>> expectedItems = defaultItemStream().collect(Collectors.toList());
             Assertions.assertTrue(items.stream().map(RegisteredItem::item).allMatch(expectedItems::remove));
 
             Assertions.assertEquals(nameToIdMap(items), defaultItemStorage.loadDefaultItemNameToIdMap());
@@ -59,11 +60,11 @@ public abstract class DefaultItemStorageTest<S> extends AbstractStorageTest<S> {
 
     @Test
     void testNewItem() throws Exception {
-        var storage = this.newStorage();
-        var defaultItemStorage = this.newDefaultItemStorage(storage);
+        S storage = this.newStorage();
+        DefaultItemStorage defaultItemStorage = this.newDefaultItemStorage(storage);
 
         try {
-            var expectedItemMap = nameToIdMap(defaultItemStorage.initializeDefaultItems(defaultItemStream(), RegisteredItem::new));
+            Object2IntMap<Object> expectedItemMap = nameToIdMap(defaultItemStorage.initializeDefaultItems(defaultItemStream(), RegisteredItem::new));
 
             expectedItemMap.put("new_item", defaultItemStorage.newDefaultItemId("new_item"));
 
@@ -75,11 +76,11 @@ public abstract class DefaultItemStorageTest<S> extends AbstractStorageTest<S> {
 
     @Test
     void testRemoveItem() throws Exception {
-        var storage = this.newStorage();
-        var defaultItemStorage = this.newDefaultItemStorage(storage);
+        S storage = this.newStorage();
+        DefaultItemStorage defaultItemStorage = this.newDefaultItemStorage(storage);
 
         try {
-            var expectedItemMap = nameToIdMap(defaultItemStorage.initializeDefaultItems(defaultItemStream(), RegisteredItem::new));
+            Object2IntMap<Object> expectedItemMap = nameToIdMap(defaultItemStorage.initializeDefaultItems(defaultItemStream(), RegisteredItem::new));
 
             int id = expectedItemMap.removeInt("item_2");
             defaultItemStorage.removeItems(IntSet.of(id));
@@ -92,11 +93,11 @@ public abstract class DefaultItemStorageTest<S> extends AbstractStorageTest<S> {
 
     @Test
     void testRenameItem() throws Exception {
-        var storage = this.newStorage();
-        var defaultItemStorage = this.newDefaultItemStorage(storage);
+        S storage = this.newStorage();
+        DefaultItemStorage defaultItemStorage = this.newDefaultItemStorage(storage);
 
         try {
-            var expectedItemMap = nameToIdMap(defaultItemStorage.initializeDefaultItems(defaultItemStream(), RegisteredItem::new));
+            Object2IntMap<Object> expectedItemMap = nameToIdMap(defaultItemStorage.initializeDefaultItems(defaultItemStream(), RegisteredItem::new));
 
             int id = expectedItemMap.removeInt("item_2");
             expectedItemMap.put("renamed_item", id);

@@ -6,6 +6,8 @@ import net.okocraft.box.storage.implementation.database.database.Database;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 
+import java.sql.Connection;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -15,16 +17,16 @@ public abstract class MetaTableTest {
 
     @Test
     void testItemDataVersion() throws Exception {
-        try (var database = this.newDatabase()) {
-            var table = newTable(database);
+        try (Database database = this.newDatabase()) {
+            MetaTable table = newTable(database);
 
             assertNull(table.getItemDataVersion());
 
-            var saved = MCDataVersion.MC_1_20_5;
+            MCDataVersion saved = MCDataVersion.MC_1_20_5;
             table.saveItemDataVersion(saved);
             assertEquals(saved, table.getItemDataVersion());
 
-            var updated = MCDataVersion.MC_1_20_6;
+            MCDataVersion updated = MCDataVersion.MC_1_20_6;
             table.saveItemDataVersion(updated);
             assertEquals(updated, table.getItemDataVersion());
         }
@@ -32,16 +34,16 @@ public abstract class MetaTableTest {
 
     @Test
     void testStorageVersion() throws Exception {
-        try (var database = this.newDatabase()) {
-            var table = newTable(database);
+        try (Database database = this.newDatabase()) {
+            MetaTable table = newTable(database);
 
             assertEquals(StorageVersion.BEFORE_V6, table.getStorageVersion());
 
-            var saved = StorageVersion.V6;
+            StorageVersion saved = StorageVersion.V6;
             table.saveStorageVersion(saved);
             assertEquals(saved, table.getStorageVersion());
 
-            var updated = new StorageVersion(100);
+            StorageVersion updated = new StorageVersion(100);
             table.saveStorageVersion(updated);
             assertEquals(updated, table.getStorageVersion());
         }
@@ -49,8 +51,8 @@ public abstract class MetaTableTest {
 
     @Test
     void testCustomDataFormat() throws Exception {
-        try (var database = this.newDatabase()) {
-            var table = newTable(database);
+        try (Database database = this.newDatabase()) {
+            MetaTable table = newTable(database);
             assertFalse(table.isCurrentCustomDataFormat());
             table.saveCurrentCustomDataFormat();
             assertTrue(table.isCurrentCustomDataFormat());
@@ -60,9 +62,9 @@ public abstract class MetaTableTest {
     protected abstract @NotNull Database newDatabase() throws Exception;
 
     private static @NotNull MetaTable newTable(@NotNull Database database) throws Exception {
-        var table = new MetaTable(database);
+        MetaTable table = new MetaTable(database);
 
-        try (var connection = database.getConnection()) {
+        try (Connection connection = database.getConnection()) {
             table.init(connection);
         }
 

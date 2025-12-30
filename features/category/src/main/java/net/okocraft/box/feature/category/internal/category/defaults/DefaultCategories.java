@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Unmodifiable;
 import org.jetbrains.annotations.VisibleForTesting;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -33,9 +34,9 @@ public final class DefaultCategories {
 
     @VisibleForTesting
     static List<DefaultCategory> collectCurrentDefaultCategories(@NotNull MCDataVersion current, @NotNull Map<String, List<ItemNameSet>> source) {
-        var result = new LinkedHashMap<String, List<String>>(source.size());
+        Map<String, List<String>> result = new LinkedHashMap<>(source.size());
 
-        for (var entry : source.entrySet()) {
+        for (Map.Entry<String, List<ItemNameSet>> entry : source.entrySet()) {
             result.put(
                 String.valueOf(entry.getKey()),
                 entry.getValue().stream().map(set -> set.getCurrentName(current)).filter(Objects::nonNull).toList()
@@ -47,11 +48,11 @@ public final class DefaultCategories {
 
     @VisibleForTesting
     static @NotNull @Unmodifiable List<DefaultCategory> collectNewItems(@NotNull MCDataVersion version, @NotNull MCDataVersion current, @NotNull Map<String, List<ItemNameSet>> source) {
-        var result = new LinkedHashMap<String, List<String>>();
+        Map<String, List<String>> result = new LinkedHashMap<>();
 
-        for (var entry : source.entrySet()) {
-            var items = new ArrayList<String>();
-            for (var itemNameSet : entry.getValue()) {
+        for (Map.Entry<String, List<ItemNameSet>> entry : source.entrySet()) {
+            List<String> items = new ArrayList<>();
+            for (ItemNameSet itemNameSet : entry.getValue()) {
                 if (version.isBefore(itemNameSet.since()) && (current.isAfter(itemNameSet.since()) || current.isSame(itemNameSet.since()))) {
                     items.add(Objects.requireNonNull(itemNameSet.getCurrentName(current)));
                 }
@@ -65,13 +66,13 @@ public final class DefaultCategories {
     }
 
     static @NotNull Map<String, List<ItemNameSet>> loadCategorizedItemNames(@NotNull MapNode source) {
-        var map = new LinkedHashMap<String, List<ItemNameSet>>(source.value().size());
+        Map<String, List<ItemNameSet>> map = new LinkedHashMap<>(source.value().size());
 
-        for (var key : source.value().keySet()) {
-            var lines = source.getList(key).asList(String.class);
-            var itemNameSetList = new ArrayList<ItemNameSet>(lines.size());
+        for (Object key : source.value().keySet()) {
+            List<String> lines = source.getList(key).asList(String.class);
+            List<ItemNameSet> itemNameSetList = new ArrayList<>(lines.size());
 
-            for (var line : lines) {
+            for (String line : lines) {
                 itemNameSetList.add(ItemNameSet.parse(line));
             }
 
@@ -82,7 +83,7 @@ public final class DefaultCategories {
     }
 
     private static @NotNull MapNode loadDefaultCategoriesFile() throws IOException {
-        try (var in = DefaultCategories.class.getClassLoader().getResourceAsStream("default_categories.yml")) {
+        try (InputStream in = DefaultCategories.class.getClassLoader().getResourceAsStream("default_categories.yml")) {
             return YamlFormat.DEFAULT.load(Objects.requireNonNull(in));
         }
     }
@@ -134,17 +135,17 @@ public final class DefaultCategories {
         public static final MCDataVersion UNKNOWN_VERSION = MCDataVersion.of(-1);
 
         static @NotNull ItemNameSet parse(@NotNull String str) {
-            var names = split(str, ';');
-            var result = new ArrayList<VersionedItemName>();
+            String[] names = split(str, ';');
+            List<VersionedItemName> result = new ArrayList<>();
 
             MCDataVersion minVer = null;
 
-            for (var name : names) {
+            for (String name : names) {
                 if (name.isEmpty()) {
                     continue;
                 }
 
-                var elements = split(name, ':');
+                String[] elements = split(name, ':');
 
                 MCDataVersion version;
                 String itemName;

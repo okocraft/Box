@@ -146,9 +146,9 @@ public interface StockHolder {
      */
     @ApiStatus.NonExtendable
     default boolean decreaseIfPossible(@NotNull Map<BoxItem, Integer> decrementMap, @NotNull StockEvent.Cause cause) {
-        var map = new Object2IntArrayMap<BoxItem>(decrementMap.size());
+        Object2IntMap<BoxItem> map = new Object2IntArrayMap<>(decrementMap.size());
 
-        for (var entry : decrementMap.entrySet()) {
+        for (Map.Entry<BoxItem, Integer> entry : decrementMap.entrySet()) {
             map.put(entry.getKey(), entry.getValue().intValue());
         }
 

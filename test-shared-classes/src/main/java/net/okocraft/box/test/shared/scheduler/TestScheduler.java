@@ -48,7 +48,7 @@ public class TestScheduler implements BoxScheduler {
     public void scheduleRepeatingAsyncTask(@NotNull Runnable task, @NotNull Duration interval, @NotNull BooleanSupplier condition) {
         this.scheduledTasks.add(new ScheduledTask(interval, interval, ScheduledTask.Type.ASYNC));
         if (this.scheduler != null) {
-            var ref = new AtomicReference<ScheduledFuture<?>>();
+            AtomicReference<ScheduledFuture<?>> ref = new AtomicReference<>();
 
             ref.set(this.scheduler.scheduleWithFixedDelay(() -> {
                 if (condition.getAsBoolean()) {
@@ -61,7 +61,7 @@ public class TestScheduler implements BoxScheduler {
     }
 
     public void checkTask(@NotNull Consumer<ScheduledTask> checker) {
-        var task = this.scheduledTasks.poll();
+        ScheduledTask task = this.scheduledTasks.poll();
         Assertions.assertNotNull(task);
         checker.accept(task);
     }

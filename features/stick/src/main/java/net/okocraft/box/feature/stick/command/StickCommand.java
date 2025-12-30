@@ -12,6 +12,7 @@ import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -57,8 +58,8 @@ public class StickCommand extends AbstractCommand {
     }
 
     private void runCommand(@NotNull Player player) {
-        var inventory = player.getInventory();
-        var currentOffHand = inventory.getItemInOffHand();
+        PlayerInventory inventory = player.getInventory();
+        ItemStack currentOffHand = inventory.getItemInOffHand();
 
         if (!currentOffHand.getType().isAir()) {
             if (this.boxStickItem.check(currentOffHand)) {
@@ -67,10 +68,10 @@ public class StickCommand extends AbstractCommand {
             }
 
             int firstEmpty = -1;
-            var storage = inventory.getStorageContents();
+            ItemStack[] storage = inventory.getStorageContents();
 
             for (int slot = 0; slot < storage.length; slot++) {
-                var item = storage[slot];
+                ItemStack item = storage[slot];
 
                 if (item == null || item.getType().isAir()) {
                     firstEmpty = slot;

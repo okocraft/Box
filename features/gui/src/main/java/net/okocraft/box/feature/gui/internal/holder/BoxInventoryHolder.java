@@ -114,14 +114,14 @@ public class BoxInventoryHolder implements InventoryHolder {
     }
 
     private void processClick0(int slot, @NotNull ClickType clickType) {
-        var button = this.buttonMap.get(slot);
+        Button button = this.buttonMap.get(slot);
 
         if (button == null) {
             this.finishClickProcess();
             return;
         }
 
-        var event = new MenuClickEvent(this.menu, this.session, button, clickType);
+        MenuClickEvent event = new MenuClickEvent(this.menu, this.session, button, clickType);
 
         BoxAPI.api().getEventCallers().sync().call(event);
 
@@ -130,7 +130,7 @@ public class BoxInventoryHolder implements InventoryHolder {
             return;
         }
 
-        var result = button.onClick(this.session, clickType);
+        ClickResult result = button.onClick(this.session, clickType);
 
         if (result instanceof ClickResult.WaitingTask waitingTask) {
             waitingTask.onCompleted(r -> this.processClickResult(button, r));
@@ -158,10 +158,10 @@ public class BoxInventoryHolder implements InventoryHolder {
     }
 
     public void renderButtons() {
-        var icons = new ItemStack[this.maxIcons];
+        ItemStack[] icons = new ItemStack[this.maxIcons];
         this.buttonMap.clear();
 
-        for (var button : this.menu.getButtons(this.session)) {
+        for (Button button : this.menu.getButtons(this.session)) {
             int slot = button.getSlot();
 
             if (slot < icons.length) {

@@ -37,7 +37,7 @@ class LoadingPersonalStockHolderTest {
     }
 
     void testSaving(@NotNull StockStorage storage) throws Exception {
-        var loader = createLoader(storage);
+        LoadingPersonalStockHolder loader = createLoader(storage);
         addStock(loader);
 
         loader.saveChangesOrUnloadIfNeeded(Long.MAX_VALUE, 0);
@@ -56,7 +56,7 @@ class LoadingPersonalStockHolderTest {
     }
 
     void testUnload(@NotNull StockStorage storage) throws Exception {
-        var loader = createLoader(storage);
+        LoadingPersonalStockHolder loader = createLoader(storage);
 
         Assertions.assertFalse(loader.isLoaded());
 
@@ -73,8 +73,8 @@ class LoadingPersonalStockHolderTest {
 
     @Test
     void testNotUnloadingWhenOnline() throws Exception {
-        var storage = new MemoryStockStorage();
-        var loader = createLoader(storage);
+        MemoryStockStorage storage = new MemoryStockStorage();
+        LoadingPersonalStockHolder loader = createLoader(storage);
 
         Assertions.assertFalse(loader.isLoaded());
 
@@ -98,17 +98,17 @@ class LoadingPersonalStockHolderTest {
 
     @Test
     void testClose() {
-        var storage = new MemoryStockStorage();
-        var loader = createLoader(storage);
+        MemoryStockStorage storage = new MemoryStockStorage();
+        LoadingPersonalStockHolder loader = createLoader(storage);
 
         Assertions.assertFalse(loader.isLoaded());
         Assertions.assertFalse(loader.isClosed());
 
-        var loaded = loader.delegate(); // load stockholder
+        StockHolder loaded = loader.delegate(); // load stockholder
         Assertions.assertTrue(loader.isLoaded());
         Assertions.assertFalse(loader.isClosed());
 
-        var unloaded = loader.close();
+        StockHolder unloaded = loader.close();
         Assertions.assertSame(loaded, unloaded);
         Assertions.assertFalse(loader.isLoaded());
         Assertions.assertTrue(loader.isClosed());
@@ -136,8 +136,8 @@ class LoadingPersonalStockHolderTest {
     }
 
     private static void checkStockData(@NotNull StockStorage storage, LoadingPersonalStockHolder loader) throws Exception {
-        var expected = Set.of(new StockData(ITEM_1.internalId(), 10), new StockData(ITEM_2.internalId(), 10), new StockData(ITEM_3.internalId(), 5));
-        var actual = storage.loadStockData(loader.getUUID());
+        Set<StockData> expected = Set.of(new StockData(ITEM_1.internalId(), 10), new StockData(ITEM_2.internalId(), 10), new StockData(ITEM_3.internalId(), 5));
+        Collection<StockData> actual = storage.loadStockData(loader.getUUID());
 
         Assertions.assertEquals(expected.size(), actual.size());
         Assertions.assertEquals(expected, Set.copyOf(actual));

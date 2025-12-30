@@ -13,7 +13,7 @@ class PerItemSettingTest {
 
     @Test
     void testEnabled() {
-        var setting = new PerItemSetting();
+        PerItemSetting setting = new PerItemSetting();
 
         // Initially, isEnabled returns false for all items.
         Assertions.assertFalse(setting.isEnabled(ITEM_1));
@@ -32,7 +32,7 @@ class PerItemSettingTest {
 
     @Test
     void testToggle() {
-        var setting = new PerItemSetting();
+        PerItemSetting setting = new PerItemSetting();
 
         // Initially, isEnabled returns false for all items.
         Assertions.assertFalse(setting.isEnabled(ITEM_1));
@@ -51,7 +51,7 @@ class PerItemSettingTest {
 
     @Test
     void testClearAndEnableItems() {
-        var setting = new PerItemSetting();
+        PerItemSetting setting = new PerItemSetting();
 
         // First, enable "dummy_item_1"
         setting.setEnabled(ITEM_1, true);

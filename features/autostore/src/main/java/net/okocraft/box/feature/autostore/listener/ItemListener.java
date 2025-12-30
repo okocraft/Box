@@ -3,11 +3,15 @@ package net.okocraft.box.feature.autostore.listener;
 import io.papermc.paper.event.block.PlayerShearBlockEvent;
 import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.event.stockholder.stock.StockEvent;
+import net.okocraft.box.api.model.item.BoxItem;
+import net.okocraft.box.api.player.BoxPlayerMap;
 import net.okocraft.box.feature.autostore.AutoStoreSettingProvider;
 import net.okocraft.box.feature.autostore.integration.CoreProtectIntegration;
+import net.okocraft.box.feature.autostore.setting.AutoStoreSetting;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Boss;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -20,6 +24,8 @@ import org.bukkit.event.player.PlayerHarvestBlockEvent;
 import org.bukkit.event.player.PlayerPickupArrowEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Optional;
 
 public class ItemListener implements Listener {
 
@@ -44,7 +50,7 @@ public class ItemListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onBlockDropItem(@NotNull BlockDropItemEvent event) {
-        var location = event.getBlock().getLocation();
+        Location location = event.getBlock().getLocation();
         event.getItems().removeIf(item -> this.processEvent(event.getPlayer(), location, item.getItemStack(), true));
     }
 
@@ -55,9 +61,9 @@ public class ItemListener implements Listener {
      */
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onEntityDeath(@NotNull EntityDeathEvent event) {
-        var killed = event.getEntity();
+        LivingEntity killed = event.getEntity();
         if (killed instanceof Mob && !(killed instanceof Boss) && killed.getKiller() != null) {
-            var location = killed.getLocation();
+            Location location = killed.getLocation();
             event.getDrops().removeIf(item -> this.processEvent(killed.getKiller(), location, item, true));
         }
     }
@@ -69,7 +75,7 @@ public class ItemListener implements Listener {
      */
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onHarvestBlock(@NotNull PlayerHarvestBlockEvent event) {
-        var location = event.getHarvestedBlock().getLocation();
+        Location location = event.getHarvestedBlock().getLocation();
         event.getItemsHarvested().removeIf(item -> this.processEvent(event.getPlayer(), location, item, true));
     }
 
@@ -80,7 +86,7 @@ public class ItemListener implements Listener {
      */
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onShearBlock(@NotNull PlayerShearBlockEvent event) {
-        var location = event.getBlock().getLocation();
+        Location location = event.getBlock().getLocation();
         event.getDrops().removeIf(item -> this.processEvent(event.getPlayer(), location, item, true));
     }
 
@@ -97,8 +103,8 @@ public class ItemListener implements Listener {
             return false;
         }
 
-        var playerMap = BoxAPI.api().getBoxPlayerMap();
-        var setting = this.container.getIfLoaded(player.getUniqueId());
+        BoxPlayerMap playerMap = BoxAPI.api().getBoxPlayerMap();
+        AutoStoreSetting setting = this.container.getIfLoaded(player.getUniqueId());
 
         if (!playerMap.isLoaded(player) || setting == null ||
             !setting.isEnabled() || !player.hasPermission("box.autostore") ||
@@ -107,7 +113,7 @@ public class ItemListener implements Listener {
             return false;
         }
 
-        var boxItem = BoxAPI.api().getItemManager().getBoxItem(item);
+        Optional<BoxItem> boxItem = BoxAPI.api().getItemManager().getBoxItem(item);
 
         if (boxItem.isEmpty()) {
             return false;

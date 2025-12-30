@@ -1,5 +1,6 @@
 package net.okocraft.box.core.model.loader.state;
 
+import net.okocraft.box.api.model.stock.StockHolder;
 import net.okocraft.box.test.shared.model.stock.TestStockHolder;
 import net.okocraft.box.test.shared.storage.memory.stock.MemoryStockStorage;
 import org.jetbrains.annotations.NotNull;
@@ -10,9 +11,9 @@ class BasicChangeStateTest extends AbstractChangeStateTest {
 
     @Test
     void test() throws Exception {
-        var storage = new MemoryStockStorage();
-        var stockHolder = TestStockHolder.create(STOCK_DATA);
-        var state = new BasicChangeState(storage);
+        MemoryStockStorage storage = new MemoryStockStorage();
+        StockHolder stockHolder = TestStockHolder.create(STOCK_DATA);
+        BasicChangeState state = new BasicChangeState(storage);
 
         checkChanges(state, false);
 

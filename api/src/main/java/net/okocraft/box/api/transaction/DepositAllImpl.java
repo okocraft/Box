@@ -1,5 +1,6 @@
 package net.okocraft.box.api.transaction;
 
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.event.stockholder.stock.StockEvent;
@@ -12,6 +13,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
@@ -41,17 +43,17 @@ record DepositAllImpl(@NotNull StockHolder stockHolder,
         Objects.requireNonNull(inventory);
         Objects.requireNonNull(cause);
 
-        var resultMap = new Object2IntOpenHashMap<BoxItem>();
-        var contents = inventory.getStorageContents();
+        Object2IntMap<BoxItem> resultMap = new Object2IntOpenHashMap<>();
+        ItemStack[] contents = inventory.getStorageContents();
 
         for (int i = 0; i < contents.length; i++) {
-            var item = contents[i];
+            ItemStack item = contents[i];
 
             if (item == null || item.getType().isAir()) {
                 continue;
             }
 
-            var boxItem = itemManager.getBoxItem(item).orElse(null);
+            BoxItem boxItem = itemManager.getBoxItem(item).orElse(null);
 
             if (boxItem == null || (this.filter != null && !this.filter.test(boxItem)) || (view != null && !checkClickEvent(view, i))) {
                 continue;
@@ -69,9 +71,9 @@ record DepositAllImpl(@NotNull StockHolder stockHolder,
             return Collections.emptyList();
         } else {
             inventory.setStorageContents(contents);
-            var result = new ArrayList<TransactionResult>(resultMap.size());
+            List<TransactionResult> result = new ArrayList<>(resultMap.size());
 
-            for (var entry : resultMap.object2IntEntrySet()) {
+            for (Object2IntMap.Entry<BoxItem> entry : resultMap.object2IntEntrySet()) {
                 result.add(TransactionResult.create(entry.getKey(), entry.getIntValue()));
             }
 

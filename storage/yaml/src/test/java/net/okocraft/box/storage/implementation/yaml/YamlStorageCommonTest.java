@@ -32,7 +32,7 @@ class YamlStorageCommonTest {
 
         @Override
         protected @NotNull UserStorage newUserStorage(@NotNull Path path) throws Exception {
-            var storage = new YamlUserStorage(path);
+            YamlUserStorage storage = new YamlUserStorage(path);
             storage.init();
             return storage;
         }
@@ -86,7 +86,7 @@ class YamlStorageCommonTest {
 
         @Override
         protected @NotNull StockStorage newStockStorage(@NotNull Path path) throws Exception {
-            var storage = new YamlStockStorage(path);
+            YamlStockStorage storage = new YamlStockStorage(path);
             storage.init();
             return storage;
         }
@@ -101,7 +101,7 @@ class YamlStorageCommonTest {
 
         @Override
         protected @NotNull CustomDataStorage newCustomDataStorage(@NotNull Path path) throws Exception {
-            var storage = new YamlCustomDataStorage(path);
+            YamlCustomDataStorage storage = new YamlCustomDataStorage(path);
             storage.init();
             return storage;
         }

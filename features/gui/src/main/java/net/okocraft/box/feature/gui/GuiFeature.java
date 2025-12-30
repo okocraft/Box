@@ -1,6 +1,7 @@
 package net.okocraft.box.feature.gui;
 
 import net.okocraft.box.api.BoxAPI;
+import net.okocraft.box.api.command.base.BoxCommand;
 import net.okocraft.box.api.feature.AbstractBoxFeature;
 import net.okocraft.box.api.feature.BoxFeature;
 import net.okocraft.box.api.feature.FeatureContext;
@@ -33,7 +34,7 @@ public class GuiFeature extends AbstractBoxFeature implements Reloadable {
     public void enable(@NotNull FeatureContext.Enabling context) {
         BoxInventoryHolder.initializeCraftInventoryCustomClass();
 
-        var boxCommand = BoxAPI.api().getBoxCommand();
+        BoxCommand boxCommand = BoxAPI.api().getBoxCommand();
 
         boxCommand.changeNoArgumentCommand(this.command);
         boxCommand.getSubCommandHolder().register(this.command);
@@ -43,7 +44,7 @@ public class GuiFeature extends AbstractBoxFeature implements Reloadable {
 
     @Override
     public void disable(@NotNull FeatureContext.Disabling context) {
-        var boxCommand = BoxAPI.api().getBoxCommand();
+        BoxCommand boxCommand = BoxAPI.api().getBoxCommand();
 
         boxCommand.changeNoArgumentCommand(null);
         boxCommand.getSubCommandHolder().unregister(this.command);

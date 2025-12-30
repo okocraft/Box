@@ -1,6 +1,8 @@
 package net.okocraft.box.storage.api.loader.item;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.storage.api.model.item.DefaultItemStorage;
 import net.okocraft.box.storage.api.model.item.NamedItem;
@@ -23,7 +25,7 @@ record DefaultItemLoader<I extends NamedItem<?>>(@NotNull Stream<I> defaultItemS
     }
 
     <R> @NotNull List<R> load(@NotNull BiFunction<I, Integer, R> function, @NotNull Consumer<I> unknownItemConsumer) throws Exception {
-        var nameToIdMap = this.itemStorage.loadDefaultItemNameToIdMap();
+        Object2IntMap<String> nameToIdMap = this.itemStorage.loadDefaultItemNameToIdMap();
 
         return this.defaultItemStream.map(item -> {
             if (nameToIdMap.containsKey(item.plainName())) {
@@ -36,12 +38,12 @@ record DefaultItemLoader<I extends NamedItem<?>>(@NotNull Stream<I> defaultItemS
     }
 
     <R> @NotNull UpdateResult<R> update(@NotNull Map<String, String> renamedItems, @NotNull BiFunction<I, Integer, R> function) throws Exception {
-        var nameToIdMap = this.itemStorage.loadDefaultItemNameToIdMap();
+        Object2IntMap<String> nameToIdMap = this.itemStorage.loadDefaultItemNameToIdMap();
 
-        var remappedItems = new Int2ObjectOpenHashMap<RemappedItem>();
-        var toRename = new Int2ObjectOpenHashMap<String>();
+        Int2ObjectMap<RemappedItem> remappedItems = new Int2ObjectOpenHashMap<>();
+        Int2ObjectMap<String> toRename = new Int2ObjectOpenHashMap<>();
 
-        for (var entry : renamedItems.entrySet()) {
+        for (Map.Entry<String, String> entry : renamedItems.entrySet()) {
             if (nameToIdMap.containsKey(entry.getValue())) {
                 if (nameToIdMap.containsKey(entry.getKey())) {
                     int id = nameToIdMap.removeInt(entry.getKey());

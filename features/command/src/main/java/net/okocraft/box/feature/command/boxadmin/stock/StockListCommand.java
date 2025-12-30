@@ -6,6 +6,7 @@ import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.command.AbstractCommand;
 import net.okocraft.box.api.message.DefaultMessageCollector;
 import net.okocraft.box.api.message.ErrorMessages;
+import net.okocraft.box.api.model.user.BoxUser;
 import net.okocraft.box.api.util.TabCompleter;
 import net.okocraft.box.api.util.UserSearcher;
 import net.okocraft.box.feature.command.shared.SharedStockListCommand;
@@ -36,7 +37,7 @@ class StockListCommand extends AbstractCommand {
             return;
         }
 
-        var target = UserSearcher.search(args[2]);
+        BoxUser target = UserSearcher.search(args[2]);
 
         if (target != null) {
             this.sharedStockListCommand.createAndSendStockList(

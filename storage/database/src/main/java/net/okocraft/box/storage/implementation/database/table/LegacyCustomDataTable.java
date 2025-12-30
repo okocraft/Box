@@ -28,15 +28,15 @@ public class LegacyCustomDataTable extends AbstractCustomDataTable {
 
     @Override
     protected @NotNull MapNode fromBytes(byte[] data) throws Exception {
-        try (var in = new ByteArrayInputStream(data);
-             var reader = new InputStreamReader(in, StandardCharsets.UTF_8)) {
+        try (ByteArrayInputStream in = new ByteArrayInputStream(data);
+             InputStreamReader reader = new InputStreamReader(in, StandardCharsets.UTF_8)) {
             return YamlFormat.DEFAULT.load(reader);
         }
     }
 
     @Override
     protected byte @NotNull [] toBytes(@NotNull MapNode node) throws Exception {
-        try (var out = new ByteArrayOutputStream()) {
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             YamlFormat.DEFAULT.save(node, out);
             return out.toByteArray();
         }

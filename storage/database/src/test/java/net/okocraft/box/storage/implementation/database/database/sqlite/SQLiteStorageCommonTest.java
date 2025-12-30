@@ -17,6 +17,7 @@ import net.okocraft.box.test.shared.storage.test.RemappedItemStorageTest;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Nested;
 
+import java.sql.Connection;
 import java.util.Optional;
 
 class SQLiteStorageCommonTest {
@@ -46,9 +47,9 @@ class SQLiteStorageCommonTest {
 
         @Override
         protected @NotNull DefaultItemStorage newDefaultItemStorage(@NotNull MemorySQLiteDatabase database) throws Exception {
-            var table = new ItemTable(database);
+            ItemTable table = new ItemTable(database);
 
-            try (var connection = database.getConnection()) {
+            try (Connection connection = database.getConnection()) {
                 table.init(connection);
             }
 
@@ -65,9 +66,9 @@ class SQLiteStorageCommonTest {
 
         @Override
         protected @NotNull CustomItemStorage newCustomItemStorage(@NotNull MemorySQLiteDatabase database) throws Exception {
-            var table = new ItemTable(database);
+            ItemTable table = new ItemTable(database);
 
-            try (var connection = database.getConnection()) {
+            try (Connection connection = database.getConnection()) {
                 table.init(connection);
             }
 
@@ -84,9 +85,9 @@ class SQLiteStorageCommonTest {
 
         @Override
         protected @NotNull RemappedItemStorage newRemappedItemStorage(@NotNull MemorySQLiteDatabase database) throws Exception {
-            var table = new RemappedItemTable(database);
+            RemappedItemTable table = new RemappedItemTable(database);
 
-            try (var connection = database.getConnection()) {
+            try (Connection connection = database.getConnection()) {
                 table.init(connection);
             }
 

@@ -3,7 +3,10 @@ package net.okocraft.box.storage.implementation.database.operator;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -15,7 +18,7 @@ public class RemappedItemTableOperator {
     private final String selectAllRemappedIdByVersionStatement;
 
     public RemappedItemTableOperator(@NotNull String tablePrefix) {
-        var tableName = tablePrefix + "remapped_items";
+        String tableName = tablePrefix + "remapped_items";
 
         this.createTableStatement = """
             CREATE TABLE IF NOT EXISTS `%s` (
@@ -32,13 +35,13 @@ public class RemappedItemTableOperator {
     }
 
     public void initTable(@NotNull Connection connection) throws SQLException {
-        try (var statement = connection.createStatement()) {
+        try (Statement statement = connection.createStatement()) {
             statement.execute(this.createTableStatement);
         }
     }
 
     public void insert(@NotNull Connection connection, int id, @NotNull String name, int remappedTo, int inVersion) throws SQLException {
-        try (var statement = connection.prepareStatement(this.insertStatement)) {
+        try (PreparedStatement statement = connection.prepareStatement(this.insertStatement)) {
             statement.setInt(1, id);
             statement.setString(2, name);
             statement.setInt(3, remappedTo);
@@ -48,8 +51,8 @@ public class RemappedItemTableOperator {
     }
 
     public void selectAllRemappedIds(@NotNull Connection connection, @NotNull BiConsumer<Integer, RemappedItem> remappedIdConsumer) throws SQLException {
-        try (var statement = connection.createStatement();
-             var resultSet = statement.executeQuery(this.selectAllRemappedIdStatement)) {
+        try (Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(this.selectAllRemappedIdStatement)) {
             while (resultSet.next()) {
                 remappedIdConsumer.accept(resultSet.getInt(3), new RemappedItem(resultSet.getInt(1), resultSet.getInt(2)));
             }
@@ -57,10 +60,10 @@ public class RemappedItemTableOperator {
     }
 
     public void selectAllRemappedIdsByVersion(@NotNull Connection connection, int inVersion, @NotNull Consumer<RemappedItem> remappedIdConsumer) throws SQLException {
-        try (var statement = connection.prepareStatement(this.selectAllRemappedIdByVersionStatement)) {
+        try (PreparedStatement statement = connection.prepareStatement(this.selectAllRemappedIdByVersionStatement)) {
             statement.setInt(1, inVersion);
 
-            try (var resultSet = statement.executeQuery()) {
+            try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
                     remappedIdConsumer.accept(new RemappedItem(resultSet.getInt(1), resultSet.getInt(2)));
                 }

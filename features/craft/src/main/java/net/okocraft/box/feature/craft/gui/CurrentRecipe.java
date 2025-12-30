@@ -5,6 +5,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.feature.craft.model.BoxIngredientItem;
 import net.okocraft.box.feature.craft.model.BoxItemRecipe;
+import net.okocraft.box.feature.craft.model.IngredientHolder;
 import net.okocraft.box.feature.craft.model.SelectedRecipe;
 import net.okocraft.box.feature.gui.api.session.TypedKey;
 import org.bukkit.inventory.ItemStack;
@@ -38,16 +39,16 @@ public class CurrentRecipe {
     }
 
     public void nextRecipe(int pos, boolean sameIngredient) {
-        var recipe = this.ingredientsMap.get(pos);
+        SelectableIngredients recipe = this.ingredientsMap.get(pos);
 
         if (recipe == null) {
             return;
         }
 
-        var selected = recipe.next();
+        int selected = recipe.next();
 
         if (sameIngredient) {
-            for (var other : this.ingredientsMap.values()) {
+            for (SelectableIngredients other : this.ingredientsMap.values()) {
                 if (recipe != other && recipe.isSameIngredient(other)) {
                     other.select(selected);
                 }
@@ -80,17 +81,17 @@ public class CurrentRecipe {
     }
 
     public void sortIngredients(@Nullable Comparator<BoxIngredientItem> sorter) {
-        for (var holder : this.source.ingredients()) {
+        for (IngredientHolder holder : this.source.ingredients()) {
             if (holder.patterns().isEmpty()) {
                 continue;
             }
 
-            var existing = this.ingredientsMap.get(holder.slot());
+            SelectableIngredients existing = this.ingredientsMap.get(holder.slot());
 
             if (existing != null) {
                 existing.sortPatterns(sorter);
             } else {
-                var ingredients = new SelectableIngredients(holder);
+                SelectableIngredients ingredients = new SelectableIngredients(holder);
                 ingredients.sortPatterns(sorter);
                 this.ingredientsMap.put(holder.slot(), ingredients);
             }

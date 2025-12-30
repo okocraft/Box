@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
@@ -22,15 +23,15 @@ public class MemoryPartialSavingStockStorage implements PartialSavingStockStorag
 
     @Override
     public @NotNull Collection<StockData> loadStockData(@NotNull UUID uuid) {
-        var map = this.stockDataMap.get(uuid);
+        Int2IntMap map = this.stockDataMap.get(uuid);
 
         if (map == null) {
             return Collections.emptyList();
         }
 
-        var result = new ArrayList<StockData>(map.size());
+        List<StockData> result = new ArrayList<>(map.size());
 
-        for (var entry : map.int2IntEntrySet()) {
+        for (Int2IntMap.Entry entry : map.int2IntEntrySet()) {
             result.add(new StockData(entry.getIntKey(), entry.getIntValue()));
         }
 
@@ -39,9 +40,9 @@ public class MemoryPartialSavingStockStorage implements PartialSavingStockStorag
 
     @Override
     public void saveStockData(@NotNull UUID uuid, @NotNull Collection<StockData> stockData) {
-        var map = new Int2IntOpenHashMap(stockData.size());
+        Int2IntMap map = new Int2IntOpenHashMap(stockData.size());
 
-        for (var data : stockData) {
+        for (StockData data : stockData) {
             map.put(data.itemId(), data.amount());
         }
 
@@ -50,7 +51,7 @@ public class MemoryPartialSavingStockStorage implements PartialSavingStockStorag
 
     @Override
     public void remapItemIds(@NotNull Int2IntMap remappedIdMap) {
-        for (var map : this.stockDataMap.values()) {
+        for (Int2IntMap map : this.stockDataMap.values()) {
             new Int2IntOpenHashMap(map)
                 .int2IntEntrySet()
                 .forEach(entry -> map.put(remappedIdMap.getOrDefault(entry.getIntKey(), entry.getIntValue()), entry.getIntValue()));
@@ -59,9 +60,9 @@ public class MemoryPartialSavingStockStorage implements PartialSavingStockStorag
 
     @Override
     public void savePartialStockData(@NotNull UUID uuid, @NotNull Collection<StockData> stockData) {
-        var map = this.stockDataMap.computeIfAbsent(uuid, ignored -> new Int2IntOpenHashMap());
+        Int2IntMap map = this.stockDataMap.computeIfAbsent(uuid, ignored -> new Int2IntOpenHashMap());
 
-        for (var data : stockData) {
+        for (StockData data : stockData) {
             if (data.amount() < 1) {
                 map.remove(data.itemId());
             } else {
@@ -72,7 +73,7 @@ public class MemoryPartialSavingStockStorage implements PartialSavingStockStorag
 
     @Override
     public void cleanupZeroStockData() {
-        for (var stockMap : this.stockDataMap.values()) {
+        for (Int2IntMap stockMap : this.stockDataMap.values()) {
             stockMap.values().removeIf(amount -> amount == 0);
         }
     }
@@ -92,9 +93,9 @@ public class MemoryPartialSavingStockStorage implements PartialSavingStockStorag
 
     @Override
     public void saveAllStockData(@NotNull Map<UUID, Collection<StockData>> stockDataMap) {
-        for (var entry : stockDataMap.entrySet()) {
+        for (Map.Entry<UUID, Collection<StockData>> entry : stockDataMap.entrySet()) {
             Int2IntMap map = new Int2IntOpenHashMap(entry.getValue().size());
-            for (var data : entry.getValue()) {
+            for (StockData data : entry.getValue()) {
                 map.put(data.itemId(), data.amount());
             }
             this.stockDataMap.put(entry.getKey(), map);

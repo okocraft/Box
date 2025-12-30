@@ -9,8 +9,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 // | uuid | username |
@@ -32,7 +34,7 @@ public class UserTable implements UserStorage {
     public @NotNull BoxUser loadBoxUser(@NotNull UUID uuid) throws Exception {
         String username;
 
-        try (var connection = this.database.getConnection()) {
+        try (Connection connection = this.database.getConnection()) {
             username = this.operator.selectUsernameByUUID(connection, uuid);
         }
 
@@ -41,7 +43,7 @@ public class UserTable implements UserStorage {
 
     @Override
     public void saveBoxUser(@NotNull UUID uuid, @Nullable String name) throws Exception {
-        try (var connection = this.database.getConnection()) {
+        try (Connection connection = this.database.getConnection()) {
             this.operator.upsertUser(connection, uuid, name != null ? name : "");
         }
     }
@@ -52,7 +54,7 @@ public class UserTable implements UserStorage {
             return null;
         }
 
-        try (var connection = this.database.getConnection()) {
+        try (Connection connection = this.database.getConnection()) {
             UUID uuid = this.operator.selectUUIDByUserName(connection, name);
             return uuid != null ? BoxUserFactory.create(uuid, name) : null;
         }
@@ -60,9 +62,9 @@ public class UserTable implements UserStorage {
 
     @Override
     public @NotNull Collection<BoxUser> loadAllBoxUsers() throws Exception {
-        var result = new ArrayList<BoxUser>();
+        List<BoxUser> result = new ArrayList<>();
 
-        try (var connection = this.database.getConnection()) {
+        try (Connection connection = this.database.getConnection()) {
             this.operator.selectAllUsers(connection, (uuid, name) -> result.add(BoxUserFactory.create(uuid, name)));
         }
 
@@ -71,9 +73,9 @@ public class UserTable implements UserStorage {
 
     @Override
     public void saveBoxUsers(@NotNull Collection<BoxUser> users) throws Exception {
-        try (var connection = this.database.getConnection();
-             var statement = this.operator.upsertUserStatement(connection)) {
-            for (var user : users) {
+        try (Connection connection = this.database.getConnection();
+             PreparedStatement statement = this.operator.upsertUserStatement(connection)) {
+            for (BoxUser user : users) {
                 this.operator.addUpsertUserBatch(statement, user.getUUID(), user.getName().orElse(""));
             }
             statement.executeBatch();

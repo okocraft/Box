@@ -21,6 +21,7 @@ import net.okocraft.box.storage.implementation.database.table.UserTable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.sql.Connection;
 import java.util.List;
 
 public class DatabaseStorage implements Storage {
@@ -54,7 +55,7 @@ public class DatabaseStorage implements Storage {
     public void init() throws Exception {
         this.database.prepare();
 
-        try (var connection = this.database.getConnection()) {
+        try (Connection connection = this.database.getConnection()) {
             this.firstStartup = !this.metaTable.exists(connection);
             if (this.firstStartup) {
                 this.metaTable.init(connection);
@@ -69,7 +70,7 @@ public class DatabaseStorage implements Storage {
 
     @Override
     public void prepare() throws Exception {
-        try (var connection = this.database.getConnection()) {
+        try (Connection connection = this.database.getConnection()) {
             this.userTable.init(connection);
             this.itemTable.init(connection);
             this.remappedItemTable.init(connection);

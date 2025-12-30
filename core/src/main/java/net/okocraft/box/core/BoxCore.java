@@ -3,6 +3,7 @@ package net.okocraft.box.core;
 import dev.siroshun.event4j.api.listener.ListenerSubscriber;
 import dev.siroshun.event4j.api.listener.SubscribedListener;
 import dev.siroshun.event4j.api.priority.Priority;
+import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.BoxAPI;
@@ -24,6 +25,7 @@ import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.core.command.BoxAdminCommandImpl;
 import net.okocraft.box.core.command.BoxCommandImpl;
 import net.okocraft.box.core.config.Config;
+import net.okocraft.box.core.config.StockDataSetting;
 import net.okocraft.box.core.event.BoxEventCallerProvider;
 import net.okocraft.box.core.feature.BoxFeatureProvider;
 import net.okocraft.box.core.listener.DebugListener;
@@ -45,10 +47,12 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -92,8 +96,8 @@ public class BoxCore implements BoxAPI {
         this.userManager = new BoxUserManager(storage.getUserStorage());
 
         try {
-            var itemLoadResult = ItemLoader.fromStorage(this.context.defaultItemProvider(), storage);
-            var remapItemIds = ItemLoader.loadRemappedItemIds(storage.remappedItemStorage());
+            ItemLoader.Result itemLoadResult = ItemLoader.fromStorage(this.context.defaultItemProvider(), storage);
+            Int2IntMap remapItemIds = ItemLoader.loadRemappedItemIds(storage.remappedItemStorage());
             itemLoadResult.logItemCount();
             this.itemManager = new BoxItemManager(storage.customItemStorage(), this.eventCallers, this.context.scheduler(), this.context.defaultItemProvider(), itemLoadResult.asIterator(), remapItemIds);
         } catch (Exception e) {
@@ -101,7 +105,7 @@ public class BoxCore implements BoxAPI {
             return false;
         }
 
-        var stockDataSetting = this.context.config().coreSetting().stockData();
+        StockDataSetting stockDataSetting = this.context.config().coreSetting().stockData();
         this.stockManager = new BoxStockManager(storage.getStockStorage(), this.eventCallers, this.itemManager::getBoxItemOrNull, stockDataSetting.unloadTime(), stockDataSetting.saveInterval(), TimeUnit.SECONDS);
 
         this.customDataManager = new BoxCustomDataManager(storage.getCustomDataStorage());
@@ -168,9 +172,9 @@ public class BoxCore implements BoxAPI {
             BoxLogger.logger().error("Could not reload messages", e);
         }
 
-        var featureReloadContext = new FeatureContext.Reloading(this.context.plugin(), sender);
+        FeatureContext.Reloading featureReloadContext = new FeatureContext.Reloading(this.context.plugin(), sender);
 
-        for (var feature : this.boxFeatureProvider.getFeatures()) {
+        for (BoxFeature feature : this.boxFeatureProvider.getFeatures()) {
             if (feature instanceof Reloadable reloadable) {
                 try {
                     reloadable.reload(featureReloadContext);
@@ -253,12 +257,12 @@ public class BoxCore implements BoxAPI {
             return;
         }
 
-        var featureMap = new LinkedHashMap<Class<? extends BoxFeature>, BoxFeature>();
+        Map<Class<? extends BoxFeature>, BoxFeature> featureMap = new LinkedHashMap<>();
         this.boxFeatureProvider = new BoxFeatureProvider(Collections.unmodifiableMap(featureMap));
 
-        var context = new FeatureContext.Enabling(this.context.plugin());
+        FeatureContext.Enabling context = new FeatureContext.Enabling(this.context.plugin());
 
-        for (var feature : features) {
+        for (BoxFeature feature : features) {
             initializeFeature(feature, featureMap, context);
             this.eventCallers.sync().call(new FeatureEvent(feature, FeatureEvent.Type.ENABLE));
         }
@@ -269,9 +273,9 @@ public class BoxCore implements BoxAPI {
             throw new IllegalStateException("%s is registered twice.".formatted(feature.getName()));
         }
 
-        var dependencies = feature.getDependencies();
+        Set<Class<? extends BoxFeature>> dependencies = feature.getDependencies();
 
-        for (var dependencyClass : dependencies) {
+        for (Class<? extends BoxFeature> dependencyClass : dependencies) {
             if (!registry.containsKey(dependencyClass)) {
                 throw new IllegalStateException("%s that is the dependency of %s is not registered.".formatted(dependencyClass.getName(), feature.getName()));
             }
@@ -287,15 +291,15 @@ public class BoxCore implements BoxAPI {
     }
 
     public void disableAllFeatures() {
-        var features = this.getFeatureProvider().getFeatures();
+        Collection<? extends BoxFeature> features = this.getFeatureProvider().getFeatures();
 
         if (features.isEmpty()) {
             return;
         }
 
-        var context = new FeatureContext.Disabling(this.context.plugin());
+        FeatureContext.Disabling context = new FeatureContext.Disabling(this.context.plugin());
 
-        for (var feature : features) {
+        for (BoxFeature feature : features) {
             try {
                 feature.disable(context);
             } catch (Throwable throwable) {

@@ -44,10 +44,10 @@ public class CraftMenu implements Menu {
     private static final List<Button> SHARED_BUTTONS;
 
     static {
-        var buttons = new ArrayList<Button>(54);
-        var recipeSlots = new int[]{10, 11, 12, 19, 20, 21, 28, 29, 30};
+        List<Button> buttons = new ArrayList<>(54);
+        int[] recipeSlots = new int[]{10, 11, 12, 19, 20, 21, 28, 29, 30};
 
-        var reservedSlots = new IntOpenHashSet(recipeSlots);
+        IntOpenHashSet reservedSlots = new IntOpenHashSet(recipeSlots);
 
         reservedSlots.add(9);
         reservedSlots.add(24);
@@ -126,7 +126,7 @@ public class CraftMenu implements Menu {
     public void onOpen(@NotNull PlayerSession session) {
         session.putData(CurrentRecipe.DATA_KEY, this.currentRecipe);
 
-        var order = session.getData(INGREDIENT_ORDER_KEY);
+        IngredientOrder order = session.getData(INGREDIENT_ORDER_KEY);
         this.currentRecipe.sortIngredients(order != null ? order.createSorter(session) : null);
     }
 

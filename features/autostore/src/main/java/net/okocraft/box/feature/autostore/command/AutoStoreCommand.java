@@ -7,6 +7,7 @@ import net.okocraft.box.api.message.DefaultMessageCollector;
 import net.okocraft.box.api.message.ErrorMessages;
 import net.okocraft.box.api.message.Placeholders;
 import net.okocraft.box.feature.autostore.AutoStoreSettingProvider;
+import net.okocraft.box.feature.autostore.setting.AutoStoreSetting;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -58,7 +59,7 @@ public class AutoStoreCommand extends AbstractCommand {
             return;
         }
 
-        var setting = this.container.getIfLoaded(player.getUniqueId());
+        AutoStoreSetting setting = this.container.getIfLoaded(player.getUniqueId());
 
         if (setting == null) {
             sender.sendMessage(this.loadErrorMessage);
@@ -77,7 +78,7 @@ public class AutoStoreCommand extends AbstractCommand {
             }
         }
 
-        var subCommand = this.matchSubCommand(args[1]);
+        Optional<AutoStoreSubCommand> subCommand = this.matchSubCommand(args[1]);
 
         if (subCommand.isPresent()) {
             subCommand.get().runCommand(sender, args, setting);

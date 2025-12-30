@@ -47,7 +47,7 @@ public final class StorageMode extends AbstractStorageMode {
 
     @Override
     public @NotNull ItemStack createItemIcon(@NotNull PlayerSession session, @NotNull BoxItem item) {
-        var amountData = session.getData(Amount.SHARED_DATA_KEY);
+        Amount amountData = session.getData(Amount.SHARED_DATA_KEY);
         int currentStock = session.getSourceStockHolder().getAmount(item);
         int transactionAmount = amountData != null ? amountData.getValue() : 1;
 

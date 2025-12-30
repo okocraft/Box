@@ -11,7 +11,7 @@ class AutoStoreSettingTest {
 
     @Test
     void testShouldAutostore() {
-        var setting = new AutoStoreSetting(UUIDFactory.byName("AutoStoreSettingTest"));
+        AutoStoreSetting setting = new AutoStoreSetting(UUIDFactory.byName("AutoStoreSettingTest"));
 
         // Initially, the item should autostore because the mode is all-mode.
         Assertions.assertTrue(setting.shouldAutoStore(ITEM));

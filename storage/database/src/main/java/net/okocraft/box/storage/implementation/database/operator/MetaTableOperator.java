@@ -5,7 +5,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 public abstract class MetaTableOperator {
 
@@ -29,7 +32,7 @@ public abstract class MetaTableOperator {
     }
 
     public void initTable(@NotNull Connection connection) throws SQLException {
-        try (var statement = connection.createStatement()) {
+        try (Statement statement = connection.createStatement()) {
             statement.execute(this.createTableStatement);
         }
     }
@@ -37,16 +40,16 @@ public abstract class MetaTableOperator {
     public boolean existsTable(@NotNull Connection connection) throws SQLException {
             DatabaseMetaData meta = connection.getMetaData();
 
-            try (var tables = meta.getTables(null, null, this.tableName.toUpperCase(), new String[] { "TABLE" })) {
+            try (ResultSet tables = meta.getTables(null, null, this.tableName.toUpperCase(), new String[] { "TABLE" })) {
                 return tables.next();
             }
     }
 
     public @Nullable String selectValue(@NotNull Connection connection, @NotNull String key) throws SQLException {
-        try (var statement = connection.prepareStatement(this.selectValueStatement)) {
+        try (PreparedStatement statement = connection.prepareStatement(this.selectValueStatement)) {
             statement.setString(1, key);
 
-            try (var resultSet = statement.executeQuery()) {
+            try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
                     return resultSet.getString("value");
                 }
@@ -56,12 +59,12 @@ public abstract class MetaTableOperator {
     }
 
     public @Nullable Integer selectValueAsIntOrNull(@NotNull Connection connection, @NotNull String key) throws SQLException {
-        var result = this.selectValue(connection, key);
+        String result = this.selectValue(connection, key);
         return result != null ? Integer.valueOf(result) : null;
     }
 
     public void upsertValue(@NotNull Connection connection, @NotNull String key, @NotNull String value) throws SQLException {
-        try (var statement = connection.prepareStatement(this.upsertValueStatement)) {
+        try (PreparedStatement statement = connection.prepareStatement(this.upsertValueStatement)) {
             statement.setString(1, key);
             statement.setString(2, value);
             statement.executeUpdate();

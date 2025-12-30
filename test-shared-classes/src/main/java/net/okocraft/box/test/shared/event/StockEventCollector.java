@@ -19,21 +19,21 @@ public class StockEventCollector extends EventCollector {
     public static final StockEvent.Cause TEST_CAUSE = StockEvent.Cause.create("BoxTestCause");
 
     public void checkSetEvent(@NotNull StockHolder stockHolder, @NotNull BoxItem item, int currentAmount, int previousAmount) {
-        var event = Assertions.assertInstanceOf(StockSetEvent.class, this.nextEvent());
+        StockSetEvent event = Assertions.assertInstanceOf(StockSetEvent.class, this.nextEvent());
 
         Assertions.assertEquals(previousAmount, event.getPreviousAmount());
         this.checkStockEvent(event, stockHolder, item, currentAmount);
     }
 
     public void checkIncreaseEvent(@NotNull StockHolder stockHolder, @NotNull BoxItem item, int increments, int currentAmount) {
-        var event = Assertions.assertInstanceOf(StockIncreaseEvent.class, this.nextEvent());
+        StockIncreaseEvent event = Assertions.assertInstanceOf(StockIncreaseEvent.class, this.nextEvent());
 
         Assertions.assertEquals(increments, event.getIncrements());
         this.checkStockEvent(event, stockHolder, item, currentAmount);
     }
 
     public void checkOverflowEvent(@NotNull StockHolder stockHolder, @NotNull BoxItem item, int increments, int excess) {
-        var event = Assertions.assertInstanceOf(StockOverflowEvent.class, this.nextEvent());
+        StockOverflowEvent event = Assertions.assertInstanceOf(StockOverflowEvent.class, this.nextEvent());
 
         Assertions.assertEquals(excess, event.getExcess());
         Assertions.assertEquals(increments, event.getIncrements());
@@ -41,7 +41,7 @@ public class StockEventCollector extends EventCollector {
     }
 
     public void checkDecreaseEvent(@NotNull StockHolder stockHolder, @NotNull BoxItem item, int decrements, int currentAmount) {
-        var event = Assertions.assertInstanceOf(StockDecreaseEvent.class, this.nextEvent());
+        StockDecreaseEvent event = Assertions.assertInstanceOf(StockDecreaseEvent.class, this.nextEvent());
 
         Assertions.assertEquals(decrements, event.getDecrements());
         this.checkStockEvent(event, stockHolder, item, currentAmount);
@@ -55,7 +55,7 @@ public class StockEventCollector extends EventCollector {
     }
 
     public void checkResetEvent(@NotNull StockHolder stockHolder, @NotNull Collection<StockData> stockDataBeforeReset) {
-        var event = Assertions.assertInstanceOf(StockHolderResetEvent.class, this.nextEvent());
+        StockHolderResetEvent event = Assertions.assertInstanceOf(StockHolderResetEvent.class, this.nextEvent());
 
         Assertions.assertEquals(stockHolder, event.getStockHolder());
         Assertions.assertEquals(stockDataBeforeReset.size(), event.getStockDataBeforeReset().size());

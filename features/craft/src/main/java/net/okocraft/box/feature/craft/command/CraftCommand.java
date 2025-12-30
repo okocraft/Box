@@ -12,6 +12,7 @@ import net.okocraft.box.api.util.TabCompleter;
 import net.okocraft.box.feature.craft.RecipeRegistry;
 import net.okocraft.box.feature.craft.gui.menu.CraftMenu;
 import net.okocraft.box.feature.craft.gui.menu.RecipeSelectorMenu;
+import net.okocraft.box.feature.craft.model.RecipeHolder;
 import net.okocraft.box.feature.gui.api.event.MenuOpenEvent;
 import net.okocraft.box.feature.gui.api.menu.Menu;
 import net.okocraft.box.feature.gui.api.session.PlayerSession;
@@ -22,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 public class CraftCommand extends AbstractCommand {
@@ -50,14 +52,14 @@ public class CraftCommand extends AbstractCommand {
             return;
         }
 
-        var item = BoxAPI.api().getItemManager().getBoxItem(args[1]);
+        Optional<BoxItem> item = BoxAPI.api().getItemManager().getBoxItem(args[1]);
 
         if (item.isEmpty()) {
             sender.sendMessage(ErrorMessages.ITEM_NOT_FOUND.apply(args[1]));
             return;
         }
 
-        var recipeHolder = RecipeRegistry.getRecipes(item.get());
+        RecipeHolder recipeHolder = RecipeRegistry.getRecipes(item.get());
 
         if (recipeHolder == null || recipeHolder.getRecipeList().isEmpty()) {
             sender.sendMessage(this.recipeNotFound.apply(item.get()));
@@ -65,7 +67,7 @@ public class CraftCommand extends AbstractCommand {
         }
 
         Menu menu;
-        var session = PlayerSession.newSession(player);
+        PlayerSession session = PlayerSession.newSession(player);
 
         if (recipeHolder.getRecipeList().size() == 1) {
             menu = CraftMenu.prepare(recipeHolder.getRecipeList().getFirst());

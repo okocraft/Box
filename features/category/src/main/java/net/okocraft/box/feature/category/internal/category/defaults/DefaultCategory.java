@@ -28,7 +28,7 @@ public record DefaultCategory(@NotNull String key,
     }
 
     public @NotNull Category toCategory(@NotNull ItemManager manager) {
-        var category = new LoadedCategory(this.icon, this.displayNameMap);
+        LoadedCategory category = new LoadedCategory(this.icon, this.displayNameMap);
         category.addItems(this.itemNames.stream().map(manager::getBoxItem).filter(Optional::isPresent).map(Optional::get).toList());
         return category;
     }
@@ -37,9 +37,9 @@ public record DefaultCategory(@NotNull String key,
         mapNode.set(CategoryFile.DISABLED_CATEGORY, BooleanValue.FALSE);
         mapNode.set(CategoryFile.ICON_KEY, this.icon.name());
 
-        var displayName = mapNode.createMap(CategoryFile.DISPLAY_NAME_KEY);
+        MapNode displayName = mapNode.createMap(CategoryFile.DISPLAY_NAME_KEY);
 
-        for (var entry : this.displayNameMap.entrySet()) {
+        for (Map.Entry<Locale, String> entry : this.displayNameMap.entrySet()) {
             displayName.set(entry.getKey() == null ? CategoryFile.LOCALE_DEFAULT : entry.getKey().toString(), entry.getValue());
         }
 

@@ -10,7 +10,7 @@ import java.util.function.Function;
 
 record CustomItemLoader(@NotNull CustomItemStorage storage, boolean shouldUpdateData) {
     <R> @NotNull List<R> load(@NotNull Function<R, ItemData> serializer, @NotNull Function<ItemData, R> deserializer) throws Exception {
-        var loaded = new ArrayList<R>();
+        List<R> loaded = new ArrayList<>();
         this.storage.loadItemData(data -> loaded.add(deserializer.apply(data)));
 
         if (!loaded.isEmpty() && this.shouldUpdateData) {

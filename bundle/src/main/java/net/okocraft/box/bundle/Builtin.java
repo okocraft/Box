@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.VisibleForTesting;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.util.Collections;
 import java.util.Locale;
@@ -52,7 +53,7 @@ public final class Builtin {
 
     @VisibleForTesting
     public static @NotNull Map<String, String> loadJapaneseFileFromJar() {
-        try (var input = Builtin.class.getClassLoader().getResourceAsStream("ja.properties")) {
+        try (InputStream input = Builtin.class.getClassLoader().getResourceAsStream("ja.properties")) {
             return input != null ? PropertiesFile.load(input) : Collections.emptyMap();
         } catch (IOException e) {
             throw new UncheckedIOException(e);

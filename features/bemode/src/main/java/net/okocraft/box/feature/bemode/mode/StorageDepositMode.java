@@ -49,8 +49,8 @@ public class StorageDepositMode extends AbstractStorageMode {
 
     @Override
     public @NotNull ItemStack createItemIcon(@NotNull PlayerSession session, @NotNull BoxItem item) {
-        var icon = item.getClonedItem();
-        var amountData = session.getData(Amount.SHARED_DATA_KEY);
+        ItemStack icon = item.getClonedItem();
+        Amount amountData = session.getData(Amount.SHARED_DATA_KEY);
 
         return ItemEditor.create()
             .copyLoreFrom(icon)

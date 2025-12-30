@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.nio.file.Path;
 
 /**
@@ -29,9 +30,9 @@ public interface BootstrapContext {
      */
     static @NotNull BootstrapContext get() {
         try {
-            var clazz = Class.forName("net.okocraft.box.bootstrap.BoxBootstrap");
-            var bootstrap = clazz.getMethod("get").invoke(null);
-            var getContext = clazz.getMethod("getContext");
+            Class<?> clazz = Class.forName("net.okocraft.box.bootstrap.BoxBootstrap");
+            Object bootstrap = clazz.getMethod("get").invoke(null);
+            Method getContext = clazz.getMethod("getContext");
             return (BootstrapContext) getContext.invoke(bootstrap);
         } catch (ClassNotFoundException | InvocationTargetException | IllegalAccessException |
                  NoSuchMethodException e) {

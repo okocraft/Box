@@ -55,7 +55,7 @@ public class LoadingPersonalStockHolder implements PersonalStockHolder {
             this.lastAccess = System.nanoTime();
         }
 
-        var stockHolder = this.stockHolder;
+        StockHolder stockHolder = this.stockHolder;
         return stockHolder != null ? stockHolder : this.load();
     }
 
@@ -100,7 +100,7 @@ public class LoadingPersonalStockHolder implements PersonalStockHolder {
             return;
         }
 
-        var loaded = this.stockHolder;
+        StockHolder loaded = this.stockHolder;
 
         if (loaded != null) {
             this.changeState.saveChanges(loaded);
@@ -111,7 +111,7 @@ public class LoadingPersonalStockHolder implements PersonalStockHolder {
         synchronized (this) {
             if (this.shouldUnload(unloadTimeInNanos)) {
                 if (this.stockHolder != null) {
-                    var unloading = this.stockHolder;
+                    StockHolder unloading = this.stockHolder;
                     this.stockHolder = null;
 
                     this.changeState.saveChanges(unloading); // Save here to prevent loading before applying data to the storage

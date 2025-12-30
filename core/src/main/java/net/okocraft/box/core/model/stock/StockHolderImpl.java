@@ -5,6 +5,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.objects.ObjectIterator;
 import it.unimi.dsi.fastutil.objects.ObjectList;
 import it.unimi.dsi.fastutil.objects.ObjectLists;
 import it.unimi.dsi.fastutil.objects.ObjectSet;
@@ -54,7 +55,7 @@ class StockHolderImpl implements StockHolder {
 
     @Override
     public int getAmount(int itemId) {
-        var stock = this.getStockOrNull(itemId);
+        Stock stock = this.getStockOrNull(itemId);
         return stock != null ? stock.get() : 0;
     }
 
@@ -69,7 +70,7 @@ class StockHolderImpl implements StockHolder {
         Objects.requireNonNull(cause);
 
         int internalId = item.getInternalId();
-        var stock = this.getStockOrNull(internalId);
+        Stock stock = this.getStockOrNull(internalId);
 
         if (amount == 0 && stock == null) {
             return;
@@ -106,7 +107,7 @@ class StockHolderImpl implements StockHolder {
         }
 
         int internalId = item.getInternalId();
-        var stock = this.getStockOrNull(internalId);
+        Stock stock = this.getStockOrNull(internalId);
 
         if (stock == null) {
             stock = this.getStockOrPutNewStock(internalId, increment);
@@ -117,7 +118,7 @@ class StockHolderImpl implements StockHolder {
             }
         }
 
-        var result = stock.add(increment);
+        Stock.ModifyResult result = stock.add(increment);
 
         if (result.getClass() == Stock.ModifyResult.Success.class) {
             this.eventCaller.callIncreaseEvent(this, item, increment, result.newValue(), cause);
@@ -155,13 +156,13 @@ class StockHolderImpl implements StockHolder {
             return returnType == RETURN_NEW_AMOUNT ? this.getAmount(item) : 0;
         }
 
-        var stock = this.getStockOrNull(item.getInternalId());
+        Stock stock = this.getStockOrNull(item.getInternalId());
 
         if (stock == null) {
             return 0;
         }
 
-        var result = stock.subtract(limit);
+        Stock.ModifyResult result = stock.subtract(limit);
 
         if (result.oldValue() != 0) {
             int decrement = result.oldValue() - result.newValue();
@@ -192,13 +193,13 @@ class StockHolderImpl implements StockHolder {
             return this.getAmount(item);
         }
 
-        var stock = this.getStockOrNull(item.getInternalId());
+        Stock stock = this.getStockOrNull(item.getInternalId());
 
         if (stock == null) {
             return -1;
         }
 
-        var result = stock.trySubtract(decrement);
+        Stock.ModifyResult result = stock.trySubtract(decrement);
 
         if (result == null) {
             return -1;
@@ -229,7 +230,7 @@ class StockHolderImpl implements StockHolder {
             return false;
         }
 
-        for (var entry : newAmountMap.object2IntEntrySet()) {
+        for (Object2IntMap.Entry<BoxItem> entry : newAmountMap.object2IntEntrySet()) {
             this.eventCaller.callDecreaseEvent(this, entry.getKey(), decrementMap.getInt(entry.getKey()), entry.getIntValue(), cause);
         }
 
@@ -239,7 +240,7 @@ class StockHolderImpl implements StockHolder {
     private @Nullable Object2IntArrayMap<BoxItem> decreaseIfPossibleAtUnsynchronized(@NotNull Object2IntMap<BoxItem> decrementMap) {
         Object2IntArrayMap<BoxItem> newAmountMap = new Object2IntArrayMap<>(decrementMap.size());
 
-        for (var entry : decrementMap.object2IntEntrySet()) {
+        for (Object2IntMap.Entry<BoxItem> entry : decrementMap.object2IntEntrySet()) {
             int decrement = entry.getIntValue();
 
             if (decrement < 0) {
@@ -248,7 +249,7 @@ class StockHolderImpl implements StockHolder {
                 continue;
             }
 
-            var stock = this.getStockAtUnsynchronized(entry.getKey().getInternalId());
+            Stock stock = this.getStockAtUnsynchronized(entry.getKey().getInternalId());
 
             if (stock == null) {
                 return null;
@@ -263,9 +264,9 @@ class StockHolderImpl implements StockHolder {
             }
         }
 
-        for (var entry : newAmountMap.object2IntEntrySet()) {
+        for (Object2IntMap.Entry<BoxItem> entry : newAmountMap.object2IntEntrySet()) {
             int internalId = entry.getKey().getInternalId();
-            var stock = this.getStockAtUnsynchronized(internalId);
+            Stock stock = this.getStockAtUnsynchronized(internalId);
 
             if (stock == null) {
                 this.putNewStockAtUnsynchronized(internalId, entry.getIntValue());
@@ -312,7 +313,7 @@ class StockHolderImpl implements StockHolder {
 
     @Override
     public String toString() {
-        var builder =
+        StringBuilder builder =
             new StringBuilder(this.getClass().getSimpleName())
                 .append("{name=").append(this.getName())
                 .append(", uuid=").append(this.uuid)
@@ -331,12 +332,12 @@ class StockHolderImpl implements StockHolder {
             ObjectSet<Int2ObjectMap.Entry<Stock>> entrySet = this.stockMap.int2ObjectEntrySet();
             stockDataCollection = new ObjectArrayList<>(entrySet.size());
 
-            for (var entry : entrySet) {
+            for (Int2ObjectMap.Entry<Stock> entry : entrySet) {
                 if (entry.getValue().get() <= 0) {
                     continue;
                 }
 
-                var item = this.toBoxItem.apply(entry.getIntKey());
+                BoxItem item = this.toBoxItem.apply(entry.getIntKey());
 
                 if (item != null) {
                     stockDataCollection.add(item);
@@ -353,10 +354,10 @@ class StockHolderImpl implements StockHolder {
         long stamp = this.lock.readLock();
 
         try {
-            var iterator = this.stockMap.int2ObjectEntrySet().fastIterator();
+            ObjectIterator<Int2ObjectMap.Entry<Stock>> iterator = this.stockMap.int2ObjectEntrySet().fastIterator();
 
             while (iterator.hasNext()) {
-                var entry = iterator.next();
+                Int2ObjectMap.Entry<Stock> entry = iterator.next();
                 builder.append(entry.getIntKey()).append('=').append(entry.getValue().get());
 
                 if (iterator.hasNext()) {
@@ -393,7 +394,7 @@ class StockHolderImpl implements StockHolder {
         long stamp = this.lock.writeLock();
 
         try {
-            var stock = this.stockMap.get(internalId);
+            Stock stock = this.stockMap.get(internalId);
 
             if (stock == null) {
                 this.putNewStockAtUnsynchronized(internalId, initialValue);
@@ -415,10 +416,10 @@ class StockHolderImpl implements StockHolder {
     }
 
     private @NotNull @Unmodifiable Collection<StockData> createStockDataAtUnsynchronized() {
-        var entrySet = this.stockMap.int2ObjectEntrySet();
-        var stockDataCollection = new ObjectArrayList<StockData>(entrySet.size());
+        Int2ObjectMap.FastEntrySet<Stock> entrySet = this.stockMap.int2ObjectEntrySet();
+        ObjectArrayList<StockData> stockDataCollection = new ObjectArrayList<>(entrySet.size());
 
-        for (var entry : entrySet) {
+        for (Int2ObjectMap.Entry<Stock> entry : entrySet) {
             int amount = entry.getValue().get();
             if (0 < amount) {
                 stockDataCollection.add(new StockData(entry.getIntKey(), amount));

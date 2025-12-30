@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static net.okocraft.box.feature.category.internal.category.defaults.DefaultCategories.ItemNameSet.UNKNOWN_VERSION;
 import static net.okocraft.box.feature.category.internal.category.defaults.DefaultCategories.collectCurrentDefaultCategories;
@@ -39,10 +40,10 @@ class DefaultCategoriesTest {
 
     @Test
     void testCollectCurrentDefaultCategories() throws IOException {
-        var source = DefaultCategories.loadCategorizedItemNames(YamlFormat.DEFAULT.load(new StringReader(ITEM_LIST)));
+        Map<String, List<ItemNameSet>> source = DefaultCategories.loadCategorizedItemNames(YamlFormat.DEFAULT.load(new StringReader(ITEM_LIST)));
 
         {
-            var categories = new ArrayList<>(collectCurrentDefaultCategories(MCDataVersion.of(10), source));
+            List<DefaultCategory> categories = new ArrayList<>(collectCurrentDefaultCategories(MCDataVersion.of(10), source));
             categories.removeIf(category -> category.itemNames().isEmpty());
             Assertions.assertEquals(3, categories.size());
             Assertions.assertEquals(List.of("DIRT", "GRASS_BLOCK"), categories.get(0).itemNames());
@@ -51,7 +52,7 @@ class DefaultCategoriesTest {
         }
 
         {
-            var categories = new ArrayList<>(collectCurrentDefaultCategories(MCDataVersion.of(5), source));
+            List<DefaultCategory> categories = new ArrayList<>(collectCurrentDefaultCategories(MCDataVersion.of(5), source));
             categories.removeIf(category -> category.itemNames().isEmpty());
             Assertions.assertEquals(2, categories.size());
             Assertions.assertEquals(List.of("DIRT", "GRASS_BLOCK"), categories.get(0).itemNames());
@@ -61,23 +62,23 @@ class DefaultCategoriesTest {
 
     @Test
     void testCollectNewItems() throws IOException {
-        var source = DefaultCategories.loadCategorizedItemNames(YamlFormat.DEFAULT.load(new StringReader(ITEM_LIST)));
+        Map<String, List<ItemNameSet>> source = DefaultCategories.loadCategorizedItemNames(YamlFormat.DEFAULT.load(new StringReader(ITEM_LIST)));
 
         {
-            var categories = new ArrayList<>(collectNewItems(MCDataVersion.of(5), MCDataVersion.of(10), source));
+            List<DefaultCategory> categories = new ArrayList<>(collectNewItems(MCDataVersion.of(5), MCDataVersion.of(10), source));
             categories.removeIf(category -> category.itemNames().isEmpty());
             Assertions.assertEquals(1, categories.size());
             Assertions.assertEquals(List.of("NEW_ITEM"), categories.get(0).itemNames());
         }
 
         {
-            var categories = new ArrayList<>(collectNewItems(MCDataVersion.of(10), MCDataVersion.of(10), source));
+            List<DefaultCategory> categories = new ArrayList<>(collectNewItems(MCDataVersion.of(10), MCDataVersion.of(10), source));
             categories.removeIf(category -> category.itemNames().isEmpty());
             Assertions.assertTrue(categories.isEmpty());
         }
 
         {
-            var categories = new ArrayList<>(collectNewItems(MCDataVersion.of(5), MCDataVersion.of(7), source));
+            List<DefaultCategory> categories = new ArrayList<>(collectNewItems(MCDataVersion.of(5), MCDataVersion.of(7), source));
             categories.removeIf(category -> category.itemNames().isEmpty());
             Assertions.assertTrue(categories.isEmpty());
         }

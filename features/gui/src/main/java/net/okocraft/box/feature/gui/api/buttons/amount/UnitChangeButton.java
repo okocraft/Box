@@ -36,10 +36,10 @@ public class UnitChangeButton extends AmountModificationButton {
 
     @Override
     public @NotNull ItemStack createIcon(@NotNull PlayerSession session) {
-        var editor = ItemEditor.create().displayName(this.displayName);
-        var currentUnit = this.getOrCreateAmount(session).getUnit();
+        ItemEditor editor = ItemEditor.create().displayName(this.displayName);
+        Amount.Unit currentUnit = this.getOrCreateAmount(session).getUnit();
 
-        for (var unit : Amount.Unit.values()) {
+        for (Amount.Unit unit : Amount.Unit.values()) {
             editor.loreLine(
                 Component.text()
                     .content(" > " + unit.getAmount())
@@ -55,7 +55,7 @@ public class UnitChangeButton extends AmountModificationButton {
 
     @Override
     public @NotNull ClickResult onClick(@NotNull PlayerSession session, @NotNull ClickType clickType) {
-        var amount = this.getOrCreateAmount(session);
+        Amount amount = this.getOrCreateAmount(session);
 
         if (clickType.isShiftClick()) {
             if (amount.getValue() != 1) {

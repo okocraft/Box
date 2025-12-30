@@ -2,9 +2,11 @@ package net.okocraft.box.feature.gui.internal.button;
 
 import dev.siroshun.mcmsgdef.MessageKey;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.Style;
 import net.okocraft.box.feature.gui.api.button.Button;
 import net.okocraft.box.feature.gui.api.button.ClickResult;
 import net.okocraft.box.feature.gui.api.lang.Styles;
+import net.okocraft.box.feature.gui.api.mode.BoxItemClickMode;
 import net.okocraft.box.feature.gui.api.session.ClickModeHolder;
 import net.okocraft.box.feature.gui.api.session.PlayerSession;
 import net.okocraft.box.feature.gui.api.util.ItemEditor;
@@ -25,11 +27,11 @@ public record ModeButton(int slot) implements Button {
 
     @Override
     public @NotNull ItemStack createIcon(@NotNull PlayerSession session) {
-        var editor = ItemEditor.create().displayName(DISPLAY_NAME);
-        var holder = ClickModeHolder.getFromSession(session);
+        ItemEditor editor = ItemEditor.create().displayName(DISPLAY_NAME);
+        ClickModeHolder holder = ClickModeHolder.getFromSession(session);
 
-        for (var mode : holder.getAvailableModes()) {
-            var style = holder.getCurrentMode() == mode ? Styles.NO_DECORATION_AQUA : Styles.NO_DECORATION_GRAY;
+        for (BoxItemClickMode mode : holder.getAvailableModes()) {
+            Style style = holder.getCurrentMode() == mode ? Styles.NO_DECORATION_AQUA : Styles.NO_DECORATION_GRAY;
             editor.loreLine(Component.text().append(Component.text(" > ")).append(mode.getDisplayName(session)).style(style).build());
         }
 
@@ -38,14 +40,14 @@ public record ModeButton(int slot) implements Button {
 
     @Override
     public @NotNull ClickResult onClick(@NotNull PlayerSession session, @NotNull ClickType clickType) {
-        var holder = ClickModeHolder.getFromSession(session);
+        ClickModeHolder holder = ClickModeHolder.getFromSession(session);
         int nextIndex = holder.getAvailableModes().indexOf(holder.getCurrentMode()) + 1;
 
         if (holder.getAvailableModes().size() <= nextIndex) {
             nextIndex = 0;
         }
 
-        var mode = holder.getAvailableModes().get(nextIndex);
+        BoxItemClickMode mode = holder.getAvailableModes().get(nextIndex);
 
         holder.setCurrentMode(mode);
         ClickResult result = mode.onSelect(session);

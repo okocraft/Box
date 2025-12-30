@@ -9,7 +9,7 @@ import java.util.List;
 final class MemorySQLiteDatabase extends AbstractSQLiteDatabase {
 
     static @NotNull MemorySQLiteDatabase prepareDatabase() throws Exception {
-        var database = new MemorySQLiteDatabase();
+        MemorySQLiteDatabase database = new MemorySQLiteDatabase();
         database.prepare();
         return database;
     }

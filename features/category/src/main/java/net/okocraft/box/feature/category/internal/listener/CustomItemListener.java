@@ -1,5 +1,6 @@
 package net.okocraft.box.feature.category.internal.listener;
 
+import dev.siroshun.configapi.core.node.MapNode;
 import dev.siroshun.configapi.format.yaml.YamlFormat;
 import net.kyori.adventure.key.Key;
 import net.okocraft.box.api.event.item.CustomItemRegisterEvent;
@@ -59,18 +60,18 @@ public class CustomItemListener {
     }
 
     private void updateCategoriesFile(@NotNull String oldName, @NotNull String newName) throws IOException {
-        var mapNode = YamlFormat.COMMENT_PROCESSING.load(this.filepath);
+        MapNode mapNode = YamlFormat.COMMENT_PROCESSING.load(this.filepath);
 
-        for (var key : mapNode.value().keySet()) {
+        for (Object key : mapNode.value().keySet()) {
             if (key.equals(CustomItemCategory.CONFIG_KEY)) {
-                var newList = renameItem(oldName, newName, mapNode.getList(key).asList(String.class));
+                List<String> newList = renameItem(oldName, newName, mapNode.getList(key).asList(String.class));
 
                 if (newList != null) {
                     mapNode.set(key, newList);
                 }
             } else if (!String.valueOf(key).startsWith("$")) {
-                var map = mapNode.getMap(key);
-                var newList = renameItem(oldName, newName, map.getList(CategoryFile.ITEMS_KEY).asList(String.class));
+                MapNode map = mapNode.getMap(key);
+                List<String> newList = renameItem(oldName, newName, map.getList(CategoryFile.ITEMS_KEY).asList(String.class));
 
                 if (newList != null) {
                     map.set(CategoryFile.ITEMS_KEY, newList);
@@ -101,7 +102,7 @@ public class CustomItemListener {
     }
 
     private void addItemToCustomItems(@NotNull BoxItem item) throws IOException {
-        var loaded = YamlFormat.COMMENT_PROCESSING.load(this.filepath);
+        MapNode loaded = YamlFormat.COMMENT_PROCESSING.load(this.filepath);
         loaded.getOrCreateList(CustomItemCategory.CONFIG_KEY).add(item.getPlainName());
         YamlFormat.COMMENT_PROCESSING.save(loaded, this.filepath);
     }

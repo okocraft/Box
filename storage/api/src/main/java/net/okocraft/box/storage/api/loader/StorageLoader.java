@@ -1,5 +1,8 @@
 package net.okocraft.box.storage.api.loader;
 
+import dev.siroshun.codec4j.api.error.DecodeError;
+import dev.siroshun.jfun.result.Result;
+import net.okocraft.box.storage.api.exporter.BoxData;
 import net.okocraft.box.storage.api.exporter.BoxDataFile;
 import net.okocraft.box.storage.api.model.Storage;
 import net.okocraft.box.storage.api.model.version.StorageVersion;
@@ -81,17 +84,17 @@ public final class StorageLoader {
     }
 
     private static void importFromInitialDataFile(@NotNull Storage storage, @NotNull String initialDataFilepath) throws Exception {
-        var filepath = Path.of(initialDataFilepath);
+        Path filepath = Path.of(initialDataFilepath);
         if (!Files.isRegularFile(filepath)) {
             return;
         }
 
-        var decodeResult = BoxDataFile.decode(filepath);
+        Result<BoxData, DecodeError> decodeResult = BoxDataFile.decode(filepath);
         if (decodeResult.isFailure()) {
             throw new RuntimeException(decodeResult.toString());
         }
 
-        var data = decodeResult.unwrap();
+        BoxData data = decodeResult.unwrap();
 
         storage.saveDataVersion(data.dataVersion());
 

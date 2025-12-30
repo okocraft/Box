@@ -11,8 +11,9 @@ import org.jetbrains.annotations.NotNull;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Map;
 import java.util.function.BiConsumer;
 
 // | key | data |
@@ -89,24 +90,24 @@ public class CustomDataTable extends AbstractCustomDataTable {
 
     @Override
     protected @NotNull MapNode fromBytes(byte[] data) throws Exception {
-        try (var in = new ByteArrayInputStream(data)) {
+        try (ByteArrayInputStream in = new ByteArrayInputStream(data)) {
             return BinaryFormat.DEFAULT.load(in) instanceof MapNode mapNode ? mapNode : MapNode.create();
         }
     }
 
     @Override
     protected byte @NotNull [] toBytes(@NotNull MapNode node) throws Exception {
-        try (var out = new ByteArrayOutputStream()) {
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             BinaryFormat.DEFAULT.save(node, out);
             return out.toByteArray();
         }
     }
 
     private boolean legacyTableExists() throws SQLException {
-        try (var connection = this.database.getConnection()) {
-            var metaData = connection.getMetaData();
-            var tableName = this.database.operators().legacyCustomDataTable().tableName();
-            try (var resultSet = metaData.getTables(null, null, tableName, null)) {
+        try (Connection connection = this.database.getConnection()) {
+            DatabaseMetaData metaData = connection.getMetaData();
+            String tableName = this.database.operators().legacyCustomDataTable().tableName();
+            try (ResultSet resultSet = metaData.getTables(null, null, tableName, null)) {
                 return resultSet.next();
             }
         }

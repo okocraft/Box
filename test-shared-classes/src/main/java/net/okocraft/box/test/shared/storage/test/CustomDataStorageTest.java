@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 public abstract class CustomDataStorageTest<S> extends AbstractStorageTest<S> {
 
@@ -21,7 +22,7 @@ public abstract class CustomDataStorageTest<S> extends AbstractStorageTest<S> {
     private static final Key KEY_3 = Key.key("unbox", "test");
 
     private static void testVisit(@NotNull CustomDataStorage storage, boolean saveNodes) throws Exception {
-        var node = mapNode();
+        MapNode node = mapNode();
 
         if (saveNodes) {
             storage.saveData(KEY_1, node);
@@ -30,7 +31,7 @@ public abstract class CustomDataStorageTest<S> extends AbstractStorageTest<S> {
         }
 
         { // test CustomDataStorage#visitData
-            var expectedKeys = new HashSet<>(Arrays.asList(KEY_1, KEY_2));
+            Set<Key> expectedKeys = new HashSet<>(Arrays.asList(KEY_1, KEY_2));
 
             storage.visitData(KEY_1.namespace(), ((key, mapNode) -> {
                 Assertions.assertTrue(expectedKeys.remove(key));
@@ -41,7 +42,7 @@ public abstract class CustomDataStorageTest<S> extends AbstractStorageTest<S> {
         }
 
         { // test CustomDataStorage#visitAll
-            var expectedKeys = new HashSet<>(Arrays.asList(KEY_1, KEY_2, KEY_3));
+            Set<Key> expectedKeys = new HashSet<>(Arrays.asList(KEY_1, KEY_2, KEY_3));
 
             storage.visitAllData(((key, mapNode) -> {
                 Assertions.assertTrue(expectedKeys.remove(key));
@@ -53,7 +54,7 @@ public abstract class CustomDataStorageTest<S> extends AbstractStorageTest<S> {
     }
 
     private static @NotNull MapNode mapNode() {
-        var mapNode = MapNode.create();
+        MapNode mapNode = MapNode.create();
         mapNode.set("string", "value");
         mapNode.set("integer", 100);
         mapNode.set("double", 3.14);
@@ -66,14 +67,14 @@ public abstract class CustomDataStorageTest<S> extends AbstractStorageTest<S> {
 
     @Test
     void testLoadingAndSaving() throws Exception {
-        var storage = this.newStorage();
-        var customDataStorage = this.newCustomDataStorage(storage);
+        S storage = this.newStorage();
+        CustomDataStorage customDataStorage = this.newCustomDataStorage(storage);
 
         try {
             NodeAssertion.assertEquals(MapNode.empty(), customDataStorage.loadData(KEY_1));
             NodeAssertion.assertEquals(MapNode.empty(), customDataStorage.loadData(KEY_2));
 
-            var node = mapNode();
+            MapNode node = mapNode();
 
             customDataStorage.saveData(KEY_1, node);
             NodeAssertion.assertEquals(node, customDataStorage.loadData(KEY_1));
@@ -81,7 +82,7 @@ public abstract class CustomDataStorageTest<S> extends AbstractStorageTest<S> {
             customDataStorage.saveData(KEY_2, node);
             NodeAssertion.assertEquals(node, customDataStorage.loadData(KEY_2));
 
-            var newNode = MapNode.create(Map.of("a", "b"));
+            MapNode newNode = MapNode.create(Map.of("a", "b"));
             customDataStorage.saveData(KEY_2, newNode); // overwrite
             NodeAssertion.assertEquals(newNode, customDataStorage.loadData(KEY_2));
         } finally {
@@ -91,8 +92,8 @@ public abstract class CustomDataStorageTest<S> extends AbstractStorageTest<S> {
 
     @Test
     void testVisit() throws Exception {
-        var storage = this.newStorage();
-        var customDataStorage = this.newCustomDataStorage(storage);
+        S storage = this.newStorage();
+        CustomDataStorage customDataStorage = this.newCustomDataStorage(storage);
 
         try {
             testVisit(customDataStorage, true);
@@ -103,10 +104,10 @@ public abstract class CustomDataStorageTest<S> extends AbstractStorageTest<S> {
 
     @Test
     void testConvert() throws Exception {
-        var storage = this.newStorage();
+        S storage = this.newStorage();
 
         try {
-            var legacy = this.newLegacyCustomDataStorage(storage);
+            Optional<CustomDataStorage> legacy = this.newLegacyCustomDataStorage(storage);
 
             if (legacy.isEmpty()) {
                 return;
@@ -114,7 +115,7 @@ public abstract class CustomDataStorageTest<S> extends AbstractStorageTest<S> {
 
             CustomDataStorageTest.testVisit(legacy.get(), true);
 
-            var table = this.newCustomDataStorage(storage);
+            CustomDataStorage table = this.newCustomDataStorage(storage);
             table.updateFormatIfNeeded();
             CustomDataStorageTest.testVisit(table, false);
         } finally {

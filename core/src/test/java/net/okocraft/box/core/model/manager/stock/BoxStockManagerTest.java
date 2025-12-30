@@ -4,6 +4,7 @@ import net.okocraft.box.api.event.stockholder.StockHolderLoadEvent;
 import net.okocraft.box.api.event.stockholder.stock.StockIncreaseEvent;
 import net.okocraft.box.api.model.stock.StockData;
 import net.okocraft.box.api.model.stock.StockEventCaller;
+import net.okocraft.box.core.model.loader.LoadingPersonalStockHolder;
 import net.okocraft.box.core.model.loader.state.ChangeState;
 import net.okocraft.box.storage.api.model.stock.StockStorage;
 import net.okocraft.box.test.shared.event.EventCollector;
@@ -29,11 +30,11 @@ class BoxStockManagerTest {
 
     @Test
     void testLoader() {
-        var storage = new MemoryStockStorage();
-        var eventCollector = new EventCollector();
-        var manager = new BoxStockManager(storage, eventCollector, id -> null, 0, 0, TimeUnit.SECONDS);
+        MemoryStockStorage storage = new MemoryStockStorage();
+        EventCollector eventCollector = new EventCollector();
+        BoxStockManager manager = new BoxStockManager(storage, eventCollector, id -> null, 0, 0, TimeUnit.SECONDS);
 
-        var loader = manager.getPersonalStockHolder(TestUser.USER);
+        LoadingPersonalStockHolder loader = manager.getPersonalStockHolder(TestUser.USER);
 
         Assertions.assertSame(loader, manager.getPersonalStockHolder(TestUser.USER));
 
@@ -53,11 +54,11 @@ class BoxStockManagerTest {
 
     @Test
     void testClose() {
-        var storage = new MemoryStockStorage();
-        var eventCollector = new EventCollector();
-        var manager = new BoxStockManager(storage, eventCollector, id -> null, 0, 0, TimeUnit.SECONDS);
+        MemoryStockStorage storage = new MemoryStockStorage();
+        EventCollector eventCollector = new EventCollector();
+        BoxStockManager manager = new BoxStockManager(storage, eventCollector, id -> null, 0, 0, TimeUnit.SECONDS);
 
-        var loader = manager.getPersonalStockHolder(TestUser.USER);
+        LoadingPersonalStockHolder loader = manager.getPersonalStockHolder(TestUser.USER);
 
         Assertions.assertSame(loader, manager.getPersonalStockHolder(TestUser.USER));
 
@@ -93,11 +94,11 @@ class BoxStockManagerTest {
     }
 
     private static void testStateUpdatingStockEventCaller(@NotNull StockStorage storage) {
-        var eventCollector = new StockEventCollector();
-        var manager = new BoxStockManager(storage, eventCollector, id -> null, 0, 0, TimeUnit.SECONDS);
+        StockEventCollector eventCollector = new StockEventCollector();
+        BoxStockManager manager = new BoxStockManager(storage, eventCollector, id -> null, 0, 0, TimeUnit.SECONDS);
 
-        var loader = manager.getPersonalStockHolder(TestUser.USER);
-        var stockEventCaller = manager.createStockEventCaller(loader);
+        LoadingPersonalStockHolder loader = manager.getPersonalStockHolder(TestUser.USER);
+        StockEventCaller stockEventCaller = manager.createStockEventCaller(loader);
 
         stockEventCaller.callSetEvent(loader, ITEM, 1, 0, StockEventCollector.TEST_CAUSE);
         eventCollector.checkSetEvent(loader, ITEM, 1, 0);
@@ -115,7 +116,7 @@ class BoxStockManagerTest {
         eventCollector.checkDecreaseEvent(loader, ITEM, 1, 1);
         checkChangeState(loader.getChangeState());
 
-        var stockData = List.of(new StockData(ITEM.getInternalId(), 1));
+        List<StockData> stockData = List.of(new StockData(ITEM.getInternalId(), 1));
         stockEventCaller.callResetEvent(loader, stockData);
         eventCollector.checkResetEvent(loader, stockData);
         checkChangeState(loader.getChangeState());
@@ -128,8 +129,8 @@ class BoxStockManagerTest {
 
     @Test
     void testScheduleAutoSave() {
-        var manager1 = new BoxStockManager(new MemoryStockStorage(), new EventCollector(), id -> null, 0, 0, TimeUnit.SECONDS);
-        var scheduler = new TestScheduler(false);
+        BoxStockManager manager1 = new BoxStockManager(new MemoryStockStorage(), new EventCollector(), id -> null, 0, 0, TimeUnit.SECONDS);
+        TestScheduler scheduler = new TestScheduler(false);
 
         manager1.schedulerAutoSaveTask(scheduler);
         scheduler.checkTask(task -> {
@@ -138,7 +139,7 @@ class BoxStockManagerTest {
             Assertions.assertEquals(task.type(), ScheduledTask.Type.ASYNC);
         });
 
-        var manager2 = new BoxStockManager(new MemoryStockStorage(), new EventCollector(), id -> null, 12, 18, TimeUnit.SECONDS);
+        BoxStockManager manager2 = new BoxStockManager(new MemoryStockStorage(), new EventCollector(), id -> null, 12, 18, TimeUnit.SECONDS);
 
         manager2.schedulerAutoSaveTask(scheduler);
         scheduler.checkTask(task -> {

@@ -32,7 +32,7 @@ public class IngredientOrderButton implements Button {
 
     @Override
     public @NotNull ItemStack createIcon(@NotNull PlayerSession session) {
-        var order = session.getData(CraftMenu.INGREDIENT_ORDER_KEY);
+        CraftMenu.IngredientOrder order = session.getData(CraftMenu.INGREDIENT_ORDER_KEY);
         return order == CraftMenu.IngredientOrder.STOCK_AMOUNT ?
             ItemEditor.create().displayName(INGREDIENT_ORDER_STOCK_AMOUNT).createItem(session.getViewer(), Material.SOUL_TORCH) :
             ItemEditor.create().displayName(INGREDIENT_ORDER_NORMAL).createItem(session.getViewer(), Material.TORCH);
@@ -40,8 +40,8 @@ public class IngredientOrderButton implements Button {
 
     @Override
     public @NotNull ClickResult onClick(@NotNull PlayerSession session, @NotNull ClickType clickType) {
-        var recipe = session.getDataOrThrow(CurrentRecipe.DATA_KEY);
-        var order = session.getData(CraftMenu.INGREDIENT_ORDER_KEY);
+        CurrentRecipe recipe = session.getDataOrThrow(CurrentRecipe.DATA_KEY);
+        CraftMenu.IngredientOrder order = session.getData(CraftMenu.INGREDIENT_ORDER_KEY);
 
         if (order == CraftMenu.IngredientOrder.STOCK_AMOUNT) {
             session.putData(CraftMenu.INGREDIENT_ORDER_KEY, CraftMenu.IngredientOrder.NORMAL);

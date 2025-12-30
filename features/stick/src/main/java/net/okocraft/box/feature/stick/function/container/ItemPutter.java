@@ -2,6 +2,7 @@ package net.okocraft.box.feature.stick.function.container;
 
 import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.event.stockholder.stock.StockEvent;
+import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.player.BoxPlayer;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -18,13 +19,13 @@ final class ItemPutter {
                            @NotNull Predicate<ItemStack> itemChecker,
                            @NotNull Consumer<ItemStack> itemSetter,
                            @NotNull Supplier<StockEvent.Cause> causeSupplier) {
-        var mainHandItem = boxPlayer.getPlayer().getInventory().getItemInMainHand();
+        ItemStack mainHandItem = boxPlayer.getPlayer().getInventory().getItemInMainHand();
 
         if ((currentItem != null && !currentItem.isSimilar(mainHandItem)) || !itemChecker.test(mainHandItem)) {
             return false;
         }
 
-        var boxItem = BoxAPI.api().getItemManager().getBoxItem(mainHandItem).orElse(null);
+        BoxItem boxItem = BoxAPI.api().getItemManager().getBoxItem(mainHandItem).orElse(null);
 
         if (boxItem == null) {
             return false;

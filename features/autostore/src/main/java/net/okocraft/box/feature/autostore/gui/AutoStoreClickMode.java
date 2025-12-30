@@ -11,6 +11,7 @@ import net.okocraft.box.feature.autostore.gui.buttons.DirectButton;
 import net.okocraft.box.feature.autostore.gui.buttons.ModeButton;
 import net.okocraft.box.feature.autostore.gui.buttons.ToggleButton;
 import net.okocraft.box.feature.autostore.setting.AutoStoreSetting;
+import net.okocraft.box.feature.autostore.setting.PerItemSetting;
 import net.okocraft.box.feature.gui.api.button.Button;
 import net.okocraft.box.feature.gui.api.button.ClickResult;
 import net.okocraft.box.feature.gui.api.buttons.BackOrCloseButton;
@@ -60,11 +61,11 @@ public class AutoStoreClickMode implements BoxItemClickMode {
 
     @Override
     public @NotNull ItemStack createItemIcon(@NotNull PlayerSession session, @NotNull BoxItem item) {
-        var setting = session.getData(AutoStoreSetting.KEY);
+        AutoStoreSetting setting = session.getData(AutoStoreSetting.KEY);
         if (setting == null) {
             return new ItemStack(Material.AIR);
         } else {
-            var icon = item.getClonedItem();
+            ItemStack icon = item.getClonedItem();
             return ItemEditor.create()
                 .copyLoreFrom(icon)
                 .loreEmptyLine()
@@ -76,7 +77,7 @@ public class AutoStoreClickMode implements BoxItemClickMode {
 
     @Override
     public @NotNull ClickResult onSelect(@NotNull PlayerSession session) {
-        var setting = this.container.getIfLoaded(session.getSourceUser().getUUID());
+        AutoStoreSetting setting = this.container.getIfLoaded(session.getSourceUser().getUUID());
         if (setting != null) {
             session.putData(AutoStoreSetting.KEY, setting);
         }
@@ -85,15 +86,15 @@ public class AutoStoreClickMode implements BoxItemClickMode {
 
     @Override
     public @NotNull ClickResult onClick(@NotNull PlayerSession session, @NotNull BoxItem item, @NotNull ClickType clickType) {
-        var playerSetting = session.getData(AutoStoreSetting.KEY);
+        AutoStoreSetting playerSetting = session.getData(AutoStoreSetting.KEY);
 
         if (playerSetting == null) {
             return ClickResult.NO_UPDATE_NEEDED;
         }
 
-        var perItemSetting = playerSetting.getPerItemModeSetting();
+        PerItemSetting perItemSetting = playerSetting.getPerItemModeSetting();
 
-        var enabled = !perItemSetting.isEnabled(item);
+        boolean enabled = !perItemSetting.isEnabled(item);
 
         perItemSetting.setEnabled(item, enabled);
 

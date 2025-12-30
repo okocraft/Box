@@ -6,6 +6,7 @@ import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.command.AbstractCommand;
 import net.okocraft.box.api.message.DefaultMessageCollector;
 import net.okocraft.box.api.message.ErrorMessages;
+import net.okocraft.box.api.player.BoxPlayerMap;
 import net.okocraft.box.feature.command.shared.SharedStockListCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -34,7 +35,7 @@ public class StockListCommand extends AbstractCommand {
             return;
         }
 
-        var playerMap = BoxAPI.api().getBoxPlayerMap();
+        BoxPlayerMap playerMap = BoxAPI.api().getBoxPlayerMap();
 
         if (playerMap.isLoaded(player)) {
             this.sharedStockListCommand.createAndSendStockList(

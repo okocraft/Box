@@ -25,6 +25,9 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AssertionFailureBuilder;
 import org.junit.jupiter.api.Assertions;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * A utility class for asserting {@link Node}s.
  */
@@ -63,8 +66,8 @@ public final class NodeAssertion {
      * @param b a second {@link ListNode}
      */
     public static void assertEquals(@NotNull ListNode a, @NotNull ListNode b) {
-        var listA = a.value();
-        var listB = b.value();
+        List<Node<?>> listA = a.value();
+        List<Node<?>> listB = b.value();
 
         if (listA.size() != listB.size()) {
             fail(a, b);
@@ -84,20 +87,20 @@ public final class NodeAssertion {
      * @param b a second {@link MapNode}
      */
     public static void assertEquals(@NotNull MapNode a, @NotNull MapNode b) {
-        var mapA = a.value();
-        var mapB = b.value();
+        Map<Object, Node<?>> mapA = a.value();
+        Map<Object, Node<?>> mapB = b.value();
 
         if (mapA.size() != mapB.size()) {
             fail(a, b);
         }
 
-        for (var key : mapA.keySet()) {
+        for (Object key : mapA.keySet()) {
             if (!mapB.containsKey(key)) {
                 fail(a, b);
             }
 
-            var nodeA = mapA.get(key);
-            var nodeB = mapB.get(key);
+            Node<?> nodeA = mapA.get(key);
+            Node<?> nodeB = mapB.get(key);
 
             assertEquals(nodeA, nodeB);
         }

@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 final class LWCIntegration {
 
     static boolean canModify(@NotNull Player player, @NotNull BlockState state, @NotNull ContainerOperation.OperationType operationType) {
-        var protection = LWC.getInstance().findProtection(state);
+        Protection protection = LWC.getInstance().findProtection(state);
 
         if (protection == null) {
             return true;

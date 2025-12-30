@@ -16,7 +16,7 @@ import java.util.Objects;
 class BukkitBoxItemMap extends BoxItemMap {
 
     static @NotNull BukkitBoxItemMap withItems(@NotNull Iterator<BoxItem> initialBoxItemIterator, @NotNull EventCaller<BoxEvent> eventCaller) {
-        var itemMap = new BukkitBoxItemMap();
+        BukkitBoxItemMap itemMap = new BukkitBoxItemMap();
 
         initialBoxItemIterator.forEachRemaining(item -> {
             itemMap.addItemAtUnsynchronized(item);
@@ -59,11 +59,11 @@ class BukkitBoxItemMap extends BoxItemMap {
     @Nullable BoxItem getByItemStack(@NotNull ItemStack item) {
         Objects.requireNonNull(item);
 
-        var one = item.getAmount() == 1 ? item : item.asOne();
+        ItemStack one = item.getAmount() == 1 ? item : item.asOne();
 
         {
             long readAttempt = this.lock.tryOptimisticRead();
-            var boxItem = this.getByItemStackAtUnsynchronized(one);
+            BoxItem boxItem = this.getByItemStackAtUnsynchronized(one);
 
             if (this.lock.validate(readAttempt)) {
                 return boxItem;

@@ -29,9 +29,9 @@ public class RemappedItemTable implements RemappedItemStorage {
 
     @Override
     public @NotNull Map<MCDataVersion, Int2IntMap> loadRemappedIds() throws Exception {
-        var result = new Object2ObjectOpenHashMap<MCDataVersion, Int2IntMap>();
+        Object2ObjectOpenHashMap<MCDataVersion, Int2IntMap> result = new Object2ObjectOpenHashMap<>();
 
-        try (var connection = this.database.getConnection()) {
+        try (Connection connection = this.database.getConnection()) {
             this.operator.selectAllRemappedIds(
                 connection,
                 (inVersion, item) ->
@@ -45,9 +45,9 @@ public class RemappedItemTable implements RemappedItemStorage {
 
     @Override
     public @NotNull Int2IntMap loadRemappedIds(@NotNull MCDataVersion version) throws Exception {
-        var result = new Int2IntOpenHashMap();
+        Int2IntOpenHashMap result = new Int2IntOpenHashMap();
 
-        try (var connection = this.database.getConnection()) {
+        try (Connection connection = this.database.getConnection()) {
             this.operator.selectAllRemappedIdsByVersion(connection, version.dataVersion(), item -> result.put(item.oldId(), item.newId()));
         }
 
@@ -56,7 +56,7 @@ public class RemappedItemTable implements RemappedItemStorage {
 
     @Override
     public void saveRemappedItem(int id, @NotNull String name, int remappedTo, @NotNull MCDataVersion inVersion) throws Exception {
-        try (var connection = this.database.getConnection()) {
+        try (Connection connection = this.database.getConnection()) {
             this.operator.insert(connection, id, name, remappedTo, inVersion.dataVersion());
         }
     }

@@ -11,7 +11,7 @@ import org.popcraft.bolt.util.Permission;
 final class BoltIntegration {
 
     static boolean canModify(@NotNull Player player, @NotNull BlockState state, @NotNull ContainerOperation.OperationType operationType) {
-        var permission = switch (operationType) {
+        String permission = switch (operationType) {
             case DEPOSIT -> Permission.WITHDRAW; // Withdraw items from the block and deposit them to Box
             case WITHDRAW -> Permission.DEPOSIT;  // Withdraw items from Box and deposit them to the block
         };

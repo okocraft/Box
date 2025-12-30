@@ -27,7 +27,7 @@ public class CategorySelectorMenu extends AbstractPaginatedMenu<Category> {
     private static final MessageKey.Arg1<StockHolder> TITLE = MessageKey.arg1(DisplayKeys.CATEGORY_SELECTOR_MENU_TITLE, holder -> Argument.string("name", holder.getName()));
 
     static {
-        var footer = new ArrayList<Button>(9);
+        List<Button> footer = new ArrayList<>(9);
 
         footer.add(new CloseButton(49));
 

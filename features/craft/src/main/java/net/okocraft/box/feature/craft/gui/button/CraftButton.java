@@ -7,6 +7,7 @@ import net.okocraft.box.feature.craft.gui.util.IngredientRenderer;
 import net.okocraft.box.feature.craft.gui.util.ItemCrafter;
 import net.okocraft.box.feature.craft.lang.CraftPlaceholders;
 import net.okocraft.box.feature.craft.lang.DisplayKeys;
+import net.okocraft.box.feature.craft.model.SelectedRecipe;
 import net.okocraft.box.feature.gui.api.button.Button;
 import net.okocraft.box.feature.gui.api.button.ClickResult;
 import net.okocraft.box.feature.gui.api.session.Amount;
@@ -44,7 +45,7 @@ public class CraftButton implements Button {
     public CraftButton(int slot, @NotNull TypedKey<Amount> timesKey) {
         this.slot = slot;
         this.timesFunction = session -> {
-            var data = session.getData(timesKey);
+            Amount data = session.getData(timesKey);
             return data != null ? data.getValue() : 1;
         };
         this.customTimes = true;
@@ -57,10 +58,10 @@ public class CraftButton implements Button {
 
     @Override
     public @NotNull ItemStack createIcon(@NotNull PlayerSession session) {
-        var recipe = session.getDataOrThrow(CurrentRecipe.DATA_KEY).getSelectedRecipe();
+        SelectedRecipe recipe = session.getDataOrThrow(CurrentRecipe.DATA_KEY).getSelectedRecipe();
         int times = this.timesFunction.applyAsInt(session);
 
-        var editor = ItemEditor.create().displayName(DISPLAY_NAME.apply(times));
+        ItemEditor editor = ItemEditor.create().displayName(DISPLAY_NAME.apply(times));
 
         IngredientRenderer.render(editor.loreEmptyLine(), session, recipe, times);
 
@@ -86,7 +87,7 @@ public class CraftButton implements Button {
 
     @Override
     public @NotNull ClickResult onClick(@NotNull PlayerSession session, @NotNull ClickType clickType) {
-        var result = ClickResult.waitingTask();
+        ClickResult.WaitingTask result = ClickResult.waitingTask();
         ItemCrafter.craft(session, this.timesFunction.applyAsInt(session), result);
         return result;
     }

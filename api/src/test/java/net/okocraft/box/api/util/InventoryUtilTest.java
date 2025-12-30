@@ -1,6 +1,7 @@
 package net.okocraft.box.api.util;
 
 import dev.siroshun.serialization.annotation.Inline;
+import net.okocraft.box.test.shared.mock.bukkit.inventory.ContentsHoldingInventory;
 import net.okocraft.box.test.shared.mock.bukkit.inventory.InventoryInfo;
 import net.okocraft.box.test.shared.model.item.ItemType;
 import net.okocraft.box.test.shared.util.TestCaseLoader;
@@ -17,7 +18,7 @@ class InventoryUtilTest {
     @ParameterizedTest
     @MethodSource({"loadTestCases"})
     void test(TestCase testCase) {
-        var inventory = testCase.inventory().createTestInventory();
+        ContentsHoldingInventory inventory = testCase.inventory().createTestInventory();
 
         Assertions.assertEquals(
             testCase.expectedReturnValue(),

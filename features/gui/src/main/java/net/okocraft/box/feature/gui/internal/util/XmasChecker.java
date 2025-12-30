@@ -22,7 +22,7 @@ public class XmasChecker {
             return;
         }
 
-        var today = LocalDateTime.now();
+        LocalDateTime today = LocalDateTime.now();
 
         IS_XMAS.set(
             today.getMonth() == Month.DECEMBER &&

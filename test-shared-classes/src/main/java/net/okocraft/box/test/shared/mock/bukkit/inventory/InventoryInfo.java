@@ -21,9 +21,9 @@ public record InventoryInfo(int size,
     }
 
     private static @Nullable ItemStack @NotNull [] toContents(int size, List<InventoryItem> items) {
-        var contents = new ItemStack[size];
+        ItemStack[] contents = new ItemStack[size];
 
-        for (var item : items) {
+        for (InventoryItem item : items) {
             contents[item.position()] = item.toItemStack();
         }
 

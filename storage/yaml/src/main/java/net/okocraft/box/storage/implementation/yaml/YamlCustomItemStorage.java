@@ -1,5 +1,6 @@
 package net.okocraft.box.storage.implementation.yaml;
 
+import dev.siroshun.configapi.core.node.MapNode;
 import dev.siroshun.configapi.format.yaml.YamlFormat;
 import net.okocraft.box.storage.api.model.item.CustomItemStorage;
 import net.okocraft.box.storage.api.model.item.ItemData;
@@ -33,16 +34,16 @@ class YamlCustomItemStorage implements CustomItemStorage {
             return;
         }
 
-        var source = YamlFormat.DEFAULT.load(this.filepath);
+        MapNode source = YamlFormat.DEFAULT.load(this.filepath);
 
-        for (var key : source.value().keySet()) {
+        for (Object key : source.value().keySet()) {
             if (!(key instanceof Number id)) {
                 continue;
             }
 
-            var section = source.getMap(key);
-            var name = section.getStringOrNull("name");
-            var data = section.getStringOrNull("data");
+            MapNode section = source.getMap(key);
+            String name = section.getStringOrNull("name");
+            String data = section.getStringOrNull("data");
 
             if (name != null && data != null) {
                 dataConsumer.accept(new ItemData(
@@ -56,7 +57,7 @@ class YamlCustomItemStorage implements CustomItemStorage {
 
     @Override
     public void updateItemData(@NotNull Stream<ItemData> items) throws Exception {
-        try (var writer = Files.newBufferedWriter(this.filepath, StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING)) {
+        try (BufferedWriter writer = Files.newBufferedWriter(this.filepath, StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING)) {
             items.forEach(item -> {
                 try {
                     appendNewItem(writer, item.internalId(), item.plainName(), item.itemData());
@@ -71,12 +72,12 @@ class YamlCustomItemStorage implements CustomItemStorage {
     public int newCustomItem(@NotNull String name, byte[] data) throws Exception {
         int id = this.metaStorage.newItemId();
 
-        var parent = this.filepath.getParent();
+        Path parent = this.filepath.getParent();
         if (!Files.isDirectory(parent)) {
             Files.createDirectories(parent);
         }
 
-        try (var writer = Files.newBufferedWriter(this.filepath, StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.APPEND)) {
+        try (BufferedWriter writer = Files.newBufferedWriter(this.filepath, StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.APPEND)) {
             appendNewItem(writer, id, name, data);
         }
 
@@ -85,20 +86,20 @@ class YamlCustomItemStorage implements CustomItemStorage {
 
     @Override
     public void renameCustomItem(int id, @NotNull String newName) throws Exception {
-        var mapNode = YamlFormat.DEFAULT.load(this.filepath);
+        MapNode mapNode = YamlFormat.DEFAULT.load(this.filepath);
         mapNode.getOrCreateMap(id).set("name", newName);
         YamlFormat.DEFAULT.save(mapNode, this.filepath);
     }
 
     @Override
     public void saveCustomItems(@NotNull List<ItemData> customItems) throws Exception {
-        var parent = this.filepath.getParent();
+        Path parent = this.filepath.getParent();
         if (!Files.isDirectory(parent)) {
             Files.createDirectories(parent);
         }
 
-        try (var writer = Files.newBufferedWriter(this.filepath, StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.APPEND)) {
-            for (var item :customItems) {
+        try (BufferedWriter writer = Files.newBufferedWriter(this.filepath, StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.APPEND)) {
+            for (ItemData item :customItems) {
                 int id = this.metaStorage.newItemIdWithoutSaving();
                 appendNewItem(writer, id, item.plainName(), item.itemData());
             }

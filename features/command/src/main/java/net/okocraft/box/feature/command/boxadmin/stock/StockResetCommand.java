@@ -19,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 class StockResetCommand extends AbstractCommand {
@@ -42,7 +43,7 @@ class StockResetCommand extends AbstractCommand {
             return;
         }
 
-        var item = BoxAPI.api().getItemManager().getBoxItem(args[3]);
+        Optional<BoxItem> item = BoxAPI.api().getItemManager().getBoxItem(args[3]);
 
         if (item.isEmpty()) {
             sender.sendMessage(ErrorMessages.ITEM_NOT_FOUND.apply(args[3]));

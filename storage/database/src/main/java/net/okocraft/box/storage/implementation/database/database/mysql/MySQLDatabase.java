@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -38,7 +39,7 @@ public class MySQLDatabase implements Database {
     public void prepare() throws Exception {
         Class.forName("com.mysql.cj.jdbc.Driver"); // checks if the driver exists
 
-        var config = new HikariConfig();
+        HikariConfig config = new HikariConfig();
 
         config.setJdbcUrl("jdbc:mysql://" + this.mySQLSetting.address() + ":" + this.mySQLSetting.port() + "/" + this.mySQLSetting.databaseName());
         config.setUsername(this.mySQLSetting.username());
@@ -67,13 +68,13 @@ public class MySQLDatabase implements Database {
 
     @Override
     public @NotNull List<Storage.Property> getInfo() {
-        var result = new ArrayList<Storage.Property>();
+        List<Storage.Property> result = new ArrayList<>();
 
         result.add(Storage.Property.of("type", "mysql"));
         result.add(Storage.Property.of("database-name", this.mySQLSetting.databaseName()));
         result.add(Storage.Property.of("table-prefix", this.mySQLSetting.tablePrefix()));
 
-        var ping = this.ping();
+        long ping = this.ping();
         if (0 <= ping) {
             result.add(Storage.Property.of("ping", ping + "ms"));
         }
@@ -121,7 +122,7 @@ public class MySQLDatabase implements Database {
 
         long start = System.currentTimeMillis();
 
-        try (var connection = this.getConnection(); var statement = connection.createStatement()) {
+        try (Connection connection = this.getConnection(); Statement statement = connection.createStatement()) {
             statement.execute("SELECT 1");
         } catch (Exception ignored) {
             return -1;

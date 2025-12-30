@@ -61,7 +61,7 @@ public class BoxUserManager implements UserManager {
             return;
         }
 
-        var name = user.getName().get();
+        String name = user.getName().get();
 
         try {
             this.userStorage.saveBoxUser(user.getUUID(), name);

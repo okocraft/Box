@@ -9,6 +9,7 @@ import net.okocraft.box.api.message.ErrorMessages;
 import net.okocraft.box.feature.stick.item.BoxStickItem;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 public class CustomStickCommand extends AbstractCommand {
@@ -40,7 +41,7 @@ public class CustomStickCommand extends AbstractCommand {
     }
 
     private void runCommand(@NotNull Player player) {
-        var item = player.getInventory().getItemInMainHand();
+        ItemStack item = player.getInventory().getItemInMainHand();
 
         if (item.getType().isAir()) {
             player.sendMessage(this.isAir);

@@ -2,6 +2,7 @@ package net.okocraft.box.core.model.stock;
 
 import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2IntLinkedOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMaps;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.model.stock.StockData;
@@ -14,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -35,8 +37,8 @@ class StockHolderTest {
 
     @Test
     void testSet() {
-        var collector = new StockEventCollector();
-        var stockHolder = createStockHolder(collector);
+        StockEventCollector collector = new StockEventCollector();
+        StockHolder stockHolder = createStockHolder(collector);
 
         // Set the amount to 5 (new stock)
         // #getAmount: 5
@@ -82,8 +84,8 @@ class StockHolderTest {
 
     @Test
     void testIncrease() {
-        var collector = new StockEventCollector();
-        var stockHolder = createStockHolder(collector);
+        StockEventCollector collector = new StockEventCollector();
+        StockHolder stockHolder = createStockHolder(collector);
 
         // Increase the amount by 5 (new stock)
         // #getAmount and returning value: 5
@@ -113,8 +115,8 @@ class StockHolderTest {
 
     @Test
     void testOverflow() {
-        var collector = new StockEventCollector();
-        var stockHolder = createStockHolder(collector);
+        StockEventCollector collector = new StockEventCollector();
+        StockHolder stockHolder = createStockHolder(collector);
 
         // Increase the amount by Integer#MAX_VALUE (new stock)
         // #getAmount and returning value: Integer#MAX_VALUE
@@ -158,8 +160,8 @@ class StockHolderTest {
 
     @Test
     void testDecrease() {
-        var collector = new StockEventCollector();
-        var stockHolder = createStockHolder(collector);
+        StockEventCollector collector = new StockEventCollector();
+        StockHolder stockHolder = createStockHolder(collector);
 
         // Set the amount to 10 (new stock)
         // #getAmount: 10
@@ -221,8 +223,8 @@ class StockHolderTest {
 
     @Test
     void testDecreaseToZero() {
-        var collector = new StockEventCollector();
-        var stockHolder = createStockHolder(collector);
+        StockEventCollector collector = new StockEventCollector();
+        StockHolder stockHolder = createStockHolder(collector);
 
         // Set the amount to 10 (new stock)
         // #getAmount: 10
@@ -289,8 +291,8 @@ class StockHolderTest {
 
     @Test
     void testDecreaseSingleItemIfPossible() {
-        var collector = new StockEventCollector();
-        var stockHolder = createStockHolder(collector);
+        StockEventCollector collector = new StockEventCollector();
+        StockHolder stockHolder = createStockHolder(collector);
 
         // Set the amount to 10 (new stock)
         // #getAmount: 10
@@ -363,8 +365,8 @@ class StockHolderTest {
 
     @Test
     void testDecreaseItemsIfPossible() {
-        var collector = new StockEventCollector();
-        var stockHolder = createStockHolder(collector);
+        StockEventCollector collector = new StockEventCollector();
+        StockHolder stockHolder = createStockHolder(collector);
 
         // Set the amount to 10 (new stock)
         // #getAmount: 10
@@ -395,7 +397,7 @@ class StockHolderTest {
         //   test_item_2:
         //     decrements: 7
         //     currentAmount: 3
-        var fastUtilMap = new Object2IntLinkedOpenHashMap<BoxItem>();
+        Object2IntMap<BoxItem> fastUtilMap = new Object2IntLinkedOpenHashMap<>();
         fastUtilMap.put(ITEM_1, 5);
         fastUtilMap.put(ITEM_2, 7);
 
@@ -427,7 +429,7 @@ class StockHolderTest {
         //   test_item_2:
         //     decrements: 2
         //     currentAmount: 1
-        var javaMap = new LinkedHashMap<BoxItem, Integer>();
+        Map<BoxItem, Integer> javaMap = new LinkedHashMap<>();
         javaMap.put(ITEM_1, 3);
         javaMap.put(ITEM_2, 2);
 
@@ -491,8 +493,8 @@ class StockHolderTest {
 
     @Test
     void testReset() {
-        var collector = new StockEventCollector();
-        var stockHolder = createStockHolder(collector);
+        StockEventCollector collector = new StockEventCollector();
+        StockHolder stockHolder = createStockHolder(collector);
 
         // Set the amount to 10 (new stock)
         // #getAmount: 10
@@ -517,12 +519,12 @@ class StockHolderTest {
         //   stock data:
         //     - test_item_1: 10
         //     - test_item_2: 10
-        var stockData = stockHolder.reset();
+        Collection<StockData> stockData = stockHolder.reset();
 
         Assertions.assertEquals(0, stockHolder.getAmount(ITEM_1));
         Assertions.assertEquals(0, stockHolder.getAmount(ITEM_2));
 
-        var expectedStockData = List.of(new StockData(ITEM_1.internalId(), 10), new StockData(ITEM_2.internalId(), 10));
+        List<StockData> expectedStockData = List.of(new StockData(ITEM_1.internalId(), 10), new StockData(ITEM_2.internalId(), 10));
 
         Assertions.assertEquals(expectedStockData.size(), stockData.size());
         Assertions.assertTrue(expectedStockData.containsAll(stockData));
@@ -532,8 +534,8 @@ class StockHolderTest {
     @SuppressWarnings("DataFlowIssue")
     @Test
     void testNullAndIllegalArguments() {
-        var collector = new StockEventCollector();
-        var stockHolder = createStockHolder(collector);
+        StockEventCollector collector = new StockEventCollector();
+        StockHolder stockHolder = createStockHolder(collector);
 
         Assertions.assertEquals(5, stockHolder.increase(ITEM_1, 5, StockEventCollector.TEST_CAUSE));
         collector.checkIncreaseEvent(stockHolder, ITEM_1, 5, 5);

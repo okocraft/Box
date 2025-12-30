@@ -8,6 +8,7 @@ import net.okocraft.box.api.message.DefaultMessageCollector;
 import net.okocraft.box.api.message.ErrorMessages;
 import net.okocraft.box.api.model.item.BoxCustomItem;
 import net.okocraft.box.api.model.item.BoxItem;
+import net.okocraft.box.api.model.manager.ItemManager;
 import net.okocraft.box.api.model.result.item.ItemRenameResult;
 import net.okocraft.box.api.util.BoxLogger;
 import org.bukkit.command.CommandSender;
@@ -15,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static net.okocraft.box.api.message.Placeholders.ERROR;
@@ -46,16 +48,16 @@ public class RenameCommand extends AbstractCommand {
             return;
         }
 
-        var itemManager = BoxAPI.api().getItemManager();
+        ItemManager itemManager = BoxAPI.api().getItemManager();
 
-        var item = itemManager.getBoxItem(args[1]);
+        Optional<BoxItem> item = itemManager.getBoxItem(args[1]);
 
         if (item.isEmpty()) {
             sender.sendMessage(ErrorMessages.ITEM_NOT_FOUND.apply(args[1]));
             return;
         }
 
-        var boxItem = item.get();
+        BoxItem boxItem = item.get();
 
         if (itemManager.isCustomItem(boxItem)) {
             itemManager.renameCustomItem((BoxCustomItem) boxItem, args[2], result -> this.consumeResult(sender, result));
@@ -67,7 +69,7 @@ public class RenameCommand extends AbstractCommand {
     @Override
     public @NotNull List<String> onTabComplete(@NotNull CommandSender sender, @NotNull String[] args) {
         if (args.length == 2) {
-            var itemManager = BoxAPI.api().getItemManager();
+            ItemManager itemManager = BoxAPI.api().getItemManager();
 
             return itemManager.getItemList()
                 .stream()

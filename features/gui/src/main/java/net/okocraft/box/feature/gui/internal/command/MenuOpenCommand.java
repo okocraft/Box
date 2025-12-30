@@ -7,8 +7,10 @@ import net.okocraft.box.api.command.AbstractCommand;
 import net.okocraft.box.api.message.DefaultMessageCollector;
 import net.okocraft.box.api.message.ErrorMessages;
 import net.okocraft.box.api.message.Placeholders;
+import net.okocraft.box.api.model.user.BoxUser;
 import net.okocraft.box.api.util.TabCompleter;
 import net.okocraft.box.api.util.UserSearcher;
+import net.okocraft.box.feature.category.api.category.Category;
 import net.okocraft.box.feature.category.api.registry.CategoryRegistry;
 import net.okocraft.box.feature.category.internal.listener.ItemInfoEventListener;
 import net.okocraft.box.feature.gui.api.event.MenuOpenEvent;
@@ -26,6 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.IntStream;
 
@@ -45,7 +48,7 @@ public class MenuOpenCommand extends AbstractCommand {
         this.categoryNotFound = MessageKey.arg1(collector.add("box.gui.command.category-not-found", "<red>Category <aqua><arg><red> not found"), Placeholders.ARG);
 
         ItemInfoEventListener.setCommandCreator(((category, item) -> {
-            var name = CategoryRegistry.get().getRegisteredName(category);
+            String name = CategoryRegistry.get().getRegisteredName(category);
             int page = category.getItems().indexOf(item) / 45 + 1;
             return "/box gui --category " + name + " --page " + page;
         }));
@@ -73,7 +76,7 @@ public class MenuOpenCommand extends AbstractCommand {
         int page = 0;
 
         for (int i = 1; i + 1 < args.length; i = i + 2) {
-            var arg = args[i].toLowerCase(Locale.ENGLISH);
+            String arg = args[i].toLowerCase(Locale.ENGLISH);
 
             if (session == null && (arg.equalsIgnoreCase("-p") || arg.equalsIgnoreCase("--player"))) {
                 if (!player.hasPermission(OTHER_PLAYERS_GUI_PERMISSION)) {
@@ -81,7 +84,7 @@ public class MenuOpenCommand extends AbstractCommand {
                     return;
                 }
 
-                var targetUser = UserSearcher.search(args[i + 1]);
+                BoxUser targetUser = UserSearcher.search(args[i + 1]);
 
                 if (targetUser != null) {
                     session = PlayerSession.newSession(player, targetUser);
@@ -90,7 +93,7 @@ public class MenuOpenCommand extends AbstractCommand {
                     return;
                 }
             } else if (menu == null && (arg.equalsIgnoreCase("-c") || arg.equalsIgnoreCase("--category"))) {
-                var category = CategoryRegistry.get().getByName(args[i + 1]);
+                Optional<Category> category = CategoryRegistry.get().getByName(args[i + 1]);
 
                 if (category.isEmpty()) {
                     sender.sendMessage(this.categoryNotFound.apply(args[i + 1]));
@@ -138,7 +141,7 @@ public class MenuOpenCommand extends AbstractCommand {
         }
 
         if (2 < args.length) {
-            var arg = args[args.length - 2].toLowerCase(Locale.ENGLISH);
+            String arg = args[args.length - 2].toLowerCase(Locale.ENGLISH);
 
             if (arg.equalsIgnoreCase("-p") || arg.equalsIgnoreCase("--player")) {
                 return sender.hasPermission(OTHER_PLAYERS_GUI_PERMISSION) ?
@@ -169,7 +172,7 @@ public class MenuOpenCommand extends AbstractCommand {
             return;
         }
 
-        var user = UserSearcher.search(args[1]);
+        BoxUser user = UserSearcher.search(args[1]);
 
         if (user == null) {
             player.sendMessage(ErrorMessages.PLAYER_NOT_FOUND.apply(args[1]));

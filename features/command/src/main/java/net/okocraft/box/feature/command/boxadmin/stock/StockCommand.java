@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.Set;
 
 public class StockCommand extends AbstractCommand implements SubCommandHoldable {
@@ -41,7 +42,7 @@ public class StockCommand extends AbstractCommand implements SubCommandHoldable 
             return;
         }
 
-        var optionalSubCommand = this.subCommandHolder.search(args[1]);
+        Optional<Command> optionalSubCommand = this.subCommandHolder.search(args[1]);
 
         if (optionalSubCommand.isEmpty()) {
             if (!args[1].equalsIgnoreCase("help")) {
@@ -51,7 +52,7 @@ public class StockCommand extends AbstractCommand implements SubCommandHoldable 
             return;
         }
 
-        var subCommand = optionalSubCommand.get();
+        Command subCommand = optionalSubCommand.get();
 
         if (sender.hasPermission(subCommand.getPermissionNode())) {
             subCommand.onCommand(sender, args);

@@ -32,10 +32,10 @@ public final class InventoryUtil {
         int remaining = amount;
         int maxStackSize = item.getMaxStackSize();
 
-        var contents = inventory.getStorageContents();
+        ItemStack[] contents = inventory.getStorageContents();
 
         for (int i = 0; i < contents.length && 0 < remaining; i++) {
-            var content = contents[i];
+            ItemStack content = contents[i];
 
             if (content == null) {
                 if (remaining < maxStackSize) {

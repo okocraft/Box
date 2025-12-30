@@ -6,6 +6,7 @@ import it.unimi.dsi.fastutil.ints.IntComparator;
 import it.unimi.dsi.fastutil.ints.IntComparators;
 import it.unimi.dsi.fastutil.objects.ObjectIntPair;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.minimessage.translation.Argument;
 import net.okocraft.box.api.message.DefaultMessageCollector;
 import net.okocraft.box.api.model.item.BoxItem;
@@ -47,9 +48,9 @@ public class SharedStockListCommand {
     private static final List<String> ARGUMENT_TYPES;
 
     static {
-        var map = new HashMap<String, ArgumentType>();
+        HashMap<String, ArgumentType> map = new HashMap<>();
 
-        for (var arg : ArgumentType.values()) {
+        for (ArgumentType arg : ArgumentType.values()) {
             map.put("--" + arg.getLongArg(), arg);
             map.put("-" + arg.getShortArg(), arg);
         }
@@ -71,10 +72,10 @@ public class SharedStockListCommand {
     }
 
     public void createAndSendStockList(@NotNull CommandSender sender, @NotNull StockHolder stockHolder, @NotNull String @Nullable [] args) {
-        var context = args != null ? createContextFromArguments(args) : new Context();
+        Context context = args != null ? createContextFromArguments(args) : new Context();
 
-        var sorter = context.sorter;
-        var filter = context.filter != null ? createFilter(context.filter) : null;
+        Sorter sorter = context.sorter;
+        Predicate<BoxItem> filter = context.filter != null ? createFilter(context.filter) : null;
 
         Stream<BoxItem> stream = stockHolder.getStockedItems().stream();
         Collection<ObjectIntPair<BoxItem>> stockDataCollection;
@@ -110,9 +111,9 @@ public class SharedStockListCommand {
         int page = Math.max(Math.min(context.page, maxPage), 1);
 
         int start = (page - 1) * 8;
-        var counter = new AtomicInteger(start);
+        AtomicInteger counter = new AtomicInteger(start);
 
-        var builder = Component.text();
+        TextComponent.Builder builder = Component.text();
 
         builder.append(this.header.apply(stockHolder.getName(), page, maxPage));
 
@@ -134,7 +135,7 @@ public class SharedStockListCommand {
     }
 
     public static @NotNull List<String> createTabCompletion(@NotNull String previousArg, @NotNull String currentArg) {
-        var type = ARGUMENT_MAP.get(previousArg);
+        ArgumentType type = ARGUMENT_MAP.get(previousArg);
 
         if (type != null) {
             return type.getTabCompleter().apply(currentArg);
@@ -144,11 +145,11 @@ public class SharedStockListCommand {
     }
 
     private static @NotNull Context createContextFromArguments(@NotNull String @NotNull [] args) {
-        var context = new Context();
+        Context context = new Context();
 
         ArgumentType type = null;
 
-        for (var arg : args) {
+        for (String arg : args) {
             if (type != null) {
                 type.getContextConsumer().accept(arg, context);
                 type = null;
@@ -165,21 +166,21 @@ public class SharedStockListCommand {
         boolean endsWith = arg.startsWith("*");
 
         if (startsWith && endsWith) {
-            var filter = arg.substring(1, arg.length() - 1).toLowerCase(Locale.ENGLISH);
+            String filter = arg.substring(1, arg.length() - 1).toLowerCase(Locale.ENGLISH);
             return item -> contains(item, filter);
         }
 
         if (startsWith) {
-            var filter = arg.substring(0, arg.length() - 1).toLowerCase(Locale.ENGLISH);
+            String filter = arg.substring(0, arg.length() - 1).toLowerCase(Locale.ENGLISH);
             return item -> startsWith(item, filter);
         }
 
         if (endsWith) {
-            var filter = arg.substring(1).toLowerCase(Locale.ENGLISH);
+            String filter = arg.substring(1).toLowerCase(Locale.ENGLISH);
             return item -> endsWith(item, filter);
         }
 
-        var filter = arg.toLowerCase(Locale.ENGLISH);
+        String filter = arg.toLowerCase(Locale.ENGLISH);
         return item -> contains(item, filter);
     }
 

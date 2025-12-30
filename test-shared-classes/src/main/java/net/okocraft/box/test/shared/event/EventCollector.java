@@ -29,12 +29,12 @@ public class EventCollector implements EventCallerProvider {
     }
 
     public void checkNoEvent() {
-        var event = this.calledEvents.poll();
+        BoxEvent event = this.calledEvents.poll();
         Assertions.assertNull(event);
     }
 
     protected @NotNull BoxEvent nextEvent() {
-        var event = this.calledEvents.poll();
+        BoxEvent event = this.calledEvents.poll();
         Assertions.assertNotNull(event);
         return event;
     }

@@ -39,9 +39,9 @@ public class IncreaseAmountButton extends AmountModificationButton {
 
     @Override
     public @NotNull ItemStack createIcon(@NotNull PlayerSession session) {
-        var amount = this.getOrCreateAmount(session);
-        var unit = amount.getUnit().getAmount();
-        var currentAmount = amount.getValue();
+        Amount amount = this.getOrCreateAmount(session);
+        int unit = amount.getUnit().getAmount();
+        int currentAmount = amount.getValue();
 
         return ItemEditor.create()
             .displayName(this.displayName)
@@ -58,9 +58,9 @@ public class IncreaseAmountButton extends AmountModificationButton {
 
     @Override
     public @NotNull ClickResult onClick(@NotNull PlayerSession session, @NotNull ClickType clickType) {
-        var amount = this.getOrCreateAmount(session);
-        var unit = amount.getUnit();
-        var current = amount.getValue();
+        Amount amount = this.getOrCreateAmount(session);
+        Amount.Unit unit = amount.getUnit();
+        int current = amount.getValue();
 
         if (current == 1 && unit.getAmount() != 1) {
             amount.setValue(unit.getAmount());

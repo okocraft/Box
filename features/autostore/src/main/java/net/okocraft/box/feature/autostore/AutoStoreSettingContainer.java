@@ -3,11 +3,14 @@ package net.okocraft.box.feature.autostore;
 import dev.siroshun.configapi.core.node.IntArray;
 import dev.siroshun.configapi.core.node.ListNode;
 import dev.siroshun.configapi.core.node.MapNode;
+import dev.siroshun.configapi.core.node.Node;
 import dev.siroshun.configapi.core.node.NumberValue;
 import dev.siroshun.event4j.api.priority.Priority;
 import dev.siroshun.mcmsgdef.MessageKey;
+import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
+import it.unimi.dsi.fastutil.ints.IntSet;
 import net.kyori.adventure.key.Key;
 import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.event.customdata.CustomDataExportEvent;
@@ -44,7 +47,7 @@ class AutoStoreSettingContainer implements AutoStoreSettingProvider {
 
     @Override
     public @NotNull AutoStoreSetting getOrLoad(@NotNull UUID uuid) throws Exception {
-        var loaded = this.settingMap.get(uuid);
+        AutoStoreSetting loaded = this.settingMap.get(uuid);
         return loaded != null ? loaded : this.load(uuid);
     }
 
@@ -75,7 +78,7 @@ class AutoStoreSettingContainer implements AutoStoreSettingProvider {
 
     void unload(@NotNull Player player) {
         try {
-            var setting = this.settingMap.remove(player.getUniqueId());
+            AutoStoreSetting setting = this.settingMap.remove(player.getUniqueId());
 
             if (setting != null) {
                 this.save(setting);
@@ -86,7 +89,7 @@ class AutoStoreSettingContainer implements AutoStoreSettingProvider {
     }
 
     void unloadAll() {
-        for (var setting : this.settingMap.values()) {
+        for (AutoStoreSetting setting : this.settingMap.values()) {
             try {
                 this.save(setting);
             } catch (Exception e) {
@@ -106,13 +109,13 @@ class AutoStoreSettingContainer implements AutoStoreSettingProvider {
     }
 
     private static @NotNull MapNode serialize(@NotNull AutoStoreSetting setting) {
-        var data = MapNode.create();
+        MapNode data = MapNode.create();
 
         if (setting.isEnabled()) data.set("enable", true);
         if (setting.isAllMode()) data.set("all-mode", true);
         if (setting.isDirect()) data.set("direct", true);
 
-        var items = setting.getPerItemModeSetting().getEnabledItems();
+        IntSet items = setting.getPerItemModeSetting().getEnabledItems();
         if (!items.isEmpty()) data.set("enabled-items", items.toIntArray());
 
         if (!data.isEmpty()) {
@@ -123,15 +126,15 @@ class AutoStoreSettingContainer implements AutoStoreSettingProvider {
     }
 
     private static @NotNull AutoStoreSetting deserialize(@NotNull UUID uuid, @NotNull MapNode data) {
-        var setting = new AutoStoreSetting(uuid);
+        AutoStoreSetting setting = new AutoStoreSetting(uuid);
 
         setting.setEnabled(data.getBoolean("enable"));
         setting.setAllMode(data.getBoolean("all-mode"));
         setting.setDirect(data.getBoolean("direct"));
 
-        var dataVersion = data.getInteger("data-version", MCDataVersion.MC_1_20_4.dataVersion());
+        int dataVersion = data.getInteger("data-version", MCDataVersion.MC_1_20_4.dataVersion());
 
-        var enabledItemsNode = data.get("enabled-items");
+        Node<?> enabledItemsNode = data.get("enabled-items");
         IntList enabledItemIds;
 
         if (enabledItemsNode instanceof IntArray(int[] value)) {
@@ -145,7 +148,7 @@ class AutoStoreSettingContainer implements AutoStoreSettingProvider {
         }
 
         if (!enabledItemIds.isEmpty() && dataVersion != MCDataVersion.current().dataVersion()) {
-            var idMap = BoxAPI.api().getItemManager().getRemappedItemIds();
+            Int2IntMap idMap = BoxAPI.api().getItemManager().getRemappedItemIds();
             enabledItemIds = IntArrayList.toList(enabledItemIds.intStream().map(id -> idMap.getOrDefault(id, id)));
         }
 
@@ -178,7 +181,7 @@ class AutoStoreSettingContainer implements AutoStoreSettingProvider {
             target.set("direct", true);
         }
 
-        var enabledItemsNode = source.get("enabled-items");
+        Node<?> enabledItemsNode = source.get("enabled-items");
         if (enabledItemsNode instanceof IntArray(int[] value) && 0 < value.length) {
             target.set("enabled-items", value);
         } else if (enabledItemsNode instanceof ListNode list) {

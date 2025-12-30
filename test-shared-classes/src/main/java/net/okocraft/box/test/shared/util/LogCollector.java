@@ -78,21 +78,21 @@ public class LogCollector extends AbstractLogger {
     }
 
     public void checkLog(@NotNull Level level, @NotNull String pattern) {
-        var log = this.collectedLogs.poll();
+        Log log = this.collectedLogs.poll();
         Assertions.assertNotNull(log);
         Assertions.assertEquals(level, log.level);
         Assertions.assertEquals(pattern, log.messagePattern);
     }
 
     public void checkLog(@NotNull Level level, @NotNull String pattern, @Nullable Object @NotNull ... arguments) {
-        var log = this.collectedLogs.poll();
+        Log log = this.collectedLogs.poll();
 
         Assertions.assertNotNull(log);
         Assertions.assertEquals(level, log.level);
         Assertions.assertEquals(pattern, log.messagePattern);
 
         if (log.throwable != null) {
-            var actualArguments = new Object[log.arguments.length + 1];
+            Object[] actualArguments = new Object[log.arguments.length + 1];
             System.arraycopy(log.arguments, 0, actualArguments, 0, log.arguments.length);
             actualArguments[actualArguments.length - 1] = log.throwable;
             Assertions.assertArrayEquals(arguments, actualArguments);
@@ -105,13 +105,13 @@ public class LogCollector extends AbstractLogger {
     }
 
     public void injectToBoxLogger() {
-        var substituteLogger = ((SubstituteLogger) BoxLogger.logger());
+        SubstituteLogger substituteLogger = ((SubstituteLogger) BoxLogger.logger());
         this.originalLogger = substituteLogger.delegate();
         substituteLogger.setDelegate(this);
     }
 
     public void ejectFromBoxLogger() {
-        var substituteLogger = ((SubstituteLogger) BoxLogger.logger());
+        SubstituteLogger substituteLogger = ((SubstituteLogger) BoxLogger.logger());
 
         if (this.originalLogger == null || substituteLogger.delegate() != this) {
             throw new IllegalStateException("This logger is not injected.");

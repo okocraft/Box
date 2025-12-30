@@ -9,18 +9,20 @@ import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.feature.craft.config.RecipeConfig;
 import net.okocraft.box.feature.craft.model.RecipeHolder;
 import org.bukkit.Bukkit;
+import org.bukkit.inventory.Recipe;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Iterator;
 import java.util.Map;
 
 public final class RecipeLoader {
 
     @SuppressWarnings("UnstableApiUsage")
     public static @NotNull Map<BoxItem, RecipeHolder> load(@NotNull Path filepath) throws IOException {
-        var deserializer = RecordDeserializer.create(RecipeConfig.class, KeyGenerator.CAMEL_TO_KEBAB);
+        RecordDeserializer<RecipeConfig> deserializer = RecordDeserializer.create(RecipeConfig.class, KeyGenerator.CAMEL_TO_KEBAB);
         RecipeConfig config;
 
         if (Files.isRegularFile(filepath)) {
@@ -30,8 +32,8 @@ public final class RecipeLoader {
             YamlFormat.COMMENT_PROCESSING.save(RecordSerializer.create(KeyGenerator.CAMEL_TO_KEBAB).serialize(config), filepath);
         }
 
-        var processor = new Processor(config);
-        var iterator = Bukkit.recipeIterator();
+        Processor processor = new Processor(config);
+        Iterator<Recipe> iterator = Bukkit.recipeIterator();
         while (iterator.hasNext()) {
             try {
                 processor.processRecipe(iterator.next());

@@ -1,6 +1,7 @@
 package net.okocraft.box.api.util;
 
 import dev.siroshun.event4j.api.listener.ListenerSubscriber;
+import dev.siroshun.event4j.api.listener.SubscribedListener;
 import dev.siroshun.event4j.api.priority.Priority;
 import dev.siroshun.event4j.tree.TreeEventService;
 import net.kyori.adventure.key.Key;
@@ -20,15 +21,15 @@ class SubscribedListenerHolderTest {
 
     @Test
     void add() {
-        var holder = new SubscribedListenerHolder();
-        var subscriber = newSubscriber();
+        SubscribedListenerHolder holder = new SubscribedListenerHolder();
+        ListenerSubscriber<Key, BoxEvent, Priority> subscriber = newSubscriber();
 
-        var subscribed1 = subscriber.subscribe(BoxEvent.class, TEST_KEY, EMPTY_CONSUMER);
+        SubscribedListener<Key, BoxEvent, Priority> subscribed1 = subscriber.subscribe(BoxEvent.class, TEST_KEY, EMPTY_CONSUMER);
 
         holder.add(subscribed1);
         Assertions.assertEquals(List.of(subscribed1), holder.getListeners());
 
-        var subscribed2 = subscriber.subscribe(BoxEvent.class, TEST_KEY, EMPTY_CONSUMER);
+        SubscribedListener<Key, BoxEvent, Priority> subscribed2 = subscriber.subscribe(BoxEvent.class, TEST_KEY, EMPTY_CONSUMER);
 
         holder.add(subscribed2);
         Assertions.assertEquals(List.of(subscribed1, subscribed2), holder.getListeners());
@@ -36,11 +37,11 @@ class SubscribedListenerHolderTest {
 
     @Test
     void addAll() {
-        var holder = new SubscribedListenerHolder();
-        var subscriber = newSubscriber();
+        SubscribedListenerHolder holder = new SubscribedListenerHolder();
+        ListenerSubscriber<Key, BoxEvent, Priority> subscriber = newSubscriber();
 
-        var subscribed1 = subscriber.subscribe(BoxEvent.class, TEST_KEY, EMPTY_CONSUMER);
-        var subscribed2 = subscriber.subscribe(BoxEvent.class, TEST_KEY, EMPTY_CONSUMER);
+        SubscribedListener<Key, BoxEvent, Priority> subscribed1 = subscriber.subscribe(BoxEvent.class, TEST_KEY, EMPTY_CONSUMER);
+        SubscribedListener<Key, BoxEvent, Priority> subscribed2 = subscriber.subscribe(BoxEvent.class, TEST_KEY, EMPTY_CONSUMER);
 
         holder.addAll(List.of(subscribed1, subscribed2));
         Assertions.assertEquals(List.of(subscribed1, subscribed2), holder.getListeners());
@@ -51,8 +52,8 @@ class SubscribedListenerHolderTest {
 
     @Test
     void subscribeAll() {
-        var holder = new SubscribedListenerHolder();
-        var subscriber = newSubscriber();
+        SubscribedListenerHolder holder = new SubscribedListenerHolder();
+        ListenerSubscriber<Key, BoxEvent, Priority> subscriber = newSubscriber();
 
         holder.subscribeAll(
             subscriber,
@@ -67,11 +68,11 @@ class SubscribedListenerHolderTest {
 
     @Test
     void unsubscribeAll() {
-        var holder = new SubscribedListenerHolder();
-        var subscriber = newSubscriber();
+        SubscribedListenerHolder holder = new SubscribedListenerHolder();
+        ListenerSubscriber<Key, BoxEvent, Priority> subscriber = newSubscriber();
 
-        var subscribed1 = subscriber.subscribe(BoxEvent.class, TEST_KEY, EMPTY_CONSUMER);
-        var subscribed2 = subscriber.subscribe(BoxEvent.class, TEST_KEY, EMPTY_CONSUMER);
+        SubscribedListener<Key, BoxEvent, Priority> subscribed1 = subscriber.subscribe(BoxEvent.class, TEST_KEY, EMPTY_CONSUMER);
+        SubscribedListener<Key, BoxEvent, Priority> subscribed2 = subscriber.subscribe(BoxEvent.class, TEST_KEY, EMPTY_CONSUMER);
 
         holder.addAll(List.of(subscribed1, subscribed2));
         holder.unsubscribeAll0(subscriber);

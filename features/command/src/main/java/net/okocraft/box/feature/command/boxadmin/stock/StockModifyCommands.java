@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import static net.okocraft.box.api.message.Placeholders.AMOUNT;
@@ -54,7 +55,7 @@ abstract class StockModifyCommands extends AbstractCommand {
             return;
         }
 
-        var item = BoxAPI.api().getItemManager().getBoxItem(args[3]);
+        Optional<BoxItem> item = BoxAPI.api().getItemManager().getBoxItem(args[3]);
 
         if (item.isEmpty()) {
             sender.sendMessage(ErrorMessages.ITEM_NOT_FOUND.apply(args[3]));

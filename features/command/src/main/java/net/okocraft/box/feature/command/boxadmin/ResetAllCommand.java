@@ -12,6 +12,7 @@ import net.okocraft.box.api.util.TabCompleter;
 import net.okocraft.box.api.util.UserSearcher;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -58,7 +59,7 @@ public class ResetAllCommand extends AbstractCommand {
         }
 
         if (CONFIRM.equalsIgnoreCase(args[1]) && this.confirmationMap.containsKey(sender)) {
-            var target = this.confirmationMap.remove(sender);
+            BoxUser target = this.confirmationMap.remove(sender);
 
             BoxAPI.api().getStockManager().getPersonalStockHolder(target).reset();
 
@@ -66,7 +67,7 @@ public class ResetAllCommand extends AbstractCommand {
 
             sender.sendMessage(this.successSender.apply(target.getName().orElseGet(target.getUUID()::toString)));
 
-            var targetPlayer = Bukkit.getPlayer(target.getUUID());
+            Player targetPlayer = Bukkit.getPlayer(target.getUUID());
 
             if (targetPlayer != null && !sender.getName().equals(targetPlayer.getName())) {
                 targetPlayer.sendMessage(this.successTarget.apply(sender.getName()));
@@ -80,7 +81,7 @@ public class ResetAllCommand extends AbstractCommand {
             return;
         }
 
-        var target = UserSearcher.search(args[1]);
+        BoxUser target = UserSearcher.search(args[1]);
 
         if (target != null) {
             this.confirmationMap.put(sender, target);
@@ -97,7 +98,7 @@ public class ResetAllCommand extends AbstractCommand {
         }
 
         if (this.confirmationMap.containsKey(sender)) {
-            var secondArgument = args[1].toLowerCase(Locale.ROOT);
+            String secondArgument = args[1].toLowerCase(Locale.ROOT);
 
             if (secondArgument.isEmpty() ||
                 (secondArgument.length() == 1 && secondArgument.charAt(0) == 'c')) {

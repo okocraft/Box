@@ -5,12 +5,14 @@ import net.okocraft.box.storage.implementation.database.database.Database;
 import net.okocraft.box.test.shared.storage.test.UserStorageTest;
 import org.jetbrains.annotations.NotNull;
 
+import java.sql.Connection;
+
 public abstract class UserTableTest extends UserStorageTest<Database> {
     @Override
     protected @NotNull UserStorage newUserStorage(@NotNull Database database) throws Exception {
-        var table = new UserTable(database);
+        UserTable table = new UserTable(database);
 
-        try (var connection = database.getConnection()) {
+        try (Connection connection = database.getConnection()) {
             table.init(connection);
         }
 

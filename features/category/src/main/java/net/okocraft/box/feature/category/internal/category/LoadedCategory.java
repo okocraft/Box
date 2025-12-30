@@ -25,7 +25,7 @@ public final class LoadedCategory extends AbstractCategory {
 
     @Override
     public @NotNull Component getDisplayName(@NotNull Player viewer) {
-        var result = this.displayNameMap.get(viewer.locale());
+        String result = this.displayNameMap.get(viewer.locale());
         if (result == null) result = this.displayNameMap.get(Locale.of(viewer.locale().getLanguage()));
         return Component.text(result != null ? result : this.displayNameMap.getOrDefault(null, "Unknown"));
     }

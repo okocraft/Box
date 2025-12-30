@@ -10,6 +10,7 @@ import net.okocraft.box.feature.gui.api.util.ItemEditor;
 import net.okocraft.box.feature.gui.api.util.SoundBase;
 import net.okocraft.box.feature.gui.internal.lang.DisplayKeys;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -35,8 +36,8 @@ public record CloseButton(int slot) implements Button {
     }
 
     static @NotNull ClickResult.WaitingTask close(@NotNull PlayerSession session) {
-        var clicker = session.getViewer();
-        var result = ClickResult.waitingTask();
+        Player clicker = session.getViewer();
+        ClickResult.WaitingTask result = ClickResult.waitingTask();
 
         BoxAPI.api().getScheduler().runEntityTask(clicker, () -> {
             clicker.closeInventory();

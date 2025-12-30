@@ -39,7 +39,7 @@ public class CategoryFeature extends AbstractBoxFeature implements Reloadable {
 
     @Override
     public void enable(@NotNull FeatureContext.Enabling context) throws IOException {
-        try (var file = new CategoryFile(this.filepath, this.categoryRegistry, BoxAPI.api().getItemManager())) {
+        try (CategoryFile file = new CategoryFile(this.filepath, this.categoryRegistry, BoxAPI.api().getItemManager())) {
             file.loadFile()
                 .convertIfUnknownVersion()
                 .readCategoriesIfExists()

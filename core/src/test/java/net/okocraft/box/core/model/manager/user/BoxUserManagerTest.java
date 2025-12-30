@@ -25,7 +25,7 @@ class BoxUserManagerTest {
 
     @Test
     void testCreate() {
-        var manager = createUserManager();
+        BoxUserManager manager = createUserManager();
 
         // Create a user without name.
         checkUserWithoutName(TEST_USER_UUID, manager.createBoxUser(TEST_USER_UUID));
@@ -36,7 +36,7 @@ class BoxUserManagerTest {
 
     @Test
     void testLoadAndSave() {
-        var manager = createUserManager();
+        BoxUserManager manager = createUserManager();
 
         // The manager does not have any users, so the method returns the user with the given UUID.
         checkUserWithoutName(TEST_USER_UUID, manager.loadBoxUser(TEST_USER_UUID));
@@ -48,13 +48,13 @@ class BoxUserManagerTest {
         checkUser(manager.loadBoxUser(TEST_USER_UUID));
 
         // Check if the unknown user is still not loadable.
-        var unknownUserUuid = UUIDFactory.byName("unknown");
+        UUID unknownUserUuid = UUIDFactory.byName("unknown");
         checkUserWithoutName(unknownUserUuid, manager.loadBoxUser(unknownUserUuid));
     }
 
     @Test
     void testSearch() {
-        var manager = createUserManager();
+        BoxUserManager manager = createUserManager();
 
         // The manager does not have any users, so the method returns null.
         assertNull(manager.searchByName(TEST_USER_NAME));
@@ -71,15 +71,15 @@ class BoxUserManagerTest {
 
     @Test
     void testExceptionHandling() {
-        var storage = new MemoryUserStorage();
+        MemoryUserStorage storage = new MemoryUserStorage();
         storage.setThrowExceptionMode(true); // Enable throwing an exception on every method call.
 
-        var logCollector = new LogCollector();
+        LogCollector logCollector = new LogCollector();
 
         try {
             logCollector.injectToBoxLogger();
 
-            var manager = new BoxUserManager(storage);
+            BoxUserManager manager = new BoxUserManager(storage);
 
             // BoxUserManager#loadBoxUser
             // Return value is the user with the given UUID

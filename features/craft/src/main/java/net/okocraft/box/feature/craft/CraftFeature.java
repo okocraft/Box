@@ -6,18 +6,21 @@ import net.okocraft.box.api.feature.AbstractBoxFeature;
 import net.okocraft.box.api.feature.BoxFeature;
 import net.okocraft.box.api.feature.FeatureContext;
 import net.okocraft.box.api.feature.Reloadable;
+import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.feature.craft.command.CraftCommand;
 import net.okocraft.box.feature.craft.lang.DisplayKeys;
 import net.okocraft.box.feature.craft.loader.RecipeLoader;
 import net.okocraft.box.feature.craft.mode.CraftMode;
 import net.okocraft.box.feature.craft.model.IngredientHolder;
+import net.okocraft.box.feature.craft.model.RecipeHolder;
 import net.okocraft.box.feature.gui.GuiFeature;
 import net.okocraft.box.feature.gui.api.mode.ClickModeRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Set;
 
 public class CraftFeature extends AbstractBoxFeature implements Reloadable {
@@ -41,7 +44,7 @@ public class CraftFeature extends AbstractBoxFeature implements Reloadable {
         // IngredientHolder 3506 -> 1417
         IngredientHolder.enableCache();
 
-        var recipeMap = RecipeLoader.load(BoxAPI.api().getPluginDirectory().resolve("recipes.yml"));
+        Map<BoxItem, RecipeHolder> recipeMap = RecipeLoader.load(BoxAPI.api().getPluginDirectory().resolve("recipes.yml"));
 
         IngredientHolder.disableCache();
 

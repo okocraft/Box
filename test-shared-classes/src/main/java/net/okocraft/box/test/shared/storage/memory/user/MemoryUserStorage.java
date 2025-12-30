@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -29,7 +30,7 @@ public class MemoryUserStorage implements UserStorage {
     public void saveBoxUser(@NotNull UUID uuid, @Nullable String name) {
         this.throwExceptionIfEnabled();
 
-        var oldName = this.uuidToNameMap.put(uuid, name);
+        String oldName = this.uuidToNameMap.put(uuid, name);
 
         if (oldName != null) {
             this.nameToUuidMap.remove(oldName);
@@ -44,7 +45,7 @@ public class MemoryUserStorage implements UserStorage {
     public @Nullable BoxUser searchByName(@NotNull String name) {
         this.throwExceptionIfEnabled();
 
-        var uuid = this.nameToUuidMap.get(name);
+        UUID uuid = this.nameToUuidMap.get(name);
         return uuid != null ? BoxUserFactory.create(uuid, name) : null;
     }
 
@@ -52,9 +53,9 @@ public class MemoryUserStorage implements UserStorage {
     public @NotNull Collection<BoxUser> loadAllBoxUsers() {
         this.throwExceptionIfEnabled();
 
-        var list = new ArrayList<BoxUser>(this.uuidToNameMap.size());
+        List<BoxUser> list = new ArrayList<>(this.uuidToNameMap.size());
 
-        for (var entry : this.uuidToNameMap.entrySet()) {
+        for (Map.Entry<UUID, String> entry : this.uuidToNameMap.entrySet()) {
             list.add(BoxUserFactory.create(entry.getKey(), entry.getValue()));
         }
 
@@ -65,7 +66,7 @@ public class MemoryUserStorage implements UserStorage {
     public void saveBoxUsers(@NotNull Collection<BoxUser> users) {
         this.throwExceptionIfEnabled();
 
-        for (var user : users) {
+        for (BoxUser user : users) {
             this.saveBoxUser(user.getUUID(), user.getName().orElse(null));
         }
     }

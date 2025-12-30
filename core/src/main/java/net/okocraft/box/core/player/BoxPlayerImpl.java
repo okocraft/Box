@@ -53,7 +53,7 @@ public class BoxPlayerImpl implements BoxPlayer {
 
     @Override
     public void setCurrentStockHolder(@NotNull StockHolder stockHolder) {
-        var previous = this.currentHolder;
+        StockHolder previous = this.currentHolder;
         this.currentHolder = Objects.requireNonNull(stockHolder);
         this.eventCaller.call(new PlayerStockHolderChangeEvent(this, previous));
     }

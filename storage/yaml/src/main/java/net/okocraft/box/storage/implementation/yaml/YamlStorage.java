@@ -56,7 +56,7 @@ public class YamlStorage implements Storage {
         this.firstStartup = !Files.isDirectory(this.rootDirectory);
         Files.createDirectories(this.rootDirectory);
 
-        var oldMetaFilepath = this.rootDirectory.resolve("items").resolve("storage-meta.yml");
+        Path oldMetaFilepath = this.rootDirectory.resolve("items").resolve("storage-meta.yml");
         if (Files.isRegularFile(oldMetaFilepath)) {
             this.metaStorage.migrateFromOldMetaFile(oldMetaFilepath);
         }

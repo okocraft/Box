@@ -12,6 +12,7 @@ import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Comparator;
+import java.util.stream.Stream;
 
 public class Main extends JavaPlugin {
 
@@ -32,10 +33,10 @@ public class Main extends JavaPlugin {
     }
 
     private void generateData() {
-        var dir = FILE_LOCATION != null ? Path.of(FILE_LOCATION) : this.getDataFolder().toPath().resolve("generated");
+        Path dir = FILE_LOCATION != null ? Path.of(FILE_LOCATION) : this.getDataFolder().toPath().resolve("generated");
 
         if (Files.isDirectory(dir)) {
-            try (var walk = Files.walk(dir)) {
+            try (Stream<@NotNull Path> walk = Files.walk(dir)) {
                 walk.sorted(Comparator.reverseOrder())
                     .forEach(filepath -> {
                         try {
@@ -50,7 +51,7 @@ public class Main extends JavaPlugin {
             }
         }
 
-        var generator = Versioned.implementations(this.getClassLoader())
+        DataGenerator generator = Versioned.implementations(this.getClassLoader())
             .stream()
             .filter(impl -> impl.version().isSame(MCDataVersion.current()))
             .map(DataGenerator::new)

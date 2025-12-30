@@ -1,9 +1,11 @@
 package net.okocraft.box.storage.implementation.yaml;
 
+import dev.siroshun.configapi.core.node.MapNode;
 import dev.siroshun.configapi.format.yaml.YamlFormat;
 import net.okocraft.box.api.util.BoxLogger;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -24,11 +26,11 @@ final class YamlStoragePatches {
             return;
         }
 
-        var source = YamlFormat.DEFAULT.load(filepath);
+        MapNode source = YamlFormat.DEFAULT.load(filepath);
         Files.move(filepath, createBackupFilepath(filepath));
 
-        try (var writer = Files.newBufferedWriter(filepath, StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING)) {
-            for (var key : source.value().keySet()) {
+        try (BufferedWriter writer = Files.newBufferedWriter(filepath, StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING)) {
+            for (Object key : source.value().keySet()) {
                 int id;
                 if (key instanceof Number number) {
                     id = number.intValue();
@@ -41,7 +43,7 @@ final class YamlStoragePatches {
                     }
                 }
 
-                var name = source.getMap(key).getStringOrNull("name");
+                String name = source.getMap(key).getStringOrNull("name");
 
                 if (name != null) {
                     YamlDefaultItemStorage.appendNewItem(writer, id, name);

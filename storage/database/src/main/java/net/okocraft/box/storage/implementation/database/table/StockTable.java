@@ -1,6 +1,8 @@
 package net.okocraft.box.storage.implementation.database.table;
 
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.okocraft.box.api.model.stock.StockData;
 import net.okocraft.box.storage.api.model.stock.PartialSavingStockStorage;
 import net.okocraft.box.storage.api.util.SneakyThrow;
@@ -10,6 +12,7 @@ import net.okocraft.box.storage.implementation.database.operator.StockTableOpera
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -38,9 +41,9 @@ public class StockTable implements PartialSavingStockStorage {
 
     @Override
     public @NotNull Collection<StockData> loadStockData(@NotNull UUID uuid) throws Exception {
-        var stock = new ArrayList<StockData>();
+        List<StockData> stock = new ArrayList<>();
 
-        try (var connection = this.database.getConnection()) {
+        try (Connection connection = this.database.getConnection()) {
             int stockId = this.stockHolderTable.getStockHolderIdByUUID(connection, uuid);
             this.stockTable.selectStockById(connection, stockId, stock::add);
         }
@@ -50,13 +53,13 @@ public class StockTable implements PartialSavingStockStorage {
 
     @Override
     public void saveStockData(@NotNull UUID uuid, @NotNull Collection<StockData> stockData) throws Exception {
-        try (var connection = this.database.getConnection()) {
+        try (Connection connection = this.database.getConnection()) {
             int stockId = this.stockHolderTable.getStockHolderIdByUUID(connection, uuid);
 
             this.stockTable.deleteStockByStockId(connection, stockId);
 
-            try (var statement = this.stockTable.insertStockStatement(connection)) {
-                for (var data : stockData) {
+            try (PreparedStatement statement = this.stockTable.insertStockStatement(connection)) {
+                for (StockData data : stockData) {
                     this.stockTable.addInsertStockBatch(statement, stockId, data.itemId(), data.amount());
                 }
                 statement.executeBatch();
@@ -67,13 +70,13 @@ public class StockTable implements PartialSavingStockStorage {
     @Override
     public void remapItemIds(@NotNull Int2IntMap remappedIdMap) throws Exception {
         try (
-            var connection = this.database.getConnection();
-            var selectByItemIdStatement = this.stockTable.selectStockByItemIdStatement(connection);
-            var selectByUUIDAndItemIdStatement = this.stockTable.selectStockByIdAndItemIdStatement(connection);
-            var updateItemIdStatement = this.stockTable.updateItemIdStatement(connection);
-            var updateAmountStatement = this.stockTable.updateAmountStatement(connection)
+            Connection connection = this.database.getConnection();
+            PreparedStatement selectByItemIdStatement = this.stockTable.selectStockByItemIdStatement(connection);
+            PreparedStatement selectByUUIDAndItemIdStatement = this.stockTable.selectStockByIdAndItemIdStatement(connection);
+            PreparedStatement updateItemIdStatement = this.stockTable.updateItemIdStatement(connection);
+            PreparedStatement updateAmountStatement = this.stockTable.updateAmountStatement(connection)
         ) {
-            for (var remapEntry : remappedIdMap.int2IntEntrySet()) {
+            for (Int2IntMap.Entry remapEntry : remappedIdMap.int2IntEntrySet()) {
                 int oldItemId = remapEntry.getIntKey();
                 int newItemId = remapEntry.getIntValue();
                 this.stockTable.selectStockByItemId(
@@ -115,11 +118,11 @@ public class StockTable implements PartialSavingStockStorage {
 
     @Override
     public void savePartialStockData(@NotNull UUID uuid, @NotNull Collection<StockData> stockData) throws Exception {
-        try (var connection = this.database.getConnection();
-             var statement = this.stockTable.upsertStockStatement(connection)
+        try (Connection connection = this.database.getConnection();
+             PreparedStatement statement = this.stockTable.upsertStockStatement(connection)
         ) {
             int stockId = this.stockHolderTable.getStockHolderIdByUUID(connection, uuid);
-            for (var data : stockData) {
+            for (StockData data : stockData) {
                 this.stockTable.addUpsertStockBatch(statement, stockId, data.itemId(), data.amount());
             }
             statement.executeBatch();
@@ -128,14 +131,14 @@ public class StockTable implements PartialSavingStockStorage {
 
     @Override
     public void cleanupZeroStockData() throws Exception {
-        try (var connection = this.database.getConnection()) {
+        try (Connection connection = this.database.getConnection()) {
             this.stockTable.deleteZeroStock(connection);
         }
     }
 
     @Override
     public boolean hasZeroStock() throws Exception {
-        try (var connection = this.database.getConnection()) {
+        try (Connection connection = this.database.getConnection()) {
             return 0 < this.stockTable.countZeroStock(connection);
         }
     }
@@ -143,17 +146,17 @@ public class StockTable implements PartialSavingStockStorage {
     @Override
     public Map<UUID, Collection<StockData>> loadAllStockData() throws Exception {
         Map<UUID, Collection<StockData>> result;
-        try (var connection = this.database.getConnection()) {
-            var idMap = this.stockHolderTable.getAllUUIDByStockHolderId(connection);
-            var invalidUUID = new UUID(0, 0);
+        try (Connection connection = this.database.getConnection()) {
+            Int2ObjectMap<UUID> idMap = this.stockHolderTable.getAllUUIDByStockHolderId(connection);
+            UUID invalidUUID = new UUID(0, 0);
             result = new HashMap<>(idMap.size());
             this.stockTable.selectAllStock(connection, (stockId, stockData) -> {
-                var uuid = idMap.getOrDefault(stockId.intValue(), invalidUUID);
+                UUID uuid = idMap.getOrDefault(stockId.intValue(), invalidUUID);
                 if (uuid.equals(invalidUUID)) {
                     return;
                 }
 
-                var col = result.computeIfAbsent(uuid, ignored -> new ArrayList<>());
+                Collection<StockData> col = result.computeIfAbsent(uuid, ignored -> new ArrayList<>());
                 col.add(stockData);
             });
         }
@@ -162,23 +165,23 @@ public class StockTable implements PartialSavingStockStorage {
 
     @Override
     public void saveAllStockData(@NotNull Map<UUID, Collection<StockData>> stockDataMap) throws Exception {
-        try (var connection = this.database.getConnection()) {
+        try (Connection connection = this.database.getConnection()) {
             List<UUID> uuids = List.copyOf(stockDataMap.keySet());
             for (int i = 0; i * 10000 < uuids.size(); i++) {
                 List<UUID> sublist = uuids.subList(i * 10000, Math.min((i + 1) * 10000, uuids.size()));
                 this.stockHolderTable.insertStockHolderUUIDs(connection, sublist);
             }
 
-            var idMap = this.stockHolderTable.getAllStockHolderIdByUUID(connection);
+            Object2IntMap<UUID> idMap = this.stockHolderTable.getAllStockHolderIdByUUID(connection);
             int count = 0;
             List<StockTableOperator.StockRecord> records = new ArrayList<>(Math.min(10000, stockDataMap.size()));
-            for (var entry : stockDataMap.entrySet()) {
+            for (Map.Entry<UUID, Collection<StockData>> entry : stockDataMap.entrySet()) {
                 int id = idMap.getInt(entry.getKey());
                 if (id == 0) {
                     continue;
                 }
 
-                for (var stock : entry.getValue()) {
+                for (StockData stock : entry.getValue()) {
                     records.add(new StockTableOperator.StockRecord(id, stock.itemId(), stock.amount()));
                     if (++count == 10000) {
                         this.stockTable.insertStockRecords(connection, records);

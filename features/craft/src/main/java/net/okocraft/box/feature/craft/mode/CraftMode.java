@@ -7,6 +7,7 @@ import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.feature.craft.RecipeRegistry;
 import net.okocraft.box.feature.craft.gui.menu.CraftMenu;
 import net.okocraft.box.feature.craft.gui.menu.RecipeSelectorMenu;
+import net.okocraft.box.feature.craft.model.RecipeHolder;
 import net.okocraft.box.feature.gui.api.button.Button;
 import net.okocraft.box.feature.gui.api.button.ClickResult;
 import net.okocraft.box.feature.gui.api.menu.Menu;
@@ -15,6 +16,7 @@ import net.okocraft.box.feature.gui.api.session.PlayerSession;
 import net.okocraft.box.feature.gui.api.util.ItemEditor;
 import net.okocraft.box.feature.gui.api.util.SoundBase;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -58,8 +60,8 @@ public class CraftMode implements BoxItemClickMode {
 
     @Override
     public @NotNull ClickResult onClick(@NotNull PlayerSession session, @NotNull BoxItem item, @NotNull ClickType clickType) {
-        var viewer = session.getViewer();
-        var recipes = RecipeRegistry.getRecipes(item);
+        Player viewer = session.getViewer();
+        RecipeHolder recipes = RecipeRegistry.getRecipes(item);
 
         if (recipes == null) {
             SoundBase.UNSUCCESSFUL.play(viewer);
