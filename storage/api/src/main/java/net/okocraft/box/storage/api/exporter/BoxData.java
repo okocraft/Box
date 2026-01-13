@@ -3,8 +3,12 @@ package net.okocraft.box.storage.api.exporter;
 import dev.siroshun.codec4j.api.codec.Base64Codec;
 import dev.siroshun.codec4j.api.codec.Codec;
 import dev.siroshun.codec4j.api.codec.UUIDCodec;
+import dev.siroshun.codec4j.api.codec.collection.ListCodec;
+import dev.siroshun.codec4j.api.codec.collection.MapCodec;
+import dev.siroshun.codec4j.api.codec.object.FieldCodec;
 import dev.siroshun.codec4j.api.codec.object.ObjectCodec;
 import dev.siroshun.codec4j.api.decoder.Decoder;
+import dev.siroshun.codec4j.api.decoder.object.FieldDecoder;
 import dev.siroshun.codec4j.api.decoder.object.ObjectDecoder;
 import dev.siroshun.codec4j.api.error.DecodeError;
 import dev.siroshun.configapi.codec.NodeCodec;
@@ -24,6 +28,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Function;
 
 public record BoxData(
     @NotNull MCDataVersion dataVersion,
@@ -34,26 +39,26 @@ public record BoxData(
     @NotNull Map<Key, MapNode> customData
 ) {
 
-    static final Codec<Collection<BoxUser>> USERS_CODEC = ObjectCodec.create(
+    static final Codec<Collection<BoxUser>> USERS_CODEC = ListCodec.create(ObjectCodec.create(
         BoxUserFactory::create,
-        UUIDCodec.UUID_AS_STRING.toFieldCodec("uuid").build(BoxUser::getUUID),
-        Codec.STRING.toFieldCodec("name").defaultValue("").build(user -> user.getName().orElseThrow(), user -> user.getName().orElse("").isEmpty())
-    ).toCollectionCodec();
+        FieldCodec.builder("uuid", UUIDCodec.UUID_AS_STRING).build(BoxUser::getUUID),
+        FieldCodec.builder("name", Codec.STRING).defaultValue("").build(user -> user.getName().orElseThrow(), user -> user.getName().orElse("").isEmpty())
+    )).xmap(List::copyOf, Function.identity());
 
-    static final Codec<List<DefaultItemData>> DEFAULT_ITEMS_CODEC = ObjectCodec.create(
+    static final Codec<List<DefaultItemData>> DEFAULT_ITEMS_CODEC = ListCodec.create(ObjectCodec.create(
         DefaultItemData::new,
-        Codec.INT.toFieldCodec("id").build(DefaultItemData::itemId),
-        Codec.STRING.toFieldCodec("plain_name").build(DefaultItemData::plainName)
-    ).toListCodec();
+        FieldCodec.builder("id", Codec.INT).build(DefaultItemData::itemId),
+        FieldCodec.builder("plain_name", Codec.STRING).build(DefaultItemData::plainName)
+    ));
 
-    static final Codec<List<ItemData>> CUSTOM_ITEMS_CODEC = ObjectCodec.create(
+    static final Codec<List<ItemData>> CUSTOM_ITEMS_CODEC = ListCodec.create(ObjectCodec.create(
         ItemData::new,
-        Codec.INT.toFieldCodec("id").build(ItemData::internalId),
-        Codec.STRING.toFieldCodec("plain_name").build(ItemData::plainName),
-        Base64Codec.CODEC.toFieldCodec("item_data").build(ItemData::itemData)
-    ).toListCodec();
+        FieldCodec.builder("id", Codec.INT).build(ItemData::internalId),
+        FieldCodec.builder("plain_name", Codec.STRING).build(ItemData::plainName),
+        FieldCodec.builder("item_data", Base64Codec.CODEC).build(ItemData::itemData)
+    ));
 
-    static final Codec<StockData> STOCK_DATA_CODEC = Codec.INT.toListCodec().flatXmap(
+    static final Codec<StockData> STOCK_DATA_CODEC = ListCodec.create(Codec.INT).flatXmap(
         data -> Result.success(List.of(data.itemId(), data.amount())),
         list -> {
             if (list.size() != 2) {
@@ -63,7 +68,7 @@ public record BoxData(
         }
     );
 
-    static final Codec<Map<UUID, Collection<StockData>>> STOCK_HOLDER_CODEC = UUIDCodec.UUID_AS_STRING.toMapCodecAsKey(STOCK_DATA_CODEC.toCollectionCodec());
+    static final Codec<Map<UUID, Collection<StockData>>> STOCK_HOLDER_CODEC = MapCodec.create(UUIDCodec.UUID_AS_STRING, ListCodec.create(STOCK_DATA_CODEC).xmap(List::copyOf, Function.identity()));
 
     private static final Codec<Key> KEY_CODEC = Codec.STRING.flatXmap(
         key -> Result.success(key.asString()),
@@ -76,15 +81,15 @@ public record BoxData(
         }
     );
 
-    static final Codec<Map<Key, MapNode>> CUSTOM_DATA_CODEC = KEY_CODEC.toMapCodecAsKey(NodeCodec.MAP_NODE_CODEC);
+    static final Codec<Map<Key, MapNode>> CUSTOM_DATA_CODEC = MapCodec.create(KEY_CODEC, NodeCodec.MAP_NODE_CODEC);
 
     public static final Decoder<BoxData> BOX_DATA_CODEC = ObjectDecoder.create(
         BoxData::new,
-        Codec.INT.xmap(MCDataVersion::dataVersion, MCDataVersion::new).toRequiredFieldDecoder("data-version"),
-        USERS_CODEC.toRequiredFieldDecoder("users"),
-        DEFAULT_ITEMS_CODEC.toRequiredFieldDecoder("default_items"),
-        CUSTOM_ITEMS_CODEC.toRequiredFieldDecoder("custom_items"),
-        STOCK_HOLDER_CODEC.toRequiredFieldDecoder("stock"),
-        CUSTOM_DATA_CODEC.toRequiredFieldDecoder("custom_data")
+        FieldDecoder.required("data-version", Codec.INT.xmap(MCDataVersion::dataVersion, MCDataVersion::new)),
+        FieldDecoder.required("users", USERS_CODEC),
+        FieldDecoder.required("default_items", DEFAULT_ITEMS_CODEC),
+        FieldDecoder.required("custom_items", CUSTOM_ITEMS_CODEC),
+        FieldDecoder.required("stock", STOCK_HOLDER_CODEC),
+        FieldDecoder.required("custom_data", CUSTOM_DATA_CODEC)
     );
 }
