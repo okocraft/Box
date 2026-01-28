@@ -40,6 +40,7 @@ public class BoxMessageProvider {
         }
 
         this.store = this.directorySource
+            .defaultLocale(Locale.ENGLISH)
             .messageProcessor(MessageProcessors.appendMissingMessagesToPropertiesFile(this.defaultMessageMapLoader))
             .messageProcessor(MessageProcessors.appendMissingMessagesToPropertiesFile(ignored -> this.collector.collectedMessages))
             .loadAsMiniMessageTranslationStore(Key.key("box", "languages"));
