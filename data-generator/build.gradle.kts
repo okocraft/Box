@@ -7,8 +7,8 @@ plugins {
 group = "net.okocraft.box.datagenerator"
 version = "1.0"
 
-val previousMinecraftVersion = "1.21.10"
-val minecraftVersion = "1.21.11"
+val previousMinecraftVersion = "1.21.11"
+val minecraftVersion = "26.1.1"
 
 repositories {
     mavenCentral()
@@ -19,7 +19,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:$minecraftVersion-R0.1-SNAPSHOT")
+    compileOnly(libs.paper)
 
     implementation(projects.boxCategoryFeature)
     rootProject.childProjects.values
