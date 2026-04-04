@@ -49,7 +49,8 @@ public final class IngredientRenderer {
             Style style = need <= current ? Styles.NO_DECORATION_AQUA : Styles.NO_DECORATION_RED;
 
             editor.loreLine(
-                space().toBuilder()
+                text()
+                    .append(space())
                     .append(translatable(item.getOriginal(), style))
                     .append(text(": ", Styles.NO_DECORATION_GRAY))
                     .append(text(need, style))
