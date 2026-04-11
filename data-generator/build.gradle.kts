@@ -7,15 +7,11 @@ plugins {
 group = "net.okocraft.box.datagenerator"
 version = "1.0"
 
-val previousMinecraftVersion = "1.21.11"
-val minecraftVersion = "26.1.1"
+val previousMinecraftVersion = "26.1.1"
+val minecraftVersion = "26.1.2"
 
 repositories {
     mavenCentral()
-
-    maven {
-        url = uri("https://repo.papermc.io/repository/maven-public/")
-    }
 }
 
 dependencies {
