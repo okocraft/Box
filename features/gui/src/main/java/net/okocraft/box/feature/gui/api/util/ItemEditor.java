@@ -188,7 +188,7 @@ public class ItemEditor {
             }
 
             if (this.builder != null) {
-                this.addLine(this.builder.build());
+                this.addLine(this.builder.asComponent());
                 this.builder = null;
             }
         }
@@ -205,7 +205,7 @@ public class ItemEditor {
             } else {
                 for (String line : lines) {
                     this.appendComponent(Component.text(line, text.style()));
-                    this.addLine(this.builder.build());
+                    this.addLine(this.builder.asComponent());
                     this.builder = null;
                 }
             }

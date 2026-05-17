@@ -44,7 +44,7 @@ public class UnitChangeButton extends AmountModificationButton {
                 Component.text()
                     .content(" > " + unit.getAmount())
                     .style(currentUnit == unit ? Styles.NO_DECORATION_AQUA : Styles.NO_DECORATION_GRAY)
-                    .build()
+                    .asComponent()
             );
         }
 

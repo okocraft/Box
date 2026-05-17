@@ -55,7 +55,7 @@ public final class IngredientRenderer {
                     .append(text(need, style))
                     .append(text("/", Styles.NO_DECORATION_GRAY))
                     .append(text(current, style))
-                    .build()
+                    .asComponent()
             );
         }
     }

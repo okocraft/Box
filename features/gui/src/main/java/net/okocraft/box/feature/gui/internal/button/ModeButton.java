@@ -32,7 +32,7 @@ public record ModeButton(int slot) implements Button {
 
         for (BoxItemClickMode mode : holder.getAvailableModes()) {
             Style style = holder.getCurrentMode() == mode ? Styles.NO_DECORATION_AQUA : Styles.NO_DECORATION_GRAY;
-            editor.loreLine(Component.text().append(Component.text(" > ")).append(mode.getDisplayName(session)).style(style).build());
+            editor.loreLine(Component.text().append(Component.text(" > ")).append(mode.getDisplayName(session)).style(style).asComponent());
         }
 
         return editor.createItem(session.getViewer(), holder.getCurrentMode().getIconMaterial());

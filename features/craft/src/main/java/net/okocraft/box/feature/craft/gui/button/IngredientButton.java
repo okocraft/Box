@@ -53,7 +53,7 @@ public record IngredientButton(int slot, int ingredientPos) implements Button {
                         .append(Component.space())
                         .append(Component.text("(" + session.getSourceStockHolder().getAmount(ingredient.item()) + ")"))
                         .style(ingredient == ingredients.getSelected() ? Styles.NO_DECORATION_AQUA : Styles.NO_DECORATION_GRAY)
-                        .build()
+                        .asComponent()
                 );
             }
         }
