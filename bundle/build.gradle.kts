@@ -17,13 +17,15 @@ bundler {
     replacePluginVersionForPaper(project.version)
 }
 
+val mcVersion = libs.versions.paper.asProvider().get().replaceAfter(".build", "").removeSuffix(".build")
+
 tasks {
     shadowJar {
         mergeServiceFiles()
     }
 
     runServer {
-        minecraftVersion("1.21.11")
+        minecraftVersion(mcVersion)
         systemProperty("com.mojang.eula.agree", "true")
         systemProperty("paper.disablePluginRemapping", "true")
     }
