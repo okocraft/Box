@@ -27,9 +27,9 @@ public final class NotificationFactory {
     @VisibleForTesting
     static final Component COMMON_PARTS_3 = text(")", DARK_GRAY);
     @VisibleForTesting
-    static final Component PLUS_1 = text().append(COMMON_PARTS_2, text("+1", AQUA), COMMON_PARTS_3).build(); // (+1)
+    static final Component PLUS_1 = text().append(COMMON_PARTS_2, text("+1", AQUA), COMMON_PARTS_3).asComponent(); // (+1)
     @VisibleForTesting
-    static final Component MINUS_1 = text().append(COMMON_PARTS_2, text("-1", RED), COMMON_PARTS_3).build(); // (-1)
+    static final Component MINUS_1 = text().append(COMMON_PARTS_2, text("-1", RED), COMMON_PARTS_3).asComponent(); // (-1)
 
     @Contract(value = "_ -> new", pure = true)
     public static @NotNull NotificationFactory create(@NotNull StockEvent event) {
@@ -94,6 +94,6 @@ public final class NotificationFactory {
                     .append(COMMON_PARTS_3);
         }
 
-        return builder.build();
+        return builder.asComponent();
     }
 }
