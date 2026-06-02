@@ -5,9 +5,10 @@ import net.okocraft.box.api.util.MCDataVersion;
 import net.okocraft.box.feature.category.internal.category.defaults.DefaultCategories;
 import net.okocraft.box.feature.category.internal.category.defaults.DefaultCategory;
 import net.okocraft.box.storage.api.model.item.provider.DefaultItem;
+import net.okocraft.box.storage.api.model.item.provider.DefaultItemProvider;
 import net.okocraft.box.storage.api.util.SneakyThrow;
 import net.okocraft.box.version.common.item.RenamedItems;
-import net.okocraft.box.version.common.version.Versioned;
+import net.okocraft.box.version.common.version.MinecraftVersioning;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,12 +29,19 @@ import java.util.stream.Stream;
 
 class DataGenerator {
 
+    private final MCDataVersion version;
     private final List<String> defaultItems;
     private final Map<String, String> renamedItems;
 
-    DataGenerator(@NotNull Versioned impl) {
-        this.defaultItems = impl.defaultItems().map(DefaultItem::plainName).distinct().sorted().toList();
-        this.renamedItems = RenamedItems.loadVersionFromResource(impl.version());
+    DataGenerator() {
+        DefaultItemProvider provider = MinecraftVersioning.createDefaultItemProvider();
+        this.version = provider.version();
+        this.defaultItems = provider.provide().map(DefaultItem::plainName).distinct().sorted().toList();
+        this.renamedItems = RenamedItems.loadVersionFromResource(this.version);
+    }
+
+    public @NotNull MCDataVersion version() {
+        return this.version;
     }
 
     public void defaultItems(@NotNull Path dir) throws IOException {

@@ -18,9 +18,7 @@ dependencies {
     compileOnly(libs.paper)
 
     implementation(projects.boxCategoryFeature)
-    rootProject.childProjects.values
-        .filter { project -> project.name.startsWith("box-version-paper") }
-        .forEach { project -> implementation(project) }
+    implementation(projects.boxVersionCommon)
 }
 
 bundler {

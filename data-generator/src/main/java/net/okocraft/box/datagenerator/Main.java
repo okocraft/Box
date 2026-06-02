@@ -1,7 +1,6 @@
 package net.okocraft.box.datagenerator;
 
 import net.okocraft.box.api.util.MCDataVersion;
-import net.okocraft.box.version.common.version.Versioned;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -33,6 +32,13 @@ public class Main extends JavaPlugin {
     }
 
     private void generateData() {
+        DataGenerator generator = new DataGenerator();
+
+        if (!generator.version().equals(MCDataVersion.current())) {
+            this.getSLF4JLogger().error("The current version does not match the version of the data generator: MC {} vs Generator {}", MCDataVersion.current(), generator.version());
+            return;
+        }
+
         Path dir = FILE_LOCATION != null ? Path.of(FILE_LOCATION) : this.getDataFolder().toPath().resolve("generated");
 
         if (Files.isDirectory(dir)) {
@@ -49,17 +55,6 @@ public class Main extends JavaPlugin {
                 this.getSLF4JLogger().error("Failed to delete old output dir", e);
                 return;
             }
-        }
-
-        DataGenerator generator = Versioned.implementations(this.getClassLoader())
-            .stream()
-            .filter(impl -> impl.version().isSame(MCDataVersion.current()))
-            .map(DataGenerator::new)
-            .findFirst().orElse(null);
-
-        if (generator == null) {
-            this.getSLF4JLogger().error("No version impl found: {}", MCDataVersion.current().dataVersion());
-            return;
         }
 
         try {

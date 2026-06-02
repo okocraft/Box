@@ -6,7 +6,6 @@ import net.okocraft.box.api.feature.BoxFeature;
 import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.api.util.MCDataVersion;
 import net.okocraft.box.bootstrap.BoxBootstrapContext;
-import net.okocraft.box.bundle.VersionedImpls;
 import net.okocraft.box.core.BoxCore;
 import net.okocraft.box.core.PluginContext;
 import net.okocraft.box.core.config.Config;
@@ -15,6 +14,7 @@ import net.okocraft.box.storage.api.model.Storage;
 import net.okocraft.box.storage.api.registry.StorageRegistry;
 import net.okocraft.box.version.common.command.BukkitCommandRegisterer;
 import net.okocraft.box.version.common.scheduler.FoliaSchedulerWrapper;
+import net.okocraft.box.version.common.version.MinecraftVersioning;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
@@ -36,9 +36,7 @@ public final class BoxPlugin extends JavaPlugin {
     private Storage storage;
 
     public BoxPlugin(@NotNull BoxBootstrapContext boxBootstrapContext) {
-        VersionedImpls versionedImpls = VersionedImpls.load(this.getClassLoader());
-
-        if (versionedImpls.leastVersion().isAfter(MCDataVersion.current())) {
+        if (MinecraftVersioning.leastVersion().isAfter(MCDataVersion.current())) {
             this.pluginContext = null;
             this.boxCore = null;
             this.storageRegistry = null;
@@ -56,7 +54,7 @@ public final class BoxPlugin extends JavaPlugin {
             boxBootstrapContext.getEventService(),
             boxBootstrapContext.createMessageProvider(),
             new Config(boxBootstrapContext.getDataDirectory()),
-            versionedImpls.createDefaultItemProvider(MCDataVersion.current()),
+            MinecraftVersioning.createDefaultItemProvider(),
             command -> BukkitCommandRegisterer.register(this.getName().toLowerCase(Locale.ENGLISH), command)
         );
 
