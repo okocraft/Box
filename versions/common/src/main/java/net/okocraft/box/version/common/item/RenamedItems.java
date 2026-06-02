@@ -20,7 +20,8 @@ public final class RenamedItems {
 
     private static final List<MCDataVersion> VERSIONS = List.of(
         MCDataVersion.MC_1_20_5,
-        MCDataVersion.MC_1_21
+        MCDataVersion.MC_1_21,
+        MCDataVersion.MC_1_21_9
     );
 
     public static @NotNull Map<String, String> loadFromResource(@NotNull MCDataVersion startingVersion, @NotNull MCDataVersion currentVersion) {
@@ -33,7 +34,7 @@ public final class RenamedItems {
             .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue, (older, newer) -> newer));
     }
 
-    public static @NotNull Map<String,String > loadVersionFromResource(@NotNull MCDataVersion version) {
+    public static @NotNull Map<String, String> loadVersionFromResource(@NotNull MCDataVersion version) {
         try (InputStream in = RenamedItems.class.getClassLoader().getResourceAsStream(version.dataVersion() + ".txt")) {
             if (in == null) {
                 return Collections.emptyMap();
