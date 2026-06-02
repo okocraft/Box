@@ -1,4 +1,4 @@
-package net.okocraft.box.version.common.scheduler;
+package net.okocraft.box.core.scheduler;
 
 import net.okocraft.box.api.scheduler.BoxScheduler;
 import net.okocraft.box.api.util.BoxLogger;
