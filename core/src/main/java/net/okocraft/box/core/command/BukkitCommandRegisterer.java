@@ -1,4 +1,4 @@
-package net.okocraft.box.version.common.command;
+package net.okocraft.box.core.command;
 
 import net.okocraft.box.api.command.Command;
 import org.bukkit.Bukkit;
