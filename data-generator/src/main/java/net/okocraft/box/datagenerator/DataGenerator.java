@@ -4,11 +4,10 @@ import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.okocraft.box.api.util.MCDataVersion;
 import net.okocraft.box.feature.category.internal.category.defaults.DefaultCategories;
 import net.okocraft.box.feature.category.internal.category.defaults.DefaultCategory;
-import net.okocraft.box.storage.api.model.item.provider.DefaultItem;
-import net.okocraft.box.storage.api.model.item.provider.DefaultItemProvider;
-import net.okocraft.box.storage.api.util.SneakyThrow;
-import net.okocraft.box.version.common.item.RenamedItems;
-import net.okocraft.box.version.common.version.MinecraftVersioning;
+import net.okocraft.box.item.DefaultItem;
+import net.okocraft.box.item.DefaultItemProvider;
+import net.okocraft.box.item.MinecraftVersioning;
+import net.okocraft.box.item.RenamedItems;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,7 +22,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -46,14 +44,10 @@ class DataGenerator {
 
     public void defaultItems(@NotNull Path dir) throws IOException {
         try (BufferedWriter writer = Files.newBufferedWriter(dir.resolve(Bukkit.getMinecraftVersion() + ".txt"))) {
-            this.defaultItems.forEach(name -> {
-                try {
-                    writer.write(name);
-                    writer.newLine();
-                } catch (IOException e) {
-                    SneakyThrow.sneaky(e);
-                }
-            });
+            for (String name : this.defaultItems) {
+                writer.write(name);
+                writer.newLine();
+            }
         }
     }
 
@@ -78,16 +72,14 @@ class DataGenerator {
         }
 
         try (BufferedWriter writer = Files.newBufferedWriter(dir.resolve(Bukkit.getMinecraftVersion() + "-new-items.txt"))) {
-            this.defaultItems.stream()
-                .filter(Predicate.not(items::contains))
-                .forEach(name -> {
-                    try {
-                        writer.write(name);
-                        writer.newLine();
-                    } catch (IOException e) {
-                        SneakyThrow.sneaky(e);
-                    }
-                });
+            for (String name : this.defaultItems) {
+                if (items.contains(name)) {
+                    continue;
+                }
+
+                writer.write(name);
+                writer.newLine();
+            }
         }
     }
 
@@ -100,19 +92,17 @@ class DataGenerator {
                 .collect(Collectors.toSet());
 
         try (BufferedWriter writer = Files.newBufferedWriter(dir.resolve(Bukkit.getMinecraftVersion() + "-uncategorized-items.txt"))) {
-            this.defaultItems.stream()
-                .filter(Predicate.not(categorizedItems::contains))
-                .forEach(name -> {
-                    try {
-                        writer.write("  - ");
-                        writer.write(String.valueOf(MCDataVersion.current().dataVersion()));
-                        writer.write(":");
-                        writer.write(name);
-                        writer.newLine();
-                    } catch (IOException e) {
-                        SneakyThrow.sneaky(e);
-                    }
-                });
+            for (String name : this.defaultItems) {
+                if (categorizedItems.contains(name)) {
+                    continue;
+                }
+
+                writer.write("  - ");
+                writer.write(String.valueOf(MCDataVersion.current().dataVersion()));
+                writer.write(":");
+                writer.write(name);
+                writer.newLine();
+            }
         }
     }
 }

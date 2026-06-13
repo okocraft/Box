@@ -13,6 +13,7 @@ val boxPrefix = rootProject.name
 sequenceOf(
     "api",
     "core",
+    "item-provider",
     "data-generator",
     "test-shared-classes"
 ).forEach {
@@ -50,16 +51,6 @@ sequenceOf(
 ).forEach {
     include("$boxPrefix-$it-$featureSuffix")
     project(":$boxPrefix-$it-$featureSuffix").projectDir = file("./features/$it")
-}
-
-val versionSuffix = "version"
-
-// versions
-sequenceOf(
-    "common"
-).forEach {
-    include("$boxPrefix-$versionSuffix-$it")
-    project(":$boxPrefix-$versionSuffix-$it").projectDir = file("./versions/$it")
 }
 
 include("$boxPrefix-bundle")

@@ -14,7 +14,7 @@ import net.okocraft.box.storage.api.holder.StorageHolder;
 import net.okocraft.box.storage.api.model.Storage;
 import net.okocraft.box.storage.api.registry.StorageRegistry;
 import net.okocraft.box.core.command.BukkitCommandRegisterer;
-import net.okocraft.box.version.common.version.MinecraftVersioning;
+import net.okocraft.box.item.MinecraftVersioning;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;

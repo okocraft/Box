@@ -1,4 +1,4 @@
-package net.okocraft.box.storage.api.model.item;
+package net.okocraft.box.item;
 
 import org.jetbrains.annotations.NotNull;
 

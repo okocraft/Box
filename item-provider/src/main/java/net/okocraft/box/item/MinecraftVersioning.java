@@ -1,10 +1,6 @@
-package net.okocraft.box.version.common.version;
+package net.okocraft.box.item;
 
 import net.okocraft.box.api.util.MCDataVersion;
-import net.okocraft.box.storage.api.model.item.provider.DefaultItem;
-import net.okocraft.box.storage.api.model.item.provider.DefaultItemProvider;
-import net.okocraft.box.version.common.item.ItemSources;
-import net.okocraft.box.version.common.item.RenamedItems;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Comparator;

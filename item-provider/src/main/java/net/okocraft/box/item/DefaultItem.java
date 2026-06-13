@@ -1,6 +1,5 @@
-package net.okocraft.box.storage.api.model.item.provider;
+package net.okocraft.box.item;
 
-import net.okocraft.box.storage.api.model.item.NamedItem;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 

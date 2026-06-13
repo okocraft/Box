@@ -9,7 +9,7 @@ import net.okocraft.box.storage.api.model.item.CustomItemStorage;
 import net.okocraft.box.storage.api.model.item.DefaultItemData;
 import net.okocraft.box.storage.api.model.item.DefaultItemStorage;
 import net.okocraft.box.storage.api.model.item.ItemData;
-import net.okocraft.box.storage.api.model.item.NamedItem;
+import net.okocraft.box.item.NamedItem;
 import net.okocraft.box.storage.api.util.SneakyThrow;
 import net.okocraft.box.storage.implementation.database.database.Database;
 import net.okocraft.box.storage.implementation.database.operator.CustomItemTableOperator;

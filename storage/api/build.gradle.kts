@@ -4,6 +4,7 @@ plugins {
 
 dependencies {
     implementation(projects.boxApi)
+    implementation(projects.boxItemProvider)
     implementation(libs.configapi.codec)
     implementation(libs.codec4j.io.gson) {
         exclude("com.google.code.gson", "gson")

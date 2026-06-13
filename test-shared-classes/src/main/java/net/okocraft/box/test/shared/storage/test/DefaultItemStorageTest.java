@@ -5,7 +5,7 @@ import it.unimi.dsi.fastutil.ints.IntSet;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.okocraft.box.storage.api.model.item.DefaultItemStorage;
-import net.okocraft.box.storage.api.model.item.NamedItem;
+import net.okocraft.box.item.NamedItem;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

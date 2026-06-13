@@ -17,7 +17,7 @@ import net.okocraft.box.api.util.ItemNameGenerator;
 import net.okocraft.box.api.util.MCDataVersion;
 import net.okocraft.box.storage.api.factory.item.BoxItemFactory;
 import net.okocraft.box.storage.api.model.item.CustomItemStorage;
-import net.okocraft.box.storage.api.model.item.provider.DefaultItemProvider;
+import net.okocraft.box.item.DefaultItemProvider;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

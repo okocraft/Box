@@ -1,4 +1,4 @@
-package net.okocraft.box.version.common.item;
+package net.okocraft.box.item;
 
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.Fireworks;
@@ -8,7 +8,6 @@ import io.papermc.paper.datacomponent.item.PotionContents;
 import io.papermc.paper.registry.RegistryAccess;
 import io.papermc.paper.registry.RegistryKey;
 import net.okocraft.box.api.util.ItemNameGenerator;
-import net.okocraft.box.storage.api.model.item.provider.DefaultItem;
 import org.bukkit.Bukkit;
 import org.bukkit.Keyed;
 import org.bukkit.Material;

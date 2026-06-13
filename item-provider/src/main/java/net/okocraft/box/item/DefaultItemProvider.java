@@ -1,4 +1,4 @@
-package net.okocraft.box.storage.api.model.item.provider;
+package net.okocraft.box.item;
 
 import net.okocraft.box.api.util.MCDataVersion;
 import org.jetbrains.annotations.NotNull;

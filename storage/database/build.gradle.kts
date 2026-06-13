@@ -4,6 +4,7 @@ plugins {
 
 dependencies {
     implementation(projects.boxApi)
+    implementation(projects.boxItemProvider)
     implementation(projects.boxStorageApi)
 
     implementation(libs.configapi.format.binary)

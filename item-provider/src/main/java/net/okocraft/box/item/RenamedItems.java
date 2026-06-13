@@ -1,4 +1,4 @@
-package net.okocraft.box.version.common.item;
+package net.okocraft.box.item;
 
 import it.unimi.dsi.fastutil.Pair;
 import net.okocraft.box.api.util.MCDataVersion;

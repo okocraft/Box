@@ -3,7 +3,7 @@ package net.okocraft.box.storage.api.factory.item;
 import net.okocraft.box.api.model.item.BoxCustomItem;
 import net.okocraft.box.api.model.item.BoxDefaultItem;
 import net.okocraft.box.api.model.item.BoxItem;
-import net.okocraft.box.storage.api.model.item.provider.DefaultItem;
+import net.okocraft.box.item.DefaultItem;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;

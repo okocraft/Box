@@ -8,7 +8,7 @@ import net.okocraft.box.api.scheduler.BoxScheduler;
 import net.okocraft.box.core.command.CommandRegisterer;
 import net.okocraft.box.core.config.Config;
 import net.okocraft.box.core.message.BoxMessageProvider;
-import net.okocraft.box.storage.api.model.item.provider.DefaultItemProvider;
+import net.okocraft.box.item.DefaultItemProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 

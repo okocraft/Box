@@ -1,5 +1,6 @@
 package net.okocraft.box.storage.api.model.item;
 
+import net.okocraft.box.item.NamedItem;
 import org.jetbrains.annotations.NotNull;
 
 public record ItemData(int internalId, String plainName, byte[] itemData) implements NamedItem<byte[]> {

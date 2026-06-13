@@ -18,7 +18,7 @@ dependencies {
     compileOnly(libs.paper)
 
     implementation(projects.boxCategoryFeature)
-    implementation(projects.boxVersionCommon)
+    implementation(projects.boxItemProvider)
 }
 
 bundler {

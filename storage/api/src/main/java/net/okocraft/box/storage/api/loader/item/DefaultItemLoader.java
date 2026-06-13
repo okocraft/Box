@@ -5,7 +5,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.storage.api.model.item.DefaultItemStorage;
-import net.okocraft.box.storage.api.model.item.NamedItem;
+import net.okocraft.box.item.NamedItem;
 import net.okocraft.box.storage.api.util.SneakyThrow;
 import org.jetbrains.annotations.NotNull;
 

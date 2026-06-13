@@ -3,6 +3,7 @@ package net.okocraft.box.storage.api.model.item;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.IntSet;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import net.okocraft.box.item.NamedItem;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
