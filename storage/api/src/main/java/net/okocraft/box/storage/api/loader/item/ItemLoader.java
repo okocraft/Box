@@ -55,7 +55,7 @@ public final class ItemLoader {
 
     public static @NotNull Result fromStorage(@NotNull DefaultItemProvider itemProvider, @NotNull Storage storage) throws Exception {
         MCDataVersion dataVersion = storage.getDataVersion();
-        MCDataVersion currentVersion = itemProvider.version();
+        MCDataVersion currentVersion = MCDataVersion.current();
 
         if (dataVersion != null) {
             if (dataVersion.isAfter(currentVersion)) {
@@ -68,7 +68,7 @@ public final class ItemLoader {
         }
 
         Result result = new Result(
-            loadDefaultItems(itemProvider, storage.defaultItemStorage(), dataVersion, remappedItems -> processRemappedItems(remappedItems, currentVersion, storage.remappedItemStorage(), storage.getStockStorage())),
+            loadDefaultItems(itemProvider, storage.defaultItemStorage(), dataVersion, currentVersion, remappedItems -> processRemappedItems(remappedItems, currentVersion, storage.remappedItemStorage(), storage.getStockStorage())),
             loadCustomItems(storage.customItemStorage(), dataVersion != null && !dataVersion.isSame(currentVersion))
         );
 
@@ -77,7 +77,7 @@ public final class ItemLoader {
         return result;
     }
 
-    private static @NotNull List<@NotNull BoxDefaultItem> loadDefaultItems(@NotNull DefaultItemProvider itemProvider, @NotNull DefaultItemStorage defaultItemStorage, @Nullable MCDataVersion dataVersion, @NotNull Consumer<Collection<DefaultItemLoader.RemappedItem>> remappedItemsConsumer) throws Exception {
+    private static @NotNull List<@NotNull BoxDefaultItem> loadDefaultItems(@NotNull DefaultItemProvider itemProvider, @NotNull DefaultItemStorage defaultItemStorage, @Nullable MCDataVersion dataVersion, MCDataVersion currentVersion, @NotNull Consumer<Collection<DefaultItemLoader.RemappedItem>> remappedItemsConsumer) throws Exception {
         DefaultItemLoader<DefaultItem> loader = new DefaultItemLoader<>(
             itemProvider.provide(),
             defaultItemStorage
@@ -88,7 +88,7 @@ public final class ItemLoader {
             return loader.initialize((item, id) -> BoxItemFactory.createDefaultItem(id, item));
         }
 
-        if (dataVersion.isSame(itemProvider.version())) {
+        if (dataVersion.isSame(currentVersion)) {
             BoxLogger.logger().info("Loading default items...");
             return loader.load(
                 (item, id) -> BoxItemFactory.createDefaultItem(id, item),
@@ -98,7 +98,7 @@ public final class ItemLoader {
 
         BoxLogger.logger().info("Updating default items...");
         DefaultItemLoader.UpdateResult<@NotNull BoxDefaultItem> updateResult = loader.update(
-            itemProvider.renamedItems(dataVersion, itemProvider.version()),
+            itemProvider.renamedItems(dataVersion, currentVersion),
             (item, id) -> BoxItemFactory.createDefaultItem(id, item)
         );
 

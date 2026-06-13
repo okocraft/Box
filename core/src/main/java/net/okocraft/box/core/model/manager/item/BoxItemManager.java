@@ -197,7 +197,7 @@ public class BoxItemManager implements ItemManager {
 
     @Override
     public @NotNull UnaryOperator<String> getItemNameConverter(@NotNull MCDataVersion sourceVersion) {
-        return this.defaultItemProvider.itemNameConvertor(sourceVersion, this.defaultItemProvider.version());
+        return this.defaultItemProvider.itemNameConvertor(sourceVersion, MCDataVersion.current());
     }
 
     @Override

@@ -4,18 +4,16 @@ import net.okocraft.box.api.APISetter;
 import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.feature.BoxFeature;
 import net.okocraft.box.api.util.BoxLogger;
-import net.okocraft.box.api.util.MCDataVersion;
 import net.okocraft.box.bootstrap.BoxBootstrapContext;
 import net.okocraft.box.core.BoxCore;
 import net.okocraft.box.core.PluginContext;
+import net.okocraft.box.core.command.BukkitCommandRegisterer;
 import net.okocraft.box.core.config.Config;
 import net.okocraft.box.core.scheduler.FoliaSchedulerWrapper;
+import net.okocraft.box.item.DefaultItemProvider;
 import net.okocraft.box.storage.api.holder.StorageHolder;
 import net.okocraft.box.storage.api.model.Storage;
 import net.okocraft.box.storage.api.registry.StorageRegistry;
-import net.okocraft.box.core.command.BukkitCommandRegisterer;
-import net.okocraft.box.item.MinecraftVersioning;
-import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -36,16 +34,6 @@ public final class BoxPlugin extends JavaPlugin {
     private Storage storage;
 
     public BoxPlugin(@NotNull BoxBootstrapContext boxBootstrapContext) {
-        if (MinecraftVersioning.leastVersion().isAfter(MCDataVersion.current())) {
-            this.pluginContext = null;
-            this.boxCore = null;
-            this.storageRegistry = null;
-            this.features = null;
-            this.status = Status.UNSUPPORTED_PLATFORM;
-            BoxLogger.logger().error("Unsupported version: {}", Bukkit.getVersion());
-            return;
-        }
-
         this.pluginContext = new PluginContext(
             this,
             boxBootstrapContext.getVersion(),
@@ -54,7 +42,7 @@ public final class BoxPlugin extends JavaPlugin {
             boxBootstrapContext.getEventService(),
             boxBootstrapContext.createMessageProvider(),
             new Config(boxBootstrapContext.getDataDirectory()),
-            MinecraftVersioning.createDefaultItemProvider(),
+            DefaultItemProvider.createDefaultItemProvider(),
             command -> BukkitCommandRegisterer.register(this.getName().toLowerCase(Locale.ENGLISH), command)
         );
 

@@ -9,8 +9,9 @@ import java.util.stream.Stream;
 
 public interface DefaultItemProvider {
 
-    @NotNull
-    MCDataVersion version();
+    static @NotNull DefaultItemProvider createDefaultItemProvider() {
+        return new DefaultItemProviderImpl();
+    }
 
     @NotNull Stream<DefaultItem> provide();
 

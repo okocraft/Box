@@ -24,10 +24,10 @@ import java.util.function.Predicate;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-public final class ItemSources {
+final class ItemSources {
 
     @SuppressWarnings("deprecation")
-    public static @NotNull Stream<DefaultItem> itemTypes() {
+    static @NotNull Stream<DefaultItem> itemTypes() {
         World world = Bukkit.getWorlds().getFirst();
         Set<ItemType> excludedTypes = Set.of(ItemType.AIR, ItemType.GOAT_HORN, ItemType.FIREWORK_ROCKET, ItemType.OMINOUS_BOTTLE);
         return registry(RegistryKey.ITEM).stream()
@@ -36,7 +36,7 @@ public final class ItemSources {
             .map(type -> new DefaultItem(ItemNameGenerator.key(type), ItemStack.of(Objects.requireNonNull(type.asMaterial()), 1))); // FIXME: remove asMaterial in the future
     }
 
-    public static @NotNull Stream<DefaultItem> potions() {
+    static @NotNull Stream<DefaultItem> potions() {
         return registry(RegistryKey.POTION).stream().flatMap(ItemSources::createItemsForPotionType);
     }
 
@@ -50,7 +50,7 @@ public final class ItemSources {
             });
     }
 
-    public static @NotNull Stream<DefaultItem> enchantedBooks() {
+    static @NotNull Stream<DefaultItem> enchantedBooks() {
         return registry(RegistryKey.ENCHANTMENT).stream()
             .map(enchantment -> {
                 String name = ItemNameGenerator.keys(Material.ENCHANTED_BOOK, enchantment);
@@ -60,7 +60,7 @@ public final class ItemSources {
             });
     }
 
-    public static @NotNull Stream<DefaultItem> fireworks() {
+    static @NotNull Stream<DefaultItem> fireworks() {
         return IntStream.of(1, 2, 3).mapToObj(power -> {
             String name = ItemNameGenerator.key(Material.FIREWORK_ROCKET) + "_" + power;
             ItemStack firework = new ItemStack(Material.FIREWORK_ROCKET);
@@ -69,7 +69,7 @@ public final class ItemSources {
         });
     }
 
-    public static @NotNull Stream<DefaultItem> goatHorns() {
+    static @NotNull Stream<DefaultItem> goatHorns() {
         return registry(RegistryKey.INSTRUMENT).stream().map(instrument -> {
             String name = ItemNameGenerator.key(instrument);
             ItemStack goatHorn = new ItemStack(Material.GOAT_HORN);
@@ -78,7 +78,7 @@ public final class ItemSources {
         });
     }
 
-    public static @NotNull Stream<DefaultItem> ominousBottles() {
+    static @NotNull Stream<DefaultItem> ominousBottles() {
         return IntStream.rangeClosed(1, 5).mapToObj(level -> {
             String name = ItemNameGenerator.key(Material.OMINOUS_BOTTLE) + "_" + level;
             ItemStack bottle = new ItemStack(Material.OMINOUS_BOTTLE);
@@ -91,10 +91,10 @@ public final class ItemSources {
         return RegistryAccess.registryAccess().getRegistry(key);
     }
 
-    public static class Merger {
+    static class Merger {
         private Stream<DefaultItem> current;
 
-        public @NotNull Merger append(@NotNull Stream<DefaultItem> stream) {
+        @NotNull Merger append(@NotNull Stream<DefaultItem> stream) {
             if (this.current != null) {
                 this.current = Stream.concat(this.current, stream);
             } else {

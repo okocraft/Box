@@ -6,7 +6,6 @@ import net.okocraft.box.feature.category.internal.category.defaults.DefaultCateg
 import net.okocraft.box.feature.category.internal.category.defaults.DefaultCategory;
 import net.okocraft.box.item.DefaultItem;
 import net.okocraft.box.item.DefaultItemProvider;
-import net.okocraft.box.item.MinecraftVersioning;
 import net.okocraft.box.item.RenamedItems;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
@@ -32,9 +31,8 @@ class DataGenerator {
     private final Map<String, String> renamedItems;
 
     DataGenerator() {
-        DefaultItemProvider provider = MinecraftVersioning.createDefaultItemProvider();
-        this.version = provider.version();
-        this.defaultItems = provider.provide().map(DefaultItem::plainName).distinct().sorted().toList();
+        this.version = MCDataVersion.current();
+        this.defaultItems = DefaultItemProvider.createDefaultItemProvider().provide().map(DefaultItem::plainName).distinct().sorted().toList();
         this.renamedItems = RenamedItems.loadVersionFromResource(this.version);
     }
 
