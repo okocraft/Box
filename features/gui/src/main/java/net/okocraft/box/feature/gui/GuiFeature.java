@@ -55,7 +55,13 @@ public class GuiFeature extends AbstractBoxFeature implements Reloadable {
 
     @Override
     public void reload(@NotNull FeatureContext.Reloading context) {
-        this.closeMenus();
+        Bukkit.getOnlinePlayers().forEach(player -> {
+            BoxAPI.api().getScheduler().runEntityTask(player, () -> {
+                if (BoxInventoryHolder.isBoxMenu(player.getOpenInventory().getTopInventory())) {
+                    player.closeInventory();
+                }
+            });
+        });
     }
 
     private void closeMenus() {
