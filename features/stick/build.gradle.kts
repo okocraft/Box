@@ -21,6 +21,7 @@ repositories {
         url = uri("https://maven.enginehub.org/repo/")
         mavenContent {
             includeGroupAndSubgroups("com.sk89q")
+            includeGroupAndSubgroups("org.enginehub")
         }
     }
 }
