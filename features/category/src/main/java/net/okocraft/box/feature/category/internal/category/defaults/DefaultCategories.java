@@ -102,6 +102,7 @@ public final class DefaultCategories {
             DefaultCategory.builder().key("concretes").icon(Material.WHITE_CONCRETE).items(categorizedItemMap.get("concretes")).addDefaultDisplayName("Concretes").addDisplayName(JAPANESE, "コンクリート").build(),
             DefaultCategory.builder().key("wools").icon(Material.WHITE_WOOL).items(categorizedItemMap.get("wools")).addDefaultDisplayName("Wools").addDisplayName(JAPANESE, "羊毛").build(),
             DefaultCategory.builder().key("sculk").icon(Material.SCULK).items(categorizedItemMap.get("sculk")).addDefaultDisplayName("Sculk").addDisplayName(JAPANESE, "スカルク").build(),
+            DefaultCategory.builder().key("sulfur-caves").icon(Material.SULFUR).items(categorizedItemMap.get("sulfur-caves")).addDefaultDisplayName("Sulfur Caves").addDisplayName(JAPANESE, "硫黄の洞窟").build(),
             DefaultCategory.builder().key("nether").icon(Material.NETHERRACK).items(categorizedItemMap.get("nether")).addDefaultDisplayName("Nether").addDisplayName(JAPANESE, "ネザー").build(),
             DefaultCategory.builder().key("end").icon(Material.END_STONE).items(categorizedItemMap.get("end")).addDefaultDisplayName("End").addDisplayName(JAPANESE, "エンド").build(),
             DefaultCategory.builder().key("shulker-boxes").icon(Material.SHULKER_BOX).items(categorizedItemMap.get("shulker-boxes")).addDefaultDisplayName("Shulker Boxes").addDisplayName(JAPANESE, "シュルカーボックス").build(),
