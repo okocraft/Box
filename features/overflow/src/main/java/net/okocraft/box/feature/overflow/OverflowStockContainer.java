@@ -17,14 +17,11 @@ import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.storage.api.model.stock.PartialSavingStockStorage;
 import net.okocraft.box.storage.api.model.stock.StockStorage;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -43,11 +40,10 @@ final class OverflowStockContainer {
 
     private final Object lock = new Object();
     private final List<UUID> holderUuids = new ArrayList<>();
-    private final Map<UUID, StockHolder> dirtyHolders = new HashMap<>();
-    private final Map<UUID, IntSet> dirtyItems = new HashMap<>();
+    private final IntSet changedItemIds = new IntOpenHashSet();
 
     private StockHolder currentHolder;
-    private boolean holderListDirty;
+    private boolean holderListChanged;
 
     private OverflowStockContainer(
         @NotNull UUID ownerUuid,
@@ -81,59 +77,36 @@ final class OverflowStockContainer {
         return container;
     }
 
-    void increase(@NotNull BoxItem item, int amount) {
+    void increase(@NotNull BoxItem item, int amount) throws Exception {
         if (amount <= 0) {
             return;
         }
 
         synchronized (this.lock) {
-            StockHolder holder = this.currentHolderOrCreate();
+            StockHolder holder = this.getOrCreateCurrentHolder();
             int capacity = Integer.MAX_VALUE - holder.getAmount(item);
-            int increment = Math.min(amount, capacity);
 
-            if (0 < increment) {
-                holder.increase(item, increment, CAUSE);
-                this.rememberChange(holder, item);
+            if (amount <= capacity) {
+                this.increase(holder, item, amount);
+                return;
             }
 
-            int remaining = amount - increment;
-
-            if (0 < remaining) {
-                holder = this.createHolder();
-                holder.increase(item, remaining, CAUSE);
-                this.rememberChange(holder, item);
+            if (0 < capacity) {
+                this.increase(holder, item, capacity);
             }
+
+            // The current page will never be used again after moving to the next page.
+            // Persist it here so only the latest page needs to stay in memory.
+            this.saveChanges0();
+
+            holder = this.createHolder();
+            this.increase(holder, item, amount - capacity);
         }
     }
 
     void saveChanges() throws Exception {
-        SaveSnapshot snapshot;
-
         synchronized (this.lock) {
-            snapshot = this.createSaveSnapshot();
-
-            if (snapshot == null) {
-                return;
-            }
-
-            this.holderListDirty = false;
-            this.dirtyHolders.clear();
-            this.dirtyItems.clear();
-        }
-
-        try {
-            for (DirtyHolder dirtyHolder : snapshot.dirtyHolders()) {
-                this.saveHolder(dirtyHolder.holder(), dirtyHolder.itemIds());
-            }
-
-            if (snapshot.holderUuids() != null) {
-                this.saveHolderList(snapshot.holderUuids());
-            }
-        } catch (Exception e) {
-            synchronized (this.lock) {
-                this.restore(snapshot);
-            }
-            throw e;
+            this.saveChanges0();
         }
     }
 
@@ -148,21 +121,18 @@ final class OverflowStockContainer {
         Set<UUID> loadedUuids = new HashSet<>();
 
         for (String value : list.asList(String.class)) {
-            UUID holderUuid;
-
             try {
-                holderUuid = UUID.fromString(value);
+                UUID holderUuid = UUID.fromString(value);
+
+                if (loadedUuids.add(holderUuid)) {
+                    this.holderUuids.add(holderUuid);
+                }
             } catch (IllegalArgumentException e) {
                 BoxLogger.logger().warn(
                     "Ignoring invalid overflow stock holder UUID '{}' for {}.",
                     value,
                     this.ownerUuid
                 );
-                continue;
-            }
-
-            if (loadedUuids.add(holderUuid)) {
-                this.holderUuids.add(holderUuid);
             }
         }
 
@@ -180,88 +150,66 @@ final class OverflowStockContainer {
         );
     }
 
-    private @NotNull StockHolder currentHolderOrCreate() {
-        return this.currentHolder != null
-            ? this.currentHolder
-            : this.createHolder();
+    private @NotNull StockHolder getOrCreateCurrentHolder() {
+        return this.currentHolder != null ? this.currentHolder : this.createHolder();
     }
 
     private @NotNull StockHolder createHolder() {
         UUID holderUuid = UUID.randomUUID();
-        StockHolder holder = this.stockManager.createStockHolder(
+        this.holderUuids.add(holderUuid);
+        this.holderListChanged = true;
+
+        return this.currentHolder = this.stockManager.createStockHolder(
             holderUuid,
             HOLDER_NAME,
             this.eventCaller
         );
-
-        this.holderUuids.add(holderUuid);
-        this.currentHolder = holder;
-        this.holderListDirty = true;
-        return holder;
     }
 
-    private void rememberChange(@NotNull StockHolder holder, @NotNull BoxItem item) {
-        this.dirtyHolders.put(holder.getUUID(), holder);
-        this.dirtyItems
-            .computeIfAbsent(holder.getUUID(), _ -> new IntOpenHashSet())
-            .add(item.getInternalId());
+    private void increase(@NotNull StockHolder holder, @NotNull BoxItem item, int amount) {
+        holder.increase(item, amount, CAUSE);
+        this.changedItemIds.add(item.getInternalId());
     }
 
-    private @Nullable SaveSnapshot createSaveSnapshot() {
-        if (!this.holderListDirty && this.dirtyHolders.isEmpty()) {
-            return null;
+    private void saveChanges0() throws Exception {
+        if (this.currentHolder == null) {
+            return;
         }
 
-        List<DirtyHolder> holders = new ArrayList<>(this.dirtyHolders.size());
-
-        for (Map.Entry<UUID, StockHolder> entry : this.dirtyHolders.entrySet()) {
-            IntSet itemIds = this.dirtyItems.get(entry.getKey());
-
-            if (itemIds != null && !itemIds.isEmpty()) {
-                holders.add(new DirtyHolder(entry.getValue(), new IntOpenHashSet(itemIds)));
-            }
+        if (!this.changedItemIds.isEmpty()) {
+            this.saveCurrentHolder();
         }
 
-        List<UUID> holderUuidSnapshot = this.holderListDirty
-            ? List.copyOf(this.holderUuids)
-            : null;
+        if (this.holderListChanged) {
+            this.saveHolderList();
+        }
 
-        return new SaveSnapshot(holders, holderUuidSnapshot);
+        this.changedItemIds.clear();
+        this.holderListChanged = false;
     }
 
-    private void restore(@NotNull SaveSnapshot snapshot) {
-        for (DirtyHolder dirtyHolder : snapshot.dirtyHolders()) {
-            UUID uuid = dirtyHolder.holder().getUUID();
-            this.dirtyHolders.put(uuid, dirtyHolder.holder());
-            this.dirtyItems
-                .computeIfAbsent(uuid, _ -> new IntOpenHashSet())
-                .addAll(dirtyHolder.itemIds());
-        }
-
-        if (snapshot.holderUuids() != null) {
-            this.holderListDirty = true;
-        }
-    }
-
-    private void saveHolder(@NotNull StockHolder holder, @NotNull IntSet itemIds) throws Exception {
+    private void saveCurrentHolder() throws Exception {
         if (this.stockStorage instanceof PartialSavingStockStorage partialSaving) {
-            List<StockData> stockData = new ArrayList<>(itemIds.size());
+            List<StockData> stockData = new ArrayList<>(this.changedItemIds.size());
 
-            for (int itemId : itemIds) {
-                stockData.add(new StockData(itemId, holder.getAmount(itemId)));
+            for (int itemId : this.changedItemIds) {
+                stockData.add(new StockData(itemId, this.currentHolder.getAmount(itemId)));
             }
 
-            partialSaving.savePartialStockData(holder.getUUID(), stockData);
+            partialSaving.savePartialStockData(this.currentHolder.getUUID(), stockData);
         } else {
-            this.stockStorage.saveStockData(holder.getUUID(), holder.toStockDataCollection());
+            this.stockStorage.saveStockData(
+                this.currentHolder.getUUID(),
+                this.currentHolder.toStockDataCollection()
+            );
         }
     }
 
-    private void saveHolderList(@NotNull List<UUID> holderUuids) throws Exception {
+    private void saveHolderList() throws Exception {
         MapNode data = MapNode.create();
         ListNode holdersNode = data.createList(HOLDERS_KEY);
 
-        for (UUID holderUuid : holderUuids) {
+        for (UUID holderUuid : this.holderUuids) {
             holdersNode.add(holderUuid.toString());
         }
 
@@ -272,15 +220,4 @@ final class OverflowStockContainer {
     private static @NotNull Key createCustomDataKey(@NotNull UUID ownerUuid) {
         return Key.key(CUSTOM_DATA_NAMESPACE, ownerUuid.toString());
     }
-
-    private record DirtyHolder(@NotNull StockHolder holder, @NotNull IntSet itemIds) {
-    }
-
-    private record SaveSnapshot(
-        @NotNull List<DirtyHolder> dirtyHolders,
-        @Nullable List<UUID> holderUuids
-    ) {
-    }
-
 }
-
