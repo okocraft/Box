@@ -11,17 +11,21 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 final class OverflowStockContainerRegistry {
 
-    private static final int LOAD_LOCK_COUNT = 64;
+    private static final int OWNER_LOCK_COUNT = 64;
 
     private final CustomDataManager customDataManager;
     private final StockStorage stockStorage;
     private final StockManager stockManager;
     private final StockEventCaller eventCaller;
     private final Map<UUID, OverflowStockContainer> containers = new ConcurrentHashMap<>();
-    private final Object[] loadLocks = new Object[LOAD_LOCK_COUNT];
+    private final Object[] ownerLocks = new Object[OWNER_LOCK_COUNT];
+    private final ReentrantReadWriteLock lifecycleLock = new ReentrantReadWriteLock();
+
+    private boolean closed;
 
     OverflowStockContainerRegistry(
         @NotNull CustomDataManager customDataManager,
@@ -34,45 +38,86 @@ final class OverflowStockContainerRegistry {
         this.stockManager = stockManager;
         this.eventCaller = eventCaller;
 
-        for (int i = 0; i < this.loadLocks.length; i++) {
-            this.loadLocks[i] = new Object();
+        for (int i = 0; i < this.ownerLocks.length; i++) {
+            this.ownerLocks[i] = new Object();
         }
     }
 
     void increase(@NotNull UUID ownerUuid, @NotNull BoxItem item, int amount) throws Exception {
-        this.getOrLoad(ownerUuid).increase(item, amount);
+        this.lifecycleLock.readLock().lock();
+
+        try {
+            this.checkOpen();
+
+            synchronized (this.ownerLock(ownerUuid)) {
+                this.getOrLoad(ownerUuid).increase(item, amount);
+            }
+        } finally {
+            this.lifecycleLock.readLock().unlock();
+        }
     }
 
     void saveIfLoaded(@NotNull UUID ownerUuid) throws Exception {
-        OverflowStockContainer container = this.containers.get(ownerUuid);
+        this.lifecycleLock.readLock().lock();
 
-        if (container != null) {
-            container.saveChanges();
+        try {
+            this.checkOpen();
+
+            synchronized (this.ownerLock(ownerUuid)) {
+                OverflowStockContainer container = this.containers.get(ownerUuid);
+
+                if (container != null) {
+                    container.saveChanges();
+                }
+            }
+        } finally {
+            this.lifecycleLock.readLock().unlock();
         }
     }
 
     void unload(@NotNull UUID ownerUuid) throws Exception {
-        OverflowStockContainer container = this.containers.get(ownerUuid);
+        this.lifecycleLock.readLock().lock();
 
-        if (container == null) {
-            return;
+        try {
+            this.checkOpen();
+
+            synchronized (this.ownerLock(ownerUuid)) {
+                OverflowStockContainer container = this.containers.remove(ownerUuid);
+
+                if (container != null) {
+                    container.saveChanges();
+                }
+            }
+        } finally {
+            this.lifecycleLock.readLock().unlock();
         }
-
-        container.saveChanges();
-        this.containers.remove(ownerUuid, container);
     }
 
-    void saveAll() {
-        for (Map.Entry<UUID, OverflowStockContainer> entry : this.containers.entrySet()) {
-            try {
-                entry.getValue().saveChanges();
-            } catch (Exception e) {
-                BoxLogger.logger().error(
-                    "Could not save overflow stock for {}.",
-                    entry.getKey(),
-                    e
-                );
+    void close() {
+        this.lifecycleLock.writeLock().lock();
+
+        try {
+            if (this.closed) {
+                return;
             }
+
+            this.closed = true;
+
+            for (Map.Entry<UUID, OverflowStockContainer> entry : this.containers.entrySet()) {
+                try {
+                    entry.getValue().saveChanges();
+                } catch (Exception e) {
+                    BoxLogger.logger().error(
+                        "Could not save overflow stock for {}.",
+                        entry.getKey(),
+                        e
+                    );
+                }
+            }
+
+            this.containers.clear();
+        } finally {
+            this.lifecycleLock.writeLock().unlock();
         }
     }
 
@@ -83,24 +128,24 @@ final class OverflowStockContainerRegistry {
             return loaded;
         }
 
-        Object lock = this.loadLocks[ownerUuid.hashCode() & (LOAD_LOCK_COUNT - 1)];
+        OverflowStockContainer container = OverflowStockContainer.load(
+            ownerUuid,
+            this.customDataManager,
+            this.stockStorage,
+            this.stockManager,
+            this.eventCaller
+        );
+        this.containers.put(ownerUuid, container);
+        return container;
+    }
 
-        synchronized (lock) {
-            loaded = this.containers.get(ownerUuid);
+    private @NotNull Object ownerLock(@NotNull UUID ownerUuid) {
+        return this.ownerLocks[ownerUuid.hashCode() & (OWNER_LOCK_COUNT - 1)];
+    }
 
-            if (loaded != null) {
-                return loaded;
-            }
-
-            OverflowStockContainer container = OverflowStockContainer.load(
-                ownerUuid,
-                this.customDataManager,
-                this.stockStorage,
-                this.stockManager,
-                this.eventCaller
-            );
-            this.containers.put(ownerUuid, container);
-            return container;
+    private void checkOpen() {
+        if (this.closed) {
+            throw new IllegalStateException("This overflow stock container registry is already closed.");
         }
     }
 }
