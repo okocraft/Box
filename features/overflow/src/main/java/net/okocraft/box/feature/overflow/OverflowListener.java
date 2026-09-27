@@ -4,19 +4,27 @@ import dev.siroshun.event4j.api.priority.Priority;
 import net.kyori.adventure.key.Key;
 import net.okocraft.box.api.event.stockholder.stock.StockOverflowEvent;
 import net.okocraft.box.api.model.stock.PersonalStockHolder;
+import net.okocraft.box.api.model.stock.StockHolder;
 import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.api.util.SubscribedListenerHolder;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.UUID;
 
 final class OverflowListener {
 
     private static final Key LISTENER_KEY = Key.key("box", "feature/overflow/stock_overflow_listener");
 
-    private final OverflowManager manager;
+    private final OverflowStockHolderMap holderMap;
+    private final OverflowStockHolderStore holderStore;
     private final SubscribedListenerHolder listenerHolder = new SubscribedListenerHolder();
 
-    OverflowListener(@NotNull OverflowManager manager) {
-        this.manager = manager;
+    OverflowListener(
+        @NotNull OverflowStockHolderMap holderMap,
+        @NotNull OverflowStockHolderStore holderStore
+    ) {
+        this.holderMap = holderMap;
+        this.holderStore = holderStore;
     }
 
     void register() {
@@ -30,16 +38,20 @@ final class OverflowListener {
     }
 
     private void onOverflow(@NotNull StockOverflowEvent event) {
-        if (!(event.getStockHolder() instanceof PersonalStockHolder stockHolder)) {
+        StockHolder source = event.getStockHolder();
+
+        if (!(source instanceof PersonalStockHolder)
+            && !this.holderMap.isOverflowHolder(source.getUUID())) {
             return;
         }
 
         try {
-            this.manager.store(stockHolder.getUUID(), event.getItem(), event.getExcess());
+            UUID overflowHolderUuid = this.holderMap.getOrCreateNext(source.getUUID());
+            this.holderStore.increase(overflowHolderUuid, event.getItem(), event.getExcess());
         } catch (Exception e) {
             BoxLogger.logger().error(
                 "Could not store overflowed stock ({}, {})",
-                stockHolder.getUUID(),
+                source.getUUID(),
                 event.getItem().getPlainName(),
                 e
             );
