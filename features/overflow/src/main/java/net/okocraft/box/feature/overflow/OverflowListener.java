@@ -73,7 +73,7 @@ final class OverflowListener {
     }
 
     private void onPlayerUnload(@NotNull PlayerUnloadEvent event) {
-        UUID ownerUuid = event.getBoxPlayer().getUser().getUUID();
+        UUID ownerUuid = event.getBoxPlayer().getUUID();
 
         try {
             this.containerRegistry.unload(ownerUuid);
