@@ -62,7 +62,7 @@ final class OverflowListener {
         UUID ownerUuid = stockHolder.getUser().getUUID();
 
         try {
-            this.containerRegistry.saveIfLoaded(ownerUuid);
+            this.containerRegistry.save(ownerUuid);
         } catch (Exception e) {
             BoxLogger.logger().error(
                 "Could not save overflow stock for {}.",
