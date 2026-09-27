@@ -39,6 +39,7 @@ final class OverflowStockContainer {
     private final CustomDataManager customDataManager;
     private final StockStorage stockStorage;
     private final StockManager stockManager;
+    private final StockEventCaller eventCaller;
 
     private final Object lock = new Object();
     private final List<UUID> holderUuids = new ArrayList<>();
@@ -52,25 +53,29 @@ final class OverflowStockContainer {
         @NotNull UUID ownerUuid,
         @NotNull CustomDataManager customDataManager,
         @NotNull StockStorage stockStorage,
-        @NotNull StockManager stockManager
+        @NotNull StockManager stockManager,
+        @NotNull StockEventCaller eventCaller
     ) {
         this.ownerUuid = ownerUuid;
         this.customDataManager = customDataManager;
         this.stockStorage = stockStorage;
         this.stockManager = stockManager;
+        this.eventCaller = eventCaller;
     }
 
     static @NotNull OverflowStockContainer load(
         @NotNull UUID ownerUuid,
         @NotNull CustomDataManager customDataManager,
         @NotNull StockStorage stockStorage,
-        @NotNull StockManager stockManager
+        @NotNull StockManager stockManager,
+        @NotNull StockEventCaller eventCaller
     ) throws Exception {
         OverflowStockContainer container = new OverflowStockContainer(
             ownerUuid,
             customDataManager,
             stockStorage,
-            stockManager
+            stockManager,
+            eventCaller
         );
         container.loadCurrentHolder();
         return container;
@@ -170,7 +175,7 @@ final class OverflowStockContainer {
         this.currentHolder = this.stockManager.createStockHolder(
             currentUuid,
             HOLDER_NAME,
-            VoidStockEventCaller.INSTANCE,
+            this.eventCaller,
             stockData
         );
     }
@@ -186,7 +191,7 @@ final class OverflowStockContainer {
         StockHolder holder = this.stockManager.createStockHolder(
             holderUuid,
             HOLDER_NAME,
-            VoidStockEventCaller.INSTANCE
+            this.eventCaller
         );
 
         this.holderUuids.add(holderUuid);
@@ -277,27 +282,5 @@ final class OverflowStockContainer {
     ) {
     }
 
-    private enum VoidStockEventCaller implements StockEventCaller {
-        INSTANCE;
-
-        @Override
-        public void callSetEvent(@NotNull StockHolder stockHolder, @NotNull BoxItem item, int amount, int previousAmount, StockEvent.@NotNull Cause cause) {
-        }
-
-        @Override
-        public void callIncreaseEvent(@NotNull StockHolder stockHolder, @NotNull BoxItem item, int increments, int currentAmount, StockEvent.@NotNull Cause cause) {
-        }
-
-        @Override
-        public void callOverflowEvent(@NotNull StockHolder stockHolder, @NotNull BoxItem item, int increments, int excess, StockEvent.@NotNull Cause cause) {
-        }
-
-        @Override
-        public void callDecreaseEvent(@NotNull StockHolder stockHolder, @NotNull BoxItem item, int decrements, int currentAmount, StockEvent.@NotNull Cause cause) {
-        }
-
-        @Override
-        public void callResetEvent(@NotNull StockHolder stockHolder, @NotNull Collection<StockData> stockDataBeforeReset) {
-        }
-    }
 }
+
