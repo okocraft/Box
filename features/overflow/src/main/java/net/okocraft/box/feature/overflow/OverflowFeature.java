@@ -3,6 +3,7 @@ package net.okocraft.box.feature.overflow;
 import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.feature.AbstractBoxFeature;
 import net.okocraft.box.api.feature.FeatureContext;
+import net.okocraft.box.api.model.stock.StockEventCaller;
 import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.storage.api.holder.StorageHolder;
 import org.jetbrains.annotations.NotNull;
@@ -27,7 +28,8 @@ public class OverflowFeature extends AbstractBoxFeature {
         this.containerRegistry = new OverflowStockContainerRegistry(
             api.getCustomDataManager(),
             StorageHolder.getStorage().getStockStorage(),
-            api.getStockManager()
+            api.getStockManager(),
+            StockEventCaller.createDefault(api.getEventCallers().async())
         );
         this.listener = new OverflowListener(this.containerRegistry);
         this.listener.register();
