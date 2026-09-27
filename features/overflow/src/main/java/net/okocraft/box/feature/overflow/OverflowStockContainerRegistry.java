@@ -82,10 +82,11 @@ final class OverflowStockContainerRegistry {
             this.checkOpen();
 
             synchronized (this.ownerLock(ownerUuid)) {
-                OverflowStockContainer container = this.containers.remove(ownerUuid);
+                OverflowStockContainer container = this.containers.get(ownerUuid);
 
                 if (container != null) {
                     container.saveChanges();
+                    this.containers.remove(ownerUuid, container);
                 }
             }
         } finally {
