@@ -3,6 +3,7 @@ package net.okocraft.box.feature.overflow;
 import net.okocraft.box.api.model.customdata.CustomDataManager;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.model.manager.StockManager;
+import net.okocraft.box.api.model.stock.StockEventCaller;
 import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.storage.api.model.stock.StockStorage;
 import org.jetbrains.annotations.NotNull;
@@ -18,17 +19,20 @@ final class OverflowStockContainerRegistry {
     private final CustomDataManager customDataManager;
     private final StockStorage stockStorage;
     private final StockManager stockManager;
+    private final StockEventCaller eventCaller;
     private final Map<UUID, OverflowStockContainer> containers = new ConcurrentHashMap<>();
     private final Object[] loadLocks = new Object[LOAD_LOCK_COUNT];
 
     OverflowStockContainerRegistry(
         @NotNull CustomDataManager customDataManager,
         @NotNull StockStorage stockStorage,
-        @NotNull StockManager stockManager
+        @NotNull StockManager stockManager,
+        @NotNull StockEventCaller eventCaller
     ) {
         this.customDataManager = customDataManager;
         this.stockStorage = stockStorage;
         this.stockManager = stockManager;
+        this.eventCaller = eventCaller;
 
         for (int i = 0; i < this.loadLocks.length; i++) {
             this.loadLocks[i] = new Object();
@@ -92,7 +96,8 @@ final class OverflowStockContainerRegistry {
                 ownerUuid,
                 this.customDataManager,
                 this.stockStorage,
-                this.stockManager
+                this.stockManager,
+                this.eventCaller
             );
             this.containers.put(ownerUuid, container);
             return container;
