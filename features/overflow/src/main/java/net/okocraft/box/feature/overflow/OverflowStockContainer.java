@@ -39,9 +39,11 @@ final class OverflowStockContainer {
     private final StockStorage stockStorage;
     private final StockManager stockManager;
 
-    private final List<StockHolder> holders = new ArrayList<>();
+    private final List<UUID> holderUuids = new ArrayList<>();
+    private final Map<UUID, StockHolder> dirtyHolders = new HashMap<>();
     private final Map<UUID, IntSet> dirtyItems = new HashMap<>();
 
+    private StockHolder currentHolder;
     private boolean holderListDirty;
 
     private OverflowStockContainer(
@@ -68,7 +70,7 @@ final class OverflowStockContainer {
             stockStorage,
             stockManager
         );
-        container.loadHolders();
+        container.loadCurrentHolder();
         return container;
     }
 
@@ -77,7 +79,7 @@ final class OverflowStockContainer {
             return;
         }
 
-        StockHolder holder = this.lastHolderOrCreate();
+        StockHolder holder = this.currentHolderOrCreate();
         int capacity = Integer.MAX_VALUE - holder.getAmount(item);
         int increment = Math.min(amount, capacity);
 
@@ -101,19 +103,21 @@ final class OverflowStockContainer {
             this.holderListDirty = false;
         }
 
-        for (StockHolder holder : this.holders) {
+        for (StockHolder holder : List.copyOf(this.dirtyHolders.values())) {
             IntSet itemIds = this.dirtyItems.get(holder.getUUID());
 
             if (itemIds == null || itemIds.isEmpty()) {
+                this.dirtyHolders.remove(holder.getUUID());
                 continue;
             }
 
             this.saveHolder(holder, itemIds);
+            this.dirtyHolders.remove(holder.getUUID());
             this.dirtyItems.remove(holder.getUUID());
         }
     }
 
-    private void loadHolders() throws Exception {
+    private void loadCurrentHolder() throws Exception {
         MapNode data = this.customDataManager.loadData(createCustomDataKey(this.ownerUuid));
         Node<?> holdersNode = data.get(HOLDERS_KEY);
 
@@ -137,26 +141,29 @@ final class OverflowStockContainer {
                 continue;
             }
 
-            if (!loadedUuids.add(holderUuid)) {
-                continue;
+            if (loadedUuids.add(holderUuid)) {
+                this.holderUuids.add(holderUuid);
             }
-
-            Collection<StockData> stockData = this.stockStorage.loadStockData(holderUuid);
-            this.holders.add(
-                this.stockManager.createStockHolder(
-                    holderUuid,
-                    HOLDER_NAME,
-                    VoidStockEventCaller.INSTANCE,
-                    stockData
-                )
-            );
         }
+
+        if (this.holderUuids.isEmpty()) {
+            return;
+        }
+
+        UUID currentUuid = this.holderUuids.getLast();
+        Collection<StockData> stockData = this.stockStorage.loadStockData(currentUuid);
+        this.currentHolder = this.stockManager.createStockHolder(
+            currentUuid,
+            HOLDER_NAME,
+            VoidStockEventCaller.INSTANCE,
+            stockData
+        );
     }
 
-    private @NotNull StockHolder lastHolderOrCreate() {
-        return this.holders.isEmpty()
-            ? this.createHolder()
-            : this.holders.getLast();
+    private @NotNull StockHolder currentHolderOrCreate() {
+        return this.currentHolder != null
+            ? this.currentHolder
+            : this.createHolder();
     }
 
     private @NotNull StockHolder createHolder() {
@@ -167,12 +174,14 @@ final class OverflowStockContainer {
             VoidStockEventCaller.INSTANCE
         );
 
-        this.holders.add(holder);
+        this.holderUuids.add(holderUuid);
+        this.currentHolder = holder;
         this.holderListDirty = true;
         return holder;
     }
 
     private void rememberChange(@NotNull StockHolder holder, @NotNull BoxItem item) {
+        this.dirtyHolders.put(holder.getUUID(), holder);
         this.dirtyItems
             .computeIfAbsent(holder.getUUID(), _ -> new IntOpenHashSet())
             .add(item.getInternalId());
@@ -196,8 +205,8 @@ final class OverflowStockContainer {
         MapNode data = MapNode.create();
         ListNode holdersNode = data.createList(HOLDERS_KEY);
 
-        for (StockHolder holder : this.holders) {
-            holdersNode.add(holder.getUUID().toString());
+        for (UUID holderUuid : this.holderUuids) {
+            holdersNode.add(holderUuid.toString());
         }
 
         this.customDataManager.saveData(createCustomDataKey(this.ownerUuid), data);
