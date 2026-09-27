@@ -43,7 +43,7 @@ public class OverflowFeature extends AbstractBoxFeature {
         }
 
         if (this.containerRegistry != null) {
-            this.containerRegistry.saveAll();
+            this.containerRegistry.close();
             this.containerRegistry = null;
         }
     }
