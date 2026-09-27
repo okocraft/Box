@@ -77,7 +77,7 @@ final class OverflowStockContainer {
         return container;
     }
 
-    void increase(@NotNull BoxItem item, int amount) throws Exception {
+    void increase(@NotNull BoxItem item, int amount) throws PartialIncreaseException {
         if (amount <= 0) {
             return;
         }
@@ -97,7 +97,11 @@ final class OverflowStockContainer {
 
             // The current page will never be used again after moving to the next page.
             // Persist it here so only the latest page needs to stay in memory.
-            this.saveChanges0();
+            try {
+                this.saveChanges0();
+            } catch (Exception e) {
+                throw new PartialIncreaseException(capacity, e);
+            }
 
             holder = this.createHolder();
             this.increase(holder, item, amount - capacity);
@@ -219,5 +223,19 @@ final class OverflowStockContainer {
     @SuppressWarnings("PatternValidation")
     private static @NotNull Key createCustomDataKey(@NotNull UUID ownerUuid) {
         return Key.key(CUSTOM_DATA_NAMESPACE, ownerUuid.toString());
+    }
+
+    static final class PartialIncreaseException extends Exception {
+
+        private final int increased;
+
+        private PartialIncreaseException(int increased, @NotNull Exception cause) {
+            super(cause);
+            this.increased = increased;
+        }
+
+        int increased() {
+            return this.increased;
+        }
     }
 }
