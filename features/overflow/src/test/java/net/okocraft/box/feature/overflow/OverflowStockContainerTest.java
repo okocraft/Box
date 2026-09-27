@@ -37,7 +37,8 @@ class OverflowStockContainerTest {
             ownerUuid,
             customDataManager,
             stockStorage,
-            new TestStockManager()
+            new TestStockManager(),
+            StockEventCaller.createDefault(event -> {})
         );
 
         container.increase(ITEM, 10);
@@ -68,7 +69,8 @@ class OverflowStockContainerTest {
             ownerUuid,
             customDataManager,
             stockStorage,
-            new TestStockManager()
+            new TestStockManager(),
+            StockEventCaller.createDefault(event -> {})
         );
 
         container.increase(ITEM, Integer.MAX_VALUE);
