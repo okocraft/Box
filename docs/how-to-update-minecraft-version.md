@@ -8,7 +8,8 @@ Determine:
 
 - the currently committed Minecraft version;
 - the target Minecraft version;
-- a Paper API build compatible with the target version.
+- a Paper API build compatible with the target version;
+- the Minecraft data version for the target version.
 
 Check `gradle/libs.versions.toml`. Renovate may already have updated `paper`; otherwise update it to a compatible build.
 
@@ -63,6 +64,35 @@ The relevant outputs are:
 
 Do not reuse a data-version value from an older Minecraft update.
 
+## 3. Update `MCDataVersion`
+
+Every Minecraft version that Box explicitly supports must have a corresponding constant in:
+
+```text
+api/src/main/java/net/okocraft/box/api/util/MCDataVersion.java
+```
+
+After confirming the target data version, add the target version constant in the existing chronological order:
+
+```java
+public static final MCDataVersion MC_<version> = new MCDataVersion(<data-version>);
+```
+
+Also review the supported versions between the previously committed version and the target version. If Box already added support for an intermediate Minecraft version but its `MCDataVersion` constant is missing, add that constant as part of the update instead of leaving a gap.
+
+Confirm each data-version value from the target Minecraft/Paper runtime or another authoritative source. Values from older updates are examples only and must not be reused for future versions.
+
+For example, PR #615 filled two missing supported-version constants:
+
+```java
+MC_26_2 = 4903
+MC_26_3 = 5023
+```
+
+Those values apply only to Minecraft 26.2 and 26.3.
+
+Adding an `MCDataVersion` constant is independent from item rename handling. Do not add an entry to `RenamedItems.VERSIONS` or create a rename resource unless item identifiers actually changed.
+
 ### If the generator cannot run locally
 
 Create a temporary workflow under `.github/workflows/` on the update branch. It should:
@@ -77,7 +107,7 @@ Use a workflow-level timeout only as a failure safeguard. Do not make a timed-ou
 
 Download the artifact, use it for the update and verification, then delete the temporary workflow before the PR is complete.
 
-## 3. Commit the generated complete list
+## 4. Commit the generated complete list
 
 Copy:
 
@@ -97,7 +127,7 @@ Compare the previous and target complete lists. Investigate any removed identifi
 
 The `-new-items.txt` and `-uncategorized-items.txt` files are review artifacts and are not committed.
 
-## 4. Categorize new items
+## 5. Categorize new items
 
 Use `<target>-new-items.txt` and `<target>-uncategorized-items.txt` to update:
 
@@ -155,7 +185,7 @@ Rerun the generator after category changes:
 
 `<target>-uncategorized-items.txt` must exist and be empty.
 
-## 5. Handle renamed items
+## 6. Handle renamed items
 
 If the previous and target lists indicate that an identifier was renamed, add:
 
@@ -171,16 +201,14 @@ OLD_NAME:NEW_NAME
 
 Then:
 
-1. add an `MCDataVersion` constant for that exact data-version boundary in
-   `api/src/main/java/net/okocraft/box/api/util/MCDataVersion.java`;
-2. register it in `RenamedItems.VERSIONS` in
+1. register the already-added version constant in `RenamedItems.VERSIONS` in
    `item-provider/src/main/java/net/okocraft/box/item/RenamedItems.java`;
-3. update affected category entries using the existing rename syntax when necessary;
-4. rerun the generator and confirm the renamed item is not incorrectly reported as new.
+2. update affected category entries using the existing rename syntax when necessary;
+3. rerun the generator and confirm the renamed item is not incorrectly reported as new.
 
-Do not add an `MCDataVersion` constant for every Minecraft release. Add one only when code needs that exact boundary, such as a rename migration.
+`RenamedItems.VERSIONS` and `item-provider/src/main/resources/<data-version>.txt` are rename-specific. Update them only when an item identifier actually changed; they are not required merely because a new Minecraft version is supported.
 
-## 6. Verify the update
+## 7. Verify the update
 
 Run:
 
@@ -198,8 +226,10 @@ Verify all of the following:
 - `<target>-new-items.txt` contains only genuinely new items after rename handling;
 - the generated complete `<target>.txt` is byte-for-byte identical to the committed `data-generator/src/main/resources/generated/items/<target>.txt`;
 - removed identifiers from the previous complete list have been explained or handled;
+- the target Minecraft version has the correct `MCDataVersion` constant;
+- supported intermediate Minecraft versions do not have missing `MCDataVersion` constants;
 - category ordering cleanup did not change the new items' count, category assignments, or data-version guards;
-- every rename migration is registered in `RenamedItems.VERSIONS`;
+- when renames exist, every rename migration is registered in `RenamedItems.VERSIONS`;
 - the project builds and tests pass;
 - any temporary GitHub Actions workflow has been removed.
 
@@ -211,6 +241,7 @@ A normal version update usually changes:
 data-generator/build.gradle.kts
 data-generator/src/main/resources/generated/items/<target>.txt
 features/category/src/main/resources/default_categories.yml
+api/src/main/java/net/okocraft/box/api/util/MCDataVersion.java
 ```
 
 Depending on the update, it may also change:
@@ -218,7 +249,6 @@ Depending on the update, it may also change:
 ```text
 gradle/libs.versions.toml
 features/category/src/main/java/net/okocraft/box/feature/category/internal/category/defaults/DefaultCategories.java
-api/src/main/java/net/okocraft/box/api/util/MCDataVersion.java
 item-provider/src/main/java/net/okocraft/box/item/RenamedItems.java
 item-provider/src/main/resources/<data-version>.txt
 ```
@@ -227,6 +257,6 @@ Other source files should change only when required by Paper/Bukkit API compatib
 
 ## Automation guidance
 
-An automated update can perform the version edits, generation, full-list comparison, generated-file copy, category coverage check, build, and final invariants.
+An automated update can perform the version edits, data-version lookup, `MCDataVersion` constant updates, missing-intermediate-constant checks, generation, full-list comparison, generated-file copy, category coverage check, build, and final invariants.
 
 When classification is part of the requested work, it should also classify and place new items using the existing category structure and official Minecraft information. It should stop for clarification only when those sources do not support a defensible classification or rename decision.
