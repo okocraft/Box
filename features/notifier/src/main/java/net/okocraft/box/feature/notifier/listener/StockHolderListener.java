@@ -4,6 +4,7 @@ import dev.siroshun.event4j.api.priority.Priority;
 import net.kyori.adventure.key.Key;
 import net.okocraft.box.api.event.stockholder.stock.StockDecreaseEvent;
 import net.okocraft.box.api.event.stockholder.stock.StockIncreaseEvent;
+import net.okocraft.box.api.event.stockholder.stock.StockOverflowEvent;
 import net.okocraft.box.api.event.stockholder.stock.StockSetEvent;
 import net.okocraft.box.api.model.stock.PersonalStockHolder;
 import net.okocraft.box.api.util.SubscribedListenerHolder;
@@ -29,7 +30,13 @@ public final class StockHolderListener {
 
     private static void onIncrease(@NotNull StockIncreaseEvent event) {
         if (event.getStockHolder() instanceof PersonalStockHolder stockHolder) {
-            NotificationFactory.create(event).increments(event.getIncrements()).showActionBar(stockHolder.getUser());
+            NotificationFactory factory = NotificationFactory.create(event).increments(event.getIncrements());
+
+            if (event instanceof StockOverflowEvent overflowEvent) {
+                factory.overflow(overflowEvent.getExcess());
+            }
+
+            factory.showActionBar(stockHolder.getUser());
         }
     }
 

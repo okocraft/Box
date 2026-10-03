@@ -46,6 +46,7 @@ sequenceOf(
     "craft",
     "gui",
     "notifier",
+    "overflow",
     "stats",
     "stick"
 ).forEach {

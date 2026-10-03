@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.AQUA;
+import static net.kyori.adventure.text.format.NamedTextColor.GOLD;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
 import static net.kyori.adventure.text.format.NamedTextColor.WHITE;
 import static net.okocraft.box.feature.notifier.factory.NotificationFactory.COMMON_PARTS_1;
@@ -47,6 +48,24 @@ class NotificationFactoryTest {
         Assertions.assertEquals(
             EXPECTED_DECREASED_NOTIFICATION,
             new NotificationFactory(ITEM, 10).previous(15).createNotification(ITEM.getDisplayName())
+        );
+    }
+
+    @Test
+    void testOverflow() {
+        Assertions.assertEquals(
+            text().append(
+                ITEM.getDisplayName(),
+                COMMON_PARTS_1,
+                text(10, WHITE),
+                COMMON_PARTS_2,
+                text("+5", AQUA),
+                COMMON_PARTS_3,
+                COMMON_PARTS_2,
+                text("overflow +7", GOLD),
+                COMMON_PARTS_3
+            ).asComponent(),
+            new NotificationFactory(ITEM, 10).increments(5).overflow(7).createNotification(ITEM.getDisplayName())
         );
     }
 

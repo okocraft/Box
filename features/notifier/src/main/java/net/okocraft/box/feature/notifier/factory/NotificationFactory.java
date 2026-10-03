@@ -15,6 +15,7 @@ import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.Component.translatable;
 import static net.kyori.adventure.text.format.NamedTextColor.AQUA;
 import static net.kyori.adventure.text.format.NamedTextColor.DARK_GRAY;
+import static net.kyori.adventure.text.format.NamedTextColor.GOLD;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
 import static net.kyori.adventure.text.format.NamedTextColor.WHITE;
 
@@ -39,6 +40,7 @@ public final class NotificationFactory {
     private final BoxItem item;
     private final int current;
     private int diff;
+    private int overflow;
 
     @VisibleForTesting
     NotificationFactory(@NotNull BoxItem item, int current) {
@@ -61,6 +63,12 @@ public final class NotificationFactory {
     @Contract("_ -> this")
     public @NotNull NotificationFactory previous(int previous) {
         this.diff += this.current - previous;
+        return this;
+    }
+
+    @Contract("_ -> this")
+    public @NotNull NotificationFactory overflow(int overflow) {
+        this.overflow += overflow;
         return this;
     }
 
@@ -92,6 +100,12 @@ public final class NotificationFactory {
                 builder.append(COMMON_PARTS_2)
                     .append(0 <= this.diff ? text("+" + this.diff, AQUA) : text(this.diff, RED))
                     .append(COMMON_PARTS_3);
+        }
+
+        if (0 < this.overflow) {
+            builder.append(COMMON_PARTS_2)
+                .append(text("overflow +" + this.overflow, GOLD))
+                .append(COMMON_PARTS_3);
         }
 
         return builder.asComponent();
