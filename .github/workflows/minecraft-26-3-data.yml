@@ -1,0 +1,29 @@
+name: Minecraft 26.3 data generation
+on:
+  push:
+    branches: [codex/minecraft-26-3]
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '25'
+      - uses: gradle/actions/setup-gradle@v4
+      - run: chmod +x ./gradlew
+      - name: Generate data
+        run: timeout 12m ./gradlew :box-data-generator:runServer || test "$?" -eq 124
+      - name: Check generated files
+        run: |
+          test -s data-generator/build/resources/generated-data/26.3.txt
+          test -f data-generator/build/resources/generated-data/26.3-new-items.txt
+          test -f data-generator/build/resources/generated-data/26.3-uncategorized-items.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: minecraft-26-3-data
+          path: data-generator/build/resources/generated-data/
+          if-no-files-found: warn
