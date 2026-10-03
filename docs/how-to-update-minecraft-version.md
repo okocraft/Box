@@ -244,7 +244,33 @@ After classifying, rerun the generator and use the uncategorized output to verif
 
 Ask for clarification only when the existing category structure and official change information still do not provide a defensible classification. Do not invent a new semantic grouping when the available evidence is genuinely ambiguous.
 
-For example, Minecraft 26.3 added 121 generated item identifiers and removed none compared with 26.2. The update used data version 5023 and classified the new items into existing categories, including Poplar items under `woods-2`, concrete variants under `concretes`, wool/cushion/bed items under `wools`, and explorer-map items under `tools`. These numbers and data version are historical facts for the 26.3 update only; always derive the corresponding values again for future versions.
+### Place new items consistently within each category
+
+Do not append all new items to the end of a category as one block. Preserve the category's existing organization and place each new item near the most closely related existing items.
+
+Use the local ordering pattern already present in the category as the primary guide. For example:
+
+- when a category is grouped by material or family, insert the new family alongside the corresponding existing families;
+- when a category is grouped by shape or variant, keep new slabs, stairs, carpets, beds, and similar variants in the corresponding shape block;
+- when an item extends a specific base item or concept, place it immediately after or near that base item;
+- for plants and other natural items, place them near the most closely related existing plants instead of at the category boundary.
+
+Minecraft 26.3 is an example of this placement rule:
+
+- Poplar items were inserted into the existing wood-type ordering in `woods-2`;
+- Concrete and Wool slabs and stairs were grouped with the existing shape-based sections instead of being appended after all older entries;
+- Explorer Map items were placed immediately after `MAP` in `tools`;
+- `SHELF_MUSHROOM` and `RED_SHRUB` were placed near related plant entries in `farms` and `flowers`.
+
+Placement changes must not alter the classification itself. After reorganizing the entries, compare the state before and after reordering and verify that:
+
+- the number of newly added items is unchanged;
+- every new item remains in the same category;
+- every new item retains the same Minecraft data-version guard.
+
+A useful invariant is the set of `(category, data-version, item)` tuples for the target version: reordering may change line positions, but it must not change that set.
+
+For example, Minecraft 26.3 added 121 generated item identifiers and removed none compared with 26.2. The update used data version 5023 and classified the new items into existing categories, including Poplar items under `woods-2`, concrete variants under `concretes`, wool/cushion/bed items under `wools`, and explorer-map items under `tools`. The placement was then adjusted according to the rules above without changing the 121-item count, category assignments, or data version. These numbers and data version are historical facts for the 26.3 update only; always derive the corresponding values again for future versions.
 
 After editing the categories, rerun:
 
@@ -317,6 +343,7 @@ Verify that:
 
 - `<target>-uncategorized-items.txt` exists and is empty;
 - `<target>-new-items.txt` contains only genuinely new items after known renames are applied;
+- after any category-ordering cleanup, the count and set of `(category, data-version, item)` tuples for newly added items are unchanged;
 - the generated complete `<target>.txt` and the committed `data-generator/src/main/resources/generated/items/<target>.txt` are identical;
 - the previous and target complete lists have been compared for unexpected removals;
 - `runServer` exits after generation and the Paper server does not remain running;
@@ -371,7 +398,7 @@ The following parts are suitable for automation:
 
 The following parts require evidence-based review rather than blind automation:
 
-- assigning new items to categories;
+- assigning new items to categories and placing them consistently with the category's existing ordering;
 - deciding whether a new default category should be introduced;
 - identifying semantic item renames and migration mappings;
 - adapting Box code to Paper/Bukkit API changes.
