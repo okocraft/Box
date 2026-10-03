@@ -173,6 +173,11 @@ public record MCDataVersion(int dataVersion) implements Version<MCDataVersion> {
     public static final MCDataVersion MC_26_1_2 = new MCDataVersion(4790);
 
     /**
+     * A {@link MCDataVersion} that represents Minecraft 26.2
+     */
+    public static final MCDataVersion MC_26_2 = new MCDataVersion(4903);
+
+    /**
      * A {@link MCDataVersion} that represents Minecraft 26.3
      */
     public static final MCDataVersion MC_26_3 = new MCDataVersion(5023);
