@@ -1,6 +1,7 @@
 package net.okocraft.box.datagenerator;
 
 import net.okocraft.box.api.util.MCDataVersion;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -17,10 +18,14 @@ public class Main extends JavaPlugin {
 
     private static final String FILE_LOCATION = System.getProperty("net.okocraft.box.datagenerator.output.dir");
     private static final String PREVIOUS_VERSION = System.getProperty("net.okocraft.box.datagenerator.previous-version");
+    private static final boolean AUTO_STOP = Boolean.getBoolean("net.okocraft.box.datagenerator.auto-stop");
 
     @Override
     public void onEnable() {
         this.generateData();
+        if (AUTO_STOP) {
+            Bukkit.getScheduler().runTask(this, Bukkit::shutdown);
+        }
     }
 
     @Override
