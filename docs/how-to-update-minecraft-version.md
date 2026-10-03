@@ -89,7 +89,7 @@ If an identifier was renamed:
 
 1. add `item-provider/src/main/resources/<data-version>.txt` with `OLD_NAME:NEW_NAME` mappings;
 2. register the corresponding `MCDataVersion` constant in `RenamedItems.VERSIONS`;
-3. update affected category entries using the existing rename syntax;
+3. update affected categories as `OLD_NAME;<data-version>:NEW_NAME`;
 4. rerun the generator and confirm the renamed item is not reported as new.
 
 Do not modify rename resources or `RenamedItems.VERSIONS` when there are no identifier renames.
@@ -108,7 +108,7 @@ New items must use the target data version:
   - <data-version>:<ITEM_NAME>
 ```
 
-Classify from existing Box categories, similar item families, and official Minecraft change information. If these provide a defensible classification, complete and verify it; ask only when they do not.
+Classify from existing Box categories, similar item families, and official Minecraft change information. If these provide a defensible classification, complete and verify it; ask only when they do not. Items that should not be available normally belong in `unavailable`.
 
 Keep each item near related existing entries instead of appending all new items at the category end. Follow the category's existing ordering, for example by wood family, shape/type, base item, or related plants.
 
