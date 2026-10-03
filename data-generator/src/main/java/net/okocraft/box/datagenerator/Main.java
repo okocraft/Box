@@ -24,7 +24,7 @@ public class Main extends JavaPlugin {
     public void onEnable() {
         this.generateData();
         if (AUTO_STOP) {
-            Bukkit.getScheduler().runTask(this, Bukkit::shutdown);
+            Bukkit.getGlobalRegionScheduler().run(this, task -> Bukkit.shutdown());
         }
     }
 
