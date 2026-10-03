@@ -64,6 +64,20 @@ The relevant outputs are:
 
 Do not reuse a data-version value from an older Minecraft update.
 
+### If the generator cannot run locally
+
+Create a temporary workflow under `.github/workflows/` on the update branch. It should:
+
+1. check out the branch;
+2. use the repository's current Java/Gradle setup;
+3. run `./gradlew :box-data-generator:runServer`;
+4. verify that the three generated files exist;
+5. upload `data-generator/build/resources/generated-data/` as an artifact.
+
+Use a workflow-level timeout only as a failure safeguard. Do not make a timed-out `runServer` invocation count as success; the command must terminate normally through auto-stop.
+
+Download the artifact, use it for the update and verification, then delete the temporary workflow before the PR is complete.
+
 ## 3. Update `MCDataVersion`
 
 Every Minecraft version that Box explicitly supports must have a corresponding constant in:
@@ -92,20 +106,6 @@ MC_26_3 = 5023
 Those values apply only to Minecraft 26.2 and 26.3.
 
 Adding an `MCDataVersion` constant is independent from item rename handling. Do not add an entry to `RenamedItems.VERSIONS` or create a rename resource unless item identifiers actually changed.
-
-### If the generator cannot run locally
-
-Create a temporary workflow under `.github/workflows/` on the update branch. It should:
-
-1. check out the branch;
-2. use the repository's current Java/Gradle setup;
-3. run `./gradlew :box-data-generator:runServer`;
-4. verify that the three generated files exist;
-5. upload `data-generator/build/resources/generated-data/` as an artifact.
-
-Use a workflow-level timeout only as a failure safeguard. Do not make a timed-out `runServer` invocation count as success; the command must terminate normally through auto-stop.
-
-Download the artifact, use it for the update and verification, then delete the temporary workflow before the PR is complete.
 
 ## 4. Commit the generated complete list
 
