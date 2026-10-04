@@ -535,7 +535,7 @@ class StockHolderTest {
     }
 
     @Test
-    void testEventCallerIsInvokedOutsideMutationLock() {
+    void testEventCallerIsInvokedOutsideWriteLock() {
         StockEventCaller eventCaller = new StockEventCaller() {
             @Override
             public void callSetEvent(@NotNull StockHolder stockHolder, @NotNull BoxItem item, int amount, int previousAmount,
@@ -543,7 +543,7 @@ class StockHolderTest {
                 try {
                     CompletableFuture.runAsync(() -> stockHolder.increase(ITEM_2, 1, cause)).get(2, TimeUnit.SECONDS);
                 } catch (Exception e) {
-                    throw new AssertionError("StockEventCaller was invoked while holding the mutation lock", e);
+                    throw new AssertionError("StockEventCaller was invoked while holding the write lock", e);
                 }
             }
 
