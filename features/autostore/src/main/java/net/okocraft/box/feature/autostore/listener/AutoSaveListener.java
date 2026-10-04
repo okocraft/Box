@@ -11,14 +11,17 @@ import net.okocraft.box.feature.autostore.event.AutoStoreSettingChangeEvent;
 import net.okocraft.box.feature.autostore.setting.AutoStoreSetting;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Set;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class AutoSaveListener {
 
     private final AutoStoreSettingProvider container;
 
-    private final Set<AutoStoreSetting> modifiedSettings = ConcurrentHashMap.newKeySet();
+    private final Map<UUID, Change> modifiedSettings = new ConcurrentHashMap<>();
+    private final AtomicLong nextRevision = new AtomicLong();
     private final SubscribedListenerHolder listenerHolder = new SubscribedListenerHolder();
 
     public AutoSaveListener(@NotNull AutoStoreSettingProvider container) {
@@ -27,26 +30,32 @@ public class AutoSaveListener {
 
     public void register(@NotNull Key listenerKey) {
         this.listenerHolder.subscribeAll(subscriber ->
-            subscriber.add(AutoStoreSettingChangeEvent.class, listenerKey, event -> this.modifiedSettings.add(event.getSetting()), Priority.NORMAL)
+            subscriber.add(AutoStoreSettingChangeEvent.class, listenerKey, event -> this.modifiedSettings.put(event.getSetting().getUuid(), new Change(event.getSetting(), this.nextRevision.incrementAndGet())), Priority.NORMAL)
                 .add(StockHolderSaveEvent.class, listenerKey, this::saveModifiedSettings, Priority.NORMAL)
         );
     }
 
     public void unregister() {
         this.listenerHolder.unsubscribeAll();
+        this.modifiedSettings.clear();
     }
 
     private void saveModifiedSettings(@NotNull StockHolderSaveEvent event) {
         if (event.getStockHolder() instanceof PersonalStockHolder personalStockHolder) {
             AutoStoreSetting setting = this.container.getIfLoaded(personalStockHolder.getUser().getUUID());
 
-            if (setting != null && this.modifiedSettings.contains(setting)) {
+            Change change = this.modifiedSettings.get(personalStockHolder.getUser().getUUID());
+            if (setting != null && change != null && change.setting() == setting) {
                 try {
                     this.container.save(setting);
+                    this.modifiedSettings.remove(setting.getUuid(), change);
                 } catch (Exception e) {
                     BoxLogger.logger().error("Could not save autostore setting ({})", setting.getUuid(), e);
                 }
             }
         }
+    }
+
+    private record Change(@NotNull AutoStoreSetting setting, long revision) {
     }
 }
