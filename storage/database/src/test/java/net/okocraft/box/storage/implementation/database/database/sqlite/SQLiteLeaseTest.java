@@ -91,6 +91,9 @@ class SQLiteLeaseTest {
             try (Connection current = database.getConnection()) {
                 assertTrue(statement.isClosed());
                 assertTrue(rows.isClosed());
+                assertDoesNotThrow(statement::close);
+                assertDoesNotThrow(prepared::close);
+                assertDoesNotThrow(rows::close);
                 assertAll(
                     () -> assertThrows(SQLException.class, statement::getConnection),
                     () -> assertThrows(SQLException.class, () -> statement.execute("SELECT 1")),

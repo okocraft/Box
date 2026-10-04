@@ -140,6 +140,7 @@ public class NonCloseableConnection implements Connection {
                     };
                 }
                 if (method.getName().equals("isClosed") && this.released) return true;
+                if (method.getName().equals("close") && this.released) return null;
                 this.checkOpen();
                 if (method.getName().equals("isWrapperFor")) {
                     return ((Class<?>) args[0]).isInstance(proxy);
