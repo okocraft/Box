@@ -28,6 +28,8 @@ Box には以下のような特徴があります。
 
 Please read [Installation and Setup](https://github.com/okocraft/Box/wiki/Installation-and-Setup) page on GitHub Wiki.
 
+Box v6 supports YAML (the default) and SQLite storage. MySQL storage is no longer supported.
+
 ## Compiling from source
 
 ```shell
