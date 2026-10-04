@@ -131,7 +131,7 @@ class AutoStoreSettingContainer implements AutoStoreSettingProvider {
         MapNode data = MapNode.create();
 
         if (setting.isEnabled()) data.set("enable", true);
-        if (setting.isAllMode()) data.set("all-mode", true);
+        data.set("all-mode", setting.isAllMode());
         if (setting.isDirect()) data.set("direct", true);
 
         IntSet items = setting.getPerItemModeSetting().getEnabledItems();
@@ -146,6 +146,10 @@ class AutoStoreSettingContainer implements AutoStoreSettingProvider {
 
     private static @NotNull AutoStoreSetting deserialize(@NotNull UUID uuid, @NotNull MapNode data) {
         AutoStoreSetting setting = new AutoStoreSetting(uuid);
+
+        if (data.isEmpty()) {
+            return setting;
+        }
 
         setting.setEnabled(data.getBoolean("enable"));
         setting.setAllMode(data.getBoolean("all-mode"));
@@ -192,8 +196,8 @@ class AutoStoreSettingContainer implements AutoStoreSettingProvider {
             target.set("enable", true);
         }
 
-        if (source.getBoolean("all-mode")) {
-            target.set("all-mode", true);
+        if (source.get("all-mode") != null) {
+            target.set("all-mode", source.getBoolean("all-mode"));
         }
 
         if (source.getBoolean("direct")) {
