@@ -23,7 +23,7 @@ public class StockStatisticsTableOperator {
                     item_id,
                     amount,
                     RANK() OVER stock_amount_by_item_id as rank,
-                    SUM(amount) OVER stock_amount_by_item_id as total_amount
+                    SUM(amount) OVER (PARTITION BY item_id) as total_amount
                 FROM %2$s
                 WINDOW stock_amount_by_item_id AS (PARTITION BY item_id ORDER BY amount DESC)
             )
