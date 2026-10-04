@@ -21,12 +21,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class BoxPlayerMapImpl implements BoxPlayerMap {
-
-    // This BoxPlayer indicates that the player data has not yet been loaded.
-    // This is because ConcurrentHashMap does not allow null.
-    private static final BoxPlayer NOT_LOADED_YET = new NotLoadedPlayer();
 
     private final Map<Player, BoxPlayer> playerMap = new ConcurrentHashMap<>();
     private final BoxStockManager stockManager;
@@ -45,12 +43,12 @@ public class BoxPlayerMapImpl implements BoxPlayerMap {
     @Override
     public boolean isLoaded(@NotNull Player player) {
         BoxPlayer boxPlayer = this.playerMap.get(player);
-        return boxPlayer != null && boxPlayer != NOT_LOADED_YET;
+        return boxPlayer instanceof BoxPlayerImpl loaded && loaded.getPlayer() == player;
     }
 
     @Override
     public boolean isScheduledLoading(@NotNull Player player) {
-        return this.playerMap.get(player) == NOT_LOADED_YET;
+        return this.playerMap.get(player) instanceof NotLoadedPlayer pending && pending.getPlayer() == player;
     }
 
     @Override
@@ -58,54 +56,89 @@ public class BoxPlayerMapImpl implements BoxPlayerMap {
         Objects.requireNonNull(player);
         BoxPlayer boxPlayer = this.playerMap.get(player);
 
-        if (boxPlayer == null || boxPlayer == NOT_LOADED_YET) {
+        if (!(boxPlayer instanceof BoxPlayerImpl loaded) || loaded.getPlayer() != player) {
             throw new IllegalStateException("player is not loaded (" + player.getName() + ")");
         }
 
-        return boxPlayer;
+        return loaded;
     }
 
     public void scheduleLoadingData(@NotNull Player player) {
-        if (this.playerMap.put(player, NOT_LOADED_YET) == NOT_LOADED_YET) {
+        NotLoadedPlayer pending = this.prepareLoading(player);
+        if (pending != null) {
+            this.scheduler.scheduleAsyncTask(() -> this.load(player, pending), 1, TimeUnit.SECONDS);
+        }
+    }
+
+    private NotLoadedPlayer prepareLoading(@NotNull Player player) {
+        AtomicReference<NotLoadedPlayer> scheduled = new AtomicReference<>();
+        AtomicReference<BoxPlayerImpl> replaced = new AtomicReference<>();
+        this.playerMap.compute(player, (key, current) -> {
+            if (current instanceof NotLoadedPlayer pending && pending.getPlayer() == player ||
+                current instanceof BoxPlayerImpl loaded && loaded.getPlayer() == player) {
+                return current;
+            }
+            if (current instanceof BoxPlayerImpl loaded) {
+                replaced.set(loaded);
+            }
+            NotLoadedPlayer pending = new NotLoadedPlayer(player);
+            scheduled.set(pending);
+            return pending;
+        });
+        if (replaced.get() != null) {
+            this.unload(replaced.get());
+        }
+        return scheduled.get();
+    }
+
+    private void load(@NotNull Player player, @NotNull NotLoadedPlayer pending) {
+        if (!player.isOnline() || this.playerMap.get(player) != pending) {
+            this.playerMap.remove(player, pending);
             return;
         }
 
-        this.scheduler.scheduleAsyncTask(() -> this.load(player), 1, TimeUnit.SECONDS);
-    }
-
-    private void load(@NotNull Player player) {
         try {
-            this.loadBoxPlayer(player);
-        } catch (Exception e) {
-            this.playerMap.remove(player);
-            BoxLogger.logger().error("Could not load a player ({})", player.getName(), e);
-            player.sendMessage(CoreMessages.LOAD_FAILURE_ON_JOIN);
-        }
-    }
-
-    private void loadBoxPlayer(@NotNull Player player) {
-        if (!player.isOnline()) { // The player is no longer online, so remove it from the map.
-            this.playerMap.remove(player);
-            return;
-        }
-
-        BoxUser boxUser = this.userManager.createBoxUser(player.getUniqueId(), player.getName());
-        LoadingPersonalStockHolder personal = this.stockManager.getPersonalStockHolder(boxUser);
-        BoxPlayerImpl boxPlayer = new BoxPlayerImpl(boxUser, player, personal, this.eventCallers.sync());
-
-        if (this.playerMap.replace(player, NOT_LOADED_YET, boxPlayer)) { // This prevents loading data twice.
+            BoxUser boxUser = this.userManager.createBoxUser(player.getUniqueId(), player.getName());
+            LoadingPersonalStockHolder personal = this.stockManager.getPersonalStockHolder(boxUser);
             personal.load();
-            personal.markAsOnline();
-
-            this.userManager.saveUsername(boxUser);
-            this.eventCallers.async().call(new PlayerLoadEvent(boxPlayer));
+            BoxPlayerImpl boxPlayer = new BoxPlayerImpl(boxUser, player, personal, this.eventCallers.sync());
+            AtomicBoolean published = new AtomicBoolean();
+            this.playerMap.computeIfPresent(player, (key, current) -> {
+                if (current == pending && player.isOnline()) {
+                    personal.markAsOnline();
+                    published.set(true);
+                    return boxPlayer;
+                }
+                return current;
+            });
+            if (published.get()) {
+                this.userManager.saveUsername(boxUser);
+                this.eventCallers.async().call(new PlayerLoadEvent(boxPlayer));
+            }
+        } catch (Exception e) {
+            // Do not remove a later join's session when this load fails.
+            if (this.playerMap.remove(player, pending)) {
+                BoxLogger.logger().error("Could not load a player ({})", player.getName(), e);
+                player.sendMessage(CoreMessages.LOAD_FAILURE_ON_JOIN);
+            }
         }
     }
 
     public void unload(@NotNull Player player) {
-        BoxPlayer removed = this.playerMap.remove(Objects.requireNonNull(player));
-        if (removed instanceof BoxPlayerImpl boxPlayer) {
-            this.unload(boxPlayer);
+        Objects.requireNonNull(player);
+        AtomicReference<BoxPlayerImpl> unloaded = new AtomicReference<>();
+        this.playerMap.computeIfPresent(player, (key, current) -> {
+            if (current instanceof NotLoadedPlayer pending && pending.getPlayer() == player) {
+                return null;
+            }
+            if (current instanceof BoxPlayerImpl loaded && loaded.getPlayer() == player) {
+                unloaded.set(loaded);
+                return null;
+            }
+            return current;
+        });
+        if (unloaded.get() != null) {
+            this.unload(unloaded.get());
         }
     }
 
@@ -116,8 +149,10 @@ public class BoxPlayerMapImpl implements BoxPlayerMap {
 
     public void loadAll() {
         Bukkit.getOnlinePlayers().forEach(player -> {
-            this.playerMap.put(player, NOT_LOADED_YET);
-            this.load(player);
+            NotLoadedPlayer pending = this.prepareLoading(player);
+            if (pending != null) {
+                this.load(player, pending);
+            }
         });
     }
 
