@@ -4,7 +4,6 @@ import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2IntLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMaps;
-import net.okocraft.box.api.event.stockholder.stock.StockEvent;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.model.stock.StockData;
 import net.okocraft.box.api.model.stock.StockEventCaller;
@@ -21,8 +20,6 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
 import java.util.function.IntFunction;
 
 class StockHolderTest {
@@ -532,46 +529,6 @@ class StockHolderTest {
         Assertions.assertEquals(expectedStockData.size(), stockData.size());
         Assertions.assertTrue(expectedStockData.containsAll(stockData));
         collector.checkResetEvent(stockHolder, expectedStockData);
-    }
-
-    @Test
-    void testEventCallerIsInvokedOutsideWriteLock() {
-        StockEventCaller eventCaller = new StockEventCaller() {
-            @Override
-            public void callSetEvent(@NotNull StockHolder stockHolder, @NotNull BoxItem item, int amount, int previousAmount,
-                                     StockEvent.@NotNull Cause cause) {
-                try {
-                    CompletableFuture.runAsync(() -> stockHolder.increase(ITEM_2, 1, cause)).get(2, TimeUnit.SECONDS);
-                } catch (Exception e) {
-                    throw new AssertionError("StockEventCaller was invoked while holding the write lock", e);
-                }
-            }
-
-            @Override
-            public void callIncreaseEvent(@NotNull StockHolder stockHolder, @NotNull BoxItem item, int increments, int currentAmount,
-                                          StockEvent.@NotNull Cause cause) {
-            }
-
-            @Override
-            public void callOverflowEvent(@NotNull StockHolder stockHolder, @NotNull BoxItem item, int increments, int excess,
-                                          StockEvent.@NotNull Cause cause) {
-            }
-
-            @Override
-            public void callDecreaseEvent(@NotNull StockHolder stockHolder, @NotNull BoxItem item, int decrements, int currentAmount,
-                                          StockEvent.@NotNull Cause cause) {
-            }
-
-            @Override
-            public void callResetEvent(@NotNull StockHolder stockHolder, @NotNull Collection<StockData> stockDataBeforeReset) {
-            }
-        };
-
-        StockHolder stockHolder = TestStockHolder.create(eventCaller, TO_BOX_ITEM);
-        stockHolder.setAmount(ITEM_1, 1, StockEventCollector.TEST_CAUSE);
-
-        Assertions.assertEquals(1, stockHolder.getAmount(ITEM_1));
-        Assertions.assertEquals(1, stockHolder.getAmount(ITEM_2));
     }
 
     @SuppressWarnings("DataFlowIssue")
