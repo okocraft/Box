@@ -7,12 +7,14 @@ import org.jetbrains.annotations.NotNull;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Properties;
+import java.util.concurrent.locks.ReentrantLock;
 
 abstract class AbstractSQLiteDatabase implements Database {
 
     protected final String tablePrefix;
     private final OperatorProvider operators;
-    private NonCloseableConnection connection;
+    private final ReentrantLock connectionLock = new ReentrantLock();
+    private Connection connection;
 
     protected AbstractSQLiteDatabase(@NotNull String tablePrefix) {
         this.tablePrefix = tablePrefix;
@@ -31,21 +33,36 @@ abstract class AbstractSQLiteDatabase implements Database {
 
     @Override
     public @NotNull Connection getConnection() throws SQLException {
+        this.connectionLock.lock();
         if (this.connection == null) {
+            this.connectionLock.unlock();
             throw new IllegalStateException("This database is not initialized.");
         }
 
-        return this.connection;
+        return new NonCloseableConnection(this.connection, this.connectionLock::unlock);
     }
 
     protected abstract @NotNull Connection createConnection() throws Exception;
 
     protected void connect() throws Exception {
-        this.connection = new NonCloseableConnection(this.createConnection());
+        this.connectionLock.lock();
+        try {
+            this.connection = this.createConnection();
+        } finally {
+            this.connectionLock.unlock();
+        }
     }
 
     protected void disconnect() throws Exception {
-        this.connection.shutdown();
+        this.connectionLock.lock();
+        try {
+            if (this.connection != null) {
+                this.connection.close();
+                this.connection = null;
+            }
+        } finally {
+            this.connectionLock.unlock();
+        }
     }
 
     protected static @NotNull Connection newConnection(@NotNull String filepath, @NotNull String filename) throws ReflectiveOperationException {

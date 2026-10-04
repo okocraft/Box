@@ -23,9 +23,16 @@ import java.util.concurrent.Executor;
 public class NonCloseableConnection implements Connection {
 
     private final Connection delegate;
+    private final Runnable release;
+    private boolean released;
 
     public NonCloseableConnection(Connection delegate) {
+        this(delegate, null);
+    }
+
+    NonCloseableConnection(Connection delegate, Runnable release) {
         this.delegate = delegate;
+        this.release = release;
     }
 
     /**
@@ -37,7 +44,10 @@ public class NonCloseableConnection implements Connection {
 
     @Override
     public final void close() throws SQLException {
-        // do nothing
+        if (this.release != null && !this.released) {
+            this.released = true;
+            this.release.run();
+        }
     }
 
     @Override

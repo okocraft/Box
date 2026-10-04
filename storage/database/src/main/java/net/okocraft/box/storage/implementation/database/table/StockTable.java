@@ -9,6 +9,7 @@ import net.okocraft.box.storage.api.util.SneakyThrow;
 import net.okocraft.box.storage.implementation.database.database.Database;
 import net.okocraft.box.storage.implementation.database.operator.StockHolderTableOperator;
 import net.okocraft.box.storage.implementation.database.operator.StockTableOperator;
+import net.okocraft.box.storage.implementation.database.operator.Transactions;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.Connection;
@@ -54,16 +55,16 @@ public class StockTable implements PartialSavingStockStorage {
     @Override
     public void saveStockData(@NotNull UUID uuid, @NotNull Collection<StockData> stockData) throws Exception {
         try (Connection connection = this.database.getConnection()) {
-            int stockId = this.stockHolderTable.getStockHolderIdByUUID(connection, uuid);
-
-            this.stockTable.deleteStockByStockId(connection, stockId);
-
-            try (PreparedStatement statement = this.stockTable.insertStockStatement(connection)) {
-                for (StockData data : stockData) {
-                    this.stockTable.addInsertStockBatch(statement, stockId, data.itemId(), data.amount());
+            Transactions.execute(connection, () -> {
+                int stockId = this.stockHolderTable.getStockHolderIdByUUID(connection, uuid);
+                this.stockTable.deleteStockByStockId(connection, stockId);
+                try (PreparedStatement statement = this.stockTable.insertStockStatement(connection)) {
+                    for (StockData data : stockData) {
+                        this.stockTable.addInsertStockBatch(statement, stockId, data.itemId(), data.amount());
+                    }
+                    statement.executeBatch();
                 }
-                statement.executeBatch();
-            }
+            });
         }
     }
 
@@ -118,14 +119,19 @@ public class StockTable implements PartialSavingStockStorage {
 
     @Override
     public void savePartialStockData(@NotNull UUID uuid, @NotNull Collection<StockData> stockData) throws Exception {
-        try (Connection connection = this.database.getConnection();
-             PreparedStatement statement = this.stockTable.upsertStockStatement(connection)
-        ) {
-            int stockId = this.stockHolderTable.getStockHolderIdByUUID(connection, uuid);
-            for (StockData data : stockData) {
-                this.stockTable.addUpsertStockBatch(statement, stockId, data.itemId(), data.amount());
-            }
-            statement.executeBatch();
+        if (stockData.isEmpty()) {
+            return;
+        }
+        try (Connection connection = this.database.getConnection()) {
+            Transactions.execute(connection, () -> {
+                int stockId = this.stockHolderTable.getStockHolderIdByUUID(connection, uuid);
+                try (PreparedStatement statement = this.stockTable.upsertStockStatement(connection)) {
+                    for (StockData data : stockData) {
+                        this.stockTable.addUpsertStockBatch(statement, stockId, data.itemId(), data.amount());
+                    }
+                    statement.executeBatch();
+                }
+            });
         }
     }
 
