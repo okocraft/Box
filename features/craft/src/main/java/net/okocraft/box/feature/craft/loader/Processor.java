@@ -14,7 +14,6 @@ import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.ShapelessRecipe;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -115,22 +114,20 @@ final class Processor {
 
         List<IngredientHolder> ingredients = new ArrayList<>();
 
-        for (Map.Entry<Character, RecipeChoice> entry : recipe.getChoiceMap().entrySet()) {
-            int slot = this.getPosition(entry.getKey(), recipe.getShape());
-            RecipeChoice choice = entry.getValue();
-
-            if (choice instanceof RecipeChoice.MaterialChoice materialChoice) {
-                ingredients.add(IngredientHolder.fromMaterialChoice(slot, materialChoice));
-            } else if (choice instanceof RecipeChoice.ExactChoice exactChoice) {
-                IngredientHolder ingredientItem = IngredientHolder.fromExactChoice(slot, exactChoice);
-
-                if (ingredientItem.patterns().isEmpty()) {
-                    return;
-                } else {
-                    ingredients.add(IngredientHolder.fromExactChoice(slot, exactChoice));
+        Map<Character, RecipeChoice> choices = recipe.getChoiceMap();
+        String[] shape = recipe.getShape();
+        for (int row = 0; row < shape.length; row++) {
+            for (int column = 0; column < shape[row].length(); column++) {
+                char symbol = shape[row].charAt(column);
+                if (symbol == ' ') {
+                    continue;
                 }
-            } else if (choice != null) {
-                return;
+
+                IngredientHolder ingredient = this.convertChoice(row * 3 + column, choices.get(symbol));
+                if (ingredient == null || ingredient.patterns().isEmpty()) {
+                    return;
+                }
+                ingredients.add(ingredient);
             }
         }
 
@@ -146,21 +143,11 @@ final class Processor {
 
         int slot = 0;
         for (RecipeChoice choice : recipe.getChoiceList()) {
-            if (choice instanceof RecipeChoice.MaterialChoice materialChoice) {
-                ingredients.add(IngredientHolder.fromMaterialChoice(slot, materialChoice));
-            } else if (choice instanceof RecipeChoice.ExactChoice exactChoice) {
-                IngredientHolder ingredientItem = IngredientHolder.fromExactChoice(slot, exactChoice);
-
-                if (ingredientItem.patterns().isEmpty()) {
-                    return;
-                } else {
-                    ingredients.add(IngredientHolder.fromExactChoice(slot, exactChoice));
-                }
-            } else {
+            IngredientHolder ingredient = this.convertChoice(slot++, choice);
+            if (ingredient == null || ingredient.patterns().isEmpty()) {
                 return;
             }
-
-            slot++;
+            ingredients.add(ingredient);
         }
 
         this.addRecipe(ingredients, result, recipe.getResult().getAmount());
@@ -179,18 +166,14 @@ final class Processor {
         this.addRecipe(ingredientHolders, result, amount);
     }
 
-    @Contract(pure = true)
-    private int getPosition(char c, String @NotNull [] shape) {
-        for (int row = 0; row < shape.length; row++) {
-            String str = shape[row];
-            int pos = str.indexOf(c);
-
-            if (pos != -1) {
-                return pos + (row * 3);
-            }
+    private @Nullable IngredientHolder convertChoice(int slot, @Nullable RecipeChoice choice) {
+        if (choice instanceof RecipeChoice.MaterialChoice materialChoice) {
+            return IngredientHolder.fromMaterialChoice(slot, materialChoice);
         }
-
-        return 8;
+        if (choice instanceof RecipeChoice.ExactChoice exactChoice) {
+            return IngredientHolder.fromExactChoice(slot, exactChoice);
+        }
+        return null;
     }
 
     void addRecipe(@NotNull List<IngredientHolder> ingredients, @NotNull BoxItem result, int amount) {
