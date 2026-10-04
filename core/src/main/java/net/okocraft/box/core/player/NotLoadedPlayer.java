@@ -11,6 +11,12 @@ import java.util.UUID;
 
 final class NotLoadedPlayer implements BoxPlayer {
 
+    private final Player player;
+
+    NotLoadedPlayer(Player player) {
+        this.player = player;
+    }
+
     @Override
     public @NotNull UUID getUUID() {
         throw new IllegalStateException();
@@ -28,7 +34,7 @@ final class NotLoadedPlayer implements BoxPlayer {
 
     @Override
     public @NotNull Player getPlayer() {
-        throw new IllegalStateException();
+        return this.player;
     }
 
     @Override
