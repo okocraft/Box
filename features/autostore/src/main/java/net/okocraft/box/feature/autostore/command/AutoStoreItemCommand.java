@@ -108,6 +108,7 @@ class AutoStoreItemCommand extends AutoStoreSubCommand {
 
     private void changeToPerItemMode(@NotNull AutoStoreSetting setting, @NotNull CommandSender sender) {
         if (setting.isAllMode()) {
+            setting.setAllMode(false);
             sender.sendMessage(this.perItemModeEnabled);
         }
     }
