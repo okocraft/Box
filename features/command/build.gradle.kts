@@ -10,6 +10,8 @@ dependencies {
     implementation(libs.codec4j.io.gson) {
         exclude("com.google.code.gson", "gson")
     }
+
+    testImplementation(projects.boxTestSharedClasses)
 }
 
 tasks.javadoc {
