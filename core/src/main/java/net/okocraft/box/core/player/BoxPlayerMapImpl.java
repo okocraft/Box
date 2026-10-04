@@ -103,7 +103,8 @@ public class BoxPlayerMapImpl implements BoxPlayerMap {
     }
 
     public void unload(@NotNull Player player) {
-        if (this.playerMap.get(Objects.requireNonNull(player)) instanceof BoxPlayerImpl boxPlayer) {
+        BoxPlayer removed = this.playerMap.remove(Objects.requireNonNull(player));
+        if (removed instanceof BoxPlayerImpl boxPlayer) {
             this.unload(boxPlayer);
         }
     }
