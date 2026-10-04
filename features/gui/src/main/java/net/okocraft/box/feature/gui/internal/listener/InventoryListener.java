@@ -18,6 +18,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -26,6 +27,14 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 public class InventoryListener implements Listener {
+
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    public void onDrag(@NotNull InventoryDragEvent event) {
+        if (BoxInventoryHolder.getFromInventory(event.getView().getTopInventory()) != null &&
+            event.getRawSlots().stream().anyMatch(slot -> slot < event.getView().getTopInventory().getSize())) {
+            event.setCancelled(true);
+        }
+    }
 
     private static final long CLICK_COOLDOWN = TimeUnit.MILLISECONDS.toNanos(150);
 
