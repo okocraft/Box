@@ -65,6 +65,24 @@ class AutoStoreSettingContainerTest {
     }
 
     @Test
+    void legacyEmptyDataUsesNewDefaultsAndStaysDisabledUntilEnabled() throws Exception {
+        UUID uuid = UUID.randomUUID();
+        Key key = Key.key("autostore", uuid.toString());
+        // The old serializer emitted an empty node for disabled per-item mode
+        // with no selected items. Its load result is identical to missing data.
+        this.savedData.put(key, MapNode.create());
+        AutoStoreSettingContainer container = new AutoStoreSettingContainer();
+        AutoStoreSetting setting = container.getOrLoad(uuid);
+        assertFalse(setting.isEnabled());
+        assertTrue(setting.isAllMode());
+        assertFalse(setting.shouldAutoStore(ITEM));
+        setting.setEnabled(true);
+        assertTrue(setting.shouldAutoStore(ITEM));
+        container.save(setting);
+        assertTrue(this.savedData.get(key).getBoolean("all-mode"));
+    }
+
+    @Test
     void disabledEmptyPerItemModeSurvivesSaveAndExport() throws Exception {
         UUID uuid = UUID.randomUUID();
         AutoStoreSettingContainer container = new AutoStoreSettingContainer();
