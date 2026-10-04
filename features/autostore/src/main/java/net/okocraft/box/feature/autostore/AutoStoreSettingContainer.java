@@ -16,6 +16,7 @@ import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.event.customdata.CustomDataExportEvent;
 import net.okocraft.box.api.event.player.PlayerLoadEvent;
 import net.okocraft.box.api.event.player.PlayerUnloadEvent;
+import net.okocraft.box.api.event.user.UserDataResetEvent;
 import net.okocraft.box.api.util.BoxLogger;
 import net.okocraft.box.api.util.MCDataVersion;
 import net.okocraft.box.api.util.SubscribedListenerHolder;
@@ -60,6 +61,7 @@ class AutoStoreSettingContainer implements AutoStoreSettingProvider {
         this.listenerHolder.subscribeAll(subscriber ->
             subscriber.add(PlayerLoadEvent.class, PLAYER_LISTENER_KEY, event -> this.load(event.getBoxPlayer().getPlayer(), loadErrorMessage), Priority.NORMAL)
                 .add(PlayerUnloadEvent.class, PLAYER_LISTENER_KEY, event -> this.unload(event.getBoxPlayer().getPlayer()), Priority.NORMAL)
+                .add(UserDataResetEvent.class, PLAYER_LISTENER_KEY, event -> this.reset(event.getUser().getUUID()), Priority.NORMAL)
         );
     }
 
@@ -97,6 +99,23 @@ class AutoStoreSettingContainer implements AutoStoreSettingProvider {
             }
         }
         this.settingMap.clear();
+    }
+
+    private void reset(@NotNull UUID uuid) {
+        try {
+            AutoStoreSetting setting = this.settingMap.get(uuid);
+            if (setting != null) {
+                setting.setEnabled(false);
+                setting.setAllMode(true);
+                setting.setDirect(false);
+                setting.getPerItemModeSetting().clearAndEnableItems(IntList.of());
+                this.save(setting);
+            } else {
+                BoxAPI.api().getCustomDataManager().saveData(createKey(uuid), MapNode.create());
+            }
+        } catch (Exception e) {
+            BoxLogger.logger().error("Could not reset autostore setting ({})", uuid, e);
+        }
     }
 
     private @NotNull AutoStoreSetting load(@NotNull UUID uuid) throws Exception {
