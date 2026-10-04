@@ -60,13 +60,12 @@ public class LoadingPersonalStockHolder implements PersonalStockHolder {
     }
 
     public @NotNull StockHolder load() {
-        if (this.closed) {
-            throw new IllegalStateException("This loader is no longer available.");
-        }
-
         StockHolder stockHolder;
 
         synchronized (this) {
+            if (this.closed) {
+                throw new IllegalStateException("This loader is no longer available.");
+            }
             if (this.stockHolder == null) {
                 this.stockHolder = this.loader.apply(this);
             }
@@ -77,11 +76,10 @@ public class LoadingPersonalStockHolder implements PersonalStockHolder {
     }
 
     public @Nullable StockHolder close() {
-        this.closed = true;
-
         StockHolder unloaded;
 
         synchronized (this) {
+            this.closed = true;
             unloaded = this.stockHolder;
             this.stockHolder = null;
         }
@@ -89,7 +87,7 @@ public class LoadingPersonalStockHolder implements PersonalStockHolder {
         return unloaded;
     }
 
-    public void saveChangesOrUnloadIfNeeded(long unloadTimeInNanos, long saveIntervalInNanos) throws Exception {
+    public synchronized void saveChangesOrUnloadIfNeeded(long unloadTimeInNanos, long saveIntervalInNanos) throws Exception {
         if (this.closed || this.stockHolder == null) {
             return;
         }
