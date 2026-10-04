@@ -36,7 +36,7 @@ class BasicChangeState implements ChangeState {
     }
 
     @Override
-    public void saveChanges(@NotNull StockHolder stockHolder) throws Exception {
+    public synchronized void saveChanges(@NotNull StockHolder stockHolder) throws Exception {
         this.lastSave = System.nanoTime();
 
         if (!this.hasChanges.compareAndSet(true, false)) {
