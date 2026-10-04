@@ -5,7 +5,6 @@ import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.TranslatableComponent;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.model.stock.StockHolder;
-import net.okocraft.box.test.shared.model.item.DummyItem;
 import org.bukkit.command.CommandSender;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -20,7 +19,7 @@ class SharedStockListCommandTest {
 
     @Test
     void wildcardFiltersWorkThroughCommandOutput() {
-        List<BoxItem> items = List.of(new DummyItem(1, "STONE"), new DummyItem(2, "REDSTONE"), new DummyItem(3, "DIRT"));
+        List<BoxItem> items = List.of(item(1, "STONE"), item(2, "REDSTONE"), item(3, "DIRT"));
         String[] filters = {"*", "**", "STONE*", "*STONE", "*STONE*", "dirt"};
         int[] expected = {3, 3, 1, 2, 2, 1};
         for (int i = 0; i < filters.length; i++) {
@@ -32,10 +31,18 @@ class SharedStockListCommandTest {
     @Test
     void pagePastLastPageIsClampedWithoutAnEmptyPage() {
         for (int size : new int[]{1, 8, 9, 16}) {
-            List<BoxItem> items = IntStream.rangeClosed(1, size).mapToObj(id -> (BoxItem) new DummyItem(id, "item_" + id)).toList();
+            List<BoxItem> items = IntStream.rangeClosed(1, size).mapToObj(id -> item(id, "item_" + id)).toList();
             Component output = execute(items, new String[]{"-p", "99"});
             assertEquals(size % 8 == 0 ? 8 : size % 8, countLines(output), "stock size " + size);
         }
+    }
+
+    private static BoxItem item(int id, String name) {
+        BoxItem item = Mockito.mock(BoxItem.class);
+        Mockito.when(item.getInternalId()).thenReturn(id);
+        Mockito.when(item.getPlainName()).thenReturn(name);
+        Mockito.when(item.getDisplayName()).thenReturn(Component.text(name));
+        return item;
     }
 
     private static Component execute(List<BoxItem> items, String[] args) {
