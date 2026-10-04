@@ -171,6 +171,7 @@ public class ItemTable implements DefaultItemStorage {
                         SneakyThrow.sneaky(e);
                     }
                 });
+                statement.executeBatch();
             }
         }
 

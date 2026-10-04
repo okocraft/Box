@@ -52,6 +52,7 @@ public abstract class CustomItemTableOperator {
     public void addInsertBatch(@NotNull PreparedStatement statement, int id, byte[] data) throws SQLException {
         statement.setInt(1, id);
         this.writeBytes(statement, 2, data);
+        statement.addBatch();
     }
 
     public @NotNull Optional<byte[]> selectItemData(@NotNull Connection connection, int id) throws SQLException {
@@ -71,6 +72,7 @@ public abstract class CustomItemTableOperator {
     public void addUpdateBatch(@NotNull PreparedStatement statement, int id, byte[] data) throws SQLException {
         this.writeBytes(statement, 1, data);
         statement.setInt(2, id);
+        statement.addBatch();
     }
 
     @SuppressWarnings("SameParameterValue")

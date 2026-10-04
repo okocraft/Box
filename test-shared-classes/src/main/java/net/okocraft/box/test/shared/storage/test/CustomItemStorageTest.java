@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 public abstract class CustomItemStorageTest<S> extends AbstractStorageTest<S> {
 
     private static final byte[] DATA = {(byte) 1, (byte) 2, (byte) 3};
-    private static final byte[] UPDATED_DATA = {(byte) 1, (byte) 2, (byte) 3};
+    private static final byte[] UPDATED_DATA = {(byte) 4, (byte) 5, (byte) 6};
 
     @Test
     void testEmpty() throws Exception {
@@ -43,6 +43,7 @@ public abstract class CustomItemStorageTest<S> extends AbstractStorageTest<S> {
                     Assertions.fail("Custom item is loaded twice (add)");
                 }
             });
+            Assertions.assertTrue(loaded.get(), "Custom item was not loaded");
         } finally {
             this.closeStorage(storage);
         }
@@ -67,6 +68,7 @@ public abstract class CustomItemStorageTest<S> extends AbstractStorageTest<S> {
                     Assertions.fail("Custom item is loaded twice (update)");
                 }
             });
+            Assertions.assertTrue(loaded.get(), "Custom item was not loaded");
         } finally {
             this.closeStorage(storage);
         }
@@ -86,11 +88,12 @@ public abstract class CustomItemStorageTest<S> extends AbstractStorageTest<S> {
                 if (loaded.compareAndSet(false, true)) {
                     Assertions.assertEquals(id, data.internalId());
                     Assertions.assertEquals("renamed_test", data.plainName());
-                    Assertions.assertArrayEquals(UPDATED_DATA, data.itemData());
+                    Assertions.assertArrayEquals(DATA, data.itemData());
                 } else {
                     Assertions.fail("Custom item is loaded twice (rename)");
                 }
             });
+            Assertions.assertTrue(loaded.get(), "Custom item was not loaded");
         } finally {
             this.closeStorage(storage);
         }
