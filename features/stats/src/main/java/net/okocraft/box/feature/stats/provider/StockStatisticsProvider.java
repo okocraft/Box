@@ -5,8 +5,6 @@ import com.google.common.cache.CacheBuilder;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.ints.IntArrayList;
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.okocraft.box.feature.stats.database.operator.StatisticsOperators;
 import net.okocraft.box.feature.stats.database.operator.StockStatisticsTableOperator;
 import net.okocraft.box.feature.stats.model.StockStatistics;
@@ -63,8 +61,10 @@ public class StockStatisticsProvider {
         this.cache.invalidateAll(uuids);
 
         try (Connection connection = this.database.getConnection()) {
-            Object2IntMap<UUID> idMap = this.database.operators().stockHolderTable().getAllStockHolderIdByUUID(connection);
-            this.operator.updateTableRecordsByStockIds(connection, IntArrayList.toList(uuids.stream().filter(idMap::containsKey).mapToInt(idMap::getInt)));
+            var ids = this.database.operators().stockHolderTable().getExistingStockHolderIds(connection, uuids);
+            if (!ids.isEmpty()) {
+                this.operator.updateTableRecordsByStockIds(connection, ids);
+            }
         }
     }
 
