@@ -47,6 +47,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -284,6 +285,11 @@ public class BoxCore implements BoxAPI {
         try {
             feature.enable(context);
         } catch (Throwable e) {
+            try {
+                feature.disable(new FeatureContext.Disabling(context.plugin()));
+            } catch (Throwable cleanupFailure) {
+                e.addSuppressed(cleanupFailure);
+            }
             throw new IllegalStateException("Failed to enable %s.".formatted(feature.getName()), e);
         }
 
@@ -299,7 +305,9 @@ public class BoxCore implements BoxAPI {
 
         FeatureContext.Disabling context = new FeatureContext.Disabling(this.context.plugin());
 
-        for (BoxFeature feature : features) {
+        List<? extends BoxFeature> reverseOrder = new ArrayList<>(features);
+        Collections.reverse(reverseOrder);
+        for (BoxFeature feature : reverseOrder) {
             try {
                 feature.disable(context);
             } catch (Throwable throwable) {
