@@ -45,7 +45,7 @@ class ExportCommandTest {
             files.when(() -> BoxDataFile.encode(any(), isNull(), isNull(), any())).thenAnswer(_ -> {
                 assertEquals(List.of("stocks", "feature"), order);
                 order.add("encode");
-                return Mockito.mock(Result.class, Mockito.RETURNS_SELF);
+                return Result.success(null);
             });
             new ExportCommand((key, message) -> key).onCommand(Mockito.mock(CommandSender.class), new String[]{"export"});
             assertEquals(List.of("stocks", "feature", "encode"), order);
