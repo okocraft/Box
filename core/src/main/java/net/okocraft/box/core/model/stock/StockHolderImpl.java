@@ -22,7 +22,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.StampedLock;
 import java.util.function.IntFunction;
 
@@ -34,7 +33,6 @@ class StockHolderImpl implements StockHolder {
     private final Int2ObjectOpenHashMap<Stock> stockMap;
     private final IntFunction<BoxItem> toBoxItem;
     private final StampedLock lock = new StampedLock();
-    private final ReentrantLock mutationLock = new ReentrantLock();
 
     StockHolderImpl(@NotNull UUID uuid, @NotNull NameHolder nameHolder, @NotNull StockEventCaller eventCaller, @NotNull Int2ObjectOpenHashMap<Stock> stockMap,
                     @NotNull IntFunction<BoxItem> toBoxItem) {
@@ -73,30 +71,25 @@ class StockHolderImpl implements StockHolder {
 
         boolean callEvent = false;
         int previousAmount = 0;
+        long stamp = this.lock.writeLock();
 
-        this.mutationLock.lock();
         try {
             int internalId = item.getInternalId();
-            Stock stock = this.getStockOrNull(internalId);
+            Stock stock = this.getStockAtUnsynchronized(internalId);
 
             if (amount == 0 && stock == null) {
                 return;
             }
 
             if (stock == null) {
-                stock = this.getStockOrPutNewStock(internalId, amount);
-
-                if (stock == null) {
-                    callEvent = true;
-                }
-            }
-
-            if (stock != null) {
+                this.putNewStockAtUnsynchronized(internalId, amount);
+                callEvent = true;
+            } else {
                 previousAmount = stock.set(amount);
                 callEvent = previousAmount != amount;
             }
         } finally {
-            this.mutationLock.unlock();
+            this.lock.unlockWrite(stamp);
         }
 
         if (callEvent) {
@@ -120,33 +113,25 @@ class StockHolderImpl implements StockHolder {
 
         int newAmount;
         int excess = 0;
+        long stamp = this.lock.writeLock();
 
-        this.mutationLock.lock();
         try {
             int internalId = item.getInternalId();
-            Stock stock = this.getStockOrNull(internalId);
+            Stock stock = this.getStockAtUnsynchronized(internalId);
 
             if (stock == null) {
-                stock = this.getStockOrPutNewStock(internalId, increment);
-
-                if (stock == null) {
-                    newAmount = increment;
-                } else {
-                    Stock.ModifyResult result = stock.add(increment);
-                    newAmount = result.newValue();
-                    if (result instanceof Stock.ModifyResult.Overflow overflow) {
-                        excess = overflow.excess();
-                    }
-                }
+                this.putNewStockAtUnsynchronized(internalId, increment);
+                newAmount = increment;
             } else {
                 Stock.ModifyResult result = stock.add(increment);
                 newAmount = result.newValue();
+
                 if (result instanceof Stock.ModifyResult.Overflow overflow) {
                     excess = overflow.excess();
                 }
             }
         } finally {
-            this.mutationLock.unlock();
+            this.lock.unlockWrite(stamp);
         }
 
         if (excess == 0) {
@@ -186,10 +171,10 @@ class StockHolderImpl implements StockHolder {
 
         int decrement;
         int newAmount;
+        long stamp = this.lock.writeLock();
 
-        this.mutationLock.lock();
         try {
-            Stock stock = this.getStockOrNull(item.getInternalId());
+            Stock stock = this.getStockAtUnsynchronized(item.getInternalId());
 
             if (stock == null) {
                 return 0;
@@ -204,7 +189,7 @@ class StockHolderImpl implements StockHolder {
             decrement = result.oldValue() - result.newValue();
             newAmount = result.newValue();
         } finally {
-            this.mutationLock.unlock();
+            this.lock.unlockWrite(stamp);
         }
 
         this.eventCaller.callDecreaseEvent(this, item, decrement, newAmount, cause);
@@ -233,10 +218,10 @@ class StockHolderImpl implements StockHolder {
         }
 
         int newAmount;
+        long stamp = this.lock.writeLock();
 
-        this.mutationLock.lock();
         try {
-            Stock stock = this.getStockOrNull(item.getInternalId());
+            Stock stock = this.getStockAtUnsynchronized(item.getInternalId());
 
             if (stock == null) {
                 return -1;
@@ -250,7 +235,7 @@ class StockHolderImpl implements StockHolder {
 
             newAmount = result.newValue();
         } finally {
-            this.mutationLock.unlock();
+            this.lock.unlockWrite(stamp);
         }
 
         this.eventCaller.callDecreaseEvent(this, item, decrement, newAmount, cause);
@@ -284,18 +269,12 @@ class StockHolderImpl implements StockHolder {
         }
 
         Object2IntArrayMap<BoxItem> newAmountMap;
+        long stamp = this.lock.writeLock();
 
-        this.mutationLock.lock();
         try {
-            long stamp = this.lock.writeLock();
-
-            try {
-                newAmountMap = this.decreaseIfPossibleAtUnsynchronized(validatedDecrementMap);
-            } finally {
-                this.lock.unlockWrite(stamp);
-            }
+            newAmountMap = this.decreaseIfPossibleAtUnsynchronized(validatedDecrementMap);
         } finally {
-            this.mutationLock.unlock();
+            this.lock.unlockWrite(stamp);
         }
 
         if (newAmountMap == null) {
@@ -351,19 +330,13 @@ class StockHolderImpl implements StockHolder {
     @Override
     public @NotNull @Unmodifiable Collection<StockData> reset() {
         Collection<StockData> stockDataCollection;
+        long stamp = this.lock.writeLock();
 
-        this.mutationLock.lock();
         try {
-            long stamp = this.lock.writeLock();
-
-            try {
-                stockDataCollection = this.createStockDataAtUnsynchronized();
-                this.stockMap.clear();
-            } finally {
-                this.lock.unlockWrite(stamp);
-            }
+            stockDataCollection = this.createStockDataAtUnsynchronized();
+            this.stockMap.clear();
         } finally {
-            this.mutationLock.unlock();
+            this.lock.unlockWrite(stamp);
         }
 
         this.eventCaller.callResetEvent(this, stockDataCollection);
@@ -465,22 +438,6 @@ class StockHolderImpl implements StockHolder {
         return stock;
     }
 
-    private @Nullable Stock getStockOrPutNewStock(int internalId, int initialValue) {
-        long stamp = this.lock.writeLock();
-
-        try {
-            Stock stock = this.stockMap.get(internalId);
-
-            if (stock == null) {
-                this.putNewStockAtUnsynchronized(internalId, initialValue);
-                return null;
-            } else {
-                return stock;
-            }
-        } finally {
-            this.lock.unlockWrite(stamp);
-        }
-    }
 
     private @Nullable Stock getStockAtUnsynchronized(int internalId) {
         return this.stockMap.get(internalId);
