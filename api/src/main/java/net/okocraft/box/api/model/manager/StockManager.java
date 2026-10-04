@@ -17,6 +17,13 @@ import java.util.UUID;
 public interface StockManager {
 
     /**
+     * Saves pending changes in all loaded personal stock holders without unloading them.
+     *
+     * @throws Exception if saving a stock holder fails
+     */
+    void saveAll() throws Exception;
+
+    /**
      * Gets the {@link PersonalStockHolder} of the specified {@link BoxUser}.
      *
      * @param user the {@link BoxUser} to get {@link PersonalStockHolder}

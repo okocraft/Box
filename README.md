@@ -22,10 +22,7 @@ Box には以下のような特徴があります。
 ## Requirements
 
 - Java 25+
-- Paper 26.3+ (API baseline: `26.3.build.140-beta`)
-
-Box v6 targets the Paper 26.3 API. Earlier Paper versions are not supported.
-Folia servers must provide the same API version.
+- Paper 1.21.2+
 
 ## Installation
 

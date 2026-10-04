@@ -7,9 +7,13 @@ dependencies {
     compileOnly(projects.boxApi)
     compileOnly(projects.boxStorageApi)
 
+    testImplementation(projects.boxTestSharedClasses)
+
     implementation(libs.codec4j.io.gson) {
         exclude("com.google.code.gson", "gson")
     }
+
+    testImplementation(projects.boxTestSharedClasses)
 }
 
 tasks.javadoc {
