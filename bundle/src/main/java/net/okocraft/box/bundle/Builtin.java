@@ -13,8 +13,6 @@ import net.okocraft.box.feature.overflow.OverflowFeature;
 import net.okocraft.box.feature.stats.StatsFeature;
 import net.okocraft.box.feature.stick.StickFeature;
 import net.okocraft.box.storage.api.registry.StorageRegistry;
-import net.okocraft.box.storage.implementation.database.database.mysql.MySQLDatabase;
-import net.okocraft.box.storage.implementation.database.database.mysql.MySQLSetting;
 import net.okocraft.box.storage.implementation.database.database.sqlite.SQLiteDatabase;
 import net.okocraft.box.storage.implementation.database.database.sqlite.SQLiteSetting;
 import net.okocraft.box.storage.implementation.yaml.YamlStorage;
@@ -46,7 +44,6 @@ public final class Builtin {
     public static void storages(@NotNull StorageRegistry registry) {
         registry.register(YamlStorage.STORAGE_NAME, YamlStorage.Setting.class, YamlStorage::new);
         registry.register("sqlite", SQLiteSetting.class, SQLiteDatabase::createStorage);
-        registry.register("mysql", MySQLSetting.class, MySQLDatabase::createStorage);
 
         registry.setDefaultStorageName(YamlStorage.STORAGE_NAME);
     }
