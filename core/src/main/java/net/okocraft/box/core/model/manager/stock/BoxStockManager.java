@@ -64,6 +64,17 @@ public class BoxStockManager implements StockManager {
     }
 
     @Override
+    public void saveAll() throws Exception {
+        this.checkClosed();
+        for (LoadingPersonalStockHolder loader : this.loaderMap.values()) {
+            if (loader.isLoaded()) {
+                loader.saveChanges();
+                this.eventCallers.sync().call(new StockHolderSaveEvent(loader));
+            }
+        }
+    }
+
+    @Override
     public @NotNull LoadingPersonalStockHolder getPersonalStockHolder(@NotNull BoxUser user) {
         this.checkClosed();
         return this.loaderMap.computeIfAbsent(user.getUUID(), ignored -> this.createLoader(user));

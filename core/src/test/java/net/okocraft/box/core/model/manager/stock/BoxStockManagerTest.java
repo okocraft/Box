@@ -88,6 +88,24 @@ class BoxStockManagerTest {
     }
 
     @Test
+    void testSaveAllBypassesIntervalWithoutUnloadingOrLoadingUnusedHolders() throws Exception {
+        MemoryStockStorage storage = new MemoryStockStorage();
+        BoxStockManager manager = new BoxStockManager(storage, new EventCollector(), id -> ITEM, 300, 3600, TimeUnit.SECONDS);
+        LoadingPersonalStockHolder holder = manager.getPersonalStockHolder(TestUser.USER);
+        holder.markAsOnline();
+        holder.increase(ITEM, 64, StockEventCollector.TEST_CAUSE);
+        manager.saveAll();
+        checkStorageData(storage, 64);
+
+        holder.decrease(ITEM, 10, StockEventCollector.TEST_CAUSE);
+        LoadingPersonalStockHolder unused = manager.getPersonalStockHolder(net.okocraft.box.storage.api.factory.user.BoxUserFactory.create(UUID.randomUUID(), "unused"));
+        manager.saveAll();
+        checkStorageData(storage, 54);
+        Assertions.assertTrue(holder.isLoaded());
+        Assertions.assertFalse(unused.isLoaded());
+    }
+
+    @Test
     void testStateUpdatingStockEventCaller() {
         testStateUpdatingStockEventCaller(new MemoryStockStorage());
         testStateUpdatingStockEventCaller(new MemoryPartialSavingStockStorage());

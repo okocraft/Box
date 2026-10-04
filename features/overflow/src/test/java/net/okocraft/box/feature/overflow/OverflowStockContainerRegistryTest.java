@@ -83,6 +83,26 @@ class OverflowStockContainerRegistryTest {
         );
     }
 
+    @Test
+    void testSaveAllPersistsLoadedOwnersWithoutUnloading() throws Exception {
+        MemoryCustomDataManager customData = new MemoryCustomDataManager();
+        MemoryStockStorage stocks = new MemoryStockStorage();
+        OverflowStockContainerRegistry registry = createRegistry(customData, stocks);
+        UUID first = UUID.randomUUID();
+        UUID second = UUID.randomUUID();
+        registry.increase(first, ITEM, 10);
+        registry.increase(second, ITEM, 20);
+        registry.saveAll();
+        UUID firstHolder = loadHolderUuids(customData, first).getFirst();
+        UUID secondHolder = loadHolderUuids(customData, second).getFirst();
+        Assertions.assertEquals(List.of(new StockData(1, 10)), stocks.loadStockData(firstHolder));
+        Assertions.assertEquals(List.of(new StockData(1, 20)), stocks.loadStockData(secondHolder));
+        registry.increase(first, ITEM, 5);
+        registry.saveAll();
+        Assertions.assertEquals(List.of(firstHolder), loadHolderUuids(customData, first));
+        Assertions.assertEquals(List.of(new StockData(1, 15)), stocks.loadStockData(firstHolder));
+    }
+
     private static @NotNull OverflowStockContainerRegistry createRegistry(
         @NotNull CustomDataManager customDataManager,
         @NotNull StockStorage stockStorage
@@ -183,6 +203,10 @@ class OverflowStockContainerRegistryTest {
     }
 
     private static final class TestStockManager implements StockManager {
+
+        @Override
+        public void saveAll() {
+        }
 
         @Override
         public @NotNull PersonalStockHolder getPersonalStockHolder(@NotNull BoxUser user) {

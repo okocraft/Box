@@ -58,7 +58,7 @@ public class AutoStoreFeature extends AbstractBoxFeature {
     public void enable(@NotNull FeatureContext.Enabling context) {
         this.settingContainer.registerBoxPlayerListener(this.loadErrorMessage);
         this.autoSaveListener.register(AUTO_SAVE_LISTENER_KEY);
-        this.customDataExportListener.register(CUSTOM_DATA_EXPORT_LISTENER_KEY, AutoStoreSettingContainer::onExportAutoStoreSetting);
+        this.customDataExportListener.register(CUSTOM_DATA_EXPORT_LISTENER_KEY, AutoStoreSettingContainer::onExportAutoStoreSetting, this.settingContainer::saveAll);
 
         Bukkit.getPluginManager().registerEvents(this.itemListener, context.plugin());
 

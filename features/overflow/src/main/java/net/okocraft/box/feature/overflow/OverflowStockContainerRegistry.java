@@ -85,6 +85,20 @@ final class OverflowStockContainerRegistry {
         }
     }
 
+    void saveAll() throws Exception {
+        this.lifecycleLock.readLock().lock();
+        try {
+            this.checkOpen();
+            Set<UUID> ownerUuids = new HashSet<>(this.containers.keySet());
+            ownerUuids.addAll(this.pendingOverflows.keySet());
+            for (UUID ownerUuid : ownerUuids) {
+                this.save(ownerUuid);
+            }
+        } finally {
+            this.lifecycleLock.readLock().unlock();
+        }
+    }
+
     void unload(@NotNull UUID ownerUuid) throws Exception {
         this.lifecycleLock.readLock().lock();
 

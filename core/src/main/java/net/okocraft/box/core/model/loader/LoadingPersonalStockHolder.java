@@ -87,6 +87,12 @@ public class LoadingPersonalStockHolder implements PersonalStockHolder {
         return unloaded;
     }
 
+    public synchronized void saveChanges() throws Exception {
+        if (!this.closed && this.stockHolder != null) {
+            this.changeState.saveChanges(this.stockHolder);
+        }
+    }
+
     public synchronized void saveChangesOrUnloadIfNeeded(long unloadTimeInNanos, long saveIntervalInNanos) throws Exception {
         if (this.closed || this.stockHolder == null) {
             return;
