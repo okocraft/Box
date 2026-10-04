@@ -53,7 +53,6 @@ public class YamlStorage implements Storage {
 
     @Override
     public void init() throws Exception {
-        this.firstStartup = !Files.isDirectory(this.rootDirectory);
         Files.createDirectories(this.rootDirectory);
 
         Path oldMetaFilepath = this.rootDirectory.resolve("items").resolve("storage-meta.yml");
@@ -62,6 +61,7 @@ public class YamlStorage implements Storage {
         }
 
         this.metaStorage.load();
+        this.firstStartup = this.metaStorage.dataVersion() == null;
     }
 
     @Override

@@ -96,8 +96,6 @@ public final class StorageLoader {
 
         BoxData data = decodeResult.unwrap();
 
-        storage.saveDataVersion(data.dataVersion());
-
         logger().info("Importing {} users...", data.users().size());
         storage.getUserStorage().saveBoxUsers(data.users());
 
@@ -112,6 +110,8 @@ public final class StorageLoader {
 
         logger().info("Importing {} custom data...", data.customData().size());
         storage.getCustomDataStorage().saveAllData(data.customData());
+
+        storage.saveDataVersion(data.dataVersion());
     }
 
     private StorageLoader() {
