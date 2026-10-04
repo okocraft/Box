@@ -6,7 +6,8 @@ import net.okocraft.box.api.model.manager.ItemManager;
 import net.okocraft.box.feature.autostore.event.AutoStoreSettingChangeEvent;
 import net.okocraft.box.feature.autostore.setting.AutoStoreSetting;
 import net.okocraft.box.test.shared.event.EventCollector;
-import net.okocraft.box.test.shared.model.item.DummyItem;
+import net.okocraft.box.api.model.item.BoxItem;
+import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandSender;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -18,8 +19,16 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class AutoStoreItemCommandTest {
 
-    private static final DummyItem STONE = new DummyItem(1, "STONE");
-    private static final DummyItem DIRT = new DummyItem(2, "DIRT");
+    private static final BoxItem STONE = item(1, "STONE");
+    private static final BoxItem DIRT = item(2, "DIRT");
+
+    private static BoxItem item(int id, String name) {
+        BoxItem item = Mockito.mock(BoxItem.class);
+        Mockito.when(item.getInternalId()).thenReturn(id);
+        Mockito.when(item.getPlainName()).thenReturn(name);
+        Mockito.when(item.getDisplayName()).thenReturn(Component.text(name));
+        return item;
+    }
 
     @Test
     void itemCommandsSwitchFromAllModeAndApplySelections() {
