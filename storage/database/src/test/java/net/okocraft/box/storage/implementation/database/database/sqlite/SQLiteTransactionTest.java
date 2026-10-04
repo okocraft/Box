@@ -2,11 +2,14 @@ package net.okocraft.box.storage.implementation.database.database.sqlite;
 
 import net.okocraft.box.api.model.stock.StockData;
 import net.okocraft.box.storage.api.model.Storage;
+import net.okocraft.box.storage.api.registry.StorageContext;
 import net.okocraft.box.storage.implementation.database.table.StockTable;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
 
 import java.sql.Connection;
+import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
@@ -19,6 +22,21 @@ import java.util.stream.IntStream;
 import static org.junit.jupiter.api.Assertions.*;
 
 class SQLiteTransactionTest {
+
+    @Test
+    void fileDatabasePreparationReleasesItsConnectionLease(@TempDir Path directory) throws Exception {
+        var storage = SQLiteDatabase.createStorage(new StorageContext<>(directory, new SQLiteSetting("box_", "test.db")));
+        storage.init();
+        try (var executor = Executors.newSingleThreadExecutor()) {
+            assertTrue(executor.submit(() -> {
+                try (Connection connection = storage.getDatabase().getConnection()) {
+                    return connection.getAutoCommit();
+                }
+            }).get(5, TimeUnit.SECONDS));
+        } finally {
+            storage.close();
+        }
+    }
 
     @Test
     void savesLargePartialBatchesWithOneCommitAndPreservesOtherItems() throws Exception {

@@ -35,7 +35,7 @@ public class SQLiteDatabase extends AbstractSQLiteDatabase {
 
         this.connect();
 
-        try (Statement statement = this.getConnection().createStatement()) {
+        try (Connection connection = this.getConnection(); Statement statement = connection.createStatement()) {
             statement.execute("PRAGMA journal_mode=TRUNCATE");
         }
     }
