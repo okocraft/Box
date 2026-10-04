@@ -58,6 +58,10 @@ class YamlMetaStorage {
         return this.lastItemId.incrementAndGet();
     }
 
+    void includeItemId(int id) {
+        this.lastItemId.accumulateAndGet(id, Math::max);
+    }
+
     void saveLastItemId() throws IOException {
         saveInt(this.lastItemIdFilepath, this.lastItemId.get());
     }

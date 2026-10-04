@@ -98,10 +98,10 @@ class YamlCustomItemStorage implements CustomItemStorage {
             Files.createDirectories(parent);
         }
 
-        try (BufferedWriter writer = Files.newBufferedWriter(this.filepath, StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.APPEND)) {
-            for (ItemData item :customItems) {
-                int id = this.metaStorage.newItemIdWithoutSaving();
-                appendNewItem(writer, id, item.plainName(), item.itemData());
+        try (BufferedWriter writer = Files.newBufferedWriter(this.filepath, StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING)) {
+            for (ItemData item : customItems) {
+                this.metaStorage.includeItemId(item.internalId());
+                appendNewItem(writer, item.internalId(), item.plainName(), item.itemData());
             }
         }
 
