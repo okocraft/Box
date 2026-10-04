@@ -31,7 +31,7 @@ public final class BoxEventHandlers {
         }
 
         int itemId = event.getItem().getInternalId();
-        StockStatistics statistics = statisticsByItemId.get(itemId);
+        StockStatistics statistics = statisticsByItemId.getOrDefault(itemId, StockStatistics.EMPTY);
         if (statistics.rank() != 0) {
             event.addInfo(languageProvider.commandBoxItemInfoStockPercentage().apply(statistics.percentage(), statistics.rank()));
         }
