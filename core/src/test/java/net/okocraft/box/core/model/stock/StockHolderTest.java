@@ -4,6 +4,7 @@ import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2IntLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMaps;
+import net.okocraft.box.api.event.stockholder.stock.StockEvent;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.model.stock.StockData;
 import net.okocraft.box.api.model.stock.StockEventCaller;
@@ -538,7 +539,7 @@ class StockHolderTest {
         StockEventCaller eventCaller = new StockEventCaller() {
             @Override
             public void callSetEvent(@NotNull StockHolder stockHolder, @NotNull BoxItem item, int amount, int previousAmount,
-                                     net.okocraft.box.api.event.stockholder.stock.StockEvent.@NotNull Cause cause) {
+                                     StockEvent.@NotNull Cause cause) {
                 try {
                     CompletableFuture.runAsync(() -> stockHolder.increase(ITEM_2, 1, cause)).get(2, TimeUnit.SECONDS);
                 } catch (Exception e) {
@@ -548,17 +549,17 @@ class StockHolderTest {
 
             @Override
             public void callIncreaseEvent(@NotNull StockHolder stockHolder, @NotNull BoxItem item, int increments, int currentAmount,
-                                          net.okocraft.box.api.event.stockholder.stock.StockEvent.@NotNull Cause cause) {
+                                          StockEvent.@NotNull Cause cause) {
             }
 
             @Override
             public void callOverflowEvent(@NotNull StockHolder stockHolder, @NotNull BoxItem item, int increments, int excess,
-                                          net.okocraft.box.api.event.stockholder.stock.StockEvent.@NotNull Cause cause) {
+                                          StockEvent.@NotNull Cause cause) {
             }
 
             @Override
             public void callDecreaseEvent(@NotNull StockHolder stockHolder, @NotNull BoxItem item, int decrements, int currentAmount,
-                                          net.okocraft.box.api.event.stockholder.stock.StockEvent.@NotNull Cause cause) {
+                                          StockEvent.@NotNull Cause cause) {
             }
 
             @Override
