@@ -90,6 +90,12 @@ class AutoStoreSettingContainer implements AutoStoreSettingProvider {
         }
     }
 
+    void saveAll() throws Exception {
+        for (AutoStoreSetting setting : this.settingMap.values()) {
+            this.save(setting);
+        }
+    }
+
     void unloadAll() {
         for (AutoStoreSetting setting : this.settingMap.values()) {
             try {

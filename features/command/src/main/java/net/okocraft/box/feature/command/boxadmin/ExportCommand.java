@@ -5,6 +5,7 @@ import dev.siroshun.mcmsgdef.MessageKey;
 import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.minimessage.translation.Argument;
 import net.okocraft.box.api.BoxAPI;
+import net.okocraft.box.api.event.customdata.DataExportPrepareEvent;
 import net.okocraft.box.api.command.AbstractCommand;
 import net.okocraft.box.api.message.DefaultMessageCollector;
 import net.okocraft.box.api.util.BoxLogger;
@@ -41,6 +42,17 @@ public class ExportCommand extends AbstractCommand {
     @Override
     public void onCommand(CommandSender sender, String[] args) {
         sender.sendMessage(this.exportStart);
+
+        try {
+            DataExportPrepareEvent preparation = new DataExportPrepareEvent();
+            preparation.addPreparation(BoxAPI.api().getStockManager()::saveAll);
+            BoxAPI.api().getEventCallers().sync().call(preparation);
+            preparation.prepare();
+        } catch (Exception e) {
+            BoxLogger.logger().error("Failed to prepare data for export", e);
+            sender.sendMessage(this.exportFailure);
+            return;
+        }
 
         Path path = BoxAPI.api().getPluginDirectory().resolve("data-" + LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME).replace(":", "-") + ".json.gz");
 

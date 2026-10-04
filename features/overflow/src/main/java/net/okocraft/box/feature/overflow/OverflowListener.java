@@ -3,6 +3,7 @@ package net.okocraft.box.feature.overflow;
 import dev.siroshun.event4j.api.priority.Priority;
 import net.kyori.adventure.key.Key;
 import net.okocraft.box.api.event.player.PlayerUnloadEvent;
+import net.okocraft.box.api.event.customdata.DataExportPrepareEvent;
 import net.okocraft.box.api.event.stockholder.StockHolderSaveEvent;
 import net.okocraft.box.api.event.stockholder.stock.StockOverflowEvent;
 import net.okocraft.box.api.model.stock.PersonalStockHolder;
@@ -28,6 +29,7 @@ final class OverflowListener {
             subscriber.add(StockOverflowEvent.class, LISTENER_KEY, this::onOverflow, Priority.NORMAL)
                 .add(StockHolderSaveEvent.class, LISTENER_KEY, this::onStockHolderSave, Priority.NORMAL)
                 .add(PlayerUnloadEvent.class, LISTENER_KEY, this::onPlayerUnload, Priority.NORMAL)
+                .add(DataExportPrepareEvent.class, LISTENER_KEY, event -> event.addPreparation(this.containerRegistry::saveAll), Priority.NORMAL)
         );
     }
 
