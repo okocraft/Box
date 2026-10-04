@@ -9,7 +9,6 @@ import org.jetbrains.annotations.NotNull;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.List;
 
@@ -43,12 +42,7 @@ public class SQLiteDatabase extends AbstractSQLiteDatabase {
 
     @Override
     public void shutdown() throws Exception {
-        try (Connection connection = this.getConnection();
-             PreparedStatement statement = connection.prepareStatement("VACUUM")) {
-            statement.execute();
-        } finally {
-            this.disconnect();
-        }
+        this.disconnect();
     }
 
     @Override
