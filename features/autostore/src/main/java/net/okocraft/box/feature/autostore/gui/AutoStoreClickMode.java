@@ -5,6 +5,8 @@ import io.papermc.paper.registry.keys.SoundEventKeys;
 import net.kyori.adventure.text.Component;
 import net.okocraft.box.api.message.DefaultMessageCollector;
 import net.okocraft.box.api.model.item.BoxItem;
+import net.okocraft.box.api.BoxAPI;
+import net.okocraft.box.feature.autostore.event.AutoStoreSettingChangeEvent;
 import net.okocraft.box.feature.autostore.AutoStoreSettingProvider;
 import net.okocraft.box.feature.autostore.gui.buttons.BulkEditingButton;
 import net.okocraft.box.feature.autostore.gui.buttons.DirectButton;
@@ -100,6 +102,8 @@ public class AutoStoreClickMode implements BoxItemClickMode {
 
         playerSetting.setEnabled(true);
         playerSetting.setAllMode(false);
+
+        BoxAPI.api().getEventCallers().async().call(new AutoStoreSettingChangeEvent(playerSetting));
 
         (enabled ? ENABLE_SOUND : DISABLE_SOUND).play(session.getViewer());
 

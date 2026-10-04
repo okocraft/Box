@@ -68,12 +68,16 @@ public class AutoStoreCommand extends AbstractCommand {
 
         // process autostore toggle
         if (args.length == 1) {
-            AutoStoreCommandUtil.changeAutoStore(setting, sender, !setting.isEnabled(), true);
+            if (AutoStoreCommandUtil.changeAutoStore(setting, sender, !setting.isEnabled(), true)) {
+                AutoStoreCommandUtil.callEvent(setting);
+            }
             return;
         } else {
             Boolean value = AutoStoreCommandUtil.getBoolean(args[1]);
             if (value != null) {
-                AutoStoreCommandUtil.changeAutoStore(setting, sender, value, true);
+                if (AutoStoreCommandUtil.changeAutoStore(setting, sender, value, true)) {
+                    AutoStoreCommandUtil.callEvent(setting);
+                }
                 return;
             }
         }
