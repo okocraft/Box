@@ -28,16 +28,6 @@ Box には以下のような特徴があります。
 
 Please read [Installation and Setup](https://github.com/okocraft/Box/wiki/Installation-and-Setup) page on GitHub Wiki.
 
-## Existing auto-store settings
-
-Box v6 treats empty auto-store data as a new setting: auto-store is disabled and
-the mode is all items. Older builds also saved disabled per-item mode with no
-selected items as empty data, so that state cannot be distinguished from a new
-setting. Enabling auto-store for such a user will therefore select all items.
-To retain disabled per-item mode with no selections, run
-`/box autostore item all off` followed by `/box autostore off`. New saves record
-the mode explicitly.
-
 ## Compiling from source
 
 ```shell
