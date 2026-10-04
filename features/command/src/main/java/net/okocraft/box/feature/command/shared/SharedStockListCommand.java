@@ -107,7 +107,7 @@ public class SharedStockListCommand {
             return;
         }
 
-        int maxPage = stockDataCollection.size() / 8 + 1;
+        int maxPage = Math.ceilDiv(stockDataCollection.size(), 8);
         int page = Math.max(Math.min(context.page, maxPage), 1);
 
         int start = (page - 1) * 8;
@@ -162,6 +162,10 @@ public class SharedStockListCommand {
     }
 
     private static @NotNull Predicate<BoxItem> createFilter(@NotNull String arg) {
+        if (arg.equals("*")) {
+            return item -> true;
+        }
+
         boolean startsWith = arg.endsWith("*");
         boolean endsWith = arg.startsWith("*");
 
