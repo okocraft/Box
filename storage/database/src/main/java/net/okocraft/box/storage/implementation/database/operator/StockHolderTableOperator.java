@@ -11,7 +11,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Collection;
 import java.util.List;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 import java.util.UUID;
 
 @NotNullByDefault
@@ -91,6 +94,30 @@ public class StockHolderTableOperator {
             }
             statement.executeUpdate();
         }
+    }
+
+    public IntList getExistingStockHolderIds(Connection connection, Collection<UUID> uuids) throws SQLException {
+        IntList result = new IntArrayList();
+        if (uuids.isEmpty()) {
+            return result;
+        }
+        List<UUID> keys = List.copyOf(uuids);
+        for (int offset = 0; offset < keys.size(); offset += 500) {
+            int end = Math.min(offset + 500, keys.size());
+            String placeholders = String.join(",", java.util.Collections.nCopies(end - offset, "?"));
+            String query = "SELECT id FROM `%s` WHERE uuid IN (%s)".formatted(this.tableName, placeholders);
+            try (PreparedStatement statement = connection.prepareStatement(query)) {
+                for (int i = offset; i < end; i++) {
+                    statement.setBytes(i - offset + 1, UUIDConverters.toBytes(keys.get(i)));
+                }
+                try (ResultSet rows = statement.executeQuery()) {
+                    while (rows.next()) {
+                        result.add(rows.getInt(1));
+                    }
+                }
+            }
+        }
+        return result;
     }
 
     public Object2IntMap<UUID> getAllStockHolderIdByUUID(Connection connection) throws SQLException {

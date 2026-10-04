@@ -25,6 +25,7 @@ public class StockStatisticsTableOperator {
                     RANK() OVER stock_amount_by_item_id as rank,
                     SUM(amount) OVER (PARTITION BY item_id) as total_amount
                 FROM %2$s
+                {SOURCE_WHERE_CLAUSE}
                 WINDOW stock_amount_by_item_id AS (PARTITION BY item_id ORDER BY amount DESC)
             )
             SELECT
@@ -47,6 +48,7 @@ public class StockStatisticsTableOperator {
             percentage = EXCLUDED.percentage
         """;
 
+    private final String stockTableName;
     private final String createTableQuery;
     private final String createItemIdIndexQuery;
     private final String bulkUpsertQuery;
@@ -56,6 +58,7 @@ public class StockStatisticsTableOperator {
 
     public StockStatisticsTableOperator(String tablePrefix, String stockTableName, String stockHolderTableName) {
         String tableName = tablePrefix + "stock_statistics";
+        this.stockTableName = stockTableName;
 
         this.createTableQuery = """
             CREATE TABLE IF NOT EXISTS %1$s (
@@ -68,7 +71,7 @@ public class StockStatisticsTableOperator {
             )
             """.formatted(tableName);
         this.createItemIdIndexQuery = "CREATE INDEX IF NOT EXISTS idx_%1$s_item_id_rank ON %1$s (item_id, rank)".formatted(tableName);
-        this.bulkUpsertQuery = BULK_UPSERT_QUERY.formatted(tableName, stockTableName).replace("{WHERE_CLAUSE}", "WHERE TRUE");
+        this.bulkUpsertQuery = BULK_UPSERT_QUERY.formatted(tableName, stockTableName).replace("{WHERE_CLAUSE}", "WHERE TRUE").replace("{SOURCE_WHERE_CLAUSE}", "");
         this.bulkUpsertByStockIdQuery = BULK_UPSERT_QUERY.formatted(tableName, stockTableName);
         this.deleteNonExistingStockRecordsQuery = """
             DELETE FROM %1$s
@@ -101,6 +104,9 @@ public class StockStatisticsTableOperator {
     }
 
     public void updateTableRecordsByStockIds(@NotNull Connection connection, IntCollection stockIds) throws SQLException {
+        if (stockIds.isEmpty()) {
+            return;
+        }
         StringBuilder whereClause = new StringBuilder("WHERE stock_id IN (");
         boolean first = true;
         for (int stockId : stockIds) {
@@ -113,7 +119,10 @@ public class StockStatisticsTableOperator {
         whereClause.append(")");
 
         try (Statement statement = connection.createStatement()) {
-            statement.executeUpdate(this.bulkUpsertByStockIdQuery.replace("{WHERE_CLAUSE}", whereClause.toString()));
+            String sourceFilter = "WHERE item_id IN (SELECT DISTINCT item_id FROM %s WHERE %s)".formatted(this.stockTableName, whereClause.substring(6));
+            statement.executeUpdate(this.bulkUpsertByStockIdQuery
+                .replace("{WHERE_CLAUSE}", whereClause.toString())
+                .replace("{SOURCE_WHERE_CLAUSE}", sourceFilter));
         }
     }
 
