@@ -63,16 +63,16 @@ class StockHolderImpl implements StockHolder {
 
     @Override
     public void setAmount(@NotNull BoxItem item, int amount, @NotNull StockEvent.Cause cause) {
+        Objects.requireNonNull(item);
+
+        if (amount < 0) {
+            throw new IllegalArgumentException("amount must be zero or positive");
+        }
+
+        Objects.requireNonNull(cause);
+
         this.mutationLock.lock();
         try {
-            Objects.requireNonNull(item);
-
-            if (amount < 0) {
-                throw new IllegalArgumentException("amount must be zero or positive");
-            }
-
-            Objects.requireNonNull(cause);
-
             int internalId = item.getInternalId();
             Stock stock = this.getStockOrNull(internalId);
 
@@ -101,20 +101,20 @@ class StockHolderImpl implements StockHolder {
 
     @Override
     public int increase(@NotNull BoxItem item, int increment, @NotNull StockEvent.Cause cause) {
+        Objects.requireNonNull(item);
+
+        if (increment < 0) {
+            throw new IllegalArgumentException("increment must be zero or positive");
+        }
+
+        Objects.requireNonNull(cause);
+
+        if (increment == 0) {
+            return this.getAmount(item);
+        }
+
         this.mutationLock.lock();
         try {
-            Objects.requireNonNull(item);
-
-            if (increment < 0) {
-                throw new IllegalArgumentException("increment must be zero or positive");
-            }
-
-            Objects.requireNonNull(cause);
-
-            if (increment == 0) {
-                return this.getAmount(item);
-            }
-
             int internalId = item.getInternalId();
             Stock stock = this.getStockOrNull(internalId);
 
@@ -156,20 +156,20 @@ class StockHolderImpl implements StockHolder {
     private static final int RETURN_DECREMENT = 1;
 
     private int decrease(@NotNull BoxItem item, int limit, @NotNull StockEvent.Cause cause, int returnType) {
+        Objects.requireNonNull(item);
+
+        if (limit < 0) {
+            throw new IllegalArgumentException("decrement must be zero or positive");
+        }
+
+        Objects.requireNonNull(cause);
+
+        if (limit == 0) {
+            return returnType == RETURN_NEW_AMOUNT ? this.getAmount(item) : 0;
+        }
+
         this.mutationLock.lock();
         try {
-            Objects.requireNonNull(item);
-
-            if (limit < 0) {
-                throw new IllegalArgumentException("decrement must be zero or positive");
-            }
-
-            Objects.requireNonNull(cause);
-
-            if (limit == 0) {
-                return returnType == RETURN_NEW_AMOUNT ? this.getAmount(item) : 0;
-            }
-
             Stock stock = this.getStockOrNull(item.getInternalId());
 
             if (stock == null) {
@@ -198,20 +198,20 @@ class StockHolderImpl implements StockHolder {
 
     @Override
     public int decreaseIfPossible(@NotNull BoxItem item, int decrement, @NotNull StockEvent.Cause cause) {
+        Objects.requireNonNull(item);
+
+        if (decrement < 0) {
+            throw new IllegalArgumentException("decrement must be zero or positive");
+        }
+
+        Objects.requireNonNull(cause);
+
+        if (decrement == 0) {
+            return this.getAmount(item);
+        }
+
         this.mutationLock.lock();
         try {
-            Objects.requireNonNull(item);
-
-            if (decrement < 0) {
-                throw new IllegalArgumentException("decrement must be zero or positive");
-            }
-
-            Objects.requireNonNull(cause);
-
-            if (decrement == 0) {
-                return this.getAmount(item);
-            }
-
             Stock stock = this.getStockOrNull(item.getInternalId());
 
             if (stock == null) {
@@ -233,14 +233,23 @@ class StockHolderImpl implements StockHolder {
 
     @Override
     public boolean decreaseIfPossible(@NotNull Object2IntMap<BoxItem> decrementMap, @NotNull StockEvent.Cause cause) {
+        Objects.requireNonNull(decrementMap);
+        Objects.requireNonNull(cause);
+
+        if (decrementMap.isEmpty()) {
+            return true;
+        }
+
+        for (Object2IntMap.Entry<BoxItem> entry : decrementMap.object2IntEntrySet()) {
+            Objects.requireNonNull(entry.getKey());
+
+            if (entry.getIntValue() < 0) {
+                throw new IllegalArgumentException("the value in the decrementMap must be zero or positive.");
+            }
+        }
+
         this.mutationLock.lock();
         try {
-            Objects.requireNonNull(cause);
-
-            if (decrementMap.isEmpty()) {
-                return true;
-            }
-
             long stamp = this.lock.writeLock();
             Object2IntArrayMap<BoxItem> newAmountMap;
 
@@ -270,9 +279,7 @@ class StockHolderImpl implements StockHolder {
         for (Object2IntMap.Entry<BoxItem> entry : decrementMap.object2IntEntrySet()) {
             int decrement = entry.getIntValue();
 
-            if (decrement < 0) {
-                throw new IllegalArgumentException("the value in the decrementMap must be zero or positive.");
-            } else if (decrement == 0) {
+            if (decrement == 0) {
                 continue;
             }
 
