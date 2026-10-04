@@ -126,16 +126,20 @@ public class BoxPlayerMapImpl implements BoxPlayerMap {
 
     public void unload(@NotNull Player player) {
         Objects.requireNonNull(player);
+        AtomicReference<BoxPlayerImpl> unloaded = new AtomicReference<>();
         this.playerMap.computeIfPresent(player, (key, current) -> {
             if (current instanceof NotLoadedPlayer pending && pending.getPlayer() == player) {
                 return null;
             }
             if (current instanceof BoxPlayerImpl loaded && loaded.getPlayer() == player) {
-                this.unload(loaded);
+                unloaded.set(loaded);
                 return null;
             }
             return current;
         });
+        if (unloaded.get() != null) {
+            this.unload(unloaded.get());
+        }
     }
 
     private void unload(@NotNull BoxPlayerImpl boxPlayer) {
