@@ -33,7 +33,7 @@ public abstract class AbstractPaginatedMenu<T> implements PaginatedMenu {
         this.list = list;
         this.currentPageKey = currentPageKey;
         this.iconsPerPage = (this.getRows() - 1) * 9;
-        this.maxPage = (list.size() + this.iconsPerPage - 1) / this.iconsPerPage;
+        this.maxPage = Math.max(1, (list.size() + this.iconsPerPage - 1) / this.iconsPerPage);
     }
 
     @Override
@@ -59,7 +59,7 @@ public abstract class AbstractPaginatedMenu<T> implements PaginatedMenu {
 
     @Override
     public void setCurrentPage(@NotNull PlayerSession session, int page) {
-        session.putData(this.currentPageKey, page);
+        session.putData(this.currentPageKey, Math.clamp(page, 1, this.maxPage));
     }
 
     @Override
