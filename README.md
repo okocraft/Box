@@ -22,7 +22,7 @@ Box には以下のような特徴があります。
 ## Requirements
 
 - Java 25+
-- Paper 1.21.2+
+- Paper 26.2+
 
 ## Installation
 
