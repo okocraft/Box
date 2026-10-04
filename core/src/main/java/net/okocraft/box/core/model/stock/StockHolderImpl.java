@@ -60,7 +60,7 @@ class StockHolderImpl implements StockHolder {
     }
 
     @Override
-    public void setAmount(@NotNull BoxItem item, int amount, @NotNull StockEvent.Cause cause) {
+    public synchronized void setAmount(@NotNull BoxItem item, int amount, @NotNull StockEvent.Cause cause) {
         Objects.requireNonNull(item);
 
         if (amount < 0) {
@@ -93,7 +93,7 @@ class StockHolderImpl implements StockHolder {
     }
 
     @Override
-    public int increase(@NotNull BoxItem item, int increment, @NotNull StockEvent.Cause cause) {
+    public synchronized int increase(@NotNull BoxItem item, int increment, @NotNull StockEvent.Cause cause) {
         Objects.requireNonNull(item);
 
         if (increment < 0) {
@@ -143,7 +143,7 @@ class StockHolderImpl implements StockHolder {
     private static final int RETURN_NEW_AMOUNT = 0;
     private static final int RETURN_DECREMENT = 1;
 
-    private int decrease(@NotNull BoxItem item, int limit, @NotNull StockEvent.Cause cause, int returnType) {
+    private synchronized int decrease(@NotNull BoxItem item, int limit, @NotNull StockEvent.Cause cause, int returnType) {
         Objects.requireNonNull(item);
 
         if (limit < 0) {
@@ -180,7 +180,7 @@ class StockHolderImpl implements StockHolder {
     }
 
     @Override
-    public int decreaseIfPossible(@NotNull BoxItem item, int decrement, @NotNull StockEvent.Cause cause) {
+    public synchronized int decreaseIfPossible(@NotNull BoxItem item, int decrement, @NotNull StockEvent.Cause cause) {
         Objects.requireNonNull(item);
 
         if (decrement < 0) {
@@ -210,7 +210,7 @@ class StockHolderImpl implements StockHolder {
     }
 
     @Override
-    public boolean decreaseIfPossible(@NotNull Object2IntMap<BoxItem> decrementMap, @NotNull StockEvent.Cause cause) {
+    public synchronized boolean decreaseIfPossible(@NotNull Object2IntMap<BoxItem> decrementMap, @NotNull StockEvent.Cause cause) {
         Objects.requireNonNull(cause);
 
         if (decrementMap.isEmpty()) {
@@ -279,7 +279,7 @@ class StockHolderImpl implements StockHolder {
     }
 
     @Override
-    public @NotNull @Unmodifiable Collection<StockData> reset() {
+    public synchronized @NotNull @Unmodifiable Collection<StockData> reset() {
         Collection<StockData> stockDataCollection;
 
         long stamp = this.lock.writeLock();
