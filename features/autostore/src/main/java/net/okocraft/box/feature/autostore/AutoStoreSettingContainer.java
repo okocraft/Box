@@ -149,7 +149,8 @@ class AutoStoreSettingContainer implements AutoStoreSettingProvider {
 
         if (data.isEmpty()) {
             // loadData returns the same empty node for missing data and for old
-            // disabled settings with no selected items. Both use new defaults;
+            // disabled settings with no selected items (storage deletes empty data).
+            // Both use new defaults;
             // the old per-item mode cannot be recovered from this representation.
             return setting;
         }

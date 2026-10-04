@@ -75,7 +75,9 @@ class AutoStoreSettingContainerTest {
         AutoStoreSetting setting = container.getOrLoad(uuid);
         assertFalse(setting.isEnabled());
         assertTrue(setting.isAllMode());
-        assertFalse(setting.shouldAutoStore(ITEM));
+        container.save(setting);
+        assertFalse(this.savedData.get(key).getBoolean("enable"));
+        assertTrue(this.savedData.get(key).getBoolean("all-mode"));
         setting.setEnabled(true);
         assertTrue(setting.shouldAutoStore(ITEM));
         container.save(setting);
