@@ -71,6 +71,9 @@ class StockHolderImpl implements StockHolder {
 
         Objects.requireNonNull(cause);
 
+        boolean callEvent = false;
+        int previousAmount = 0;
+
         this.mutationLock.lock();
         try {
             int internalId = item.getInternalId();
@@ -84,18 +87,20 @@ class StockHolderImpl implements StockHolder {
                 stock = this.getStockOrPutNewStock(internalId, amount);
 
                 if (stock == null) {
-                    this.eventCaller.callSetEvent(this, item, amount, 0, cause);
-                    return;
+                    callEvent = true;
                 }
             }
 
-            int previousAmount = stock.set(amount);
-
-            if (previousAmount != amount) {
-                this.eventCaller.callSetEvent(this, item, amount, previousAmount, cause);
+            if (stock != null) {
+                previousAmount = stock.set(amount);
+                callEvent = previousAmount != amount;
             }
         } finally {
             this.mutationLock.unlock();
+        }
+
+        if (callEvent) {
+            this.eventCaller.callSetEvent(this, item, amount, previousAmount, cause);
         }
     }
 
@@ -113,6 +118,9 @@ class StockHolderImpl implements StockHolder {
             return this.getAmount(item);
         }
 
+        int newAmount;
+        int excess = 0;
+
         this.mutationLock.lock();
         try {
             int internalId = item.getInternalId();
@@ -122,24 +130,32 @@ class StockHolderImpl implements StockHolder {
                 stock = this.getStockOrPutNewStock(internalId, increment);
 
                 if (stock == null) {
-                    this.eventCaller.callIncreaseEvent(this, item, increment, increment, cause);
-                    return increment;
+                    newAmount = increment;
+                } else {
+                    Stock.ModifyResult result = stock.add(increment);
+                    newAmount = result.newValue();
+                    if (result instanceof Stock.ModifyResult.Overflow overflow) {
+                        excess = overflow.excess();
+                    }
                 }
-            }
-
-            Stock.ModifyResult result = stock.add(increment);
-
-            if (result.getClass() == Stock.ModifyResult.Success.class) {
-                this.eventCaller.callIncreaseEvent(this, item, increment, result.newValue(), cause);
-                return result.newValue();
             } else {
-                int excess = ((Stock.ModifyResult.Overflow) result).excess();
-                this.eventCaller.callOverflowEvent(this, item, increment - excess, excess, cause);
-                return Integer.MAX_VALUE;
+                Stock.ModifyResult result = stock.add(increment);
+                newAmount = result.newValue();
+                if (result instanceof Stock.ModifyResult.Overflow overflow) {
+                    excess = overflow.excess();
+                }
             }
         } finally {
             this.mutationLock.unlock();
         }
+
+        if (excess == 0) {
+            this.eventCaller.callIncreaseEvent(this, item, increment, newAmount, cause);
+        } else {
+            this.eventCaller.callOverflowEvent(this, item, increment - excess, excess, cause);
+        }
+
+        return newAmount;
     }
 
     @Override
@@ -168,6 +184,9 @@ class StockHolderImpl implements StockHolder {
             return returnType == RETURN_NEW_AMOUNT ? this.getAmount(item) : 0;
         }
 
+        int decrement;
+        int newAmount;
+
         this.mutationLock.lock();
         try {
             Stock stock = this.getStockOrNull(item.getInternalId());
@@ -178,21 +197,24 @@ class StockHolderImpl implements StockHolder {
 
             Stock.ModifyResult result = stock.subtract(limit);
 
-            if (result.oldValue() != 0) {
-                int decrement = result.oldValue() - result.newValue();
-
-                this.eventCaller.callDecreaseEvent(this, item, decrement, result.newValue(), cause);
-
-                if (returnType == RETURN_NEW_AMOUNT) {
-                    return result.newValue();
-                } else if (returnType == RETURN_DECREMENT) {
-                    return decrement;
-                }
+            if (result.oldValue() == 0) {
+                return 0;
             }
 
-            return 0;
+            decrement = result.oldValue() - result.newValue();
+            newAmount = result.newValue();
         } finally {
             this.mutationLock.unlock();
+        }
+
+        this.eventCaller.callDecreaseEvent(this, item, decrement, newAmount, cause);
+
+        if (returnType == RETURN_NEW_AMOUNT) {
+            return newAmount;
+        } else if (returnType == RETURN_DECREMENT) {
+            return decrement;
+        } else {
+            return 0;
         }
     }
 
@@ -210,6 +232,8 @@ class StockHolderImpl implements StockHolder {
             return this.getAmount(item);
         }
 
+        int newAmount;
+
         this.mutationLock.lock();
         try {
             Stock stock = this.getStockOrNull(item.getInternalId());
@@ -224,11 +248,13 @@ class StockHolderImpl implements StockHolder {
                 return -1;
             }
 
-            this.eventCaller.callDecreaseEvent(this, item, decrement, result.newValue(), cause);
-            return result.newValue();
+            newAmount = result.newValue();
         } finally {
             this.mutationLock.unlock();
         }
+
+        this.eventCaller.callDecreaseEvent(this, item, decrement, newAmount, cause);
+        return newAmount;
     }
 
     @Override
@@ -240,37 +266,47 @@ class StockHolderImpl implements StockHolder {
             return true;
         }
 
-        for (Object2IntMap.Entry<BoxItem> entry : decrementMap.object2IntEntrySet()) {
-            Objects.requireNonNull(entry.getKey());
+        Object2IntArrayMap<BoxItem> validatedDecrementMap = new Object2IntArrayMap<>(decrementMap.size());
 
-            if (entry.getIntValue() < 0) {
+        for (Object2IntMap.Entry<BoxItem> entry : decrementMap.object2IntEntrySet()) {
+            BoxItem item = Objects.requireNonNull(entry.getKey());
+            int decrement = entry.getIntValue();
+
+            if (decrement < 0) {
                 throw new IllegalArgumentException("the value in the decrementMap must be zero or positive.");
+            } else if (decrement != 0) {
+                validatedDecrementMap.put(item, decrement);
             }
         }
+
+        if (validatedDecrementMap.isEmpty()) {
+            return true;
+        }
+
+        Object2IntArrayMap<BoxItem> newAmountMap;
 
         this.mutationLock.lock();
         try {
             long stamp = this.lock.writeLock();
-            Object2IntArrayMap<BoxItem> newAmountMap;
 
             try {
-                newAmountMap = this.decreaseIfPossibleAtUnsynchronized(decrementMap);
+                newAmountMap = this.decreaseIfPossibleAtUnsynchronized(validatedDecrementMap);
             } finally {
                 this.lock.unlockWrite(stamp);
             }
-
-            if (newAmountMap == null) {
-                return false;
-            }
-
-            for (Object2IntMap.Entry<BoxItem> entry : newAmountMap.object2IntEntrySet()) {
-                this.eventCaller.callDecreaseEvent(this, entry.getKey(), decrementMap.getInt(entry.getKey()), entry.getIntValue(), cause);
-            }
-
-            return true;
         } finally {
             this.mutationLock.unlock();
         }
+
+        if (newAmountMap == null) {
+            return false;
+        }
+
+        for (Object2IntMap.Entry<BoxItem> entry : newAmountMap.object2IntEntrySet()) {
+            this.eventCaller.callDecreaseEvent(this, entry.getKey(), validatedDecrementMap.getInt(entry.getKey()), entry.getIntValue(), cause);
+        }
+
+        return true;
     }
 
     private @Nullable Object2IntArrayMap<BoxItem> decreaseIfPossibleAtUnsynchronized(@NotNull Object2IntMap<BoxItem> decrementMap) {
@@ -314,10 +350,10 @@ class StockHolderImpl implements StockHolder {
 
     @Override
     public @NotNull @Unmodifiable Collection<StockData> reset() {
+        Collection<StockData> stockDataCollection;
+
         this.mutationLock.lock();
         try {
-            Collection<StockData> stockDataCollection;
-
             long stamp = this.lock.writeLock();
 
             try {
@@ -326,13 +362,13 @@ class StockHolderImpl implements StockHolder {
             } finally {
                 this.lock.unlockWrite(stamp);
             }
-
-            this.eventCaller.callResetEvent(this, stockDataCollection);
-
-            return stockDataCollection;
         } finally {
             this.mutationLock.unlock();
         }
+
+        this.eventCaller.callResetEvent(this, stockDataCollection);
+
+        return stockDataCollection;
     }
 
     @Override
