@@ -43,7 +43,7 @@ public class ResetAllCommand extends AbstractCommand {
 
     public ResetAllCommand(@NotNull DefaultMessageCollector collector) {
         super("resetall", "box.admin.command.resetall");
-        this.successSender = MessageKey.arg1(collector.add("box.command.boxadmin.resetall.success.sender", "<aqua><player><gray>'s Box data have been reset."), PLAYER_NAME);
+        this.successSender = MessageKey.arg1(collector.add("box.command.boxadmin.resetall.success.sender", "<aqua><player_name><gray>'s Box data have been reset."), PLAYER_NAME);
         this.successTarget = MessageKey.arg1(collector.add("box.command.boxadmin.resetall.success.target", "<gray>Your Box data have been reset by <aqua><player_name><gray>."), PLAYER_NAME);
         this.cancel = MessageKey.key(collector.add("box.command.boxadmin.resetall.cancel", "<gray>Cancelled reset operation."));
         this.confirmation = MessageKey.arg1(collector.add("box.command.boxadmin.resetall.confirmation", DEFAULT_CONFIRMATION_MESSAGE), PLAYER_NAME);
