@@ -101,7 +101,7 @@ public class InfinityCommand extends AbstractCommand {
             sender.sendMessage(enabled ? this.enableSelf : this.disableSelf);
         } else {
             sender.sendMessage((enabled ? this.enableOtherSender : this.disableOtherSender).apply(target.getName()));
-            sender.sendMessage((enabled ? this.enableOtherTarget : this.disableOtherTarget).apply(sender.getName()));
+            target.sendMessage((enabled ? this.enableOtherTarget : this.disableOtherTarget).apply(sender.getName()));
         }
 
         if (enabled) {
