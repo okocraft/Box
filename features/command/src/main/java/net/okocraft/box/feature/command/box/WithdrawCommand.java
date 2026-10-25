@@ -78,7 +78,7 @@ public class WithdrawCommand extends AbstractCommand {
             try {
                 amount = Math.min(currentStock, Math.max(Integer.parseInt(args[2]), 1));
             } catch (NumberFormatException e) {
-                ErrorMessages.INVALID_NUMBER.apply(args[2]);
+                sender.sendMessage(ErrorMessages.INVALID_NUMBER.apply(args[2]));
                 return;
             }
         } else {
