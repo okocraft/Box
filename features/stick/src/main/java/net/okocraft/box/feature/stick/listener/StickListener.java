@@ -327,6 +327,11 @@ public class StickListener implements Listener {
 
         ItemStack mainHandItem = player.getInventory().getItemInMainHand();
 
+        // Crossbows launch their loaded firework, not the crossbow held in the main hand.
+        if (entityType == EntityType.FIREWORK_ROCKET && mainHandItem.getType() != Material.FIREWORK_ROCKET) {
+            return;
+        }
+
         if (!this.isIllegalStack(mainHandItem) && this.tryConsumingStock(boxPlayer, mainHandItem, new StickCauses.ProjectileLaunch(boxPlayer, entityType))) {
             mainHandItem.setAmount(mainHandItem.getAmount() + 1);
             player.updateInventory();
