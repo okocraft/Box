@@ -5,6 +5,12 @@ plugins {
 
 repositories {
     maven {
+        url = uri(rootDir.resolve("libs"))
+        mavenContent {
+            includeGroup(libs.kansokusha.api.get().module.group)
+        }
+    }
+    maven {
         url = uri("https://maven.playpro.com/")
         mavenContent {
             includeGroup(libs.coreprotect.get().module.group)
@@ -16,6 +22,8 @@ dependencies {
     compileOnly(projects.boxApi)
     compileOnly(projects.boxGuiFeature)
     compileOnly(libs.coreprotect)
+    compileOnly(libs.kansokusha.api)
+    compileOnly(libs.kansokusha.paper)
 
     testImplementation(projects.boxApi)
     testImplementation(projects.boxGuiFeature)
