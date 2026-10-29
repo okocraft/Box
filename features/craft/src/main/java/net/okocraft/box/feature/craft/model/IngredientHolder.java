@@ -1,11 +1,16 @@
 package net.okocraft.box.feature.craft.model;
 
+import io.papermc.paper.registry.TypedKey;
+
+import org.bukkit.Registry;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.ItemType;
 import org.bukkit.inventory.RecipeChoice;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -37,14 +42,18 @@ public record IngredientHolder(int slot, @NotNull @Unmodifiable List<BoxIngredie
     }
 
     /**
-     * Creates a {@link IngredientHolder} from {@link org.bukkit.inventory.RecipeChoice.MaterialChoice}.
+     * Creates a {@link IngredientHolder} from {@link RecipeChoice.ItemTypeChoice}.
      *
      * @param slot   the position in the crafting table (0-8)
-     * @param choice the {@link org.bukkit.inventory.RecipeChoice.MaterialChoice} instance to create {@link IngredientHolder}
+     * @param choice the {@link RecipeChoice.ItemTypeChoice} instance to create {@link IngredientHolder}
      * @return a {@link IngredientHolder}
      */
-    public static @NotNull IngredientHolder fromMaterialChoice(int slot, @NotNull RecipeChoice.MaterialChoice choice) {
-        return ModelCache.getIngredientHolder(slot, choice.getChoices().stream().map(ItemStack::new).toList());
+    public static @NotNull IngredientHolder fromItemTypeChoice(int slot, @NotNull RecipeChoice.ItemTypeChoice choice) {
+        List<ItemStack> itemStacks = new ArrayList<>();
+        for (TypedKey<ItemType> type : choice.itemTypes()) {
+            itemStacks.add(Registry.ITEM.getOrThrow(type).createItemStack());
+        }
+        return ModelCache.getIngredientHolder(slot, itemStacks);
     }
 
     /**
