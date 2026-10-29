@@ -123,7 +123,12 @@ final class Processor {
                     continue;
                 }
 
-                IngredientHolder ingredient = this.convertChoice(row * 3 + column, choices.get(symbol));
+                RecipeChoice choice = choices.get(symbol);
+                if (choice == null || choice == RecipeChoice.empty()) {
+                    continue;
+                }
+
+                IngredientHolder ingredient = this.convertChoice(row * 3 + column, choice);
                 if (ingredient == null || ingredient.patterns().isEmpty()) {
                     return;
                 }
@@ -167,8 +172,8 @@ final class Processor {
     }
 
     private @Nullable IngredientHolder convertChoice(int slot, @Nullable RecipeChoice choice) {
-        if (choice instanceof RecipeChoice.MaterialChoice materialChoice) {
-            return IngredientHolder.fromMaterialChoice(slot, materialChoice);
+        if (choice instanceof RecipeChoice.ItemTypeChoice itemTypeChoice) {
+            return IngredientHolder.fromItemTypeChoice(slot, itemTypeChoice);
         }
         if (choice instanceof RecipeChoice.ExactChoice exactChoice) {
             return IngredientHolder.fromExactChoice(slot, exactChoice);
