@@ -131,7 +131,7 @@ public class GiveCommand extends AbstractCommand {
 
         BoxPlayer targetBoxPlayer = playerMap.get(target);
 
-        int senderDecreaseResult = stockHolder.decreaseIfPossible(boxItem, amount, new CommandCauses.Give(targetBoxPlayer));
+        int senderDecreaseResult = stockHolder.decreaseIfPossible(boxItem, amount, new CommandCauses.Give(targetBoxPlayer, senderBoxPlayer.getUUID()));
 
         if (senderDecreaseResult == -1) {
             sender.sendMessage(this.noStock.apply(boxItem));

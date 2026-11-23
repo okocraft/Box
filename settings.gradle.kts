@@ -45,6 +45,7 @@ sequenceOf(
     "command",
     "craft",
     "gui",
+    "kansokusha",
     "notifier",
     "overflow",
     "stats",
