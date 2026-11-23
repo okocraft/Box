@@ -29,6 +29,11 @@ class CommandCausesTest {
         assertEquals(expected, give.actor());
         assertEquals(expected, receive.actor());
         assertSame(target, give.target());
-        assertNull(new CommandCauses.Give(target).actor());
+    }
+
+    @Test
+    void testGiveRequiresAnInitiatingPlayer() {
+        var target = mock(BoxPlayer.class);
+        assertThrows(NullPointerException.class, () -> new CommandCauses.Give(target, null));
     }
 }

@@ -8,27 +8,19 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
+
 /**
  * A class for implementing {@link net.okocraft.box.api.event.stockholder.stock.StockEvent.Cause}.
  */
 public final class CommandCauses {
 
-    /**
-     * A {@link net.okocraft.box.api.event.stockholder.stock.StockEvent.Cause} that indicates depositing to own {@link net.okocraft.box.api.model.stock.StockHolder}.
-     */
-    public static final StockEvent.Cause DEPOSIT = StockEvent.Cause.create("deposit");
-
-    /**
-     * A {@link net.okocraft.box.api.event.stockholder.stock.StockEvent.Cause} that indicates withdrawing from  own {@link net.okocraft.box.api.model.stock.StockHolder}.
-     */
-    public static final StockEvent.Cause WITHDRAW = StockEvent.Cause.create("withdraw");
-
     public static StockEvent.@NotNull Cause deposit(@NotNull Player player) {
-        return StockEvent.Cause.create(DEPOSIT.name(), StockActor.fromPlayer(player));
+        return StockEvent.Cause.create("deposit", StockActor.fromPlayer(player));
     }
 
     public static StockEvent.@NotNull Cause withdraw(@NotNull Player player) {
-        return StockEvent.Cause.create(WITHDRAW.name(), StockActor.fromPlayer(player));
+        return StockEvent.Cause.create("withdraw", StockActor.fromPlayer(player));
     }
 
     /**
@@ -36,11 +28,11 @@ public final class CommandCauses {
      * giving items to the other player.
      *
      * @param target the {@link BoxPlayer} receiving the items
-     * @param actor  the initiating player, if known
+     * @param actor  the initiating player
      */
-    public record Give(@NotNull BoxPlayer target, StockActor.@Nullable Player actor) implements StockEvent.Cause {
-        public Give(@NotNull BoxPlayer target) {
-            this(target, null);
+    public record Give(@NotNull BoxPlayer target, StockActor.@NotNull Player actor) implements StockEvent.Cause {
+        public Give {
+            Objects.requireNonNull(actor, "actor");
         }
 
         @Override
