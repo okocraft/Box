@@ -89,7 +89,7 @@ public class WithdrawCommand extends AbstractCommand {
             int withdrawnAmount =
                 StockHolderTransaction.create(stockHolder)
                     .withdraw(boxItem, amount)
-                    .toInventory(player.getInventory(), CommandCauses.WITHDRAW).amount();
+                    .toInventory(player.getInventory(), CommandCauses.withdraw(player)).amount();
 
             if (withdrawnAmount == 0) {
                 sender.sendMessage(this.inventoryFull);

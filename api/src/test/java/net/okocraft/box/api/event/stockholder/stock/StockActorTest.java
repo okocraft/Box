@@ -1,10 +1,15 @@
 package net.okocraft.box.api.event.stockholder.stock;
 
+import org.bukkit.command.BlockCommandSender;
+import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.command.RemoteConsoleCommandSender;
+import org.bukkit.entity.Player;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 class StockActorTest {
 
@@ -25,6 +30,19 @@ class StockActorTest {
         assertFalse(StockActor.CONSOLE.isPlayer());
         assertNull(StockActor.CONSOLE.uuid());
         assertEquals("console", StockActor.CONSOLE.name());
+    }
+
+    @Test
+    void testKnownCommandSendersHaveAnActor() {
+        var player = mock(Player.class);
+        var uuid = new UUID(0, 3);
+        when(player.getUniqueId()).thenReturn(uuid);
+        when(player.getName()).thenReturn("ExamplePlayer");
+
+        assertEquals(new StockActor.Player(uuid, "ExamplePlayer"), StockActor.fromSender(player));
+        assertSame(StockActor.CONSOLE, StockActor.fromSender(mock(ConsoleCommandSender.class)));
+        assertSame(StockActor.CONSOLE, StockActor.fromSender(mock(RemoteConsoleCommandSender.class)));
+        assertNull(StockActor.fromSender(mock(BlockCommandSender.class)));
     }
 
     @Test

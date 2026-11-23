@@ -1,5 +1,6 @@
 package net.okocraft.box.feature.gui.api.event.stock;
 
+import net.okocraft.box.api.event.stockholder.stock.StockActor;
 import net.okocraft.box.api.event.stockholder.stock.StockEvent;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -16,6 +17,11 @@ public final class GuiCauses {
      */
     public record Deposit(@NotNull Player clicker) implements StockEvent.Cause {
         @Override
+        public StockActor.@NotNull Player actor() {
+            return StockActor.fromPlayer(this.clicker);
+        }
+
+        @Override
         public @NotNull String name() {
             return "deposit";
         }
@@ -27,6 +33,11 @@ public final class GuiCauses {
      * @param clicker the {@link Player} who click the button in GUI
      */
     public record Withdraw(@NotNull Player clicker) implements StockEvent.Cause {
+        @Override
+        public StockActor.@NotNull Player actor() {
+            return StockActor.fromPlayer(this.clicker);
+        }
+
         @Override
         public @NotNull String name() {
             return "withdraw";

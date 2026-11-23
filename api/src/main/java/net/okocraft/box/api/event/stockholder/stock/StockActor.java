@@ -1,5 +1,8 @@
 package net.okocraft.box.api.event.stockholder.stock;
 
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.command.RemoteConsoleCommandSender;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,6 +20,31 @@ public interface StockActor {
      * The built-in actor for the server console.
      */
     public static final StockActor CONSOLE = new Other("console");
+
+    /**
+     * Captures a player's identity without retaining the Bukkit player.
+     *
+     * @param player the initiating player
+     * @return the captured identity
+     */
+    static @NotNull Player fromPlayer(org.bukkit.entity.@NotNull Player player) {
+        return new Player(player.getUniqueId(), player.getName());
+    }
+
+    /**
+     * Identifies a player or a local or remote console. Other sender types are not inferred.
+     *
+     * @param sender the initiating command sender
+     * @return the actor, or {@code null} if the sender is not recognized
+     */
+    static @Nullable StockActor fromSender(@NotNull CommandSender sender) {
+        return switch (sender) {
+            case org.bukkit.entity.Player player -> fromPlayer(player);
+            case ConsoleCommandSender ignored -> CONSOLE;
+            case RemoteConsoleCommandSender ignored -> CONSOLE;
+            default -> null;
+        };
+    }
 
     /**
      * Returns the actor's UUID, or {@code null} if it has none.

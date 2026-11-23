@@ -144,7 +144,7 @@ public class DepositCommand extends AbstractCommand {
             int amount = Math.min(limit, mainHand.getAmount());
             int remaining = mainHand.getAmount() - amount;
 
-            int current = BoxAPI.api().getBoxPlayerMap().get(player).getCurrentStockHolder().increase(boxItem, amount, CommandCauses.DEPOSIT);
+            int current = BoxAPI.api().getBoxPlayerMap().get(player).getCurrentStockHolder().increase(boxItem, amount, CommandCauses.deposit(player));
 
             if (0 < remaining) {
                 player.getInventory().setItemInMainHand(mainHand.asQuantity(remaining));
@@ -161,7 +161,7 @@ public class DepositCommand extends AbstractCommand {
             player, false,
             StockHolderTransaction.create(BoxAPI.api().getBoxPlayerMap().get(player).getCurrentStockHolder())
                 .depositAll()
-                .fromInventory(player.getInventory(), CommandCauses.DEPOSIT)
+                .fromInventory(player.getInventory(), CommandCauses.deposit(player))
         ));
     }
 
@@ -170,7 +170,7 @@ public class DepositCommand extends AbstractCommand {
             player, true,
             StockHolderTransaction.create(BoxAPI.api().getBoxPlayerMap().get(player).getCurrentStockHolder())
                 .deposit(boxItem, amount)
-                .fromInventory(player.getInventory(), CommandCauses.DEPOSIT)
+                .fromInventory(player.getInventory(), CommandCauses.deposit(player))
         ));
     }
 
