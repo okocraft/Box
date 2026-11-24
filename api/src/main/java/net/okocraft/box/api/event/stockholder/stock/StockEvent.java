@@ -4,6 +4,7 @@ import net.okocraft.box.api.event.stockholder.StockHolderEvent;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.model.stock.StockHolder;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -78,7 +79,18 @@ public class StockEvent extends StockHolderEvent {
          * @return a {@link Cause} instance
          */
         static @NotNull Cause create(@NotNull String name) {
-            return new CauseImpl(name);
+            return create(name, null);
+        }
+
+        /**
+         * Creates a named cause with an optional initiator.
+         *
+         * @param name the reason the stock changed
+         * @param actor the initiator, if known
+         * @return the cause
+         */
+        static @NotNull Cause create(@NotNull String name, @Nullable StockActor actor) {
+            return new CauseImpl(name, actor);
         }
 
         /**
@@ -91,9 +103,19 @@ public class StockEvent extends StockHolderEvent {
          * @return the string that indicates the cause
          */
         @NotNull String name();
+
+        /**
+         * Returns the initiator of the change, if known. This method may be called asynchronously
+         * and must not consult mutable player or world state.
+         *
+         * @return the initiator, or {@code null} if not attributed
+         */
+        default @Nullable StockActor actor() {
+            return null;
+        }
     }
 
-    private record CauseImpl(@NotNull String name) implements Cause {
+    private record CauseImpl(@NotNull String name, @Nullable StockActor actor) implements Cause {
 
         public CauseImpl {
             if (name.isEmpty()) { // implicit null check of "name"

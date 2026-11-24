@@ -4,6 +4,7 @@ import dev.siroshun.mcmsgdef.MessageKey;
 import net.kyori.adventure.text.ComponentLike;
 import net.okocraft.box.api.BoxAPI;
 import net.okocraft.box.api.command.AbstractCommand;
+import net.okocraft.box.api.event.stockholder.stock.StockActor;
 import net.okocraft.box.api.message.DefaultMessageCollector;
 import net.okocraft.box.api.message.ErrorMessages;
 import net.okocraft.box.api.model.item.BoxItem;
@@ -130,15 +131,16 @@ public class GiveCommand extends AbstractCommand {
         }
 
         BoxPlayer targetBoxPlayer = playerMap.get(target);
+        StockActor.Player actor = StockActor.fromPlayer(player);
 
-        int senderDecreaseResult = stockHolder.decreaseIfPossible(boxItem, amount, new CommandCauses.Give(targetBoxPlayer));
+        int senderDecreaseResult = stockHolder.decreaseIfPossible(boxItem, amount, new CommandCauses.Give(targetBoxPlayer, actor));
 
         if (senderDecreaseResult == -1) {
             sender.sendMessage(this.noStock.apply(boxItem));
             return;
         }
 
-        int targetCurrent = targetBoxPlayer.getCurrentStockHolder().increase(boxItem, amount, new CommandCauses.Receive(senderBoxPlayer));
+        int targetCurrent = targetBoxPlayer.getCurrentStockHolder().increase(boxItem, amount, new CommandCauses.Receive(senderBoxPlayer, actor));
 
         sender.sendMessage(this.successSender.apply(target.getName(), boxItem, amount, senderDecreaseResult));
         target.sendMessage(this.successTarget.apply(sender.getName(), boxItem, amount, targetCurrent));

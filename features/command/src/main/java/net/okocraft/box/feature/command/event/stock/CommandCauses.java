@@ -1,32 +1,39 @@
 package net.okocraft.box.feature.command.event.stock;
 
+import net.okocraft.box.api.event.stockholder.stock.StockActor;
 import net.okocraft.box.api.event.stockholder.stock.StockEvent;
 import net.okocraft.box.api.player.BoxPlayer;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
 
 /**
  * A class for implementing {@link net.okocraft.box.api.event.stockholder.stock.StockEvent.Cause}.
  */
 public final class CommandCauses {
 
-    /**
-     * A {@link net.okocraft.box.api.event.stockholder.stock.StockEvent.Cause} that indicates depositing to own {@link net.okocraft.box.api.model.stock.StockHolder}.
-     */
-    public static final StockEvent.Cause DEPOSIT = StockEvent.Cause.create("deposit");
+    public static StockEvent.@NotNull Cause deposit(@NotNull Player player) {
+        return StockEvent.Cause.create("deposit", StockActor.fromPlayer(player));
+    }
 
-    /**
-     * A {@link net.okocraft.box.api.event.stockholder.stock.StockEvent.Cause} that indicates withdrawing from  own {@link net.okocraft.box.api.model.stock.StockHolder}.
-     */
-    public static final StockEvent.Cause WITHDRAW = StockEvent.Cause.create("withdraw");
+    public static StockEvent.@NotNull Cause withdraw(@NotNull Player player) {
+        return StockEvent.Cause.create("withdraw", StockActor.fromPlayer(player));
+    }
 
     /**
      * A {@link net.okocraft.box.api.event.stockholder.stock.StockEvent.Cause} implementation that indicates
      * giving items to the other player.
      *
-     * @param target the {@link  BoxPlayer} who receive items
+     * @param target the {@link BoxPlayer} receiving the items
+     * @param actor  the initiating player
      */
-    public record Give(@NotNull BoxPlayer target) implements StockEvent.Cause {
+    public record Give(@NotNull BoxPlayer target, StockActor.@NotNull Player actor) implements StockEvent.Cause {
+        public Give {
+            Objects.requireNonNull(actor, "actor");
+        }
+
         @Override
         public @NotNull String name() {
             return "give";
@@ -37,9 +44,18 @@ public final class CommandCauses {
      * A {@link net.okocraft.box.api.event.stockholder.stock.StockEvent.Cause} implementation that indicates
      * receiving items from the other player.
      *
-     * @param sender the {@link  BoxPlayer} who give items
+     * @param sender the {@link BoxPlayer} giving the items
+     * @param actor  the initiating player
      */
-    public record Receive(@NotNull BoxPlayer sender) implements StockEvent.Cause {
+    public record Receive(@NotNull BoxPlayer sender, StockActor.@NotNull Player actor) implements StockEvent.Cause {
+        public Receive {
+            Objects.requireNonNull(actor, "actor");
+        }
+
+        public Receive(@NotNull BoxPlayer sender) {
+            this(sender, StockActor.fromPlayer(sender.getPlayer()));
+        }
+
         @Override
         public @NotNull String name() {
             return "receive";
@@ -51,8 +67,17 @@ public final class CommandCauses {
      * increasing stock by an admin.
      *
      * @param sender executor of the command to increase stock
+     * @param actor the executor's captured identity
      */
-    public record AdminGive(@NotNull CommandSender sender) implements StockEvent.Cause {
+    public record AdminGive(@NotNull CommandSender sender, @NotNull StockActor actor) implements StockEvent.Cause {
+        public AdminGive {
+            Objects.requireNonNull(actor, "actor");
+        }
+
+        public AdminGive(@NotNull CommandSender sender) {
+            this(sender, StockActor.fromSender(sender));
+        }
+
         @Override
         public @NotNull String name() {
             return "admin_give";
@@ -64,8 +89,17 @@ public final class CommandCauses {
      * resetting stock by an admin.
      *
      * @param sender executor of the command to reset stock
+     * @param actor the executor's captured identity
      */
-    public record AdminReset(@NotNull CommandSender sender) implements StockEvent.Cause {
+    public record AdminReset(@NotNull CommandSender sender, @NotNull StockActor actor) implements StockEvent.Cause {
+        public AdminReset {
+            Objects.requireNonNull(actor, "actor");
+        }
+
+        public AdminReset(@NotNull CommandSender sender) {
+            this(sender, StockActor.fromSender(sender));
+        }
+
         @Override
         public @NotNull String name() {
             return "admin_reset";
@@ -77,8 +111,17 @@ public final class CommandCauses {
      * setting stock by an admin.
      *
      * @param sender executor of the command to set stock
+     * @param actor the executor's captured identity
      */
-    public record AdminSet(@NotNull CommandSender sender) implements StockEvent.Cause {
+    public record AdminSet(@NotNull CommandSender sender, @NotNull StockActor actor) implements StockEvent.Cause {
+        public AdminSet {
+            Objects.requireNonNull(actor, "actor");
+        }
+
+        public AdminSet(@NotNull CommandSender sender) {
+            this(sender, StockActor.fromSender(sender));
+        }
+
         @Override
         public @NotNull String name() {
             return "admin_set";
@@ -90,8 +133,17 @@ public final class CommandCauses {
      * decreasing stock by an admin.
      *
      * @param sender executor of the command to decrease stock
+     * @param actor the executor's captured identity
      */
-    public record AdminTake(@NotNull CommandSender sender) implements StockEvent.Cause {
+    public record AdminTake(@NotNull CommandSender sender, @NotNull StockActor actor) implements StockEvent.Cause {
+        public AdminTake {
+            Objects.requireNonNull(actor, "actor");
+        }
+
+        public AdminTake(@NotNull CommandSender sender) {
+            this(sender, StockActor.fromSender(sender));
+        }
+
         @Override
         public @NotNull String name() {
             return "admin_take";
