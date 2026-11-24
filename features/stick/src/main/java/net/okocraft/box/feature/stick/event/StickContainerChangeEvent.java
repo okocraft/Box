@@ -4,6 +4,7 @@ import net.okocraft.box.api.event.BoxEvent;
 import net.okocraft.box.api.event.stockholder.stock.StockActor;
 import net.okocraft.box.feature.stick.function.container.ContainerContents;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
@@ -17,19 +18,32 @@ public final class StickContainerChangeEvent extends BoxEvent {
 
     private final StockActor.Player actor;
     private final Location location;
+    private final @Nullable Material containerType;
     private final @Nullable ItemStack[] before;
     private final @Nullable ItemStack[] after;
 
     /**
-     * @param actor the player who used the Box Stick
-     * @param location the clicked block of the container
-     * @param before the container's slot contents before the operation
-     * @param after the container's slot contents after the operation
+     * Creates an event without a container type snapshot.
+     *
+     * @see #StickContainerChangeEvent(StockActor.Player, Location, Material, ItemStack[], ItemStack[])
      */
     public StickContainerChangeEvent(StockActor.Player actor, Location location,
                                      @Nullable ItemStack[] before, @Nullable ItemStack[] after) {
+        this(actor, location, null, before, after);
+    }
+
+    /**
+     * @param actor the player who used the Box Stick
+     * @param location the clicked block of the container
+     * @param containerType the clicked block type, or null if unavailable
+     * @param before the container's slot contents before the operation
+     * @param after the container's slot contents after the operation
+     */
+    public StickContainerChangeEvent(StockActor.Player actor, Location location, @Nullable Material containerType,
+                                     @Nullable ItemStack[] before, @Nullable ItemStack[] after) {
         this.actor = actor;
         this.location = location.clone();
+        this.containerType = containerType;
         this.before = ContainerContents.copy(before);
         this.after = ContainerContents.copy(after);
     }
@@ -43,6 +57,13 @@ public final class StickContainerChangeEvent extends BoxEvent {
      */
     public Location getLocation() {
         return this.location.clone();
+    }
+
+    /**
+     * Returns the clicked block type captured before the operation, or null if unavailable.
+     */
+    public @Nullable Material getContainerType() {
+        return this.containerType;
     }
 
     /**

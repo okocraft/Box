@@ -5,12 +5,6 @@ plugins {
 
 repositories {
     maven {
-        url = uri(rootDir.resolve("libs"))
-        mavenContent {
-            includeGroup(libs.kansokusha.api.get().module.group)
-        }
-    }
-    maven {
         url = uri("https://repo.codemc.io/repository/maven-public/")
         mavenContent {
             includeGroup(libs.bolt.bukkit.get().module.group)
@@ -39,8 +33,6 @@ dependencies {
     compileOnly(libs.bolt.bukkit)
     compileOnly(libs.bolt.common)
     compileOnly(libs.coreprotect)
-    compileOnly(libs.kansokusha.api)
-    compileOnly(libs.kansokusha.paper)
     compileOnly(libs.worldguard) {
         exclude("com.google.guava", "guava")
         exclude("com.google.code.gson", "gson")

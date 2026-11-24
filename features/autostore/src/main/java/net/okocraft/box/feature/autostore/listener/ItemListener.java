@@ -9,7 +9,6 @@ import net.okocraft.box.api.player.BoxPlayerMap;
 import net.okocraft.box.feature.autostore.AutoStoreSettingProvider;
 import net.okocraft.box.feature.autostore.event.AutoStoreItemEvent;
 import net.okocraft.box.feature.autostore.integration.CoreProtectIntegration;
-import net.okocraft.box.feature.autostore.integration.KansokushaIntegration;
 import net.okocraft.box.feature.autostore.setting.AutoStoreSetting;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -155,7 +154,6 @@ public class ItemListener implements Listener {
         }
 
         CoreProtectIntegration.logItemPickup(player, location, item);
-        KansokushaIntegration.logItemPickup(player, location, item, sourceEntityId);
 
         return new AutoStoreItemEvent(StockActor.fromPlayer(player), location, item, sourceEntityId);
     }
