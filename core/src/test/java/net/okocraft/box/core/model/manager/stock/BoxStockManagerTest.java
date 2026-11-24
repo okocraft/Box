@@ -135,7 +135,7 @@ class BoxStockManagerTest {
         checkChangeState(loader.getChangeState());
 
         List<StockData> stockData = List.of(new StockData(ITEM.getInternalId(), 1));
-        stockEventCaller.callResetEvent(loader, stockData);
+        stockEventCaller.callResetEvent(loader, stockData, StockEventCollector.TEST_CAUSE);
         eventCollector.checkResetEvent(loader, stockData);
         checkChangeState(loader.getChangeState());
     }

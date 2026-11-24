@@ -42,7 +42,8 @@ final class DefaultStockEventCaller implements StockEventCaller {
     }
 
     @Override
-    public void callResetEvent(@NotNull StockHolder stockHolder, @NotNull Collection<StockData> stockDataBeforeReset) {
-        this.caller.call(new StockHolderResetEvent(stockHolder, stockDataBeforeReset));
+    public void callResetEvent(@NotNull StockHolder stockHolder, @NotNull Collection<StockData> stockDataBeforeReset,
+                               StockEvent.@NotNull Cause cause) {
+        this.caller.call(new StockHolderResetEvent(stockHolder, stockDataBeforeReset, cause));
     }
 }

@@ -79,7 +79,7 @@ public interface StockHolderWrapper extends StockHolder {
     }
 
     @Override
-    default @NotNull @Unmodifiable Collection<StockData> reset() {
-        return this.delegate().reset();
+    default @NotNull @Unmodifiable Collection<StockData> reset(StockEvent.@NotNull Cause cause) {
+        return this.delegate().reset(cause);
     }
 }

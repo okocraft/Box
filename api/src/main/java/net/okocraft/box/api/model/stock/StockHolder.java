@@ -193,7 +193,9 @@ public interface StockHolder {
     /**
      * Resets all stock.
      *
+     * @param cause the reason for the reset, including its initiator if known
      * @return the collection of {@link StockData} before reset
+     * @throws NullPointerException if {@code cause} is {@code null}
      */
-    @NotNull @Unmodifiable Collection<StockData> reset();
+    @NotNull @Unmodifiable Collection<StockData> reset(@NotNull StockEvent.Cause cause);
 }

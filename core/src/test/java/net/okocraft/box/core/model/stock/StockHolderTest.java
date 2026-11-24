@@ -519,7 +519,7 @@ class StockHolderTest {
         //   stock data:
         //     - test_item_1: 10
         //     - test_item_2: 10
-        Collection<StockData> stockData = stockHolder.reset();
+        Collection<StockData> stockData = stockHolder.reset(StockEventCollector.TEST_CAUSE);
 
         Assertions.assertEquals(0, stockHolder.getAmount(ITEM_1));
         Assertions.assertEquals(0, stockHolder.getAmount(ITEM_2));

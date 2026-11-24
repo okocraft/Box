@@ -23,6 +23,16 @@ public final class CommandCauses {
     }
 
     /**
+     * Captures the sender who confirmed a full reset.
+     *
+     * @param sender the confirming command sender
+     * @return the full reset cause, distinct from a single-item reset
+     */
+    public static StockEvent.@NotNull Cause adminResetAll(@NotNull CommandSender sender) {
+        return StockEvent.Cause.create("admin_reset_all", StockActor.fromSender(sender));
+    }
+
+    /**
      * A {@link net.okocraft.box.api.event.stockholder.stock.StockEvent.Cause} implementation that indicates
      * giving items to the other player.
      *

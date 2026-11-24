@@ -1,6 +1,7 @@
 package net.okocraft.box.core.model.loader.state;
 
 import net.okocraft.box.api.model.stock.StockHolder;
+import net.okocraft.box.test.shared.event.StockEventCollector;
 import net.okocraft.box.test.shared.model.stock.TestStockHolder;
 import net.okocraft.box.test.shared.storage.memory.stock.MemoryPartialSavingStockStorage;
 import org.jetbrains.annotations.NotNull;
@@ -26,7 +27,7 @@ class PerItemChangeStateTest extends AbstractChangeStateTest {
         this.checkSize(state, 0);
         this.checkStorageAmount(storage, stockHolder, ITEM_AMOUNT);
 
-        state.rememberReset(stockHolder.reset());
+        state.rememberReset(stockHolder.reset(StockEventCollector.TEST_CAUSE));
 
         this.checkSize(state, 1);
 
