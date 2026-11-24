@@ -2,14 +2,17 @@ package net.okocraft.box.feature.stick.listener;
 
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import net.okocraft.box.api.BoxAPI;
+import net.okocraft.box.api.event.stockholder.stock.StockActor;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.player.BoxPlayer;
 import net.okocraft.box.api.player.BoxPlayerMap;
 import net.okocraft.box.api.util.ItemNameGenerator;
+import net.okocraft.box.feature.stick.event.StickContainerChangeEvent;
 import net.okocraft.box.feature.stick.event.stock.StickCause;
 import net.okocraft.box.feature.stick.event.stock.StickCauses;
 import net.okocraft.box.feature.stick.function.container.BrewerOperator;
 import net.okocraft.box.feature.stick.function.container.ChestAccessChecker;
+import net.okocraft.box.feature.stick.function.container.ContainerContents;
 import net.okocraft.box.feature.stick.function.container.ContainerOperation;
 import net.okocraft.box.feature.stick.function.container.ContainerOperator;
 import net.okocraft.box.feature.stick.function.container.FurnaceOperator;
@@ -206,6 +209,7 @@ public class StickListener implements Listener {
         }
 
         var kansokushaSnapshot = KansokushaIntegration.snapshot(container);
+        var before = kansokushaSnapshot != null ? kansokushaSnapshot : ContainerContents.copy(inventory.getContents());
         try {
             CoreProtectIntegration.logContainerTransaction(player, container);
             if (operation.run() || player.getGameMode() == GameMode.CREATIVE) { // This prevents the instant breaking of blocks in creative mode.
@@ -214,6 +218,11 @@ public class StickListener implements Listener {
         } finally {
             CoreProtectIntegration.logContainerTransaction(player, container);
             KansokushaIntegration.logContainerTransaction(player, container, kansokushaSnapshot);
+            var after = inventory.getContents();
+            if (ContainerContents.hasNetChange(before, after)) {
+                BoxAPI.api().getEventCallers().sync()
+                    .call(new StickContainerChangeEvent(StockActor.fromPlayer(player), clickedBlockLocation, before, after));
+            }
         }
     }
 

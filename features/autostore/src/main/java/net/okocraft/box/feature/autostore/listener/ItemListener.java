@@ -2,10 +2,12 @@ package net.okocraft.box.feature.autostore.listener;
 
 import io.papermc.paper.event.block.PlayerShearBlockEvent;
 import net.okocraft.box.api.BoxAPI;
+import net.okocraft.box.api.event.stockholder.stock.StockActor;
 import net.okocraft.box.api.event.stockholder.stock.StockEvent;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.player.BoxPlayerMap;
 import net.okocraft.box.feature.autostore.AutoStoreSettingProvider;
+import net.okocraft.box.feature.autostore.event.AutoStoreItemEvent;
 import net.okocraft.box.feature.autostore.integration.CoreProtectIntegration;
 import net.okocraft.box.feature.autostore.integration.KansokushaIntegration;
 import net.okocraft.box.feature.autostore.setting.AutoStoreSetting;
@@ -27,8 +29,11 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Function;
 
 public class ItemListener implements Listener {
 
@@ -45,16 +50,18 @@ public class ItemListener implements Listener {
             return;
         }
 
-        if (this.processEvent(player, event.getItem().getLocation(), event.getItem().getItemStack(), event.getItem().getUniqueId(), false)) {
+        var stored = this.storeItem(player, event.getItem().getLocation(), event.getItem().getItemStack(), event.getItem().getUniqueId(), false);
+        if (stored != null) {
             event.setCancelled(true);
             event.getItem().remove();
+            notifyStored(stored);
         }
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onBlockDropItem(@NotNull BlockDropItemEvent event) {
         Location location = event.getBlock().getLocation();
-        event.getItems().removeIf(item -> this.processEvent(event.getPlayer(), location, item.getItemStack(), item.getUniqueId(), true));
+        storeDrops(event.getItems(), item -> this.storeItem(event.getPlayer(), location, item.getItemStack(), item.getUniqueId(), true));
     }
 
     /**
@@ -67,7 +74,7 @@ public class ItemListener implements Listener {
         LivingEntity killed = event.getEntity();
         if (killed instanceof Mob && !(killed instanceof Boss) && killed.getKiller() != null) {
             Location location = killed.getLocation();
-            event.getDrops().removeIf(item -> this.processEvent(killed.getKiller(), location, item, null, true));
+            storeDrops(event.getDrops(), item -> this.storeItem(killed.getKiller(), location, item, null, true));
         }
     }
 
@@ -79,7 +86,7 @@ public class ItemListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onHarvestBlock(@NotNull PlayerHarvestBlockEvent event) {
         Location location = event.getHarvestedBlock().getLocation();
-        event.getItemsHarvested().removeIf(item -> this.processEvent(event.getPlayer(), location, item, null, true));
+        storeDrops(event.getItemsHarvested(), item -> this.storeItem(event.getPlayer(), location, item, null, true));
     }
 
     /**
@@ -90,20 +97,40 @@ public class ItemListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onShearBlock(@NotNull PlayerShearBlockEvent event) {
         Location location = event.getBlock().getLocation();
-        event.getDrops().removeIf(item -> this.processEvent(event.getPlayer(), location, item, null, true));
+        storeDrops(event.getDrops(), item -> this.storeItem(event.getPlayer(), location, item, null, true));
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onArrowPickup(@NotNull PlayerPickupArrowEvent event) {
-        if (this.processEvent(event.getPlayer(), event.getArrow().getLocation(), event.getArrow().getItemStack(), event.getArrow().getUniqueId(), false)) {
+        var stored = this.storeItem(event.getPlayer(), event.getArrow().getLocation(), event.getArrow().getItemStack(), event.getArrow().getUniqueId(), false);
+        if (stored != null) {
             event.setCancelled(true);
             event.getArrow().remove();
+            notifyStored(stored);
         }
     }
 
-    private boolean processEvent(@NotNull Player player, @NotNull Location location, @NotNull ItemStack item, @Nullable UUID itemEntityId, boolean direct) {
+    private static <T> void storeDrops(List<T> drops, Function<T, @Nullable AutoStoreItemEvent> store) {
+        var stored = new ArrayList<AutoStoreItemEvent>();
+        drops.removeIf(drop -> {
+            var event = store.apply(drop);
+            if (event == null) {
+                return false;
+            }
+            stored.add(event);
+            return true;
+        });
+        stored.forEach(ItemListener::notifyStored);
+    }
+
+    private static void notifyStored(AutoStoreItemEvent event) {
+        BoxAPI.api().getEventCallers().sync().call(event);
+    }
+
+    private @Nullable AutoStoreItemEvent storeItem(@NotNull Player player, @NotNull Location location, @NotNull ItemStack item,
+                                                  @Nullable UUID itemEntityId, boolean direct) {
         if (!BoxAPI.api().canUseBox(player)) {
-            return false;
+            return null;
         }
 
         BoxPlayerMap playerMap = BoxAPI.api().getBoxPlayerMap();
@@ -113,27 +140,23 @@ public class ItemListener implements Listener {
             !setting.isEnabled() || !player.hasPermission("box.autostore") ||
             (direct && !setting.isDirect())
         ) {
-            return false;
+            return null;
         }
 
         Optional<BoxItem> boxItem = BoxAPI.api().getItemManager().getBoxItem(item);
 
-        if (boxItem.isEmpty()) {
-            return false;
+        if (boxItem.isEmpty() || !setting.shouldAutoStore(boxItem.get())) {
+            return null;
         }
 
-        if (setting.shouldAutoStore(boxItem.get())) {
-            playerMap.get(player).getCurrentStockHolder().increase(boxItem.get(), item.getAmount(), AUTOSTORE_CAUSE);
-            if (!direct) {
-                player.playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, 0.2f, (float) Math.random() + 1.0f);
-            }
-
-            CoreProtectIntegration.logItemPickup(player, location, item);
-            KansokushaIntegration.logItemPickup(player, location, item, itemEntityId);
-
-            return true;
-        } else {
-            return false;
+        playerMap.get(player).getCurrentStockHolder().increase(boxItem.get(), item.getAmount(), AUTOSTORE_CAUSE);
+        if (!direct) {
+            player.playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, 0.2f, (float) Math.random() + 1.0f);
         }
+
+        CoreProtectIntegration.logItemPickup(player, location, item);
+        KansokushaIntegration.logItemPickup(player, location, item, itemEntityId);
+
+        return new AutoStoreItemEvent(StockActor.fromPlayer(player), location, item, itemEntityId);
     }
 }
