@@ -1,9 +1,14 @@
 package net.okocraft.box.feature.command.event.stock;
 
+import net.okocraft.box.api.event.stockholder.stock.StockActor;
 import net.okocraft.box.api.event.stockholder.stock.StockEvent;
 import net.okocraft.box.api.player.BoxPlayer;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.UUID;
 
 /**
  * A class for implementing {@link net.okocraft.box.api.event.stockholder.stock.StockEvent.Cause}.
@@ -20,13 +25,31 @@ public final class CommandCauses {
      */
     public static final StockEvent.Cause WITHDRAW = StockEvent.Cause.create("withdraw");
 
+    public static StockEvent.@NotNull Cause deposit(@NotNull Player player) {
+        return StockEvent.Cause.create(DEPOSIT.name(), StockActor.fromSender(player));
+    }
+
+    public static StockEvent.@NotNull Cause withdraw(@NotNull Player player) {
+        return StockEvent.Cause.create(WITHDRAW.name(), StockActor.fromSender(player));
+    }
+
     /**
      * A {@link net.okocraft.box.api.event.stockholder.stock.StockEvent.Cause} implementation that indicates
      * giving items to the other player.
      *
-     * @param target the {@link  BoxPlayer} who receive items
+     * @param target the {@link BoxPlayer} who receives items
+     * @param senderId the UUID of the initiating player, if known
      */
-    public record Give(@NotNull BoxPlayer target) implements StockEvent.Cause {
+    public record Give(@NotNull BoxPlayer target, @Nullable UUID senderId) implements StockEvent.Cause {
+        public Give(@NotNull BoxPlayer target) {
+            this(target, null);
+        }
+
+        @Override
+        public @Nullable StockActor actor() {
+            return this.senderId == null ? null : new StockActor.Player(this.senderId);
+        }
+
         @Override
         public @NotNull String name() {
             return "give";
@@ -41,6 +64,11 @@ public final class CommandCauses {
      */
     public record Receive(@NotNull BoxPlayer sender) implements StockEvent.Cause {
         @Override
+        public @NotNull StockActor actor() {
+            return new StockActor.Player(this.sender.getUUID());
+        }
+
+        @Override
         public @NotNull String name() {
             return "receive";
         }
@@ -53,6 +81,11 @@ public final class CommandCauses {
      * @param sender executor of the command to increase stock
      */
     public record AdminGive(@NotNull CommandSender sender) implements StockEvent.Cause {
+        @Override
+        public @Nullable StockActor actor() {
+            return StockActor.fromSender(this.sender);
+        }
+
         @Override
         public @NotNull String name() {
             return "admin_give";
@@ -67,6 +100,11 @@ public final class CommandCauses {
      */
     public record AdminReset(@NotNull CommandSender sender) implements StockEvent.Cause {
         @Override
+        public @Nullable StockActor actor() {
+            return StockActor.fromSender(this.sender);
+        }
+
+        @Override
         public @NotNull String name() {
             return "admin_reset";
         }
@@ -80,6 +118,11 @@ public final class CommandCauses {
      */
     public record AdminSet(@NotNull CommandSender sender) implements StockEvent.Cause {
         @Override
+        public @Nullable StockActor actor() {
+            return StockActor.fromSender(this.sender);
+        }
+
+        @Override
         public @NotNull String name() {
             return "admin_set";
         }
@@ -92,6 +135,11 @@ public final class CommandCauses {
      * @param sender executor of the command to decrease stock
      */
     public record AdminTake(@NotNull CommandSender sender) implements StockEvent.Cause {
+        @Override
+        public @Nullable StockActor actor() {
+            return StockActor.fromSender(this.sender);
+        }
+
         @Override
         public @NotNull String name() {
             return "admin_take";

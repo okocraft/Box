@@ -10,6 +10,7 @@ import net.okocraft.box.api.message.ErrorMessages;
 import net.okocraft.box.api.model.user.BoxUser;
 import net.okocraft.box.api.util.TabCompleter;
 import net.okocraft.box.api.util.UserSearcher;
+import net.okocraft.box.feature.command.event.stock.CommandCauses;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -61,7 +62,7 @@ public class ResetAllCommand extends AbstractCommand {
         if (CONFIRM.equalsIgnoreCase(args[1]) && this.confirmationMap.containsKey(sender)) {
             BoxUser target = this.confirmationMap.remove(sender);
 
-            BoxAPI.api().getStockManager().getPersonalStockHolder(target).reset();
+            BoxAPI.api().getStockManager().getPersonalStockHolder(target).reset(new CommandCauses.AdminReset(sender));
 
             BoxAPI.api().getEventCallers().sync().call(new UserDataResetEvent(target));
 

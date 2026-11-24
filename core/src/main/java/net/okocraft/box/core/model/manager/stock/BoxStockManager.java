@@ -228,8 +228,14 @@ public class BoxStockManager implements StockManager {
 
         @Override
         public void callResetEvent(@NotNull StockHolder stockHolder, @NotNull Collection<StockData> stockDataBeforeReset) {
+            this.callResetEvent(stockHolder, stockDataBeforeReset, StockHolderResetEvent.DEFAULT_CAUSE);
+        }
+
+        @Override
+        public void callResetEvent(@NotNull StockHolder stockHolder, @NotNull Collection<StockData> stockDataBeforeReset,
+                                   StockEvent.@NotNull Cause cause) {
             this.loader.getChangeState().rememberReset(stockDataBeforeReset);
-            this.caller.call(new StockHolderResetEvent(this.loader, stockDataBeforeReset));
+            this.caller.call(new StockHolderResetEvent(this.loader, stockDataBeforeReset, cause));
         }
     }
 }

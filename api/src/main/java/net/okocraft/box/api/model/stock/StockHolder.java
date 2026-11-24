@@ -196,4 +196,15 @@ public interface StockHolder {
      * @return the collection of {@link StockData} before reset
      */
     @NotNull @Unmodifiable Collection<StockData> reset();
+
+    /**
+     * Resets this holder with a cause. Implementations that only support {@link #reset()}
+     * may discard the cause.
+     *
+     * @param cause the cause of the reset
+     * @return the stock data before the reset
+     */
+    default @NotNull @Unmodifiable Collection<StockData> reset(StockEvent.@NotNull Cause cause) {
+        return this.reset();
+    }
 }

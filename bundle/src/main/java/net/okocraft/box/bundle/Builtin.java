@@ -8,6 +8,7 @@ import net.okocraft.box.feature.category.CategoryFeature;
 import net.okocraft.box.feature.command.CommandFeature;
 import net.okocraft.box.feature.craft.CraftFeature;
 import net.okocraft.box.feature.gui.GuiFeature;
+import net.okocraft.box.feature.kansokusha.KansokushaFeature;
 import net.okocraft.box.feature.notifier.NotifierFeature;
 import net.okocraft.box.feature.overflow.OverflowFeature;
 import net.okocraft.box.feature.stats.StatsFeature;
@@ -38,7 +39,8 @@ public final class Builtin {
             .addFeature(StickFeature::new)
             .addFeature(NotifierFeature::new)
             .addFeature(OverflowFeature::new)
-            .addFeature(StatsFeature::new);
+            .addFeature(StatsFeature::new)
+            .addFeature(KansokushaFeature::new);
     }
 
     public static void storages(@NotNull StorageRegistry registry) {

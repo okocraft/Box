@@ -77,4 +77,12 @@ public interface StockEventCaller {
      */
     void callResetEvent(@NotNull StockHolder stockHolder, @NotNull Collection<StockData> stockDataBeforeReset);
 
+    /**
+     * Publishes a reset with its cause when the caller supports cause-aware resets.
+     */
+    default void callResetEvent(@NotNull StockHolder stockHolder, @NotNull Collection<StockData> stockDataBeforeReset,
+                                StockEvent.@NotNull Cause cause) {
+        this.callResetEvent(stockHolder, stockDataBeforeReset);
+    }
+
 }

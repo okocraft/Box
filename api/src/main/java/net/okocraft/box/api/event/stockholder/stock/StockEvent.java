@@ -4,7 +4,9 @@ import net.okocraft.box.api.event.stockholder.StockHolderEvent;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.model.stock.StockHolder;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.time.Instant;
 import java.util.Objects;
 
 /**
@@ -18,6 +20,7 @@ public class StockEvent extends StockHolderEvent {
     private final BoxItem item;
     private final int amount;
     private final Cause cause;
+    private final Instant occurredAt = Instant.now();
 
     /**
      * The constructor of {@link StockEvent}.
@@ -63,6 +66,13 @@ public class StockEvent extends StockHolderEvent {
     }
 
     /**
+     * Gets the time the change was published, before any asynchronous event dispatch.
+     */
+    public @NotNull Instant getOccurredAt() {
+        return this.occurredAt;
+    }
+
+    /**
      * An interface that indicates why the {@link StockEvent} was called.
      * <p>
      * By implementing this interface, {@link Cause} can have additional information.
@@ -78,7 +88,14 @@ public class StockEvent extends StockHolderEvent {
          * @return a {@link Cause} instance
          */
         static @NotNull Cause create(@NotNull String name) {
-            return new CauseImpl(name);
+            return create(name, null);
+        }
+
+        /**
+         * Creates a named cause with an optional initiator.
+         */
+        static @NotNull Cause create(@NotNull String name, @Nullable StockActor actor) {
+            return new CauseImpl(name, actor);
         }
 
         /**
@@ -91,9 +108,18 @@ public class StockEvent extends StockHolderEvent {
          * @return the string that indicates the cause
          */
         @NotNull String name();
+
+        /**
+         * Gets the initiator, or {@code null} for automated or unattributed changes.
+         * Stock events may be delivered asynchronously, so this must not consult mutable
+         * player or world state.
+         */
+        default @Nullable StockActor actor() {
+            return null;
+        }
     }
 
-    private record CauseImpl(@NotNull String name) implements Cause {
+    private record CauseImpl(@NotNull String name, @Nullable StockActor actor) implements Cause {
 
         public CauseImpl {
             if (name.isEmpty()) { // implicit null check of "name"

@@ -9,6 +9,7 @@ import it.unimi.dsi.fastutil.objects.ObjectIterator;
 import it.unimi.dsi.fastutil.objects.ObjectList;
 import it.unimi.dsi.fastutil.objects.ObjectLists;
 import it.unimi.dsi.fastutil.objects.ObjectSet;
+import net.okocraft.box.api.event.stockholder.StockHolderResetEvent;
 import net.okocraft.box.api.event.stockholder.stock.StockEvent;
 import net.okocraft.box.api.model.item.BoxItem;
 import net.okocraft.box.api.model.stock.StockData;
@@ -329,6 +330,12 @@ class StockHolderImpl implements StockHolder {
 
     @Override
     public @NotNull @Unmodifiable Collection<StockData> reset() {
+        return this.reset(StockHolderResetEvent.DEFAULT_CAUSE);
+    }
+
+    @Override
+    public @NotNull @Unmodifiable Collection<StockData> reset(StockEvent.@NotNull Cause cause) {
+        Objects.requireNonNull(cause);
         Collection<StockData> stockDataCollection;
         long stamp = this.lock.writeLock();
 
@@ -339,7 +346,7 @@ class StockHolderImpl implements StockHolder {
             this.lock.unlockWrite(stamp);
         }
 
-        this.eventCaller.callResetEvent(this, stockDataCollection);
+        this.eventCaller.callResetEvent(this, stockDataCollection, cause);
 
         return stockDataCollection;
     }
