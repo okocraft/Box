@@ -51,6 +51,7 @@ dependencies {
 tasks.javadoc {
     include("net/okocraft/box/feature/stick/StickFeature.java")
     include("net/okocraft/box/feature/stick/package-info.java")
+    include("net/okocraft/box/feature/stick/event/StickContainerChangeEvent.java")
     include("net/okocraft/box/feature/stick/event/stock/**")
     include("net/okocraft/box/feature/stick/item/**")
 }
