@@ -96,7 +96,7 @@ class ItemListenerTest {
         var notification = assertInstanceOf(AutoStoreItemEvent.class, emitted.getFirst());
         assertEquals(1, emitted.size());
         assertEquals(new StockActor.Player(playerId, "Collector"), notification.getActor());
-        assertEquals(entityId, notification.getItemEntityId());
+        assertEquals(entityId, notification.getSourceEntityId());
         assertEquals(location, notification.getLocation());
         assertNotSame(location, notification.getLocation());
     }

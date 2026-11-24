@@ -19,19 +19,20 @@ public final class AutoStoreItemEvent extends BoxEvent {
     private final StockActor.Player actor;
     private final Location location;
     private final ItemStack item;
-    private final @Nullable UUID itemEntityId;
+    private final @Nullable UUID sourceEntityId;
 
     /**
      * @param actor the player associated with the item
      * @param location the original pickup or drop location
      * @param item the item AutoStore took
-     * @param itemEntityId the item entity UUID, or {@code null} if the item was not an entity
+     * @param sourceEntityId the UUID of the item or arrow entity that was collected,
+     *                       or {@code null} if the item was taken from a drop list without an entity
      */
-    public AutoStoreItemEvent(StockActor.Player actor, Location location, ItemStack item, @Nullable UUID itemEntityId) {
+    public AutoStoreItemEvent(StockActor.Player actor, Location location, ItemStack item, @Nullable UUID sourceEntityId) {
         this.actor = actor;
         this.location = location.clone();
         this.item = item.clone();
-        this.itemEntityId = itemEntityId;
+        this.sourceEntityId = sourceEntityId;
     }
 
     public StockActor.Player getActor() {
@@ -52,7 +53,10 @@ public final class AutoStoreItemEvent extends BoxEvent {
         return this.item.clone();
     }
 
-    public @Nullable UUID getItemEntityId() {
-        return this.itemEntityId;
+    /**
+     * Returns the UUID of the collected item or arrow entity, or {@code null} if there was no such entity.
+     */
+    public @Nullable UUID getSourceEntityId() {
+        return this.sourceEntityId;
     }
 }

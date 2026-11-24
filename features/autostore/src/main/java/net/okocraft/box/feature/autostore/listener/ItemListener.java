@@ -128,7 +128,7 @@ public class ItemListener implements Listener {
     }
 
     private @Nullable AutoStoreItemEvent storeItem(@NotNull Player player, @NotNull Location location, @NotNull ItemStack item,
-                                                  @Nullable UUID itemEntityId, boolean direct) {
+                                                  @Nullable UUID sourceEntityId, boolean direct) {
         if (!BoxAPI.api().canUseBox(player)) {
             return null;
         }
@@ -155,8 +155,8 @@ public class ItemListener implements Listener {
         }
 
         CoreProtectIntegration.logItemPickup(player, location, item);
-        KansokushaIntegration.logItemPickup(player, location, item, itemEntityId);
+        KansokushaIntegration.logItemPickup(player, location, item, sourceEntityId);
 
-        return new AutoStoreItemEvent(StockActor.fromPlayer(player), location, item, itemEntityId);
+        return new AutoStoreItemEvent(StockActor.fromPlayer(player), location, item, sourceEntityId);
     }
 }
