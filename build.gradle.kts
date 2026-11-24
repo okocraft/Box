@@ -1,3 +1,5 @@
+import org.gradle.plugins.signing.Sign
+
 plugins {
     alias(libs.plugins.jcommon)
     alias(libs.plugins.aggregated.javadoc)
@@ -5,6 +7,14 @@ plugins {
 }
 
 val isReleaseVersion = !project.version.toString().endsWith("-SNAPSHOT")
+
+if (providers.gradleProperty("skipSigning").isPresent) {
+    subprojects {
+        tasks.withType<Sign>().configureEach {
+            enabled = false
+        }
+    }
+}
 
 aggregatedJavadoc {
     val dirName = if (isReleaseVersion) "release" else "snapshot"
