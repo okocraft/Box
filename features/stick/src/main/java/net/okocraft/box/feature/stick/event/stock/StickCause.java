@@ -1,6 +1,5 @@
 package net.okocraft.box.feature.stick.event.stock;
 
-import net.okocraft.box.api.event.stockholder.stock.StockActor;
 import net.okocraft.box.api.event.stockholder.stock.StockEvent;
 import net.okocraft.box.api.player.BoxPlayer;
 import org.jetbrains.annotations.NotNull;
@@ -16,10 +15,5 @@ public interface StickCause extends StockEvent.Cause {
      * @return the {@link BoxPlayer} that used the Box Stick
      */
     @NotNull BoxPlayer player();
-
-    @Override
-    default StockActor.@NotNull Player actor() {
-        return StockActor.fromPlayer(this.player().getPlayer());
-    }
 
 }

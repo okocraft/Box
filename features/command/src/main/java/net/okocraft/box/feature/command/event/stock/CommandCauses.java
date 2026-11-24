@@ -44,12 +44,16 @@ public final class CommandCauses {
      * A {@link net.okocraft.box.api.event.stockholder.stock.StockEvent.Cause} implementation that indicates
      * receiving items from the other player.
      *
-     * @param sender the {@link  BoxPlayer} who give items
+     * @param sender the {@link BoxPlayer} giving the items
+     * @param actor  the initiating player
      */
-    public record Receive(@NotNull BoxPlayer sender) implements StockEvent.Cause {
-        @Override
-        public StockActor.@NotNull Player actor() {
-            return StockActor.fromPlayer(this.sender.getPlayer());
+    public record Receive(@NotNull BoxPlayer sender, StockActor.@NotNull Player actor) implements StockEvent.Cause {
+        public Receive {
+            Objects.requireNonNull(actor, "actor");
+        }
+
+        public Receive(@NotNull BoxPlayer sender) {
+            this(sender, StockActor.fromPlayer(sender.getPlayer()));
         }
 
         @Override
@@ -66,6 +70,10 @@ public final class CommandCauses {
      * @param actor the executor's captured identity
      */
     public record AdminGive(@NotNull CommandSender sender, @NotNull StockActor actor) implements StockEvent.Cause {
+        public AdminGive {
+            Objects.requireNonNull(actor, "actor");
+        }
+
         public AdminGive(@NotNull CommandSender sender) {
             this(sender, StockActor.fromSender(sender));
         }
@@ -84,6 +92,10 @@ public final class CommandCauses {
      * @param actor the executor's captured identity
      */
     public record AdminReset(@NotNull CommandSender sender, @NotNull StockActor actor) implements StockEvent.Cause {
+        public AdminReset {
+            Objects.requireNonNull(actor, "actor");
+        }
+
         public AdminReset(@NotNull CommandSender sender) {
             this(sender, StockActor.fromSender(sender));
         }
@@ -102,6 +114,10 @@ public final class CommandCauses {
      * @param actor the executor's captured identity
      */
     public record AdminSet(@NotNull CommandSender sender, @NotNull StockActor actor) implements StockEvent.Cause {
+        public AdminSet {
+            Objects.requireNonNull(actor, "actor");
+        }
+
         public AdminSet(@NotNull CommandSender sender) {
             this(sender, StockActor.fromSender(sender));
         }
@@ -120,6 +136,10 @@ public final class CommandCauses {
      * @param actor the executor's captured identity
      */
     public record AdminTake(@NotNull CommandSender sender, @NotNull StockActor actor) implements StockEvent.Cause {
+        public AdminTake {
+            Objects.requireNonNull(actor, "actor");
+        }
+
         public AdminTake(@NotNull CommandSender sender) {
             this(sender, StockActor.fromSender(sender));
         }

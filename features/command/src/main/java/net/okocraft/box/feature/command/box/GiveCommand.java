@@ -131,15 +131,16 @@ public class GiveCommand extends AbstractCommand {
         }
 
         BoxPlayer targetBoxPlayer = playerMap.get(target);
+        StockActor.Player actor = StockActor.fromPlayer(player);
 
-        int senderDecreaseResult = stockHolder.decreaseIfPossible(boxItem, amount, new CommandCauses.Give(targetBoxPlayer, StockActor.fromPlayer(player)));
+        int senderDecreaseResult = stockHolder.decreaseIfPossible(boxItem, amount, new CommandCauses.Give(targetBoxPlayer, actor));
 
         if (senderDecreaseResult == -1) {
             sender.sendMessage(this.noStock.apply(boxItem));
             return;
         }
 
-        int targetCurrent = targetBoxPlayer.getCurrentStockHolder().increase(boxItem, amount, new CommandCauses.Receive(senderBoxPlayer));
+        int targetCurrent = targetBoxPlayer.getCurrentStockHolder().increase(boxItem, amount, new CommandCauses.Receive(senderBoxPlayer, actor));
 
         sender.sendMessage(this.successSender.apply(target.getName(), boxItem, amount, senderDecreaseResult));
         target.sendMessage(this.successTarget.apply(sender.getName(), boxItem, amount, targetCurrent));
