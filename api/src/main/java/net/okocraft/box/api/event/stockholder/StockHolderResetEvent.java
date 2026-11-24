@@ -58,6 +58,7 @@ public class StockHolderResetEvent extends StockHolderEvent {
             ", name=" + this.getStockHolder().getName() +
             ", class=" + this.getStockHolder().getClass().getSimpleName() +
             ", stockDataBeforeReset={" + this.stockDataBeforeReset.stream().map(data -> data.itemId() + "=" + data.amount()).collect(Collectors.joining(",")) + "}" +
+            ", cause=" + this.getCause() +
             "}";
     }
 
@@ -66,6 +67,7 @@ public class StockHolderResetEvent extends StockHolderEvent {
         return "StockHolderResetEvent{" +
             "stockholder=" + this.getStockHolder() +
             ", stockDataBeforeReset=" + this.stockDataBeforeReset +
+            ", cause=" + this.getCause() +
             "}";
     }
 }
