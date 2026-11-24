@@ -17,7 +17,6 @@ import net.okocraft.box.feature.stick.function.container.ContainerOperation;
 import net.okocraft.box.feature.stick.function.container.ContainerOperator;
 import net.okocraft.box.feature.stick.function.container.FurnaceOperator;
 import net.okocraft.box.feature.stick.integration.CoreProtectIntegration;
-import net.okocraft.box.feature.stick.integration.KansokushaIntegration;
 import net.okocraft.box.feature.stick.item.BoxStickItem;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -208,8 +207,8 @@ public class StickListener implements Listener {
             return;
         }
 
-        var kansokushaSnapshot = KansokushaIntegration.snapshot(container);
-        var before = kansokushaSnapshot != null ? kansokushaSnapshot : ContainerContents.copy(inventory.getContents());
+        var containerType = container.getType();
+        var before = ContainerContents.copy(inventory.getContents());
         try {
             CoreProtectIntegration.logContainerTransaction(player, container);
             if (operation.run() || player.getGameMode() == GameMode.CREATIVE) { // This prevents the instant breaking of blocks in creative mode.
@@ -217,11 +216,10 @@ public class StickListener implements Listener {
             }
         } finally {
             CoreProtectIntegration.logContainerTransaction(player, container);
-            KansokushaIntegration.logContainerTransaction(player, container, kansokushaSnapshot);
             var after = inventory.getContents();
             if (ContainerContents.hasNetChange(before, after)) {
                 BoxAPI.api().getEventCallers().sync()
-                    .call(new StickContainerChangeEvent(StockActor.fromPlayer(player), clickedBlockLocation, before, after));
+                    .call(new StickContainerChangeEvent(StockActor.fromPlayer(player), clickedBlockLocation, containerType, before, after));
             }
         }
     }
