@@ -1,0 +1,200 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "net.okocraft.box",
+    "module": "box-storage-database",
+    "version": "6.0.0-rc.8",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "9.9.1"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 25,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api"
+      },
+      "dependencies": [
+        {
+          "group": "dev.siroshun.configapi",
+          "module": "configapi-format-yaml",
+          "version": {
+            "requires": "5.0.0-rc.2"
+          },
+          "excludes": [
+            {
+              "group": "org.yaml",
+              "module": "snakeyaml"
+            }
+          ]
+        },
+        {
+          "group": "dev.siroshun.event4j",
+          "module": "event4j-tree",
+          "version": {
+            "requires": "4.1.0"
+          }
+        },
+        {
+          "group": "dev.siroshun.mcmsgdef",
+          "module": "mcmsgdef",
+          "version": {
+            "requires": "1.3.0"
+          }
+        },
+        {
+          "group": "io.papermc.paper",
+          "module": "paper-api",
+          "version": {
+            "requires": "26.3.build.257-stable"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "box-storage-database-6.0.0-rc.8.jar",
+          "url": "box-storage-database-6.0.0-rc.8.jar",
+          "size": 86164,
+          "sha512": "c8a59ce832aad44457fb302fae97d18a342518a57ec94bfd817be1d55a8a23ad33ca22a5497031db2ba7172dec02bda567c3939c55d1d3452debdb96aba9d7be",
+          "sha256": "bb03a710f4abf1fa9fec9299ef1c6dfaa6545e70b98c98f08842407cd98c6cdd",
+          "sha1": "7f93cb0c7ed23596600c286ab6ba50a02735e894",
+          "md5": "ead1749e0a6771c4a4edefb3ec8aefd6"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 25,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "dependencies": [
+        {
+          "group": "net.okocraft.box",
+          "module": "box-api",
+          "version": {
+            "requires": "6.0.0-rc.8"
+          }
+        },
+        {
+          "group": "net.okocraft.box",
+          "module": "box-item-provider",
+          "version": {
+            "requires": "6.0.0-rc.8"
+          }
+        },
+        {
+          "group": "net.okocraft.box",
+          "module": "box-storage-api",
+          "version": {
+            "requires": "6.0.0-rc.8"
+          }
+        },
+        {
+          "group": "dev.siroshun.configapi",
+          "module": "configapi-format-binary",
+          "version": {
+            "requires": "5.0.0-rc.2"
+          }
+        },
+        {
+          "group": "dev.siroshun.configapi",
+          "module": "configapi-serialization-record",
+          "version": {
+            "requires": "5.0.0-rc.2"
+          }
+        },
+        {
+          "group": "dev.siroshun.configapi",
+          "module": "configapi-format-yaml",
+          "version": {
+            "requires": "5.0.0-rc.2"
+          },
+          "excludes": [
+            {
+              "group": "org.yaml",
+              "module": "snakeyaml"
+            }
+          ]
+        },
+        {
+          "group": "dev.siroshun.event4j",
+          "module": "event4j-tree",
+          "version": {
+            "requires": "4.1.0"
+          }
+        },
+        {
+          "group": "dev.siroshun.mcmsgdef",
+          "module": "mcmsgdef",
+          "version": {
+            "requires": "1.3.0"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "box-storage-database-6.0.0-rc.8.jar",
+          "url": "box-storage-database-6.0.0-rc.8.jar",
+          "size": 86164,
+          "sha512": "c8a59ce832aad44457fb302fae97d18a342518a57ec94bfd817be1d55a8a23ad33ca22a5497031db2ba7172dec02bda567c3939c55d1d3452debdb96aba9d7be",
+          "sha256": "bb03a710f4abf1fa9fec9299ef1c6dfaa6545e70b98c98f08842407cd98c6cdd",
+          "sha1": "7f93cb0c7ed23596600c286ab6ba50a02735e894",
+          "md5": "ead1749e0a6771c4a4edefb3ec8aefd6"
+        }
+      ]
+    },
+    {
+      "name": "javadocElements",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "javadoc",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "box-storage-database-6.0.0-rc.8-javadoc.jar",
+          "url": "box-storage-database-6.0.0-rc.8-javadoc.jar",
+          "size": 4281888,
+          "sha512": "8fb6ae559a2fe46f8cbcb11b9c96c5e5a8e9ea7a0bedc0b158c31b1435b4620189879dda1e2951ae974e57483c5437cbd6465f23aa1c3834c480260e6c0e5a1a",
+          "sha256": "b23f0c6cf0810b4849a019fd1af2924814f812085551be75ca2086bc0ba09b05",
+          "sha1": "cd58f94fcd9e5b406ebcbb15f6dc48b2d0d7ce00",
+          "md5": "7fff425c6fe02dba42cefbd70f439fa7"
+        }
+      ]
+    },
+    {
+      "name": "sourcesElements",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "box-storage-database-6.0.0-rc.8-sources.jar",
+          "url": "box-storage-database-6.0.0-rc.8-sources.jar",
+          "size": 33048,
+          "sha512": "ee8dba2575d45ebca03583fc40a39af8d519c4710342326a8ad128afa80a31d1ac0dce0e9655425702cede258b5662c8148fb6952da28e05e09e9c7b37481f55",
+          "sha256": "2063f476718dc134fe508ad7fa2f7c7966d227878ae1da9ca8027a62942b93dc",
+          "sha1": "eec650274577e4e174471d953bdb5f01999cdb10",
+          "md5": "11ab645772139820c318eb51082a18ca"
+        }
+      ]
+    }
+  ]
+}

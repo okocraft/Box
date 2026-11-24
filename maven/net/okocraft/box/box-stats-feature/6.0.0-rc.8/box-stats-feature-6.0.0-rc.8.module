@@ -1,0 +1,172 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "net.okocraft.box",
+    "module": "box-stats-feature",
+    "version": "6.0.0-rc.8",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "9.9.1"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 25,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api"
+      },
+      "dependencies": [
+        {
+          "group": "dev.siroshun.configapi",
+          "module": "configapi-format-yaml",
+          "version": {
+            "requires": "5.0.0-rc.2"
+          },
+          "excludes": [
+            {
+              "group": "org.yaml",
+              "module": "snakeyaml"
+            }
+          ]
+        },
+        {
+          "group": "dev.siroshun.event4j",
+          "module": "event4j-tree",
+          "version": {
+            "requires": "4.1.0"
+          }
+        },
+        {
+          "group": "dev.siroshun.mcmsgdef",
+          "module": "mcmsgdef",
+          "version": {
+            "requires": "1.3.0"
+          }
+        },
+        {
+          "group": "io.papermc.paper",
+          "module": "paper-api",
+          "version": {
+            "requires": "26.3.build.257-stable"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "box-stats-feature-6.0.0-rc.8.jar",
+          "url": "box-stats-feature-6.0.0-rc.8.jar",
+          "size": 30075,
+          "sha512": "f7eaf5c9a4fe519f1e6ad80fad508ca2623388b4b4531e6430c5a9dad56714d1d386295d92d1c7e960d39c6a5bb4e00f73d55128bb243971c19b90bf253a3283",
+          "sha256": "54c2783ddbf30803ea1f5b70381bed0dde6aa6b68f8193cc5961dc811aba0d51",
+          "sha1": "f127760819c9aad235d1be09c41e12e6d3b57562",
+          "md5": "263d9d13ed007ce08a40d31e59566969"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 25,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "dependencies": [
+        {
+          "group": "dev.siroshun.configapi",
+          "module": "configapi-serialization-record",
+          "version": {
+            "requires": "5.0.0-rc.2"
+          }
+        },
+        {
+          "group": "dev.siroshun.configapi",
+          "module": "configapi-format-yaml",
+          "version": {
+            "requires": "5.0.0-rc.2"
+          },
+          "excludes": [
+            {
+              "group": "org.yaml",
+              "module": "snakeyaml"
+            }
+          ]
+        },
+        {
+          "group": "dev.siroshun.event4j",
+          "module": "event4j-tree",
+          "version": {
+            "requires": "4.1.0"
+          }
+        },
+        {
+          "group": "dev.siroshun.mcmsgdef",
+          "module": "mcmsgdef",
+          "version": {
+            "requires": "1.3.0"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "box-stats-feature-6.0.0-rc.8.jar",
+          "url": "box-stats-feature-6.0.0-rc.8.jar",
+          "size": 30075,
+          "sha512": "f7eaf5c9a4fe519f1e6ad80fad508ca2623388b4b4531e6430c5a9dad56714d1d386295d92d1c7e960d39c6a5bb4e00f73d55128bb243971c19b90bf253a3283",
+          "sha256": "54c2783ddbf30803ea1f5b70381bed0dde6aa6b68f8193cc5961dc811aba0d51",
+          "sha1": "f127760819c9aad235d1be09c41e12e6d3b57562",
+          "md5": "263d9d13ed007ce08a40d31e59566969"
+        }
+      ]
+    },
+    {
+      "name": "javadocElements",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "javadoc",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "box-stats-feature-6.0.0-rc.8-javadoc.jar",
+          "url": "box-stats-feature-6.0.0-rc.8-javadoc.jar",
+          "size": 4205973,
+          "sha512": "95b69f5b314d4a16a4238095ac1bd074af93571ab009dd7f467748a7ef9e0628c3d71455062ca90f9e6dccbd73999d46afc210e45a740fb179ecee69daa0d73b",
+          "sha256": "c8dd67e28bd228eff228b17b81c94872312d5521525f1d61b7246a4db7caa0d9",
+          "sha1": "b474495748751aa30b67d388ecb87926382a4e1b",
+          "md5": "1fbe157bb3e09cb5a58482580bc94190"
+        }
+      ]
+    },
+    {
+      "name": "sourcesElements",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "box-stats-feature-6.0.0-rc.8-sources.jar",
+          "url": "box-stats-feature-6.0.0-rc.8-sources.jar",
+          "size": 13883,
+          "sha512": "7fa2ae98ffc6dae9d0633dab6281f3cad0bb1ad506303890672d926efe1720781c68b47734a26f59f9d019426425697aef01f68ae70ffe88c0a5edc3be48babd",
+          "sha256": "42db3511d3f6b4b603e3fece24a6c9c7c5b5928ef00436c8702d0a739b7ba92d",
+          "sha1": "a2b84a9a1e4a46e860e01d3c21572f0800bbef4c",
+          "md5": "763a575fe3a874d86a73a3bccf4b4b9f"
+        }
+      ]
+    }
+  ]
+}
