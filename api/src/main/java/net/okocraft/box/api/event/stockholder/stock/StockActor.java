@@ -32,17 +32,18 @@ public interface StockActor {
     }
 
     /**
-     * Identifies a player or a local or remote console. Other sender types are not inferred.
+     * Captures the sender's identity. Other than players and consoles, senders are represented
+     * by name only.
      *
      * @param sender the initiating command sender
-     * @return the actor, or {@code null} if the sender is not recognized
+     * @return the captured identity
      */
-    static @Nullable StockActor fromSender(@NotNull CommandSender sender) {
+    static @NotNull StockActor fromSender(@NotNull CommandSender sender) {
         return switch (sender) {
             case org.bukkit.entity.Player player -> fromPlayer(player);
             case ConsoleCommandSender ignored -> CONSOLE;
             case RemoteConsoleCommandSender ignored -> CONSOLE;
-            default -> null;
+            default -> new Other(sender.getName());
         };
     }
 
@@ -62,15 +63,6 @@ public interface StockActor {
     @NotNull String name();
 
     /**
-     * Returns whether the actor represents a player.
-     *
-     * @return whether this is a player actor
-     */
-    default boolean isPlayer() {
-        return false;
-    }
-
-    /**
      * An immutable player identity.
      *
      * @param uuid the player's UUID
@@ -80,11 +72,6 @@ public interface StockActor {
         public Player {
             Objects.requireNonNull(uuid, "uuid");
             Objects.requireNonNull(name, "name");
-        }
-
-        @Override
-        public boolean isPlayer() {
-            return true;
         }
     }
 

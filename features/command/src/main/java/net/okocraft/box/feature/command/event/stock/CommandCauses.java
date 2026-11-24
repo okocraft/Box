@@ -6,7 +6,6 @@ import net.okocraft.box.api.player.BoxPlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -64,11 +63,11 @@ public final class CommandCauses {
      * increasing stock by an admin.
      *
      * @param sender executor of the command to increase stock
+     * @param actor the executor's captured identity
      */
-    public record AdminGive(@NotNull CommandSender sender) implements StockEvent.Cause {
-        @Override
-        public @Nullable StockActor actor() {
-            return StockActor.fromSender(this.sender);
+    public record AdminGive(@NotNull CommandSender sender, @NotNull StockActor actor) implements StockEvent.Cause {
+        public AdminGive(@NotNull CommandSender sender) {
+            this(sender, StockActor.fromSender(sender));
         }
 
         @Override
@@ -82,11 +81,11 @@ public final class CommandCauses {
      * resetting stock by an admin.
      *
      * @param sender executor of the command to reset stock
+     * @param actor the executor's captured identity
      */
-    public record AdminReset(@NotNull CommandSender sender) implements StockEvent.Cause {
-        @Override
-        public @Nullable StockActor actor() {
-            return StockActor.fromSender(this.sender);
+    public record AdminReset(@NotNull CommandSender sender, @NotNull StockActor actor) implements StockEvent.Cause {
+        public AdminReset(@NotNull CommandSender sender) {
+            this(sender, StockActor.fromSender(sender));
         }
 
         @Override
@@ -100,11 +99,11 @@ public final class CommandCauses {
      * setting stock by an admin.
      *
      * @param sender executor of the command to set stock
+     * @param actor the executor's captured identity
      */
-    public record AdminSet(@NotNull CommandSender sender) implements StockEvent.Cause {
-        @Override
-        public @Nullable StockActor actor() {
-            return StockActor.fromSender(this.sender);
+    public record AdminSet(@NotNull CommandSender sender, @NotNull StockActor actor) implements StockEvent.Cause {
+        public AdminSet(@NotNull CommandSender sender) {
+            this(sender, StockActor.fromSender(sender));
         }
 
         @Override
@@ -118,11 +117,11 @@ public final class CommandCauses {
      * decreasing stock by an admin.
      *
      * @param sender executor of the command to decrease stock
+     * @param actor the executor's captured identity
      */
-    public record AdminTake(@NotNull CommandSender sender) implements StockEvent.Cause {
-        @Override
-        public @Nullable StockActor actor() {
-            return StockActor.fromSender(this.sender);
+    public record AdminTake(@NotNull CommandSender sender, @NotNull StockActor actor) implements StockEvent.Cause {
+        public AdminTake(@NotNull CommandSender sender) {
+            this(sender, StockActor.fromSender(sender));
         }
 
         @Override

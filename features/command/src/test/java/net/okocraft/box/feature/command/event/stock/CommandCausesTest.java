@@ -2,6 +2,7 @@ package net.okocraft.box.feature.command.event.stock;
 
 import net.okocraft.box.api.event.stockholder.stock.StockActor;
 import net.okocraft.box.api.player.BoxPlayer;
+import org.bukkit.command.BlockCommandSender;
 import org.bukkit.entity.Player;
 import org.junit.jupiter.api.Test;
 
@@ -35,5 +36,16 @@ class CommandCausesTest {
     void testGiveRequiresAnInitiatingPlayer() {
         var target = mock(BoxPlayer.class);
         assertThrows(NullPointerException.class, () -> new CommandCauses.Give(target, null));
+    }
+
+    @Test
+    void testAdminCauseRetainsTheSenderNameFromCreation() {
+        var sender = mock(BlockCommandSender.class);
+        when(sender.getName()).thenReturn("Restock block", "Renamed block");
+
+        var cause = new CommandCauses.AdminSet(sender);
+
+        verify(sender).getName();
+        assertEquals(new StockActor.Other("Restock block"), cause.actor());
     }
 }

@@ -18,7 +18,6 @@ class StockActorTest {
         var uuid = new UUID(0, 1);
         var player = new StockActor.Player(uuid, "ExamplePlayer");
 
-        assertTrue(player.isPlayer());
         assertEquals(uuid, player.uuid());
         assertEquals("ExamplePlayer", player.name());
         assertThrows(NullPointerException.class, () -> new StockActor.Player(null, "ExamplePlayer"));
@@ -27,7 +26,6 @@ class StockActorTest {
 
     @Test
     void testConsoleDoesNotRequireUuid() {
-        assertFalse(StockActor.CONSOLE.isPlayer());
         assertNull(StockActor.CONSOLE.uuid());
         assertEquals("console", StockActor.CONSOLE.name());
     }
@@ -42,7 +40,14 @@ class StockActorTest {
         assertEquals(new StockActor.Player(uuid, "ExamplePlayer"), StockActor.fromSender(player));
         assertSame(StockActor.CONSOLE, StockActor.fromSender(mock(ConsoleCommandSender.class)));
         assertSame(StockActor.CONSOLE, StockActor.fromSender(mock(RemoteConsoleCommandSender.class)));
-        assertNull(StockActor.fromSender(mock(BlockCommandSender.class)));
+    }
+
+    @Test
+    void testOtherCommandSenderIsRepresentedByNameOnly() {
+        var sender = mock(BlockCommandSender.class);
+        when(sender.getName()).thenReturn("Restock block");
+
+        assertEquals(new StockActor.Other("Restock block"), StockActor.fromSender(sender));
     }
 
     @Test
@@ -54,7 +59,6 @@ class StockActorTest {
         var cause = StockEvent.Cause.create("restock", actor);
 
         assertSame(actor, cause.actor());
-        assertFalse(actor.isPlayer());
         assertEquals(uuid, actor.uuid());
     }
 
