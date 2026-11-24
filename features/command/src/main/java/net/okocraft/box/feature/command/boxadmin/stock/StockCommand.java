@@ -30,7 +30,8 @@ public class StockCommand extends AbstractCommand implements SubCommandHoldable 
             new StockModifyCommands.StockSetCommand(collector),
             new StockInfoCommand(collector),
             new StockListCommand(collector, sharedStockListCommand),
-            new StockResetCommand(collector)
+            new StockResetCommand(collector),
+            new StockTransferCommand(collector)
         );
     }
 

@@ -2,6 +2,7 @@ package net.okocraft.box.feature.command.event.stock;
 
 import net.okocraft.box.api.event.stockholder.stock.StockActor;
 import net.okocraft.box.api.event.stockholder.stock.StockEvent;
+import net.okocraft.box.api.model.user.BoxUser;
 import net.okocraft.box.api.player.BoxPlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -157,6 +158,44 @@ public final class CommandCauses {
         @Override
         public @NotNull String name() {
             return "admin_take";
+        }
+    }
+
+    /**
+     * A {@link net.okocraft.box.api.event.stockholder.stock.StockEvent.Cause} implementation that indicates
+     * decreasing stock of the source player when an admin transfers stock to another player.
+     *
+     * @param destination the {@link BoxUser} receiving the stock
+     * @param actor       the executor's captured identity
+     */
+    public record AdminTransferOut(@NotNull BoxUser destination, @NotNull StockActor actor) implements StockEvent.Cause {
+        public AdminTransferOut {
+            Objects.requireNonNull(destination, "destination");
+            Objects.requireNonNull(actor, "actor");
+        }
+
+        @Override
+        public @NotNull String name() {
+            return "admin_transfer_out";
+        }
+    }
+
+    /**
+     * A {@link net.okocraft.box.api.event.stockholder.stock.StockEvent.Cause} implementation that indicates
+     * increasing stock of the destination player when an admin transfers stock from another player.
+     *
+     * @param source the {@link BoxUser} whose stock is transferred
+     * @param actor  the executor's captured identity
+     */
+    public record AdminTransferIn(@NotNull BoxUser source, @NotNull StockActor actor) implements StockEvent.Cause {
+        public AdminTransferIn {
+            Objects.requireNonNull(source, "source");
+            Objects.requireNonNull(actor, "actor");
+        }
+
+        @Override
+        public @NotNull String name() {
+            return "admin_transfer_in";
         }
     }
 
