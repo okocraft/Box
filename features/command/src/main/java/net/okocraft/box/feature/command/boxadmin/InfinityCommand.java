@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
@@ -173,7 +174,8 @@ public class InfinityCommand extends AbstractCommand {
         }
 
         @Override
-        public @NotNull @Unmodifiable Collection<StockData> reset() {
+        public @NotNull @Unmodifiable Collection<StockData> reset(StockEvent.@NotNull Cause cause) {
+            Objects.requireNonNull(cause, "cause");
             return Collections.emptyList();
         }
     }

@@ -60,5 +60,6 @@ public class StockEventCollector extends EventCollector {
         Assertions.assertEquals(stockHolder, event.getStockHolder());
         Assertions.assertEquals(stockDataBeforeReset.size(), event.getStockDataBeforeReset().size());
         Assertions.assertTrue(stockDataBeforeReset.containsAll(event.getStockDataBeforeReset()));
+        Assertions.assertSame(TEST_CAUSE, event.getCause());
     }
 }

@@ -172,7 +172,8 @@ class LoadingPersonalStockHolderTest {
         }
 
         @Override
-        public void callResetEvent(@NotNull StockHolder stockHolder, @NotNull Collection<StockData> stockDataBeforeReset) {
+        public void callResetEvent(@NotNull StockHolder stockHolder, @NotNull Collection<StockData> stockDataBeforeReset,
+                                   StockEvent.@NotNull Cause cause) {
             this.state.rememberReset(stockDataBeforeReset);
         }
     }

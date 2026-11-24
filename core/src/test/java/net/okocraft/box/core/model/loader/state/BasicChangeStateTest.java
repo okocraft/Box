@@ -1,6 +1,7 @@
 package net.okocraft.box.core.model.loader.state;
 
 import net.okocraft.box.api.model.stock.StockHolder;
+import net.okocraft.box.test.shared.event.StockEventCollector;
 import net.okocraft.box.test.shared.model.stock.TestStockHolder;
 import net.okocraft.box.test.shared.storage.memory.stock.MemoryStockStorage;
 import org.jetbrains.annotations.NotNull;
@@ -26,7 +27,7 @@ class BasicChangeStateTest extends AbstractChangeStateTest {
         this.checkChanges(state, false);
         this.checkStorageAmount(storage, stockHolder, ITEM_AMOUNT);
 
-        state.rememberReset(stockHolder.reset());
+        state.rememberReset(stockHolder.reset(StockEventCollector.TEST_CAUSE));
 
         this.checkChanges(state, true);
 

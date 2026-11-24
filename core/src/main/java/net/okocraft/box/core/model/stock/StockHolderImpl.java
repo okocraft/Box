@@ -328,7 +328,8 @@ class StockHolderImpl implements StockHolder {
     }
 
     @Override
-    public @NotNull @Unmodifiable Collection<StockData> reset() {
+    public @NotNull @Unmodifiable Collection<StockData> reset(StockEvent.@NotNull Cause cause) {
+        Objects.requireNonNull(cause, "cause");
         Collection<StockData> stockDataCollection;
         long stamp = this.lock.writeLock();
 
@@ -339,7 +340,7 @@ class StockHolderImpl implements StockHolder {
             this.lock.unlockWrite(stamp);
         }
 
-        this.eventCaller.callResetEvent(this, stockDataCollection);
+        this.eventCaller.callResetEvent(this, stockDataCollection, cause);
 
         return stockDataCollection;
     }

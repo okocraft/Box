@@ -74,7 +74,9 @@ public interface StockEventCaller {
      *
      * @param stockHolder          the source {@link StockHolder}
      * @param stockDataBeforeReset the collection of {@link StockData} before reset
+     * @param cause                the cause passed to {@link StockHolder#reset(StockEvent.Cause)}
      */
-    void callResetEvent(@NotNull StockHolder stockHolder, @NotNull Collection<StockData> stockDataBeforeReset);
+    void callResetEvent(@NotNull StockHolder stockHolder, @NotNull Collection<StockData> stockDataBeforeReset,
+                        @NotNull StockEvent.Cause cause);
 
 }
