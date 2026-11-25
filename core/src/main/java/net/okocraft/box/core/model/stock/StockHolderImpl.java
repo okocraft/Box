@@ -144,6 +144,48 @@ class StockHolderImpl implements StockHolder {
     }
 
     @Override
+    public int increaseToMax(@NotNull BoxItem item, int increment, @NotNull StockEvent.Cause cause) {
+        Objects.requireNonNull(item);
+
+        if (increment < 0) {
+            throw new IllegalArgumentException("increment must be zero or positive");
+        }
+
+        Objects.requireNonNull(cause);
+
+        if (increment == 0) {
+            return 0;
+        }
+
+        int added;
+        int newAmount;
+        long stamp = this.lock.writeLock();
+
+        try {
+            int internalId = item.getInternalId();
+            Stock stock = this.getStockAtUnsynchronized(internalId);
+
+            if (stock == null) {
+                this.putNewStockAtUnsynchronized(internalId, increment);
+                added = increment;
+                newAmount = increment;
+            } else {
+                Stock.ModifyResult result = stock.add(increment);
+                newAmount = result.newValue();
+                added = result instanceof Stock.ModifyResult.Overflow overflow ? increment - overflow.excess() : increment;
+            }
+        } finally {
+            this.lock.unlockWrite(stamp);
+        }
+
+        if (added > 0) {
+            this.eventCaller.callIncreaseEvent(this, item, added, newAmount, cause);
+        }
+
+        return added;
+    }
+
+    @Override
     public int decrease(@NotNull BoxItem item, int decrement, @NotNull StockEvent.Cause cause) {
         return this.decrease(item, decrement, cause, RETURN_NEW_AMOUNT);
     }

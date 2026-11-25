@@ -27,6 +27,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
 import static net.okocraft.box.api.message.Placeholders.PLAYER_NAME;
@@ -35,6 +36,7 @@ class StockTransferCommand extends AbstractCommand {
 
     private static final String CONFIRM = "confirm";
     private static final String CANCEL = "cancel";
+    private static final long REQUEST_TIMEOUT_NANOS = TimeUnit.MINUTES.toNanos(1);
 
     private static final Placeholder<String> FROM = name -> Argument.string("from", name);
     private static final Placeholder<String> TO = name -> Argument.string("to", name);
@@ -50,6 +52,7 @@ class StockTransferCommand extends AbstractCommand {
 
     private final MessageKey.Arg2<String, String> confirmation;
     private final MessageKey cancel;
+    private final MessageKey expired;
     private final MessageKey samePlayer;
     private final MessageKey.Arg1<String> noStock;
     private final MessageKey.Arg3<String, String, Integer> successSender;
@@ -62,6 +65,7 @@ class StockTransferCommand extends AbstractCommand {
         super("transfer", "box.admin.command.stock.transfer", Set.of("tr"));
         this.confirmation = MessageKey.arg2(collector.add("box.command.boxadmin.stock.transfer.confirmation", DEFAULT_CONFIRMATION_MESSAGE), FROM, TO);
         this.cancel = MessageKey.key(collector.add("box.command.boxadmin.stock.transfer.cancel", "<gray>Cancelled transfer operation."));
+        this.expired = MessageKey.key(collector.add("box.command.boxadmin.stock.transfer.expired", "<red>The transfer request has expired. Please run the command again."));
         this.samePlayer = MessageKey.key(collector.add("box.command.boxadmin.stock.transfer.same-player", "<red>The source and destination players are the same."));
         this.noStock = MessageKey.arg1(collector.add("box.command.boxadmin.stock.transfer.no-stock", "<aqua><from><gray> has no stock to transfer."), FROM);
         this.successSender = MessageKey.arg3(collector.add("box.command.boxadmin.stock.transfer.success.sender", "<gray>Transferred <aqua><count><gray> kinds of items from <aqua><from><gray> to <aqua><to><gray>."), FROM, TO, COUNT);
@@ -79,14 +83,19 @@ class StockTransferCommand extends AbstractCommand {
             return;
         }
 
-        if (CONFIRM.equalsIgnoreCase(args[2]) && this.confirmationMap.containsKey(sender)) {
-            this.transfer(sender, this.confirmationMap.remove(sender));
-            return;
-        }
+        if (args.length == 3 && (CONFIRM.equalsIgnoreCase(args[2]) || CANCEL.equalsIgnoreCase(args[2]))) {
+            Request request = this.confirmationMap.remove(sender);
 
-        if (CANCEL.equalsIgnoreCase(args[2]) && this.confirmationMap.remove(sender) != null) {
-            sender.sendMessage(this.cancel);
-            return;
+            if (request != null) {
+                if (CANCEL.equalsIgnoreCase(args[2])) {
+                    sender.sendMessage(this.cancel);
+                } else if (request.isExpired()) {
+                    sender.sendMessage(this.expired);
+                } else {
+                    this.transfer(sender, request);
+                }
+                return;
+            }
         }
 
         if (args.length < 4) {
@@ -112,7 +121,7 @@ class StockTransferCommand extends AbstractCommand {
             return;
         }
 
-        this.confirmationMap.put(sender, new Request(from, to));
+        this.confirmationMap.put(sender, new Request(from, to, System.nanoTime()));
         sender.sendMessage(this.confirmation.apply(nameOf(from), nameOf(to)));
     }
 
@@ -123,19 +132,22 @@ class StockTransferCommand extends AbstractCommand {
         StockHolder fromHolder = BoxAPI.api().getStockManager().getPersonalStockHolder(request.from());
         StockHolder toHolder = BoxAPI.api().getStockManager().getPersonalStockHolder(request.to());
 
-        if (fromHolder.getStockedItems().isEmpty()) {
-            sender.sendMessage(this.noStock.apply(fromName));
-            return;
-        }
-
         StockActor actor = StockActor.fromSender(sender);
         Result result = transferAll(
             fromHolder, toHolder,
             new CommandCauses.AdminTransferOut(request.to(), actor),
-            new CommandCauses.AdminTransferIn(request.from(), actor)
+            new CommandCauses.AdminTransferIn(request.from(), actor),
+            new CommandCauses.AdminTransferRefund(request.to(), actor)
         );
 
-        sender.sendMessage(this.successSender.apply(fromName, toName, result.transferred()));
+        if (result.transferred() == 0 && result.remaining() == 0) {
+            sender.sendMessage(this.noStock.apply(fromName));
+            return;
+        }
+
+        if (result.transferred() > 0) {
+            sender.sendMessage(this.successSender.apply(fromName, toName, result.transferred()));
+        }
 
         if (result.remaining() > 0) {
             sender.sendMessage(this.remaining.apply(result.remaining()));
@@ -160,17 +172,21 @@ class StockTransferCommand extends AbstractCommand {
      * Moves all stock from {@code from} to {@code to}.
      * <p>
      * The amount that would exceed {@link Integer#MAX_VALUE} in {@code to} is left in {@code from}.
+     * If the destination cannot accept the decreased amount (e.g. its stock grew concurrently, or increasing failed),
+     * the amount is returned to {@code from} with {@code refundCause}.
      *
-     * @param from     the source stock holder
-     * @param to       the destination stock holder
-     * @param outCause the cause for decreasing the source stock
-     * @param inCause  the cause for increasing the destination stock
+     * @param from        the source stock holder
+     * @param to          the destination stock holder
+     * @param outCause    the cause for decreasing the source stock
+     * @param inCause     the cause for increasing the destination stock
+     * @param refundCause the cause for returning the amount that could not be added to the destination
      * @return the number of item kinds that were transferred and that were (partially) left in the source
      */
     @VisibleForTesting
     static @NotNull Result transferAll(@NotNull StockHolder from, @NotNull StockHolder to,
                                        @NotNull CommandCauses.AdminTransferOut outCause,
-                                       @NotNull CommandCauses.AdminTransferIn inCause) {
+                                       @NotNull CommandCauses.AdminTransferIn inCause,
+                                       @NotNull CommandCauses.AdminTransferRefund refundCause) {
         int transferred = 0;
         int remaining = 0;
 
@@ -183,13 +199,23 @@ class StockTransferCommand extends AbstractCommand {
 
             int capacity = Integer.MAX_VALUE - to.getAmount(item);
             int moved = capacity > 0 ? from.decreaseToZero(item, Math.min(amount, capacity), outCause) : 0;
+            int added = 0;
 
             if (moved > 0) {
-                to.increase(item, moved, inCause);
+                try {
+                    added = to.increaseToMax(item, moved, inCause);
+                } finally {
+                    if (added < moved) {
+                        from.increase(item, moved - added, refundCause);
+                    }
+                }
+            }
+
+            if (added > 0) {
                 transferred++;
             }
 
-            if (moved < amount) {
+            if (capacity < amount || added < moved) {
                 remaining++;
             }
         }
@@ -200,14 +226,17 @@ class StockTransferCommand extends AbstractCommand {
     @Override
     public @NotNull List<String> onTabComplete(@NotNull CommandSender sender, @NotNull String[] args) {
         if (args.length == 3) {
-            if (this.confirmationMap.containsKey(sender)) {
-                String arg = args[2].toLowerCase(Locale.ROOT);
-                return Stream.of(CONFIRM, CANCEL).filter(s -> s.startsWith(arg)).toList();
+            List<String> players = TabCompleter.players(args[2]);
+
+            if (!this.confirmationMap.containsKey(sender)) {
+                return players;
             }
-            return TabCompleter.players(args[2]);
+
+            String arg = args[2].toLowerCase(Locale.ROOT);
+            return Stream.concat(Stream.of(CONFIRM, CANCEL).filter(s -> s.startsWith(arg)), players.stream()).toList();
         }
 
-        if (args.length == 4 && !this.confirmationMap.containsKey(sender)) {
+        if (args.length == 4) {
             return TabCompleter.players(args[3]);
         }
 
@@ -223,7 +252,10 @@ class StockTransferCommand extends AbstractCommand {
         return user.getName().orElseGet(user.getUUID()::toString);
     }
 
-    private record Request(@NotNull BoxUser from, @NotNull BoxUser to) {
+    private record Request(@NotNull BoxUser from, @NotNull BoxUser to, long createdAt) {
+        private boolean isExpired() {
+            return REQUEST_TIMEOUT_NANOS < System.nanoTime() - this.createdAt;
+        }
     }
 
     @VisibleForTesting

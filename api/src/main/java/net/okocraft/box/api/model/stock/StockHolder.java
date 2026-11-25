@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -80,6 +81,40 @@ public interface StockHolder {
      * @throws NullPointerException     if {@code item} or {@code cause} is {@code null}
      */
     int increase(@NotNull BoxItem item, @Range(from = 0, to = Integer.MAX_VALUE) int increment, @NotNull StockEvent.Cause cause);
+
+    /**
+     * Increases the stock of the specified item up to {@link Integer#MAX_VALUE}.
+     * <p>
+     * Unlike {@link #increase(BoxItem, int, StockEvent.Cause)}, this method never overflows:
+     * the amount that would exceed {@link Integer#MAX_VALUE} is not added, and the caller can find it from the return value.
+     * <p>
+     * The default implementation is not atomic. Implementations should override this method
+     * if the stock can be modified concurrently.
+     *
+     * @param item      the item to increase the stock
+     * @param increment the maximum amount to increase the stock
+     * @param cause     the cause that indicates why this method called
+     * @return the amount actually added
+     * @throws IllegalArgumentException if {@code increment} is negative
+     * @throws NullPointerException     if {@code item} or {@code cause} is {@code null}
+     */
+    default int increaseToMax(@NotNull BoxItem item, @Range(from = 0, to = Integer.MAX_VALUE) int increment, @NotNull StockEvent.Cause cause) {
+        Objects.requireNonNull(item);
+        Objects.requireNonNull(cause);
+
+        if (increment < 0) {
+            throw new IllegalArgumentException("increment must be zero or positive");
+        }
+
+        int added = Math.min(increment, Integer.MAX_VALUE - this.getAmount(item));
+
+        if (added <= 0) {
+            return 0;
+        }
+
+        this.increase(item, added, cause);
+        return added;
+    }
 
     /**
      * Decreases the stock of the specified item.

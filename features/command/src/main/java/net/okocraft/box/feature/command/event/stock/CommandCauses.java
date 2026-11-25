@@ -199,6 +199,26 @@ public final class CommandCauses {
         }
     }
 
+    /**
+     * A {@link net.okocraft.box.api.event.stockholder.stock.StockEvent.Cause} implementation that indicates
+     * returning stock to the source player when an admin transfer could not be completed
+     * (e.g. the destination stock reached the limit).
+     *
+     * @param destination the {@link BoxUser} that was to receive the stock
+     * @param actor       the executor's captured identity
+     */
+    public record AdminTransferRefund(@NotNull BoxUser destination, @NotNull StockActor actor) implements StockEvent.Cause {
+        public AdminTransferRefund {
+            Objects.requireNonNull(destination, "destination");
+            Objects.requireNonNull(actor, "actor");
+        }
+
+        @Override
+        public @NotNull String name() {
+            return "admin_transfer_refund";
+        }
+    }
+
     private CommandCauses() {
         throw new UnsupportedOperationException();
     }

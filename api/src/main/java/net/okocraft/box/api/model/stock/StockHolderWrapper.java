@@ -49,6 +49,11 @@ public interface StockHolderWrapper extends StockHolder {
     }
 
     @Override
+    default int increaseToMax(@NotNull BoxItem item, @Range(from = 0, to = Integer.MAX_VALUE) int increment, StockEvent.@NotNull Cause cause) {
+        return this.delegate().increaseToMax(item, increment, cause);
+    }
+
+    @Override
     default int decrease(@NotNull BoxItem item, @Range(from = 0, to = Integer.MAX_VALUE) int decrement, StockEvent.@NotNull Cause cause) {
         return this.delegate().decrease(item, decrement, cause);
     }

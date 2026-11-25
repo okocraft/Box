@@ -159,6 +159,35 @@ class StockHolderTest {
     }
 
     @Test
+    void testIncreaseToMax() {
+        StockEventCollector collector = new StockEventCollector();
+        StockHolder stockHolder = createStockHolder(collector);
+
+        // New stock: all is added
+        Assertions.assertEquals(5, stockHolder.increaseToMax(ITEM_1, 5, StockEventCollector.TEST_CAUSE));
+        Assertions.assertEquals(5, stockHolder.getAmount(ITEM_1));
+        collector.checkIncreaseEvent(stockHolder, ITEM_1, 5, 5);
+
+        // Existing stock near the limit: only the margin is added, and no overflow event is fired
+        stockHolder.setAmount(ITEM_2, Integer.MAX_VALUE - 100, StockEventCollector.TEST_CAUSE);
+        collector.checkSetEvent(stockHolder, ITEM_2, Integer.MAX_VALUE - 100, 0);
+        Assertions.assertEquals(100, stockHolder.increaseToMax(ITEM_2, 200, StockEventCollector.TEST_CAUSE));
+        Assertions.assertEquals(Integer.MAX_VALUE, stockHolder.getAmount(ITEM_2));
+        collector.checkIncreaseEvent(stockHolder, ITEM_2, 100, Integer.MAX_VALUE);
+
+        // Already at the limit: nothing is added
+        Assertions.assertEquals(0, stockHolder.increaseToMax(ITEM_2, 10, StockEventCollector.TEST_CAUSE));
+        Assertions.assertEquals(Integer.MAX_VALUE, stockHolder.getAmount(ITEM_2));
+        collector.checkNoEvent();
+
+        // Zero increment
+        Assertions.assertEquals(0, stockHolder.increaseToMax(ITEM_1, 0, StockEventCollector.TEST_CAUSE));
+        collector.checkNoEvent();
+
+        Assertions.assertThrows(IllegalArgumentException.class, () -> stockHolder.increaseToMax(ITEM_1, -1, StockEventCollector.TEST_CAUSE));
+    }
+
+    @Test
     void testDecrease() {
         StockEventCollector collector = new StockEventCollector();
         StockHolder stockHolder = createStockHolder(collector);
